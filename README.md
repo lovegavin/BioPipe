@@ -193,4 +193,4 @@ qc: ...
 
 本软件为专有软件。未经版权所有者书面许可，任何人不得复制、修改、分发、再许可或用于商业用途。
 
-如需商业授权、定制开发或合作，请联系：email: lihj255@mail2.sysu.edu.cn / WeChat: mylovegavin118 / No. 13727316173。
+如需商业授权、定制开发或合作，请联系：email: lovegavin118@outlook.com / WeChat: mylovegavin118 / No. 13727316173。
