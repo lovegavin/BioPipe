@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# 任务数据与结果
+tasks/*/input/
+tasks/*/processed/
+tasks/*/output/
+input/
+processed/
+output/
+
+# 基因型 / 测序大文件
+*.vcf
+*.vcf.gz
+*.bed
+*.bim
+*.fam
+*.bam
+*.bai
+*.sam
+*.fastq
+*.fq
+*.fa
+*.fasta
+
+# 表格数据，按需保留
+*.csv
+*.tsv
+*.xlsx
+*.xls
+
+# 图片结果
+*.png
+*.jpg
+*.jpeg
+*.pdf
+
+# 日志和系统文件
+*.log
+.DS_Store
+Thumbs.db
