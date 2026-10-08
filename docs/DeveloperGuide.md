@@ -1,3 +1,5 @@
+# developer.md
+
 # Developer Guide
 
 This document explains how to extend BioPipe: adding a new input format, a new pipeline step, a new statistical model, or an entire pipeline.
@@ -79,6 +81,10 @@ raise ReaderSchemaError(
 
 Never raise bare `Exception`. Use the hierarchy defined in `src/core/errors/`.
 
+### 1.6 Version string
+
+The version comes from `src/version.py`. Do not hard-code `"0.1.0"` anywhere else. Bumping the version is a one-line edit.
+
 ---
 
 ## 2. Adding a new reader
@@ -107,6 +113,7 @@ Every reader:
 4. Calls `validate()` on every form before returning.
 5. Raises `ReaderFormatError` for format issues and `ReaderSchemaError` for schema issues.
 6. Does not silently rename, coerce or drop columns.
+7. Returns exactly the keys listed for its role in `architecture.md` §3.2.
 
 ### 2.3 Template
 
@@ -421,7 +428,7 @@ src/pipelines/<name>/
   __init__.py
   manifest.py       # default manifest + validation
   init.py           # scan input/, produce the input section
-  pipeline.py       # GwasPipeline-equivalent class
+  pipeline.py       # <Name>Pipeline class
   steps/
     __init__.py
     step_1.py
@@ -439,12 +446,13 @@ src/pipelines/<name>/
 """<Name> manifest: default values and validation."""
 
 from src.core.errors import ValidationError
+from src.version import __version__
 
 
 def default_manifest() -> dict:
     return {
         "pipeline": "<name>",
-        "version": "0.1.0",
+        "version": __version__,
         "input": {...},
         "runtime": {"seed": 42, "device": "cpu"},
         # pipeline-specific sections
@@ -482,79 +490,47 @@ def init_from_input_dir(task_dir) -> dict:
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 
-import numpy as np
-
-from src.orchestration.context import PipelineContext
+from src.orchestration.bootstrap import bootstrap_context, load_manifest
 from src.orchestration.runner import run_pipeline
 from src.pipelines.<name>.manifest import validate_manifest
 from src.pipelines.<name>.steps import Step1, Step2, ...
+from src.version import __version__
 
 
 class <Name>Pipeline:
     name = "<name>"
-    version = "0.1.0"
+    version = __version__
 
     steps = [Step1(), Step2(), ...]
 
     def run(self, task_dir: Path) -> None:
         task_dir = Path(task_dir)
-        config = self._load_manifest(task_dir)
+        config = load_manifest(task_dir)
         validate_manifest(config)
-
-        out_dir = task_dir / "output"
-        proc_dir = task_dir / "processed"
-        fig_dir = out_dir / "figures"
-        log_dir = task_dir / "logs"
-        for d in (out_dir, proc_dir, fig_dir, log_dir):
-            d.mkdir(parents=True, exist_ok=True)
-
-        logger = self._build_logger(log_dir)
-        seed = int(config["runtime"].get("seed", 42))
-
-        ctx = PipelineContext(
-            config=config,
-            task_dir=task_dir,
-            out_dir=out_dir,
-            proc_dir=proc_dir,
-            fig_dir=fig_dir,
-            log_dir=log_dir,
-            logger=logger,
-            rng=np.random.default_rng(seed),
-            device=config["runtime"].get("device", "cpu"),
-        )
-
+        ctx = bootstrap_context(task_dir, config, self.name)
         run_pipeline(self.steps, ctx)
-
-    @staticmethod
-    def _load_manifest(task_dir):
-        import yaml
-        with open(task_dir / "manifest.yaml", encoding="utf-8") as f:
-            return yaml.safe_load(f)
-
-    @staticmethod
-    def _build_logger(log_dir):
-        # see src/pipelines/gwas/pipeline.py for the reference implementation
-        ...
 ```
+
+Directory layout, logging and context construction are handled by `bootstrap_context`. Do not duplicate that logic in the pipeline class.
 
 ### 5.5 Registration
 
 In `src/pipelines/__init__.py`:
 
 ```python
-from src.pipelines import gwas, <name>
 from src.pipelines.<name> import manifest as <name>_manifest
 from src.pipelines.<name> import init as <name>_init
 from src.pipelines.<name> import pipeline as <name>_pipeline
+from src.pipelines.<name>.pipeline import <Name>Pipeline
 
 
 class _<Name>Plugin:
     manifest = <name>_manifest
     init = <name>_init
     pipeline = <name>_pipeline
+    pipeline_class = <Name>Pipeline
 
 
 PIPELINES = {
@@ -608,12 +584,15 @@ For a reader:
 - Accepts a path and optional kwargs.
 - Returns a dict of forms.
 - Every returned form passes `validate()`.
+- The returned dict keys match the role contract in `architecture.md` §3.2.
 
 For a pipeline:
 
 - `manifest.default_manifest()` and `manifest.validate_manifest()` are callable.
 - `init.init_from_input_dir()` returns a dict.
 - `pipeline.<Name>Pipeline` has `name`, `version`, `steps`, and `run`.
+- The registry entry exposes a `pipeline_class` attribute.
+- `pipeline_class.name` matches the registry key.
 
 ### 6.4 Golden tests
 
@@ -642,6 +621,8 @@ Priority order:
 
 ## 7. Style and review checklist
 
+> **Note on testing status.** The repository currently ships no test infrastructure (`tests/` does not exist). The checklist below describes the target state. Items that depend on `tests/` will be enforced once the v0.2 hardening milestone lands.
+
 Before submitting a change:
 
 - [ ] File header contains the repository-relative path.
@@ -653,7 +634,8 @@ Before submitting a change:
 - [ ] Readers call `validate()` on every returned form.
 - [ ] Forms are registered with `ctx.put()`, artefacts with `ctx.artifacts`.
 - [ ] A reader is accompanied by a golden test.
-- [ ] A new pipeline is registered in `src/pipelines/__init__.py`.
+- [ ] A new pipeline is registered in `src/pipelines/__init__.py` with a `pipeline_class` attribute.
+- [ ] No hard-coded version strings outside `src/version.py`.
 - [ ] Documentation has been updated if a public contract changed.
 
 ---

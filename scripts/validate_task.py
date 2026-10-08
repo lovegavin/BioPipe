@@ -37,7 +37,7 @@ def main() -> None:
     plugin = PIPELINES[name]
     plugin.manifest.validate_manifest(manifest)
 
-    for key in ("genotype", "phenotype"):
+    for key in ("genotype", "phenotype", "covariates"):
         rel = manifest["input"].get(key)
         if rel and not (task_dir / rel).exists():
             raise SystemExit(

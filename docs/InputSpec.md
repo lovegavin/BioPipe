@@ -1,3 +1,5 @@
+# input_spec.md
+
 # Input Specification
 
 This document defines every input file BioPipe accepts, the exact column names it requires, and the compression suffixes it tolerates.
@@ -200,7 +202,17 @@ S003,38,1,A
 
 Covariates must not contain missing values. The association step raises an error if any NaN is found.
 
-### 6.5 Absence
+### 6.5 Numeric requirement
+
+Covariate columns must be numeric. Categorical variables must be encoded as integers (dummy coding, ordinal coding, or similar) before they reach BioPipe. A string column raises:
+
+```text
+could not convert string to float
+```
+
+PCA components appended by `PcaStep` are numeric by construction and may be mixed freely with user-supplied covariates.
+
+### 6.6 Absence
 
 If the manifest declares `covariates: null`, no covariate file is read. If PCA is enabled and `pca.as_covariates` is true, principal components are used as the sole covariates.
 
@@ -221,6 +233,7 @@ If the manifest declares `covariates: null`, no covariate file is read. If PCA i
 | `Excel does not support compression` | `.xlsx.gz` | Remove the `.gz` suffix |
 | `PLINK component missing` | `.bim` or `.fam` not next to `.bed` | Place all three files with the same stem |
 | `Unable to infer ploidy from VCF` | No valid GT calls in the file | Check the VCF for GT data |
+| `could not convert string to float` | Covariates include a non-numeric column | Encode categorical covariates as integers |
 
 ## 9. What is not supported
 
@@ -231,4 +244,4 @@ If the manifest declares `covariates: null`, no covariate file is read. If PCA i
 - Column names other than those listed above
 - Multi-allelic dosage re-encoding (first ALT allele is used)
 
-Future readers for BGEN and PLINK 2.x are planned. See `roadmap.md`.
+Future readers for BGEN and PLINK 2.x are tracked in [roadmap.md](roadmap.md) §3 (IO, priority P1) without a scheduled milestone.

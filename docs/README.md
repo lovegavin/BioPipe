@@ -1,3 +1,5 @@
+# README.md
+
 # BioPipe Documentation
 
 BioPipe is a modular bioinformatics pipeline framework. It converts heterogeneous file formats into a small set of in-memory forms, then runs declarative pipelines over those forms. The current release ships a complete GWAS pipeline; additional pipelines and machine-learning workflows are planned.
@@ -11,6 +13,7 @@ BioPipe is a modular bioinformatics pipeline framework. It converts heterogeneou
 | Understand how the code is organised | architecture.md |
 | Add a reader, step or pipeline | developer.md |
 | See what is planned next | roadmap.md |
+| See what changed between versions | CHANGELOG.md |
 
 ## Documentation index
 
@@ -21,6 +24,7 @@ BioPipe is a modular bioinformatics pipeline framework. It converts heterogeneou
 | architecture.md | Contributors, maintainers | Layering, dependency rules, memory forms, IO pipeline, orchestration, contracts. |
 | developer.md | Contributors | How to add a reader, a step, or a whole pipeline. |
 | roadmap.md | Everyone | Milestones and prioritised backlog. |
+| CHANGELOG.md | Everyone | Notable changes per version. |
 
 ## Quick reference
 
@@ -55,7 +59,8 @@ Full details: architecture.md.
 |---|---|
 | Core forms | Stable |
 | IO readers (VCF, PLINK, tabular) | Stable |
-| Orchestration (Step / Context / Runner) | Stable |
+| Orchestration (Step / Context / Runner / bootstrap) | Stable |
+| Multi-pipeline registry | Stable |
 | GWAS pipeline | End-to-end working |
 | ML/DL extension points | Reserved, not implemented |
 

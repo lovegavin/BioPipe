@@ -1,3 +1,5 @@
+# architecture.md
+
 # Architecture
 
 This document describes how BioPipe is organised internally: the layers, the dependency rules between them, the in-memory forms that pipelines exchange, the IO pipeline that converts files into forms, and the orchestration that runs a pipeline.
@@ -22,7 +24,7 @@ BioPipe is layered. Each layer has a single responsibility and depends only on t
                          │
 ┌────────────────────────▼────────────────────────────┐
 │ src/orchestration/                                  │  Execution engine
-│   context.py  step.py  runner.py                    │
+│   context.py  step.py  runner.py  bootstrap.py      │
 └────────────────────────┬────────────────────────────┘
                          │
 ┌────────────────────────▼────────────────────────────┐
@@ -54,7 +56,7 @@ Violations are considered architectural bugs, not style issues.
 
 A form is a minimal, closed, well-defined data structure that pipelines consume and produce. Readers convert file formats into forms. Writers convert forms back into files. Pipelines never touch raw file formats.
 
-BioPipe defines six forms. Four are implemented; two are reserved.
+BioPipe defines seven forms. Five are implemented; two are reserved.
 
 | Form | Indexed by | Purpose | Status |
 |---|---|---|---|
@@ -135,15 +137,17 @@ read(path: str, role: str, **kwargs) -> dict[str, Form]
 
 ### 3.2 Roles
 
-| Role | Produces |
-|---|---|
-| genotype | `{"genotype", "variant_table", "sample_table"}` |
-| phenotype | `{"phenotype"}` |
-| covariates | `{"covariates"}` |
-| interval | `{"interval"}` (reserved) |
-| reads | `{"reads"}` (reserved) |
+| Role | Produces | Returns |
+|---|---|---|
+| genotype | GenotypeMatrix, VariantTable, SampleTable | `{"genotype", "variant_table", "sample_table"}` |
+| phenotype | Table | `{"phenotype"}` |
+| covariates | Table | `{"covariates"}` |
+| interval | IntervalTable (reserved) | `{"interval"}` |
+| reads | SequenceReads (reserved) | `{"reads"}` |
 
 A role is a semantic declaration. `.bed` can be a genotype (PLINK) or an interval (BED); the role disambiguates.
+
+The `Returns` column is the authoritative contract for `read()`. Every reader for a given role must return exactly the keys shown. Readers never add or omit keys silently.
 
 ### 3.3 Format detection
 
@@ -283,25 +287,54 @@ On any failure, raise `PipelineError` and abort.
 
 The runner is domain-agnostic. It knows nothing about GWAS.
 
+### 5.4 Bootstrap
+
+`src/orchestration/bootstrap.py` centralises the setup shared by every pipeline:
+
+```python
+def bootstrap_context(
+    task_dir: Path,
+    config: dict,
+    pipeline_name: str,
+) -> PipelineContext: ...
+```
+
+It:
+
+1. Resolves `task_dir` to an absolute path.
+2. Creates the standard directory layout (`output/`, `output/figures/`, `processed/`, `logs/`).
+3. Builds a logger namespaced as `biopipe.<pipeline_name>` that writes to `logs/run.log` and stderr.
+4. Seeds the RNG from `config["runtime"]["seed"]`.
+5. Returns a fully initialised `PipelineContext`.
+
+Pipeline classes call `bootstrap_context` and never duplicate this logic.
+
 ## 6. Pipelines — `src/pipelines/`
 
 ### 6.1 Plugin interface
 
-Each pipeline provides three modules:
+Each pipeline provides four attributes:
 
-| Module | Responsibility |
+| Attribute | Responsibility |
 |---|---|
-| `manifest.py` | Default manifest, validation |
-| `init.py` | Scan `input/`, produce the input section |
-| `pipeline.py` | Declare steps, implement `run(task_dir)` |
+| `manifest` | Module with `default_manifest()` and `validate_manifest()`. |
+| `init` | Module with `init_from_input_dir(task_dir)`. |
+| `pipeline` | Module containing the pipeline class. |
+| `pipeline_class` | The pipeline class itself. `scripts/run.py` instantiates it; the script never imports a concrete pipeline. |
 
 The pipeline is registered in `src/pipelines/__init__.py`:
 
 ```python
+class _GwasPlugin:
+    manifest = gwas_manifest
+    init = gwas_init
+    pipeline = gwas_pipeline
+    pipeline_class = gwas_pipeline.GwasPipeline
+
 PIPELINES = {"gwas": _GwasPlugin()}
 ```
 
-`scripts/init_task.py` and `scripts/run.py` access pipelines only through this registry.
+`scripts/init_task.py`, `scripts/validate_task.py` and `scripts/run.py` access pipelines only through this registry. No entry point imports a concrete pipeline class directly.
 
 ### 6.2 GWAS pipeline
 
@@ -312,14 +345,16 @@ Steps, in order:
 | 1 | load | — | genotype, phenotype |
 | 2 | align | genotype, phenotype | genotype, phenotype |
 | 3 | sample_qc | genotype, phenotype | genotype, phenotype |
-| 4 | ld_prune | genotype | — |
-| 5 | pca | genotype | — |
-| 6 | snp_qc | genotype, phenotype | genotype |
+| 4 | snp_qc | genotype, phenotype | genotype |
+| 5 | ld_prune | genotype | — |
+| 6 | pca | genotype | — |
 | 7 | assoc | genotype, phenotype | association |
 | 8 | correction | association | association |
 | 9 | clump | genotype, association | — |
 | 10 | plot | association | — |
 | 11 | metadata | association | — |
+
+Order rationale: variant QC (`snp_qc`) precedes LD pruning and PCA so that pruning and components are computed on the filtered variant set. Monomorphic and low-quality variants would otherwise distort both the correlation structure and the principal components. Association testing uses the same filtered matrix, so removed variants do not dilute the multiple-testing correction.
 
 Each step lives in its own module under `steps/`. Statistical models live under `models/`.
 
@@ -348,13 +383,16 @@ Four contracts define the boundaries between components. These are stable APIs. 
 - Every returned form must pass `validate()`.
 - Column names are hard-coded.
 - Errors use `ReaderFormatError` / `ReaderSchemaError`.
+- The returned dict keys match exactly the `Returns` column in §3.2.
 
 ### 7.3 Plugin contract
 
-- A pipeline provides `manifest`, `init`, `pipeline`.
-- `pipeline.run(task_dir: Path)` is the only entry point.
-- Steps are listed in `pipeline.steps` in execution order.
+- A pipeline provides `manifest`, `init`, `pipeline`, `pipeline_class`.
+- `pipeline_class().run(task_dir: Path)` is the only entry point.
+- Steps are listed in `pipeline_class.steps` in execution order.
 - Each step sets `name`, `consumes`, `produces`, and implements `run(ctx)`.
+- `pipeline_class.name` matches the registry key.
+- Directory layout, logging and `PipelineContext` construction are handled by `src.orchestration.bootstrap.bootstrap_context`. Pipeline classes do not duplicate that logic.
 
 ### 7.4 Output contract
 
@@ -364,6 +402,8 @@ Four contracts define the boundaries between components. These are stable APIs. 
 - Logs: `logs/`
 
 `output/run_metadata.json` is mandatory and records pipeline version, dependency versions, full manifest, per-step timings, and QC summaries.
+
+Input file hashes are not yet recorded; see `roadmap.md` v0.2.
 
 ## 8. Design decisions in one place
 
@@ -375,6 +415,8 @@ Four contracts define the boundaries between components. These are stable APIs. 
 - **Steps never call each other.** All shared state goes through the context. This makes every step independently testable and reorderable.
 - **Manifest is the run contract.** Code changes are not required to change parameters.
 - **One-way dependencies.** scripts → pipelines → orchestration → services → core. No reverse imports.
+- **Variant QC before LD pruning and PCA.** LD and principal components are computed on the post-QC matrix, not the raw matrix. Monomorphic and low-quality variants would otherwise distort both.
+- **Pipeline bootstrap is centralised.** Directory layout, logging and context construction live in `orchestration/bootstrap.py`. Pipeline classes contain only their step list and manifest handling.
 
 ## 9. Extension points
 
@@ -392,6 +434,7 @@ Four contracts define the boundaries between components. These are stable APIs. 
 
 ```text
 src/
+  version.py
   core/
     errors/
     forms/
@@ -419,6 +462,7 @@ src/
     context.py
     step.py
     runner.py
+    bootstrap.py
   pipelines/
     __init__.py
     gwas/
@@ -441,4 +485,5 @@ docs/
   architecture.md
   developer.md
   roadmap.md
+  CHANGELOG.md
 ```

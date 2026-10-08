@@ -1,3 +1,5 @@
+# guide.md
+
 # Guide
 
 This guide walks you through installing BioPipe, preparing input data, running a task, and interpreting the outputs. It assumes no prior knowledge of the framework.
@@ -88,7 +90,7 @@ Column names are fixed. See [input_spec.md](input_spec.md) for the exact contrac
 sample_id,trait_value
 ```
 
-**Covariates** — first column is `sample_id`, the rest are free:
+**Covariates** — first column is `sample_id`, the rest are free and must be numeric:
 
 ```text
 sample_id,age,sex,batch
@@ -97,6 +99,35 @@ sample_id,age,sex,batch
 ### 2.3 Sample IDs
 
 Sample IDs must match exactly across genotype, phenotype and covariate files. Alignment is done by string comparison.
+
+### 2.4 Minimal working example
+
+A complete task that runs end-to-end:
+
+```text
+tasks/task_demo/input/
+  genotype.vcf.gz    # 3 samples, 5 variants, GT field present
+  phenotype.csv      # sample_id,trait_value
+```
+
+`phenotype.csv`:
+
+```csv
+sample_id,trait_value
+S001,1.23
+S002,0.87
+S003,1.05
+```
+
+Then:
+
+```bash
+python scripts/init_task.py     --task tasks/task_demo
+python scripts/validate_task.py --task tasks/task_demo
+python scripts/run.py           --task tasks/task_demo
+```
+
+Three samples is below the recommended minimum for real analysis (see §7 FAQ), but it proves the pipeline works before you commit to a larger dataset.
 
 ---
 
@@ -125,7 +156,7 @@ Open `manifest.yaml` and adjust any parameter you want to change — QC threshol
 python scripts/validate_task.py --task tasks/task_001_myrun_GWAS
 ```
 
-This checks that the manifest is well-formed and that every declared input path exists. No computation is performed.
+This checks that the manifest is well-formed and that every declared input path (genotype, phenotype, covariates) exists. No computation is performed.
 
 Expected output:
 
@@ -210,7 +241,7 @@ Tab-separated. One row per variant.
 
 ### 4.2 Run metadata — `output/run_metadata.json`
 
-Records everything needed to reproduce the run:
+Records the following:
 
 - Pipeline name and version
 - Python version and platform
@@ -219,6 +250,8 @@ Records everything needed to reproduce the run:
 - Per-step timings
 - Alignment, sample QC, SNP QC and correction summaries
 - Input paths
+
+Input file hashes are not yet recorded; they are tracked in [roadmap.md](roadmap.md) (v0.2, P2). Until then, re-running with different inputs produces a metadata file that looks identical.
 
 ### 4.3 Figures — `output/figures/`
 
@@ -264,10 +297,13 @@ pca:
 ```yaml
 qc:
   maf: 0.05
+  mac: 20
   missing: 0.05
   sample_missing: 0.05
   hwe: 1.0e-6
 ```
+
+`qc.mac` is the minor allele count floor. The default is `10`. Variants whose minor allele count is below this threshold are dropped before association testing so they cannot dilute the multiple-testing correction. Raising it discards more low-frequency variants; lowering it admits more but makes per-variant estimates noisier.
 
 **Switch to standard logistic regression**
 
@@ -313,6 +349,7 @@ The manifest is the only file you should edit after `init_task.py`. Do not edit 
 | `PLINK component missing` | `.bim` or `.fam` not found | Keep all three files together |
 | `Unable to infer ploidy from VCF` | No valid `GT` calls | Check the VCF for `GT` data |
 | `Covariates contain missing values` | `NaN` in covariates | Clean the covariate file |
+| `could not convert string to float` | Covariates include a non-numeric column | Encode categorical covariates as numbers |
 | `Sample missingness filter removed every sample` | Threshold too strict | Raise `qc.sample_missing` |
 | `Step 'X' declared form 'Y' but did not register it` | Plugin bug | Report to the maintainer |
 
@@ -341,6 +378,10 @@ If the data has no population structure, PCA over-corrects and removes real sign
 **Why is Firth slower than standard logistic regression?**
 
 Firth requires an iterative solution to the penalised score equation, while standard logistic regression uses IRLS. The cost is 5–10× in exchange for unbiased estimates under case-control imbalance and perfect separation.
+
+**Why does the pipeline run SNP QC before LD pruning and PCA?**
+
+LD pruning and PCA both summarise the correlation structure of the genotype matrix. Monomorphic, high-missingness and HWE-violating variants distort that structure. Filtering first means the pruning and the principal components reflect the variants that actually enter the association test.
 
 **Can I use BioPipe with BGEN or PLINK 2.x input?**
 

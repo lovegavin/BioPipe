@@ -82,7 +82,20 @@ def compute_hwe_pvalues(
     """Compute HWE p-values per variant.
 
     If ``phenotype_values`` is binary, the test is restricted to
-    controls (value 0). Otherwise all samples are used.
+    controls. The control group is taken as the smaller of the two
+    observed values, so both ``0/1`` and ``1/2`` case-control coding
+    are handled. If fewer than 10 controls are available, the test
+    falls back to all samples.
+
+    Parameters
+    ----------
+    data : np.ndarray
+        Genotype dosage matrix, shape ``(n_snps, n_samples)``.
+    phenotype_values : np.ndarray, optional
+        Sample-level phenotype. Binary values trigger controls-only
+        testing.
+    missing_code : float
+        Sentinel for missing genotype calls.
 
     Returns
     -------
@@ -92,9 +105,19 @@ def compute_hwe_pvalues(
     n_snps, n_samples = data.shape
     pvals = np.full(n_snps, np.nan, dtype=float)
 
-    if phenotype_values is not None and len(np.unique(phenotype_values)) == 2:
-        ctrl_mask = phenotype_values == 0
-        scope = "controls_only" if ctrl_mask.sum() >= 10 else "all_samples"
+    if (
+        phenotype_values is not None
+        and len(np.unique(phenotype_values)) == 2
+    ):
+        # Take the smaller value as the control group. Works for both
+        # 0/1 coding (control=0) and 1/2 coding (control=1).
+        ctrl_value = np.unique(phenotype_values).min()
+        ctrl_mask = phenotype_values == ctrl_value
+        scope = (
+            "controls_only" if ctrl_mask.sum() >= 10 else "all_samples"
+        )
+        if scope == "all_samples":
+            ctrl_mask = np.ones(n_samples, dtype=bool)
     else:
         ctrl_mask = np.ones(n_samples, dtype=bool)
         scope = "all_samples"

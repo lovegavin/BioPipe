@@ -9,13 +9,14 @@ it to change paths, thresholds, models and toggles.
 from __future__ import annotations
 
 from src.core.errors import ValidationError
+from src.version import __version__
 
 
 def default_manifest() -> dict:
     """Return the default GWAS manifest."""
     return {
         "pipeline": "gwas",
-        "version": "0.1.0",
+        "version": __version__,
         "input": {
             "genotype": None,
             "phenotype": None,
@@ -23,6 +24,7 @@ def default_manifest() -> dict:
         },
         "qc": {
             "maf": 0.01,
+            "mac": 10,
             "missing": 0.10,
             "sample_missing": 0.10,
             "hwe": 1.0e-6,
@@ -91,6 +93,14 @@ def validate_manifest(cfg: dict) -> None:
     hwe = qc.get("hwe")
     if hwe is not None:
         _check_range("qc.hwe", hwe, 0.0, 1.0, strict_low=True)
+    mac = qc.get("mac")
+    if mac is not None:
+        if not isinstance(mac, int) or mac < 1:
+            raise ValidationError(
+                "Manifest",
+                "qc.mac must be a positive integer",
+                f"got {mac!r}",
+            )
 
     pca = cfg.get("pca", {})
     if not isinstance(pca.get("n_components"), int) or \

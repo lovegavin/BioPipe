@@ -1,3 +1,5 @@
+# roadmap.md
+
 # Roadmap
 
 This document describes where BioPipe is, where it is going, and what needs to be built next. It is updated as milestones complete.
@@ -16,17 +18,18 @@ BioPipe v0.1.0 ships a working GWAS pipeline end-to-end.
 | IO pipeline (`read(path, role)`) | Stable |
 | Readers: VCF, PLINK 1.x, CSV / TSV / Excel / Parquet | Stable |
 | Form-agnostic sample alignment | Stable |
-| QC operators: missingness, MAF, HWE | Stable |
-| Orchestration: Step, LoopStep, PipelineContext, Runner | Stable |
+| QC operators: missingness, MAF, MAC, HWE | Stable |
+| Orchestration: Step, LoopStep, PipelineContext, Runner, bootstrap | Stable |
 | GWAS pipeline: 11 steps, end-to-end | Working |
 | Manifest generation and validation | Working |
 | Run metadata and reproducibility record | Working |
+| Multi-pipeline registry (`pipeline_class`) | Stable |
 
 **Not yet implemented**
 
 | Component | Notes |
 |---|---|
-| Automated test suite | No unit, contract or golden tests committed yet |
+| Automated test suite | No unit, contract or golden tests committed yet. See §2 v0.2. |
 | Additional genotype readers | BGEN, PLINK 2.x `.pgen`, Oxford `.gen` |
 | Additional pipelines | Everything below GWAS |
 | ML/DL extension points | `to_tensor`, `LoopStep` reserved but not implemented |
@@ -48,6 +51,9 @@ BioPipe v0.1.0 ships a working GWAS pipeline end-to-end.
 | Golden test: Firth vs R `logistf` | P1 |
 | Unit tests for readers, alignment, QC operators | P0 |
 | Contract tests for plugins and readers | P1 |
+| Fix step ordering: `snp_qc` before `ld_prune` / `pca` | P0 |
+| Fix HWE control-group detection for 1/2 phenotype coding | P0 |
+| Add MAC lower bound to `snp_qc` | P1 |
 | Vectorise `ld_prune` (currently O(n × window) in Python) | P1 |
 | Vectorise `assoc` for OLS (matrix form instead of per-SNP loop) | P1 |
 | Chunked / memmap backend for large genotype matrices | P1 |
@@ -189,6 +195,7 @@ Items not yet assigned to a milestone. Priorities: P0 = blocking, P1 = important
 | Chunked Firth (process variants in batches, free memory) | P1 |
 | Parallel association via multiprocessing or Dask | P1 |
 | Sparse matrix support for rare variants | P2 |
+| Align PCA missing-value imputation with PLINK2 two-pass method | P1 |
 
 ---
 

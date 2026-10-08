@@ -7,11 +7,10 @@ import argparse
 import sys
 from pathlib import Path
 
-import yaml
-
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+from src.orchestration.bootstrap import load_manifest  # noqa: E402
 from src.pipelines import PIPELINES  # noqa: E402
 
 
@@ -23,24 +22,24 @@ def main() -> None:
     args = ap.parse_args()
 
     task_dir = Path(args.task).resolve()
-    manifest_path = task_dir / "manifest.yaml"
-    if not manifest_path.exists():
-        raise SystemExit(
-            f"Missing manifest: {manifest_path}\n"
-            f"Run scripts/init_task.py first."
-        )
 
-    with open(manifest_path, encoding="utf-8") as f:
-        manifest = yaml.safe_load(f)
+    # The manifest declares which pipeline to run. Reading it here
+    # keeps this script pipeline-agnostic: it never names a concrete
+    # pipeline class.
+    try:
+        config = load_manifest(task_dir)
+    except FileNotFoundError as exc:
+        raise SystemExit(str(exc))
 
-    name = manifest.get("pipeline")
+    name = config.get("pipeline")
     if name not in PIPELINES:
         raise SystemExit(
             f"Unknown pipeline: '{name}'. "
             f"Available: {list(PIPELINES.keys())}"
         )
 
-    PIPELINES[name].pipeline.GwasPipeline().run(task_dir)
+    plugin = PIPELINES[name]
+    plugin.pipeline_class().run(task_dir)
 
 
 if __name__ == "__main__":

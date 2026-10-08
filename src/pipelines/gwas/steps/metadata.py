@@ -11,10 +11,11 @@ from importlib.metadata import version as pkg_version, PackageNotFoundError
 
 from src.orchestration.context import PipelineContext
 from src.orchestration.step import Step
+from src.version import __version__
 
 _TRACKED_PACKAGES = (
     "numpy", "pandas", "scipy", "statsmodels",
-    "pysam", "bed_reader", "matplotlib",
+    "pysam", "bed-reader", "matplotlib",
 )
 
 
@@ -50,7 +51,7 @@ class MetadataStep(Step):
 
         metadata = {
             "pipeline": "gwas",
-            "version": ctx.config.get("version", "0.1.0"),
+            "version": ctx.config.get("version", __version__),
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "python": sys.version.split()[0],
             "platform": platform.platform(),
