@@ -1,0 +1,68 @@
+name: demo
+
+sources:
+  pheno:
+    path: input/phenotype.csv
+    dims: [sample, field]
+    labels:
+      field:
+        pheno_sid: 0
+        sex: 1
+        batch: 2
+        age: 3
+        trait: 4
+    args:
+      encoders:
+        all: labelencoder
+
+  expr:
+    path: input/expression.csv
+    dims: [sample, field]
+    labels:
+      field:
+        expr_sid: 0
+        gene_A: 1
+        gene_B: 2
+        gene_C: 3
+
+  meth:
+    path: input/methylation.csv
+    dims: [sample, field]
+    labels:
+      field:
+        meth_sid: 0
+        cpg_1: 1
+        cpg_2: 2
+        cpg_3: 3
+
+steps:
+  - name: describe
+    inputs: [pheno]
+
+  # Drop two label-named columns from pheno. The remaining labels
+  # (pheno_sid, age, trait) shift to positions 0, 1, 2.
+  - name: drop
+    inputs: [pheno]
+    params:
+      dim: field
+      labels: [sex, batch]
+      output: pheno_trimmed
+
+  - name: describe
+    inputs: [pheno_trimmed]
+
+  - name: concat
+    inputs: [pheno_trimmed, expr, meth]
+    params:
+      axis: field
+      align:
+        dim: sample
+        key:
+          pheno_trimmed: pheno_sid
+          expr: expr_sid
+          meth: meth_sid
+      label: sid
+      output: combined
+
+  - name: describe
+    inputs: [combined]

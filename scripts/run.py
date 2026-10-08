@@ -1,45 +1,40 @@
 # scripts/run.py
-"""Execute a pipeline against a task directory."""
+"""Execute a task described by task.yaml."""
 
 from __future__ import annotations
 
-import argparse
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from src.orchestration.bootstrap import load_manifest  # noqa: E402
-from src.pipelines import PIPELINES  # noqa: E402
+from src.reader import pick_reader  # noqa: E402
+from src.task import Context, load_manifest, run  # noqa: E402
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(
-        description="Run a BioPipe pipeline."
-    )
-    ap.add_argument("--task", required=True, help="Task directory.")
-    args = ap.parse_args()
+    if len(sys.argv) != 2:
+        raise SystemExit("Usage: python scripts/run.py <task_dir>")
 
-    task_dir = Path(args.task).resolve()
+    task_dir = Path(sys.argv[1]).resolve()
+    manifest = load_manifest(task_dir / "task.yaml")
+    ctx = Context(task_dir, manifest)
 
-    # The manifest declares which pipeline to run. Reading it here
-    # keeps this script pipeline-agnostic: it never names a concrete
-    # pipeline class.
-    try:
-        config = load_manifest(task_dir)
-    except FileNotFoundError as exc:
-        raise SystemExit(str(exc))
-
-    name = config.get("pipeline")
-    if name not in PIPELINES:
-        raise SystemExit(
-            f"Unknown pipeline: '{name}'. "
-            f"Available: {list(PIPELINES.keys())}"
+    for name, spec in manifest["sources"].items():
+        reader = pick_reader(spec["path"])
+        form = reader.read(
+            task_dir / spec["path"],
+            dims=spec["dims"],
+            labels=spec["labels"],
+            **spec.get("args", {}),
         )
+        form.validate()
+        ctx[name] = form
+        print(f"[source] {name}: shape={form.data.shape}, dims={form.dims}")
 
-    plugin = PIPELINES[name]
-    plugin.pipeline_class().run(task_dir)
+    run(ctx, manifest["steps"])
+    print("Task finished")
 
 
 if __name__ == "__main__":
