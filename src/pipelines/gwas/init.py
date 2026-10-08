@@ -1,19 +1,37 @@
 # src/pipelines/gwas/init.py
-"""按命名约定扫描 input/, 生成 input section"""
+"""Scan the task input directory and populate the manifest input section.
+
+No format or schema inspection is performed here — only file existence
+is checked against the naming convention. Column-level validation is
+the responsibility of readers at run time.
+"""
+
+from __future__ import annotations
 
 from pathlib import Path
 
-# 约定名（按优先级）
-GENOTYPE_CONVENTION = (
+GENOTYPE_CANDIDATES = (
     "genotype.vcf.gz",
     "genotype.vcf",
     "genotype.bed",
 )
-PHENO_CONVENTION = ("phenotype.csv",)
-COVAR_CONVENTION = ("covariates.csv",)
+PHENOTYPE_CANDIDATES = (
+    "phenotype.csv",
+    "phenotype.tsv",
+    "phenotype.txt",
+    "phenotype.xlsx",
+    "phenotype.parquet",
+)
+COVARIATE_CANDIDATES = (
+    "covariates.csv",
+    "covariates.tsv",
+    "covariates.txt",
+    "covariates.xlsx",
+    "covariates.parquet",
+)
 
 
-def _match(input_dir: Path, names):
+def _match(input_dir: Path, names: tuple[str, ...]) -> Path | None:
     for name in names:
         p = input_dir / name
         if p.exists():
@@ -21,51 +39,49 @@ def _match(input_dir: Path, names):
     return None
 
 
-def init_from_input_dir(task_dir):
-    """
-    约定:
-        input/genotype.vcf.gz  或
-        input/genotype.vcf     或
-        input/genotype.bed     (需 .bim/.fam 同目录)
-        input/phenotype.csv
-        input/covariates.csv   (可选)
-    未命中时列出候选, 用户手改 config.yaml。
+def _list_dir(input_dir: Path) -> list[str]:
+    return sorted(f.name for f in input_dir.iterdir() if f.is_file())
+
+
+def init_from_input_dir(task_dir) -> dict:
+    """Return the manifest ``input`` section for ``task_dir``.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the input directory is missing, or a mandatory file cannot
+        be located under any of the convention names.
     """
     task_dir = Path(task_dir)
     input_dir = task_dir / "input"
+
     if not input_dir.exists():
-        raise FileNotFoundError(f"缺少 input 目录: {input_dir}")
+        raise FileNotFoundError(
+            f"Missing input directory: {input_dir}"
+        )
 
-    geno = _match(input_dir, GENOTYPE_CONVENTION)
-    pheno = _match(input_dir, PHENO_CONVENTION)
-    covar = _match(input_dir, COVAR_CONVENTION)
+    genotype = _match(input_dir, GENOTYPE_CANDIDATES)
+    phenotype = _match(input_dir, PHENOTYPE_CANDIDATES)
+    covariates = _match(input_dir, COVARIATE_CANDIDATES)
 
-    def _rel(p):
-        return str(p.relative_to(task_dir)) if p else None
+    if genotype is None:
+        raise FileNotFoundError(
+            "No genotype file found.\n"
+            f"  Expected one of: {list(GENOTYPE_CANDIDATES)}\n"
+            f"  Directory listing: {_list_dir(input_dir)}"
+        )
+    if phenotype is None:
+        raise FileNotFoundError(
+            "No phenotype file found.\n"
+            f"  Expected one of: {list(PHENOTYPE_CANDIDATES)}\n"
+            f"  Directory listing: {_list_dir(input_dir)}"
+        )
 
-    input_section = {
-        "genotype":   _rel(geno),
-        "phenotype":  _rel(pheno),
-        "covariates": _rel(covar),
+    def _rel(p: Path | None) -> str | None:
+        return str(p.relative_to(task_dir)) if p is not None else None
+
+    return {
+        "genotype": _rel(genotype),
+        "phenotype": _rel(phenotype),
+        "covariates": _rel(covariates),
     }
-
-    print("识别结果:")
-    print(f"  基因型:  {geno.name if geno else '(未命中约定名)'}")
-    print(f"  表型:    {pheno.name if pheno else '(未命中约定名)'}")
-    print(f"  协变量:  {covar.name if covar else '(未命中约定名)'}")
-
-    if geno is None:
-        cands = [f.name for f in input_dir.iterdir()
-                 if f.suffix.lower() in (".vcf", ".gz", ".bed")]
-        if cands:
-            print(f"\n  基因型候选: {cands}")
-            print(f"  请在 config.yaml 的 input.genotype 手动填写")
-
-    if pheno is None:
-        cands = [f.name for f in input_dir.iterdir()
-                 if f.suffix.lower() == ".csv"]
-        if cands:
-            print(f"\n  表型候选: {cands}")
-            print(f"  请在 config.yaml 的 input.phenotype 手动填写")
-
-    return input_section
