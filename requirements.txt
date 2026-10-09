@@ -9,9 +9,11 @@ cached-property @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-
 certifi @ file:///home/conda/feedstock_root/build_artifacts/certifi_1784717589373/work/certifi
 click @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_click_1788802215/work
 cloudpickle @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_cloudpickle_1765303462/work
+coloredlogs==15.0.1
 contourpy @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_contourpy_1769155975/work
 cycler @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_cycler_1764466758/work
 cytoolz @ file:///home/conda/feedstock_root/build_artifacts/cytoolz_1789704602889/work
+cyvcf2==0.34.0
 dask @ file:///home/conda/feedstock_root/build_artifacts/dask-core_1677707033352/work
 Deprecated @ file:///home/conda/feedstock_root/build_artifacts/deprecated_1768934076236/work
 distributed @ file:///home/conda/feedstock_root/build_artifacts/distributed_1677711074949/work
@@ -25,6 +27,7 @@ google-crc32c @ file:///home/conda/feedstock_root/build_artifacts/google-crc32c_
 h2 @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_h2_1785796355/work
 h5py @ file:///home/conda/feedstock_root/build_artifacts/h5py_1790854792399/work
 hpack @ file:///home/conda/feedstock_root/build_artifacts/hpack_1782283902770/work
+humanfriendly==10.0
 hyperframe @ file:///home/conda/feedstock_root/build_artifacts/hyperframe_1737618333194/work
 Jinja2==3.1.0
 joblib @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_joblib_1788177170/work
@@ -43,17 +46,18 @@ nose @ file:///home/conda/feedstock_root/build_artifacts/nose_1602434998960/work
 numba @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_numba_1790835914/work
 numcodecs @ file:///home/conda/feedstock_root/build_artifacts/numcodecs_1764782165587/work
 numexpr @ file:///home/conda/feedstock_root/build_artifacts/numexpr_1789120092487/work
-numpy @ file:///home/conda/feedstock_root/build_artifacts/numpy_1707225376651/work/dist/numpy-1.26.4-cp311-cp311-linux_x86_64.whl#sha256=d08e1c9e5833ae7780563812aa73e2497db1ee3bd5510d3becb8aa18aa2d0c7c
+numpy==2.4.6
 openpyxl==3.1.0
 optree @ file:///home/conda/feedstock_root/build_artifacts/optree_1788504419749/work
 packaging==26.1
-pandas @ file:///home/conda/feedstock_root/build_artifacts/pandas_1702057161833/work
+pandas==3.0.6
 partd @ file:///home/conda/feedstock_root/build_artifacts/partd_1715026491486/work
 patsy @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_patsy_1788106018/work
 pillow @ file:///croot/pillow_1731594689713/work
 ply @ file:///home/conda/feedstock_root/build_artifacts/ply_1733239724146/work
 pomegranate @ file:///home/conda/feedstock_root/build_artifacts/pomegranate_1734870954619/work
 psutil @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_psutil_1789682042/work
+pyarrow==25.0.1
 pybind11 @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pybind11_1786200320/work
 pybind11-global @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pybind11-global_1786200320/work
 pyparsing @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pyparsing_1790063282/work
@@ -61,7 +65,7 @@ PyQt6==6.11.0
 PyQt6_sip @ file:///home/task_177582793952007/croot/pyqt-split_1775828360951/work/pyqt_sip
 pysam==0.22.0
 PySocks @ file:///home/conda/feedstock_root/build_artifacts/pysocks_1733217236728/work
-python-dateutil @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_python-dateutil_1751104122/work
+python-dateutil==2.9.0.post0
 pytz @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pytz_1791103834/work
 PyYAML @ file:///home/conda/feedstock_root/build_artifacts/pyyaml_1770223234623/work
 scikit-allel @ file:///home/conda/feedstock_root/build_artifacts/scikit-allel_1769850538662/work
@@ -69,7 +73,7 @@ scikit-learn @ file:///home/conda/feedstock_root/build_artifacts/scikit-learn_17
 SciPy @ file:///home/conda/feedstock_root/build_artifacts/scipy-split_1700812475366/work/dist/scipy-1.11.4-cp311-cp311-linux_x86_64.whl#sha256=541ab873d7e2ca49432757bee07cc2c5f839e4e27d4cec88a4f8dd915e03ba64
 seaborn @ file:///home/conda/feedstock_root/build_artifacts/seaborn-split_1733730015268/work
 sip @ file:///home/conda/feedstock_root/build_artifacts/sip_1774373864388/work
-six @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_six_1753199211/work
+six==1.17.0
 sortedcontainers @ file:///home/conda/feedstock_root/build_artifacts/sortedcontainers_1738440353519/work
 statsmodels @ file:///home/conda/feedstock_root/build_artifacts/statsmodels_1764982999281/work
 sympy @ file:///home/conda/feedstock_root/build_artifacts/sympy_1771952240620/work

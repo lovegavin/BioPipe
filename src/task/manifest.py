@@ -36,7 +36,8 @@ def _validate_sources(sources: dict) -> None:
         if not isinstance(spec, dict):
             raise ManifestError(f"Source '{name}' must be a mapping")
 
-        for key in ("path", "dims", "labels"):
+        # path and dims are required; labels is optional.
+        for key in ("path", "dims"):
             if key not in spec:
                 raise ManifestError(
                     f"Source '{name}' missing required field '{key}'"
@@ -53,9 +54,11 @@ def _validate_sources(sources: dict) -> None:
             raise ManifestError(
                 f"Source '{name}': dims must be a list of names"
             )
-        if not isinstance(spec["labels"], dict):
+
+        labels = spec.get("labels")
+        if labels is not None and not isinstance(labels, dict):
             raise ManifestError(
-                f"Source '{name}': labels must be a mapping"
+                f"Source '{name}': labels must be a mapping when present"
             )
 
         args = spec.get("args")

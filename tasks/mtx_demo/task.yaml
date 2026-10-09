@@ -1,0 +1,19 @@
+name: mtx_demo
+
+sources:
+  pbmc:
+    path: input/filtered_feature_bc_matrix/matrix.mtx.gz
+    dims: [gene, cell]
+
+steps:
+  - name: describe
+    inputs: [pbmc]
+
+  - name: transpose
+    inputs: [pbmc]
+    params:
+      order: [cell, gene]
+      output: pbmc_T
+
+  - name: describe
+    inputs: [pbmc_T]

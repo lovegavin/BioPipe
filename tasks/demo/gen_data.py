@@ -1,67 +1,152 @@
 # tasks/demo/gen_data.py
-"""Generate three CSVs that share a sample_id column.
+"""Generate VCF test files for the demo task.
 
-phenotype.csv   sample_id, sex, batch, age, trait
-expression.csv  sample_id, gene_A, gene_B, gene_C
-methylation.csv sample_id, cpg_1, cpg_2, cpg_3
+    variants_dip.vcf       diploid       30 variants x 500 samples
+    variants_tri.vcf       triploid      15 variants x 200 samples
+    variants_tet.vcf       tetraploid    12 variants x 100 samples
+    variants_ma.vcf        multi-allelic  5 records x 100 samples
+    variants_dip.vcf.gz    same as variants_dip.vcf, gzipped
 
-A couple of empty fields are injected into phenotype.csv to exercise
-null handling in the reader. Deterministic given SEED.
+Every file carries the full VCF header (fileformat, fileDate, source,
+reference, assembly, phasing, FORMAT, INFO, FILTER, contig, ALT).
+
+A few genotypes are missing in every file to exercise NaN handling.
+Deterministic given SEED.
 """
 
 from __future__ import annotations
 
+import gzip
 import random
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 OUT_DIR = HERE / "input"
-
-N_SAMPLES = 200
 SEED = 42
 
 
-def _ids():
-    return [f"S{i + 1:04d}" for i in range(N_SAMPLES)]
+def _header_lines(samples: list[str]) -> list[str]:
+    lines = [
+        "##fileformat=VCFv4.2",
+        "##fileDate=20261008",
+        "##source=biopipe-demo-generator",
+        "##reference=file:///refs/GRCh38.fa",
+        "##assembly=GRCh38",
+        "##phasing=partial",
+        '##FORMAT=<ID=GT,Number=1,Type=String,'
+        'Description="Genotype">',
+        '##FORMAT=<ID=GQ,Number=1,Type=Integer,'
+        'Description="Genotype Quality">',
+        '##INFO=<ID=DP,Number=1,Type=Integer,'
+        'Description="Total Depth">',
+        '##FILTER=<ID=PASS,Description="All filters passed">',
+        '##ALT=<ID=DEL,Description="Deletion">',
+    ]
+    for c in range(1, 23):
+        lines.append(f"##contig=<ID=chr{c},length={100_000_000 + c}>")
+
+    header = ["#CHROM", "POS", "ID", "REF", "ALT",
+              "QUAL", "FILTER", "INFO", "FORMAT"]
+    header.extend(samples)
+    lines.append("\t".join(header))
+    return lines
 
 
-def _write(path, rows):
+def _write_vcf(
+    path: Path,
+    n_samples: int,
+    n_variants: int,
+    ploidy: int,
+    seed: int,
+    gz: bool = False,
+) -> None:
+    rng = random.Random(seed)
+    samples = [f"S{i + 1:04d}" for i in range(n_samples)]
+
+    opener = (
+        (lambda p: gzip.open(p, "wt", encoding="utf-8"))
+        if gz else
+        (lambda p: open(p, "w", encoding="utf-8"))
+    )
+
+    with opener(path) as f:
+        for line in _header_lines(samples):
+            f.write(line + "\n")
+
+        for i in range(n_variants):
+            pos = 10000 + i * 5000
+            vid = f"rs{i + 1}"
+            ref = rng.choice("ACGT")
+            alt = rng.choice([b for b in "ACGT" if b != ref])
+
+            gts = []
+            for _ in samples:
+                if rng.random() < 0.02:
+                    gts.append("/".join(["."] * ploidy))
+                    continue
+                alleles = [
+                    "1" if rng.random() < 0.30 else "0"
+                    for _ in range(ploidy)
+                ]
+                gts.append("/".join(alleles))
+
+            fields = ["1", str(pos), vid, ref, alt,
+                      ".", ".", ".", "GT"]
+            fields.extend(gts)
+            f.write("\t".join(fields) + "\n")
+
+
+def _write_multiallelic(path: Path, n_samples: int, seed: int) -> None:
+    """Five records, each with two ALTs. GT-only."""
+    rng = random.Random(seed)
+    samples = [f"S{i + 1:04d}" for i in range(n_samples)]
+
     with open(path, "w", encoding="utf-8") as f:
-        for row in rows:
-            f.write(",".join(str(v) for v in row) + "\n")
+        for line in _header_lines(samples):
+            f.write(line + "\n")
+
+        for i in range(5):
+            pos = 10000 + i * 1000
+            vid = f"ma{i + 1}"
+            ref = "A"
+            alt = "C,G"
+
+            gts = []
+            for _ in samples:
+                if rng.random() < 0.02:
+                    gts.append("./.")
+                    continue
+                alleles = []
+                for _ in range(2):
+                    x = rng.random()
+                    alleles.append(
+                        0 if x < 0.25 else
+                        1 if x < 0.70 else
+                        2
+                    )
+                gts.append(f"{alleles[0]}/{alleles[1]}")
+
+            fields = ["1", str(pos), vid, ref, alt,
+                      ".", ".", ".", "GT"]
+            fields.extend(gts)
+            f.write("\t".join(fields) + "\n")
 
 
 def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    ids = _ids()
 
-    rng = random.Random(SEED)
-    rows = []
-    for sid in ids:
-        sex = rng.choice(["M", "F"])
-        batch = rng.choice([1, 2, 3])
-        age = rng.randint(20, 80)
-        base = 1.0 + (0.3 if sex == "M" else -0.3) + (age - 50) * 0.005
-        base += rng.gauss(0, 0.2)
-        rows.append([sid, sex, batch, age, round(base, 4)])
+    _write_vcf(OUT_DIR / "variants_dip.vcf", 500, 30, 2, SEED)
+    _write_vcf(OUT_DIR / "variants_tri.vcf", 200, 15, 3, SEED + 1)
+    _write_vcf(OUT_DIR / "variants_tet.vcf", 100, 12, 4, SEED + 2)
+    _write_multiallelic(OUT_DIR / "variants_ma.vcf", 100, SEED + 10)
+    _write_vcf(OUT_DIR / "variants_dip.vcf.gz", 500, 30, 2, SEED, gz=True)
 
-    # --- null tests ---
-    rows[5][1] = ""    # sex, string column
-    rows[5][3] = ""    # age, numeric column
-
-    _write(OUT_DIR / "phenotype.csv", rows)
-
-    rng = random.Random(SEED + 1)
-    rows = [[sid] + [round(rng.gauss(5.0, 1.5), 4) for _ in range(3)]
-            for sid in ids]
-    _write(OUT_DIR / "expression.csv", rows)
-
-    rng = random.Random(SEED + 2)
-    rows = [[sid] + [round(rng.uniform(0.0, 1.0), 4) for _ in range(3)]
-            for sid in ids]
-    _write(OUT_DIR / "methylation.csv", rows)
-
-    print(f"Wrote 3 files to {OUT_DIR}")
+    print(f"Wrote 5 files to {OUT_DIR}")
+    print("  variants_dip.vcf       diploid        30 x 500")
+    print("  variants_tri.vcf       triploid       15 x 200")
+    print("  variants_tet.vcf       tetraploid     12 x 100")
+    print("  variants_ma.vcf        multi-allelic   5 x 100  (splits to 10)")
+    print("  variants_dip.vcf.gz    diploid        30 x 500  (gzipped)")
 
 
 if __name__ == "__main__":

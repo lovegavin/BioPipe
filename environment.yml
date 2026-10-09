@@ -180,13 +180,11 @@ dependencies:
   - numba=0.68.0
   - numcodecs=0.16.5
   - numexpr=2.14.2
-  - numpy=1.26.4
   - openjpeg=2.4.0
   - openldap=2.6.13
   - openssl=3.6.5
   - optree=0.20.0
   - packaging=26.1
-  - pandas=2.1.4
   - partd=1.4.2
   - patsy=1.0.3
   - pcre2=10.46
@@ -277,10 +275,16 @@ dependencies:
       - anndata==0.10.0
       - array-api-compat==1.15.0
       - bed-reader==1.0.0
+      - coloredlogs==15.0.1
+      - cyvcf2==0.34.0
       - et-xmlfile==2.0.0
+      - humanfriendly==10.0
       - jinja2==3.1.0
       - natsort==8.4.0
+      - numpy==2.4.6
       - openpyxl==3.1.0
+      - pandas==3.0.6
+      - pyarrow==25.0.1
       - pysam==0.22.0
       - pyyaml==6.0
 prefix: /home/lovagavin/miniconda3/envs/biopipe

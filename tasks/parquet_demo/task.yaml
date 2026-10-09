@@ -1,0 +1,13 @@
+name: parquet_demo
+
+sources:
+  pq:
+    path: input/alltypes.parquet
+    dims: [row, field]
+    args:
+      encoders:
+        all: labelencoder
+
+steps:
+  - name: describe
+    inputs: [pq]

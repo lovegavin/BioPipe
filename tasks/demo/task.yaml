@@ -1,68 +1,38 @@
 name: demo
 
 sources:
-  pheno:
-    path: input/phenotype.csv
-    dims: [sample, field]
-    labels:
-      field:
-        pheno_sid: 0
-        sex: 1
-        batch: 2
-        age: 3
-        trait: 4
-    args:
-      encoders:
-        all: labelencoder
+  dip:
+    path: input/variants_dip.vcf
+    dims: [variant, sample]
 
-  expr:
-    path: input/expression.csv
-    dims: [sample, field]
-    labels:
-      field:
-        expr_sid: 0
-        gene_A: 1
-        gene_B: 2
-        gene_C: 3
+  tri:
+    path: input/variants_tri.vcf
+    dims: [variant, sample]
 
-  meth:
-    path: input/methylation.csv
-    dims: [sample, field]
-    labels:
-      field:
-        meth_sid: 0
-        cpg_1: 1
-        cpg_2: 2
-        cpg_3: 3
+  tet:
+    path: input/variants_tet.vcf
+    dims: [variant, sample]
+
+  ma:
+    path: input/variants_ma.vcf
+    dims: [variant, sample]
+
+  dip_gz:
+    path: input/variants_dip.vcf.gz
+    dims: [variant, sample]
 
 steps:
   - name: describe
-    inputs: [pheno]
-
-  # Drop two label-named columns from pheno. The remaining labels
-  # (pheno_sid, age, trait) shift to positions 0, 1, 2.
-  - name: drop
-    inputs: [pheno]
-    params:
-      dim: field
-      labels: [sex, batch]
-      output: pheno_trimmed
+    inputs: [dip]
 
   - name: describe
-    inputs: [pheno_trimmed]
-
-  - name: concat
-    inputs: [pheno_trimmed, expr, meth]
-    params:
-      axis: field
-      align:
-        dim: sample
-        key:
-          pheno_trimmed: pheno_sid
-          expr: expr_sid
-          meth: meth_sid
-      label: sid
-      output: combined
+    inputs: [tri]
 
   - name: describe
-    inputs: [combined]
+    inputs: [tet]
+
+  - name: describe
+    inputs: [ma]
+
+  - name: describe
+    inputs: [dip_gz]

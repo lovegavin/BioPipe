@@ -22,10 +22,10 @@ class DescribeStep(Step):
 
         print("[describe] form")
         print(f"  shape:  {form.data.shape}")
-        print(f"  dims:   {form.dims}")
-        print(f"  info:   {form.info}")
-        if form.labels:
-            print(f"  labels: {form.labels}")
+        # print(f"  dims:   {form.dims}")
+        # print(f"  info:   {form.info}")
+        # if form.labels:
+        #     print(f"  labels: {form.labels}")
 
         if form.data.size > 0:
             print(

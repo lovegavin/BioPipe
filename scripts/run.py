@@ -26,7 +26,7 @@ def main() -> None:
         form = reader.read(
             task_dir / spec["path"],
             dims=spec["dims"],
-            labels=spec["labels"],
+            labels=spec.get("labels", {}),
             **spec.get("args", {}),
         )
         form.validate()
