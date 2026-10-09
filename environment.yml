@@ -48,8 +48,6 @@ dependencies:
   - cycler=0.12.1
   - cyrus-sasl=2.1.28
   - cytoolz=1.1.0
-  - dask=2023.3.0
-  - dask-core=2023.3.0
   - deprecated=1.3.1
   - distributed=2023.3.0
   - donfig=0.8.1.post1
@@ -219,8 +217,6 @@ dependencies:
   - s2n=1.7.6
   - samtools=1.23.1
   - scikit-allel=1.3.13
-  - scikit-learn=1.3.2
-  - scipy=1.11.4
   - seaborn=0.13.2
   - seaborn-base=0.13.2
   - setuptools=83.0.0
@@ -273,18 +269,48 @@ dependencies:
   - zstd=1.5.7
   - pip:
       - anndata==0.10.0
+      - appdirs==1.4.4
       - array-api-compat==1.15.0
       - bed-reader==1.0.0
+      - bgen-reader==4.0.9
+      - cachetools==5.5.2
+      - cbgen==1.0.6
+      - cffi==2.1.1
+      - charset-normalizer==3.5.2
       - coloredlogs==15.0.1
       - cyvcf2==0.34.0
+      - dask==2024.12.1
+      - dask-expr==1.1.21
       - et-xmlfile==2.0.0
       - humanfriendly==10.0
+      - idna==3.20
+      - importlib-metadata==9.0.1
+      - iniconfig==2.3.1
       - jinja2==3.1.0
+      - legacy-api-wrap==1.5
+      - narwhals==2.26.0
       - natsort==8.4.0
-      - numpy==2.4.6
+      - numpy==1.26.4
       - openpyxl==3.1.0
-      - pandas==3.0.6
+      - pandas==2.3.3
+      - pgenlib==0.95.1
+      - platformdirs==4.12.4
+      - pluggy==1.6.0
+      - pooch==1.9.0
       - pyarrow==25.0.1
+      - pycparser==3.1
+      - pygments==2.21.0
+      - pynndescent==0.6.0
       - pysam==0.22.0
+      - pytest==9.1.1
       - pyyaml==6.0
+      - requests==2.34.2
+      - scanpy==1.11.5
+      - scikit-learn==1.9.1
+      - scipy==1.17.1
+      - session-info2==0.4.1
+      - texttable==1.7.0
+      - umap-learn==0.5.12
+      - xarray==2024.11.0
+      - zipp==4.1.1
 prefix: /home/lovagavin/miniconda3/envs/biopipe

@@ -1,0 +1,24 @@
+name: gtf_demo
+
+sources:
+  annotation:
+    path: input/homo_sapiens.gtf.gz
+    dims: [feature, field]
+    labels:
+      field:
+        seqid: 0
+        source: 1
+        feature: 2
+        start: 3
+        end: 4
+        score: 5
+        strand: 6
+        frame: 7
+        attributes: 8
+    args:
+      encoders:
+        all: labelencoder
+
+steps:
+  - name: describe
+    inputs: [annotation]

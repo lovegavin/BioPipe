@@ -12,8 +12,8 @@ from src.reader import readers as _readers_pkg
 from src.reader.base import Reader, primary_ext
 
 
-def _discover() -> dict[str, Reader]:
-    registry: dict[str, Reader] = {}
+def _discover() -> list[Reader]:
+    instances: list[Reader] = []
     for _, mod_name, is_pkg in pkgutil.iter_modules(_readers_pkg.__path__):
         if is_pkg:
             continue
@@ -25,28 +25,39 @@ def _discover() -> dict[str, Reader]:
                 and attr is not Reader
                 and getattr(attr, "extensions", None)
             ):
-                instance = attr()
-                for ext in attr.extensions:
-                    key = ext.lower()
-                    if key in registry:
-                        raise ReaderError(
-                            f"Extension '{key}' registered by two readers"
-                        )
-                    registry[key] = instance
-    return registry
+                instances.append(attr())
+    return instances
 
 
-READERS: dict[str, Reader] = _discover()
+READERS: list[Reader] = _discover()
 
 
 def pick_reader(path: Path) -> Reader:
-    ext = primary_ext(path)
-    if ext not in READERS:
+    """Return the single reader that claims this path.
+
+    Raises
+    ------
+    ReaderError
+        If no reader matches, or if more than one reader claims the
+        same path.
+    """
+    path = Path(path)
+    candidates = [r for r in READERS if r.matches(path)]
+
+    if not candidates:
+        ext = primary_ext(path)
+        known = sorted({e for r in READERS for e in r.extensions})
         raise ReaderError(
-            f"No reader for extension '{ext}'. "
-            f"Available: {sorted(READERS)}"
+            f"No reader for extension '{ext}' at {path}. "
+            f"Known extensions: {known}"
         )
-    return READERS[ext]
+    if len(candidates) > 1:
+        names = [type(r).__name__ for r in candidates]
+        raise ReaderError(
+            f"Multiple readers claim {path}: {names}. "
+            f"Disambiguate by adding required siblings or renaming."
+        )
+    return candidates[0]
 
 
 __all__ = ["READERS", "pick_reader", "Reader", "primary_ext"]

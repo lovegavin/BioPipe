@@ -6,17 +6,13 @@ Reads a MEX triplet:
     barcodes.tsv.gz  — cell barcodes (columns)
     features.tsv.gz  — gene features (rows)
 
-The three files must live in the same directory. The reader is
-triggered by pointing at the .mtx.gz file; it locates the sibling
-barcodes and features files automatically.
+Per the 10x Genomics documentation, each element of the matrix is the
+number of UMIs associated with a feature (row) and a barcode (column).
+Genes are rows; cells are columns.
 
-Layout is the natural 10x order:
-    axis 0 = gene, axis 1 = cell.
-``dims`` names the two axes in that order.
-
-Labels come from the files:
-    gene axis — the gene ID column of features.tsv.gz
-    cell axis — the barcode column of barcodes.tsv.gz
+MatrixMarket coordinate format uses 1-based indexing. The header line
+is ``%%MatrixMarket matrix coordinate real general`` followed by
+``m n nnz`` where m is the number of rows and n the number of columns.
 """
 
 from __future__ import annotations
@@ -48,12 +44,9 @@ class MtxReader(Reader):
         path = Path(path)
         parent = path.parent
 
-        # Locate sibling barcodes and features files. Accept both .gz
-        # and uncompressed variants.
         barcodes_path = _find_sibling(parent, "barcodes.tsv")
         features_path = _find_sibling(parent, "features.tsv")
         if barcodes_path is None or features_path is None:
-            # Older 10x layouts use genes.tsv instead of features.tsv
             features_path = _find_sibling(parent, "genes.tsv")
             if features_path is None:
                 raise ReaderError(
@@ -61,13 +54,11 @@ class MtxReader(Reader):
                     f"next to {path}"
                 )
 
-        # --- 1. Read sparse matrix
         with _open_maybe_gz(path) as fh:
             matrix = mmread(fh)
         matrix = matrix.tocsr()
         n_genes, n_cells = matrix.shape
 
-        # --- 2. Read barcodes
         barcodes = _read_tsv_column(barcodes_path, col=0)
         if len(barcodes) != n_cells:
             raise ReaderError(
@@ -75,45 +66,15 @@ class MtxReader(Reader):
                 f"{n_cells} columns"
             )
 
-        # --- 3. Read features
-        features_df = _read_tsv(features_path, n_cols=None)
+        features_df = _read_tsv(features_path)
         if features_df.shape[0] != n_genes:
             raise ReaderError(
                 f"features has {features_df.shape[0]} rows but matrix has "
                 f"{n_genes} rows"
             )
         gene_ids = features_df.iloc[:, 0].astype(str).tolist()
-        gene_symbols = (
-            features_df.iloc[:, 1].astype(str).tolist()
-            if features_df.shape[1] > 1 else gene_ids
-        )
-        feature_types = (
-            features_df.iloc[:, 2].astype(str).tolist()
-            if features_df.shape[1] > 2 else None
-        )
-        genomes = (
-            features_df.iloc[:, 3].astype(str).tolist()
-            if features_df.shape[1] > 3 else None
-        )
 
-        # --- 4. Dense float32
         data = matrix.toarray().astype(np.float32)
-
-        # --- 5. info
-        info = {
-            "missing_code": np.nan,
-            "source_format": "mtx",
-            "encoding": "count",
-            "n_genes": int(n_genes),
-            "n_cells": int(n_cells),
-            "n_nonzero": int(matrix.nnz),
-            "gene_ids": gene_ids,
-            "gene_symbols": gene_symbols,
-        }
-        if feature_types is not None:
-            info["feature_types"] = feature_types
-        if genomes is not None:
-            info["genomes"] = genomes
 
         return Form(
             data=data,
@@ -122,23 +83,17 @@ class MtxReader(Reader):
                 gene_dim: {g: i for i, g in enumerate(gene_ids)},
                 cell_dim: {b: i for i, b in enumerate(barcodes)},
             },
-            info=info,
+            info={"missing_code": np.nan},
         )
 
 
-# --------------------------------------------------------------------- #
-# Helpers
-# --------------------------------------------------------------------- #
-
 def _open_maybe_gz(path: Path):
-    """Open a file, transparently decompressing .gz."""
     if str(path).lower().endswith(".gz"):
         return gzip.open(path, "rt", encoding="utf-8")
     return open(path, encoding="utf-8")
 
 
 def _find_sibling(parent: Path, stem: str) -> Path | None:
-    """Return parent/stem or parent/stem.gz if it exists."""
     for name in (stem, stem + ".gz"):
         p = parent / name
         if p.exists():
@@ -146,17 +101,12 @@ def _find_sibling(parent: Path, stem: str) -> Path | None:
     return None
 
 
-def _read_tsv(path: Path, n_cols: int | None = None) -> pd.DataFrame:
-    """Read a TSV, optionally limiting the number of columns."""
+def _read_tsv(path: Path) -> pd.DataFrame:
     with _open_maybe_gz(path) as fh:
-        df = pd.read_csv(fh, sep="\t", header=None)
-    if n_cols is not None:
-        df = df.iloc[:, :n_cols]
-    return df
+        return pd.read_csv(fh, sep="\t", header=None)
 
 
 def _read_tsv_column(path: Path, col: int) -> list[str]:
-    """Read a single column from a TSV."""
     with _open_maybe_gz(path) as fh:
         values = []
         for line in fh:

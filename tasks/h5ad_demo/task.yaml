@@ -1,0 +1,19 @@
+name: h5ad_demo
+
+sources:
+  pbmc:
+    path: input/pbmc3k.h5ad
+    dims: [cell, gene]
+
+steps:
+  - name: describe
+    inputs: [pbmc]
+
+  - name: transpose
+    inputs: [pbmc]
+    params:
+      order: [gene, cell]
+      output: pbmc_T
+
+  - name: describe
+    inputs: [pbmc_T]

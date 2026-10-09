@@ -1,0 +1,18 @@
+name: bed_demo
+
+sources:
+  intervals:
+    path: input/example1.bed
+    dims: [interval, field]
+    labels:
+      field:
+        chrom: 0
+        chromStart: 1
+        chromEnd: 2
+    args:
+      encoders:
+        all: labelencoder
+
+steps:
+  - name: describe
+    inputs: [intervals]

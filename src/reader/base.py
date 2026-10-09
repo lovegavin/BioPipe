@@ -15,39 +15,36 @@ _COMPRESSION = {".gz", ".bz2", ".xz", ".zst"}
 class Reader(ABC):
     """Abstract reader.
 
-    Subclasses declare which extensions they handle via the
-    ``extensions`` class attribute, and implement ``read``.
+    Subclasses declare:
+
+    * ``extensions`` — extensions this reader handles.
+    * ``requires_siblings`` — extensions that must exist alongside the
+      target file for this reader to claim it.
+    * ``excludes_siblings`` — extensions that must NOT exist alongside
+      the target file for this reader to claim it.
+
+    The two sibling rules disambiguate readers that share an extension.
     """
 
     extensions: ClassVar[list[str]] = []
+    requires_siblings: ClassVar[list[str]] = []
+    excludes_siblings: ClassVar[list[str]] = []
+
+    def matches(self, path: Path) -> bool:
+        """Return True if this reader claims ``path``."""
+        ext = primary_ext(path)
+        if ext not in self.extensions:
+            return False
+        for sib_ext in self.requires_siblings:
+            if not path.with_suffix(sib_ext).exists():
+                return False
+        for sib_ext in self.excludes_siblings:
+            if path.with_suffix(sib_ext).exists():
+                return False
+        return True
 
     @abstractmethod
-    def read(
-        self,
-        path: Path,
-        dims: list,
-        labels: dict,
-        **args,
-    ) -> Form:
-        """Turn a file into a Form.
-
-        Parameters
-        ----------
-        path : Path
-            File to read.
-        dims : list[str]
-            Axis names in order.
-        labels : dict
-            ``{dim_name: {label: position}}``. Positions are 0-based
-            indices within ``data``.
-        **args
-            Reader-specific arguments from the manifest's ``args``
-            section.
-
-        Returns
-        -------
-        Form
-        """
+    def read(self, path: Path, dims, labels, **args) -> Form:
         ...
 
 

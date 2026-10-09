@@ -1,0 +1,19 @@
+name: plink2_demo
+
+sources:
+  geno:
+    path: input/genotype.pgen
+    dims: [variant, sample]
+
+steps:
+  - name: describe
+    inputs: [geno]
+
+  - name: transpose
+    inputs: [geno]
+    params:
+      order: [sample, variant]
+      output: geno_T
+
+  - name: describe
+    inputs: [geno_T]

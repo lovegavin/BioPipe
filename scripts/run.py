@@ -22,9 +22,10 @@ def main() -> None:
     ctx = Context(task_dir, manifest)
 
     for name, spec in manifest["sources"].items():
-        reader = pick_reader(spec["path"])
+        abs_path = task_dir / spec["path"]
+        reader = pick_reader(abs_path)
         form = reader.read(
-            task_dir / spec["path"],
+            abs_path,
             dims=spec["dims"],
             labels=spec.get("labels", {}),
             **spec.get("args", {}),
