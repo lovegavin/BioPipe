@@ -1,0 +1,31 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/gwas_demo
+generated : 2026-10-10T10:00:54.780063+00:00
+steps     : 16
+elapsed   : 0.599s
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   missing                 0.004s   steps/01_missing.json
+2   missing                 0.005s   steps/02_missing.json
+3   maf                     0.004s   steps/03_maf.json
+4   hwe                     0.007s   steps/04_hwe.json
+5   ld_prune                0.113s   steps/05_ld_prune.json
+6   pca                     0.070s   steps/06_pca.json
+7   transpose               0.000s   steps/07_transpose.json
+8   rename_dim              0.000s   steps/08_rename_dim.json
+9   concat                  0.000s   steps/09_concat.json
+10  regress                 0.075s   steps/10_regress.json
+11  correction              0.001s   steps/11_correction.json
+12  attach_info             0.000s   steps/12_attach_info.json
+13  manhattan               0.156s   steps/13_manhattan.json
+14  scatter                 0.084s   steps/14_scatter.json
+15  histogram               0.079s   steps/15_histogram.json
+16  describe                0.000s   steps/16_describe.json
+
+============================================================
+Per-step details are in output/steps/. This file is an index only.
+============================================================

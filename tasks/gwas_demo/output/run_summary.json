@@ -1,0 +1,251 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/gwas_demo",
+  "generated_at": "2026-10-10T10:00:54.780063+00:00",
+  "n_steps": 16,
+  "total_elapsed": 0.5994,
+  "steps": [
+    {
+      "index": 1,
+      "name": "missing",
+      "elapsed": 0.0043,
+      "inputs": [
+        "geno"
+      ],
+      "params": {
+        "dim": "sample",
+        "threshold": 0.1,
+        "output": "geno_sm"
+      },
+      "export_path": "steps/01_missing.json"
+    },
+    {
+      "index": 2,
+      "name": "missing",
+      "elapsed": 0.0048,
+      "inputs": [
+        "geno_sm"
+      ],
+      "params": {
+        "dim": "variant",
+        "threshold": 0.05,
+        "output": "geno_vm"
+      },
+      "export_path": "steps/02_missing.json"
+    },
+    {
+      "index": 3,
+      "name": "maf",
+      "elapsed": 0.0043,
+      "inputs": [
+        "geno_vm"
+      ],
+      "params": {
+        "dim": "variant",
+        "threshold": 0.05,
+        "output": "geno_maf"
+      },
+      "export_path": "steps/03_maf.json"
+    },
+    {
+      "index": 4,
+      "name": "hwe",
+      "elapsed": 0.0067,
+      "inputs": [
+        "geno_maf"
+      ],
+      "params": {
+        "dim": "variant",
+        "threshold": 0.0001,
+        "output": "geno_hwe"
+      },
+      "export_path": "steps/04_hwe.json"
+    },
+    {
+      "index": 5,
+      "name": "ld_prune",
+      "elapsed": 0.1134,
+      "inputs": [
+        "geno_hwe"
+      ],
+      "params": {
+        "dim": "variant",
+        "window": 50,
+        "r2": 0.2,
+        "output": "geno_pruned"
+      },
+      "export_path": "steps/05_ld_prune.json"
+    },
+    {
+      "index": 6,
+      "name": "pca",
+      "elapsed": 0.0698,
+      "inputs": [
+        "geno_pruned"
+      ],
+      "params": {
+        "dim": "variant",
+        "n_components": 10,
+        "output": "pcs"
+      },
+      "export_path": "steps/06_pca.json"
+    },
+    {
+      "index": 7,
+      "name": "transpose",
+      "elapsed": 0.0001,
+      "inputs": [
+        "geno_hwe"
+      ],
+      "params": {
+        "order": [
+          "sample",
+          "variant"
+        ],
+        "output": "geno_T"
+      },
+      "export_path": "steps/07_transpose.json"
+    },
+    {
+      "index": 8,
+      "name": "rename_dim",
+      "elapsed": 0.0001,
+      "inputs": [
+        "geno_T"
+      ],
+      "params": {
+        "from": "variant",
+        "to": "feature",
+        "output": "geno_f"
+      },
+      "export_path": "steps/08_rename_dim.json"
+    },
+    {
+      "index": 9,
+      "name": "concat",
+      "elapsed": 0.0003,
+      "inputs": [
+        "geno_f",
+        "pheno",
+        "covar"
+      ],
+      "params": {
+        "axis": "feature",
+        "output": "combined"
+      },
+      "export_path": "steps/09_concat.json"
+    },
+    {
+      "index": 10,
+      "name": "regress",
+      "elapsed": 0.0751,
+      "inputs": [
+        "combined"
+      ],
+      "params": {
+        "dim": "feature",
+        "response": "trait_value",
+        "covariates": [
+          "sex",
+          "batch"
+        ],
+        "output": "raw"
+      },
+      "export_path": "steps/10_regress.json"
+    },
+    {
+      "index": 11,
+      "name": "correction",
+      "elapsed": 0.0008,
+      "inputs": [
+        "raw"
+      ],
+      "params": {
+        "method": "fdr",
+        "alpha": 0.05,
+        "output": "assoc_result"
+      },
+      "export_path": "steps/11_correction.json"
+    },
+    {
+      "index": 12,
+      "name": "attach_info",
+      "elapsed": 0.0002,
+      "inputs": [
+        "assoc_result",
+        "geno_hwe"
+      ],
+      "params": {
+        "fields": [
+          "chrom",
+          "pos"
+        ],
+        "target_dim": "feature",
+        "output": "assoc_with_pos"
+      },
+      "export_path": "steps/12_attach_info.json"
+    },
+    {
+      "index": 13,
+      "name": "manhattan",
+      "elapsed": 0.1563,
+      "inputs": [
+        "assoc_with_pos"
+      ],
+      "params": {
+        "dim": "feature",
+        "chrom_label": "chrom",
+        "pos_label": "pos",
+        "p_dim": "statistic",
+        "p_label": "P",
+        "filename": "manhattan.png",
+        "title": "GWAS Manhattan plot"
+      },
+      "export_path": "steps/13_manhattan.json"
+    },
+    {
+      "index": 14,
+      "name": "scatter",
+      "elapsed": 0.0837,
+      "inputs": [
+        "pcs"
+      ],
+      "params": {
+        "dim": "component",
+        "x_label": "PC1",
+        "y_label": "PC2",
+        "filename": "pca_scatter.png",
+        "title": "PCA",
+        "xlabel": "PC1",
+        "ylabel": "PC2"
+      },
+      "export_path": "steps/14_scatter.json"
+    },
+    {
+      "index": 15,
+      "name": "histogram",
+      "elapsed": 0.0793,
+      "inputs": [
+        "assoc_result"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "P",
+        "bins": 20,
+        "filename": "pvalue_hist.png",
+        "title": "P-value distribution",
+        "xlabel": "P"
+      },
+      "export_path": "steps/15_histogram.json"
+    },
+    {
+      "index": 16,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "assoc_result"
+      ],
+      "params": {},
+      "export_path": "steps/16_describe.json"
+    }
+  ]
+}

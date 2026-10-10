@@ -13,8 +13,7 @@ env/
 tasks/*/input/
 #tasks/*/output/
 input/
-processed/
-output/
+#output/
 
 # 基因型 / 测序大文件
 *.vcf

@@ -1,0 +1,12 @@
+{
+  "kind": "histogram",
+  "filename": "pvalue_hist.png",
+  "path": "/home/lovagavin/biopipe/tasks/gwas_demo/output/figures/pvalue_hist.png",
+  "value_label": "P",
+  "bins": 20,
+  "n_valid": 167,
+  "min": 0.006805712357163429,
+  "max": 0.9933018088340759,
+  "mean": 0.5172146698125376,
+  "std": 0.2764158774557288
+}

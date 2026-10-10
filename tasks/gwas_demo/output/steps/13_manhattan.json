@@ -1,0 +1,15 @@
+{
+  "kind": "manhattan",
+  "filename": "manhattan.png",
+  "path": "/home/lovagavin/biopipe/tasks/gwas_demo/output/figures/manhattan.png",
+  "dim": "feature",
+  "p_dim": "statistic",
+  "chrom_label": "chrom",
+  "pos_label": "pos",
+  "p_label": "P",
+  "threshold": null,
+  "n_variants": 167,
+  "chromosomes": [
+    "22"
+  ]
+}

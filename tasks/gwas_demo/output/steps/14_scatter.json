@@ -1,0 +1,9 @@
+{
+  "kind": "scatter",
+  "filename": "pca_scatter.png",
+  "path": "/home/lovagavin/biopipe/tasks/gwas_demo/output/figures/pca_scatter.png",
+  "x_label": "PC1",
+  "y_label": "PC2",
+  "color_label": null,
+  "n_points": 200
+}

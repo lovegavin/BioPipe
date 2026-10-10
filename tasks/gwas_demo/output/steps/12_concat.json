@@ -1,0 +1,35 @@
+{
+  "axis": "feature",
+  "n_inputs": 3,
+  "input_names": [
+    "geno_f",
+    "pheno",
+    "covar"
+  ],
+  "input_shapes": [
+    [
+      200,
+      167
+    ],
+    [
+      200,
+      1
+    ],
+    [
+      200,
+      2
+    ]
+  ],
+  "output_shape": [
+    200,
+    170
+  ],
+  "output_dims": [
+    "sample",
+    "feature"
+  ],
+  "output_label_counts": {
+    "sample": 200,
+    "feature": 170
+  }
+}

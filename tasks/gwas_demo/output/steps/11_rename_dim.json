@@ -1,0 +1,12 @@
+{
+  "from": "variant",
+  "to": "feature",
+  "input_dims": [
+    "sample",
+    "variant"
+  ],
+  "output_dims": [
+    "sample",
+    "feature"
+  ]
+}

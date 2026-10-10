@@ -1,0 +1,16 @@
+{
+  "fields": [
+    "chrom",
+    "pos"
+  ],
+  "target_dim": "feature",
+  "source_dim": "variant",
+  "target_shape": [
+    167,
+    6
+  ],
+  "n_target_labels": 167,
+  "n_matched": 167,
+  "n_unmatched": 0,
+  "encoded_fields": []
+}

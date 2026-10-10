@@ -1,0 +1,12 @@
+{
+  "kind": "histogram",
+  "filename": "qvalue_hist.png",
+  "path": "/home/lovagavin/biopipe/tasks/gwas_demo/output/figures/qvalue_hist.png",
+  "value_label": "Q_VALUE",
+  "bins": 20,
+  "n_valid": 167,
+  "min": 0.9179536700248718,
+  "max": 0.9933018088340759,
+  "mean": 0.96596326728067,
+  "std": 0.016255838420487487
+}

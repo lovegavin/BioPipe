@@ -1,0 +1,18 @@
+{
+  "input_dims": [
+    "variant",
+    "sample"
+  ],
+  "output_dims": [
+    "sample",
+    "variant"
+  ],
+  "input_shape": [
+    167,
+    200
+  ],
+  "output_shape": [
+    200,
+    167
+  ]
+}
