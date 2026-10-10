@@ -11,8 +11,7 @@ env/
 
 # 任务数据与结果
 tasks/*/input/
-tasks/*/processed/
-tasks/*/output/
+#tasks/*/output/
 input/
 processed/
 output/
