@@ -1,13 +1,13 @@
 name: csv_demo
 
 sources:
-  areas:
+  data:
     path: input/test_party_1.csv
-    dims: [row, field]
-    args:
-      encoders:
-        all: labelencoder
+    dims: [sample, feature]
+    labels:
+      sample: auto
+      feature: builtin
 
 steps:
   - name: describe
-    inputs: [areas]
+    inputs: [data]

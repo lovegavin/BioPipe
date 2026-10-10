@@ -1,0 +1,30 @@
+name: missing_demo
+
+sources:
+  geno:
+    path: input/geno.vcf
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample:  builtin
+
+steps:
+  - name: missing
+    inputs: [geno]
+    params:
+      dim: sample
+      threshold: 0.10
+      output: geno_sm
+
+  - name: describe
+    inputs: [geno_sm]
+
+  - name: missing
+    inputs: [geno_sm]
+    params:
+      dim: variant
+      threshold: 0.05
+      output: geno_vm
+
+  - name: describe
+    inputs: [geno_vm]

@@ -1,18 +1,13 @@
 name: bed_demo
 
 sources:
-  intervals:
+  peaks:
     path: input/example1.bed
     dims: [interval, field]
     labels:
-      field:
-        chrom: 0
-        chromStart: 1
-        chromEnd: 2
-    args:
-      encoders:
-        all: labelencoder
+      interval: auto
+      field: builtin
 
 steps:
   - name: describe
-    inputs: [intervals]
+    inputs: [peaks]

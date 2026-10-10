@@ -4,16 +4,10 @@ sources:
   geno:
     path: input/example.bgen
     dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample:  builtin
 
 steps:
   - name: describe
     inputs: [geno]
-
-  - name: transpose
-    inputs: [geno]
-    params:
-      order: [sample, variant]
-      output: geno_T
-
-  - name: describe
-    inputs: [geno_T]

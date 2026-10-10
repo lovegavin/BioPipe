@@ -1,0 +1,21 @@
+name: regress_demo
+
+sources:
+  data:
+    path: input/data.csv
+    dims: [sample, feature]
+    labels:
+      sample:  {feature: 0}
+      feature: builtin
+
+steps:
+  - name: regress
+    inputs: [data]
+    params:
+      dim: feature
+      response: trait
+      covariates: [age, sex]
+      output: result
+
+  - name: describe
+    inputs: [result]

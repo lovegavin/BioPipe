@@ -2,17 +2,59 @@
 """PLINK readers: 1.x (.bed/.bim/.fam) and 2.x (.pgen/.pvar/.psam).
 
 Both readers produce the same layout:
+
     axis 0 = variant, axis 1 = sample.
 
-PLINK 2.x multi-allelic handling
---------------------------------
-PLINK 2 encodes multi-allelic variants in a single PGEN record. To read
-them correctly, PgenReader must receive an ``allele_idx_offsets`` array
-computed from the PVAR file. Each variant's record is then expanded:
-a variant with K ALT alleles produces K output rows, one per ALT.
+PLINK 1.x
+---------
+    .bed    binary genotype matrix, variant-major (mode byte 0x01)
+    .bim    variant metadata: CHROM ID CM POS A1 A2
+    .fam    sample metadata:  FID IID PID MID SEX PHENO
 
-This matches the VCF reader's behaviour: ``{id}:{alt}`` for each
-split allele.
+PLINK 2.x
+---------
+    .pgen   binary genotype matrix
+    .pvar   variant metadata (VCF-style or BIM-style header)
+    .psam   sample metadata (header starts with #FID or #IID)
+
+Routing
+-------
+A .bed is claimed by Plink1Reader only when .bim and .fam siblings
+exist. Otherwise it is claimed by BedReader.
+A .pgen is claimed by Plink2Reader only when .pvar and .psam siblings
+exist.
+
+Both readers declare ``handles_compression = True`` because their
+sibling files must stay next to the target; the framework cannot
+decompress to a temporary directory without breaking the sibling
+lookups.
+
+Variant ID policy
+-----------------
+    ID present, single ALT   use the ID as-is
+    ID present, multi ALT    ``{id}:{alt}`` per split row
+    ID missing               ``{CHROM}:{POS}:{ALT}`` per row
+                             (PLINK 1.x uses A1 in place of ALT)
+
+Label rules accepted
+--------------------
+    builtin           variant: ID column
+                      sample:  IID column
+    auto              position indices ``"0"``, ``"1"``, ...
+    {name: pos, ...}  explicit mapping
+
+A missing dim entry defaults to ``builtin``. Duplicate labels are
+disambiguated by appending ``#<position>``.
+
+Info fields set
+---------------
+    missing_code      ``np.nan``
+    ploidy            ``2``
+    chrom             ``list[str]``, length = number of variant rows
+    pos               ``list[int]``, length = number of variant rows
+
+The ``chrom`` and ``pos`` arrays are parallel to the variant axis and
+are kept in sync when the axis is subset (see ``Form.subset_axis``).
 """
 
 from __future__ import annotations
@@ -25,27 +67,28 @@ from bed_reader import open_bed
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.reader.readers._labels import unique_labels
+
+
+_BIM_COLUMNS = ["CHROM", "ID", "CM", "POS", "A1", "A2"]
+_FAM_COLUMNS = ["FID", "IID", "PID", "MID", "SEX", "PHENO"]
 
 
 # --------------------------------------------------------------------- #
 # PLINK 1.x
 # --------------------------------------------------------------------- #
 
-_BIM_COLUMNS = ["CHROM", "ID", "CM", "POS", "A1", "A2"]
-_FAM_COLUMNS = ["FID", "IID", "PID", "MID", "SEX", "PHENO"]
-
-
 class Plink1Reader(Reader):
     """Reader for PLINK 1.x .bed / .bim / .fam triplets."""
 
     extensions = [".bed"]
     requires_siblings = [".bim", ".fam"]
+    handles_compression = True
 
-    def read(self, path: Path, dims, labels, **args) -> Form:
-        if not isinstance(dims, list) or len(dims) != 2:
+    def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
+        if len(dims) != 2:
             raise ReaderError(
-                "PLINK 1.x reader expects dims as a two-element list, "
-                "e.g. dims: [variant, sample]"
+                f"PLINK 1.x reader requires exactly two dims, got {dims}"
             )
         variant_dim, sample_dim = dims[0], dims[1]
 
@@ -77,17 +120,25 @@ class Plink1Reader(Reader):
                 f"{data.shape[1]} samples"
             )
 
-        variant_ids = bim["ID"].astype(str).tolist()
+        variant_ids = _ids_from_bim(bim)
         sample_ids = fam["IID"].astype(str).tolist()
+
+        final = _resolve_labels(
+            labels, variant_dim, sample_dim,
+            variant_ids, sample_ids, "plink1",
+        )
 
         return Form(
             data=data,
-            dims=[variant_dim, sample_dim],
-            labels={
-                variant_dim: {v: i for i, v in enumerate(variant_ids)},
-                sample_dim: {s: i for i, s in enumerate(sample_ids)},
+            dims=list(dims),
+            labels=final,
+            info={
+                "missing_code": np.nan,
+                "ploidy": 2,
+                "chrom": bim["CHROM"].astype(str).tolist(),
+                "pos": bim["POS"].astype(int).tolist(),
             },
-            info={"missing_code": np.nan},
+            axis_info={variant_dim: ["chrom", "pos"]},
         )
 
 
@@ -96,19 +147,16 @@ class Plink1Reader(Reader):
 # --------------------------------------------------------------------- #
 
 class Plink2Reader(Reader):
-    """Reader for PLINK 2.x .pgen / .pvar / .psam triplets.
-
-    Multi-allelic variants are split into one output row per ALT allele.
-    """
+    """Reader for PLINK 2.x .pgen / .pvar / .psam triplets."""
 
     extensions = [".pgen"]
     requires_siblings = [".pvar", ".psam"]
+    handles_compression = True
 
-    def read(self, path: Path, dims, labels, **args) -> Form:
-        if not isinstance(dims, list) or len(dims) != 2:
+    def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
+        if len(dims) != 2:
             raise ReaderError(
-                "PLINK 2.x reader expects dims as a two-element list, "
-                "e.g. dims: [variant, sample]"
+                f"PLINK 2.x reader requires exactly two dims, got {dims}"
             )
         variant_dim, sample_dim = dims[0], dims[1]
 
@@ -124,31 +172,24 @@ class Plink2Reader(Reader):
                 "Install it with: pip install Pgenlib"
             ) from exc
 
-        # --- 1. Parse PVAR ------------------------------------------
         pvar_df = _read_pvar(pvar_path)
         n_variants = len(pvar_df)
 
-        # ALT column: comma-separated list of ALT alleles per variant.
         alt_lists = pvar_df["ALT"].fillna(".").astype(str).apply(
             lambda s: [] if s == "." else s.split(",")
         )
         n_alts_per_variant = alt_lists.apply(len).to_numpy()
         total_alt = int(n_alts_per_variant.sum())
 
-        # --- 2. Parse PSAM ------------------------------------------
         psam_df = _read_psam(psam_path)
         n_samples = len(psam_df)
 
-        # --- 3. Build allele_idx_offsets ----------------------------
-        # allele_idx_offsets[i+1] - allele_idx_offsets[i] = number of
-        # alleles of variant i (REF + ALT count).
         allele_idx_offsets = np.zeros(n_variants + 1, dtype=np.uintp)
         for i in range(n_variants):
             allele_idx_offsets[i + 1] = (
                 allele_idx_offsets[i] + 1 + n_alts_per_variant[i]
             )
 
-        # --- 4. Read PGEN -------------------------------------------
         with pgenlib.PgenReader(
             str(path).encode(),
             raw_sample_ct=n_samples,
@@ -166,7 +207,6 @@ class Plink2Reader(Reader):
                     f"but .pvar has {n_variants}"
                 )
 
-            # Allocate the full output tensor.
             data = np.full(
                 (total_alt, n_samples), np.nan, dtype=np.float32
             )
@@ -176,8 +216,6 @@ class Plink2Reader(Reader):
                 k = n_alts_per_variant[vidx]
                 if k == 0:
                     continue
-
-                # Read each ALT allele separately.
                 for alt_idx in range(1, k + 1):
                     buf = np.empty(n_samples, dtype=np.int8)
                     reader.read(vidx, buf, allele_idx=alt_idx)
@@ -186,28 +224,45 @@ class Plink2Reader(Reader):
                     data[out_row] = row
                     out_row += 1
 
-        # --- 5. Build variant labels --------------------------------
+        base_ids = _ids_from_pvar(pvar_df)
+        chrom_col = pvar_df["CHROM"].astype(str).tolist()
+        pos_col = pvar_df["POS"].astype(int).tolist()
+
         variant_ids: list[str] = []
-        base_ids = pvar_df["ID"].astype(str).tolist()
+        chroms: list[str] = []
+        positions: list[int] = []
+
         for i, alts in enumerate(alt_lists):
             if len(alts) == 0:
                 continue
             if len(alts) == 1:
                 variant_ids.append(base_ids[i])
+                chroms.append(chrom_col[i])
+                positions.append(pos_col[i])
             else:
                 for alt in alts:
                     variant_ids.append(f"{base_ids[i]}:{alt}")
+                    chroms.append(chrom_col[i])
+                    positions.append(pos_col[i])
 
         sample_ids = psam_df["IID"].astype(str).tolist()
 
+        final = _resolve_labels(
+            labels, variant_dim, sample_dim,
+            variant_ids, sample_ids, "plink2",
+        )
+
         return Form(
             data=data,
-            dims=[variant_dim, sample_dim],
-            labels={
-                variant_dim: {v: i for i, v in enumerate(variant_ids)},
-                sample_dim: {s: i for i, s in enumerate(sample_ids)},
+            dims=list(dims),
+            labels=final,
+            info={
+                "missing_code": np.nan,
+                "ploidy": 2,
+                "chrom": chroms,
+                "pos": positions,
             },
-            info={"missing_code": np.nan},
+            axis_info={variant_dim: ["chrom", "pos"]},
         )
 
 
@@ -216,15 +271,6 @@ class Plink2Reader(Reader):
 # --------------------------------------------------------------------- #
 
 def _read_pvar(path: Path) -> pd.DataFrame:
-    """Read a .pvar file per the PLINK 2.0 specification.
-
-    VCF-style:
-        ##...metadata...
-        #CHROM  POS  ID  REF  ALT  [QUAL  FILTER  INFO]
-    BIM-style (no header):
-        CHROM  ID  CM  POS  ALT  REF   (6 columns)
-        CHROM  ID  POS  ALT  REF        (5 columns)
-    """
     header: list[str] | None = None
     with open(path, encoding="utf-8") as fh:
         for line in fh:
@@ -243,15 +289,14 @@ def _read_pvar(path: Path) -> pd.DataFrame:
             df = df.loc[:, :"FORMAT"].iloc[:, :-1]
         if "ID" not in df.columns:
             raise ReaderError(
-                f"PVAR header lacks an ID column: {list(df.columns)}"
+                f"PVAR header lacks ID: {list(df.columns)}"
             )
         if "ALT" not in df.columns:
             raise ReaderError(
-                f"PVAR header lacks an ALT column: {list(df.columns)}"
+                f"PVAR header lacks ALT: {list(df.columns)}"
             )
         return df
 
-    # BIM-style
     first_data = None
     with open(path, encoding="utf-8") as fh:
         for line in fh:
@@ -268,7 +313,7 @@ def _read_pvar(path: Path) -> pd.DataFrame:
         names = ["CHROM", "ID", "POS", "ALT", "REF"]
     else:
         raise ReaderError(
-            f"PVAR with {ncols} columns is not a recognized layout"
+            f"PVAR with {ncols} columns is not recognized"
         )
     return pd.read_csv(
         path, sep=r"\s+", header=None, dtype=str, names=names,
@@ -276,22 +321,89 @@ def _read_pvar(path: Path) -> pd.DataFrame:
 
 
 def _read_psam(path: Path) -> pd.DataFrame:
-    """Read a .psam file per the PLINK 2.0 specification."""
+    header: list[str] | None = None
     with open(path, encoding="utf-8") as fh:
         for line in fh:
             if line.startswith("#"):
                 header = line.rstrip("\n").lstrip("#").split("\t")
                 break
-        else:
-            raise ReaderError(f"PSAM file has no header line: {path}")
+    if header is None:
+        raise ReaderError(f"PSAM has no header: {path}")
 
     df = pd.read_csv(
         path, sep="\t", comment="#", header=None,
         names=header, dtype=str,
     )
-
     if "IID" not in df.columns:
         raise ReaderError(
-            f"PSAM header must contain IID, got: {list(df.columns)}"
+            f"PSAM header must contain IID, got {list(df.columns)}"
         )
     return df
+
+
+# --------------------------------------------------------------------- #
+# Variant ID derivation
+# --------------------------------------------------------------------- #
+
+def _ids_from_bim(bim: pd.DataFrame) -> list[str]:
+    ids: list[str] = []
+    for _, row in bim.iterrows():
+        vid = str(row["ID"])
+        if vid in (".", ""):
+            vid = f"{row['CHROM']}:{row['POS']}:{row['A1']}"
+        ids.append(vid)
+    return ids
+
+
+def _ids_from_pvar(pvar_df: pd.DataFrame) -> list[str]:
+    has_pos = "POS" in pvar_df.columns
+    has_chrom = "CHROM" in pvar_df.columns
+    ids: list[str] = []
+    for _, row in pvar_df.iterrows():
+        vid = str(row["ID"])
+        if vid in (".", ""):
+            if has_pos and has_chrom:
+                vid = f"{row['CHROM']}:{row['POS']}"
+            else:
+                vid = "."
+        ids.append(vid)
+    return ids
+
+
+# --------------------------------------------------------------------- #
+# Label resolution
+# --------------------------------------------------------------------- #
+
+def _resolve_labels(
+    labels: dict,
+    variant_dim: str,
+    sample_dim: str,
+    variant_ids: list[str],
+    sample_ids: list[str],
+    source: str,
+) -> dict[str, dict[str, int]]:
+    final: dict[str, dict[str, int]] = {}
+
+    for dim_name, builtin in (
+        (variant_dim, variant_ids),
+        (sample_dim, sample_ids),
+    ):
+        rule = labels.get(dim_name, "builtin")
+
+        if rule in (None, "builtin"):
+            final[dim_name] = unique_labels(builtin, dim_name, source)
+        elif rule == "auto":
+            final[dim_name] = {
+                str(i): i for i in range(len(builtin))
+            }
+        elif isinstance(rule, dict):
+            final[dim_name] = {
+                str(k): int(v) for k, v in rule.items()
+            }
+        else:
+            raise ReaderError(
+                f"PLINK reader: unsupported label rule for "
+                f"'{dim_name}': {rule!r}"
+            )
+
+    return final

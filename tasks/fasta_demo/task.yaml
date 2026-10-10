@@ -1,10 +1,13 @@
 name: fasta_demo
 
 sources:
-  virus:
+  seqs:
     path: input/sars_cov2.fasta
     dims: [sequence, position]
+    labels:
+      sequence: builtin
+      position: auto
 
 steps:
   - name: describe
-    inputs: [virus]
+    inputs: [seqs]

@@ -1,9 +1,5 @@
 # src/task/step/steps/drop.py
-"""Drop step: remove named labels from one dimension.
-
-The names to drop are the labels assigned at read time. If a label
-has no name, it cannot be dropped by this step.
-"""
+"""Drop step: remove named labels from one dimension."""
 
 from __future__ import annotations
 
@@ -18,10 +14,9 @@ class DropStep(Step):
     """Remove a set of labels from one dimension.
 
     Params:
-
-    * ``dim``    — dimension name from which to drop.
-    * ``labels`` — list of label names to remove.
-    * ``output`` — context key for the result.
+        dim    : dimension from which to drop
+        labels : list of label names to remove
+        output : context key for the result
     """
 
     name = "drop"
@@ -32,12 +27,12 @@ class DropStep(Step):
         form = inputs[0]
         dim = ctx.step_params["dim"]
         labels = ctx.step_params["labels"]
-        out_name = ctx.step_params["output"]
+        out_name = ctx.step_params.get("output", self.name)
 
         if dim not in form.dims:
             raise StepError(f"drop: dim '{dim}' not in {form.dims}")
 
-        axis = form.axis(dim)
+        axis = form.dims.index(dim)
         dim_labels = form.labels.get(dim, {})
 
         drop_positions = set()
@@ -52,6 +47,12 @@ class DropStep(Step):
         size = form.data.shape[axis]
         keep = [i for i in range(size) if i not in drop_positions]
 
+        if not keep:
+            raise StepError(
+                f"drop: removing {sorted(labels)} would empty dim "
+                f"'{dim}'. Refuse to produce a form with zero positions."
+            )
+
         index = [slice(None)] * form.data.ndim
         index[axis] = keep
         new_data = form.data[tuple(index)]
@@ -64,10 +65,7 @@ class DropStep(Step):
         }
 
         new_labels = {k: dict(v) for k, v in form.labels.items()}
-        if new_dim_labels:
-            new_labels[dim] = new_dim_labels
-        else:
-            new_labels.pop(dim, None)
+        new_labels[dim] = new_dim_labels
 
         ctx[out_name] = Form(
             data=new_data.astype(np.float32),
@@ -76,7 +74,17 @@ class DropStep(Step):
             info=dict(form.info),
         )
 
+        self._export_data = {
+            "dim": dim,
+            "n_before": int(size),
+            "n_after": len(keep),
+            "dropped_labels": list(labels),
+        }
+
         print(
             f"[drop] removed {len(drop_positions)} from '{dim}' "
             f"-> {out_name}, shape={new_data.shape}"
         )
+
+    def export(self, ctx: Context) -> dict:
+        return self._export_data

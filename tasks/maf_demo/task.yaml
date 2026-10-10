@@ -1,0 +1,20 @@
+name: maf_demo
+
+sources:
+  geno:
+    path: input/geno.vcf
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample:  builtin
+
+steps:
+  - name: maf
+    inputs: [geno]
+    params:
+      dim: variant
+      threshold: 0.05
+      output: geno_qc
+
+  - name: describe
+    inputs: [geno_qc]

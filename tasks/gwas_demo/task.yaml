@@ -1,0 +1,116 @@
+name: gwas_demo
+
+sources:
+  geno:
+    path: input/geno.vcf
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample:  builtin
+
+  pheno:
+    path: input/phenotype.csv
+    dims: [sample, feature]
+    labels:
+      sample:  {feature: 0}
+      feature: builtin
+
+  covar:
+    path: input/covariates.csv
+    dims: [sample, feature]
+    labels:
+      sample:  {feature: 0}
+      feature: builtin
+
+steps:
+  - name: missing
+    inputs: [geno]
+    params: {dim: sample, threshold: 0.10, output: geno_sm}
+
+  - name: missing
+    inputs: [geno_sm]
+    params: {dim: variant, threshold: 0.05, output: geno_vm}
+
+  - name: maf
+    inputs: [geno_vm]
+    params: {dim: variant, threshold: 0.05, output: geno_maf}
+
+  - name: hwe
+    inputs: [geno_maf]
+    params: {dim: variant, threshold: 1.0e-4, output: geno_hwe}
+
+  - name: ld_prune
+    inputs: [geno_hwe]
+    params: {dim: variant, window: 50, r2: 0.2, output: geno_pruned}
+
+  - name: pca
+    inputs: [geno_pruned]
+    params: {dim: variant, n_components: 10, output: pcs}
+
+  - name: transpose
+    inputs: [geno_hwe]
+    params: {order: [sample, variant], output: geno_T}
+
+  - name: rename_dim
+    inputs: [geno_T]
+    params: {from: variant, to: feature, output: geno_f}
+
+  - name: concat
+    inputs: [geno_f, pheno, covar]
+    params: {axis: feature, output: combined}
+
+  - name: regress
+    inputs: [combined]
+    params:
+      dim: feature
+      response: trait_value
+      covariates: [sex, batch]
+      output: raw
+
+  - name: correction
+    inputs: [raw]
+    params: {method: fdr, alpha: 0.05, output: assoc_result}
+
+  # ---------- 把 CHROM 和 POS 从 geno_hwe 的 info 附加到结果上 ----------
+  - name: attach_info
+    inputs: [assoc_result, geno_hwe]
+    params:
+      fields: [chrom, pos]
+      target_dim: feature
+      output: assoc_with_pos
+
+  # ---------- 绘图 ----------
+  - name: manhattan
+    inputs: [assoc_with_pos]
+    params:
+      dim: feature
+      chrom_label: chrom
+      pos_label: pos
+      p_dim: statistic
+      p_label: P
+      filename: manhattan.png
+      title: GWAS Manhattan plot
+
+  - name: scatter
+    inputs: [pcs]
+    params:
+      dim: component
+      x_label: PC1
+      y_label: PC2
+      filename: pca_scatter.png
+      title: PCA
+      xlabel: PC1
+      ylabel: PC2
+
+  - name: histogram
+    inputs: [assoc_result]
+    params:
+      dim: statistic
+      value_label: P
+      bins: 20
+      filename: pvalue_hist.png
+      title: P-value distribution
+      xlabel: P
+
+  - name: describe
+    inputs: [assoc_result]

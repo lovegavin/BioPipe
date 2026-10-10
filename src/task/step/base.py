@@ -17,9 +17,10 @@ class Step(ABC):
 
     * ``name`` — matched against the manifest's ``name`` field.
     * ``inputs_arity`` — number of input forms, or ``"*"`` for any.
-    * ``outputs`` — names the step registers on exit.
+    * ``outputs`` — context keys the step registers on exit.
 
-    And implement ``run``.
+    And implement ``run``. They may also implement ``export`` to
+    return a JSON-serializable dict of the step's full results.
     """
 
     name: ClassVar[str] = "unnamed"
@@ -28,14 +29,13 @@ class Step(ABC):
 
     @abstractmethod
     def run(self, ctx: Context, inputs: list[Form]) -> None:
-        """Execute the step.
+        """Execute the step."""
 
-        Parameters
-        ----------
-        ctx : Context
-            Read params from ``ctx.step_params``. Write results via
-            ``ctx[name] = form``.
-        inputs : list[Form]
-            Input forms, in manifest order.
+    def export(self, ctx: Context) -> dict:
+        """Return a JSON-serializable summary of this step's results.
+
+        Called by the runner right after run(). The default returns
+        an empty dict. Subclasses return everything a user would want
+        to see. Do not truncate.
         """
-        ...
+        return {}

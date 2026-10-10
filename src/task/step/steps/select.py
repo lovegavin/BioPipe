@@ -1,11 +1,5 @@
 # src/task/step/steps/select.py
-"""Select step: keep a subset of labels along one dimension.
-
-The data is sliced along ``dim``; positions not in the given label
-list are dropped. The output labels for that dim are renumbered
-0..k-1 in the order requested by the user. Every other dim is
-untouched.
-"""
+"""Select step: keep a subset of labels along one dimension."""
 
 from __future__ import annotations
 
@@ -20,10 +14,9 @@ class SelectStep(Step):
     """Keep only the listed labels along one dimension.
 
     Params:
-
-    * ``dim``    — dimension name to select along.
-    * ``labels`` — list of label names to keep, in output order.
-    * ``output`` — context key for the result.
+        dim    : dimension to select along
+        labels : list of label names to keep, in output order
+        output : context key for the result
     """
 
     name = "select"
@@ -34,12 +27,10 @@ class SelectStep(Step):
         form = inputs[0]
         dim = ctx.step_params["dim"]
         labels = ctx.step_params["labels"]
-        out_name = ctx.step_params["output"]
+        out_name = ctx.step_params.get("output", self.name)
 
         if dim not in form.dims:
-            raise StepError(
-                f"select: dim '{dim}' not in {form.dims}"
-            )
+            raise StepError(f"select: dim '{dim}' not in {form.dims}")
         if not isinstance(labels, list) or not labels:
             raise StepError("select: 'labels' must be a non-empty list")
 
@@ -73,7 +64,17 @@ class SelectStep(Step):
             info=dict(form.info),
         )
 
+        self._export_data = {
+            "dim": dim,
+            "n_before": int(form.data.shape[axis]),
+            "n_after": len(labels),
+            "selected_labels": list(labels),
+        }
+
         print(
             f"[select] dim '{dim}': {len(labels)} labels kept "
             f"-> {out_name}, shape={new_data.shape}"
         )
+
+    def export(self, ctx: Context) -> dict:
+        return self._export_data

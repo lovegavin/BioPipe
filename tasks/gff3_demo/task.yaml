@@ -5,19 +5,8 @@ sources:
     path: input/homo_sapiens.gff3.gz
     dims: [feature, field]
     labels:
-      field:
-        seqid: 0
-        source: 1
-        type: 2
-        start: 3
-        end: 4
-        score: 5
-        strand: 6
-        phase: 7
-        attributes: 8
-    args:
-      encoders:
-        all: labelencoder
+      feature: auto
+      field: builtin
 
 steps:
   - name: describe

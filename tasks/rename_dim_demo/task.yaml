@@ -1,0 +1,34 @@
+# tasks/rename_dim_demo/task.yaml
+name: rename_dim_demo
+
+sources:
+  data:
+    path: input/data.csv
+    dims: [sample, feature]
+    labels:
+      sample:  {feature: 0}
+      feature: builtin
+
+steps:
+  - name: describe
+    inputs: [data]
+
+  - name: rename_dim
+    inputs: [data]
+    params:
+      from: feature
+      to: variant
+      output: renamed
+
+  - name: describe
+    inputs: [renamed]
+
+  - name: rename_dim
+    inputs: [renamed]
+    params:
+      from: variant
+      to: feature
+      output: restored
+
+  - name: describe
+    inputs: [restored]

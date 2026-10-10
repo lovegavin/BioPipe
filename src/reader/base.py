@@ -9,29 +9,39 @@ from typing import ClassVar
 
 from src.core import Form
 
-_COMPRESSION = {".gz", ".bz2", ".xz", ".zst"}
-
 
 class Reader(ABC):
     """Abstract reader.
 
-    Subclasses declare:
+    Subclasses declare which extensions they handle, which sibling
+    files must or must not exist alongside the target, and whether
+    they can consume compressed input directly.
 
-    * ``extensions`` — extensions this reader handles.
-    * ``requires_siblings`` — extensions that must exist alongside the
-      target file for this reader to claim it.
-    * ``excludes_siblings`` — extensions that must NOT exist alongside
-      the target file for this reader to claim it.
+    A reader receives the manifest's ``labels`` block and is
+    responsible for producing a Form in which every dim has a label
+    mapping. Four label specs are accepted per dim:
 
-    The two sibling rules disambiguate readers that share an extension.
+        builtin           use the format's built-in label source
+        auto              position indices "0", "1", "2", ...
+        {<dim>: <pos>}    read position <pos> along <dim>
+        {name: pos, ...}  explicit mapping
+
+    A missing dim entry defaults to ``auto``.
+
+    Readers that encode non-numeric columns must record the encoder
+    instance used in ``info["encoders"]`` as ``{dim: {label: encoder}}``.
     """
 
     extensions: ClassVar[list[str]] = []
     requires_siblings: ClassVar[list[str]] = []
     excludes_siblings: ClassVar[list[str]] = []
 
+    # If True, the reader consumes compressed input directly and the
+    # framework passes the original path. If False, the framework
+    # decompresses to a temporary file first.
+    handles_compression: ClassVar[bool] = False
+
     def matches(self, path: Path) -> bool:
-        """Return True if this reader claims ``path``."""
         ext = primary_ext(path)
         if ext not in self.extensions:
             return False
@@ -44,8 +54,17 @@ class Reader(ABC):
         return True
 
     @abstractmethod
-    def read(self, path: Path, dims, labels, **args) -> Form:
+    def read(
+        self,
+        path: Path,
+        dims: list,
+        labels: dict,
+        **args,
+    ) -> Form:
         ...
+
+
+_COMPRESSION = {".gz", ".bz2", ".xz", ".zst"}
 
 
 def primary_ext(path: Path) -> str:
@@ -53,3 +72,6 @@ def primary_ext(path: Path) -> str:
     if p.suffix.lower() in _COMPRESSION:
         p = p.with_suffix("")
     return p.suffix.lower()
+
+
+__all__ = ["Reader", "primary_ext"]

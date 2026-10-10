@@ -1,0 +1,36 @@
+name: concat_demo
+
+sources:
+  pheno:
+    path: input/pheno.csv
+    dims: [sample, feature]
+    labels:
+      sample:  {feature: 0}
+      feature: builtin
+
+  expr:
+    path: input/expr.csv
+    dims: [sample, feature]
+    labels:
+      sample:  {feature: 0}
+      feature: builtin
+
+  meth:
+    path: input/meth.csv
+    dims: [sample, feature]
+    labels:
+      sample:  {feature: 0}
+      feature: builtin
+
+steps:
+  - name: describe
+    inputs: [pheno]
+
+  - name: concat
+    inputs: [pheno, expr, meth]
+    params:
+      axis: feature
+      output: combined
+
+  - name: describe
+    inputs: [combined]
