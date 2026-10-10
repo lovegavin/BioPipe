@@ -37,10 +37,10 @@ output/
 *.xls
 
 # 图片结果
-*.png
-*.jpg
-*.jpeg
-*.pdf
+#*.png
+#*.jpg
+#*.jpeg
+#*.pdf
 
 # 日志和系统文件
 *.log
