@@ -1,0 +1,206 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/rnaseq_de_demo",
+  "generated_at": "2026-10-11T16:50:03.964233+00:00",
+  "n_steps": 12,
+  "total_elapsed": 7.6398,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.0144,
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "dim": "gene",
+        "min_value": 10,
+        "min_samples": 3,
+        "output": "counts_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "compare_groups",
+      "elapsed": 6.9462,
+      "inputs": [
+        "counts_filtered",
+        "meta"
+      ],
+      "params": {
+        "dim": "gene",
+        "group_dim": "sample",
+        "group_label": "dex",
+        "group_a": "untrt",
+        "group_b": "trt",
+        "method": "deseq2",
+        "output": "de_result"
+      },
+      "export_path": "steps/02_compare_groups.json"
+    },
+    {
+      "index": 3,
+      "name": "volcano",
+      "elapsed": 0.1684,
+      "inputs": [
+        "de_result"
+      ],
+      "params": {
+        "dim": "gene",
+        "stat_dim": "statistic",
+        "lfc_label": "log2FC",
+        "p_label": "Q_VALUE",
+        "lfc_threshold": 1.0,
+        "p_threshold": 0.05,
+        "filename": "volcano.png",
+        "title": "Airway: dex vs untrt",
+        "label_top": 8
+      },
+      "export_path": "steps/03_volcano.json"
+    },
+    {
+      "index": 4,
+      "name": "ma_plot",
+      "elapsed": 0.1367,
+      "inputs": [
+        "de_result"
+      ],
+      "params": {
+        "dim": "gene",
+        "stat_dim": "statistic",
+        "lfc_label": "log2FC",
+        "mean_a_label": "mean_a",
+        "mean_b_label": "mean_b",
+        "p_label": "Q_VALUE",
+        "p_threshold": 0.05,
+        "filename": "ma.png",
+        "title": "Airway: dex vs untrt"
+      },
+      "export_path": "steps/04_ma_plot.json"
+    },
+    {
+      "index": 5,
+      "name": "normalize",
+      "elapsed": 0.0031,
+      "inputs": [
+        "counts_filtered"
+      ],
+      "params": {
+        "method": "cpm",
+        "dim": "sample",
+        "target_sum": "1e6",
+        "output": "counts_cpm"
+      },
+      "export_path": "steps/05_normalize.json"
+    },
+    {
+      "index": 6,
+      "name": "log_transform",
+      "elapsed": 0.0054,
+      "inputs": [
+        "counts_cpm"
+      ],
+      "params": {
+        "base": 2,
+        "pseudocount": 1,
+        "output": "counts_log"
+      },
+      "export_path": "steps/06_log_transform.json"
+    },
+    {
+      "index": 7,
+      "name": "pca",
+      "elapsed": 0.0491,
+      "inputs": [
+        "counts_log"
+      ],
+      "params": {
+        "dim": "gene",
+        "n_components": 10,
+        "output": "pcs"
+      },
+      "export_path": "steps/07_pca.json"
+    },
+    {
+      "index": 8,
+      "name": "scatter",
+      "elapsed": 0.1186,
+      "inputs": [
+        "pcs"
+      ],
+      "params": {
+        "dim": "component",
+        "x_label": "PC1",
+        "y_label": "PC2",
+        "filename": "pca.png",
+        "title": "Sample PCA"
+      },
+      "export_path": "steps/08_scatter.json"
+    },
+    {
+      "index": 9,
+      "name": "heatmap",
+      "elapsed": 0.1181,
+      "inputs": [
+        "counts_log"
+      ],
+      "params": {
+        "dim": "gene",
+        "other_dim": "sample",
+        "select": "variance",
+        "top_n": 50,
+        "standardize": "row",
+        "cluster_rows": true,
+        "cluster_cols": true,
+        "filename": "top50_heatmap.png",
+        "title": "Top 50 variable genes"
+      },
+      "export_path": "steps/09_heatmap.json"
+    },
+    {
+      "index": 10,
+      "name": "transpose",
+      "elapsed": 0.0012,
+      "inputs": [
+        "counts_log"
+      ],
+      "params": {
+        "order": [
+          "sample",
+          "gene"
+        ],
+        "output": "samples_by_gene"
+      },
+      "export_path": "steps/10_transpose.json"
+    },
+    {
+      "index": 11,
+      "name": "boxplot",
+      "elapsed": 0.056,
+      "inputs": [
+        "samples_by_gene",
+        "meta"
+      ],
+      "params": {
+        "dim": "gene",
+        "value_label": "ENSG00000109906",
+        "group_dim": "sample",
+        "group_label": "dex",
+        "filename": "ZBTB16_boxplot.png",
+        "title": "ZBTB16 by dex",
+        "ylabel": "log2(CPM + 1)"
+      },
+      "export_path": "steps/11_boxplot.json"
+    },
+    {
+      "index": 12,
+      "name": "describe",
+      "elapsed": 0.0226,
+      "inputs": [
+        "de_result"
+      ],
+      "params": {},
+      "export_path": "steps/12_describe.json"
+    }
+  ]
+}

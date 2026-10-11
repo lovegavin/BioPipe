@@ -1,0 +1,37 @@
+{
+  "kind": "boxplot",
+  "filename": "ZBTB16_by_dex.png",
+  "path": "/home/lovagavin/biopipe/tasks/boxplot_demo/output/figures/ZBTB16_by_dex.png",
+  "dim": "gene",
+  "value_label": "ENSG00000109906",
+  "group_dim": "sample",
+  "group_label": "dex",
+  "n_samples": 8,
+  "n_groups": 2,
+  "groups": [
+    "trt",
+    "untrt"
+  ],
+  "summary": {
+    "trt": {
+      "n": 4,
+      "min": 4.3127336502075195,
+      "q25": 4.733546495437622,
+      "median": 5.1038408279418945,
+      "q75": 5.436753749847412,
+      "max": 5.74542236328125,
+      "mean": 5.06645941734314,
+      "std": 0.5333173230306167
+    },
+    "untrt": {
+      "n": 4,
+      "min": 0.05790155753493309,
+      "q25": 0.20635832007974386,
+      "median": 0.2579234689474106,
+      "q75": 0.37083686888217926,
+      "max": 0.7033383846282959,
+      "mean": 0.31927172001451254,
+      "std": 0.2363035281534017
+    }
+  }
+}

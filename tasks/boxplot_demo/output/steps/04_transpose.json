@@ -1,0 +1,18 @@
+{
+  "input_dims": [
+    "gene",
+    "sample"
+  ],
+  "output_dims": [
+    "sample",
+    "gene"
+  ],
+  "input_shape": [
+    16596,
+    8
+  ],
+  "output_shape": [
+    8,
+    16596
+  ]
+}

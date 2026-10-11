@@ -1,0 +1,27 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/rnaseq_de_demo
+generated : 2026-10-11T16:50:03.964233+00:00
+steps     : 12
+elapsed   : 7.640s
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   filter_min              0.014s   steps/01_filter_min.json
+2   compare_groups          6.946s   steps/02_compare_groups.json
+3   volcano                 0.168s   steps/03_volcano.json
+4   ma_plot                 0.137s   steps/04_ma_plot.json
+5   normalize               0.003s   steps/05_normalize.json
+6   log_transform           0.005s   steps/06_log_transform.json
+7   pca                     0.049s   steps/07_pca.json
+8   scatter                 0.119s   steps/08_scatter.json
+9   heatmap                 0.118s   steps/09_heatmap.json
+10  transpose               0.001s   steps/10_transpose.json
+11  boxplot                 0.056s   steps/11_boxplot.json
+12  describe                0.023s   steps/12_describe.json
+
+============================================================
+Per-step details are in output/steps/. This file is an index only.
+============================================================

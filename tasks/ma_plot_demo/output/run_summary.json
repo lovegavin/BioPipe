@@ -1,0 +1,62 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/ma_plot_demo",
+  "generated_at": "2026-10-11T16:30:11.849454+00:00",
+  "n_steps": 3,
+  "total_elapsed": 6.5794,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.0071,
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "dim": "gene",
+        "min_value": 10,
+        "min_samples": 3,
+        "output": "counts_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "compare_groups",
+      "elapsed": 6.4051,
+      "inputs": [
+        "counts_filtered",
+        "meta"
+      ],
+      "params": {
+        "dim": "gene",
+        "group_dim": "sample",
+        "group_label": "dex",
+        "group_a": "untrt",
+        "group_b": "trt",
+        "method": "deseq2",
+        "output": "de_result"
+      },
+      "export_path": "steps/02_compare_groups.json"
+    },
+    {
+      "index": 3,
+      "name": "ma_plot",
+      "elapsed": 0.1672,
+      "inputs": [
+        "de_result"
+      ],
+      "params": {
+        "dim": "gene",
+        "stat_dim": "statistic",
+        "lfc_label": "log2FC",
+        "mean_a_label": "mean_a",
+        "mean_b_label": "mean_b",
+        "p_label": "Q_VALUE",
+        "p_threshold": 0.05,
+        "filename": "ma.png",
+        "title": "Airway smooth muscle: dex vs untrt"
+      },
+      "export_path": "steps/03_ma_plot.json"
+    }
+  ]
+}
