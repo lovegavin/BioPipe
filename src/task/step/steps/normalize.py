@@ -94,14 +94,58 @@ class NormalizeStep(Step):
                 np.nan,
             )
 
-        # sum_after must be computed in the flat layout, where axis 0
-        # is still the sample axis.
-        masked_norm = np.where(valid, normalized, 0.0)
-        sum_after = masked_norm.sum(axis=1)
+        # Compute per-sample statistics in the flat layout,
+        # before moveaxis shuffles the axes.
+        pos_to_label = {v: k for k, v in form.labels[dim].items()}
+        masked_before = np.where(valid, flat, np.nan)
+        masked_after = np.where(valid, normalized, np.nan)
 
-        masked = np.where(valid, flat, 0.0)
-        sum_before = masked.sum(axis=1)
+        per_sample = {}
+        for i in range(n_samples):
+            label = pos_to_label[i]
+            before_row = masked_before[i]
+            after_row = masked_after[i]
+            finite_before = before_row[np.isfinite(before_row)]
+            finite_after = after_row[np.isfinite(after_row)]
+            per_sample[label] = {
+                "size_factor": float(size_factors[i]),
+                "sum_before": float(np.nansum(before_row)),
+                "sum_after": float(np.nansum(after_row)),
+                "min_before": (
+                    float(finite_before.min())
+                    if finite_before.size else None
+                ),
+                "min_after": (
+                    float(finite_after.min())
+                    if finite_after.size else None
+                ),
+                "max_before": (
+                    float(finite_before.max())
+                    if finite_before.size else None
+                ),
+                "max_after": (
+                    float(finite_after.max())
+                    if finite_after.size else None
+                ),
+                "mean_before": (
+                    float(finite_before.mean())
+                    if finite_before.size else None
+                ),
+                "mean_after": (
+                    float(finite_after.mean())
+                    if finite_after.size else None
+                ),
+                "std_before": (
+                    float(finite_before.std())
+                    if finite_before.size else None
+                ),
+                "std_after": (
+                    float(finite_after.std())
+                    if finite_after.size else None
+                ),
+            }
 
+        # Now reshape and move axes for the Form.
         normalized = normalized.reshape(moved.shape)
         normalized = np.moveaxis(normalized, 0, axis).astype(np.float32)
 
@@ -113,26 +157,12 @@ class NormalizeStep(Step):
             axis_info={k: list(v) for k, v in form.axis_info.items()},
         )
 
-        pos_to_label = {v: k for k, v in form.labels[dim].items()}
-        size_factor_by_label = {
-            pos_to_label[i]: float(size_factors[i])
-            for i in range(n_samples)
-        }
-
         self._export_data = {
             "method": method,
             "dim": dim,
             "target_sum": target_sum if method == "cpm" else None,
             "n_samples": int(n_samples),
-            "size_factors": size_factor_by_label,
-            "sum_before": {
-                pos_to_label[i]: float(sum_before[i])
-                for i in range(n_samples)
-            },
-            "sum_after": {
-                pos_to_label[i]: float(sum_after[i])
-                for i in range(n_samples)
-            },
+            "per_sample": per_sample,
         }
 
         ctx.metadata.setdefault(self.name, {})[out_name] = {

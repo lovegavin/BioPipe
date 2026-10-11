@@ -1,4 +1,4 @@
-name: filter_low_count_demo
+name: filter_min_demo
 
 sources:
   counts:
@@ -9,11 +9,11 @@ sources:
       sample: builtin
 
 steps:
-  - name: filter_low_count
+  - name: filter_min
     inputs: [counts]
     params:
       dim: gene
-      min_count: 10
+      min_value: 10
       min_samples: 3
       output: counts_filtered
 

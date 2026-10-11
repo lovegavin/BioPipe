@@ -68,17 +68,35 @@ class LogTransformStep(Step):
         )
 
         finite = transformed[np.isfinite(transformed)]
+        finite_after = transformed[np.isfinite(transformed)]
+        finite_before = data[np.isfinite(data)]
+
+        def _stats(arr):
+            if arr.size == 0:
+                return {
+                    "min": None, "max": None,
+                    "mean": None, "std": None,
+                    "q25": None, "q50": None, "q75": None,
+                }
+            return {
+                "min": float(arr.min()),
+                "max": float(arr.max()),
+                "mean": float(arr.mean()),
+                "std": float(arr.std()),
+                "q25": float(np.quantile(arr, 0.25)),
+                "q50": float(np.quantile(arr, 0.50)),
+                "q75": float(np.quantile(arr, 0.75)),
+            }
 
         self._export_data = {
             "base": base_value,
             "base_input": base,
             "pseudocount": pseudocount,
-            "n_valid": int(finite.size),
-            "n_missing": int(transformed.size - finite.size),
-            "min": float(finite.min()) if finite.size else None,
-            "max": float(finite.max()) if finite.size else None,
-            "mean": float(finite.mean()) if finite.size else None,
-            "std": float(finite.std()) if finite.size else None,
+            "formula": f"log_{base_value:g}(x + {pseudocount:g})",
+            "n_valid": int(finite_after.size),
+            "n_missing": int(transformed.size - finite_after.size),
+            "before": _stats(finite_before),
+            "after": _stats(finite_after),
         }
 
         ctx.metadata.setdefault(self.name, {})[out_name] = {
