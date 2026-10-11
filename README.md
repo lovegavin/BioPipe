@@ -25,7 +25,9 @@ Repository: <https://github.com/lovegavin/BioPipe>
 - [Runtime: Context and Runner](#runtime-context-and-runner)
 - [Built-in Readers](#built-in-readers)
 - [Built-in Steps](#built-in-steps)
+- [Operator Demos](#operator-demos)
 - [Full Example: GWAS Pipeline](#full-example-gwas-pipeline)
+- [Full Example: RNA-seq Differential Expression](#full-example-rna-seq-differential-expression)
 - [Output Structure](#output-structure)
 - [Extension Guide](#extension-guide)
   - [Add a Reader](#add-a-reader)
@@ -77,7 +79,7 @@ cd BioPipe
 pip install -r requirements.txt
 ```
 
-`requirements.txt` pins exact versions of all Python dependencies, including `anndata`, `bed-reader`, `bgen-reader`, `cyvcf2`, `dask`, `h5py`, `statsmodels`, `matplotlib`.
+`requirements.txt` pins exact versions of all Python dependencies, including `anndata`, `bed-reader`, `bgen-reader`, `cyvcf2`, `dask`, `h5py`, `statsmodels`, `matplotlib`, `scipy`, `pydeseq2`.
 
 > **Note**: `environment.yml` and `requirements.txt` are **mandatory** dependency manifests, not optional. Missing any dependency causes the corresponding Reader or Step to raise `ReaderError` at runtime.
 
@@ -297,7 +299,7 @@ Duplicate labels are handled by `unique_labels`; the second occurrence gets `#<p
 
 ## Protocol 3: Step Protocol
 
-Step is the operator layer. Filtering, selection, merging, transposition, PCA, regression, HWE, MAF, LD pruning, plotting — all are pluggable Steps.
+Step is the operator layer. Filtering, selection, merging, transposition, normalization, group comparison, PCA, regression, HWE, MAF, LD pruning, plotting — all are pluggable Steps.
 
 ### Base class contract
 
@@ -434,13 +436,375 @@ Responsibilities:
 
 ## Built-in Steps
 
-| Category | Step |
+Every Step is domain-agnostic: it operates on any `Form` whose dimensions match its parameters. Steps are grouped below by purpose. For each step, `In` is the number of inputs, `Out` is the context key (`params.output`), and the listed parameters are the ones the step reads from `ctx.step_params`.
+
+### Data inspection
+
+#### `describe`
+
+Print and export a summary of one input form. No parameters.
+
+- **In**: 1
+- **Params**: none
+- **Export**: shape, dims, info, labels, global stats (min/max/mean/std/n_valid/n_missing)
+
+---
+
+### Dimension and label
+
+#### `transpose`
+
+Reorder the axes of a form. Labels are unchanged; only axis order changes.
+
+- **In**: 1
+- **Params**:
+  - `order` (list of dim names, required): the desired new axis order
+  - `output` (default `transpose`)
+
+#### `rename_dim`
+
+Rename a single dimension.
+
+- **In**: 1
+- **Params**:
+  - `from` (str, required): current dim name
+  - `to` (str, required): new dim name
+  - `output` (default `rename_dim`)
+
+#### `select`
+
+Keep only the listed labels along one dimension.
+
+- **In**: 1
+- **Params**:
+  - `dim` (str, required)
+  - `labels` (list, required): label names to keep, in output order
+  - `output` (default `select`)
+
+#### `drop`
+
+Remove named labels from one dimension.
+
+- **In**: 1
+- **Params**:
+  - `dim` (str, required)
+  - `labels` (list, required): label names to remove
+  - `output` (default `drop`)
+
+#### `concat`
+
+Concatenate several forms along one dimension. Aligns on non-axis dims by label intersection.
+
+- **In**: `"*"` (at least 2)
+- **Params**:
+  - `axis` (str, required): dim to concatenate along
+  - `align` (optional): `{dim: <name>, key: {input_name: label}}` for key-based alignment
+  - `label` (optional): name for the merged key column
+  - `output` (required)
+
+#### `attach_info`
+
+Attach axis-parallel info arrays from a source form onto a target, aligned by label.
+
+- **In**: 2 (target, source)
+- **Params**:
+  - `fields` (list, required): info keys to attach
+  - `target_dim` (str, required)
+  - `output` (default `attach_info`)
+
+---
+
+### QC filtering
+
+#### `filter_min`
+
+Drop positions along `dim` whose value does not reach `min_value` in at least `min_samples` samples.
+
+- **In**: 1
+- **Params**:
+  - `dim` (str, required)
+  - `min_value` (float, default 1)
+  - `min_samples` (int, default 1)
+  - `output` (default `filter_min`)
+- **Export**: `kept_labels`, `dropped_labels`, counts
+
+#### `missing`
+
+Filter positions along one dimension by missing rate.
+
+- **In**: 1
+- **Params**:
+  - `dim` (str, required)
+  - `threshold` (float, default 0.10): max allowed missing rate
+  - `output` (default `missing`)
+
+#### `maf`
+
+Filter positions along one dimension by minor allele frequency.
+
+- **In**: 1
+- **Params**:
+  - `dim` (str, required)
+  - `threshold` (float, default 0.01): minimum allowed MAF
+  - `output` (default `maf`)
+- **Requires**: `form.info["missing_code"]` and `form.info["ploidy"]`
+
+#### `hwe`
+
+Filter positions along one dimension by Hardy-Weinberg exact test p-value.
+
+- **In**: 1
+- **Params**:
+  - `dim` (str, required)
+  - `threshold` (float, default 1e-6): minimum allowed p-value
+  - `output` (default `hwe`)
+- **Requires**: `form.info["missing_code"]` and `form.info["ploidy"] == 2`
+
+#### `ld_prune`
+
+Prune positions along one dimension by pairwise LD.
+
+- **In**: 1
+- **Params**:
+  - `dim` (str, required)
+  - `window` (int, default 50): window size in positions
+  - `r2` (float, default 0.2): r² threshold
+  - `output` (default `ld_prune`)
+
+---
+
+### Transformation
+
+#### `normalize`
+
+Scale a form along one dimension. Methods:
+
+- `cpm`: counts per million, scaled to `target_sum`
+- `total`: divide each sample by its total
+- `median_of_ratios`: DESeq2-style size factors
+- `zscore`: column-wise z-score
+
+- **In**: 1
+- **Params**:
+  - `method` (str, required)
+  - `dim` (str, required): typically the sample axis
+  - `target_sum` (float, default 1e6, only for `cpm`)
+  - `output` (default `normalize`)
+- **Export**: per-sample `size_factor`, `sum_before`, `sum_after`, min/max/mean/std
+
+#### `log_transform`
+
+Apply `log_base(x + pseudocount)` elementwise. Missing values preserved.
+
+- **In**: 1
+- **Params**:
+  - `base` (int, float, or `"e"`, default 2)
+  - `pseudocount` (float, default 1, must be > 0)
+  - `output` (default `log_transform`)
+- **Export**: `before` and `after` distributions (min/max/mean/std/quartiles)
+
+---
+
+### Statistical modeling
+
+#### `compare_groups`
+
+Two-group comparison along one dimension. All statistics delegated to classical libraries:
+
+- `ttest` → `scipy.stats.ttest_ind(equal_var=True)`
+- `welch` → `scipy.stats.ttest_ind(equal_var=False)`
+- `mannwhitney` → `scipy.stats.mannwhitneyu`
+- `deseq2` → `pydeseq2` negative binomial GLM
+
+- **In**: 2 (data form, metadata form)
+- **Params**:
+  - `dim` (str, required): feature dim of the data form
+  - `group_dim` (str, required): sample dim shared by both forms
+  - `group_label` (str, required): column on the metadata's other dim
+  - `group_a` (str or int, required)
+  - `group_b` (str or int, required)
+  - `method` (str, default `ttest`)
+  - `output` (default `compare_groups`)
+- **Output form**: `dims = [dim, "statistic"]`; `statistic` labels are `log2FC`, `mean_a`, `mean_b`, `stat`, `P`, `N`, plus `Q_VALUE` when `method="deseq2"`
+- **Export**: per-feature results and per-feature failures
+
+#### `pca`
+
+Principal component analysis along one dimension of a 2D form.
+
+- **In**: 1
+- **Params**:
+  - `dim` (str, required): dim to compress
+  - `n_components` (int, default 10)
+  - `output` (default `pca`)
+- **Requires**: `form.info["missing_code"]`
+- **Output form**: `dims = [<observation dim>, "component"]`; labels are `PC1`, `PC2`, ...
+
+#### `regress`
+
+Multiple regression over one dimension of a wide form. Tests each remaining position as a predictor, adjusting for covariates.
+
+- **In**: 1
+- **Params**:
+  - `dim` (str, required): dimension to iterate over
+  - `response` (str, required): label of the response column
+  - `covariates` (list, optional)
+  - `method` (str, default `auto`): `ols`, `logit`, or `auto`
+  - `output` (default `regress`)
+- **Output form**: `dims = [dim, "statistic"]` with `BETA`, `SE`, `P`, `N`
+
+#### `correction`
+
+Multiple-testing correction on a result table. Adds `Q_VALUE` and `SIGNIFICANT` columns.
+
+- **In**: 1
+- **Params**:
+  - `method` (str, required): `bonferroni` or `fdr`
+  - `alpha` (float, default 0.05)
+  - `pfield` (str, default `P`): name of the p-value column
+  - `dim` (str, default `statistic`)
+  - `output` (default `correction`)
+
+---
+
+### Plotting
+
+All plotting steps write to `output/figures/<filename>` and do not modify the Context. They have `outputs = []`.
+
+#### `volcano`
+
+Volcano plot: x = log2FC, y = -log10(P), color by significance.
+
+- **In**: 1
+- **Params**:
+  - `dim` (default `gene`)
+  - `stat_dim` (default `statistic`)
+  - `lfc_label` (default `log2FC`)
+  - `p_label` (default `P`)
+  - `lfc_threshold` (float, default 1.0)
+  - `p_threshold` (float, default 0.05)
+  - `filename` (required)
+  - `title`, `xlabel`, `ylabel`, `point_size`, `alpha`, `label_top` (optional)
+
+#### `ma_plot`
+
+MA plot: x = log2 mean, y = log2FC, color by P < threshold.
+
+- **In**: 1
+- **Params**:
+  - `dim` (default `gene`)
+  - `stat_dim` (default `statistic`)
+  - `lfc_label` (default `log2FC`)
+  - `mean_a_label` (default `mean_a`)
+  - `mean_b_label` (default `mean_b`)
+  - `p_label` (default `P`)
+  - `p_threshold` (float, default 0.05)
+  - `filename` (required)
+  - `title`, `xlabel`, `ylabel`, `point_size`, `alpha`, `label_top` (optional)
+
+#### `heatmap`
+
+Matrix heatmap with optional row selection, standardization, and clustering.
+
+- **In**: 1
+- **Params**:
+  - `dim` (default `feature`)
+  - `other_dim` (default `sample`)
+  - `select` (str, default `variance`): `variance`, `label`, or `all`
+  - `top_n` (int, default 50, only for `select=variance`)
+  - `labels` (list, required for `select=label`)
+  - `standardize` (str, default `none`): `row`, `col`, or `none`
+  - `cluster_rows` (bool, default True)
+  - `cluster_cols` (bool, default True)
+  - `filename` (required)
+  - `title`, `cmap`, `nan_color`, `figsize`, `show_row_labels`, `show_col_labels` (optional)
+
+#### `boxplot`
+
+Boxplot of one value column split by groups from a metadata form.
+
+- **In**: 2 (data form, metadata form)
+- **Params**:
+  - `dim` (default `feature`)
+  - `value_label` (str, required): column to plot
+  - `group_dim` (str, required): sample dim shared by both forms
+  - `group_label` (str, required): column on the metadata's other dim
+  - `groups` (list, optional): subset and order of groups to show
+  - `filename` (required)
+  - `title`, `xlabel`, `ylabel`, `show_points`, `point_size`, `point_alpha` (optional)
+- **Export**: per-group summary (n, min, q25, median, q75, max, mean, std)
+
+#### `histogram`
+
+Histogram of one labeled column.
+
+- **In**: 1
+- **Params**:
+  - `dim` (default `feature`)
+  - `value_label` (str, required)
+  - `bins` (int, default 40)
+  - `filename` (required)
+  - `title`, `xlabel`, `ylabel`, `log_y` (optional)
+
+#### `scatter`
+
+Scatter plot of two labeled columns, optional color group.
+
+- **In**: 1
+- **Params**:
+  - `dim` (default `feature`)
+  - `x_label`, `y_label` (required)
+  - `color_label` (optional)
+  - `filename` (required)
+  - `title`, `xlabel`, `ylabel`, `point_size`, `alpha` (optional)
+
+#### `line`
+
+Line plot of one labeled column against another. Sorted by x by default.
+
+- **In**: 1
+- **Params**:
+  - `dim` (default `feature`)
+  - `x_label`, `y_label` (required)
+  - `filename` (required)
+  - `title`, `xlabel`, `ylabel`, `sort` (optional)
+
+#### `manhattan`
+
+Genome-wide Manhattan plot: -log10(P) against cumulative genomic position, chromosomes in natural order.
+
+- **In**: 1
+- **Params**:
+  - `dim` (default `feature`)
+  - `chrom_label`, `pos_label`, `p_label` (required)
+  - `p_dim` (default: same as `dim`)
+  - `filename` (required)
+  - `threshold`, `title`, `point_size`, `alpha` (optional)
+
+---
+
+## Operator Demos
+
+Each operator has a dedicated demo task under `tasks/<operator>_demo/` that runs the operator against real data and produces a JSON export plus optional figures.
+
+| Demo | Operator | Data |
+|---|---|---|
+| `csv_demo` | `describe` | small CSV |
+| `filter_min_demo` | `filter_min` | airway counts |
+| `normalize_demo` | `normalize` | airway counts |
+| `log_transform_demo` | `log_transform` | airway counts |
+| `compare_groups_demo` | `compare_groups` | airway counts + metadata |
+| `volcano_demo` | `volcano` | airway DE result |
+| `ma_plot_demo` | `ma_plot` | airway DE result |
+| `heatmap_demo` | `heatmap` | airway counts |
+| `boxplot_demo` | `boxplot` | airway counts + metadata |
+
+Full pipelines:
+
+| Task | Description |
 |---|---|
-| Data inspection | `describe` |
-| Dimension/label | `transpose`, `rename_dim`, `select`, `drop`, `concat`, `attach_info` |
-| QC filtering | `missing`, `maf`, `hwe`, `ld_prune` |
-| Statistical modeling | `pca`, `regress`, `correction` |
-| Plotting | `histogram`, `scatter`, `line`, `manhattan` |
+| `gwas_demo` | Complete GWAS workflow |
+| `rnaseq_de_demo` | Complete RNA-seq differential expression workflow |
 
 ---
 
@@ -551,7 +915,171 @@ python scripts/run.py tasks/gwas_demo
 
 ---
 
+## Full Example: RNA-seq Differential Expression
+
+The following example comes from `tasks/rnaseq_de_demo/task.yaml` in the repository, showing a complete RNA-seq differential expression workflow on the airway dataset (8 samples, 4 treated / 4 control).
+
+```yaml
+name: rnaseq_de_demo
+
+sources:
+  counts:
+    path: input/airway_counts.csv
+    dims: [gene, sample]
+    labels:
+      gene: {sample: 0}
+      sample: builtin
+
+  meta:
+    path: input/airway_colData.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+steps:
+  # 1. Filter low-expression genes
+  - name: filter_min
+    inputs: [counts]
+    params:
+      dim: gene
+      min_value: 10
+      min_samples: 3
+      output: counts_filtered
+
+  # 2. Differential expression: DESeq2 negative binomial GLM
+  - name: compare_groups
+    inputs: [counts_filtered, meta]
+    params:
+      dim: gene
+      group_dim: sample
+      group_label: dex
+      group_a: untrt
+      group_b: trt
+      method: deseq2
+      output: de_result
+
+  # 3. Visualization: volcano and MA plot
+  - name: volcano
+    inputs: [de_result]
+    params:
+      dim: gene
+      stat_dim: statistic
+      lfc_label: log2FC
+      p_label: Q_VALUE
+      lfc_threshold: 1.0
+      p_threshold: 0.05
+      filename: volcano.png
+      title: "Airway: dex vs untrt"
+      label_top: 8
+
+  - name: ma_plot
+    inputs: [de_result]
+    params:
+      dim: gene
+      stat_dim: statistic
+      lfc_label: log2FC
+      mean_a_label: mean_a
+      mean_b_label: mean_b
+      p_label: Q_VALUE
+      p_threshold: 0.05
+      filename: ma.png
+      title: "Airway: dex vs untrt"
+
+  # 4. Normalization and log transform for exploratory visualization
+  - name: normalize
+    inputs: [counts_filtered]
+    params:
+      method: cpm
+      dim: sample
+      target_sum: 1e6
+      output: counts_cpm
+
+  - name: log_transform
+    inputs: [counts_cpm]
+    params:
+      base: 2
+      pseudocount: 1
+      output: counts_log
+
+  # 5. Sample clustering check: PCA + scatter
+  - name: pca
+    inputs: [counts_log]
+    params:
+      dim: gene
+      n_components: 10
+      output: pcs
+
+  - name: scatter
+    inputs: [pcs]
+    params:
+      dim: component
+      x_label: PC1
+      y_label: PC2
+      filename: pca.png
+      title: "Sample PCA"
+
+  # 6. Heatmap of the top 50 most variable genes
+  - name: heatmap
+    inputs: [counts_log]
+    params:
+      dim: gene
+      other_dim: sample
+      select: variance
+      top_n: 50
+      standardize: row
+      cluster_rows: true
+      cluster_cols: true
+      filename: top50_heatmap.png
+      title: "Top 50 variable genes"
+
+  # 7. Single-gene boxplot: ZBTB16 (a canonical dex-induced marker)
+  - name: transpose
+    inputs: [counts_log]
+    params:
+      order: [sample, gene]
+      output: samples_by_gene
+
+  - name: boxplot
+    inputs: [samples_by_gene, meta]
+    params:
+      dim: gene
+      value_label: ENSG00000109906
+      group_dim: sample
+      group_label: dex
+      filename: ZBTB16_boxplot.png
+      title: "ZBTB16 by dex"
+      ylabel: "log2(CPM + 1)"
+
+  # 8. Result summary
+  - name: describe
+    inputs: [de_result]
+```
+
+Download the data (airway, GSE52778):
+
+```bash
+mkdir -p tasks/rnaseq_de_demo/input
+cd tasks/rnaseq_de_demo/input
+
+wget -O airway_counts.csv \
+  "http://ftp.dk.xemacs.org/bioconductor/help/course-materials/2022/CSAMA/lecture/1-monday/lecture-01-data/airway_counts.csv"
+
+wget -O airway_colData.csv \
+  "http://ftp.dk.xemacs.org/bioconductor/help/course-materials/2022/CSAMA/lecture/1-monday/lecture-01-data/airway_colData.csv"
+```
+
+Run:
+
+```bash
+python scripts/run.py tasks/rnaseq_de_demo
+```
+
+---
+
 ## Output Structure
+
+Example output for the GWAS pipeline:
 
 ```text
 output/
@@ -578,6 +1106,33 @@ output/
     manhattan.png
     pca_scatter.png
     pvalue_hist.png
+```
+
+Example output for the RNA-seq DE pipeline:
+
+```text
+output/
+  run_summary.json
+  run_summary.txt
+  steps/
+    01_filter_min.json
+    02_compare_groups.json
+    03_volcano.json
+    04_ma_plot.json
+    05_normalize.json
+    06_log_transform.json
+    07_pca.json
+    08_scatter.json
+    09_heatmap.json
+    10_transpose.json
+    11_boxplot.json
+    12_describe.json
+  figures/
+    volcano.png
+    ma.png
+    pca.png
+    top50_heatmap.png
+    ZBTB16_boxplot.png
 ```
 
 - `run_summary.json`: run index with step names, timings, inputs, parameters, export paths.
@@ -641,6 +1196,7 @@ output/
 - **Axis-parallel metadata sync**: `axis_info` guarantees subset safety.
 - **Explicit errors**: a clear exception hierarchy.
 - **Full export**: every step's result is traceable.
+- **Classical backends**: `compare_groups` delegates all statistics to `scipy` and `pydeseq2`; no statistical model is re-implemented.
 
 ---
 
@@ -680,20 +1236,54 @@ src/
       __init__.py           # Step auto-discovery
       base.py               # Step base class
       steps/                # operators
+        # data inspection
+        describe.py
+        # dimension / label
+        transpose.py
+        rename_dim.py
+        select.py
+        drop.py
+        concat.py
+        attach_info.py
+        # QC filtering
+        filter_min.py
+        missing.py
         maf.py
         hwe.py
+        ld_prune.py
+        # transformation
+        normalize.py
+        log_transform.py
+        # statistical modeling
+        compare_groups.py
         pca.py
         regress.py
         correction.py
-        manhattan.py
+        # plotting
+        volcano.py
+        ma_plot.py
+        heatmap.py
+        boxplot.py
+        histogram.py
         scatter.py
-        ...
+        line.py
+        manhattan.py
+        _plot_helpers.py
 
 tasks/
   csv_demo/                 # minimal CSV example
   gwas_demo/                # full GWAS pipeline example
+  rnaseq_de_demo/           # full RNA-seq DE pipeline example
   fasta_demo/               # FASTA example
   vcf_demo/                 # VCF example
+  filter_min_demo/          # operator demo: filter_min
+  normalize_demo/           # operator demo: normalize
+  log_transform_demo/       # operator demo: log_transform
+  compare_groups_demo/      # operator demo: compare_groups
+  volcano_demo/             # operator demo: volcano
+  ma_plot_demo/             # operator demo: ma_plot
+  heatmap_demo/             # operator demo: heatmap
+  boxplot_demo/             # operator demo: boxplot
   ...
 
 environment.yml             # Conda environment definition
@@ -708,11 +1298,18 @@ requirements.txt            # pip dependency manifest
 # Activate the environment
 conda activate biopipe
 
-# Run tests
+# Run the full test suite
 pytest
 
 # Run an example task
 python scripts/run.py tasks/csv_demo
+
+# Run an operator demo
+python scripts/run.py tasks/filter_min_demo
+python scripts/run.py tasks/compare_groups_demo
+
+# Run the end-to-end RNA-seq DE pipeline
+python scripts/run.py tasks/rnaseq_de_demo
 ```
 
 ---
