@@ -1,0 +1,726 @@
+# BioPipe
+
+A declarative, plugin-based bioinformatics pipeline framework.
+
+BioPipe writes task workflows in `task.yaml`, reads external files into unified `Form` objects, and applies pluggable `Step` operators to filter, compute statistics, model, and plot those `Form` objects. The core goals are: **format and algorithm decoupling, label alignment safety, traceable outputs, zero-registration extensibility**.
+
+Repository: <https://github.com/lovegavin/BioPipe>
+
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Quick Start](#quick-start)
+  - [Environment Setup](#environment-setup)
+  - [Install Dependencies](#install-dependencies)
+  - [Write task.yaml](#write-taskyaml)
+  - [Run](#run)
+  - [Output Overview](#output-overview)
+- [Core Architecture: Four Protocols](#core-architecture-four-protocols)
+  - [Protocol 1: Manifest Task Protocol](#protocol-1-manifest-task-protocol)
+  - [Protocol 2: Reader Protocol](#protocol-2-reader-protocol)
+  - [Protocol 3: Step Protocol](#protocol-3-step-protocol)
+  - [Protocol 4: Form Data Protocol](#protocol-4-form-data-protocol)
+- [Runtime: Context and Runner](#runtime-context-and-runner)
+- [Built-in Readers](#built-in-readers)
+- [Built-in Steps](#built-in-steps)
+- [Full Example: GWAS Pipeline](#full-example-gwas-pipeline)
+- [Output Structure](#output-structure)
+- [Extension Guide](#extension-guide)
+  - [Add a Reader](#add-a-reader)
+  - [Add a Step](#add-a-step)
+- [Design Principles](#design-principles)
+- [Directory Structure](#directory-structure)
+- [Development and Testing](#development-and-testing)
+- [License](#license)
+
+---
+
+## Features
+
+- **Declarative orchestration**: describe "what to read, in what order to do what" in YAML.
+- **Plugin Readers**: adding a new file format only requires a new module, no registry changes.
+- **Plugin Steps**: adding a new operator only requires a new module, auto-discovered.
+- **Unified Form model**: all data is an N-dimensional tensor with named dimensions, labels, and info.
+- **Complete label coverage**: every axis position must have a label; filtering, merging and alignment never lose positions.
+- **Axis-parallel metadata sync**: `axis_info` guarantees that arrays such as chromosome and position are trimmed together with axis subsets.
+- **Full export**: every Step's complete result is written to `output/steps/`, with a run index in `run_summary.*`.
+- **Explicit error hierarchy**: `BioPipeError` with `ReaderError`, `ManifestError`, `StepError`, `ValidationError`, `ContextError`.
+
+---
+
+## Quick Start
+
+### Environment Setup
+
+Python 3.11+ is required. Conda is recommended for environment management.
+
+### Install Dependencies
+
+**Option 1: Conda (recommended)**
+
+```bash
+git clone https://github.com/lovegavin/BioPipe.git
+cd BioPipe
+conda env create -f environment.yml
+conda activate biopipe
+```
+
+`environment.yml` declares the full Conda environment, including Python 3.11, CUDA toolchain, and bioinformatics-specific packages such as `bed-reader`, `bgen-reader`, `cyvcf2`, `h5py`, `pgenlib`.
+
+**Option 2: pip**
+
+```bash
+git clone https://github.com/lovegavin/BioPipe.git
+cd BioPipe
+pip install -r requirements.txt
+```
+
+`requirements.txt` pins exact versions of all Python dependencies, including `anndata`, `bed-reader`, `bgen-reader`, `cyvcf2`, `dask`, `h5py`, `statsmodels`, `matplotlib`.
+
+> **Note**: `environment.yml` and `requirements.txt` are **mandatory** dependency manifests, not optional. Missing any dependency causes the corresponding Reader or Step to raise `ReaderError` at runtime.
+
+### Write task.yaml
+
+Create `task.yaml` in the task directory. The following minimal example reads a CSV and prints its description:
+
+```yaml
+name: csv_demo
+
+sources:
+  data:
+    path: input/test_party_1.csv
+    dims: [sample, feature]
+    labels:
+      sample: auto
+      feature: builtin
+
+steps:
+  - name: describe
+    inputs: [data]
+```
+
+This example comes from `tasks/csv_demo/task.yaml` in the repository. It demonstrates the three most basic things: declaring a source, specifying label rules, and invoking the `describe` Step.
+
+### Run
+
+```bash
+python scripts/run.py tasks/csv_demo
+```
+
+### Output Overview
+
+After a run, the task directory contains:
+
+```text
+output/
+  run_summary.json
+  run_summary.txt
+  steps/
+    01_describe.json
+  figures/
+```
+
+- `run_summary.json`: machine-readable run index with step names, timings, inputs, parameters, export paths.
+- `run_summary.txt`: human-readable run index.
+- `steps/*.json`: full export of each Step.
+- `figures/*`: images produced by plotting steps.
+
+---
+
+## Core Architecture: Four Protocols
+
+BioPipe can be summarized as **four protocols/contracts**, plus two runtime components. The four protocols are the heart of the project; understanding them means understanding the whole framework.
+
+| Protocol | Defined in | Question it answers | Key interface |
+|---|---|---|---|
+| **Manifest** | `task.yaml`, `src/task/manifest.py` | What to read? In what order to do what? | `sources`, `steps`, `labels`, `args`, `params` |
+| **Reader** | `src/reader/base.py` | How does a file become a Form? | `extensions`, `requires_siblings`, `excludes_siblings`, `handles_compression`, `read()` |
+| **Step** | `src/task/step/base.py` | How is a Form processed? | `name`, `inputs_arity`, `outputs`, `run()`, `export()` |
+| **Form** | `src/core/forms/form.py` | What does the data look like? | `data`, `dims`, `labels`, `info`, `axis_info`, `validate()`, `subset_axis()` |
+
+Runtime components:
+
+- **Context**: holds `forms`, `params`, `step_params`, `metadata`, `artifacts`; manages output directories; writes `run_summary.*` at the end.
+- **Runner**: executes steps in order, resolves inputs, checks outputs, writes per-step JSON.
+
+In one sentence:
+**Manifest orchestrates, Reader ingests, Step processes, Form unifies, Context/Runner runs.**
+
+---
+
+## Protocol 1: Manifest Task Protocol
+
+The Manifest is the declarative orchestration layer. Users only write YAML, no Python.
+
+### Top-level structure
+
+```yaml
+name: my_task
+sources:
+  ...
+steps:
+  ...
+```
+
+Optional top-level `params` is read by `Context` as task-level parameters.
+
+### sources specification
+
+Each source is a mapping:
+
+```yaml
+sources:
+  my_data:
+    path: data/example.vcf
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample: auto
+    args:
+      some_option: value
+```
+
+- `path`: file path, relative to the task directory.
+- `dims`: list of dimension names, must be a non-empty list.
+- `labels`: label rules, optional, must be a mapping.
+  - Keys must be dimension names in `dims`.
+  - Rules support:
+    - `"builtin"`: use the format's built-in identifiers.
+    - `"auto"`: use positional indices `"0"`, `"1"`, ...
+    - `{name: pos, ...}`: explicit mapping.
+    - `None`: equivalent to omitted.
+- `args`: extra arguments passed to the Reader, optional, must be a mapping.
+- Unknown keys are not allowed.
+
+### steps specification
+
+Each step is a mapping:
+
+```yaml
+steps:
+  - name: maf
+    inputs: [my_data]
+    params:
+      dim: variant
+      threshold: 0.01
+      output: filtered
+  - name: describe
+    inputs: [filtered]
+```
+
+- `name`: Step name, must be found in `STEPS`.
+- `inputs`: list of input Form names, optional.
+- `params`: parameters passed to the Step, optional, must be a mapping.
+- Unknown keys are not allowed.
+
+### Execution flow
+
+Runner executes in order:
+
+1. Look up the Step class by `name`.
+2. Check `inputs_arity` against `inputs` length.
+3. Resolve input Forms from the Context.
+4. Set `ctx.step_params`, inject `_input_names`.
+5. Call `step.run(ctx, forms)`.
+6. Verify that all declared `outputs` are registered.
+7. Call `step.export(ctx)` and write `output/steps/NN_name.json`.
+8. Record timings and metadata.
+
+---
+
+## Protocol 2: Reader Protocol
+
+The Reader is the input adaptation layer, converting heterogeneous files such as FASTA, VCF, BED, CSV, H5AD, PLINK, BGEN into a unified `Form`.
+
+### Base class contract
+
+```python
+class Reader(ABC):
+    extensions: ClassVar[list[str]] = []
+    requires_siblings: ClassVar[list[str]] = []
+    excludes_siblings: ClassVar[list[str]] = []
+    handles_compression: ClassVar[bool] = False
+
+    def matches(self, path: Path) -> bool:
+        ...
+
+    @abstractmethod
+    def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
+        ...
+```
+
+- `extensions`: extensions this Reader handles.
+- `requires_siblings`: required sibling files, e.g. PLINK `.bed` requires `.bim`, `.fam`.
+- `excludes_siblings`: do not match when these siblings are present, e.g. BED Reader excludes `.bim/.fam/.pgen`.
+- `handles_compression`:
+  - `False`: the framework decompresses to a temp file first; the Reader only sees a plain file.
+  - `True`: the Reader handles compression itself, or needs the original path and same-directory siblings.
+
+### Routing and auto-discovery
+
+`src/reader/__init__.py` scans the `src.reader.readers` package:
+
+- Imports each module.
+- Finds `Reader` subclasses.
+- Instantiates them and adds to `READERS`.
+- New Readers only need a new module; no registry change.
+
+`read_source(path, dims, labels, **args)` is the unified entry:
+
+1. Calls `pick_reader(path)` to select the unique matching Reader.
+2. If the Reader does not handle compression, decompresses to a temp file via `_decompressed`.
+3. Calls `reader.read(...)`.
+
+### Label rules
+
+Label rules per dim support:
+
+- `"builtin"`
+- `"auto"`
+- `{name: pos, ...}`
+- When omitted, the specific Reader decides the default.
+
+Duplicate labels are handled by `unique_labels`; the second occurrence gets `#<position>` appended.
+
+### Encoding and info
+
+- Non-numeric columns are encoded.
+- Encoder instances are recorded in `info["encoders"]`.
+- `info` typically contains `missing_code`, usually `np.nan`.
+- Genotype Readers also write `ploidy`, `chrom`, `pos`, etc.
+- If an info entry is parallel to an axis, it must be declared in `axis_info`.
+- This allows `Form.subset_axis` to trim those arrays in sync.
+
+---
+
+## Protocol 3: Step Protocol
+
+Step is the operator layer. Filtering, selection, merging, transposition, PCA, regression, HWE, MAF, LD pruning, plotting — all are pluggable Steps.
+
+### Base class contract
+
+```python
+class Step(ABC):
+    name: ClassVar[str] = "unnamed"
+    inputs_arity: ClassVar[int | str] = 0
+    outputs: ClassVar[list[str]] = []
+
+    @abstractmethod
+    def run(self, ctx: Context, inputs: list[Form]) -> None:
+        ...
+
+    def export(self, ctx: Context) -> dict:
+        return {}
+```
+
+- `name`: step name, matched against `name` in the manifest.
+- `inputs_arity`:
+  - Integer: fixed number of inputs.
+  - `"*"`: any non-empty number of inputs.
+- `outputs`: keys that will be registered in the Context; Runner checks them.
+- `run`: executes the step.
+- `export`: returns a JSON-serializable complete result; Runner writes it to `output/steps/`.
+
+### Parameters and outputs
+
+- Parameters are read from `ctx.step_params`.
+- Runner injects `ctx.step_params["_input_names"]`.
+- Steps register outputs via `ctx[out_name] = Form(...)`.
+- `Context.__setitem__` automatically calls `form.validate()`.
+
+### Auto-discovery
+
+`src/task/step/__init__.py` scans `src.task.step.steps`:
+
+- Imports modules.
+- Finds `Step` subclasses.
+- Requires `name != "unnamed"`.
+- Builds `STEPS[name] = class`.
+- Duplicate names raise an error.
+
+### Error handling
+
+- Input, parameter, and execution errors should raise `StepError`.
+- Some Steps have explicit failure policies, e.g. `regress` only skips known non-fittable cases.
+
+---
+
+## Protocol 4: Form Data Protocol
+
+Form is the shared language between Readers and Steps.
+
+```python
+@dataclass
+class Form:
+    data: np.ndarray
+    dims: list[str]
+    labels: dict[str, dict[str, int]] = field(default_factory=dict)
+    info: dict = field(default_factory=dict)
+    axis_info: dict[str, list[str]] = field(default_factory=dict)
+```
+
+### Constraints
+
+- `len(dims) == data.ndim`.
+- `dims` must not contain duplicates.
+- Every dim must have labels.
+- Every axis position must be covered by at least one label.
+- Label positions must be int and within `0..size-1`.
+- Each key listed in `axis_info[dim]` must exist in info and have length equal to the axis size.
+- `subset_axis` trims data, labels, and axis-parallel info in sync.
+- `get_parallel(field, dim)` retrieves a data column by label, or an info array by `axis_info`.
+
+### Main methods
+
+- `axis(name)`: returns the axis index.
+- `get_parallel(field, dim)`: retrieves the parallel array.
+- `subset_axis(dim, indices)`: subsets along a dim.
+- `validate()`: structural validation.
+
+---
+
+## Runtime: Context and Runner
+
+### Context
+
+Location: `src/task/context/base.py`
+
+Responsibilities:
+
+- Holds `forms`, `params`, `step_params`, `metadata`, `artifacts`.
+- Manages `out_dir`.
+- `__setitem__` automatically calls `form.validate()`.
+- `finalize()` writes:
+  - `output/run_summary.json`
+  - `output/run_summary.txt`
+
+### Runner
+
+Location: `src/task/runner.py`
+
+Responsibilities:
+
+- Executes steps in order.
+- Checks `inputs_arity`.
+- Resolves inputs from the Context.
+- Sets `ctx.step_params`.
+- Executes `step.run()`.
+- Checks `step.outputs`.
+- Calls `step.export()` to write `output/steps/NN_name.json`.
+- Records timings and metadata.
+
+---
+
+## Built-in Readers
+
+| Reader | Extensions | Main layout | Notes |
+|---|---|---|---|
+| FastaReader | `.fasta` `.fa` `.fna` `.faa` | sequence × position | Nucleotide/protein sequences, NaN-padded |
+| H5adReader | `.h5ad` | obs × var | AnnData, supports layers |
+| Gff3Reader | `.gff` `.gff3` | row × 9 columns | GFF3 annotation |
+| GtfReader | `.gtf` | row × 9 columns | GTF annotation |
+| VcfReader | `.vcf` `.vcf.gz` | variant × sample | GT to ALT count |
+| BedReader | `.bed` | row × column | UCSC BED, 3–12 columns |
+| CsvReader | `.csv` | row × column | Header supported |
+| ParquetReader | `.parquet` | row × column | Column names from metadata |
+| MtxReader | `.mtx` | gene × cell | 10x MEX |
+| Plink1Reader | `.bed` + `.bim` + `.fam` | variant × sample | PLINK 1.x |
+| Plink2Reader | `.pgen` + `.pvar` + `.psam` | variant × sample | PLINK 2.x |
+| BgenReader | `.bgen` | variant × sample | Expected ALT dosage |
+
+---
+
+## Built-in Steps
+
+| Category | Step |
+|---|---|
+| Data inspection | `describe` |
+| Dimension/label | `transpose`, `rename_dim`, `select`, `drop`, `concat`, `attach_info` |
+| QC filtering | `missing`, `maf`, `hwe`, `ld_prune` |
+| Statistical modeling | `pca`, `regress`, `correction` |
+| Plotting | `histogram`, `scatter`, `line`, `manhattan` |
+
+---
+
+## Full Example: GWAS Pipeline
+
+The following example comes from `tasks/gwas_demo/task.yaml` in the repository, showing a complete GWAS analysis workflow:
+
+```yaml
+name: gwas_demo
+
+sources:
+  geno:
+    path: input/geno.vcf
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample: builtin
+  pheno:
+    path: input/phenotype.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+  covar:
+    path: input/covariates.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+steps:
+  - name: missing
+    inputs: [geno]
+    params: {dim: sample, threshold: 0.10, output: geno_sm}
+  - name: missing
+    inputs: [geno_sm]
+    params: {dim: variant, threshold: 0.05, output: geno_vm}
+  - name: maf
+    inputs: [geno_vm]
+    params: {dim: variant, threshold: 0.05, output: geno_maf}
+  - name: hwe
+    inputs: [geno_maf]
+    params: {dim: variant, threshold: 1.0e-4, output: geno_hwe}
+  - name: ld_prune
+    inputs: [geno_hwe]
+    params: {dim: variant, window: 50, r2: 0.2, output: geno_pruned}
+  - name: pca
+    inputs: [geno_pruned]
+    params: {dim: variant, n_components: 10, output: pcs}
+  - name: transpose
+    inputs: [geno_hwe]
+    params: {order: [sample, variant], output: geno_T}
+  - name: rename_dim
+    inputs: [geno_T]
+    params: {from: variant, to: feature, output: geno_f}
+  - name: concat
+    inputs: [geno_f, pheno, covar]
+    params: {axis: feature, output: combined}
+  - name: regress
+    inputs: [combined]
+    params:
+      dim: feature
+      response: trait_value
+      covariates: [sex, batch]
+      output: raw
+  - name: correction
+    inputs: [raw]
+    params: {method: fdr, alpha: 0.05, output: assoc_result}
+  - name: attach_info
+    inputs: [assoc_result, geno_hwe]
+    params:
+      fields: [chrom, pos]
+      target_dim: feature
+      output: assoc_with_pos
+  - name: manhattan
+    inputs: [assoc_with_pos]
+    params:
+      dim: feature
+      chrom_label: chrom
+      pos_label: pos
+      p_dim: statistic
+      p_label: P
+      filename: manhattan.png
+      title: GWAS Manhattan plot
+  - name: scatter
+    inputs: [pcs]
+    params:
+      dim: component
+      x_label: PC1
+      y_label: PC2
+      filename: pca_scatter.png
+  - name: histogram
+    inputs: [assoc_result]
+    params:
+      dim: statistic
+      value_label: P
+      bins: 20
+      filename: pvalue_hist.png
+  - name: describe
+    inputs: [assoc_result]
+```
+
+Run:
+
+```bash
+python scripts/run.py tasks/gwas_demo
+```
+
+---
+
+## Output Structure
+
+```text
+output/
+  run_summary.json
+  run_summary.txt
+  steps/
+    01_missing.json
+    02_missing.json
+    03_maf.json
+    04_hwe.json
+    05_ld_prune.json
+    06_pca.json
+    07_transpose.json
+    08_rename_dim.json
+    09_concat.json
+    10_regress.json
+    11_correction.json
+    12_attach_info.json
+    13_manhattan.json
+    14_scatter.json
+    15_histogram.json
+    16_describe.json
+  figures/
+    manhattan.png
+    pca_scatter.png
+    pvalue_hist.png
+```
+
+- `run_summary.json`: run index with step names, timings, inputs, parameters, export paths.
+- `run_summary.txt`: human-readable index.
+- `steps/*.json`: full export of each Step.
+- `figures/*`: outputs of plotting steps.
+
+---
+
+## Extension Guide
+
+### Add a Reader
+
+1. Create a new module in `src/reader/readers/`.
+2. Subclass `Reader`.
+3. Declare:
+   - `extensions`
+   - `requires_siblings`
+   - `excludes_siblings`
+   - `handles_compression`
+4. Implement:
+   ```python
+   def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
+       ...
+   ```
+5. Use `unique_labels` to handle labels.
+6. Use `get_encoder` for encoding when necessary.
+7. Fill `info` and `axis_info`.
+8. Auto-discovered; no registration needed.
+
+### Add a Step
+
+1. Create a new module in `src/task/step/steps/`.
+2. Subclass `Step`.
+3. Declare:
+   - `name`
+   - `inputs_arity`
+   - `outputs`
+4. Implement:
+   ```python
+   def run(self, ctx: Context, inputs: list[Form]) -> None:
+       ...
+   ```
+5. Optionally implement:
+   ```python
+   def export(self, ctx: Context) -> dict:
+       ...
+   ```
+6. Output via `ctx[out_name] = Form(...)`.
+7. Auto-discovered; no registration needed.
+
+---
+
+## Design Principles
+
+- **Declarative orchestration**: task.yaml describes the pipeline.
+- **Plugin Readers**: adding formats does not touch the core.
+- **Plugin Steps**: adding operators does not touch the core.
+- **Unified Form**: all data shares one model.
+- **Complete label coverage**: every axis position must have a label.
+- **Axis-parallel metadata sync**: `axis_info` guarantees subset safety.
+- **Explicit errors**: a clear exception hierarchy.
+- **Full export**: every step's result is traceable.
+
+---
+
+## Directory Structure
+
+```text
+scripts/
+  run.py                    # entry point
+
+src/
+  core/
+    errors/                 # error hierarchy
+    forms/
+      form.py               # Form data protocol
+
+  reader/
+    __init__.py             # read_source, pick_reader, auto-discovery
+    base.py                 # Reader base class
+    readers/                # format-specific Readers
+      fasta_reader.py
+      vcf_reader.py
+      bed_reader.py
+      csv_reader.py
+      h5ad_reader.py
+      plink_reader.py
+      bgen_reader.py
+      mtx_reader.py
+      ...
+
+  task/
+    __init__.py
+    manifest.py             # task.yaml load and validation
+    runner.py               # step scheduling
+    context/
+      base.py               # Context
+    step/
+      __init__.py           # Step auto-discovery
+      base.py               # Step base class
+      steps/                # operators
+        maf.py
+        hwe.py
+        pca.py
+        regress.py
+        correction.py
+        manhattan.py
+        scatter.py
+        ...
+
+tasks/
+  csv_demo/                 # minimal CSV example
+  gwas_demo/                # full GWAS pipeline example
+  fasta_demo/               # FASTA example
+  vcf_demo/                 # VCF example
+  ...
+
+environment.yml             # Conda environment definition
+requirements.txt            # pip dependency manifest
+```
+
+---
+
+## Development and Testing
+
+```bash
+# Activate the environment
+conda activate biopipe
+
+# Run tests
+pytest
+
+# Run an example task
+python scripts/run.py tasks/csv_demo
+```
+
+---
+
+## License
+
+Copyright (c) 2026 Haojian Li. All rights reserved.
+
+This software is proprietary. No part of this software may be copied, modified, distributed, sublicensed, or used for commercial purposes without the prior written permission of the copyright holder.
+
+For commercial licensing, custom development, or collaboration, please contact: email: lovegavin118@outlook.com / WeChat: mylovegavin118 / No. 13727316173.
