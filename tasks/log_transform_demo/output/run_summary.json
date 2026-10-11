@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/log_transform_demo",
-  "generated_at": "2026-10-11T14:32:11.276179+00:00",
+  "generated_at": "2026-10-11T15:02:35.595376+00:00",
   "n_steps": 4,
-  "total_elapsed": 0.0378,
+  "total_elapsed": 0.0837,
   "steps": [
     {
       "index": 1,
-      "name": "filter_low_count",
-      "elapsed": 0.0138,
+      "name": "filter_min",
+      "elapsed": 0.0134,
       "inputs": [
         "counts"
       ],
@@ -17,12 +17,12 @@
         "min_samples": 3,
         "output": "counts_filtered"
       },
-      "export_path": "steps/01_filter_low_count.json"
+      "export_path": "steps/01_filter_min.json"
     },
     {
       "index": 2,
       "name": "normalize",
-      "elapsed": 0.0033,
+      "elapsed": 0.0071,
       "inputs": [
         "counts_filtered"
       ],
@@ -37,7 +37,7 @@
     {
       "index": 3,
       "name": "log_transform",
-      "elapsed": 0.0024,
+      "elapsed": 0.0137,
       "inputs": [
         "counts_cpm"
       ],
@@ -51,7 +51,7 @@
     {
       "index": 4,
       "name": "describe",
-      "elapsed": 0.0183,
+      "elapsed": 0.0495,
       "inputs": [
         "counts_log"
       ],

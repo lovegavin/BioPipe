@@ -1,28 +1,28 @@
 {
-  "task_dir": "/home/lovagavin/biopipe/tasks/filter_low_count_demo",
-  "generated_at": "2026-10-11T14:15:23.080626+00:00",
+  "task_dir": "/home/lovagavin/biopipe/tasks/filter_min_demo",
+  "generated_at": "2026-10-11T15:00:16.159475+00:00",
   "n_steps": 2,
-  "total_elapsed": 0.1667,
+  "total_elapsed": 0.0268,
   "steps": [
     {
       "index": 1,
-      "name": "filter_low_count",
-      "elapsed": 0.016,
+      "name": "filter_min",
+      "elapsed": 0.0089,
       "inputs": [
         "counts"
       ],
       "params": {
         "dim": "gene",
-        "min_count": 10,
+        "min_value": 10,
         "min_samples": 3,
         "output": "counts_filtered"
       },
-      "export_path": "steps/01_filter_low_count.json"
+      "export_path": "steps/01_filter_min.json"
     },
     {
       "index": 2,
       "name": "describe",
-      "elapsed": 0.1507,
+      "elapsed": 0.0179,
       "inputs": [
         "counts_filtered"
       ],

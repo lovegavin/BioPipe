@@ -9,7 +9,7 @@ sources:
       sample: builtin
 
 steps:
-  - name: filter_low_count
+  - name: filter_min
     inputs: [counts]
     params:
       dim: gene

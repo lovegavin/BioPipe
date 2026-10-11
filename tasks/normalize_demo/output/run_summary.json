@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/normalize_demo",
-  "generated_at": "2026-10-11T14:24:02.173359+00:00",
+  "generated_at": "2026-10-11T15:02:05.881477+00:00",
   "n_steps": 2,
-  "total_elapsed": 0.0196,
+  "total_elapsed": 0.0264,
   "steps": [
     {
       "index": 1,
-      "name": "filter_low_count",
-      "elapsed": 0.0112,
+      "name": "filter_min",
+      "elapsed": 0.0134,
       "inputs": [
         "counts"
       ],
@@ -17,12 +17,12 @@
         "min_samples": 3,
         "output": "counts_filtered"
       },
-      "export_path": "steps/01_filter_low_count.json"
+      "export_path": "steps/01_filter_min.json"
     },
     {
       "index": 2,
       "name": "normalize",
-      "elapsed": 0.0084,
+      "elapsed": 0.013,
       "inputs": [
         "counts_filtered"
       ],

@@ -1,0 +1,52 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/compare_groups_demo",
+  "generated_at": "2026-10-11T14:58:25.603162+00:00",
+  "n_steps": 3,
+  "total_elapsed": 6.4788,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.0075,
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "dim": "gene",
+        "min_value": 10,
+        "min_samples": 3,
+        "output": "counts_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "compare_groups",
+      "elapsed": 6.4456,
+      "inputs": [
+        "counts_filtered",
+        "meta"
+      ],
+      "params": {
+        "dim": "gene",
+        "group_dim": "sample",
+        "group_label": "dex",
+        "group_a": "untrt",
+        "group_b": "trt",
+        "method": "deseq2",
+        "output": "de_result"
+      },
+      "export_path": "steps/02_compare_groups.json"
+    },
+    {
+      "index": 3,
+      "name": "describe",
+      "elapsed": 0.0257,
+      "inputs": [
+        "de_result"
+      ],
+      "params": {},
+      "export_path": "steps/03_describe.json"
+    }
+  ]
+}
