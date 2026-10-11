@@ -1,0 +1,21 @@
+name: filter_low_count_demo
+
+sources:
+  counts:
+    path: input/airway_counts.csv
+    dims: [gene, sample]
+    labels:
+      gene: {sample: 0}
+      sample: builtin
+
+steps:
+  - name: filter_low_count
+    inputs: [counts]
+    params:
+      dim: gene
+      min_count: 10
+      min_samples: 3
+      output: counts_filtered
+
+  - name: describe
+    inputs: [counts_filtered]
