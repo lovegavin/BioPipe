@@ -1,0 +1,17 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/filter_low_count_demo
+generated : 2026-10-11T14:15:23.080626+00:00
+steps     : 2
+elapsed   : 0.167s
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   filter_low_count        0.016s   steps/01_filter_low_count.json
+2   describe                0.151s   steps/02_describe.json
+
+============================================================
+Per-step details are in output/steps/. This file is an index only.
+============================================================

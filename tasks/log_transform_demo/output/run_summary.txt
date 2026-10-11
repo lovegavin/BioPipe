@@ -1,0 +1,19 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/log_transform_demo
+generated : 2026-10-11T14:32:11.276179+00:00
+steps     : 4
+elapsed   : 0.038s
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   filter_low_count        0.014s   steps/01_filter_low_count.json
+2   normalize               0.003s   steps/02_normalize.json
+3   log_transform           0.002s   steps/03_log_transform.json
+4   describe                0.018s   steps/04_describe.json
+
+============================================================
+Per-step details are in output/steps/. This file is an index only.
+============================================================

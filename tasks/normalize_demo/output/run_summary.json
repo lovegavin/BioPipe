@@ -1,0 +1,37 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/normalize_demo",
+  "generated_at": "2026-10-11T14:24:02.173359+00:00",
+  "n_steps": 2,
+  "total_elapsed": 0.0196,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_low_count",
+      "elapsed": 0.0112,
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "dim": "gene",
+        "min_count": 10,
+        "min_samples": 3,
+        "output": "counts_filtered"
+      },
+      "export_path": "steps/01_filter_low_count.json"
+    },
+    {
+      "index": 2,
+      "name": "normalize",
+      "elapsed": 0.0084,
+      "inputs": [
+        "counts_filtered"
+      ],
+      "params": {
+        "method": "median_of_ratios",
+        "dim": "sample",
+        "output": "counts_norm"
+      },
+      "export_path": "steps/02_normalize.json"
+    }
+  ]
+}
