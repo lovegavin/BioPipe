@@ -1,0 +1,6 @@
+* text=auto eol=lf
+legacy/** -text
+*.png binary
+*.jpg binary
+*.woff2 binary
+*.exe binary

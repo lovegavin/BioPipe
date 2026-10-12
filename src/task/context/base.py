@@ -67,6 +67,28 @@ class Context:
     def has(self, name: str) -> bool:
         return name in self.forms
 
+    def log(self, message: str, **details) -> None:
+        """Write a structured plugin event and a human-readable console line."""
+        event = {"message": str(message), **details}
+        # Fail early rather than corrupting the JSONL log with arbitrary values.
+        json.dumps(event, allow_nan=False)
+        if self.memory:
+            self.memory.event("operator_log", **event)
+        self.metadata.setdefault("operator_logs", []).append(event)
+        print(str(message), flush=True)
+
+    def artifact_path(self, name: str) -> Path:
+        """Allocate a run-local artifact path without permitting traversal."""
+        from pathlib import PureWindowsPath
+        path = Path(name)
+        if not name or path.is_absolute() or PureWindowsPath(name).drive or ".." in path.parts or "\\" in name:
+            raise ContextError("Artifact names must be relative paths within the run")
+        target = (self.out_dir / "artifacts" / path).resolve()
+        if not target.is_relative_to((self.out_dir / "artifacts").resolve()):
+            raise ContextError("Artifact path escapes the run")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        return target
+
     def finalize(self) -> None:
         """Write the run summary.
 

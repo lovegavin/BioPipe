@@ -1,0 +1,535 @@
+{
+  "$defs": {
+    "Graph": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": 1,
+          "enum": [
+            1,
+            2
+          ],
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "name": {
+          "default": "我的工作流",
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "base_dir": {
+          "default": ".",
+          "maxLength": 2048,
+          "title": "Base Dir",
+          "type": "string"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/GraphNode"
+          },
+          "maxItems": 1000,
+          "title": "Nodes",
+          "type": "array"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/GraphEdge"
+          },
+          "maxItems": 5000,
+          "title": "Edges",
+          "type": "array"
+        },
+        "memory": {
+          "additionalProperties": true,
+          "title": "Memory",
+          "type": "object"
+        },
+        "interface": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RouteInterface"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "plugin_lock": {
+          "additionalProperties": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "title": "Plugin Lock",
+          "type": "object"
+        }
+      },
+      "required": [
+        "nodes",
+        "edges"
+      ],
+      "title": "Graph",
+      "type": "object"
+    },
+    "GraphEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 200,
+          "title": "Id",
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 80,
+          "title": "Source",
+          "type": "string"
+        },
+        "target": {
+          "maxLength": 80,
+          "title": "Target",
+          "type": "string"
+        },
+        "sourceHandle": {
+          "default": "out",
+          "maxLength": 100,
+          "title": "Sourcehandle",
+          "type": "string"
+        },
+        "targetHandle": {
+          "default": "in-0",
+          "pattern": "^in-\\d+$",
+          "title": "Targethandle",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "target"
+      ],
+      "title": "GraphEdge",
+      "type": "object"
+    },
+    "GraphNode": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z_][A-Za-z0-9_.-]{0,79}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "source",
+            "operator",
+            "route"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "operator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Operator"
+        },
+        "title": {
+          "default": "",
+          "maxLength": 120,
+          "title": "Title",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Source"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "input_count": {
+          "default": 1,
+          "maximum": 20,
+          "minimum": 0,
+          "title": "Input Count",
+          "type": "integer"
+        },
+        "route": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RouteDefinition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "position"
+      ],
+      "title": "GraphNode",
+      "type": "object"
+    },
+    "PanelWidths": {
+      "additionalProperties": false,
+      "properties": {
+        "library": {
+          "anyOf": [
+            {
+              "maximum": 360,
+              "minimum": 200,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Library"
+        },
+        "inspector": {
+          "anyOf": [
+            {
+              "maximum": 420,
+              "minimum": 256,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Inspector"
+        }
+      },
+      "title": "PanelWidths",
+      "type": "object"
+    },
+    "Position": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 1000000,
+          "minimum": -1000000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 1000000,
+          "minimum": -1000000,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "Position",
+      "type": "object"
+    },
+    "RouteDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^route_[a-f0-9]{12}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "graph": {
+          "$ref": "#/$defs/Graph"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "name",
+        "graph"
+      ],
+      "title": "RouteDefinition",
+      "type": "object"
+    },
+    "RouteInput": {
+      "additionalProperties": false,
+      "properties": {
+        "node_id": {
+          "maxLength": 80,
+          "title": "Node Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "contract": {
+          "additionalProperties": true,
+          "title": "Contract",
+          "type": "object"
+        }
+      },
+      "required": [
+        "node_id",
+        "label"
+      ],
+      "title": "RouteInput",
+      "type": "object"
+    },
+    "RouteInterface": {
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": 1,
+          "default": 1,
+          "title": "Version",
+          "type": "integer"
+        },
+        "inputs": {
+          "items": {
+            "$ref": "#/$defs/RouteInput"
+          },
+          "maxItems": 20,
+          "title": "Inputs",
+          "type": "array"
+        },
+        "outputs": {
+          "items": {
+            "$ref": "#/$defs/RouteOutput"
+          },
+          "maxItems": 20,
+          "title": "Outputs",
+          "type": "array"
+        }
+      },
+      "title": "RouteInterface",
+      "type": "object"
+    },
+    "RouteOutput": {
+      "additionalProperties": false,
+      "properties": {
+        "node_id": {
+          "maxLength": 80,
+          "title": "Node Id",
+          "type": "string"
+        },
+        "handle": {
+          "default": "out",
+          "pattern": "^out(?:-\\d+)?$",
+          "title": "Handle",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "contract": {
+          "additionalProperties": true,
+          "title": "Contract",
+          "type": "object"
+        }
+      },
+      "required": [
+        "node_id",
+        "label"
+      ],
+      "title": "RouteOutput",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "default": "",
+          "maxLength": 2048,
+          "title": "Path",
+          "type": "string"
+        },
+        "dims": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Dims",
+          "type": "array"
+        },
+        "labels": {
+          "additionalProperties": true,
+          "title": "Labels",
+          "type": "object"
+        },
+        "args": {
+          "additionalProperties": true,
+          "title": "Args",
+          "type": "object"
+        }
+      },
+      "title": "Source",
+      "type": "object"
+    },
+    "Viewport": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 1000000,
+          "minimum": -1000000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 1000000,
+          "minimum": -1000000,
+          "title": "Y",
+          "type": "number"
+        },
+        "zoom": {
+          "maximum": 4,
+          "minimum": 0.1,
+          "title": "Zoom",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "zoom"
+      ],
+      "title": "Viewport",
+      "type": "object"
+    },
+    "WorkspaceDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "graph": {
+          "$ref": "#/$defs/Graph"
+        },
+        "viewport": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Viewport"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "workflow_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workflow Id"
+        },
+        "workflow_version": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workflow Version"
+        }
+      },
+      "required": [
+        "id",
+        "graph"
+      ],
+      "title": "WorkspaceDocument",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Schema Version",
+      "type": "integer"
+    },
+    "active_id": {
+      "maxLength": 80,
+      "title": "Active Id",
+      "type": "string"
+    },
+    "documents": {
+      "items": {
+        "$ref": "#/$defs/WorkspaceDocument"
+      },
+      "maxItems": 20,
+      "minItems": 1,
+      "title": "Documents",
+      "type": "array"
+    },
+    "closed_documents": {
+      "items": {
+        "$ref": "#/$defs/WorkspaceDocument"
+      },
+      "maxItems": 20,
+      "title": "Closed Documents",
+      "type": "array"
+    },
+    "panel_widths": {
+      "$ref": "#/$defs/PanelWidths"
+    }
+  },
+  "required": [
+    "active_id",
+    "documents"
+  ],
+  "title": "Workspace",
+  "type": "object"
+}

@@ -1,0 +1,23 @@
+name: pca_demo
+
+sources:
+  geno:
+    path: input/geno.vcf
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample:  builtin
+
+steps:
+  - name: describe
+    inputs: [geno]
+
+  - name: pca
+    inputs: [geno]
+    params:
+      dim: variant
+      n_components: 5
+      output: pcs
+
+  - name: describe
+    inputs: [pcs]

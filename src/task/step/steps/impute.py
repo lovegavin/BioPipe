@@ -42,6 +42,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import port, param
+from src.core.forms.metadata import project_metadata
 
 
 _METHODS = ("min", "median", "mean")
@@ -53,6 +55,9 @@ class ImputeStep(Step):
     name = "impute"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(dims=[param("dim")])]
+    output_contract = {"mode": "transform", "representation": "impute"}
+    output_parameter = "output"
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -164,12 +169,14 @@ class ImputeStep(Step):
 
         result = filled.astype(np.float32)
 
+        info, axis_info = project_metadata(form, derived=True)
+        info.update(missing_code=np.nan, representation="impute")
         ctx[out_name] = Form(
             data=result,
             dims=list(form.dims),
             labels={k: dict(v) for k, v in form.labels.items()},
-            info=dict(form.info),
-            axis_info={k: list(v) for k, v in form.axis_info.items()},
+            info=info,
+            axis_info=axis_info,
         )
 
         self._export_data = {

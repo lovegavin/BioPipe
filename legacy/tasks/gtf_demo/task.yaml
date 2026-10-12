@@ -1,0 +1,13 @@
+name: gtf_demo
+
+sources:
+  annotation:
+    path: input/homo_sapiens.gtf.gz
+    dims: [feature, field]
+    labels:
+      feature: auto
+      field: builtin
+
+steps:
+  - name: describe
+    inputs: [annotation]

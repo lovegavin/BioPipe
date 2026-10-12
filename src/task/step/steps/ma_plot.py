@@ -33,6 +33,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import port, param
+from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -42,6 +44,8 @@ class MaPlotStep(Step):
     name = "ma_plot"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(ndim=2, dims=[param("dim", "gene"), param("stat_dim", "statistic")], labels=[{"dim": param("stat_dim", "statistic"), "values": [param("lfc_label", "log2FC"), param("p_label", "P"), param("mean_a_label", "mean_a"), param("mean_b_label", "mean_b")]}])]
+    output_contract = {"mode": "none"}
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

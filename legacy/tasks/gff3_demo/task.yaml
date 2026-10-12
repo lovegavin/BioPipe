@@ -1,0 +1,13 @@
+name: gff3_demo
+
+sources:
+  annotation:
+    path: input/homo_sapiens.gff3.gz
+    dims: [feature, field]
+    labels:
+      feature: auto
+      field: builtin
+
+steps:
+  - name: describe
+    inputs: [annotation]

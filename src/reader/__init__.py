@@ -114,6 +114,9 @@ def read_source(
     """
     path = Path(path)
     reader = pick_reader(path)
+    if reader.parameters_schema is not None:
+        from biopipe_sdk.protocol import validate_parameters
+        args = validate_parameters(reader.parameters_schema, args)
 
     if reader.handles_compression:
         form = reader.read(path, dims, labels, **args)

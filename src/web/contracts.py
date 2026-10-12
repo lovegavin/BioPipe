@@ -5,8 +5,11 @@ from src.core.contracts import VERSION, compatible, infer_output, resolve, sourc
 from src.reader import READERS, primary_ext
 
 
-def analyze_graph(graph, catalog, root):
+def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=()):
     from .graph import GraphError, project_path
+    from .routes import check_interface, require_route, port_index
+    if len(ancestry) > 6:
+        raise GraphError("路线嵌套最多支持 6 层。")
     registry = {item["name"]: item for item in catalog["operators"]}
     nodes = {node.id: node for node in graph.nodes}
     if len(nodes) != len(graph.nodes):
@@ -19,18 +22,37 @@ def analyze_graph(graph, catalog, root):
         if node.kind == "source":
             source = node.source
             schema = unknown()
-            if source:
+            if source_overrides and node.id in source_overrides:
+                schema = source_overrides[node.id]
+            elif source:
                 schema.update(dims=source.dims, ndim=len(source.dims))
                 path = project_path(root, source.path, graph.base_dir)
                 # A BED filename alone cannot distinguish PLINK from intervals.
                 # Use sibling routing only when the source actually exists.
-                candidates = [reader for reader in READERS if reader.matches(path)] if path.is_file() else [
-                    reader for reader in READERS if primary_ext(path) in reader.extensions]
+                candidates = [reader for reader in catalog["readers"] if primary_ext(path) in reader["extensions"]
+                              and (not path.is_file() or (all(path.with_suffix(s).exists() for s in reader.get("requires_siblings", []))
+                              and not any(path.with_suffix(s).exists() for s in reader.get("excludes_siblings", []))))]
                 if len(candidates) == 1:
                     reader = candidates[0]
-                    schema = source_schema(reader.output_contract, source.dims)
-                    schema["reader"] = type(reader).__name__
+                    if reader["name"] == "TxtReader":
+                        from src.reader.readers.txt_reader import _find_reader
+                        from src.core import ReaderError
+                        try:
+                            from biopipe_sdk.protocol import describe_reader
+                            reader = describe_reader(_find_reader(source.args.get("reader", "csv")))
+                        except (ReaderError, AttributeError):
+                            raise GraphError("TxtReader 的 reader 参数无效。", node.id)
+                    schema = source_schema(reader["output_contract"], source.dims)
+                    schema["reader"] = reader["name"]
             ports[node.id] = {"inputs": [], "outputs": [schema]}
+        elif node.kind == "route":
+            route = require_route(node)
+            if route.id in ancestry:
+                raise GraphError("路线不能递归调用自身。", node.id)
+            check_interface(route.graph, catalog)
+            interface = route.graph.interface
+            ports[node.id] = {"inputs": [port.contract or None for port in interface.inputs],
+                              "outputs": [unknown() for _ in interface.outputs]}
         else:
             spec = registry.get(node.operator)
             if spec is None:
@@ -63,7 +85,7 @@ def analyze_graph(graph, catalog, root):
         key = queue.popleft()
         visited += 1
         node = nodes[key]
-        if node.kind == "operator":
+        if node.kind != "source":
             inputs = [unknown() for _ in ports[key]["inputs"]]
             invalid = False
             for index, (edge, output) in incoming[key].items():
@@ -74,8 +96,23 @@ def analyze_graph(graph, catalog, root):
                     result = {"status": "unknown", "reasons": ["请完善算子参数后检查契约"]}
                 invalid |= result["status"] == "incompatible"
                 results.append({"id": edge.id, "source": edge.source, "target": key, **result})
-            spec = registry[node.operator]
-            if ports[key]["outputs"]:
+            if node.kind == "route":
+                route = require_route(node)
+                overrides = {port.node_id: inputs[i] for i, port in enumerate(route.graph.interface.inputs)}
+                try:
+                    inner = analyze_graph(route.graph, catalog, root, source_overrides=overrides, ancestry=(*ancestry, route.id))
+                except GraphError as exc:
+                    raise GraphError(f"{node.title or route.name}：{exc}", key) from exc
+                failures = [check for check in inner["edges"] if check["status"] == "incompatible"]
+                if failures:
+                    for check in results:
+                        if check["target"] == key:
+                            check["status"] = "incompatible"
+                            check["reasons"] = list(dict.fromkeys(reason for failure in failures for reason in failure["reasons"]))
+                ports[key]["outputs"] = [inner["nodes"][port.node_id]["outputs"][port_index(port.handle)]
+                                          if not invalid and not failures else unknown() for port in route.graph.interface.outputs]
+            elif ports[key]["outputs"]:
+                spec = registry[node.operator]
                 try:
                     schema = infer_output(spec["contracts"]["output"], inputs, {**spec["runtime_defaults"], **node.params}) if not invalid else unknown()
                 except (TypeError, ValueError, KeyError):

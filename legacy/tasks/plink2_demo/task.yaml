@@ -1,0 +1,13 @@
+name: plink2_demo
+
+sources:
+  geno:
+    path: input/genotype.pgen
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample:  builtin
+
+steps:
+  - name: describe
+    inputs: [geno]

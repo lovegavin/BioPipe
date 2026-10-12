@@ -1,0 +1,4 @@
+# Optional analysis extensions; install into the same Python environment as BioPipe.
+# No machine-specific paths, CUDA runtime, or frozen developer environment.
+lifelines>=0.30,<0.31
+pydeseq2==0.5.4

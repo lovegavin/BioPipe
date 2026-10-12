@@ -1,0 +1,32 @@
+# tasks/transpose_demo/task.yaml
+name: transpose_demo
+
+sources:
+  data:
+    path: input/data.csv
+    dims: [sample, feature]
+    labels:
+      sample:  {feature: 0}
+      feature: builtin
+
+steps:
+  - name: describe
+    inputs: [data]
+
+  - name: transpose
+    inputs: [data]
+    params:
+      order: [feature, sample]
+      output: data_T
+
+  - name: describe
+    inputs: [data_T]
+
+  - name: transpose
+    inputs: [data_T]
+    params:
+      order: [sample, feature]
+      output: data_back
+
+  - name: describe
+    inputs: [data_back]

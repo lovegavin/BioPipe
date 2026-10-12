@@ -1,0 +1,15 @@
+name: mtx_demo
+
+sources:
+
+  pbmc_gz:
+    path: input/matrix.mtx.gz
+    dims: [gene, cell]
+    labels:
+      gene: builtin
+      cell: builtin
+
+steps:
+
+  - name: describe
+    inputs: [pbmc_gz]

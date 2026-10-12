@@ -213,7 +213,9 @@ class MemoryRuntime:
                 return [], stream
 
         forms = [self.store[name] for name in spec.get("inputs", [])]
-        workspace, output = full_estimate(spec["name"], forms, spec.get("params", {}), self.config.profiles)
+        workspace, output = cls.estimate_memory(forms, spec.get("params", {}), self.config.profiles)
+        if any(isinstance(value, bool) or not isinstance(value, int) or value < 0 for value in (workspace, output)):
+            raise ValueError(f"{spec['name']}: estimate_memory must return two non-negative integer byte counts")
         workspace = max(workspace, self.observed_workspace.get(spec["name"], 0))
         self.workspace, self.remaining_output = workspace, output
         self.store.reserved = workspace + output

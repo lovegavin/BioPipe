@@ -10,7 +10,8 @@ from collections import defaultdict
 
 FORM_STEPS = frozenset({"select", "drop", "transpose", "rename_dim", "attach_info",
                         "missing", "maf", "hwe", "ld_prune", "pca", "concat",
-                        "regress", "correction"})
+                        "regress", "correction", "filter_min", "normalize", "log_transform", "impute",
+                        "compare_groups", "logrank_test", "cox_regression"})
 NEVER = 10**18
 
 
@@ -57,6 +58,43 @@ def full_estimate(name: str, forms: list, params: dict, profiles: dict) -> tuple
         workspace = 3 * data
     elif name in {"rename_dim", "transpose"}:
         workspace = data
+    elif name in {"normalize", "log_transform", "impute", "filter_min"} and forms:
+        # Float64 working arrays, masks, quantile indices, and report summaries.
+        # These kernels do not offer equivalent streaming implementations yet.
+        cells = forms[0].data.size
+        workspace = cells * (80 if name == "normalize" else 56) + metadata * 2
+        output = cells * 4 + metadata
+    elif name == "compare_groups" and forms:
+        form = forms[0]
+        axis = form.dims.index(params["dim"]) if params.get("dim") in form.dims else 0
+        features = form.data.shape[axis]
+        workspace = 96 * form.data.size + metadata * 2
+        if params.get("method") == "deseq2":
+            workspace = max(workspace * 4, 256 * 1024**2)
+        output = features * 7 * 4 + (features + 7) * 96 + metadata
+    elif name in {"cox_regression", "logrank_test", "kaplan_meier"} and forms:
+        rows, columns = forms[0].data.shape
+        # Cox may one-hot encode every categorical value. Bound the design width
+        # conservatively using sample count when categorical covariates are used.
+        width = min(rows, columns + rows * len(params.get("categorical", [])))
+        workspace = max(data * 12 + rows * width * 32 + width * width * 32, 16 * 1024**2)
+        groups = params.get("groups")
+        if groups:
+            group_count = len(groups)
+        elif params.get("group_label") in forms[0].labels.get(forms[0].dims[1], {}):
+            import numpy as np
+            column = forms[0].labels[forms[0].dims[1]][params["group_label"]]
+            group_count = len(np.unique(forms[0].data[:, column]))
+        else:
+            group_count = rows
+        comparisons = 1 + group_count * (group_count - 1) // 2 if params.get("pairwise") else 1
+        output = (width * 7 if name == "cox_regression" else comparisons * 3) * 100 if name in FORM_STEPS else 0
+    elif name == "heatmap" and forms:
+        rows, columns = forms[0].data.shape
+        selected = min(max(rows, columns), int(params.get("top_n", 50))) if params.get("select", "variance") == "variance" else max(rows, columns)
+        workspace = 64 * forms[0].data.size + 16 * (selected**2 + min(rows, columns)**2)
+    elif name in {"volcano", "ma_plot", "boxplot", "forest_plot"}:
+        workspace = max(16 * data + metadata, 8 * 1024**2)
     profile = profiles.get(name, {})
     return (int(profile.get("workspace_mb", workspace / 1024**2) * 1024**2),
             int(profile.get("output_mb", output / 1024**2) * 1024**2))

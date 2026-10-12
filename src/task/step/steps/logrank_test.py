@@ -34,6 +34,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import port, param
+from src.core.forms.metadata import project_metadata
 
 
 _STAT_LABELS = {"chi2": 0, "df": 1, "P": 2}
@@ -45,6 +47,9 @@ class LogrankTestStep(Step):
     name = "logrank_test"
     inputs_arity = 1
     outputs = []
+    input_contracts = [{**port(ndim=2), "labels_axis": [{"axis": 1, "values": [param("time_label"), param("event_label"), param("group_label")]}]}]
+    output_contract = {"mode": "logrank_test"}
+    output_parameter = "output"
 
     def run(self, ctx: Context, inputs) -> None:
         try:
@@ -225,6 +230,8 @@ class LogrankTestStep(Step):
             [[r[1], r[2], r[3]] for r in rows], dtype=np.float32
         )
         comp_labels = {r[0]: i for i, r in enumerate(rows)}
+        info, axis_info = project_metadata(form, keep_dims=[], derived=True)
+        info.update(missing_code=np.nan, representation="logrank_test")
         ctx[out_name] = Form(
             data=data,
             dims=["comparison", "statistic"],
@@ -232,7 +239,8 @@ class LogrankTestStep(Step):
                 "comparison": comp_labels,
                 "statistic": dict(_STAT_LABELS),
             },
-            info={"missing_code": np.nan},
+            info=info,
+            axis_info=axis_info,
         )
 
         self._export_data = {

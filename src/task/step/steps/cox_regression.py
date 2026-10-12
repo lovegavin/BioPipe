@@ -42,6 +42,8 @@ import pandas as pd
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import port, param
+from src.core.forms.metadata import project_metadata
 
 
 _STAT_LABELS = {
@@ -61,6 +63,9 @@ class CoxRegressionStep(Step):
     name = "cox_regression"
     inputs_arity = 1
     outputs = []
+    input_contracts = [{**port(ndim=2), "labels_axis": [{"axis": 1, "values": [param("time_label"), param("event_label")]}, {"axis": 1, "values": param("covariates", [])}]}]
+    output_contract = {"mode": "cox_regression"}
+    output_parameter = "output"
 
     def run(self, ctx: Context, inputs) -> None:
         try:
@@ -288,6 +293,8 @@ class CoxRegressionStep(Step):
                 "CI_high": float(np.exp(ci_high)),
             })
 
+        info, axis_info = project_metadata(form, keep_dims=[], derived=True)
+        info.update(missing_code=np.nan, representation="cox_regression")
         ctx[out_name] = Form(
             data=data,
             dims=["covariate", "statistic"],
@@ -295,7 +302,8 @@ class CoxRegressionStep(Step):
                 "covariate": {n: i for i, n in enumerate(coef_names)},
                 "statistic": dict(_STAT_LABELS),
             },
-            info={"missing_code": np.nan},
+            info=info,
+            axis_info=axis_info,
         )
 
         self._export_data = {

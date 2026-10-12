@@ -1,0 +1,2 @@
+-r requirements-studio.txt
+mcp>=1.20,<2

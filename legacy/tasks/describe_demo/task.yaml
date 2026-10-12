@@ -1,0 +1,13 @@
+name: describe_demo
+
+sources:
+  data:
+    path: input/data.csv
+    dims: [sample, feature]
+    labels:
+      sample:  {feature: 0}
+      feature: builtin
+
+steps:
+  - name: describe
+    inputs: [data]

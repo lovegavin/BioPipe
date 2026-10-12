@@ -24,6 +24,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import port, param
+from src.core.forms.metadata import project_metadata
 
 
 class FilterMinStep(Step):
@@ -32,6 +34,9 @@ class FilterMinStep(Step):
     name = "filter_min"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(dims=[param("dim")])]
+    output_contract = {"mode": "subset"}
+    output_parameter = "output"
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

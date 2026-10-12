@@ -1,0 +1,13 @@
+name: bgen_demo
+
+sources:
+  geno:
+    path: input/example.bgen
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample:  builtin
+
+steps:
+  - name: describe
+    inputs: [geno]

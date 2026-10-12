@@ -44,10 +44,9 @@ def build_catalog(registry):
         except (OSError, TypeError, SyntaxError):
             pass
         descriptor["runtime_defaults"] = defaults
-        operators.append(descriptor)
+        from biopipe_sdk.protocol import describe_operator
+        operators.append(describe_operator(cls, descriptor))
     from src.reader import READERS
-    readers = [{"name": type(reader).__name__, "module": type(reader).__module__,
-                "extensions": list(reader.extensions), "requires_siblings": list(reader.requires_siblings),
-                "excludes_siblings": list(reader.excludes_siblings), "output_contract": reader.output_contract}
-               for reader in READERS]
-    return {"schema_version": 1, "contract_version": VERSION, "operators": operators, "readers": readers}
+    from biopipe_sdk.protocol import describe_reader
+    readers = [describe_reader(reader) for reader in READERS]
+    return {"schema_version": 1, "protocol_version": 1, "contract_version": VERSION, "operators": operators, "readers": readers}

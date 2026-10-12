@@ -1,5 +1,114 @@
 # BioPipe
 
+BioPipe is a local bioinformatics pipeline engine with a visual desktop workspace,
+typed data contracts, bounded resource planning and an extensible operator SDK.
+Create branched workflows, reuse saved routes as operators, and connect your own
+AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
+
+Studio 0.2.0 preserves the upstream Python Steps, Readers and YAML tasks,
+with **31 built-in operators, 13 readers and four reusable route templates**:
+GWAS, RNA-seq DE, Proteomics DE and survival analysis.
+
+Download the ready-built Windows desktop package from
+[GitHub Releases](https://github.com/lovegavin/BioPipe/releases/latest).
+Extract the complete ZIP, configure a Python environment as described in its
+`START_HERE.txt`, then double-click `BioPipe Studio.exe`. Python and analysis
+dependencies are not bundled. The repository contains development source;
+compiled desktop distributions are release attachments.
+
+See [release notes](docs/releases/v0.2.0.md) for this version and
+[legacy/](legacy/README.md) for the archived previous source.
+
+## Start Studio
+
+Use Python 3.11+ (tested with 3.12). Build the frontend with Node 22.12+:
+
+```text
+python -m venv .venv
+# Activate .venv using your shell's standard activation command.
+python -m pip install -e ".[agent,dev]"
+cd frontend
+npm install
+npm run build
+cd ..
+python scripts/studio.py
+```
+
+Open `http://127.0.0.1:8765`. The generated CSV demo runs immediately. Format-specific
+dependencies are listed in `requirements-readers.txt`; DESeq2 and survival analyses
+use `requirements-analysis.txt`. Dependencies can also be installed with uv.
+
+On Windows, a built desktop distribution starts by double-clicking
+`dist/BioPipe Studio/BioPipe Studio.exe`. The host bundles the frontend and backend
+startup logic. Python, the backend source and analysis dependencies remain separate.
+See [desktop setup](docs/desktop.md) and [portability](docs/portability.md).
+
+Both desktop and development entry points use `~/.biopipe/studio` by default.
+`BIOPIPE_STUDIO_HOME` or `--profile-dir` selects another shared profile;
+`--workspace` explicitly isolates a workspace. CLI and MCP use the same resolver.
+No developer username, installation drive or fixed backend port is embedded.
+
+## Extend and automate
+
+```text
+biopipe plugin init ./lab_scale
+biopipe plugin check ./lab_scale
+biopipe plugin test ./lab_scale
+biopipe plugin build ./lab_scale
+biopipe plugin install ./lab_scale/dist/lab_scale-0.1.0-py3-none-any.whl
+biopipe sessions list
+biopipe context get
+biopipe mcp
+```
+
+New plugins use the stable `biopipe_sdk` imports, JSON Schema parameters, explicit
+info/axis contracts and standard Python entry points. Wheel installation updates
+the JSON registry while Studio is open. Saved graphs and running jobs retain their
+plugin version pins. Start with the [30-minute SDK tutorial](docs/sdk_quickstart.md).
+
+Agents read semantic selection context and issue revision-checked edit batches.
+Each batch is visible immediately and creates one undo entry. Execution is a
+separate action; MCP requires `--allow-run` for it. The Agent panel also provides
+copyable selection context and client revocation. See [CLI/MCP setup](docs/agent_api.md).
+
+## Documentation
+
+| Guide | Contents |
+| --- | --- |
+| [Operator protocol](docs/operator_protocol.md) | Descriptor, parameters, ports, outputs, versions and compatibility |
+| [SDK quickstart](docs/sdk_quickstart.md) / [reference](docs/sdk_reference.md) | Operator and reader templates, testing and public Python APIs |
+| [Plugin lifecycle](docs/plugins.md) | Hot installation, dependency isolation, pins and migration |
+| [Agent interface](docs/agent_api.md) | CLI, MCP, context, atomic commands, permissions and events |
+| [Data contracts](docs/data_contracts.md) | Static compatibility, runtime checks and metadata propagation |
+| [Reusable routes](docs/route_operators.md) | Save/register separation, nested graphs and version snapshots |
+| [Studio interaction](docs/frontend_requirements.md) | Canvas editing, panels, results and visual design |
+| [Resource runtime](docs/resource_runtime.md) | Fixed budget, admission, spill, cache format and limits |
+| [Desktop](docs/desktop.md) / [portability](docs/portability.md) | Build, launch, profiles and moving computers |
+
+## Validation
+
+```text
+python -m pytest -q
+cd frontend
+npm test
+npm run build
+```
+
+Install the `agent` and `dev` extras for the complete suite. Tests cover actual
+plugin wheels/workers, reader dispatch, plugin upgrade/removal, route compatibility,
+CLI processes, MCP stdio, revision conflicts, shared undo and data propagation.
+Windows desktop verification is available in `scripts/verify_desktop.py`.
+
+The resource budget is chosen once before a run. Actual sizes refine step admission;
+emergency spill protects evictable data. It cannot preempt an active native allocation.
+New SDK plugins currently execute in full-memory mode; built-in `describe` retains
+its real chunk implementation. CUDA kernels and a generic chunk SDK are future work.
+
+## Engine and upstream task reference
+
+The following sections document the existing YAML engine and built-in implementation.
+New external extensions should follow the SDK guides above.
+
 A declarative, plugin-based bioinformatics pipeline framework.
 
 BioPipe writes task workflows in `task.yaml`, reads external files into unified `Form` objects, and applies pluggable `Step` operators to filter, compute statistics, model, and plot those `Form` objects. The core goals are: **format and algorithm decoupling, label alignment safety, traceable outputs, zero-registration extensibility**.
@@ -25,9 +134,7 @@ Repository: <https://github.com/lovegavin/BioPipe>
 - [Runtime: Context and Runner](#runtime-context-and-runner)
 - [Built-in Readers](#built-in-readers)
 - [Built-in Steps](#built-in-steps)
-- [Operator Demos](#operator-demos)
 - [Full Example: GWAS Pipeline](#full-example-gwas-pipeline)
-- [Full Example: RNA-seq Differential Expression](#full-example-rna-seq-differential-expression)
 - [Output Structure](#output-structure)
 - [Extension Guide](#extension-guide)
   - [Add a Reader](#add-a-reader)
@@ -69,7 +176,7 @@ conda env create -f environment.yml
 conda activate biopipe
 ```
 
-`environment.yml` declares the full Conda environment, including Python 3.11, CUDA toolchain, and bioinformatics-specific packages such as `bed-reader`, `bgen-reader`, `cyvcf2`, `h5py`, `pgenlib`.
+`environment.yml` declares a portable CPU environment for the engine and Studio. It has no machine-specific prefix, local build paths, or mandatory CUDA toolchain.
 
 **Option 2: pip**
 
@@ -79,9 +186,9 @@ cd BioPipe
 pip install -r requirements.txt
 ```
 
-`requirements.txt` pins exact versions of all Python dependencies, including `anndata`, `bed-reader`, `bgen-reader`, `cyvcf2`, `dask`, `h5py`, `statsmodels`, `matplotlib`, `scipy`, `pydeseq2`.
+`requirements.txt` installs the engine and Studio through portable package requirements. These are supported version ranges, not a platform-specific environment lock.
 
-> **Note**: `environment.yml` and `requirements.txt` are **mandatory** dependency manifests, not optional. Missing any dependency causes the corresponding Reader or Step to raise `ReaderError` at runtime.
+CSV, text annotation, FASTA and MTX support is included. Install `requirements-readers.txt` for the additional Parquet, AnnData, PLINK, BGEN and VCF readers, or install only the required reader's package. Native reader dependencies must be available for the target OS; they are loaded only when that format is used. The desktop launcher and core pipeline do not require CUDA.
 
 ### Write task.yaml
 
@@ -299,7 +406,7 @@ Duplicate labels are handled by `unique_labels`; the second occurrence gets `#<p
 
 ## Protocol 3: Step Protocol
 
-Step is the operator layer. Filtering, selection, merging, transposition, normalization, group comparison, PCA, regression, HWE, MAF, LD pruning, plotting — all are pluggable Steps.
+Step is the operator layer. Filtering, selection, merging, transposition, PCA, regression, HWE, MAF, LD pruning, plotting — all are pluggable Steps.
 
 ### Base class contract
 
@@ -436,375 +543,13 @@ Responsibilities:
 
 ## Built-in Steps
 
-Every Step is domain-agnostic: it operates on any `Form` whose dimensions match its parameters. Steps are grouped below by purpose. For each step, `In` is the number of inputs, `Out` is the context key (`params.output`), and the listed parameters are the ones the step reads from `ctx.step_params`.
-
-### Data inspection
-
-#### `describe`
-
-Print and export a summary of one input form. No parameters.
-
-- **In**: 1
-- **Params**: none
-- **Export**: shape, dims, info, labels, global stats (min/max/mean/std/n_valid/n_missing)
-
----
-
-### Dimension and label
-
-#### `transpose`
-
-Reorder the axes of a form. Labels are unchanged; only axis order changes.
-
-- **In**: 1
-- **Params**:
-  - `order` (list of dim names, required): the desired new axis order
-  - `output` (default `transpose`)
-
-#### `rename_dim`
-
-Rename a single dimension.
-
-- **In**: 1
-- **Params**:
-  - `from` (str, required): current dim name
-  - `to` (str, required): new dim name
-  - `output` (default `rename_dim`)
-
-#### `select`
-
-Keep only the listed labels along one dimension.
-
-- **In**: 1
-- **Params**:
-  - `dim` (str, required)
-  - `labels` (list, required): label names to keep, in output order
-  - `output` (default `select`)
-
-#### `drop`
-
-Remove named labels from one dimension.
-
-- **In**: 1
-- **Params**:
-  - `dim` (str, required)
-  - `labels` (list, required): label names to remove
-  - `output` (default `drop`)
-
-#### `concat`
-
-Concatenate several forms along one dimension. Aligns on non-axis dims by label intersection.
-
-- **In**: `"*"` (at least 2)
-- **Params**:
-  - `axis` (str, required): dim to concatenate along
-  - `align` (optional): `{dim: <name>, key: {input_name: label}}` for key-based alignment
-  - `label` (optional): name for the merged key column
-  - `output` (required)
-
-#### `attach_info`
-
-Attach axis-parallel info arrays from a source form onto a target, aligned by label.
-
-- **In**: 2 (target, source)
-- **Params**:
-  - `fields` (list, required): info keys to attach
-  - `target_dim` (str, required)
-  - `output` (default `attach_info`)
-
----
-
-### QC filtering
-
-#### `filter_min`
-
-Drop positions along `dim` whose value does not reach `min_value` in at least `min_samples` samples.
-
-- **In**: 1
-- **Params**:
-  - `dim` (str, required)
-  - `min_value` (float, default 1)
-  - `min_samples` (int, default 1)
-  - `output` (default `filter_min`)
-- **Export**: `kept_labels`, `dropped_labels`, counts
-
-#### `missing`
-
-Filter positions along one dimension by missing rate.
-
-- **In**: 1
-- **Params**:
-  - `dim` (str, required)
-  - `threshold` (float, default 0.10): max allowed missing rate
-  - `output` (default `missing`)
-
-#### `maf`
-
-Filter positions along one dimension by minor allele frequency.
-
-- **In**: 1
-- **Params**:
-  - `dim` (str, required)
-  - `threshold` (float, default 0.01): minimum allowed MAF
-  - `output` (default `maf`)
-- **Requires**: `form.info["missing_code"]` and `form.info["ploidy"]`
-
-#### `hwe`
-
-Filter positions along one dimension by Hardy-Weinberg exact test p-value.
-
-- **In**: 1
-- **Params**:
-  - `dim` (str, required)
-  - `threshold` (float, default 1e-6): minimum allowed p-value
-  - `output` (default `hwe`)
-- **Requires**: `form.info["missing_code"]` and `form.info["ploidy"] == 2`
-
-#### `ld_prune`
-
-Prune positions along one dimension by pairwise LD.
-
-- **In**: 1
-- **Params**:
-  - `dim` (str, required)
-  - `window` (int, default 50): window size in positions
-  - `r2` (float, default 0.2): r² threshold
-  - `output` (default `ld_prune`)
-
----
-
-### Transformation
-
-#### `normalize`
-
-Scale a form along one dimension. Methods:
-
-- `cpm`: counts per million, scaled to `target_sum`
-- `total`: divide each sample by its total
-- `median_of_ratios`: DESeq2-style size factors
-- `zscore`: column-wise z-score
-
-- **In**: 1
-- **Params**:
-  - `method` (str, required)
-  - `dim` (str, required): typically the sample axis
-  - `target_sum` (float, default 1e6, only for `cpm`)
-  - `output` (default `normalize`)
-- **Export**: per-sample `size_factor`, `sum_before`, `sum_after`, min/max/mean/std
-
-#### `log_transform`
-
-Apply `log_base(x + pseudocount)` elementwise. Missing values preserved.
-
-- **In**: 1
-- **Params**:
-  - `base` (int, float, or `"e"`, default 2)
-  - `pseudocount` (float, default 1, must be > 0)
-  - `output` (default `log_transform`)
-- **Export**: `before` and `after` distributions (min/max/mean/std/quartiles)
-
----
-
-### Statistical modeling
-
-#### `compare_groups`
-
-Two-group comparison along one dimension. All statistics delegated to classical libraries:
-
-- `ttest` → `scipy.stats.ttest_ind(equal_var=True)`
-- `welch` → `scipy.stats.ttest_ind(equal_var=False)`
-- `mannwhitney` → `scipy.stats.mannwhitneyu`
-- `deseq2` → `pydeseq2` negative binomial GLM
-
-- **In**: 2 (data form, metadata form)
-- **Params**:
-  - `dim` (str, required): feature dim of the data form
-  - `group_dim` (str, required): sample dim shared by both forms
-  - `group_label` (str, required): column on the metadata's other dim
-  - `group_a` (str or int, required)
-  - `group_b` (str or int, required)
-  - `method` (str, default `ttest`)
-  - `output` (default `compare_groups`)
-- **Output form**: `dims = [dim, "statistic"]`; `statistic` labels are `log2FC`, `mean_a`, `mean_b`, `stat`, `P`, `N`, plus `Q_VALUE` when `method="deseq2"`
-- **Export**: per-feature results and per-feature failures
-
-#### `pca`
-
-Principal component analysis along one dimension of a 2D form.
-
-- **In**: 1
-- **Params**:
-  - `dim` (str, required): dim to compress
-  - `n_components` (int, default 10)
-  - `output` (default `pca`)
-- **Requires**: `form.info["missing_code"]`
-- **Output form**: `dims = [<observation dim>, "component"]`; labels are `PC1`, `PC2`, ...
-
-#### `regress`
-
-Multiple regression over one dimension of a wide form. Tests each remaining position as a predictor, adjusting for covariates.
-
-- **In**: 1
-- **Params**:
-  - `dim` (str, required): dimension to iterate over
-  - `response` (str, required): label of the response column
-  - `covariates` (list, optional)
-  - `method` (str, default `auto`): `ols`, `logit`, or `auto`
-  - `output` (default `regress`)
-- **Output form**: `dims = [dim, "statistic"]` with `BETA`, `SE`, `P`, `N`
-
-#### `correction`
-
-Multiple-testing correction on a result table. Adds `Q_VALUE` and `SIGNIFICANT` columns.
-
-- **In**: 1
-- **Params**:
-  - `method` (str, required): `bonferroni` or `fdr`
-  - `alpha` (float, default 0.05)
-  - `pfield` (str, default `P`): name of the p-value column
-  - `dim` (str, default `statistic`)
-  - `output` (default `correction`)
-
----
-
-### Plotting
-
-All plotting steps write to `output/figures/<filename>` and do not modify the Context. They have `outputs = []`.
-
-#### `volcano`
-
-Volcano plot: x = log2FC, y = -log10(P), color by significance.
-
-- **In**: 1
-- **Params**:
-  - `dim` (default `gene`)
-  - `stat_dim` (default `statistic`)
-  - `lfc_label` (default `log2FC`)
-  - `p_label` (default `P`)
-  - `lfc_threshold` (float, default 1.0)
-  - `p_threshold` (float, default 0.05)
-  - `filename` (required)
-  - `title`, `xlabel`, `ylabel`, `point_size`, `alpha`, `label_top` (optional)
-
-#### `ma_plot`
-
-MA plot: x = log2 mean, y = log2FC, color by P < threshold.
-
-- **In**: 1
-- **Params**:
-  - `dim` (default `gene`)
-  - `stat_dim` (default `statistic`)
-  - `lfc_label` (default `log2FC`)
-  - `mean_a_label` (default `mean_a`)
-  - `mean_b_label` (default `mean_b`)
-  - `p_label` (default `P`)
-  - `p_threshold` (float, default 0.05)
-  - `filename` (required)
-  - `title`, `xlabel`, `ylabel`, `point_size`, `alpha`, `label_top` (optional)
-
-#### `heatmap`
-
-Matrix heatmap with optional row selection, standardization, and clustering.
-
-- **In**: 1
-- **Params**:
-  - `dim` (default `feature`)
-  - `other_dim` (default `sample`)
-  - `select` (str, default `variance`): `variance`, `label`, or `all`
-  - `top_n` (int, default 50, only for `select=variance`)
-  - `labels` (list, required for `select=label`)
-  - `standardize` (str, default `none`): `row`, `col`, or `none`
-  - `cluster_rows` (bool, default True)
-  - `cluster_cols` (bool, default True)
-  - `filename` (required)
-  - `title`, `cmap`, `nan_color`, `figsize`, `show_row_labels`, `show_col_labels` (optional)
-
-#### `boxplot`
-
-Boxplot of one value column split by groups from a metadata form.
-
-- **In**: 2 (data form, metadata form)
-- **Params**:
-  - `dim` (default `feature`)
-  - `value_label` (str, required): column to plot
-  - `group_dim` (str, required): sample dim shared by both forms
-  - `group_label` (str, required): column on the metadata's other dim
-  - `groups` (list, optional): subset and order of groups to show
-  - `filename` (required)
-  - `title`, `xlabel`, `ylabel`, `show_points`, `point_size`, `point_alpha` (optional)
-- **Export**: per-group summary (n, min, q25, median, q75, max, mean, std)
-
-#### `histogram`
-
-Histogram of one labeled column.
-
-- **In**: 1
-- **Params**:
-  - `dim` (default `feature`)
-  - `value_label` (str, required)
-  - `bins` (int, default 40)
-  - `filename` (required)
-  - `title`, `xlabel`, `ylabel`, `log_y` (optional)
-
-#### `scatter`
-
-Scatter plot of two labeled columns, optional color group.
-
-- **In**: 1
-- **Params**:
-  - `dim` (default `feature`)
-  - `x_label`, `y_label` (required)
-  - `color_label` (optional)
-  - `filename` (required)
-  - `title`, `xlabel`, `ylabel`, `point_size`, `alpha` (optional)
-
-#### `line`
-
-Line plot of one labeled column against another. Sorted by x by default.
-
-- **In**: 1
-- **Params**:
-  - `dim` (default `feature`)
-  - `x_label`, `y_label` (required)
-  - `filename` (required)
-  - `title`, `xlabel`, `ylabel`, `sort` (optional)
-
-#### `manhattan`
-
-Genome-wide Manhattan plot: -log10(P) against cumulative genomic position, chromosomes in natural order.
-
-- **In**: 1
-- **Params**:
-  - `dim` (default `feature`)
-  - `chrom_label`, `pos_label`, `p_label` (required)
-  - `p_dim` (default: same as `dim`)
-  - `filename` (required)
-  - `threshold`, `title`, `point_size`, `alpha` (optional)
-
----
-
-## Operator Demos
-
-Each operator has a dedicated demo task under `tasks/<operator>_demo/` that runs the operator against real data and produces a JSON export plus optional figures.
-
-| Demo | Operator | Data |
-|---|---|---|
-| `csv_demo` | `describe` | small CSV |
-| `filter_min_demo` | `filter_min` | airway counts |
-| `normalize_demo` | `normalize` | airway counts |
-| `log_transform_demo` | `log_transform` | airway counts |
-| `compare_groups_demo` | `compare_groups` | airway counts + metadata |
-| `volcano_demo` | `volcano` | airway DE result |
-| `ma_plot_demo` | `ma_plot` | airway DE result |
-| `heatmap_demo` | `heatmap` | airway counts |
-| `boxplot_demo` | `boxplot` | airway counts + metadata |
-
-Full pipelines:
-
-| Task | Description |
+| Category | Step |
 |---|---|
-| `gwas_demo` | Complete GWAS workflow |
-| `rnaseq_de_demo` | Complete RNA-seq differential expression workflow |
+| Data inspection | `describe` |
+| Dimension/label | `transpose`, `rename_dim`, `select`, `drop`, `concat`, `attach_info` |
+| QC filtering | `missing`, `maf`, `hwe`, `ld_prune` |
+| Statistical modeling | `pca`, `regress`, `correction` |
+| Plotting | `histogram`, `scatter`, `line`, `manhattan` |
 
 ---
 
@@ -915,171 +660,7 @@ python scripts/run.py tasks/gwas_demo
 
 ---
 
-## Full Example: RNA-seq Differential Expression
-
-The following example comes from `tasks/rnaseq_de_demo/task.yaml` in the repository, showing a complete RNA-seq differential expression workflow on the airway dataset (8 samples, 4 treated / 4 control).
-
-```yaml
-name: rnaseq_de_demo
-
-sources:
-  counts:
-    path: input/airway_counts.csv
-    dims: [gene, sample]
-    labels:
-      gene: {sample: 0}
-      sample: builtin
-
-  meta:
-    path: input/airway_colData.csv
-    dims: [sample, feature]
-    labels:
-      sample: {feature: 0}
-      feature: builtin
-
-steps:
-  # 1. Filter low-expression genes
-  - name: filter_min
-    inputs: [counts]
-    params:
-      dim: gene
-      min_value: 10
-      min_samples: 3
-      output: counts_filtered
-
-  # 2. Differential expression: DESeq2 negative binomial GLM
-  - name: compare_groups
-    inputs: [counts_filtered, meta]
-    params:
-      dim: gene
-      group_dim: sample
-      group_label: dex
-      group_a: untrt
-      group_b: trt
-      method: deseq2
-      output: de_result
-
-  # 3. Visualization: volcano and MA plot
-  - name: volcano
-    inputs: [de_result]
-    params:
-      dim: gene
-      stat_dim: statistic
-      lfc_label: log2FC
-      p_label: Q_VALUE
-      lfc_threshold: 1.0
-      p_threshold: 0.05
-      filename: volcano.png
-      title: "Airway: dex vs untrt"
-      label_top: 8
-
-  - name: ma_plot
-    inputs: [de_result]
-    params:
-      dim: gene
-      stat_dim: statistic
-      lfc_label: log2FC
-      mean_a_label: mean_a
-      mean_b_label: mean_b
-      p_label: Q_VALUE
-      p_threshold: 0.05
-      filename: ma.png
-      title: "Airway: dex vs untrt"
-
-  # 4. Normalization and log transform for exploratory visualization
-  - name: normalize
-    inputs: [counts_filtered]
-    params:
-      method: cpm
-      dim: sample
-      target_sum: 1e6
-      output: counts_cpm
-
-  - name: log_transform
-    inputs: [counts_cpm]
-    params:
-      base: 2
-      pseudocount: 1
-      output: counts_log
-
-  # 5. Sample clustering check: PCA + scatter
-  - name: pca
-    inputs: [counts_log]
-    params:
-      dim: gene
-      n_components: 10
-      output: pcs
-
-  - name: scatter
-    inputs: [pcs]
-    params:
-      dim: component
-      x_label: PC1
-      y_label: PC2
-      filename: pca.png
-      title: "Sample PCA"
-
-  # 6. Heatmap of the top 50 most variable genes
-  - name: heatmap
-    inputs: [counts_log]
-    params:
-      dim: gene
-      other_dim: sample
-      select: variance
-      top_n: 50
-      standardize: row
-      cluster_rows: true
-      cluster_cols: true
-      filename: top50_heatmap.png
-      title: "Top 50 variable genes"
-
-  # 7. Single-gene boxplot: ZBTB16 (a canonical dex-induced marker)
-  - name: transpose
-    inputs: [counts_log]
-    params:
-      order: [sample, gene]
-      output: samples_by_gene
-
-  - name: boxplot
-    inputs: [samples_by_gene, meta]
-    params:
-      dim: gene
-      value_label: ENSG00000109906
-      group_dim: sample
-      group_label: dex
-      filename: ZBTB16_boxplot.png
-      title: "ZBTB16 by dex"
-      ylabel: "log2(CPM + 1)"
-
-  # 8. Result summary
-  - name: describe
-    inputs: [de_result]
-```
-
-Download the data (airway, GSE52778):
-
-```bash
-mkdir -p tasks/rnaseq_de_demo/input
-cd tasks/rnaseq_de_demo/input
-
-wget -O airway_counts.csv \
-  "http://ftp.dk.xemacs.org/bioconductor/help/course-materials/2022/CSAMA/lecture/1-monday/lecture-01-data/airway_counts.csv"
-
-wget -O airway_colData.csv \
-  "http://ftp.dk.xemacs.org/bioconductor/help/course-materials/2022/CSAMA/lecture/1-monday/lecture-01-data/airway_colData.csv"
-```
-
-Run:
-
-```bash
-python scripts/run.py tasks/rnaseq_de_demo
-```
-
----
-
 ## Output Structure
-
-Example output for the GWAS pipeline:
 
 ```text
 output/
@@ -1108,33 +689,6 @@ output/
     pvalue_hist.png
 ```
 
-Example output for the RNA-seq DE pipeline:
-
-```text
-output/
-  run_summary.json
-  run_summary.txt
-  steps/
-    01_filter_min.json
-    02_compare_groups.json
-    03_volcano.json
-    04_ma_plot.json
-    05_normalize.json
-    06_log_transform.json
-    07_pca.json
-    08_scatter.json
-    09_heatmap.json
-    10_transpose.json
-    11_boxplot.json
-    12_describe.json
-  figures/
-    volcano.png
-    ma.png
-    pca.png
-    top50_heatmap.png
-    ZBTB16_boxplot.png
-```
-
 - `run_summary.json`: run index with step names, timings, inputs, parameters, export paths.
 - `run_summary.txt`: human-readable index.
 - `steps/*.json`: full export of each Step.
@@ -1143,6 +697,10 @@ output/
 ---
 
 ## Extension Guide
+
+For external plugins, use the [SDK quickstart](docs/sdk_quickstart.md) and
+[protocol](docs/operator_protocol.md). The instructions below are for maintaining
+built-ins inside the engine repository; they require a service restart.
 
 ### Add a Reader
 
@@ -1196,7 +754,6 @@ output/
 - **Axis-parallel metadata sync**: `axis_info` guarantees subset safety.
 - **Explicit errors**: a clear exception hierarchy.
 - **Full export**: every step's result is traceable.
-- **Classical backends**: `compare_groups` delegates all statistics to `scipy` and `pydeseq2`; no statistical model is re-implemented.
 
 ---
 
@@ -1236,54 +793,20 @@ src/
       __init__.py           # Step auto-discovery
       base.py               # Step base class
       steps/                # operators
-        # data inspection
-        describe.py
-        # dimension / label
-        transpose.py
-        rename_dim.py
-        select.py
-        drop.py
-        concat.py
-        attach_info.py
-        # QC filtering
-        filter_min.py
-        missing.py
         maf.py
         hwe.py
-        ld_prune.py
-        # transformation
-        normalize.py
-        log_transform.py
-        # statistical modeling
-        compare_groups.py
         pca.py
         regress.py
         correction.py
-        # plotting
-        volcano.py
-        ma_plot.py
-        heatmap.py
-        boxplot.py
-        histogram.py
-        scatter.py
-        line.py
         manhattan.py
-        _plot_helpers.py
+        scatter.py
+        ...
 
 tasks/
   csv_demo/                 # minimal CSV example
   gwas_demo/                # full GWAS pipeline example
-  rnaseq_de_demo/           # full RNA-seq DE pipeline example
   fasta_demo/               # FASTA example
   vcf_demo/                 # VCF example
-  filter_min_demo/          # operator demo: filter_min
-  normalize_demo/           # operator demo: normalize
-  log_transform_demo/       # operator demo: log_transform
-  compare_groups_demo/      # operator demo: compare_groups
-  volcano_demo/             # operator demo: volcano
-  ma_plot_demo/             # operator demo: ma_plot
-  heatmap_demo/             # operator demo: heatmap
-  boxplot_demo/             # operator demo: boxplot
   ...
 
 environment.yml             # Conda environment definition
@@ -1294,22 +817,21 @@ requirements.txt            # pip dependency manifest
 
 ## Development and Testing
 
+An opt-in fixed-order resource planner now supports lazy sources, run-local
+disk spill/reload, per-run logs, an RSS spill monitor, and streaming `describe`.
+See [Resource runtime](docs/resource_runtime.md) for budgets, limitations and
+reproducible verification. Use `requirements-runtime.txt` for the portable CPU
+runtime; format-specific Readers require their optional dependencies.
+
 ```bash
 # Activate the environment
 conda activate biopipe
 
-# Run the full test suite
+# Run tests
 pytest
 
 # Run an example task
 python scripts/run.py tasks/csv_demo
-
-# Run an operator demo
-python scripts/run.py tasks/filter_min_demo
-python scripts/run.py tasks/compare_groups_demo
-
-# Run the end-to-end RNA-seq DE pipeline
-python scripts/run.py tasks/rnaseq_de_demo
 ```
 
 ---
