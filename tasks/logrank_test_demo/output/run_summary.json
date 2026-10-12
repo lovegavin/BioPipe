@@ -1,0 +1,50 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/logrank_test_demo",
+  "generated_at": "2026-10-12T03:35:51.007893+00:00",
+  "n_steps": 2,
+  "total_elapsed": 0.1387,
+  "steps": [
+    {
+      "index": 1,
+      "name": "logrank_test",
+      "elapsed": 0.1385,
+      "inputs": [
+        "clinical"
+      ],
+      "params": {
+        "time_label": "OS_Time_nature2012",
+        "event_label": "OS_event_nature2012",
+        "group_label": "AJCC_Stage_nature2012",
+        "group_map": {
+          "Stage IA": "Stage I",
+          "Stage IB": "Stage I",
+          "Stage IIA": "Stage II",
+          "Stage IIB": "Stage II",
+          "Stage IIIA": "Stage III",
+          "Stage IIIB": "Stage III",
+          "Stage IIIC": "Stage III",
+          "Stage IV": "Stage IV"
+        },
+        "groups": [
+          "Stage I",
+          "Stage II",
+          "Stage III",
+          "Stage IV"
+        ],
+        "pairwise": true,
+        "output": "logrank_result"
+      },
+      "export_path": "steps/01_logrank_test.json"
+    },
+    {
+      "index": 2,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "logrank_result"
+      ],
+      "params": {},
+      "export_path": "steps/02_describe.json"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "kind": "logrank_test",
+  "time_label": "OS_Time_nature2012",
+  "event_label": "OS_event_nature2012",
+  "group_label": "AJCC_Stage_nature2012",
+  "group_map": {
+    "Stage IA": "Stage I",
+    "Stage IB": "Stage I",
+    "Stage IIA": "Stage II",
+    "Stage IIB": "Stage II",
+    "Stage IIIA": "Stage III",
+    "Stage IIIB": "Stage III",
+    "Stage IIIC": "Stage III",
+    "Stage IV": "Stage IV"
+  },
+  "groups": [
+    "Stage I",
+    "Stage II",
+    "Stage III",
+    "Stage IV"
+  ],
+  "n_total": 769,
+  "n_events": 77,
+  "groups_summary": {
+    "Stage I": {
+      "n": 133,
+      "n_events": 10
+    },
+    "Stage II": {
+      "n": 446,
+      "n_events": 39
+    },
+    "Stage III": {
+      "n": 175,
+      "n_events": 20
+    },
+    "Stage IV": {
+      "n": 15,
+      "n_events": 8
+    }
+  },
+  "overall": {
+    "chi2": 10.278011066550302,
+    "df": 3,
+    "P": 0.0163449235779444
+  },
+  "pairwise": [
+    {
+      "comparison": "Stage I vs Stage II",
+      "chi2": 1.2722578405797875,
+      "df": 1,
+      "P": 0.259343537538819,
+      "n_a": 133,
+      "n_b": 446
+    },
+    {
+      "comparison": "Stage I vs Stage III",
+      "chi2": 2.883743101283862,
+      "df": 1,
+      "P": 0.08947780581355706,
+      "n_a": 133,
+      "n_b": 175
+    },
+    {
+      "comparison": "Stage I vs Stage IV",
+      "chi2": 11.256653791814735,
+      "df": 1,
+      "P": 0.0007933810414012746,
+      "n_a": 133,
+      "n_b": 15
+    },
+    {
+      "comparison": "Stage II vs Stage III",
+      "chi2": 1.055872581126377,
+      "df": 1,
+      "P": 0.3041584447765872,
+      "n_a": 446,
+      "n_b": 175
+    },
+    {
+      "comparison": "Stage II vs Stage IV",
+      "chi2": 6.7182097700389525,
+      "df": 1,
+      "P": 0.009543337468302344,
+      "n_a": 446,
+      "n_b": 15
+    },
+    {
+      "comparison": "Stage III vs Stage IV",
+      "chi2": 4.812120250065902,
+      "df": 1,
+      "P": 0.028260254152011197,
+      "n_a": 175,
+      "n_b": 15
+    }
+  ]
+}

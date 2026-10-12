@@ -1,0 +1,107 @@
+{
+  "kind": "forest_plot",
+  "filename": "forest.png",
+  "path": "/home/lovagavin/biopipe/tasks/survival_demo/output/figures/forest.png",
+  "dim": "covariate",
+  "stat_dim": "statistic",
+  "hr_label": "HR",
+  "low_label": "CI_low",
+  "high_label": "CI_high",
+  "p_label": "P",
+  "sort_by": "p",
+  "log_scale": true,
+  "n_total": 13,
+  "n_valid": 11,
+  "n_significant": 2,
+  "n_ns": 9,
+  "rows": [
+    {
+      "covariate": "Age_at_Initial_Pathologic_Diagnosis_nature2012",
+      "HR": 1.0284684896469116,
+      "CI_low": 1.009866714477539,
+      "CI_high": 1.0474129915237427,
+      "P": 0.0025760449934750795,
+      "significant": true
+    },
+    {
+      "covariate": "AJCC_Stage_nature2012_Stage IIIC",
+      "HR": 5.9136199951171875,
+      "CI_low": 1.603843331336975,
+      "CI_high": 21.8044376373291,
+      "P": 0.007595548406243324,
+      "significant": true
+    },
+    {
+      "covariate": "AJCC_Stage_nature2012_Stage IV",
+      "HR": 2.895548105239868,
+      "CI_low": 0.9823923110961914,
+      "CI_high": 8.534470558166504,
+      "P": 0.05388582870364189,
+      "significant": false
+    },
+    {
+      "covariate": "AJCC_Stage_nature2012_Stage IA",
+      "HR": 0.41795000433921814,
+      "CI_low": 0.10243953764438629,
+      "CI_high": 1.705222487449646,
+      "P": 0.22396987676620483,
+      "significant": false
+    },
+    {
+      "covariate": "AJCC_Stage_nature2012_Stage IIIA",
+      "HR": 1.4224028587341309,
+      "CI_low": 0.4799582362174988,
+      "CI_high": 4.215428829193115,
+      "P": 0.524994969367981,
+      "significant": false
+    },
+    {
+      "covariate": "AJCC_Stage_nature2012_Stage III",
+      "HR": 1.6616324186325073,
+      "CI_low": 0.3157058656215668,
+      "CI_high": 8.745553016662598,
+      "P": 0.548978328704834,
+      "significant": false
+    },
+    {
+      "covariate": "AJCC_Stage_nature2012_Stage IB",
+      "HR": 1.7326115369796753,
+      "CI_low": 0.20514161884784698,
+      "CI_high": 14.633514404296875,
+      "P": 0.6136431097984314,
+      "significant": false
+    },
+    {
+      "covariate": "AJCC_Stage_nature2012_Stage IIA",
+      "HR": 1.230965495109558,
+      "CI_low": 0.48384785652160645,
+      "CI_high": 3.1317203044891357,
+      "P": 0.6627212762832642,
+      "significant": false
+    },
+    {
+      "covariate": "AJCC_Stage_nature2012_Stage IIB",
+      "HR": 1.190252423286438,
+      "CI_low": 0.4516943097114563,
+      "CI_high": 3.1364150047302246,
+      "P": 0.7246062159538269,
+      "significant": false
+    },
+    {
+      "covariate": "AJCC_Stage_nature2012_Stage II",
+      "HR": 1.2581473588943481,
+      "CI_low": 0.34114184975624084,
+      "CI_high": 4.64010763168335,
+      "P": 0.7301933169364929,
+      "significant": false
+    },
+    {
+      "covariate": "AJCC_Stage_nature2012_Stage IIIB",
+      "HR": 1.176864504814148,
+      "CI_low": 0.3666475713253021,
+      "CI_high": 3.7774970531463623,
+      "P": 0.7843176126480103,
+      "significant": false
+    }
+  ]
+}

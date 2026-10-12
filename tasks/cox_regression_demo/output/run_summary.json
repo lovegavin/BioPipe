@@ -1,0 +1,41 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/cox_regression_demo",
+  "generated_at": "2026-10-12T03:40:42.813499+00:00",
+  "n_steps": 2,
+  "total_elapsed": 1.016,
+  "steps": [
+    {
+      "index": 1,
+      "name": "cox_regression",
+      "elapsed": 1.0159,
+      "inputs": [
+        "clinical"
+      ],
+      "params": {
+        "time_label": "OS_Time_nature2012",
+        "event_label": "OS_event_nature2012",
+        "covariates": [
+          "Age_at_Initial_Pathologic_Diagnosis_nature2012",
+          "AJCC_Stage_nature2012",
+          "Gender_nature2012"
+        ],
+        "categorical": [
+          "AJCC_Stage_nature2012",
+          "Gender_nature2012"
+        ],
+        "output": "cox_result"
+      },
+      "export_path": "steps/01_cox_regression.json"
+    },
+    {
+      "index": 2,
+      "name": "describe",
+      "elapsed": 0.0001,
+      "inputs": [
+        "cox_result"
+      ],
+      "params": {},
+      "export_path": "steps/02_describe.json"
+    }
+  ]
+}

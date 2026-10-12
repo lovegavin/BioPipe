@@ -1,0 +1,17 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/logrank_test_demo
+generated : 2026-10-12T03:35:51.007893+00:00
+steps     : 2
+elapsed   : 0.139s
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   logrank_test            0.139s   steps/01_logrank_test.json
+2   describe                0.000s   steps/02_describe.json
+
+============================================================
+Per-step details are in output/steps/. This file is an index only.
+============================================================

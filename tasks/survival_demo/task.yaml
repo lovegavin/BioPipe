@@ -1,0 +1,89 @@
+name: survival_demo
+
+sources:
+  clinical:
+    path: input/tcga_brca_clinical_raw.tsv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args:
+      reader: csv
+      sep: "\t"
+
+steps:
+  # 1. Kaplan-Meier 曲线：按 AJCC 分期
+  - name: kaplan_meier
+    inputs: [clinical]
+    params:
+      time_label: OS_Time_nature2012
+      event_label: OS_event_nature2012
+      group_label: AJCC_Stage_nature2012
+      group_map:
+        "Stage IA": "Stage I"
+        "Stage IB": "Stage I"
+        "Stage IIA": "Stage II"
+        "Stage IIB": "Stage II"
+        "Stage IIIA": "Stage III"
+        "Stage IIIB": "Stage III"
+        "Stage IIIC": "Stage III"
+        "Stage IV": "Stage IV"
+      groups: ["Stage I", "Stage II", "Stage III", "Stage IV"]
+      filename: km_stage.png
+      title: "TCGA BRCA: overall survival by AJCC stage"
+      xlabel: "Time (days)"
+      show_censors: true
+
+  # 2. Log-rank 检验：全局 + 两两比较
+  - name: logrank_test
+    inputs: [clinical]
+    params:
+      time_label: OS_Time_nature2012
+      event_label: OS_event_nature2012
+      group_label: AJCC_Stage_nature2012
+      group_map:
+        "Stage IA": "Stage I"
+        "Stage IB": "Stage I"
+        "Stage IIA": "Stage II"
+        "Stage IIB": "Stage II"
+        "Stage IIIA": "Stage III"
+        "Stage IIIB": "Stage III"
+        "Stage IIIC": "Stage III"
+        "Stage IV": "Stage IV"
+      groups: ["Stage I", "Stage II", "Stage III", "Stage IV"]
+      pairwise: true
+      output: logrank_result
+
+  # 3. 多因素 Cox 回归
+  - name: cox_regression
+    inputs: [clinical]
+    params:
+      time_label: OS_Time_nature2012
+      event_label: OS_event_nature2012
+      covariates:
+        - Age_at_Initial_Pathologic_Diagnosis_nature2012
+        - AJCC_Stage_nature2012
+        - Gender_nature2012
+      categorical:
+        - AJCC_Stage_nature2012
+        - Gender_nature2012
+      output: cox_result
+
+  # 4. 森林图
+  - name: forest_plot
+    inputs: [cox_result]
+    params:
+      dim: covariate
+      stat_dim: statistic
+      hr_label: HR
+      low_label: CI_low
+      high_label: CI_high
+      p_label: P
+      filename: forest.png
+      title: "TCGA BRCA: multivariable Cox regression"
+      xlabel: "Hazard ratio (95% CI)"
+      sort_by: p
+
+  # 5. 结果摘要
+  - name: describe
+    inputs: [logrank_result]

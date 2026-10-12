@@ -1,0 +1,52 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/forest_plot_demo",
+  "generated_at": "2026-10-12T03:49:32.820599+00:00",
+  "n_steps": 2,
+  "total_elapsed": 1.401,
+  "steps": [
+    {
+      "index": 1,
+      "name": "cox_regression",
+      "elapsed": 1.1889,
+      "inputs": [
+        "clinical"
+      ],
+      "params": {
+        "time_label": "OS_Time_nature2012",
+        "event_label": "OS_event_nature2012",
+        "covariates": [
+          "Age_at_Initial_Pathologic_Diagnosis_nature2012",
+          "AJCC_Stage_nature2012",
+          "Gender_nature2012"
+        ],
+        "categorical": [
+          "AJCC_Stage_nature2012",
+          "Gender_nature2012"
+        ],
+        "output": "cox_result"
+      },
+      "export_path": "steps/01_cox_regression.json"
+    },
+    {
+      "index": 2,
+      "name": "forest_plot",
+      "elapsed": 0.2121,
+      "inputs": [
+        "cox_result"
+      ],
+      "params": {
+        "dim": "covariate",
+        "stat_dim": "statistic",
+        "hr_label": "HR",
+        "low_label": "CI_low",
+        "high_label": "CI_high",
+        "p_label": "P",
+        "filename": "forest.png",
+        "title": "TCGA BRCA: multivariable Cox regression",
+        "xlabel": "Hazard ratio (95% CI)",
+        "sort_by": "p"
+      },
+      "export_path": "steps/02_forest_plot.json"
+    }
+  ]
+}

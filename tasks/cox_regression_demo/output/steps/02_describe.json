@@ -1,0 +1,47 @@
+{
+  "shape": [
+    13,
+    7
+  ],
+  "dims": [
+    "covariate",
+    "statistic"
+  ],
+  "info": {
+    "missing_code": NaN
+  },
+  "labels": {
+    "covariate": {
+      "Age_at_Initial_Pathologic_Diagnosis_nature2012": 0,
+      "AJCC_Stage_nature2012_Stage IA": 1,
+      "AJCC_Stage_nature2012_Stage IB": 2,
+      "AJCC_Stage_nature2012_Stage II": 3,
+      "AJCC_Stage_nature2012_Stage IIA": 4,
+      "AJCC_Stage_nature2012_Stage IIB": 5,
+      "AJCC_Stage_nature2012_Stage III": 6,
+      "AJCC_Stage_nature2012_Stage IIIA": 7,
+      "AJCC_Stage_nature2012_Stage IIIB": 8,
+      "AJCC_Stage_nature2012_Stage IIIC": 9,
+      "AJCC_Stage_nature2012_Stage IV": 10,
+      "AJCC_Stage_nature2012_Stage X": 11,
+      "Gender_nature2012_MALE": 12
+    },
+    "statistic": {
+      "coef": 0,
+      "HR": 1,
+      "se": 2,
+      "z": 3,
+      "P": 4,
+      "CI_low": 5,
+      "CI_high": 6
+    }
+  },
+  "global": {
+    "min": -15.719511032104492,
+    "max": 8468.9375,
+    "mean": 128.34991455078125,
+    "std": 938.6744995117188,
+    "n_valid": 89,
+    "n_missing": 2
+  }
+}

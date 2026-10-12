@@ -1,0 +1,37 @@
+{
+  "shape": [
+    7,
+    3
+  ],
+  "dims": [
+    "comparison",
+    "statistic"
+  ],
+  "info": {
+    "missing_code": NaN
+  },
+  "labels": {
+    "comparison": {
+      "overall": 0,
+      "Stage I vs Stage II": 1,
+      "Stage I vs Stage III": 2,
+      "Stage I vs Stage IV": 3,
+      "Stage II vs Stage III": 4,
+      "Stage II vs Stage IV": 5,
+      "Stage III vs Stage IV": 6
+    },
+    "statistic": {
+      "chi2": 0,
+      "df": 1,
+      "P": 2
+    }
+  },
+  "global": {
+    "min": 0.0007933810702525079,
+    "max": 11.256653785705566,
+    "mean": 2.284989833831787,
+    "std": 3.216136932373047,
+    "n_valid": 21,
+    "n_missing": 0
+  }
+}

@@ -1,0 +1,17 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/cox_regression_demo
+generated : 2026-10-12T03:40:42.813499+00:00
+steps     : 2
+elapsed   : 1.016s
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   cox_regression          1.016s   steps/01_cox_regression.json
+2   describe                0.000s   steps/02_describe.json
+
+============================================================
+Per-step details are in output/steps/. This file is an index only.
+============================================================
