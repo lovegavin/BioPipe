@@ -1,4 +1,4 @@
-anndata==0.10.0
+anndata==0.12.19
 appdirs==1.4.4
 apricot-select @ file:///home/conda/feedstock_root/build_artifacts/apricot-select_1734870919462/work
 array-api-compat==1.15.0
@@ -17,6 +17,7 @@ click @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_clic
 cloudpickle @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_cloudpickle_1765303462/work
 coloredlogs==15.0.1
 contourpy @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_contourpy_1769155975/work
+cptac==1.5.14
 cycler @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_cycler_1764466758/work
 cytoolz @ file:///home/conda/feedstock_root/build_artifacts/cytoolz_1789704602889/work
 cyvcf2==0.34.0
@@ -28,6 +29,8 @@ donfig @ file:///home/conda/feedstock_root/build_artifacts/donfig_1734368700593/
 et_xmlfile==2.0.0
 filelock @ file:///home/conda/feedstock_root/build_artifacts/filelock_1791210222670/work
 fonttools @ file:///home/conda/feedstock_root/build_artifacts/fonttools_1790702725089/work
+formulaic==1.2.2
+formulaic-contrasts==1.0.0
 fsspec @ file:///home/conda/feedstock_root/build_artifacts/fsspec_1790256769698/work
 gmpy2 @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_gmpy2_1791166947/work
 google-crc32c @ file:///home/conda/feedstock_root/build_artifacts/google-crc32c_1788537460946/work
@@ -39,6 +42,7 @@ hyperframe @ file:///home/conda/feedstock_root/build_artifacts/hyperframe_173761
 idna==3.20
 importlib_metadata==9.0.1
 iniconfig==2.3.1
+interface_meta==2.0.1
 Jinja2==3.1.0
 joblib @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_joblib_1788177170/work
 kiwisolver @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_kiwisolver_1790082012/work
@@ -47,18 +51,19 @@ llvmlite @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_l
 locket @ file:///home/conda/feedstock_root/build_artifacts/locket_1650660393415/work
 lz4 @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_lz4_1789242268/work
 MarkupSafe @ file:///home/conda/feedstock_root/build_artifacts/markupsafe_1791014629569/work
-matplotlib @ file:///home/conda/feedstock_root/build_artifacts/matplotlib-suite_1715976244352/work
+matplotlib==3.11.2
 mpmath @ file:///home/conda/feedstock_root/build_artifacts/mpmath_1773661943568/work
 msgpack @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_msgpack-python_1790682659/work
 munkres==1.1.4
 narwhals==2.26.0
 natsort==8.4.0
+ncls==0.0.70
 networkx @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_networkx_1765215107/work
 nose @ file:///home/conda/feedstock_root/build_artifacts/nose_1602434998960/work
 numba @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_numba_1790835914/work
 numcodecs @ file:///home/conda/feedstock_root/build_artifacts/numcodecs_1764782165587/work
 numexpr @ file:///home/conda/feedstock_root/build_artifacts/numexpr_1789120092487/work
-numpy==1.26.4
+numpy==2.4.6
 openpyxl==3.1.0
 optree @ file:///home/conda/feedstock_root/build_artifacts/optree_1788504419749/work
 packaging==26.1
@@ -77,11 +82,13 @@ pyarrow==25.0.1
 pybind11 @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pybind11_1786200320/work
 pybind11-global @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pybind11-global_1786200320/work
 pycparser==3.1
+pydeseq2==0.5.4
 Pygments==2.21.0
 pynndescent==0.6.0
 pyparsing @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_pyparsing_1790063282/work
 PyQt6==6.11.0
 PyQt6_sip @ file:///home/task_177582793952007/croot/pyqt-split_1775828360951/work/pyqt_sip
+pyranges==0.1.4
 pysam==0.22.0
 PySocks @ file:///home/conda/feedstock_root/build_artifacts/pysocks_1733217236728/work
 pytest==9.1.1
@@ -93,13 +100,18 @@ scanpy==1.11.5
 scikit-allel @ file:///home/conda/feedstock_root/build_artifacts/scikit-allel_1769850538662/work
 scikit-learn==1.9.1
 scipy==1.17.1
+scverse-misc==0.0.3
 seaborn @ file:///home/conda/feedstock_root/build_artifacts/seaborn-split_1733730015268/work
 session-info2==0.4.1
+session_info==1.0.1
 sip @ file:///home/conda/feedstock_root/build_artifacts/sip_1774373864388/work
 six==1.17.0
+sorted_nearest==0.0.41
 sortedcontainers @ file:///home/conda/feedstock_root/build_artifacts/sortedcontainers_1738440353519/work
 statsmodels @ file:///home/conda/feedstock_root/build_artifacts/statsmodels_1764982999281/work
+stdlib-list==0.12.0
 sympy @ file:///home/conda/feedstock_root/build_artifacts/sympy_1771952240620/work
+tabulate==0.10.0
 tblib @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_tblib_1762956379/work
 texttable==1.7.0
 threadpoolctl @ file:///home/conda/feedstock_root/build_artifacts/threadpoolctl_1789547442801/work

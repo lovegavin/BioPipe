@@ -58,7 +58,8 @@ class CsvReader(Reader):
         has_header = bool(args.get("header", True))
         encoders_cfg = args.get("encoders", {})
 
-        df = pd.read_csv(path, header=0 if has_header else None)
+        sep = args.get("sep", ",")
+        df = pd.read_csv(path, header=0 if has_header else None, sep=sep)
         if has_header:
             col_names = [str(c) for c in df.columns]
         else:
