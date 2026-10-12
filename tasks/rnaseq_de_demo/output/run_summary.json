@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/rnaseq_de_demo",
-  "generated_at": "2026-10-11T16:50:03.964233+00:00",
+  "generated_at": "2026-10-12T09:47:57.367714+00:00",
   "n_steps": 12,
-  "total_elapsed": 7.6398,
+  "total_elapsed": 15.6349,
   "steps": [
     {
       "index": 1,
       "name": "filter_min",
-      "elapsed": 0.0144,
+      "elapsed": 0.0074,
       "inputs": [
         "counts"
       ],
@@ -22,7 +22,7 @@
     {
       "index": 2,
       "name": "compare_groups",
-      "elapsed": 6.9462,
+      "elapsed": 7.0636,
       "inputs": [
         "counts_filtered",
         "meta"
@@ -41,7 +41,7 @@
     {
       "index": 3,
       "name": "volcano",
-      "elapsed": 0.1684,
+      "elapsed": 0.1656,
       "inputs": [
         "de_result"
       ],
@@ -61,7 +61,7 @@
     {
       "index": 4,
       "name": "ma_plot",
-      "elapsed": 0.1367,
+      "elapsed": 0.1942,
       "inputs": [
         "de_result"
       ],
@@ -81,7 +81,7 @@
     {
       "index": 5,
       "name": "normalize",
-      "elapsed": 0.0031,
+      "elapsed": 0.0035,
       "inputs": [
         "counts_filtered"
       ],
@@ -96,7 +96,7 @@
     {
       "index": 6,
       "name": "log_transform",
-      "elapsed": 0.0054,
+      "elapsed": 0.0093,
       "inputs": [
         "counts_cpm"
       ],
@@ -110,7 +110,7 @@
     {
       "index": 7,
       "name": "pca",
-      "elapsed": 0.0491,
+      "elapsed": 0.0654,
       "inputs": [
         "counts_log"
       ],
@@ -124,7 +124,7 @@
     {
       "index": 8,
       "name": "scatter",
-      "elapsed": 0.1186,
+      "elapsed": 0.0922,
       "inputs": [
         "pcs"
       ],
@@ -140,7 +140,7 @@
     {
       "index": 9,
       "name": "heatmap",
-      "elapsed": 0.1181,
+      "elapsed": 0.1176,
       "inputs": [
         "counts_log"
       ],
@@ -160,7 +160,7 @@
     {
       "index": 10,
       "name": "transpose",
-      "elapsed": 0.0012,
+      "elapsed": 0.7332,
       "inputs": [
         "counts_log"
       ],
@@ -176,7 +176,7 @@
     {
       "index": 11,
       "name": "boxplot",
-      "elapsed": 0.056,
+      "elapsed": 0.0594,
       "inputs": [
         "samples_by_gene",
         "meta"
@@ -195,12 +195,14 @@
     {
       "index": 12,
       "name": "describe",
-      "elapsed": 0.0226,
+      "elapsed": 7.1235,
       "inputs": [
         "de_result"
       ],
       "params": {},
       "export_path": "steps/12_describe.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

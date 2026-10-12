@@ -2,24 +2,25 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/proteomics_de_demo
-generated : 2026-10-12T02:55:37.087710+00:00
+generated : 2026-10-12T09:50:23.865835+00:00
 steps     : 10
-elapsed   : 4.973s
+elapsed   : 5.268s
+status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   missing                 0.006s   steps/01_missing.json
-2   impute                  0.013s   steps/02_impute.json
-3   normalize               0.093s   steps/03_normalize.json
-4   compare_groups          3.782s   steps/04_compare_groups.json
-5   correction              0.019s   steps/05_correction.json
-6   volcano                 0.212s   steps/06_volcano.json
-7   ma_plot                 0.133s   steps/07_ma_plot.json
-8   transpose               0.004s   steps/08_transpose.json
-9   heatmap                 0.701s   steps/09_heatmap.json
-10  describe                0.009s   steps/10_describe.json
+1   missing                 0.013s   steps/01_missing.json
+2   impute                  0.009s   steps/02_impute.json
+3   normalize               0.080s   steps/03_normalize.json
+4   compare_groups          3.606s   steps/04_compare_groups.json
+5   correction              0.281s   steps/05_correction.json
+6   volcano                 0.132s   steps/06_volcano.json
+7   ma_plot                 0.129s   steps/07_ma_plot.json
+8   transpose               0.288s   steps/08_transpose.json
+9   heatmap                 0.719s   steps/09_heatmap.json
+10  describe                0.012s   steps/10_describe.json
 
 ============================================================
-Per-step details are in output/steps/. This file is an index only.
+Per-step details are at the export paths above. This file is an index only.
 ============================================================

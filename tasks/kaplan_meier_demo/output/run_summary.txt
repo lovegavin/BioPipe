@@ -2,16 +2,17 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/kaplan_meier_demo
-generated : 2026-10-12T03:21:21.813859+00:00
+generated : 2026-10-12T09:47:34.200484+00:00
 steps     : 2
-elapsed   : 0.132s
+elapsed   : 0.142s
+status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   kaplan_meier            0.122s   steps/01_kaplan_meier.json
-2   describe                0.009s   steps/02_describe.json
+1   kaplan_meier            0.136s   steps/01_kaplan_meier.json
+2   describe                0.006s   steps/02_describe.json
 
 ============================================================
-Per-step details are in output/steps/. This file is an index only.
+Per-step details are at the export paths above. This file is an index only.
 ============================================================

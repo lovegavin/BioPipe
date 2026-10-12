@@ -2,16 +2,17 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/filter_min_demo
-generated : 2026-10-11T15:00:16.159475+00:00
+generated : 2026-10-12T09:47:30.134554+00:00
 steps     : 2
-elapsed   : 0.027s
+elapsed   : 0.036s
+status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   filter_min              0.009s   steps/01_filter_min.json
-2   describe                0.018s   steps/02_describe.json
+1   filter_min              0.015s   steps/01_filter_min.json
+2   describe                0.021s   steps/02_describe.json
 
 ============================================================
-Per-step details are in output/steps/. This file is an index only.
+Per-step details are at the export paths above. This file is an index only.
 ============================================================

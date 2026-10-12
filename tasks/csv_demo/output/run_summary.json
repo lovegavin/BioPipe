@@ -1,0 +1,20 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/csv_demo",
+  "generated_at": "2026-10-12T09:46:59.228344+00:00",
+  "n_steps": 1,
+  "total_elapsed": 0.0002,
+  "steps": [
+    {
+      "index": 1,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "data"
+      ],
+      "params": {},
+      "export_path": "steps/01_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

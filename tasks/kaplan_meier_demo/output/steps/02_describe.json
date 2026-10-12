@@ -8,7 +8,7 @@
     "feature"
   ],
   "info": {
-    "missing_code": NaN,
+    "missing_code": "nan",
     "encoders": {
       "feature": {
         "AJCC_Stage_nature2012": {
@@ -28715,6 +28715,7 @@
       }
     }
   },
+  "axis_info": {},
   "labels": {
     "sample": {
       "TCGA-3C-AAAU-01": 0,

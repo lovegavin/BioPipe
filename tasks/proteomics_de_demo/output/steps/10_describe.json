@@ -7,7 +7,11 @@
     "protein",
     "statistic"
   ],
-  "info": {},
+  "info": {
+    "missing_code": "nan",
+    "correction_method": "fdr"
+  },
+  "axis_info": {},
   "labels": {
     "protein": {
       "ENSG00000000003.15": 0,

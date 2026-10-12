@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/cox_regression_demo",
-  "generated_at": "2026-10-12T03:40:42.813499+00:00",
+  "generated_at": "2026-10-12T09:47:38.048451+00:00",
   "n_steps": 2,
-  "total_elapsed": 1.016,
+  "total_elapsed": 1.0215,
   "steps": [
     {
       "index": 1,
       "name": "cox_regression",
-      "elapsed": 1.0159,
+      "elapsed": 1.0214,
       "inputs": [
         "clinical"
       ],
@@ -37,5 +37,7 @@
       "params": {},
       "export_path": "steps/02_describe.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

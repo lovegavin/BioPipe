@@ -1,0 +1,160 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/violin_demo",
+  "generated_at": "2026-10-12T10:34:07.923151+00:00",
+  "n_steps": 9,
+  "total_elapsed": 19.9084,
+  "steps": [
+    {
+      "index": 1,
+      "name": "reduce_axis",
+      "elapsed": 0.9023,
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "dim": "gene",
+        "stats": [
+          "sum",
+          "nonzero"
+        ],
+        "output": "cell_qc"
+      },
+      "export_path": "steps/01_reduce_axis.json"
+    },
+    {
+      "index": 2,
+      "name": "filter_by",
+      "elapsed": 0.1208,
+      "inputs": [
+        "counts",
+        "cell_qc"
+      ],
+      "params": {
+        "dim": "cell",
+        "rules": [
+          {
+            "field": "nonzero",
+            "min": 200
+          }
+        ],
+        "output": "counts_filtered"
+      },
+      "export_path": "steps/02_filter_by.json"
+    },
+    {
+      "index": 3,
+      "name": "normalize",
+      "elapsed": 5.0604,
+      "inputs": [
+        "counts_filtered"
+      ],
+      "params": {
+        "method": "total",
+        "dim": "cell",
+        "target_sum": "1e4",
+        "output": "counts_norm"
+      },
+      "export_path": "steps/03_normalize.json"
+    },
+    {
+      "index": 4,
+      "name": "log_transform",
+      "elapsed": 3.524,
+      "inputs": [
+        "counts_norm"
+      ],
+      "params": {
+        "base": "e",
+        "pseudocount": 1,
+        "output": "counts_log"
+      },
+      "export_path": "steps/04_log_transform.json"
+    },
+    {
+      "index": 5,
+      "name": "rank_axis",
+      "elapsed": 0.9188,
+      "inputs": [
+        "counts_log"
+      ],
+      "params": {
+        "dim": "gene",
+        "by": "variance",
+        "top_n": 2000,
+        "output": "hvg"
+      },
+      "export_path": "steps/05_rank_axis.json"
+    },
+    {
+      "index": 6,
+      "name": "reduce",
+      "elapsed": 5.3243,
+      "inputs": [
+        "hvg"
+      ],
+      "params": {
+        "dim": "gene",
+        "method": "pca",
+        "n_components": 50,
+        "output": "pcs"
+      },
+      "export_path": "steps/06_reduce.json"
+    },
+    {
+      "index": 7,
+      "name": "cluster_axis",
+      "elapsed": 0.4568,
+      "inputs": [
+        "pcs"
+      ],
+      "params": {
+        "dim": "cell",
+        "method": "louvain",
+        "n_neighbors": 15,
+        "resolution": 1.0,
+        "random_state": 0,
+        "output": "clusters"
+      },
+      "export_path": "steps/07_cluster_axis.json"
+    },
+    {
+      "index": 8,
+      "name": "transpose",
+      "elapsed": 3.378,
+      "inputs": [
+        "counts_log"
+      ],
+      "params": {
+        "order": [
+          "cell",
+          "gene"
+        ],
+        "output": "cells_by_gene"
+      },
+      "export_path": "steps/08_transpose.json"
+    },
+    {
+      "index": 9,
+      "name": "violin",
+      "elapsed": 0.223,
+      "inputs": [
+        "cells_by_gene",
+        "clusters"
+      ],
+      "params": {
+        "dim": "gene",
+        "value_label": "ENSG00000167286",
+        "group_dim": "cell",
+        "group_label": "cluster",
+        "inner": "box",
+        "show_points": false,
+        "filename": "cd3d_violin.png",
+        "title": "CD3D by cluster",
+        "ylabel": "log1p normalized expression"
+      },
+      "export_path": "steps/09_violin.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

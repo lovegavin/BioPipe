@@ -8,8 +8,9 @@
     "statistic"
   ],
   "info": {
-    "missing_code": NaN
+    "missing_code": "nan"
   },
+  "axis_info": {},
   "labels": {
     "comparison": {
       "overall": 0,

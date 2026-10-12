@@ -1,0 +1,38 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/reduce_axis_demo",
+  "generated_at": "2026-10-12T09:50:01.975077+00:00",
+  "n_steps": 2,
+  "total_elapsed": 1.1138,
+  "steps": [
+    {
+      "index": 1,
+      "name": "reduce_axis",
+      "elapsed": 1.11,
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "dim": "gene",
+        "stats": [
+          "sum",
+          "nonzero",
+          "mean"
+        ],
+        "output": "cell_qc"
+      },
+      "export_path": "steps/01_reduce_axis.json"
+    },
+    {
+      "index": 2,
+      "name": "describe",
+      "elapsed": 0.0038,
+      "inputs": [
+        "cell_qc"
+      ],
+      "params": {},
+      "export_path": "steps/02_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

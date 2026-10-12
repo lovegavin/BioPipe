@@ -1,0 +1,64 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/rank_axis_demo",
+  "generated_at": "2026-10-12T09:58:28.281495+00:00",
+  "n_steps": 4,
+  "total_elapsed": 9.6942,
+  "steps": [
+    {
+      "index": 1,
+      "name": "normalize",
+      "elapsed": 5.4774,
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "method": "total",
+        "dim": "cell",
+        "target_sum": "1e4",
+        "output": "counts_norm"
+      },
+      "export_path": "steps/01_normalize.json"
+    },
+    {
+      "index": 2,
+      "name": "log_transform",
+      "elapsed": 3.4279,
+      "inputs": [
+        "counts_norm"
+      ],
+      "params": {
+        "base": "e",
+        "pseudocount": 1,
+        "output": "counts_log"
+      },
+      "export_path": "steps/02_log_transform.json"
+    },
+    {
+      "index": 3,
+      "name": "rank_axis",
+      "elapsed": 0.7631,
+      "inputs": [
+        "counts_log"
+      ],
+      "params": {
+        "dim": "gene",
+        "by": "variance",
+        "top_n": 2000,
+        "output": "hvg"
+      },
+      "export_path": "steps/03_rank_axis.json"
+    },
+    {
+      "index": 4,
+      "name": "describe",
+      "elapsed": 0.0258,
+      "inputs": [
+        "hvg"
+      ],
+      "params": {},
+      "export_path": "steps/04_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

@@ -2,17 +2,18 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/volcano_demo
-generated : 2026-10-11T16:24:39.239977+00:00
+generated : 2026-10-12T09:47:15.905075+00:00
 steps     : 3
-elapsed   : 6.625s
+elapsed   : 7.196s
+status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   filter_min              0.008s   steps/01_filter_min.json
-2   compare_groups          6.425s   steps/02_compare_groups.json
-3   volcano                 0.193s   steps/03_volcano.json
+1   filter_min              0.011s   steps/01_filter_min.json
+2   compare_groups          6.995s   steps/02_compare_groups.json
+3   volcano                 0.190s   steps/03_volcano.json
 
 ============================================================
-Per-step details are in output/steps/. This file is an index only.
+Per-step details are at the export paths above. This file is an index only.
 ============================================================

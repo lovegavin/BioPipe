@@ -1,0 +1,20 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/rank_axis_demo
+generated : 2026-10-12T09:58:28.281495+00:00
+steps     : 4
+elapsed   : 9.694s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   normalize               5.477s   steps/01_normalize.json
+2   log_transform           3.428s   steps/02_log_transform.json
+3   rank_axis               0.763s   steps/03_rank_axis.json
+4   describe                0.026s   steps/04_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

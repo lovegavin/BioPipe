@@ -1,0 +1,187 @@
+name: scrnaseq_demo
+
+sources:
+  counts:
+    path: input/filtered_gene_bc_matrices/hg19/matrix.mtx
+    dims: [gene, cell]
+    labels:
+      gene: builtin
+      cell: builtin
+
+steps:
+  # ------------------------------------------------------------------
+  # 1. 质控：每个 cell 的基因数和总计数
+  # ------------------------------------------------------------------
+  - name: reduce_axis
+    inputs: [counts]
+    params:
+      dim: gene
+      stats: [sum, nonzero]
+      output: cell_qc
+
+  # ------------------------------------------------------------------
+  # 2. 按质控过滤 cell
+  # ------------------------------------------------------------------
+  - name: filter_by
+    inputs: [counts, cell_qc]
+    params:
+      dim: cell
+      rules:
+        - {field: nonzero, min: 200}
+        - {field: sum, min: 500}
+      output: counts_filtered
+
+  # ------------------------------------------------------------------
+  # 3. 归一化 + log1p
+  # ------------------------------------------------------------------
+  - name: normalize
+    inputs: [counts_filtered]
+    params:
+      method: total
+      dim: cell
+      target_sum: 1e4
+      output: counts_norm
+
+  - name: log_transform
+    inputs: [counts_norm]
+    params:
+      base: "e"
+      pseudocount: 1
+      output: counts_log
+
+  # ------------------------------------------------------------------
+  # 4. 高变基因：按方差取 top 2000
+  # ------------------------------------------------------------------
+  - name: rank_axis
+    inputs: [counts_log]
+    params:
+      dim: gene
+      by: variance
+      top_n: 2000
+      output: hvg
+
+  # ------------------------------------------------------------------
+  # 5. 降维：PCA + UMAP
+  # ------------------------------------------------------------------
+  - name: reduce
+    inputs: [hvg]
+    params:
+      dim: gene
+      method: pca
+      n_components: 50
+      standardize: true
+      output: pcs
+
+  - name: reduce
+    inputs: [hvg]
+    params:
+      dim: gene
+      method: umap
+      n_components: 2
+      n_neighbors: 10
+      min_dist: 0.3
+      random_state: 0
+      output: umap_coords
+
+  # ------------------------------------------------------------------
+  # 6. 聚类：Louvain
+  # ------------------------------------------------------------------
+  - name: cluster_axis
+    inputs: [pcs]
+    params:
+      dim: cell
+      method: louvain
+      n_neighbors: 10
+      resolution: 2.0
+      random_state: 0
+      output: clusters
+
+  # ------------------------------------------------------------------
+  # 7. 把 log 矩阵转置为 [cell, gene]，供点图和小提琴图使用
+  # ------------------------------------------------------------------
+  - name: transpose
+    inputs: [counts_log]
+    params:
+      order: [cell, gene]
+      output: cells_by_gene
+
+  # ------------------------------------------------------------------
+  # 8. marker 检测：每个 cluster vs 其余
+  # ------------------------------------------------------------------
+  - name: compare_groups
+    inputs: [counts_log, clusters]
+    params:
+      dim: gene
+      group_dim: cell
+      group_label: cluster
+      mode: one_vs_rest
+      method: wilcoxon
+      min_per_group: 3
+      output: cluster_markers
+
+  # ------------------------------------------------------------------
+  # 9. 可视化
+  # ------------------------------------------------------------------
+  - name: scatter
+    inputs: [umap_coords]
+    params:
+      dim: component
+      x_label: PC1
+      y_label: PC2
+      filename: umap.png
+      title: "PBMC 3k: UMAP of cells"
+      point_size: 4
+      alpha: 0.6
+
+  - name: dotplot
+    inputs: [cells_by_gene, clusters]
+    params:
+      feature_dim: gene
+      group_dim: cell
+      group_label: cluster
+      features:
+        - ENSG00000167286   # CD3D  (T cells)
+        - ENSG00000105369   # CD79A (B cells)
+        - ENSG00000174059   # CD34  (stem)
+        - ENSG00000090339   # ICAM1 (endothelial)
+        - ENSG00000105483   # CARD16 (monocytes)
+        - ENSG00000130303   # CD86  (APC)
+      statistic: mean
+      proportion_mode: nonzero
+      filename: markers_dotplot.png
+      title: "PBMC 3k: marker expression by cluster"
+
+  - name: violin
+    inputs: [cells_by_gene, clusters]
+    params:
+      dim: gene
+      value_label: ENSG00000167286
+      group_dim: cell
+      group_label: cluster
+      inner: box
+      filename: cd3d_violin.png
+      title: "CD3D by cluster"
+      ylabel: "log1p normalized expression"
+
+  - name: heatmap
+    inputs: [cells_by_gene]
+    params:
+      dim: gene
+      other_dim: cell
+      select: variance
+      top_n: 30
+      standardize: row
+      cluster_rows: true
+      cluster_cols: false
+      filename: top30_heatmap.png
+      title: "Top 30 variable genes"
+      show_row_labels: true
+
+  # ------------------------------------------------------------------
+  # 10. 摘要
+  # ------------------------------------------------------------------
+  - name: describe
+    inputs: [cell_qc]
+
+  - name: describe
+    inputs: [clusters]

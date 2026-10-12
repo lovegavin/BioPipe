@@ -1,0 +1,287 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/scrnaseq_demo",
+  "generated_at": "2026-10-12T10:50:26.359602+00:00",
+  "n_steps": 16,
+  "total_elapsed": 249.3137,
+  "steps": [
+    {
+      "index": 1,
+      "name": "reduce_axis",
+      "elapsed": 0.7662,
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "dim": "gene",
+        "stats": [
+          "sum",
+          "nonzero"
+        ],
+        "output": "cell_qc"
+      },
+      "export_path": "steps/01_reduce_axis.json"
+    },
+    {
+      "index": 2,
+      "name": "filter_by",
+      "elapsed": 0.1312,
+      "inputs": [
+        "counts",
+        "cell_qc"
+      ],
+      "params": {
+        "dim": "cell",
+        "rules": [
+          {
+            "field": "nonzero",
+            "min": 200
+          },
+          {
+            "field": "sum",
+            "min": 500
+          }
+        ],
+        "output": "counts_filtered"
+      },
+      "export_path": "steps/02_filter_by.json"
+    },
+    {
+      "index": 3,
+      "name": "normalize",
+      "elapsed": 4.9131,
+      "inputs": [
+        "counts_filtered"
+      ],
+      "params": {
+        "method": "total",
+        "dim": "cell",
+        "target_sum": "1e4",
+        "output": "counts_norm"
+      },
+      "export_path": "steps/03_normalize.json"
+    },
+    {
+      "index": 4,
+      "name": "log_transform",
+      "elapsed": 3.2601,
+      "inputs": [
+        "counts_norm"
+      ],
+      "params": {
+        "base": "e",
+        "pseudocount": 1,
+        "output": "counts_log"
+      },
+      "export_path": "steps/04_log_transform.json"
+    },
+    {
+      "index": 5,
+      "name": "rank_axis",
+      "elapsed": 0.8608,
+      "inputs": [
+        "counts_log"
+      ],
+      "params": {
+        "dim": "gene",
+        "by": "variance",
+        "top_n": 2000,
+        "output": "hvg"
+      },
+      "export_path": "steps/05_rank_axis.json"
+    },
+    {
+      "index": 6,
+      "name": "reduce",
+      "elapsed": 2.6479,
+      "inputs": [
+        "hvg"
+      ],
+      "params": {
+        "dim": "gene",
+        "method": "pca",
+        "n_components": 50,
+        "standardize": true,
+        "output": "pcs"
+      },
+      "export_path": "steps/06_reduce.json"
+    },
+    {
+      "index": 7,
+      "name": "reduce",
+      "elapsed": 14.5586,
+      "inputs": [
+        "hvg"
+      ],
+      "params": {
+        "dim": "gene",
+        "method": "umap",
+        "n_components": 2,
+        "n_neighbors": 10,
+        "min_dist": 0.3,
+        "random_state": 0,
+        "output": "umap_coords"
+      },
+      "export_path": "steps/07_reduce.json"
+    },
+    {
+      "index": 8,
+      "name": "cluster_axis",
+      "elapsed": 0.2968,
+      "inputs": [
+        "pcs"
+      ],
+      "params": {
+        "dim": "cell",
+        "method": "louvain",
+        "n_neighbors": 10,
+        "resolution": 2.0,
+        "random_state": 0,
+        "output": "clusters"
+      },
+      "export_path": "steps/08_cluster_axis.json"
+    },
+    {
+      "index": 9,
+      "name": "transpose",
+      "elapsed": 3.2301,
+      "inputs": [
+        "counts_log"
+      ],
+      "params": {
+        "order": [
+          "cell",
+          "gene"
+        ],
+        "output": "cells_by_gene"
+      },
+      "export_path": "steps/09_transpose.json"
+    },
+    {
+      "index": 10,
+      "name": "compare_groups",
+      "elapsed": 204.5445,
+      "inputs": [
+        "counts_log",
+        "clusters"
+      ],
+      "params": {
+        "dim": "gene",
+        "group_dim": "cell",
+        "group_label": "cluster",
+        "mode": "one_vs_rest",
+        "method": "wilcoxon",
+        "min_per_group": 3,
+        "output": "cluster_markers"
+      },
+      "export_path": "steps/10_compare_groups.json"
+    },
+    {
+      "index": 11,
+      "name": "scatter",
+      "elapsed": 0.0841,
+      "inputs": [
+        "umap_coords"
+      ],
+      "params": {
+        "dim": "component",
+        "x_label": "PC1",
+        "y_label": "PC2",
+        "filename": "umap.png",
+        "title": "PBMC 3k: UMAP of cells",
+        "point_size": 4,
+        "alpha": 0.6
+      },
+      "export_path": "steps/11_scatter.json"
+    },
+    {
+      "index": 12,
+      "name": "dotplot",
+      "elapsed": 0.3446,
+      "inputs": [
+        "cells_by_gene",
+        "clusters"
+      ],
+      "params": {
+        "feature_dim": "gene",
+        "group_dim": "cell",
+        "group_label": "cluster",
+        "features": [
+          "ENSG00000167286",
+          "ENSG00000105369",
+          "ENSG00000174059",
+          "ENSG00000090339",
+          "ENSG00000105483",
+          "ENSG00000130303"
+        ],
+        "statistic": "mean",
+        "proportion_mode": "nonzero",
+        "filename": "markers_dotplot.png",
+        "title": "PBMC 3k: marker expression by cluster"
+      },
+      "export_path": "steps/12_dotplot.json"
+    },
+    {
+      "index": 13,
+      "name": "violin",
+      "elapsed": 0.301,
+      "inputs": [
+        "cells_by_gene",
+        "clusters"
+      ],
+      "params": {
+        "dim": "gene",
+        "value_label": "ENSG00000167286",
+        "group_dim": "cell",
+        "group_label": "cluster",
+        "inner": "box",
+        "filename": "cd3d_violin.png",
+        "title": "CD3D by cluster",
+        "ylabel": "log1p normalized expression"
+      },
+      "export_path": "steps/13_violin.json"
+    },
+    {
+      "index": 14,
+      "name": "heatmap",
+      "elapsed": 13.3718,
+      "inputs": [
+        "cells_by_gene"
+      ],
+      "params": {
+        "dim": "gene",
+        "other_dim": "cell",
+        "select": "variance",
+        "top_n": 30,
+        "standardize": "row",
+        "cluster_rows": true,
+        "cluster_cols": false,
+        "filename": "top30_heatmap.png",
+        "title": "Top 30 variable genes",
+        "show_row_labels": true
+      },
+      "export_path": "steps/14_heatmap.json"
+    },
+    {
+      "index": 15,
+      "name": "describe",
+      "elapsed": 0.0016,
+      "inputs": [
+        "cell_qc"
+      ],
+      "params": {},
+      "export_path": "steps/15_describe.json"
+    },
+    {
+      "index": 16,
+      "name": "describe",
+      "elapsed": 0.0013,
+      "inputs": [
+        "clusters"
+      ],
+      "params": {},
+      "export_path": "steps/16_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

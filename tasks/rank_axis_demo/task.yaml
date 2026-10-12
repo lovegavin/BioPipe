@@ -1,0 +1,36 @@
+name: rank_axis_demo
+
+sources:
+  counts:
+    path: input/filtered_gene_bc_matrices/hg19/matrix.mtx
+    dims: [gene, cell]
+    labels:
+      gene: builtin
+      cell: builtin
+
+steps:
+  - name: normalize
+    inputs: [counts]
+    params:
+      method: total
+      dim: cell
+      target_sum: 1e4
+      output: counts_norm
+
+  - name: log_transform
+    inputs: [counts_norm]
+    params:
+      base: "e"
+      pseudocount: 1
+      output: counts_log
+
+  - name: rank_axis
+    inputs: [counts_log]
+    params:
+      dim: gene
+      by: variance
+      top_n: 2000
+      output: hvg
+
+  - name: describe
+    inputs: [hvg]

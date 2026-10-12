@@ -8,8 +8,9 @@
     "statistic"
   ],
   "info": {
-    "missing_code": NaN
+    "missing_code": "nan"
   },
+  "axis_info": {},
   "labels": {
     "covariate": {
       "Age_at_Initial_Pathologic_Diagnosis_nature2012": 0,

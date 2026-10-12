@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/volcano_demo",
-  "generated_at": "2026-10-11T16:24:39.239977+00:00",
+  "generated_at": "2026-10-12T09:47:15.905075+00:00",
   "n_steps": 3,
-  "total_elapsed": 6.6255,
+  "total_elapsed": 7.1961,
   "steps": [
     {
       "index": 1,
       "name": "filter_min",
-      "elapsed": 0.0079,
+      "elapsed": 0.0113,
       "inputs": [
         "counts"
       ],
@@ -22,7 +22,7 @@
     {
       "index": 2,
       "name": "compare_groups",
-      "elapsed": 6.4245,
+      "elapsed": 6.9945,
       "inputs": [
         "counts_filtered",
         "meta"
@@ -41,7 +41,7 @@
     {
       "index": 3,
       "name": "volcano",
-      "elapsed": 0.1931,
+      "elapsed": 0.1903,
       "inputs": [
         "de_result"
       ],
@@ -58,5 +58,7 @@
       },
       "export_path": "steps/03_volcano.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

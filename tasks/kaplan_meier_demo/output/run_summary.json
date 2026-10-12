@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/kaplan_meier_demo",
-  "generated_at": "2026-10-12T03:21:21.813859+00:00",
+  "generated_at": "2026-10-12T09:47:34.200484+00:00",
   "n_steps": 2,
-  "total_elapsed": 0.1315,
+  "total_elapsed": 0.1419,
   "steps": [
     {
       "index": 1,
       "name": "kaplan_meier",
-      "elapsed": 0.1222,
+      "elapsed": 0.1359,
       "inputs": [
         "clinical"
       ],
@@ -41,12 +41,14 @@
     {
       "index": 2,
       "name": "describe",
-      "elapsed": 0.0093,
+      "elapsed": 0.006,
       "inputs": [
         "clinical"
       ],
       "params": {},
       "export_path": "steps/02_describe.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

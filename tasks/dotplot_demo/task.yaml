@@ -1,0 +1,84 @@
+name: dotplot_demo
+
+sources:
+  counts:
+    path: input/filtered_gene_bc_matrices/hg19/matrix.mtx
+    dims: [gene, cell]
+    labels:
+      gene: builtin
+      cell: builtin
+
+steps:
+  - name: reduce_axis
+    inputs: [counts]
+    params:
+      dim: gene
+      stats: [sum, nonzero]
+      output: cell_qc
+
+  - name: filter_by
+    inputs: [counts, cell_qc]
+    params:
+      dim: cell
+      rules:
+        - {field: nonzero, min: 200}
+      output: counts_filtered
+
+  - name: normalize
+    inputs: [counts_filtered]
+    params:
+      method: total
+      dim: cell
+      target_sum: 1e4
+      output: counts_norm
+
+  - name: log_transform
+    inputs: [counts_norm]
+    params:
+      base: "e"
+      pseudocount: 1
+      output: counts_log
+
+  - name: rank_axis
+    inputs: [counts_log]
+    params:
+      dim: gene
+      by: variance
+      top_n: 2000
+      output: hvg
+
+  - name: reduce
+    inputs: [hvg]
+    params:
+      dim: gene
+      method: pca
+      n_components: 50
+      output: pcs
+
+  - name: cluster_axis
+    inputs: [pcs]
+    params:
+      dim: cell
+      method: louvain
+      n_neighbors: 15
+      resolution: 1.0
+      random_state: 0
+      output: clusters
+
+  - name: dotplot
+    inputs: [counts_log, clusters]
+    params:
+      feature_dim: gene
+      group_dim: cell
+      group_label: cluster
+      features:
+        - ENSG00000167286   # CD3D
+        - ENSG00000105369   # CD79A
+        - ENSG00000081237   # PTPRC (CD45)
+        - ENSG00000174059   # CD34
+        - ENSG00000090339   # ICAM1
+        - ENSG00000105483   # CARD16
+      statistic: mean
+      proportion_mode: nonzero
+      filename: markers_dotplot.png
+      title: "PBMC 3k: marker expression by cluster"

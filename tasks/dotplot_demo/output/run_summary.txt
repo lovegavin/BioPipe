@@ -1,0 +1,24 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/dotplot_demo
+generated : 2026-10-12T10:29:30.848317+00:00
+steps     : 8
+elapsed   : 13.885s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   reduce_axis             0.840s   steps/01_reduce_axis.json
+2   filter_by               0.133s   steps/02_filter_by.json
+3   normalize               5.100s   steps/03_normalize.json
+4   log_transform           3.367s   steps/04_log_transform.json
+5   rank_axis               0.639s   steps/05_rank_axis.json
+6   reduce                  2.691s   steps/06_reduce.json
+7   cluster_axis            0.763s   steps/07_cluster_axis.json
+8   dotplot                 0.351s   steps/08_dotplot.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

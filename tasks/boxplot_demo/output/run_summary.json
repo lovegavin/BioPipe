@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/boxplot_demo",
-  "generated_at": "2026-10-11T16:42:01.456657+00:00",
+  "generated_at": "2026-10-12T09:47:28.673057+00:00",
   "n_steps": 5,
-  "total_elapsed": 0.1284,
+  "total_elapsed": 0.8143,
   "steps": [
     {
       "index": 1,
       "name": "filter_min",
-      "elapsed": 0.0107,
+      "elapsed": 0.0085,
       "inputs": [
         "counts"
       ],
@@ -22,7 +22,7 @@
     {
       "index": 2,
       "name": "normalize",
-      "elapsed": 0.0073,
+      "elapsed": 0.0043,
       "inputs": [
         "counts_filtered"
       ],
@@ -37,7 +37,7 @@
     {
       "index": 3,
       "name": "log_transform",
-      "elapsed": 0.0075,
+      "elapsed": 0.0064,
       "inputs": [
         "counts_cpm"
       ],
@@ -51,7 +51,7 @@
     {
       "index": 4,
       "name": "transpose",
-      "elapsed": 0.0011,
+      "elapsed": 0.7198,
       "inputs": [
         "counts_log"
       ],
@@ -67,7 +67,7 @@
     {
       "index": 5,
       "name": "boxplot",
-      "elapsed": 0.1018,
+      "elapsed": 0.0753,
       "inputs": [
         "samples_by_gene",
         "meta"
@@ -83,5 +83,7 @@
       },
       "export_path": "steps/05_boxplot.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

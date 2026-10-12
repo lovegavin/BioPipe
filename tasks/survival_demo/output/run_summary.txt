@@ -2,19 +2,20 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/survival_demo
-generated : 2026-10-12T03:51:06.306958+00:00
+generated : 2026-10-12T09:48:02.965958+00:00
 steps     : 5
-elapsed   : 1.654s
+elapsed   : 1.447s
+status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   kaplan_meier            0.138s   steps/01_kaplan_meier.json
-2   logrank_test            0.277s   steps/02_logrank_test.json
-3   cox_regression          1.014s   steps/03_cox_regression.json
-4   forest_plot             0.225s   steps/04_forest_plot.json
+1   kaplan_meier            0.098s   steps/01_kaplan_meier.json
+2   logrank_test            0.131s   steps/02_logrank_test.json
+3   cox_regression          1.005s   steps/03_cox_regression.json
+4   forest_plot             0.212s   steps/04_forest_plot.json
 5   describe                0.000s   steps/05_describe.json
 
 ============================================================
-Per-step details are in output/steps/. This file is an index only.
+Per-step details are at the export paths above. This file is an index only.
 ============================================================

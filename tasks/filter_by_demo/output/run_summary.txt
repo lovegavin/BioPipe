@@ -1,0 +1,19 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/filter_by_demo
+generated : 2026-10-12T09:53:53.899978+00:00
+steps     : 3
+elapsed   : 1.525s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   reduce_axis             0.846s   steps/01_reduce_axis.json
+2   filter_by               0.136s   steps/02_filter_by.json
+3   describe                0.543s   steps/03_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

@@ -1,0 +1,87 @@
+name: violin_demo
+
+sources:
+  counts:
+    path: input/filtered_gene_bc_matrices/hg19/matrix.mtx
+    dims: [gene, cell]
+    labels:
+      gene: builtin
+      cell: builtin
+
+steps:
+  - name: reduce_axis
+    inputs: [counts]
+    params:
+      dim: gene
+      stats: [sum, nonzero]
+      output: cell_qc
+
+  - name: filter_by
+    inputs: [counts, cell_qc]
+    params:
+      dim: cell
+      rules:
+        - {field: nonzero, min: 200}
+      output: counts_filtered
+
+  - name: normalize
+    inputs: [counts_filtered]
+    params:
+      method: total
+      dim: cell
+      target_sum: 1e4
+      output: counts_norm
+
+  - name: log_transform
+    inputs: [counts_norm]
+    params:
+      base: "e"
+      pseudocount: 1
+      output: counts_log
+
+  - name: rank_axis
+    inputs: [counts_log]
+    params:
+      dim: gene
+      by: variance
+      top_n: 2000
+      output: hvg
+
+  - name: reduce
+    inputs: [hvg]
+    params:
+      dim: gene
+      method: pca
+      n_components: 50
+      output: pcs
+
+  - name: cluster_axis
+    inputs: [pcs]
+    params:
+      dim: cell
+      method: louvain
+      n_neighbors: 15
+      resolution: 1.0
+      random_state: 0
+      output: clusters
+
+  # 把 counts_log 转置为 [cell, gene]，使 value_label 在 feature 维上
+  - name: transpose
+    inputs: [counts_log]
+    params:
+      order: [cell, gene]
+      output: cells_by_gene
+
+  # 单基因小提琴图：CD3D 在 T 细胞里高表达
+  - name: violin
+    inputs: [cells_by_gene, clusters]
+    params:
+      dim: gene
+      value_label: ENSG00000167286
+      group_dim: cell
+      group_label: cluster
+      inner: box
+      show_points: false
+      filename: cd3d_violin.png
+      title: "CD3D by cluster"
+      ylabel: "log1p normalized expression"

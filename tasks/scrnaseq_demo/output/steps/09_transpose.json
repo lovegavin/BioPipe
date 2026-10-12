@@ -1,0 +1,18 @@
+{
+  "input_dims": [
+    "gene",
+    "cell"
+  ],
+  "output_dims": [
+    "cell",
+    "gene"
+  ],
+  "input_shape": [
+    32738,
+    2700
+  ],
+  "output_shape": [
+    2700,
+    32738
+  ]
+}

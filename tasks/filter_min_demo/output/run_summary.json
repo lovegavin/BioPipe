@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/filter_min_demo",
-  "generated_at": "2026-10-11T15:00:16.159475+00:00",
+  "generated_at": "2026-10-12T09:47:30.134554+00:00",
   "n_steps": 2,
-  "total_elapsed": 0.0268,
+  "total_elapsed": 0.036,
   "steps": [
     {
       "index": 1,
       "name": "filter_min",
-      "elapsed": 0.0089,
+      "elapsed": 0.0149,
       "inputs": [
         "counts"
       ],
@@ -22,12 +22,14 @@
     {
       "index": 2,
       "name": "describe",
-      "elapsed": 0.0179,
+      "elapsed": 0.0211,
       "inputs": [
         "counts_filtered"
       ],
       "params": {},
       "export_path": "steps/02_describe.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

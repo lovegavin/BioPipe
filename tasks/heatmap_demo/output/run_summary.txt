@@ -2,18 +2,19 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/heatmap_demo
-generated : 2026-10-11T16:37:49.979987+00:00
+generated : 2026-10-12T09:47:26.666011+00:00
 steps     : 4
-elapsed   : 0.183s
+elapsed   : 0.136s
+status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   filter_min              0.015s   steps/01_filter_min.json
-2   normalize               0.007s   steps/02_normalize.json
+1   filter_min              0.010s   steps/01_filter_min.json
+2   normalize               0.004s   steps/02_normalize.json
 3   log_transform           0.006s   steps/03_log_transform.json
-4   heatmap                 0.155s   steps/04_heatmap.json
+4   heatmap                 0.115s   steps/04_heatmap.json
 
 ============================================================
-Per-step details are in output/steps/. This file is an index only.
+Per-step details are at the export paths above. This file is an index only.
 ============================================================

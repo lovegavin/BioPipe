@@ -1,0 +1,61 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/filter_by_demo",
+  "generated_at": "2026-10-12T09:53:53.899978+00:00",
+  "n_steps": 3,
+  "total_elapsed": 1.5249,
+  "steps": [
+    {
+      "index": 1,
+      "name": "reduce_axis",
+      "elapsed": 0.8456,
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "dim": "gene",
+        "stats": [
+          "sum",
+          "nonzero"
+        ],
+        "output": "cell_qc"
+      },
+      "export_path": "steps/01_reduce_axis.json"
+    },
+    {
+      "index": 2,
+      "name": "filter_by",
+      "elapsed": 0.1361,
+      "inputs": [
+        "counts",
+        "cell_qc"
+      ],
+      "params": {
+        "dim": "cell",
+        "rules": [
+          {
+            "field": "nonzero",
+            "min": 200
+          },
+          {
+            "field": "sum",
+            "min": 500
+          }
+        ],
+        "output": "counts_filtered"
+      },
+      "export_path": "steps/02_filter_by.json"
+    },
+    {
+      "index": 3,
+      "name": "describe",
+      "elapsed": 0.5432,
+      "inputs": [
+        "counts_filtered"
+      ],
+      "params": {},
+      "export_path": "steps/03_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

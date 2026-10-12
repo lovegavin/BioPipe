@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/gwas_demo",
-  "generated_at": "2026-10-10T10:00:54.780063+00:00",
+  "generated_at": "2026-10-12T09:48:00.304715+00:00",
   "n_steps": 16,
-  "total_elapsed": 0.5994,
+  "total_elapsed": 1.0314,
   "steps": [
     {
       "index": 1,
       "name": "missing",
-      "elapsed": 0.0043,
+      "elapsed": 0.0861,
       "inputs": [
         "geno"
       ],
@@ -21,7 +21,7 @@
     {
       "index": 2,
       "name": "missing",
-      "elapsed": 0.0048,
+      "elapsed": 0.0088,
       "inputs": [
         "geno_sm"
       ],
@@ -35,7 +35,7 @@
     {
       "index": 3,
       "name": "maf",
-      "elapsed": 0.0043,
+      "elapsed": 0.0046,
       "inputs": [
         "geno_vm"
       ],
@@ -49,7 +49,7 @@
     {
       "index": 4,
       "name": "hwe",
-      "elapsed": 0.0067,
+      "elapsed": 0.0046,
       "inputs": [
         "geno_maf"
       ],
@@ -63,7 +63,7 @@
     {
       "index": 5,
       "name": "ld_prune",
-      "elapsed": 0.1134,
+      "elapsed": 0.093,
       "inputs": [
         "geno_hwe"
       ],
@@ -78,7 +78,7 @@
     {
       "index": 6,
       "name": "pca",
-      "elapsed": 0.0698,
+      "elapsed": 0.0755,
       "inputs": [
         "geno_pruned"
       ],
@@ -92,7 +92,7 @@
     {
       "index": 7,
       "name": "transpose",
-      "elapsed": 0.0001,
+      "elapsed": 0.0009,
       "inputs": [
         "geno_hwe"
       ],
@@ -108,7 +108,7 @@
     {
       "index": 8,
       "name": "rename_dim",
-      "elapsed": 0.0001,
+      "elapsed": 0.0007,
       "inputs": [
         "geno_T"
       ],
@@ -122,7 +122,7 @@
     {
       "index": 9,
       "name": "concat",
-      "elapsed": 0.0003,
+      "elapsed": 0.0009,
       "inputs": [
         "geno_f",
         "pheno",
@@ -137,7 +137,7 @@
     {
       "index": 10,
       "name": "regress",
-      "elapsed": 0.0751,
+      "elapsed": 0.0966,
       "inputs": [
         "combined"
       ],
@@ -155,7 +155,7 @@
     {
       "index": 11,
       "name": "correction",
-      "elapsed": 0.0008,
+      "elapsed": 0.0011,
       "inputs": [
         "raw"
       ],
@@ -169,7 +169,7 @@
     {
       "index": 12,
       "name": "attach_info",
-      "elapsed": 0.0002,
+      "elapsed": 0.0006,
       "inputs": [
         "assoc_result",
         "geno_hwe"
@@ -187,7 +187,7 @@
     {
       "index": 13,
       "name": "manhattan",
-      "elapsed": 0.1563,
+      "elapsed": 0.245,
       "inputs": [
         "assoc_with_pos"
       ],
@@ -205,7 +205,7 @@
     {
       "index": 14,
       "name": "scatter",
-      "elapsed": 0.0837,
+      "elapsed": 0.2827,
       "inputs": [
         "pcs"
       ],
@@ -223,7 +223,7 @@
     {
       "index": 15,
       "name": "histogram",
-      "elapsed": 0.0793,
+      "elapsed": 0.13,
       "inputs": [
         "assoc_result"
       ],
@@ -240,12 +240,14 @@
     {
       "index": 16,
       "name": "describe",
-      "elapsed": 0.0002,
+      "elapsed": 0.0003,
       "inputs": [
         "assoc_result"
       ],
       "params": {},
       "export_path": "steps/16_describe.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

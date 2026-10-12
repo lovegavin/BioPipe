@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/logrank_test_demo",
-  "generated_at": "2026-10-12T03:35:51.007893+00:00",
+  "generated_at": "2026-10-12T09:47:35.845611+00:00",
   "n_steps": 2,
-  "total_elapsed": 0.1387,
+  "total_elapsed": 0.167,
   "steps": [
     {
       "index": 1,
       "name": "logrank_test",
-      "elapsed": 0.1385,
+      "elapsed": 0.1668,
       "inputs": [
         "clinical"
       ],
@@ -46,5 +46,7 @@
       "params": {},
       "export_path": "steps/02_describe.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

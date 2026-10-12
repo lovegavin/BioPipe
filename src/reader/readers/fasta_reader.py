@@ -24,8 +24,9 @@ A missing dim entry defaults to ``auto`` for position and
 ``builtin`` for sequence. Duplicate identifiers are disambiguated by
 appending ``#<position>``.
 
-When sequence identifiers are non-numeric they are encoded; the
-encoder instance is recorded in ``info["encoders"]``.
+Sequence identifiers are used as labels directly. They are not
+encoded: the axis position of each entry in the label map already
+identifies the sequence.
 
 The alphabet is inferred from the observed characters and recorded
 in ``info["alphabet"]`` as one of ``"dna"``, ``"rna"`` or
@@ -40,7 +41,6 @@ Info fields set:
 
     missing_code      np.nan
     alphabet          "dna" | "rna" | "protein"
-    encoders          present only when sequence IDs were encoded
 """
 
 from __future__ import annotations
@@ -51,8 +51,6 @@ import numpy as np
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
-from src.core.contracts import reader_contract
-from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
 
 
@@ -67,8 +65,6 @@ _PROTEIN_CHARS = set("ACDEFGHIKLMNPQRSTVWY")
 class FastaReader(Reader):
     """Reader for .fasta / .fa / .fna / .faa files."""
 
-    output_contract = reader_contract(extra={"alphabet": {"type": "string"}})
-
     extensions = [".fasta", ".fa", ".fna", ".faa"]
     handles_compression = False
 
@@ -78,8 +74,6 @@ class FastaReader(Reader):
                 f"FASTA reader requires exactly two dims, got {dims}"
             )
         sequence_dim, position_dim = dims[0], dims[1]
-
-        encoders_cfg = args.get("encoders", {})
 
         ids, seqs = _parse_fasta(path)
         if not ids:
@@ -96,16 +90,12 @@ class FastaReader(Reader):
         alphabet = _infer_alphabet(seqs)
 
         final: dict[str, dict[str, int]] = {}
-        encoders_used: dict[str, dict[str, object]] = {}
 
         seq_rule = labels.get(sequence_dim, "builtin")
         if seq_rule in (None, "builtin"):
-            seq_labels, seq_encs = _encode_ids(
-                ids, encoders_cfg, sequence_dim
+            final[sequence_dim] = unique_labels(
+                ids, sequence_dim, "fasta"
             )
-            final[sequence_dim] = seq_labels
-            if seq_encs:
-                encoders_used[sequence_dim] = seq_encs
         elif seq_rule == "auto":
             final[sequence_dim] = {str(i): i for i in range(n)}
         elif isinstance(seq_rule, dict):
@@ -137,8 +127,6 @@ class FastaReader(Reader):
             "missing_code": np.nan,
             "alphabet": alphabet,
         }
-        if encoders_used:
-            info["encoders"] = encoders_used
 
         return Form(
             data=data,
@@ -193,17 +181,3 @@ def _infer_alphabet(seqs: list[str]) -> str:
     if observed <= _PROTEIN_CHARS:
         return "protein"
     return "dna"
-
-
-def _encode_ids(ids, encoders_cfg, dim_name):
-    try:
-        _ = np.asarray(ids, dtype=np.float32)
-        return unique_labels(ids, dim_name, "fasta"), {}
-    except (ValueError, TypeError):
-        pass
-
-    enc_name = encoders_cfg.get("all", "labelencoder")
-    encoder = get_encoder(enc_name)
-    codes = encoder.fit_transform(ids)
-    labels_map = unique_labels(ids, dim_name, "fasta")
-    return labels_map, {dim_name: encoder}

@@ -1,0 +1,24 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/cluster_axis_demo
+generated : 2026-10-12T10:14:23.827634+00:00
+steps     : 8
+elapsed   : 12.829s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   reduce_axis             0.853s   steps/01_reduce_axis.json
+2   filter_by               0.123s   steps/02_filter_by.json
+3   normalize               4.911s   steps/03_normalize.json
+4   log_transform           3.499s   steps/04_log_transform.json
+5   rank_axis               0.886s   steps/05_rank_axis.json
+6   reduce                  1.985s   steps/06_reduce.json
+7   cluster_axis            0.566s   steps/07_cluster_axis.json
+8   describe                0.004s   steps/08_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

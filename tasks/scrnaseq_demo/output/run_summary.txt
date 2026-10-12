@@ -1,0 +1,32 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/scrnaseq_demo
+generated : 2026-10-12T10:50:26.359602+00:00
+steps     : 16
+elapsed   : 249.314s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   reduce_axis             0.766s   steps/01_reduce_axis.json
+2   filter_by               0.131s   steps/02_filter_by.json
+3   normalize               4.913s   steps/03_normalize.json
+4   log_transform           3.260s   steps/04_log_transform.json
+5   rank_axis               0.861s   steps/05_rank_axis.json
+6   reduce                  2.648s   steps/06_reduce.json
+7   reduce                 14.559s   steps/07_reduce.json
+8   cluster_axis            0.297s   steps/08_cluster_axis.json
+9   transpose               3.230s   steps/09_transpose.json
+10  compare_groups        204.544s   steps/10_compare_groups.json
+11  scatter                 0.084s   steps/11_scatter.json
+12  dotplot                 0.345s   steps/12_dotplot.json
+13  violin                  0.301s   steps/13_violin.json
+14  heatmap                13.372s   steps/14_heatmap.json
+15  describe                0.002s   steps/15_describe.json
+16  describe                0.001s   steps/16_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

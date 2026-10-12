@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/normalize_demo",
-  "generated_at": "2026-10-11T15:02:05.881477+00:00",
+  "generated_at": "2026-10-12T09:47:31.431745+00:00",
   "n_steps": 2,
-  "total_elapsed": 0.0264,
+  "total_elapsed": 0.0268,
   "steps": [
     {
       "index": 1,
       "name": "filter_min",
-      "elapsed": 0.0134,
+      "elapsed": 0.0145,
       "inputs": [
         "counts"
       ],
@@ -22,7 +22,7 @@
     {
       "index": 2,
       "name": "normalize",
-      "elapsed": 0.013,
+      "elapsed": 0.0123,
       "inputs": [
         "counts_filtered"
       ],
@@ -33,5 +33,7 @@
       },
       "export_path": "steps/02_normalize.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

@@ -2,17 +2,22 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/compare_groups_demo
-generated : 2026-10-11T14:58:25.603162+00:00
-steps     : 3
-elapsed   : 6.479s
+generated : 2026-10-12T10:19:07.163552+00:00
+steps     : 7
+elapsed   : 69.927s
+status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   filter_min              0.007s   steps/01_filter_min.json
-2   compare_groups          6.446s   steps/02_compare_groups.json
-3   describe                0.026s   steps/03_describe.json
+1   filter_min              0.008s   steps/01_filter_min.json
+2   compare_groups          6.510s   steps/02_compare_groups.json
+3   compare_groups         24.895s   steps/03_compare_groups.json
+4   compare_groups         38.372s   steps/04_compare_groups.json
+5   describe                0.038s   steps/05_describe.json
+6   describe                0.043s   steps/06_describe.json
+7   describe                0.061s   steps/07_describe.json
 
 ============================================================
-Per-step details are in output/steps/. This file is an index only.
+Per-step details are at the export paths above. This file is an index only.
 ============================================================

@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/heatmap_demo",
-  "generated_at": "2026-10-11T16:37:49.979987+00:00",
+  "generated_at": "2026-10-12T09:47:26.666011+00:00",
   "n_steps": 4,
-  "total_elapsed": 0.1826,
+  "total_elapsed": 0.1355,
   "steps": [
     {
       "index": 1,
       "name": "filter_min",
-      "elapsed": 0.0145,
+      "elapsed": 0.0103,
       "inputs": [
         "counts"
       ],
@@ -22,7 +22,7 @@
     {
       "index": 2,
       "name": "normalize",
-      "elapsed": 0.0072,
+      "elapsed": 0.0041,
       "inputs": [
         "counts_filtered"
       ],
@@ -37,7 +37,7 @@
     {
       "index": 3,
       "name": "log_transform",
-      "elapsed": 0.0063,
+      "elapsed": 0.0062,
       "inputs": [
         "counts_cpm"
       ],
@@ -51,7 +51,7 @@
     {
       "index": 4,
       "name": "heatmap",
-      "elapsed": 0.1546,
+      "elapsed": 0.1149,
       "inputs": [
         "counts_log"
       ],
@@ -69,5 +69,7 @@
       },
       "export_path": "steps/04_heatmap.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

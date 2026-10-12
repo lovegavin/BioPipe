@@ -2,16 +2,17 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/normalize_demo
-generated : 2026-10-11T15:02:05.881477+00:00
+generated : 2026-10-12T09:47:31.431745+00:00
 steps     : 2
-elapsed   : 0.026s
+elapsed   : 0.027s
+status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   filter_min              0.013s   steps/01_filter_min.json
-2   normalize               0.013s   steps/02_normalize.json
+1   filter_min              0.015s   steps/01_filter_min.json
+2   normalize               0.012s   steps/02_normalize.json
 
 ============================================================
-Per-step details are in output/steps/. This file is an index only.
+Per-step details are at the export paths above. This file is an index only.
 ============================================================

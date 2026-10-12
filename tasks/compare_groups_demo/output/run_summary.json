@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/compare_groups_demo",
-  "generated_at": "2026-10-11T14:58:25.603162+00:00",
-  "n_steps": 3,
-  "total_elapsed": 6.4788,
+  "generated_at": "2026-10-12T10:19:07.163552+00:00",
+  "n_steps": 7,
+  "total_elapsed": 69.9267,
   "steps": [
     {
       "index": 1,
       "name": "filter_min",
-      "elapsed": 0.0075,
+      "elapsed": 0.0083,
       "inputs": [
         "counts"
       ],
@@ -22,7 +22,7 @@
     {
       "index": 2,
       "name": "compare_groups",
-      "elapsed": 6.4456,
+      "elapsed": 6.5095,
       "inputs": [
         "counts_filtered",
         "meta"
@@ -33,20 +33,78 @@
         "group_label": "dex",
         "group_a": "untrt",
         "group_b": "trt",
-        "method": "deseq2",
-        "output": "de_result"
+        "method": "welch",
+        "output": "de_dex"
       },
       "export_path": "steps/02_compare_groups.json"
     },
     {
       "index": 3,
-      "name": "describe",
-      "elapsed": 0.0257,
+      "name": "compare_groups",
+      "elapsed": 24.8947,
       "inputs": [
-        "de_result"
+        "counts_filtered",
+        "meta"
+      ],
+      "params": {
+        "dim": "gene",
+        "group_dim": "sample",
+        "group_label": "cell",
+        "mode": "one_vs_rest",
+        "method": "welch",
+        "output": "per_cell"
+      },
+      "export_path": "steps/03_compare_groups.json"
+    },
+    {
+      "index": 4,
+      "name": "compare_groups",
+      "elapsed": 38.3722,
+      "inputs": [
+        "counts_filtered",
+        "meta"
+      ],
+      "params": {
+        "dim": "gene",
+        "group_dim": "sample",
+        "group_label": "cell",
+        "mode": "pairwise",
+        "method": "welch",
+        "output": "pairwise_cell"
+      },
+      "export_path": "steps/04_compare_groups.json"
+    },
+    {
+      "index": 5,
+      "name": "describe",
+      "elapsed": 0.038,
+      "inputs": [
+        "de_dex"
       ],
       "params": {},
-      "export_path": "steps/03_describe.json"
+      "export_path": "steps/05_describe.json"
+    },
+    {
+      "index": 6,
+      "name": "describe",
+      "elapsed": 0.0429,
+      "inputs": [
+        "per_cell"
+      ],
+      "params": {},
+      "export_path": "steps/06_describe.json"
+    },
+    {
+      "index": 7,
+      "name": "describe",
+      "elapsed": 0.0611,
+      "inputs": [
+        "pairwise_cell"
+      ],
+      "params": {},
+      "export_path": "steps/07_describe.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/proteomics_de_demo",
-  "generated_at": "2026-10-12T02:55:37.087710+00:00",
+  "generated_at": "2026-10-12T09:50:23.865835+00:00",
   "n_steps": 10,
-  "total_elapsed": 4.973,
+  "total_elapsed": 5.2682,
   "steps": [
     {
       "index": 1,
       "name": "missing",
-      "elapsed": 0.006,
+      "elapsed": 0.0132,
       "inputs": [
         "proteins"
       ],
@@ -21,7 +21,7 @@
     {
       "index": 2,
       "name": "impute",
-      "elapsed": 0.0135,
+      "elapsed": 0.009,
       "inputs": [
         "proteins_filtered"
       ],
@@ -35,7 +35,7 @@
     {
       "index": 3,
       "name": "normalize",
-      "elapsed": 0.0926,
+      "elapsed": 0.0797,
       "inputs": [
         "proteins_imputed"
       ],
@@ -49,7 +49,7 @@
     {
       "index": 4,
       "name": "compare_groups",
-      "elapsed": 3.7824,
+      "elapsed": 3.6062,
       "inputs": [
         "proteins_qn",
         "meta"
@@ -68,7 +68,7 @@
     {
       "index": 5,
       "name": "correction",
-      "elapsed": 0.019,
+      "elapsed": 0.2806,
       "inputs": [
         "de_raw"
       ],
@@ -82,7 +82,7 @@
     {
       "index": 6,
       "name": "volcano",
-      "elapsed": 0.2125,
+      "elapsed": 0.1324,
       "inputs": [
         "de_result"
       ],
@@ -102,7 +102,7 @@
     {
       "index": 7,
       "name": "ma_plot",
-      "elapsed": 0.1332,
+      "elapsed": 0.1288,
       "inputs": [
         "de_result"
       ],
@@ -122,7 +122,7 @@
     {
       "index": 8,
       "name": "transpose",
-      "elapsed": 0.0041,
+      "elapsed": 0.2876,
       "inputs": [
         "proteins_qn"
       ],
@@ -138,7 +138,7 @@
     {
       "index": 9,
       "name": "heatmap",
-      "elapsed": 0.701,
+      "elapsed": 0.7186,
       "inputs": [
         "samples_by_protein"
       ],
@@ -158,12 +158,14 @@
     {
       "index": 10,
       "name": "describe",
-      "elapsed": 0.0087,
+      "elapsed": 0.0121,
       "inputs": [
         "de_result"
       ],
       "params": {},
       "export_path": "steps/10_describe.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

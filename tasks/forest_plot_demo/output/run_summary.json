@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/forest_plot_demo",
-  "generated_at": "2026-10-12T03:49:32.820599+00:00",
+  "generated_at": "2026-10-12T09:47:40.447172+00:00",
   "n_steps": 2,
-  "total_elapsed": 1.401,
+  "total_elapsed": 1.227,
   "steps": [
     {
       "index": 1,
       "name": "cox_regression",
-      "elapsed": 1.1889,
+      "elapsed": 1.0007,
       "inputs": [
         "clinical"
       ],
@@ -30,7 +30,7 @@
     {
       "index": 2,
       "name": "forest_plot",
-      "elapsed": 0.2121,
+      "elapsed": 0.2263,
       "inputs": [
         "cox_result"
       ],
@@ -48,5 +48,7 @@
       },
       "export_path": "steps/02_forest_plot.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

@@ -2,17 +2,18 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/ma_plot_demo
-generated : 2026-10-11T16:30:11.849454+00:00
+generated : 2026-10-12T09:47:24.725934+00:00
 steps     : 3
-elapsed   : 6.579s
+elapsed   : 6.821s
+status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   filter_min              0.007s   steps/01_filter_min.json
-2   compare_groups          6.405s   steps/02_compare_groups.json
-3   ma_plot                 0.167s   steps/03_ma_plot.json
+1   filter_min              0.013s   steps/01_filter_min.json
+2   compare_groups          6.654s   steps/02_compare_groups.json
+3   ma_plot                 0.153s   steps/03_ma_plot.json
 
 ============================================================
-Per-step details are in output/steps/. This file is an index only.
+Per-step details are at the export paths above. This file is an index only.
 ============================================================

@@ -1,0 +1,133 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/cluster_axis_demo",
+  "generated_at": "2026-10-12T10:14:23.827634+00:00",
+  "n_steps": 8,
+  "total_elapsed": 12.8287,
+  "steps": [
+    {
+      "index": 1,
+      "name": "reduce_axis",
+      "elapsed": 0.8526,
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "dim": "gene",
+        "stats": [
+          "sum",
+          "nonzero"
+        ],
+        "output": "cell_qc"
+      },
+      "export_path": "steps/01_reduce_axis.json"
+    },
+    {
+      "index": 2,
+      "name": "filter_by",
+      "elapsed": 0.1234,
+      "inputs": [
+        "counts",
+        "cell_qc"
+      ],
+      "params": {
+        "dim": "cell",
+        "rules": [
+          {
+            "field": "nonzero",
+            "min": 200
+          }
+        ],
+        "output": "counts_filtered"
+      },
+      "export_path": "steps/02_filter_by.json"
+    },
+    {
+      "index": 3,
+      "name": "normalize",
+      "elapsed": 4.9114,
+      "inputs": [
+        "counts_filtered"
+      ],
+      "params": {
+        "method": "total",
+        "dim": "cell",
+        "target_sum": "1e4",
+        "output": "counts_norm"
+      },
+      "export_path": "steps/03_normalize.json"
+    },
+    {
+      "index": 4,
+      "name": "log_transform",
+      "elapsed": 3.4995,
+      "inputs": [
+        "counts_norm"
+      ],
+      "params": {
+        "base": "e",
+        "pseudocount": 1,
+        "output": "counts_log"
+      },
+      "export_path": "steps/04_log_transform.json"
+    },
+    {
+      "index": 5,
+      "name": "rank_axis",
+      "elapsed": 0.8861,
+      "inputs": [
+        "counts_log"
+      ],
+      "params": {
+        "dim": "gene",
+        "by": "variance",
+        "top_n": 2000,
+        "output": "hvg"
+      },
+      "export_path": "steps/05_rank_axis.json"
+    },
+    {
+      "index": 6,
+      "name": "reduce",
+      "elapsed": 1.9851,
+      "inputs": [
+        "hvg"
+      ],
+      "params": {
+        "dim": "gene",
+        "method": "pca",
+        "n_components": 50,
+        "output": "pcs"
+      },
+      "export_path": "steps/06_reduce.json"
+    },
+    {
+      "index": 7,
+      "name": "cluster_axis",
+      "elapsed": 0.5662,
+      "inputs": [
+        "pcs"
+      ],
+      "params": {
+        "dim": "cell",
+        "method": "louvain",
+        "n_neighbors": 15,
+        "resolution": 1.0,
+        "random_state": 0,
+        "output": "clusters"
+      },
+      "export_path": "steps/07_cluster_axis.json"
+    },
+    {
+      "index": 8,
+      "name": "describe",
+      "elapsed": 0.0044,
+      "inputs": [
+        "clusters"
+      ],
+      "params": {},
+      "export_path": "steps/08_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

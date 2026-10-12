@@ -2,19 +2,20 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/boxplot_demo
-generated : 2026-10-11T16:42:01.456657+00:00
+generated : 2026-10-12T09:47:28.673057+00:00
 steps     : 5
-elapsed   : 0.128s
+elapsed   : 0.814s
+status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   filter_min              0.011s   steps/01_filter_min.json
-2   normalize               0.007s   steps/02_normalize.json
-3   log_transform           0.007s   steps/03_log_transform.json
-4   transpose               0.001s   steps/04_transpose.json
-5   boxplot                 0.102s   steps/05_boxplot.json
+1   filter_min              0.009s   steps/01_filter_min.json
+2   normalize               0.004s   steps/02_normalize.json
+3   log_transform           0.006s   steps/03_log_transform.json
+4   transpose               0.720s   steps/04_transpose.json
+5   boxplot                 0.075s   steps/05_boxplot.json
 
 ============================================================
-Per-step details are in output/steps/. This file is an index only.
+Per-step details are at the export paths above. This file is an index only.
 ============================================================

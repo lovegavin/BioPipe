@@ -2,16 +2,17 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/forest_plot_demo
-generated : 2026-10-12T03:49:32.820599+00:00
+generated : 2026-10-12T09:47:40.447172+00:00
 steps     : 2
-elapsed   : 1.401s
+elapsed   : 1.227s
+status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   cox_regression          1.189s   steps/01_cox_regression.json
-2   forest_plot             0.212s   steps/02_forest_plot.json
+1   cox_regression          1.001s   steps/01_cox_regression.json
+2   forest_plot             0.226s   steps/02_forest_plot.json
 
 ============================================================
-Per-step details are in output/steps/. This file is an index only.
+Per-step details are at the export paths above. This file is an index only.
 ============================================================

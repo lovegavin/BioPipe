@@ -1,0 +1,25 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/reduce_demo
+generated : 2026-10-12T10:08:28.751323+00:00
+steps     : 9
+elapsed   : 29.684s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   reduce_axis             0.852s   steps/01_reduce_axis.json
+2   filter_by               0.126s   steps/02_filter_by.json
+3   normalize               5.121s   steps/03_normalize.json
+4   log_transform           3.520s   steps/04_log_transform.json
+5   rank_axis               0.771s   steps/05_rank_axis.json
+6   reduce                  3.579s   steps/06_reduce.json
+7   reduce                 15.711s   steps/07_reduce.json
+8   describe                0.002s   steps/08_describe.json
+9   describe                0.002s   steps/09_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

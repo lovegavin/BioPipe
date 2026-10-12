@@ -1,0 +1,9 @@
+{
+  "kind": "scatter",
+  "filename": "umap.png",
+  "path": "/home/lovagavin/biopipe/tasks/scrnaseq_demo/output/figures/umap.png",
+  "x_label": "PC1",
+  "y_label": "PC2",
+  "color_label": null,
+  "n_points": 2700
+}

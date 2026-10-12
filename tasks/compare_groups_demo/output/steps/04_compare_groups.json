@@ -1,0 +1,33 @@
+{
+  "mode": "pairwise",
+  "method": "welch",
+  "dim": "gene",
+  "group_dim": "sample",
+  "group_label": "cell",
+  "n_features": 16596,
+  "n_comparisons": 6,
+  "n_skipped": 0,
+  "comparisons": [
+    "N052611_vs_N061011",
+    "N052611_vs_N080611",
+    "N052611_vs_N61311",
+    "N061011_vs_N080611",
+    "N061011_vs_N61311",
+    "N080611_vs_N61311"
+  ],
+  "statistics": [
+    "log2FC",
+    "mean_a",
+    "mean_b",
+    "stat",
+    "P",
+    "N"
+  ],
+  "skipped": [],
+  "groups": [
+    "N052611",
+    "N061011",
+    "N080611",
+    "N61311"
+  ]
+}

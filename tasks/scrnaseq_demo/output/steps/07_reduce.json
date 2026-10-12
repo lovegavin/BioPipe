@@ -1,0 +1,10 @@
+{
+  "dim": "gene",
+  "method": "umap",
+  "standardize": true,
+  "n_components": 2,
+  "n_observations": 2700,
+  "n_features": 2000,
+  "explained_variance_ratio": null,
+  "singular_values": null
+}

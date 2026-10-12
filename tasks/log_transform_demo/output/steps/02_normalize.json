@@ -5,7 +5,6 @@
   "n_samples": 8,
   "per_sample": {
     "SRR1039508": {
-      "size_factor": 20.636729,
       "sum_before": 20636729.0,
       "sum_after": 1000000.0,
       "min_before": 0.0,
@@ -15,10 +14,10 @@
       "mean_before": 780.0101674415089,
       "mean_after": 37.79718033034736,
       "std_before": 5362.707334681839,
-      "std_after": 259.8622744273978
+      "std_after": 259.8622744273978,
+      "size_factor": 20.636729
     },
     "SRR1039509": {
-      "size_factor": 18.807767,
       "sum_before": 18807767.0,
       "sum_after": 1000000.0000000001,
       "min_before": 0.0,
@@ -28,10 +27,10 @@
       "mean_before": 710.8805609101561,
       "mean_after": 37.79718033034736,
       "std_before": 4528.491944483165,
-      "std_after": 240.7777565770123
+      "std_after": 240.7777565770123,
+      "size_factor": 18.807767
     },
     "SRR1039512": {
-      "size_factor": 25.34647,
       "sum_before": 25346470.0,
       "sum_after": 999999.9999999999,
       "min_before": 0.0,
@@ -41,10 +40,10 @@
       "mean_before": 958.0250973277393,
       "mean_after": 37.79718033034735,
       "std_before": 7461.408238147623,
-      "std_after": 294.3766227860378
+      "std_after": 294.3766227860378,
+      "size_factor": 25.34647
     },
     "SRR1039513": {
-      "size_factor": 15.162502,
       "sum_before": 15162502.0,
       "sum_after": 1000000.0,
       "min_before": 0.0,
@@ -54,10 +53,10 @@
       "mean_before": 573.0998223532524,
       "mean_after": 37.79718033034736,
       "std_before": 4127.076577990471,
-      "std_after": 272.1896806998259
+      "std_after": 272.1896806998259,
+      "size_factor": 15.162502
     },
     "SRR1039516": {
-      "size_factor": 24.446669,
       "sum_before": 24446669.0,
       "sum_after": 999999.9999999999,
       "min_before": 0.0,
@@ -67,10 +66,10 @@
       "mean_before": 924.0151566693124,
       "mean_after": 37.79718033034735,
       "std_before": 6862.95680739627,
-      "std_after": 280.7317760712623
+      "std_after": 280.7317760712623,
+      "size_factor": 24.446669
     },
     "SRR1039517": {
-      "size_factor": 30.816194,
       "sum_before": 30816194.0,
       "sum_after": 1000000.0000000002,
       "min_before": 0.0,
@@ -80,10 +79,10 @@
       "mean_before": 1164.7652417129682,
       "mean_after": 37.797180330347366,
       "std_before": 7964.430660664464,
-      "std_after": 258.44952367136784
+      "std_after": 258.44952367136784,
+      "size_factor": 30.816194
     },
     "SRR1039520": {
-      "size_factor": 19.124908,
       "sum_before": 19124908.0,
       "sum_after": 1000000.0,
       "min_before": 0.0,
@@ -93,10 +92,10 @@
       "mean_before": 722.8675964773028,
       "mean_after": 37.79718033034736,
       "std_before": 5570.235832737126,
-      "std_after": 291.255562261378
+      "std_after": 291.255562261378,
+      "size_factor": 19.124908
     },
     "SRR1039521": {
-      "size_factor": 21.163069,
       "sum_before": 21163069.0,
       "sum_after": 1000000.0000000001,
       "min_before": 0.0,
@@ -106,7 +105,8 @@
       "mean_before": 799.9043353365839,
       "mean_after": 37.79718033034736,
       "std_before": 5711.761830358981,
-      "std_after": 269.8928888980601
+      "std_after": 269.8928888980601,
+      "size_factor": 21.163069
     }
   }
 }

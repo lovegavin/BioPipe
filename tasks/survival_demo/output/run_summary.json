@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/survival_demo",
-  "generated_at": "2026-10-12T03:51:06.306958+00:00",
+  "generated_at": "2026-10-12T09:48:02.965958+00:00",
   "n_steps": 5,
-  "total_elapsed": 1.6544,
+  "total_elapsed": 1.4466,
   "steps": [
     {
       "index": 1,
       "name": "kaplan_meier",
-      "elapsed": 0.1382,
+      "elapsed": 0.0984,
       "inputs": [
         "clinical"
       ],
@@ -41,7 +41,7 @@
     {
       "index": 2,
       "name": "logrank_test",
-      "elapsed": 0.2768,
+      "elapsed": 0.1306,
       "inputs": [
         "clinical"
       ],
@@ -73,7 +73,7 @@
     {
       "index": 3,
       "name": "cox_regression",
-      "elapsed": 1.0138,
+      "elapsed": 1.005,
       "inputs": [
         "clinical"
       ],
@@ -96,7 +96,7 @@
     {
       "index": 4,
       "name": "forest_plot",
-      "elapsed": 0.2254,
+      "elapsed": 0.2124,
       "inputs": [
         "cox_result"
       ],
@@ -124,5 +124,7 @@
       "params": {},
       "export_path": "steps/05_describe.json"
     }
-  ]
+  ],
+  "status": "complete",
+  "error": null
 }

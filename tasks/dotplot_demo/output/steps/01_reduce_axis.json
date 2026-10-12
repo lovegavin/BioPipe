@@ -1,0 +1,25 @@
+{
+  "dim": "gene",
+  "stats": [
+    "sum",
+    "nonzero"
+  ],
+  "input_dims": [
+    "gene",
+    "cell"
+  ],
+  "input_shape": [
+    32738,
+    2700
+  ],
+  "output_dims": [
+    "cell",
+    "statistic"
+  ],
+  "output_shape": [
+    2700,
+    2
+  ],
+  "n_reduced": 32738,
+  "n_outer": 2700
+}

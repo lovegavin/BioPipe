@@ -1,0 +1,150 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/dotplot_demo",
+  "generated_at": "2026-10-12T10:29:30.848317+00:00",
+  "n_steps": 8,
+  "total_elapsed": 13.8851,
+  "steps": [
+    {
+      "index": 1,
+      "name": "reduce_axis",
+      "elapsed": 0.8404,
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "dim": "gene",
+        "stats": [
+          "sum",
+          "nonzero"
+        ],
+        "output": "cell_qc"
+      },
+      "export_path": "steps/01_reduce_axis.json"
+    },
+    {
+      "index": 2,
+      "name": "filter_by",
+      "elapsed": 0.1327,
+      "inputs": [
+        "counts",
+        "cell_qc"
+      ],
+      "params": {
+        "dim": "cell",
+        "rules": [
+          {
+            "field": "nonzero",
+            "min": 200
+          }
+        ],
+        "output": "counts_filtered"
+      },
+      "export_path": "steps/02_filter_by.json"
+    },
+    {
+      "index": 3,
+      "name": "normalize",
+      "elapsed": 5.1002,
+      "inputs": [
+        "counts_filtered"
+      ],
+      "params": {
+        "method": "total",
+        "dim": "cell",
+        "target_sum": "1e4",
+        "output": "counts_norm"
+      },
+      "export_path": "steps/03_normalize.json"
+    },
+    {
+      "index": 4,
+      "name": "log_transform",
+      "elapsed": 3.3668,
+      "inputs": [
+        "counts_norm"
+      ],
+      "params": {
+        "base": "e",
+        "pseudocount": 1,
+        "output": "counts_log"
+      },
+      "export_path": "steps/04_log_transform.json"
+    },
+    {
+      "index": 5,
+      "name": "rank_axis",
+      "elapsed": 0.6395,
+      "inputs": [
+        "counts_log"
+      ],
+      "params": {
+        "dim": "gene",
+        "by": "variance",
+        "top_n": 2000,
+        "output": "hvg"
+      },
+      "export_path": "steps/05_rank_axis.json"
+    },
+    {
+      "index": 6,
+      "name": "reduce",
+      "elapsed": 2.6909,
+      "inputs": [
+        "hvg"
+      ],
+      "params": {
+        "dim": "gene",
+        "method": "pca",
+        "n_components": 50,
+        "output": "pcs"
+      },
+      "export_path": "steps/06_reduce.json"
+    },
+    {
+      "index": 7,
+      "name": "cluster_axis",
+      "elapsed": 0.7631,
+      "inputs": [
+        "pcs"
+      ],
+      "params": {
+        "dim": "cell",
+        "method": "louvain",
+        "n_neighbors": 15,
+        "resolution": 1.0,
+        "random_state": 0,
+        "output": "clusters"
+      },
+      "export_path": "steps/07_cluster_axis.json"
+    },
+    {
+      "index": 8,
+      "name": "dotplot",
+      "elapsed": 0.3515,
+      "inputs": [
+        "counts_log",
+        "clusters"
+      ],
+      "params": {
+        "feature_dim": "gene",
+        "group_dim": "cell",
+        "group_label": "cluster",
+        "features": [
+          "ENSG00000167286",
+          "ENSG00000105369",
+          "ENSG00000081237",
+          "ENSG00000174059",
+          "ENSG00000090339",
+          "ENSG00000105483"
+        ],
+        "statistic": "mean",
+        "proportion_mode": "nonzero",
+        "filename": "markers_dotplot.png",
+        "title": "PBMC 3k: marker expression by cluster"
+      },
+      "export_path": "steps/08_dotplot.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

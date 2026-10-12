@@ -1,0 +1,25 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/violin_demo
+generated : 2026-10-12T10:34:07.923151+00:00
+steps     : 9
+elapsed   : 19.908s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   reduce_axis             0.902s   steps/01_reduce_axis.json
+2   filter_by               0.121s   steps/02_filter_by.json
+3   normalize               5.060s   steps/03_normalize.json
+4   log_transform           3.524s   steps/04_log_transform.json
+5   rank_axis               0.919s   steps/05_rank_axis.json
+6   reduce                  5.324s   steps/06_reduce.json
+7   cluster_axis            0.457s   steps/07_cluster_axis.json
+8   transpose               3.378s   steps/08_transpose.json
+9   violin                  0.223s   steps/09_violin.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================
