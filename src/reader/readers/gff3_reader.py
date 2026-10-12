@@ -52,6 +52,7 @@ import numpy as np
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
 
@@ -64,6 +65,8 @@ _GFF3_COLUMNS = [
 
 class Gff3Reader(Reader):
     """Reader for .gff / .gff3 files."""
+
+    output_contract = reader_contract()
 
     extensions = [".gff", ".gff3"]
     handles_compression = False

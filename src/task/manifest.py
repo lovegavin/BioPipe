@@ -8,6 +8,7 @@ from pathlib import Path
 import yaml
 
 from src.core import ManifestError
+from src.task.memory.config import MemoryConfig
 
 
 _SOURCE_KEYS = {"path", "dims", "labels", "args"}
@@ -29,6 +30,7 @@ def load_manifest(path: Path) -> dict:
 
     _validate_sources(raw["sources"])
     _validate_steps(raw["steps"])
+    MemoryConfig.parse(raw, detect_available=False)
     return raw
 
 

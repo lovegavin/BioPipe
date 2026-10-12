@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>BioPipe Studio</title>
+    <script>
+      // Apply the saved appearance before first paint, including the loading screen.
+      try {
+        const preference = localStorage.getItem("biopipe-studio-theme-v1");
+        const theme =
+          preference === "light" || preference === "dark"
+            ? preference
+            : matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="theme-color"]').content =
+          theme === "dark" ? "#191919" : "#ffffff";
+      } catch {
+        document.documentElement.dataset.theme = matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches
+          ? "dark"
+          : "light";
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-4HGtEeHd.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/flow-vgTXqXxx.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-BHMsc2_O.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

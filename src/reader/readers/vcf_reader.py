@@ -52,20 +52,26 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-from cyvcf2 import VCF
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
 class VcfReader(Reader):
     """Reader for .vcf and .vcf.gz files."""
 
+    output_contract = reader_contract(representation="hard_call", coordinates=True)
+
     extensions = [".vcf"]
     handles_compression = True
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
+        try:
+            from cyvcf2 import VCF
+        except ImportError as exc:
+            raise ReaderError("VCF input requires the 'cyvcf2' package") from exc
         if len(dims) != 2:
             raise ReaderError(
                 f"VCF reader requires exactly two dims, got {dims}"
@@ -88,6 +94,9 @@ class VcfReader(Reader):
             alleles = arr[:, :-1]
             if ploidy is None and alleles.shape[1] > 0:
                 ploidy = int(alleles.shape[1])
+            if alleles.shape[1] != ploidy or (alleles < -1).any():
+                vcf.close()
+                raise ReaderError("VCF contains mixed ploidy; a single info.ploidy cannot describe these calls")
             missing = (alleles == -1).any(axis=1)
 
             alts = variant.ALT or []
@@ -178,6 +187,7 @@ class VcfReader(Reader):
             labels=final,
             info={
                 "missing_code": np.nan,
+                "representation": "hard_call",
                 "ploidy": ploidy,
                 "chrom": chroms,
                 "pos": positions,

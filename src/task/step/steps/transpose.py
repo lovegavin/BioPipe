@@ -12,6 +12,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.forms.metadata import project_metadata
+from src.core.contracts import MISSING, param, port
 
 
 class TransposeStep(Step):
@@ -25,6 +27,10 @@ class TransposeStep(Step):
     name = "transpose"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(dims=param("order", []))]
+    output_contract = {"mode": "transpose"}
+    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -48,11 +54,13 @@ class TransposeStep(Step):
 
         new_labels = {k: dict(v) for k, v in form.labels.items()}
 
+        new_info, new_axis_info = project_metadata(form)
         ctx[out_name] = Form(
             data=new_data.astype(np.float32),
             dims=list(order),
             labels=new_labels,
-            info=dict(form.info),
+            info=new_info,
+            axis_info=new_axis_info,
         )
 
         self._export_data = {

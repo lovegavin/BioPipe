@@ -33,6 +33,8 @@ from statsmodels.tools.sm_exceptions import PerfectSeparationError
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.forms.metadata import project_metadata
+from src.core.contracts import MISSING, param, port
 
 
 class RegressStep(Step):
@@ -49,6 +51,10 @@ class RegressStep(Step):
     name = "regress"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(ndim=2, dims=[param("dim")], labels=[{"dim": param("dim"), "values": param("response")}, {"dim": param("dim"), "values": param("covariates", [])}])]
+    output_contract = {"mode": "regress"}
+    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -122,7 +128,7 @@ class RegressStep(Step):
                 ],
                 axis=1,
             )
-            cov_missing_per_row = np.isnan(cov_block).any(axis=1)
+            cov_missing_per_row = _missing_mask(cov_block, form.info.get("missing_code", np.nan)).any(axis=1)
         else:
             cov_block = None
             cov_missing_per_row = np.zeros(n_obs, dtype=bool)
@@ -243,6 +249,8 @@ class RegressStep(Step):
             label: i for i, (label, _) in enumerate(predictors)
         }
 
+        new_info, new_axis_info = project_metadata(form, {dim: [pos for _, pos in predictors]}, keep_dims=[dim], derived=True)
+        new_info.update(missing_code=np.nan, representation='regression')
         ctx[out_name] = Form(
             data=result.astype(np.float32),
             dims=[dim, "statistic"],
@@ -250,7 +258,8 @@ class RegressStep(Step):
                 dim: out_labels_dim,
                 "statistic": {"BETA": 0, "SE": 1, "P": 2, "N": 3},
             },
-            info={},
+            info=new_info,
+            axis_info=new_axis_info,
         )
 
         n_tested = int(np.isfinite(result[:, 2]).sum())

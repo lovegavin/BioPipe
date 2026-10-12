@@ -98,8 +98,12 @@ class Form:
         if dim not in self.dims:
             raise ValidationError("Form", f"unknown dim '{dim}'")
         axis = self.dims.index(dim)
-        indices = np.asarray(indices)
+        indices = np.asarray(indices, dtype=np.intp) if len(indices) == 0 else np.asarray(indices)
         axis_size = self.data.shape[axis]
+        if indices.ndim != 1 or indices.dtype.kind not in "iu" or len(set(indices.tolist())) != len(indices):
+            raise ValidationError("Form", "subset indices must be unique integers")
+        if np.any(indices < 0) or np.any(indices >= axis_size):
+            raise ValidationError("Form", "subset index out of range")
 
         # Labels must cover every position before subsetting.
         pos_to_label = {v: k for k, v in self.labels[dim].items()}
@@ -120,41 +124,14 @@ class Form:
         new_labels = {k: dict(v) for k, v in self.labels.items()}
         new_labels[dim] = new_dim_labels
 
-        parallel = set(self.axis_info.get(dim, []))
-        new_info: dict = {}
-        for k, v in self.info.items():
-            if k in parallel:
-                if isinstance(v, np.ndarray):
-                    if v.shape[0] != axis_size:
-                        raise ValidationError(
-                            "Form",
-                            f"info['{k}'] declared parallel to '{dim}' "
-                            f"but has length {v.shape[0]} != {axis_size}",
-                        )
-                    new_info[k] = v[indices]
-                elif isinstance(v, list):
-                    if len(v) != axis_size:
-                        raise ValidationError(
-                            "Form",
-                            f"info['{k}'] declared parallel to '{dim}' "
-                            f"but has length {len(v)} != {axis_size}",
-                        )
-                    new_info[k] = [v[int(i)] for i in indices]
-                else:
-                    raise ValidationError(
-                        "Form",
-                        f"info['{k}'] declared parallel to '{dim}' but "
-                        f"is not a list or array",
-                    )
-            else:
-                new_info[k] = v
-
+        from .metadata import project_metadata
+        new_info, new_axis_info = project_metadata(self, {dim: indices})
         return Form(
-            data=new_data.astype(np.float32),
+            data=new_data,
             dims=list(self.dims),
             labels=new_labels,
             info=new_info,
-            axis_info={k: list(v) for k, v in self.axis_info.items()},
+            axis_info=new_axis_info,
         )
 
     # ------------------------------------------------------------------ #
@@ -164,6 +141,10 @@ class Form:
     def validate(self) -> None:
         if not isinstance(self.data, np.ndarray):
             raise ValidationError("Form", "data must be a numpy array")
+        if not isinstance(self.info, dict) or not isinstance(self.axis_info, dict):
+            raise ValidationError("Form", "info and axis_info must be dictionaries")
+        if any(not isinstance(dim, str) or not dim for dim in self.dims):
+            raise ValidationError("Form", "dimensions must be nonempty strings")
 
         if len(self.dims) != self.data.ndim:
             raise ValidationError(
@@ -192,7 +173,7 @@ class Form:
             # Every position must be labeled.
             seen = set()
             for lab, pos in mapping.items():
-                if not isinstance(pos, int):
+                if not isinstance(pos, int) or isinstance(pos, bool):
                     raise ValidationError(
                         "Form",
                         f"labels.{dim_name}.{lab} must be an int",
@@ -203,6 +184,8 @@ class Form:
                         f"labels.{dim_name}.{lab}={pos} out of range "
                         f"(axis size {size})",
                     )
+                if pos in seen:
+                    raise ValidationError("Form", f"dim '{dim_name}' has multiple labels for position {pos}")
                 seen.add(pos)
             unlabeled = set(range(size)) - seen
             if unlabeled:
@@ -212,7 +195,10 @@ class Form:
                     f"first missing: {sorted(unlabeled)[:5]}",
                 )
 
+        bound_fields = set()
         for dim_name, keys in self.axis_info.items():
+            if not isinstance(keys, list) or any(not isinstance(key, str) for key in keys):
+                raise ValidationError("Form", "axis_info entries must be lists of field names")
             if dim_name not in self.dims:
                 raise ValidationError(
                     "Form",
@@ -220,6 +206,9 @@ class Form:
                 )
             size = self.data.shape[self.axis(dim_name)]
             for k in keys:
+                if k in bound_fields:
+                    raise ValidationError("Form", f"info.{k} must bind to exactly one axis")
+                bound_fields.add(k)
                 if k not in self.info:
                     raise ValidationError(
                         "Form",
@@ -227,6 +216,10 @@ class Form:
                         f"not in info",
                     )
                 v = self.info[k]
+                if isinstance(v, np.ndarray) and v.ndim != 1:
+                    raise ValidationError("Form", f"info.{k} must be a one-dimensional array")
+                if isinstance(v, list) and any(isinstance(item, (list, tuple, np.ndarray)) for item in v):
+                    raise ValidationError("Form", f"info.{k} must be a one-dimensional list")
                 if not isinstance(v, (list, np.ndarray)):
                     raise ValidationError(
                         "Form",
@@ -239,3 +232,12 @@ class Form:
                         f"info['{k}'] declared parallel to '{dim_name}' "
                         f"but has length {len(v)} != {size}",
                     )
+        encoders = self.info.get("encoders", {})
+        if not isinstance(encoders, dict):
+            raise ValidationError("Form", "info.encoders must be a dimension mapping")
+        for dim, fields in encoders.items():
+            if dim not in self.dims or not isinstance(fields, dict):
+                raise ValidationError("Form", f"invalid encoder dimension {dim}")
+            for key in fields:
+                if key not in self.labels[dim] and key not in self.axis_info.get(dim, []):
+                    raise ValidationError("Form", f"orphan encoder {dim}.{key}")

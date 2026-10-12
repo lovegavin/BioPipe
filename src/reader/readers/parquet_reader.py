@@ -40,12 +40,15 @@ import pandas as pd
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
 
 
 class ParquetReader(Reader):
     """Reader for .parquet files."""
+
+    output_contract = reader_contract()
 
     extensions = [".parquet"]
     handles_compression = True

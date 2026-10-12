@@ -6,7 +6,7 @@ components. The other dimension becomes the "observation" axis of the
 output.
 
 Missing cells are filled with the column mean before standardization.
-The output form has no missing values and carries an empty info.
+The output retains observation annotations and declares score semantics.
 
 Layout:
     input  : [<dim_to_compress>, <observation_dim>]  (any 2D orientation)
@@ -20,6 +20,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.forms.metadata import project_metadata
+from src.core.contracts import MISSING, param, port
 
 
 class PcaStep(Step):
@@ -34,6 +36,10 @@ class PcaStep(Step):
     name = "pca"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(info={"missing_code": MISSING}, dims=[param("dim")], ndim=2)]
+    output_contract = {"mode": "pca"}
+    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -93,11 +99,14 @@ class PcaStep(Step):
             "component": {f"PC{i + 1}": i for i in range(k)},
         }
 
+        new_info, new_axis_info = project_metadata(form, keep_dims=[obs_dim_name], derived=True)
+        new_info.update(missing_code=np.nan, representation='scores')
         ctx[out_name] = Form(
             data=scores,
             dims=[obs_dim_name, "component"],
             labels=out_labels,
-            info={},
+            info=new_info,
+            axis_info=new_axis_info,
         )
 
         explained = (S[:k] ** 2) / float((S ** 2).sum())
@@ -122,7 +131,7 @@ class PcaStep(Step):
 
         print(
             f"[pca] compressed '{dim}' -> {k} components, "
-            f"PC1={explained[0]:.3f}, PC2={explained[1]:.3f}"
+            + ", ".join(f"PC{i+1}={value:.3f}" for i, value in enumerate(explained[:2]))
         )
 
     def export(self, ctx: Context) -> dict:

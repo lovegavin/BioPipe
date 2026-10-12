@@ -26,6 +26,10 @@ class Step(ABC):
     name: ClassVar[str] = "unnamed"
     inputs_arity: ClassVar[int | str] = 0
     outputs: ClassVar[list[str]] = []
+    input_contracts: ClassVar[list[dict] | None] = None
+    output_contract: ClassVar[dict | None] = None
+    output_parameter: ClassVar[str | None] = None
+    supports_streaming: ClassVar[bool] = False
 
     @abstractmethod
     def run(self, ctx: Context, inputs: list[Form]) -> None:
@@ -39,3 +43,7 @@ class Step(ABC):
         to see. Do not truncate.
         """
         return {}
+
+    def run_stream(self, ctx: Context, stream: dict) -> None:
+        """Optional equivalent chunk mode; defaults to unsupported."""
+        raise NotImplementedError(f"{self.name} has no streaming contract")

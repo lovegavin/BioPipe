@@ -38,12 +38,15 @@ import pandas as pd
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
 
 
 class CsvReader(Reader):
     """Reader for .csv files."""
+
+    output_contract = reader_contract()
 
     extensions = [".csv"]
     handles_compression = True
@@ -58,8 +61,7 @@ class CsvReader(Reader):
         has_header = bool(args.get("header", True))
         encoders_cfg = args.get("encoders", {})
 
-        sep = args.get("sep", ",")
-        df = pd.read_csv(path, header=0 if has_header else None, sep=sep)
+        df = pd.read_csv(path, header=0 if has_header else None)
         if has_header:
             col_names = [str(c) for c in df.columns]
         else:

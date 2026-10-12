@@ -15,6 +15,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import MISSING, param, port
 
 
 class HweStep(Step):
@@ -29,6 +30,10 @@ class HweStep(Step):
     name = "hwe"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(info={"missing_code": MISSING, "ploidy": {"type": "integer", "const": 2}, "representation": {"type": "string", "const": "hard_call"}}, dims=[param("dim")], values="hard_call")]
+    output_contract = {"mode": "subset"}
+    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

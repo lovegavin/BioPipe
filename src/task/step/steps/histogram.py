@@ -14,6 +14,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import MISSING, param, port
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -34,6 +35,9 @@ class HistogramStep(Step):
     name = "histogram"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(ndim=2, dims=[param("dim", "feature")], labels=[{"dim": param("dim", "feature"), "values": param("value_label")}])]
+    output_contract = {"mode": "report"}
+
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

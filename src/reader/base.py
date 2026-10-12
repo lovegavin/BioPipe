@@ -32,6 +32,8 @@ class Reader(ABC):
     instance used in ``info["encoders"]`` as ``{dim: {label: encoder}}``.
     """
 
+    output_contract: ClassVar[dict | None] = None
+
     extensions: ClassVar[list[str]] = []
     requires_siblings: ClassVar[list[str]] = []
     excludes_siblings: ClassVar[list[str]] = []

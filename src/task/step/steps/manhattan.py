@@ -24,6 +24,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import MISSING, param, port
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -46,6 +47,9 @@ class ManhattanStep(Step):
     name = "manhattan"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(ndim=2, dims=[param("dim", "feature")], parallel=[{"dim": param("dim", "feature"), "fields": [param("chrom_label"), param("pos_label")], "allow_label": True}, {"dim": param("p_dim", param("dim", "feature")), "fields": [param("p_label")], "allow_label": True}])]
+    output_contract = {"mode": "report"}
+
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

@@ -6,6 +6,8 @@ from __future__ import annotations
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.forms.metadata import project_metadata
+from src.core.contracts import MISSING, param, port
 
 
 class RenameDimStep(Step):
@@ -20,6 +22,10 @@ class RenameDimStep(Step):
     name = "rename_dim"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(dims=[param("from")])]
+    output_contract = {"mode": "rename"}
+    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -47,11 +53,13 @@ class RenameDimStep(Step):
         new_labels = {k: dict(v) for k, v in form.labels.items()}
         new_labels[new] = new_labels.pop(old)
 
+        new_info, new_axis_info = project_metadata(form, rename={old: new})
         ctx[out_name] = Form(
             data=form.data.copy(),
             dims=new_dims,
             labels=new_labels,
-            info=dict(form.info),
+            info=new_info,
+            axis_info=new_axis_info,
         )
 
         self._export_data = {
