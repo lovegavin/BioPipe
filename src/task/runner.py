@@ -28,6 +28,12 @@ def run(ctx: Context, steps: list[dict]) -> None:
             names = spec.get("inputs", [])
             _check_arity(name, step.inputs_arity, names)
             ctx.step_params = dict(spec.get("params", {}))
+            if cls.parameters_schema is not None:
+                from biopipe_sdk.protocol import validate_parameters
+                output = ctx.step_params.pop(cls.output_parameter, None) if cls.output_parameter else None
+                ctx.step_params = validate_parameters(cls.parameters_schema, ctx.step_params)
+                if output is not None:
+                    ctx.step_params[cls.output_parameter] = output
             ctx.step_params["_input_names"] = list(names)
             forms, stream = [], None
             schemas, expected = [], None
@@ -66,7 +72,7 @@ def run(ctx: Context, steps: list[dict]) -> None:
                     declared_outputs.append(str(ctx.step_params.get(cls.output_parameter, name)))
                 ctx.written_outputs.clear()
                 def check_output(key, form):
-                    if cls.output_contract and cls.output_contract.get("mode") == "report":
+                    if cls.output_contract and cls.output_contract.get("mode") in {"report", "none"}:
                         raise StepError(f"{name} contract: report operator cannot register a Form")
                     if declared_outputs and key not in declared_outputs:
                         raise StepError(f"{name} contract: undeclared output {key}")

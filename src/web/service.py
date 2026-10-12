@@ -15,6 +15,8 @@ import yaml
 
 from .graph import GraphError, compile_graph, relative_manifest
 from .models import Graph
+from .routes import RouteLibrary, expand_routes
+from .storage import FileLock, atomic_json
 
 
 def safe_json(value):
@@ -37,10 +39,7 @@ def read_json(path, default=None):
 
 
 def write_json(path, value):
-    path = Path(path)
-    temporary = path.with_suffix(".tmp")
-    temporary.write_text(json.dumps(safe_json(value), ensure_ascii=False, indent=2), encoding="utf-8")
-    os.replace(temporary, path)
+    atomic_json(path, safe_json(value))
 
 
 @dataclass
@@ -52,31 +51,64 @@ class Settings:
     testing: bool = False
     code_root: Path | None = None
     desktop: bool = False
+    profile: dict | None = None
+    migrate_legacy: bool = False
+    builtin_routes: bool = False
+    instance_url: str | None = None
 
 
 class JobService:
     def __init__(self, settings, catalog):
-        self.settings, self.catalog = settings, catalog
+        self.settings, self.base_catalog = settings, catalog
         self.root = settings.root.resolve()
         self.directory = settings.data_dir.resolve()
+        from biopipe.plugins import PluginManager
+        self.plugins = PluginManager(self.directory)
+        self.catalog = self.plugins.extend_catalog(catalog)
         if not self.directory.is_relative_to(self.root):
             raise ValueError("Studio data directory must be inside the project")
         self.jobs_dir = self.directory / "jobs"
         self.assets_dir = self.directory / "assets"
         self.jobs_dir.mkdir(parents=True, exist_ok=True)
         self.assets_dir.mkdir(exist_ok=True)
-        self.lock = threading.RLock()
+        self.lock = FileLock(self.directory / ".jobs.lock")
         self.processes, self.threads, self.jobs = {}, {}, {}
+        import psutil
+        self.owner = {"pid": os.getpid(), "created": psutil.Process().create_time()}
+        with self.lock:
+            self._refresh_jobs()
+            self.demo = self._demo()
+            write_json(self.directory / "operators.json", self.catalog)
+        self.routes = RouteLibrary(self.directory / "workflows", self.catalog, self.root,
+                                   lambda graph: self.plugins.catalog_for(graph, self.base_catalog))
+        if settings.builtin_routes:
+            self.routes.install_builtins()
+
+    def refresh_catalog(self):
+        state = self.plugins.state()
+        if state["generation"] != self.catalog.get("plugin_generation"):
+            value = self.plugins.extend_catalog(self.base_catalog)
+            self.catalog.update(value)
+            write_json(self.directory / "operators.json", self.catalog)
+
+    def _refresh_jobs(self):
+        import psutil
         for record in self.jobs_dir.glob("*/job.json"):
             value = read_json(record)
             if value:
                 if value["status"] == "running":
-                    value["status"] = "interrupted"
-                    value["error"] = "本地服务重启，之前的任务未完成。"
-                    write_json(record, value)
+                    owner = value.get("owner", {})
+                    try:
+                        alive = psutil.Process(owner["pid"]).create_time() == owner["created"]
+                    except (KeyError, psutil.NoSuchProcess):
+                        alive = False
+                    except psutil.AccessDenied:
+                        alive = True  # Insufficient permission is not proof of a dead worker.
+                    if not alive:
+                        value["status"] = "interrupted"
+                        value["error"] = "本地服务重启，之前的任务未完成。"
+                        write_json(record, value)
                 self.jobs[value["id"]] = value
-        self.demo = self._demo()
-        write_json(self.directory / "operators.json", catalog)
 
     def load_draft(self):
         value = read_json(self.directory / "draft.json")
@@ -120,16 +152,24 @@ class JobService:
         }
 
     def launch(self, graph: Graph):
-        manifest, order = compile_graph(graph, self.catalog, self.root, require_files=True)
+        graph = self.plugins.pin(graph)
+        catalog = self.plugins.catalog_for(graph, self.base_catalog)
+        plugin_snapshot = self.plugins.snapshot(graph)
+        manifest, order = compile_graph(graph, catalog, self.root, require_files=True)
         with self.lock:
+            self._refresh_jobs()
             if any(job["status"] == "running" for job in self.jobs.values()):
                 raise GraphError("已有任务正在运行，请等它结束或先停止。")
             key = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8]
             directory = self.jobs_dir / key
             directory.mkdir()
+            write_json(directory / "plugins.lock.json", plugin_snapshot)
             (directory / "task.yaml").write_text(yaml.safe_dump(relative_manifest(manifest, directory), sort_keys=False, allow_unicode=True), encoding="utf-8")
             job = {"id": key, "name": graph.name, "status": "running", "created_at": datetime.now(timezone.utc).isoformat(),
-                   "finished_at": None, "error": None, "order": order, "graph": graph.model_dump(mode="json")}
+                   "finished_at": None, "error": None, "order": order, "graph": graph.model_dump(mode="json"), "owner": self.owner}
+            job["plugins"] = {"generation": plugin_snapshot["generation"], "packages": plugin_snapshot["packages"]}
+            if any(node.kind == "route" for node in graph.nodes):
+                _, job["node_owners"] = expand_routes(graph, self.catalog)
             self.jobs[key] = job
             write_json(directory / "job.json", job)
             temporary = directory / "tmp"
@@ -141,7 +181,7 @@ class JobService:
                 code_root = self.settings.code_root or self.root
                 # stdin belongs to the desktop host's control pipe. Inheriting it
                 # can block Python startup on Windows while watch_host reads it.
-                process = subprocess.Popen([sys.executable, str(code_root / "scripts/run.py"), str(directory)],
+                process = subprocess.Popen([self.plugins.python_for(plugin_snapshot), str(code_root / "scripts/run.py"), str(directory)],
                                            cwd=self.root, env=env, stdin=subprocess.DEVNULL,
                                            stdout=console, stderr=subprocess.STDOUT,
                                            creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
@@ -171,6 +211,10 @@ class JobService:
             self.threads.pop(key, None)
 
     def require(self, key):
+        # Jobs created by the other launcher become visible without restarting.
+        value = read_json(self.jobs_dir / key / "job.json") if key.replace("-", "").isalnum() else None
+        if value:
+            self.jobs[key] = value
         if key not in self.jobs:
             raise KeyError("找不到这次运行。")
         return self.jobs[key]
@@ -235,6 +279,7 @@ class JobService:
 
     def history(self):
         with self.lock:
+            self._refresh_jobs()
             return [{k: value[k] for k in ("id", "name", "status", "created_at", "finished_at", "error")}
                     for value in sorted(self.jobs.values(), key=lambda j: j["created_at"], reverse=True)[:30]]
 
@@ -242,6 +287,8 @@ class JobService:
         with self.lock:
             job = self.require(key)
             if job["status"] == "running":
+                if key not in self.processes:
+                    raise GraphError("任务由另一个 BioPipe 窗口运行，请在启动它的窗口停止。")
                 job["status"] = "cancelled"
                 self.processes[key].terminate()
                 write_json(self.jobs_dir / key / "job.json", job)

@@ -1,0 +1,13 @@
+name: h5ad_demo
+
+sources:
+  pbmc:
+    path: input/pbmc3k.h5ad
+    dims: [cell, gene]
+    labels:
+      cell: builtin
+      gene: builtin
+
+steps:
+  - name: describe
+    inputs: [pbmc]

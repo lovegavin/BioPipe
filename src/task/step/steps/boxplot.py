@@ -37,6 +37,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import port, param
+from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -46,6 +48,8 @@ class BoxplotStep(Step):
     name = "boxplot"
     inputs_arity = 2
     outputs = []
+    input_contracts = [port(ndim=2, dims=[param("dim", "feature"), param("group_dim")], labels=[{"dim": param("dim", "feature"), "values": param("value_label")}]), {**port(ndim=2, dims=[param("group_dim")]), "labels_any": [param("group_label")]}]
+    output_contract = {"mode": "none"}
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

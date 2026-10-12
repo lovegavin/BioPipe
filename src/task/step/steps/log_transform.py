@@ -22,6 +22,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import port, param
+from src.core.forms.metadata import project_metadata
 
 
 class LogTransformStep(Step):
@@ -30,6 +32,9 @@ class LogTransformStep(Step):
     name = "log_transform"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port()]
+    output_contract = {"mode": "transform", "representation": "log_transform"}
+    output_parameter = "output"
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -59,12 +64,14 @@ class LogTransformStep(Step):
         transformed = np.where(missing, np.nan, transformed)
         transformed = transformed.astype(np.float32)
 
+        info, axis_info = project_metadata(form, derived=True)
+        info.update(missing_code=np.nan, representation="log_transform")
         ctx[out_name] = Form(
             data=transformed,
             dims=list(form.dims),
             labels={k: dict(v) for k, v in form.labels.items()},
-            info=dict(form.info),
-            axis_info={k: list(v) for k, v in form.axis_info.items()},
+            info=info,
+            axis_info=axis_info,
         )
 
         finite = transformed[np.isfinite(transformed)]

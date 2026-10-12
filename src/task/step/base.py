@@ -30,6 +30,21 @@ class Step(ABC):
     output_contract: ClassVar[dict | None] = None
     output_parameter: ClassVar[str | None] = None
     supports_streaming: ClassVar[bool] = False
+    version: ClassVar[str] = "1.0.0"
+    parameters_schema: ClassVar[dict | None] = None
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        """Return (temporary workspace bytes, output bytes); not a hard bound.
+
+        Existing operators use their established estimates. Plugins can override
+        this hook without editing the planner and without copying input arrays.
+        """
+        from src.task.memory.planner import full_estimate
+        resolved = dict(params)
+        if cls.output_parameter or cls.outputs:
+            resolved.setdefault("output", cls.name)
+        return full_estimate(cls.name, inputs, resolved, profiles)
 
     @abstractmethod
     def run(self, ctx: Context, inputs: list[Form]) -> None:

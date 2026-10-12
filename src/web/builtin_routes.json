@@ -1,0 +1,2210 @@
+{
+  "schema_version": 1,
+  "source_commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95",
+  "routes": [
+    {
+      "id": "route_f6f466bace35",
+      "version": 1,
+      "name": "GWAS",
+      "graph": {
+        "schema_version": 2,
+        "name": "GWAS",
+        "base_dir": ".studio/builtin-inputs/gwas",
+        "nodes": [
+          {
+            "id": "covar",
+            "kind": "source",
+            "operator": null,
+            "title": "covar",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "source": {
+              "path": "input/covariates.csv",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "geno",
+            "kind": "source",
+            "operator": null,
+            "title": "geno",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "source": {
+              "path": "input/geno.vcf",
+              "dims": [
+                "variant",
+                "sample"
+              ],
+              "labels": {
+                "sample": "builtin",
+                "variant": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pheno",
+            "kind": "source",
+            "operator": null,
+            "title": "pheno",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "source": {
+              "path": "input/phenotype.csv",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "missing_1",
+            "kind": "operator",
+            "operator": "missing",
+            "title": "缺失值过滤",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "threshold": 0.1,
+              "dim": "sample",
+              "output": "geno_sm"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "missing_2",
+            "kind": "operator",
+            "operator": "missing",
+            "title": "缺失值过滤",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "threshold": 0.05,
+              "dim": "variant",
+              "output": "geno_vm"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "maf_3",
+            "kind": "operator",
+            "operator": "maf",
+            "title": "MAF",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "threshold": 0.05,
+              "dim": "variant",
+              "output": "geno_maf"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "hwe_4",
+            "kind": "operator",
+            "operator": "hwe",
+            "title": "HWE",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "threshold": 0.0001,
+              "dim": "variant",
+              "output": "geno_hwe"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ld_prune_5",
+            "kind": "operator",
+            "operator": "ld_prune",
+            "title": "LD pruning",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {
+              "window": 50,
+              "r2": 0.2,
+              "dim": "variant",
+              "output": "geno_pruned"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pca_6",
+            "kind": "operator",
+            "operator": "pca",
+            "title": "PCA",
+            "position": {
+              "x": 1810.0,
+              "y": 100.0
+            },
+            "params": {
+              "n_components": 10,
+              "dim": "variant",
+              "output": "pcs"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "transpose_7",
+            "kind": "operator",
+            "operator": "transpose",
+            "title": "维度转置",
+            "position": {
+              "x": 1520.0,
+              "y": 310.0
+            },
+            "params": {
+              "order": [
+                "sample",
+                "variant"
+              ],
+              "output": "geno_T"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "rename_dim_8",
+            "kind": "operator",
+            "operator": "rename_dim",
+            "title": "重命名维度",
+            "position": {
+              "x": 1810.0,
+              "y": 310.0
+            },
+            "params": {
+              "from": "variant",
+              "output": "geno_f",
+              "to": "feature"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "concat_9",
+            "kind": "operator",
+            "operator": "concat",
+            "title": "合并数据",
+            "position": {
+              "x": 2100.0,
+              "y": 100.0
+            },
+            "params": {
+              "_input_names": [],
+              "axis": "feature",
+              "output": "combined"
+            },
+            "source": null,
+            "input_count": 3,
+            "route": null
+          },
+          {
+            "id": "regress_10",
+            "kind": "operator",
+            "operator": "regress",
+            "title": "回归分析",
+            "position": {
+              "x": 2390.0,
+              "y": 100.0
+            },
+            "params": {
+              "method": "auto",
+              "covariates": [
+                "sex",
+                "batch"
+              ],
+              "dim": "feature",
+              "output": "raw",
+              "response": "trait_value"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "correction_11",
+            "kind": "operator",
+            "operator": "correction",
+            "title": "FDR",
+            "position": {
+              "x": 2680.0,
+              "y": 100.0
+            },
+            "params": {
+              "method": "fdr",
+              "pfield": "P",
+              "dim": "statistic",
+              "alpha": 0.05,
+              "output": "assoc_result"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "attach_info_12",
+            "kind": "operator",
+            "operator": "attach_info",
+            "title": "附加注释",
+            "position": {
+              "x": 2970.0,
+              "y": 100.0
+            },
+            "params": {
+              "fields": [
+                "chrom",
+                "pos"
+              ],
+              "output": "assoc_with_pos",
+              "target_dim": "feature"
+            },
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "manhattan_13",
+            "kind": "operator",
+            "operator": "manhattan",
+            "title": "曼哈顿图",
+            "position": {
+              "x": 3260.0,
+              "y": 100.0
+            },
+            "params": {
+              "dim": "feature",
+              "point_size": 6,
+              "alpha": 0.85,
+              "chrom_label": "chrom",
+              "filename": "manhattan.png",
+              "p_dim": "statistic",
+              "p_label": "P",
+              "pos_label": "pos",
+              "title": "GWAS Manhattan plot"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "scatter_14",
+            "kind": "operator",
+            "operator": "scatter",
+            "title": "散点图",
+            "position": {
+              "x": 2100.0,
+              "y": 310.0
+            },
+            "params": {
+              "dim": "component",
+              "point_size": 8,
+              "alpha": 0.7,
+              "filename": "pca_scatter.png",
+              "title": "PCA",
+              "x_label": "PC1",
+              "xlabel": "PC1",
+              "y_label": "PC2",
+              "ylabel": "PC2"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "histogram_15",
+            "kind": "operator",
+            "operator": "histogram",
+            "title": "直方图",
+            "position": {
+              "x": 2970.0,
+              "y": 310.0
+            },
+            "params": {
+              "dim": "statistic",
+              "ylabel": "Count",
+              "bins": 20,
+              "log_y": false,
+              "filename": "pvalue_hist.png",
+              "title": "P-value distribution",
+              "value_label": "P",
+              "xlabel": "P"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_16",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 2970.0,
+              "y": 520.0
+            },
+            "params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "geno-missing_1-0",
+            "source": "geno",
+            "target": "missing_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "missing_1-missing_2-0",
+            "source": "missing_1",
+            "target": "missing_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "missing_2-maf_3-0",
+            "source": "missing_2",
+            "target": "maf_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "maf_3-hwe_4-0",
+            "source": "maf_3",
+            "target": "hwe_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "hwe_4-ld_prune_5-0",
+            "source": "hwe_4",
+            "target": "ld_prune_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ld_prune_5-pca_6-0",
+            "source": "ld_prune_5",
+            "target": "pca_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "hwe_4-transpose_7-0",
+            "source": "hwe_4",
+            "target": "transpose_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "transpose_7-rename_dim_8-0",
+            "source": "transpose_7",
+            "target": "rename_dim_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "rename_dim_8-concat_9-0",
+            "source": "rename_dim_8",
+            "target": "concat_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pheno-concat_9-1",
+            "source": "pheno",
+            "target": "concat_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "covar-concat_9-2",
+            "source": "covar",
+            "target": "concat_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-2"
+          },
+          {
+            "id": "concat_9-regress_10-0",
+            "source": "concat_9",
+            "target": "regress_10",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "regress_10-correction_11-0",
+            "source": "regress_10",
+            "target": "correction_11",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "correction_11-attach_info_12-0",
+            "source": "correction_11",
+            "target": "attach_info_12",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "hwe_4-attach_info_12-1",
+            "source": "hwe_4",
+            "target": "attach_info_12",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "attach_info_12-manhattan_13-0",
+            "source": "attach_info_12",
+            "target": "manhattan_13",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pca_6-scatter_14-0",
+            "source": "pca_6",
+            "target": "scatter_14",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "correction_11-histogram_15-0",
+            "source": "correction_11",
+            "target": "histogram_15",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "correction_11-describe_16-0",
+            "source": "correction_11",
+            "target": "describe_16",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "covar",
+              "label": "covar",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "geno",
+              "label": "geno",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "variant",
+                  "sample"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "hard_call"
+                  },
+                  "ploidy": {
+                    "type": "integer",
+                    "min": 1
+                  },
+                  "chrom": {
+                    "type": "array",
+                    "items": "string"
+                  },
+                  "pos": {
+                    "type": "array",
+                    "items": "integer"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": [
+                  {
+                    "dim": "variant",
+                    "fields": [
+                      "chrom",
+                      "pos"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "node_id": "pheno",
+              "label": "pheno",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "pca_6",
+              "handle": "out",
+              "label": "PCA",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "component"
+                ],
+                "labels": {
+                  "sample": null,
+                  "component": null
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "scores"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
+              }
+            },
+            {
+              "node_id": "attach_info_12",
+              "handle": "out",
+              "label": "附加注释",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "feature",
+                  "statistic"
+                ],
+                "labels": {
+                  "feature": null,
+                  "statistic": [
+                    "BETA",
+                    "SE",
+                    "P",
+                    "N",
+                    "Q_VALUE",
+                    "SIGNIFICANT"
+                  ]
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "regression"
+                  },
+                  "correction_method": {
+                    "type": "string",
+                    "const": "fdr"
+                  },
+                  "chrom": {
+                    "type": "array"
+                  },
+                  "pos": {
+                    "type": "array"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": true,
+                "axis_info": {
+                  "feature": [
+                    "chrom",
+                    "pos"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "route_274abd24ce8d",
+      "version": 1,
+      "name": "RNA-seq DE",
+      "graph": {
+        "schema_version": 2,
+        "name": "RNA-seq DE",
+        "base_dir": ".studio/builtin-inputs/rnaseq_de",
+        "nodes": [
+          {
+            "id": "counts",
+            "kind": "source",
+            "operator": null,
+            "title": "counts",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "source": {
+              "path": "input/airway_counts.csv",
+              "dims": [
+                "gene",
+                "sample"
+              ],
+              "labels": {
+                "gene": {
+                  "sample": 0
+                },
+                "sample": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "meta",
+            "kind": "source",
+            "operator": null,
+            "title": "meta",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "source": {
+              "path": "input/airway_colData.csv",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "filter_min_1",
+            "kind": "operator",
+            "operator": "filter_min",
+            "title": "低表达过滤",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_value": 10,
+              "min_samples": 3,
+              "dim": "gene",
+              "output": "counts_filtered"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "compare_groups_2",
+            "kind": "operator",
+            "operator": "compare_groups",
+            "title": "组间比较",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "method": "deseq2",
+              "dim": "gene",
+              "group_a": "untrt",
+              "group_b": "trt",
+              "group_dim": "sample",
+              "group_label": "dex",
+              "output": "de_result"
+            },
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "volcano_3",
+            "kind": "operator",
+            "operator": "volcano",
+            "title": "Volcano",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "dim": "gene",
+              "stat_dim": "statistic",
+              "lfc_label": "log2FC",
+              "p_label": "Q_VALUE",
+              "ylabel": "-log10(P)",
+              "lfc_threshold": 1.0,
+              "p_threshold": 0.05,
+              "point_size": 8,
+              "alpha": 0.7,
+              "label_top": 8,
+              "filename": "volcano.png",
+              "title": "Airway: dex vs untrt"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ma_plot_4",
+            "kind": "operator",
+            "operator": "ma_plot",
+            "title": "MA plot",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "dim": "gene",
+              "stat_dim": "statistic",
+              "lfc_label": "log2FC",
+              "mean_a_label": "mean_a",
+              "mean_b_label": "mean_b",
+              "p_label": "Q_VALUE",
+              "xlabel": "log2 mean",
+              "p_threshold": 0.05,
+              "point_size": 8,
+              "alpha": 0.7,
+              "label_top": 0,
+              "filename": "ma.png",
+              "title": "Airway: dex vs untrt"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "normalize_5",
+            "kind": "operator",
+            "operator": "normalize",
+            "title": "归一化",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "target_sum": 1000000.0,
+              "dim": "sample",
+              "method": "cpm",
+              "output": "counts_cpm"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "log_transform_6",
+            "kind": "operator",
+            "operator": "log_transform",
+            "title": "Log",
+            "position": {
+              "x": 940.0,
+              "y": 520.0
+            },
+            "params": {
+              "base": 2,
+              "pseudocount": 1,
+              "output": "counts_log"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pca_7",
+            "kind": "operator",
+            "operator": "pca",
+            "title": "PCA",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "n_components": 10,
+              "dim": "gene",
+              "output": "pcs"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "scatter_8",
+            "kind": "operator",
+            "operator": "scatter",
+            "title": "散点图",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {
+              "dim": "component",
+              "point_size": 8,
+              "alpha": 0.7,
+              "filename": "pca.png",
+              "title": "Sample PCA",
+              "x_label": "PC1",
+              "y_label": "PC2"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "heatmap_9",
+            "kind": "operator",
+            "operator": "heatmap",
+            "title": "Heatmap",
+            "position": {
+              "x": 1230.0,
+              "y": 310.0
+            },
+            "params": {
+              "dim": "gene",
+              "other_dim": "sample",
+              "select": "variance",
+              "standardize": "row",
+              "cmap": "RdBu_r",
+              "nan_color": "#DDDDDD",
+              "top_n": 50,
+              "cluster_rows": true,
+              "cluster_cols": true,
+              "show_row_labels": false,
+              "show_col_labels": true,
+              "filename": "top50_heatmap.png",
+              "title": "Top 50 variable genes"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "transpose_10",
+            "kind": "operator",
+            "operator": "transpose",
+            "title": "维度转置",
+            "position": {
+              "x": 1230.0,
+              "y": 520.0
+            },
+            "params": {
+              "order": [
+                "sample",
+                "gene"
+              ],
+              "output": "samples_by_gene"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "boxplot_11",
+            "kind": "operator",
+            "operator": "boxplot",
+            "title": "Boxplot",
+            "position": {
+              "x": 1520.0,
+              "y": 310.0
+            },
+            "params": {
+              "dim": "gene",
+              "show_points": true,
+              "point_size": 4,
+              "point_alpha": 0.5,
+              "filename": "ZBTB16_boxplot.png",
+              "group_dim": "sample",
+              "group_label": "dex",
+              "title": "ZBTB16 by dex",
+              "value_label": "ENSG00000109906",
+              "ylabel": "log2(CPM + 1)"
+            },
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "describe_12",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 940.0,
+              "y": 730.0
+            },
+            "params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "counts-filter_min_1-0",
+            "source": "counts",
+            "target": "filter_min_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "filter_min_1-compare_groups_2-0",
+            "source": "filter_min_1",
+            "target": "compare_groups_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "meta-compare_groups_2-1",
+            "source": "meta",
+            "target": "compare_groups_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "compare_groups_2-volcano_3-0",
+            "source": "compare_groups_2",
+            "target": "volcano_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "compare_groups_2-ma_plot_4-0",
+            "source": "compare_groups_2",
+            "target": "ma_plot_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "filter_min_1-normalize_5-0",
+            "source": "filter_min_1",
+            "target": "normalize_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_5-log_transform_6-0",
+            "source": "normalize_5",
+            "target": "log_transform_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_6-pca_7-0",
+            "source": "log_transform_6",
+            "target": "pca_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pca_7-scatter_8-0",
+            "source": "pca_7",
+            "target": "scatter_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_6-heatmap_9-0",
+            "source": "log_transform_6",
+            "target": "heatmap_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_6-transpose_10-0",
+            "source": "log_transform_6",
+            "target": "transpose_10",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "transpose_10-boxplot_11-0",
+            "source": "transpose_10",
+            "target": "boxplot_11",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "meta-boxplot_11-1",
+            "source": "meta",
+            "target": "boxplot_11",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "compare_groups_2-describe_12-0",
+            "source": "compare_groups_2",
+            "target": "describe_12",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "counts",
+              "label": "counts",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "gene",
+                  "sample"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "meta",
+              "label": "meta",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "compare_groups_2",
+              "handle": "out",
+              "label": "组间比较",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "gene",
+                  "statistic"
+                ],
+                "labels": {
+                  "gene": null,
+                  "statistic": [
+                    "log2FC",
+                    "mean_a",
+                    "mean_b",
+                    "stat",
+                    "P",
+                    "N",
+                    "Q_VALUE"
+                  ]
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "comparison"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
+              }
+            },
+            {
+              "node_id": "pca_7",
+              "handle": "out",
+              "label": "PCA",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "component"
+                ],
+                "labels": {
+                  "sample": null,
+                  "component": null
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "scores"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
+              }
+            },
+            {
+              "node_id": "transpose_10",
+              "handle": "out",
+              "label": "维度转置",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "gene"
+                ],
+                "labels": {
+                  "gene": null,
+                  "sample": null
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "log_transform"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "route_88fb083f4238",
+      "version": 1,
+      "name": "Proteomics DE",
+      "graph": {
+        "schema_version": 2,
+        "name": "Proteomics DE",
+        "base_dir": ".studio/builtin-inputs/proteomics_de",
+        "nodes": [
+          {
+            "id": "meta",
+            "kind": "source",
+            "operator": null,
+            "title": "meta",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "source": {
+              "path": "input/clinical_raw.txt",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {
+                "reader": "csv",
+                "sep": "\t"
+              }
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "proteins",
+            "kind": "source",
+            "operator": null,
+            "title": "proteins",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "source": {
+              "path": "input/proteomics_raw.txt",
+              "dims": [
+                "protein",
+                "sample"
+              ],
+              "labels": {
+                "protein": {
+                  "sample": 0
+                },
+                "sample": "builtin"
+              },
+              "args": {
+                "reader": "csv",
+                "sep": "\t"
+              }
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "missing_1",
+            "kind": "operator",
+            "operator": "missing",
+            "title": "缺失值过滤",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "threshold": 0.5,
+              "dim": "protein",
+              "output": "proteins_filtered"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "impute_2",
+            "kind": "operator",
+            "operator": "impute",
+            "title": "缺失值填补",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_scale": 1.0,
+              "dim": "protein",
+              "method": "min",
+              "output": "proteins_imputed"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "normalize_3",
+            "kind": "operator",
+            "operator": "normalize",
+            "title": "归一化",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "target_sum": 1000000.0,
+              "dim": "sample",
+              "method": "quantile",
+              "output": "proteins_qn"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "compare_groups_4",
+            "kind": "operator",
+            "operator": "compare_groups",
+            "title": "组间比较",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "method": "welch",
+              "dim": "protein",
+              "group_a": "Stage II",
+              "group_b": "Stage III",
+              "group_dim": "sample",
+              "group_label": "Stage",
+              "output": "de_raw"
+            },
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "correction_5",
+            "kind": "operator",
+            "operator": "correction",
+            "title": "FDR",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {
+              "method": "fdr",
+              "pfield": "P",
+              "dim": "statistic",
+              "alpha": 0.05,
+              "output": "de_result"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "volcano_6",
+            "kind": "operator",
+            "operator": "volcano",
+            "title": "Volcano",
+            "position": {
+              "x": 1810.0,
+              "y": 100.0
+            },
+            "params": {
+              "dim": "protein",
+              "stat_dim": "statistic",
+              "lfc_label": "log2FC",
+              "p_label": "Q_VALUE",
+              "ylabel": "-log10(P)",
+              "lfc_threshold": 0.5,
+              "p_threshold": 0.05,
+              "point_size": 8,
+              "alpha": 0.7,
+              "label_top": 10,
+              "filename": "volcano.png",
+              "title": "CPTAC BRCA: Stage III vs Stage II"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ma_plot_7",
+            "kind": "operator",
+            "operator": "ma_plot",
+            "title": "MA plot",
+            "position": {
+              "x": 1810.0,
+              "y": 310.0
+            },
+            "params": {
+              "dim": "protein",
+              "stat_dim": "statistic",
+              "lfc_label": "log2FC",
+              "mean_a_label": "mean_a",
+              "mean_b_label": "mean_b",
+              "p_label": "Q_VALUE",
+              "xlabel": "log2 mean",
+              "p_threshold": 0.05,
+              "point_size": 8,
+              "alpha": 0.7,
+              "label_top": 0,
+              "filename": "ma.png",
+              "title": "CPTAC BRCA: Stage III vs Stage II"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "transpose_8",
+            "kind": "operator",
+            "operator": "transpose",
+            "title": "维度转置",
+            "position": {
+              "x": 1230.0,
+              "y": 310.0
+            },
+            "params": {
+              "order": [
+                "sample",
+                "protein"
+              ],
+              "output": "samples_by_protein"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "heatmap_9",
+            "kind": "operator",
+            "operator": "heatmap",
+            "title": "Heatmap",
+            "position": {
+              "x": 1520.0,
+              "y": 310.0
+            },
+            "params": {
+              "dim": "protein",
+              "other_dim": "sample",
+              "select": "variance",
+              "standardize": "row",
+              "cmap": "RdBu_r",
+              "nan_color": "#DDDDDD",
+              "top_n": 50,
+              "cluster_rows": true,
+              "cluster_cols": true,
+              "show_row_labels": false,
+              "show_col_labels": true,
+              "filename": "heatmap.png",
+              "title": "Top 50 variable proteins"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_10",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1810.0,
+              "y": 520.0
+            },
+            "params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "proteins-missing_1-0",
+            "source": "proteins",
+            "target": "missing_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "missing_1-impute_2-0",
+            "source": "missing_1",
+            "target": "impute_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "impute_2-normalize_3-0",
+            "source": "impute_2",
+            "target": "normalize_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_3-compare_groups_4-0",
+            "source": "normalize_3",
+            "target": "compare_groups_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "meta-compare_groups_4-1",
+            "source": "meta",
+            "target": "compare_groups_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "compare_groups_4-correction_5-0",
+            "source": "compare_groups_4",
+            "target": "correction_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "correction_5-volcano_6-0",
+            "source": "correction_5",
+            "target": "volcano_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "correction_5-ma_plot_7-0",
+            "source": "correction_5",
+            "target": "ma_plot_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_3-transpose_8-0",
+            "source": "normalize_3",
+            "target": "transpose_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "transpose_8-heatmap_9-0",
+            "source": "transpose_8",
+            "target": "heatmap_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "correction_5-describe_10-0",
+            "source": "correction_5",
+            "target": "describe_10",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "meta",
+              "label": "meta",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "proteins",
+              "label": "proteins",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "protein",
+                  "sample"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "correction_5",
+              "handle": "out",
+              "label": "FDR",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "protein",
+                  "statistic"
+                ],
+                "labels": {
+                  "protein": null,
+                  "statistic": [
+                    "log2FC",
+                    "mean_a",
+                    "mean_b",
+                    "stat",
+                    "P",
+                    "N",
+                    "Q_VALUE",
+                    "SIGNIFICANT"
+                  ]
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "comparison"
+                  },
+                  "correction_method": {
+                    "type": "string",
+                    "const": "fdr"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
+              }
+            },
+            {
+              "node_id": "transpose_8",
+              "handle": "out",
+              "label": "维度转置",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "protein"
+                ],
+                "labels": {
+                  "protein": null,
+                  "sample": null
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "normalize"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "route_bf78f7a6e12f",
+      "version": 1,
+      "name": "生存分析",
+      "graph": {
+        "schema_version": 2,
+        "name": "生存分析",
+        "base_dir": ".studio/builtin-inputs/survival",
+        "nodes": [
+          {
+            "id": "clinical",
+            "kind": "source",
+            "operator": null,
+            "title": "clinical",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "source": {
+              "path": "input/tcga_brca_clinical_raw.tsv",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {
+                "reader": "csv",
+                "sep": "\t"
+              }
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "kaplan_meier_1",
+            "kind": "operator",
+            "operator": "kaplan_meier",
+            "title": "KM",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "xlabel": "Time (days)",
+              "ylabel": "Survival probability",
+              "show_censors": true,
+              "show_ci": false,
+              "event_label": "OS_event_nature2012",
+              "filename": "km_stage.png",
+              "group_label": "AJCC_Stage_nature2012",
+              "group_map": {
+                "Stage IA": "Stage I",
+                "Stage IB": "Stage I",
+                "Stage IIA": "Stage II",
+                "Stage IIB": "Stage II",
+                "Stage IIIA": "Stage III",
+                "Stage IIIB": "Stage III",
+                "Stage IIIC": "Stage III",
+                "Stage IV": "Stage IV"
+              },
+              "groups": [
+                "Stage I",
+                "Stage II",
+                "Stage III",
+                "Stage IV"
+              ],
+              "time_label": "OS_Time_nature2012",
+              "title": "TCGA BRCA: overall survival by AJCC stage"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "logrank_test_2",
+            "kind": "operator",
+            "operator": "logrank_test",
+            "title": "Log-rank",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "pairwise": true,
+              "event_label": "OS_event_nature2012",
+              "group_label": "AJCC_Stage_nature2012",
+              "group_map": {
+                "Stage IA": "Stage I",
+                "Stage IB": "Stage I",
+                "Stage IIA": "Stage II",
+                "Stage IIB": "Stage II",
+                "Stage IIIA": "Stage III",
+                "Stage IIIB": "Stage III",
+                "Stage IIIC": "Stage III",
+                "Stage IV": "Stage IV"
+              },
+              "groups": [
+                "Stage I",
+                "Stage II",
+                "Stage III",
+                "Stage IV"
+              ],
+              "output": "logrank_result",
+              "time_label": "OS_Time_nature2012"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "cox_regression_3",
+            "kind": "operator",
+            "operator": "cox_regression",
+            "title": "Cox",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "categorical": [
+                "AJCC_Stage_nature2012",
+                "Gender_nature2012"
+              ],
+              "covariates": [
+                "Age_at_Initial_Pathologic_Diagnosis_nature2012",
+                "AJCC_Stage_nature2012",
+                "Gender_nature2012"
+              ],
+              "event_label": "OS_event_nature2012",
+              "output": "cox_result",
+              "time_label": "OS_Time_nature2012"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "forest_plot_4",
+            "kind": "operator",
+            "operator": "forest_plot",
+            "title": "Forest plot",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "dim": "covariate",
+              "stat_dim": "statistic",
+              "hr_label": "HR",
+              "low_label": "CI_low",
+              "high_label": "CI_high",
+              "p_label": "P",
+              "xlabel": "Hazard ratio (95% CI)",
+              "color_sig": "#D62728",
+              "color_ns": "#4C72B0",
+              "sort_by": "p",
+              "log_scale": true,
+              "filename": "forest.png",
+              "title": "TCGA BRCA: multivariable Cox regression"
+            },
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_5",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "clinical-kaplan_meier_1-0",
+            "source": "clinical",
+            "target": "kaplan_meier_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clinical-logrank_test_2-0",
+            "source": "clinical",
+            "target": "logrank_test_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clinical-cox_regression_3-0",
+            "source": "clinical",
+            "target": "cox_regression_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "cox_regression_3-forest_plot_4-0",
+            "source": "cox_regression_3",
+            "target": "forest_plot_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "logrank_test_2-describe_5-0",
+            "source": "logrank_test_2",
+            "target": "describe_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "clinical",
+              "label": "clinical",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "logrank_test_2",
+              "handle": "out",
+              "label": "Log-rank",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "comparison",
+                  "statistic"
+                ],
+                "labels": {
+                  "comparison": null,
+                  "statistic": [
+                    "chi2",
+                    "df",
+                    "P"
+                  ]
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "logrank_test"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
+              }
+            },
+            {
+              "node_id": "cox_regression_3",
+              "handle": "out",
+              "label": "Cox",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "covariate",
+                  "statistic"
+                ],
+                "labels": {
+                  "covariate": null,
+                  "statistic": [
+                    "coef",
+                    "HR",
+                    "se",
+                    "z",
+                    "P",
+                    "CI_low",
+                    "CI_high"
+                  ]
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "cox_regression"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

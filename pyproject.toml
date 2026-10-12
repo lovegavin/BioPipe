@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biopipe-studio"
+version = "0.2.0"
+description = "Typed bioinformatics pipelines, desktop canvas and agent interfaces"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26", "pandas>=2.0", "PyYAML>=6.0", "scipy>=1.11", "statsmodels>=0.14", "matplotlib>=3.8", "psutil>=5.9", "pydantic>=2.7", "jsonschema>=4.23,<5", "packaging>=24", "fastapi>=0.115", "uvicorn>=0.30", "httpx>=0.27"]
+
+[project.optional-dependencies]
+agent = ["mcp>=1.20,<2"]
+dev = ["pytest>=8", "build>=1.2", "setuptools>=69"]
+
+[project.scripts]
+biopipe = "biopipe.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["biopipe*", "src*"]
+
+[tool.setuptools.package-data]
+"src.task" = ["operator_ui.json"]
+"src.web" = ["builtin_routes.json"]
+"biopipe_sdk" = ["schemas/*.json"]

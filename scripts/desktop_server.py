@@ -32,33 +32,41 @@ def bind_loopback(preferred_port: int = 0) -> socket.socket:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--workspace", required=True, type=Path)
+    parser.add_argument("--workspace", type=Path, help="Explicit isolated workspace")
+    parser.add_argument("--profile-dir", type=Path, help="Shared Studio profile")
+    parser.add_argument("--resolve-profile", action="store_true")
+    parser.add_argument("--migrate-legacy", action="store_true", default=None)
     parser.add_argument("--frontend", type=Path, default=CODE_ROOT / "frontend/dist")
     parser.add_argument("--port", type=int, default=0)
     parser.add_argument("--wait-for-host", action="store_true")
     args = parser.parse_args()
+    from src.web.profile import make_settings, resolve_profile
+    options = dict(profile_dir=args.profile_dir, workspace=args.workspace)
+    try:
+        profile = resolve_profile(CODE_ROOT, **options)
+    except ValueError as error:
+        parser.error(str(error))
+    if args.resolve_profile:
+        print(json.dumps(profile.as_dict(), ensure_ascii=False))
+        return
     # The host first attaches us to its Windows Job Object, then releases startup.
     if args.wait_for_host and sys.stdin.readline().strip() != "start":
         return
     if not 0 <= args.port <= 65535:
         parser.error("port must be between 0 and 65535")
-    workspace = args.workspace.resolve()
-    workspace.mkdir(parents=True, exist_ok=True)
-    data_dir = workspace / ".studio"
-    os.environ["MPLCONFIGDIR"] = str(data_dir / "matplotlib")
     os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
     from src.web.api import create_app
-    from src.web.service import Settings
     import uvicorn
 
     if not (args.frontend / "index.html").is_file():
         parser.error("Frontend index.html is missing")
-    settings = Settings(workspace, data_dir, args.frontend.resolve(),
-                        code_root=CODE_ROOT, desktop=True)
+    settings = make_settings(CODE_ROOT, args.frontend, desktop=True,
+                             migrate_legacy=args.migrate_legacy, **options)
     app = create_app(settings)
     finished = threading.Event()
     with bind_loopback(args.port) as listener:
         port = listener.getsockname()[1]
+        app.state.instance_url = f"http://127.0.0.1:{port}"
         server = uvicorn.Server(uvicorn.Config(app, host="127.0.0.1", port=port,
                                              access_log=False, timeout_graceful_shutdown=3))
 

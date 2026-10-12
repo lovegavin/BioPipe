@@ -18,23 +18,35 @@ from src.core import ManifestError
 from src.task import STEPS
 from src.task.operator_catalog import build_catalog
 from .graph import GraphError, compile_graph, import_manifest, project_path, relative_manifest
-from .models import Graph, ManifestImport
+from .models import Graph, ManifestImport, SaveWorkflow, RegisterRoutes, Workspace, LibraryAction
+from .routes import prepare_interface
 from .contracts import analyze_graph
 from .service import JobService, Settings, read_json, safe_json
 
 
 def create_app(settings=None):
     root = Path(__file__).resolve().parents[2]
-    settings = settings or Settings(root, root / os.getenv("BIOPIPE_STUDIO_DATA", ".local/studio"), root / "frontend/dist")
+    if settings is None:
+        from .profile import make_settings
+        settings = make_settings(root, root / "frontend/dist")
     catalog = build_catalog(STEPS)
+    if settings.migrate_legacy:
+        from .migration import migrate_profile
+        migrate_profile(settings, catalog)
     service = JobService(settings, catalog)
+    catalog = service.catalog
     token = secrets.token_urlsafe(32)
     @asynccontextmanager
     async def lifespan(app):
+        bridge.publish(getattr(app.state, "instance_url", None) or settings.instance_url)
         yield
+        bridge.close()
         service.shutdown()
-    app = FastAPI(title="BioPipe Studio", version="0.1.0", lifespan=lifespan)
+    app = FastAPI(title="BioPipe Studio", version="0.2.0", lifespan=lifespan)
     app.state.service, app.state.token = service, token
+    from biopipe.bridge import Bridge
+    bridge = Bridge(app, service, token)
+    app.state.bridge = bridge
 
     @app.middleware("http")
     async def local_boundary(request, call_next):
@@ -44,7 +56,7 @@ def create_app(settings=None):
         if not settings.testing and (host not in ("localhost", "127.0.0.1") or
                                     (origin and urlparse(origin).hostname not in ("localhost", "127.0.0.1"))):
             return JSONResponse({"message": "此服务仅允许本地访问。"}, status_code=403)
-        if request.method not in ("GET", "HEAD", "OPTIONS"):
+        if request.method not in ("GET", "HEAD", "OPTIONS") and not request.url.path.startswith("/api/agent/"):
             if not hmac.compare_digest(request.headers.get("x-studio-token", ""), token):
                 return JSONResponse({"message": "本地会话已更新，请刷新页面。"}, status_code=403)
         if request.url.path.startswith("/api") and not request.url.path.startswith("/api/assets"):
@@ -55,6 +67,7 @@ def create_app(settings=None):
             if length > 2 * 1024**2:
                 return JSONResponse({"message": "工作流配置超过 2 MiB，请缩小配置。"}, status_code=413)
         try:
+            service.refresh_catalog()
             response = await call_next(request)
         except Exception:
             logging.exception("studio request failure", extra={"request_id": request_id})
@@ -78,16 +91,71 @@ def create_app(settings=None):
     async def missing(request, exc):
         return JSONResponse({"message": str(exc).strip("'")}, status_code=404)
 
+    @app.exception_handler(ValueError)
+    async def invalid_value(request, exc):
+        return JSONResponse({"code": "invalid_request", "message": str(exc)}, status_code=422)
+
     @app.get("/health")
     @app.get("/ready")
     def health():
-        return {"status": "ok", "studio": "0.1.0"}
+        return {"status": "ok", "studio": "0.2.0"}
 
     @app.get("/api/bootstrap")
     def bootstrap():
+        import sys
+        agent_args = ["-m", "biopipe", "--workspace", str(service.root), "--data-dir", str(service.directory), "mcp"]
         return {"token": token, "catalog": catalog, "demo": service.demo,
+                "agent_config": {"command": sys.executable, "args": agent_args},
                 "history": service.history(), "upload_limit_mb": settings.max_upload // 1024**2,
+                "storage": settings.profile or {"workspace": str(service.root), "data_dir": str(service.directory),
+                                                "registry": str(service.routes.directory / "registry.json")},
                 "desktop": settings.desktop, "draft": service.load_draft() if settings.desktop else None}
+
+    @app.get("/api/workspace")
+    def workspace():
+        return service.routes.load_workspace()
+
+    @app.post("/api/workspace")
+    def save_workspace(workspace: Workspace):
+        service.routes.save_workspace(workspace)
+        active = next(document for document in workspace.documents if document.id == workspace.active_id)
+        if settings.desktop:
+            service.save_draft(active.graph)
+        return {"saved": True}
+
+    @app.get("/api/workflows")
+    def saved_workflows():
+        return service.routes.list_saved()
+
+    @app.post("/api/workflows/prepare")
+    def prepare_workflow(graph: Graph):
+        graph = service.plugins.pin(graph)
+        return prepare_interface(graph, service.plugins.catalog_for(graph, service.base_catalog), settings.root).model_dump(mode="json")
+
+    @app.post("/api/workflows/save")
+    def save_workflow(payload: SaveWorkflow):
+        payload.graph = service.plugins.pin(payload.graph)
+        return service.routes.save(payload)
+
+    @app.get("/api/workflows/{key}")
+    def get_workflow(key: str):
+        return service.routes.get(key)
+
+    @app.get("/api/routes")
+    def routes():
+        return service.routes.routes()
+
+    @app.post("/api/routes/register")
+    def register_routes(payload: RegisterRoutes):
+        return service.routes.register(payload.workflow_ids)
+
+    @app.get("/api/library/state")
+    def library_state():
+        return service.routes.library_state()
+
+    @app.post("/api/library/manage")
+    def manage_library(payload: LibraryAction):
+        return service.routes.manage_item(payload.key, payload.action)
 
     @app.post("/api/draft")
     def save_draft(graph: Graph):
@@ -102,17 +170,18 @@ def create_app(settings=None):
 
     @app.post("/api/validate")
     def validate(graph: Graph):
-        manifest, order = compile_graph(graph, catalog, settings.root, require_files=True)
+        resolved = service.plugins.catalog_for(graph, service.base_catalog)
+        manifest, order = compile_graph(graph, resolved, settings.root, require_files=True)
         return {"valid": True, "order": order, "manifest": manifest,
-                "contracts": analyze_graph(graph, catalog, settings.root)}
+                "contracts": analyze_graph(graph, resolved, settings.root)}
 
     @app.post("/api/contracts")
     def contracts(graph: Graph):
-        return analyze_graph(graph, catalog, settings.root)
+        return analyze_graph(graph, service.plugins.catalog_for(graph, service.base_catalog), settings.root)
 
     @app.post("/api/export")
     def export(graph: Graph):
-        manifest, order = compile_graph(graph, catalog, settings.root)
+        manifest, order = compile_graph(graph, service.plugins.catalog_for(graph, service.base_catalog), settings.root)
         manifest = relative_manifest(manifest, project_path(settings.root, ".", graph.base_dir))
         return {"yaml": yaml.safe_dump(manifest, allow_unicode=True, sort_keys=False), "order": order}
 

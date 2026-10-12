@@ -34,6 +34,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import port, param
+from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -43,6 +45,8 @@ class KaplanMeierStep(Step):
     name = "kaplan_meier"
     inputs_arity = 1
     outputs = []
+    input_contracts = [{**port(ndim=2), "labels_axis": [{"axis": 1, "values": [param("time_label"), param("event_label"), param("group_label")]}]}]
+    output_contract = {"mode": "none"}
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

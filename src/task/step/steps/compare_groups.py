@@ -33,6 +33,8 @@ from scipy import stats
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import port, param
+from src.core.forms.metadata import project_metadata
 
 
 _STAT_LABELS = {
@@ -48,6 +50,9 @@ class CompareGroupsStep(Step):
     name = "compare_groups"
     inputs_arity = 2
     outputs = []
+    input_contracts = [port(ndim=2, dims=[param("dim"), param("group_dim")]), {**port(ndim=2, dims=[param("group_dim")]), "labels_any": [param("group_label")]}]
+    output_contract = {"mode": "compare_groups"}
+    output_parameter = "output"
 
     def run(self, ctx: Context, inputs) -> None:
         data_form, meta_form = inputs
@@ -122,12 +127,18 @@ class CompareGroupsStep(Step):
         n_features = moved.shape[0]
         flat = moved.reshape(n_features, -1).astype(np.float64)
 
+        missing_code = data_form.info.get("missing_code", np.nan)
+        if missing_code is not None and np.isfinite(missing_code):
+            flat[flat == missing_code] = np.nan
+
         result, extra_labels = _dispatch(method, flat, mask_a, mask_b)
 
         pos_to_label = {v: k for k, v in data_form.labels[dim].items()}
         stat_labels = dict(_STAT_LABELS)
         stat_labels.update(extra_labels)
 
+        info, axis_info = project_metadata(data_form, keep_dims=[dim], derived=True)
+        info.update(missing_code=np.nan, representation="comparison")
         ctx[out_name] = Form(
             data=result.astype(np.float32),
             dims=[dim, "statistic"],
@@ -135,7 +146,8 @@ class CompareGroupsStep(Step):
                 dim: {pos_to_label[i]: i for i in range(n_features)},
                 "statistic": stat_labels,
             },
-            info={"missing_code": np.nan},
+            info=info,
+            axis_info=axis_info,
         )
 
         n_tested = int(np.isfinite(result[:, 4]).sum())
@@ -310,6 +322,13 @@ def _deseq2_test(flat, mask_a, mask_b):
             "Install with: pip install pydeseq2"
         ) from exc
 
+    # Other metadata groups must never silently enter group B. DESeq2 needs
+    # raw integer counts; rounding normalized data would change the analysis.
+    selected = mask_a | mask_b
+    flat = flat[:, selected]
+    mask_a, mask_b = mask_a[selected], mask_b[selected]
+    if not np.isfinite(flat).all() or (flat < 0).any() or not np.equal(flat, np.rint(flat)).all():
+        raise StepError("compare_groups/deseq2: use finite, non-negative raw integer counts before normalization or log transformation")
     n_features, n_samples = flat.shape
     counts = pd.DataFrame(
         np.rint(flat).astype(int).T,
@@ -325,12 +344,13 @@ def _deseq2_test(flat, mask_a, mask_b):
     dds = DeseqDataSet(
         counts=counts,
         metadata=meta,
-        design_factors="group",
-        ref_level=["group", "A"],
+        design="~group",
+        n_cpus=1,
+        quiet=True,
     )
     dds.deseq2()
 
-    stat_res = DeseqStats(dds, contrast=["group", "B", "A"])
+    stat_res = DeseqStats(dds, contrast=["group", "B", "A"], n_cpus=1, quiet=True)
     stat_res.summary()
     res = stat_res.results_df
 

@@ -39,6 +39,18 @@ def relative_manifest(manifest, directory):
 
 
 def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=False):
+    if any(node.kind == "route" for node in graph.nodes):
+        from .contracts import analyze_graph
+        from .routes import expand_routes
+        analysis = analyze_graph(graph, catalog, root)
+        for edge in analysis["edges"]:
+            if edge["status"] == "incompatible":
+                raise GraphError("；".join(edge["reasons"]), edge["target"])
+        expanded, owners = expand_routes(graph, catalog)
+        try:
+            return compile_graph(expanded, catalog, root, require_files=require_files)
+        except GraphError as exc:
+            raise GraphError(str(exc), owners.get(exc.node_id, exc.node_id)) from exc
     try:
         json.dumps(graph.model_dump(), allow_nan=False)
     except (ValueError, TypeError) as exc:
@@ -62,6 +74,15 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
             if node.operator not in registry:
                 raise GraphError(f"未找到算子 {node.operator!r}；请更新算子清单。", node.id)
             spec = registry[node.operator]
+            if spec.get("implementation"):
+                from biopipe_sdk.protocol import validate_parameters
+                params = dict(node.params)
+                if spec.get("output_parameter"):
+                    params.pop(spec["output_parameter"], None)
+                try:
+                    validate_parameters(spec["parameters_schema"], params)
+                except ValueError as error:
+                    raise GraphError(str(error), node.id) from error
             outputs[node.id] = ([str(node.params.get("output", node.id))] if spec["output_parameter"]
                                 else spec["outputs"])
             for field in spec["parameters"]:
@@ -84,6 +105,12 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
                     raise GraphError(f"{field['label']}不是可选值。", node.id)
                 if kind == "string" and not isinstance(value, str):
                     raise GraphError(f"{field['label']}需要文本。", node.id)
+                if kind == "scalar" and (isinstance(value, bool) or not isinstance(value, (str, int, float))):
+                    raise GraphError(f"{field['label']}需要文本或数值。", node.id)
+                if kind == "boolean" and not isinstance(value, bool):
+                    raise GraphError(f"{field['label']}需要开关值。", node.id)
+                if kind == "json" and not isinstance(value, (dict, list)):
+                    raise GraphError(f"{field['label']}需要 JSON 对象或列表。", node.id)
         for name in outputs[node.id]:
             if not name or name in used_names:
                 raise GraphError(f"输出名称 {name!r} 重复或为空，请为它设置独立名称。", node.id)

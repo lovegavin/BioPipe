@@ -33,6 +33,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import port, param
+from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -42,6 +44,8 @@ class ForestPlotStep(Step):
     name = "forest_plot"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(ndim=2, dims=[param("dim", "covariate"), param("stat_dim", "statistic")], labels=[{"dim": param("stat_dim", "statistic"), "values": [param("hr_label", "HR"), param("low_label", "CI_low"), param("high_label", "CI_high"), param("p_label", "P")]}])]
+    output_contract = {"mode": "none"}
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

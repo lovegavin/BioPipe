@@ -1,0 +1,20 @@
+name: hwe_demo
+
+sources:
+  geno:
+    path: input/geno.vcf
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample:  builtin
+
+steps:
+  - name: hwe
+    inputs: [geno]
+    params:
+      dim: variant
+      threshold: 1.0e-4
+      output: geno_qc
+
+  - name: describe
+    inputs: [geno_qc]

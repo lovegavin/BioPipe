@@ -23,6 +23,11 @@ def main() -> None:
     parser.add_argument("--no-auto-spill", action="store_true")
     args = parser.parse_args()
     task_dir = args.task_dir.resolve()
+    plugin_lock = task_dir / "plugins.lock.json"
+    if plugin_lock.is_file():
+        import json
+        from biopipe.plugins import load_runtime
+        load_runtime(json.loads(plugin_lock.read_text(encoding="utf-8")))
     manifest = load_manifest(task_dir / "task.yaml")
     overrides = {key: value for key, value in (("budget_mb", args.memory_mb),
                   ("process_limit_mb", args.process_memory_mb), ("disk_limit_mb", args.disk_mb),

@@ -45,3 +45,14 @@ input/
 *.log
 .DS_Store
 Thumbs.db
+
+# Local Studio assets, worker jobs and verification output
+.local/
+.verification/
+.idea/
+
+# Desktop build output (source and build scripts remain tracked)
+desktop/bin/
+desktop/obj/
+dist/
+build/

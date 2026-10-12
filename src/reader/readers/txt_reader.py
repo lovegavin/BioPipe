@@ -22,10 +22,14 @@ from pathlib import Path
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract, validate_form, validate_output, source_schema
 
 
 class TxtReader(Reader):
     """Read generic text files by delegating to another reader."""
+
+    # The delegate owns dimensionality and format-specific metadata guarantees.
+    output_contract = {**reader_contract(ndim=None), "info_open": True}
 
     extensions = [".txt", ".tsv", ".tab"]
     handles_compression = False
@@ -46,7 +50,10 @@ class TxtReader(Reader):
             if ext in (".tsv", ".tab", ".txt"):
                 args["sep"] = "\t"
 
-        return delegate.read(path, dims, labels, **args)
+        form = delegate.read(path, dims, labels, **args)
+        validate_form(form, delegate.output_contract, f"TxtReader/{type(delegate).__name__} output")
+        validate_output(form, source_schema(delegate.output_contract, dims), f"TxtReader/{type(delegate).__name__} output")
+        return form
 
 
 def _find_reader(name: str, exclude: Reader | None = None) -> Reader:

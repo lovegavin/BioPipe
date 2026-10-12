@@ -1,0 +1,28 @@
+name: normalize_demo
+
+sources:
+  counts:
+    path: input/airway_counts.csv
+    dims: [gene, sample]
+    labels:
+      gene: {sample: 0}
+      sample: builtin
+
+steps:
+  - name: filter_min
+    inputs: [counts]
+    params:
+      dim: gene
+      min_count: 10
+      min_samples: 3
+      output: counts_filtered
+
+  - name: normalize
+    inputs: [counts_filtered]
+    params:
+      method: median_of_ratios
+      dim: sample
+      output: counts_norm
+
+#  - name: describe
+#    inputs: [counts_norm]

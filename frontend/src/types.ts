@@ -1,0 +1,167 @@
+export type Parameter = {
+  key: string;
+  label: string;
+  type: "string" | "number" | "integer" | "list" | "choice" | "boolean" | "json" | "scalar";
+  default?: unknown;
+  required?: boolean;
+  min?: number;
+  max?: number;
+  step?: number;
+  options?: (string | number)[];
+};
+export type Operator = {
+  name: string;
+  title: string;
+  title_aliases?: string[];
+  title_parameter?: { key: string; values: Record<string, string> };
+  runtime_defaults?: Record<string, unknown>;
+  category: string;
+  description: string;
+  icon?: string;
+  preview?: { kind: string; caption: string };
+  inputs_arity: number | "*";
+  outputs: string[];
+  output_parameter: string | null;
+  input_type: string;
+  output_type: string;
+  memory_modes: string[];
+  supports_cuda: boolean;
+  parameters: Parameter[];
+  contracts?: { version: number; inputs: PortContract[] | null; output: { mode: string } | null };
+};
+export type Catalog = { schema_version: 1; contract_version?: number; operators: Operator[]; readers?: { name: string; extensions: string[]; output_contract: PortContract | null }[] };
+export type InfoRule = { type?: string | string[]; items?: string | string[]; const?: unknown; enum?: unknown[]; optional?: boolean; min?: number; display?: string };
+export type PortContract = {
+  version?: number;
+  ndim?: number;
+  dims?: string[] | null;
+  numeric?: boolean;
+  info?: Record<string, InfoRule>;
+  labels?: Record<string, string[] | null> | { dim: string; values: string | string[] | null; optional?: boolean }[];
+  labels_any?: (string | null)[];
+  labels_axis?: { axis: number; values: string | (string | null)[] | null }[];
+  parallel?: { dim?: string; fields: string | string[]; allow_label?: boolean }[];
+  axis_info?: Record<string, string[]>;
+  reader?: string;
+  info_open?: boolean;
+};
+export type ContractCheck = { id: string; source: string; target: string; status: "compatible" | "incompatible" | "unknown"; reasons: string[] };
+export type NodeContracts = { inputs: (PortContract | null)[]; outputs: PortContract[] };
+export type ContractAnalysis = { version: number; nodes: Record<string, NodeContracts>; edges: ContractCheck[] };
+export type DataSource = {
+  path: string;
+  dims: string[];
+  labels: Record<string, unknown>;
+  args: Record<string, unknown>;
+};
+export type GraphNode = {
+  id: string;
+  kind: "source" | "operator" | "route";
+  route?: RouteDefinition | null;
+  operator?: string | null;
+  title: string;
+  position: { x: number; y: number };
+  params: Record<string, unknown>;
+  source?: DataSource | null;
+  input_count: number;
+};
+export type GraphEdge = {
+  id: string;
+  source: string;
+  target: string;
+  sourceHandle: string;
+  targetHandle: string;
+};
+export type Memory = {
+  enabled: boolean;
+  auto_spill?: boolean;
+  budget_mb?: number;
+  process_limit_mb?: number;
+  disk_limit_mb?: number;
+  keep?: string[];
+  [key: string]: unknown;
+};
+export type Graph = {
+  schema_version: 1 | 2;
+  name: string;
+  base_dir: string;
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+  memory: Memory;
+  interface?: RouteInterface | null;
+  plugin_lock?: Record<string, {package: string; version: string; sha256: string}>;
+};
+export type RouteInput = { node_id: string; label: string; contract: PortContract };
+export type RouteOutput = RouteInput & { handle: string };
+export type RouteInterface = { version: 1; inputs: RouteInput[]; outputs: RouteOutput[] };
+export type RouteDefinition = { id: string; version: number; name: string; graph: Graph };
+export type LibraryState = { disabled: string[]; hidden: string[] };
+export type LibraryAction = "disable" | "enable" | "delete" | "restore";
+export type SavedWorkflow = { id: string; version: number; updated_at: string; graph: Graph };
+export type WorkflowSummary = { id: string; version: number; name: string; updated_at: string; nodes: number; interface: RouteInterface; registered_version: number | null };
+export type WorkspaceDocument = { id: string; graph: Graph; viewport?: { x: number; y: number; zoom: number }; workflow_id?: string; workflow_version?: number };
+export type Workspace = { schema_version: 1; active_id: string; documents: WorkspaceDocument[]; closed_documents?: WorkspaceDocument[]; panel_widths?: import("./panelLayout").PanelWidths };
+export type Artifact = {
+  artifact_id: string;
+  name: string;
+  shape: number[];
+  dtype: string;
+  ram_estimate_bytes: number;
+  disk_uri: string | null;
+  source_uri?: string | null;
+  storage: string;
+};
+export type RunEvent = {
+  event: string;
+  time: string;
+  name?: string;
+  reason?: string;
+  index?: number;
+  [key: string]: unknown;
+};
+export type SpillCounts = {
+  planned: number;
+  emergency: number;
+  correction: number;
+  final: number;
+};
+export type Job = {
+  id: string;
+  name: string;
+  status: "running" | "complete" | "failed" | "cancelled" | "interrupted";
+  created_at: string;
+  finished_at?: string | null;
+  error?: string | null;
+  graph?: Graph;
+  order?: string[];
+  node_owners?: Record<string, string>;
+  spill_counts?: SpillCounts;
+  summary?: {
+    steps: { name: string; export_path: string }[];
+    memory_report?: string;
+    [key: string]: unknown;
+  } | null;
+  report?: {
+    artifacts: Artifact[];
+    budget_bytes: number;
+    managed_peak_bytes: number;
+    sampled_rss_peak_bytes: number;
+    plans: { index: number; mode: string; chunk_bytes?: number }[];
+    [key: string]: unknown;
+  } | null;
+};
+export type Preview = {
+  descriptor: Artifact;
+  rows: (number | null)[][];
+  points: (number | null)[][];
+};
+export type Bootstrap = {
+  agent_config?: {command: string; args: string[]};
+  desktop?: boolean;
+  draft?: Graph | null;
+  token: string;
+  catalog: Catalog;
+  demo: Graph;
+  history: Job[];
+  upload_limit_mb: number;
+};

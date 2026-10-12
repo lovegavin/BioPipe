@@ -33,6 +33,8 @@ class Reader(ABC):
     """
 
     output_contract: ClassVar[dict | None] = None
+    version: ClassVar[str] = "1.0.0"
+    parameters_schema: ClassVar[dict | None] = None
 
     extensions: ClassVar[list[str]] = []
     requires_siblings: ClassVar[list[str]] = []

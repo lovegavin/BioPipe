@@ -1,0 +1,13 @@
+name: bed_demo
+
+sources:
+  peaks:
+    path: input/example1.bed
+    dims: [interval, field]
+    labels:
+      interval: auto
+      field: builtin
+
+steps:
+  - name: describe
+    inputs: [peaks]

@@ -1,0 +1,28 @@
+name: impute_demo
+
+sources:
+  proteins:
+    path: input/proteomics.csv
+    dims: [protein, sample]
+    labels:
+      protein: {sample: 0}
+      sample: builtin
+
+steps:
+  - name: missing
+    inputs: [proteins]
+    params:
+      dim: protein
+      threshold: 0.5
+      output: proteins_filtered
+
+  - name: impute
+    inputs: [proteins_filtered]
+    params:
+      method: min
+      dim: protein
+      min_scale: 1.0
+      output: proteins_imputed
+
+  - name: describe
+    inputs: [proteins_imputed]

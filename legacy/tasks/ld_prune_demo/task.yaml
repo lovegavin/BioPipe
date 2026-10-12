@@ -1,0 +1,21 @@
+name: ld_prune_demo
+
+sources:
+  geno:
+    path: input/geno.vcf
+    dims: [variant, sample]
+
+steps:
+  - name: describe
+    inputs: [geno]
+
+  - name: ld_prune
+    inputs: [geno]
+    params:
+      dim: variant
+      window: 5
+      r2: 0.5
+      output: geno_pruned
+
+  - name: describe
+    inputs: [geno_pruned]

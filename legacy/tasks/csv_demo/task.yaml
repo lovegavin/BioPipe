@@ -1,0 +1,13 @@
+name: csv_demo
+
+sources:
+  data:
+    path: input/test_party_1.csv
+    dims: [sample, feature]
+    labels:
+      sample: auto
+      feature: builtin
+
+steps:
+  - name: describe
+    inputs: [data]

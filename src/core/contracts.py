@@ -158,6 +158,19 @@ def compatible(schema, requirement):
         for field in values:
             check(None if field is None or known is None else field in known,
                   f"labels.{dim} 需要 {field or '（待设置）'}")
+    for field in requirement.get("labels_any", []):
+        candidates = list(schema.get("labels", {}).values())
+        check(True if any(field in labels for labels in candidates if labels is not None) else
+              None if field is None or not candidates or any(labels is None for labels in candidates) else False,
+              f"需要字段 {field or '（待设置）'}")
+    for rule in requirement.get("labels_axis", []):
+        axis = rule["axis"]
+        dim = dims[axis] if dims and axis < len(dims) else None
+        known = schema.get("labels", {}).get(dim)
+        values = rule.get("values", [])
+        for field in values if isinstance(values, list) else [values]:
+            check(None if field is None or known is None else field in known,
+                  f"第 {axis + 1} 维需要字段 {field or '（待设置）'}")
     for rule in requirement.get("parallel", []):
         fields = rule.get("fields", [])
         fields = fields if isinstance(fields, list) else [fields]
@@ -222,8 +235,26 @@ def infer_output(rule, inputs, params):
     if not rule or rule.get("mode") == "unknown":
         return unknown()
     mode = rule["mode"]
+    if mode == "declare":
+        # A plugin can state a conservative, parameter-dependent output schema
+        # without adding a named branch to the engine. Runtime checks promises.
+        return {**unknown(), **resolve(deepcopy(rule.get("schema", {})), params)}
     result = deepcopy(inputs[0] if inputs else unknown())
     result.pop("reader", None)
+    if mode == "project":
+        keep = resolve(rule.get("keep_dims", result.get("dims")), params)
+        if keep is None:
+            return unknown()
+        for axis, fields in list(result["axis_info"].items()):
+            if axis not in keep:
+                for key in fields:
+                    result["info"].pop(key, None)
+        result["axis_info"] = {d: f for d, f in result["axis_info"].items() if d in keep}
+        result["labels"] = {d: f for d, f in result["labels"].items() if d in keep}
+        result["dims"], result["ndim"] = keep, len(keep)
+        if rule.get("derived", False):
+            for key in ("representation", "ploidy", "alphabet", "encoders"):
+                result["info"].pop(key, None)
     dims = result.get("dims")
     dim = params.get("dim")
     if mode == "subset" and dim:
@@ -242,7 +273,21 @@ def infer_output(rule, inputs, params):
                     result[key][new] = result[key].pop(old)
     elif mode == "transpose":
         result["dims"] = params.get("order") or None
-    elif mode in ("pca", "regress"):
+    elif mode == "transform":
+        for key in ("ploidy", "representation", "encoders", "alphabet"):
+            result["info"].pop(key, None)
+        result["info"].update(missing_code=MISSING, representation={"type": "string", "const": rule["representation"]})
+    elif mode in ("cox_regression", "logrank_test"):
+        for fields in result["axis_info"].values():
+            for key in fields:
+                result["info"].pop(key, None)
+        for key in ("ploidy", "representation", "encoders", "alphabet"):
+            result["info"].pop(key, None)
+        axis = "covariate" if mode == "cox_regression" else "comparison"
+        columns = ["coef", "HR", "se", "z", "P", "CI_low", "CI_high"] if mode == "cox_regression" else ["chi2", "df", "P"]
+        result.update(ndim=2, dims=[axis, "statistic"], labels={axis: None, "statistic": columns}, axis_info={})
+        result["info"].update(missing_code=MISSING, representation={"type": "string", "const": mode})
+    elif mode in ("pca", "regress", "compare_groups"):
         kept = next((d for d in dims or [] if d != dim), None) if mode == "pca" else dim
         added = "component" if mode == "pca" else "statistic"
         for axis, fields in list(result["axis_info"].items()):
@@ -252,13 +297,15 @@ def infer_output(rule, inputs, params):
                 del result["axis_info"][axis]
         for key in ("ploidy", "representation", "encoders", "alphabet"):
             result["info"].pop(key, None)
-        result["info"].update(missing_code=MISSING, representation={"type": "string", "const": "scores" if mode == "pca" else "regression"})
+        result["info"].update(missing_code=MISSING, representation={"type": "string", "const": "scores" if mode == "pca" else "comparison" if mode == "compare_groups" else "regression"})
         result.update(ndim=2, dims=[kept, added] if kept else None)
         # PCA clips n_components to matrix rank; actual count is not guaranteed.
         known = result["labels"].get(kept)
         if mode == "regress" and known is not None:
             known = [v for v in known if v not in [params.get("response"), *params.get("covariates", [])]]
         result["labels"] = {**({kept: known} if kept else {}), added: None if mode == "pca" else ["BETA", "SE", "P", "N"]}
+        if mode == "compare_groups":
+            result["labels"][added] = ["log2FC", "mean_a", "mean_b", "stat", "P", "N"] + (["Q_VALUE"] if params.get("method") == "deseq2" else [])
     elif mode == "correction":
         dim = params.get("dim", "statistic")
         known = result["labels"].get(dim)

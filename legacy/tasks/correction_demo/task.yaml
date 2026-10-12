@@ -1,0 +1,27 @@
+name: correction_demo
+
+sources:
+  data:
+    path: input/data.csv
+    dims: [sample, feature]
+    labels:
+      sample:  {feature: 0}
+      feature: builtin
+
+steps:
+  - name: regress
+    inputs: [data]
+    params:
+      dim: feature
+      response: trait
+      output: raw
+
+  - name: correction
+    inputs: [raw]
+    params:
+      method: fdr
+      alpha: 0.05
+      output: corrected
+
+  - name: describe
+    inputs: [corrected]

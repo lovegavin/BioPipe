@@ -1,0 +1,53 @@
+name: heatmap_demo
+
+sources:
+  counts:
+    path: input/airway_counts.csv
+    dims: [gene, sample]
+    labels:
+      gene: {sample: 0}
+      sample: builtin
+  meta:
+    path: input/airway_colData.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+steps:
+  - name: filter_min
+    inputs: [counts]
+    params:
+      dim: gene
+      min_value: 10
+      min_samples: 3
+      output: counts_filtered
+
+  - name: normalize
+    inputs: [counts_filtered]
+    params:
+      method: cpm
+      dim: sample
+      target_sum: 1e6
+      output: counts_cpm
+
+  - name: log_transform
+    inputs: [counts_cpm]
+    params:
+      base: 2
+      pseudocount: 1
+      output: counts_log
+
+  - name: heatmap
+    inputs: [counts_log]
+    params:
+      dim: gene
+      other_dim: sample
+      select: variance
+      top_n: 50
+      standardize: row
+      cluster_rows: true
+      cluster_cols: true
+      cmap: RdBu_r
+      filename: top50_heatmap.png
+      title: "Top 50 variable genes"

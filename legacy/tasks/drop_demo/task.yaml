@@ -1,0 +1,28 @@
+name: drop_demo
+
+sources:
+  data:
+    path: input/data.csv
+    dims: [sample, feature]
+    labels:
+      sample:  {feature: 0}
+      feature: builtin
+
+steps:
+  - name: drop
+    inputs: [data]
+    params:
+      dim: feature
+      labels: [age]
+      output: dropped
+
+  - name: describe
+    inputs: [dropped]
+
+  # 测试删空：应该报错
+  - name: drop
+    inputs: [dropped]
+    params:
+      dim: feature
+      labels: [trait]
+      output: should_fail

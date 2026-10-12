@@ -1,0 +1,6 @@
+{
+  "backendRoot": "../..",
+  "python": "auto",
+  "entryPoint": "scripts/desktop_server.py",
+  "frontend": "frontend"
+}

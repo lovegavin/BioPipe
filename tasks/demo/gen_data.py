@@ -30,7 +30,7 @@ def _header_lines(samples: list[str]) -> list[str]:
         "##fileformat=VCFv4.2",
         "##fileDate=20261008",
         "##source=biopipe-demo-generator",
-        "##reference=file:///refs/GRCh38.fa",
+        "##reference=GRCh38",
         "##assembly=GRCh38",
         "##phasing=partial",
         '##FORMAT=<ID=GT,Number=1,Type=String,'
