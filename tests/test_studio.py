@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 @pytest.fixture
 def studio(tmp_path):
-    app = create_app(Settings(ROOT, tmp_path / "s", ROOT / "frontend/dist", testing=True))
+    app = create_app(Settings(tmp_path, tmp_path / "s", ROOT / "frontend/dist", testing=True, code_root=ROOT))
     with TestClient(app) as client:
         data = client.get("/api/bootstrap").json()
         client.headers["X-Studio-Token"] = data["token"]
@@ -108,7 +108,7 @@ def test_session_token_and_streamed_upload(studio):
     assert response.status_code == 403
     upload = client.post("/api/assets?filename=test.csv", content=b"a,b\n1,2\n3,4\n", headers={"Content-Type": "application/octet-stream"})
     assert upload.status_code == 200
-    assert (ROOT / upload.json()["path"]).read_bytes() == b"a,b\n1,2\n3,4\n"
+    assert (client.app.state.service.root / upload.json()["path"]).read_bytes() == b"a,b\n1,2\n3,4\n"
     assert client.post("/api/assets?filename=code.py", content=b"print('x')").status_code == 422
 
 
