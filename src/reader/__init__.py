@@ -116,10 +116,14 @@ def read_source(
     reader = pick_reader(path)
 
     if reader.handles_compression:
-        return reader.read(path, dims, labels, **args)
-
-    with _decompressed(path) as real_path:
-        return reader.read(real_path, dims, labels, **args)
+        form = reader.read(path, dims, labels, **args)
+    else:
+        with _decompressed(path) as real_path:
+            form = reader.read(real_path, dims, labels, **args)
+    from src.core.contracts import validate_form, validate_output, source_schema
+    validate_form(form, reader.output_contract, f"reader {type(reader).__name__} output")
+    validate_output(form, source_schema(reader.output_contract, dims), f"reader {type(reader).__name__} output")
+    return form
 
 
 __all__ = [

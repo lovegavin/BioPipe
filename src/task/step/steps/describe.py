@@ -7,6 +7,7 @@ import numpy as np
 
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import MISSING, param, port
 
 
 class DescribeStep(Step):
@@ -18,6 +19,46 @@ class DescribeStep(Step):
     name = "describe"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port()]
+    output_contract = {"mode": "report"}
+
+    supports_streaming = True
+
+    def run_stream(self, ctx: Context, stream: dict) -> None:
+        """Bounded finite-cell statistics; float64 moments may differ by rounding."""
+        count, mean, m2 = 0, 0.0, 0.0
+        minimum = maximum = None
+        for block in stream["chunks"]:
+            finite = block[np.isfinite(block)]
+            if finite.size:
+                values = finite.astype(np.float64, copy=False)
+                n = int(values.size)
+                local_mean = float(values.mean())
+                local_m2 = float(values.var()) * n
+                delta = local_mean - mean
+                total = count + n
+                m2 += local_m2 + delta * delta * count * n / total
+                mean += delta * n / total
+                count = total
+                low, high = float(values.min()), float(values.max())
+                minimum = low if minimum is None else min(minimum, low)
+                maximum = high if maximum is None else max(maximum, high)
+                del values
+            del finite
+        meta = stream["metadata"]
+        self._export_data = {
+            "shape": list(stream["shape"]), "dims": list(meta["dims"]),
+            "info": _serialize_info(meta["info"]),
+            "axis_info": meta.get("axis_info", {}),
+            "labels": {dim: {str(k): int(v) for k, v in labels.items()}
+                       for dim, labels in meta["labels"].items()},
+            "global": {"min": minimum, "max": maximum,
+                       "mean": mean if count else None,
+                       "std": float(np.sqrt(max(0.0, m2 / count))) if count else None,
+                       "n_valid": count,
+                       "n_missing": int(np.prod(stream["shape"])) - count},
+        }
+        print(f"[describe] streamed shape={stream['shape']}, n_valid={count}")
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -29,6 +70,7 @@ class DescribeStep(Step):
             "shape": list(data.shape),
             "dims": list(form.dims),
             "info": _serialize_info(form.info),
+            "axis_info": form.axis_info,
             "labels": {
                 dim: {str(k): int(v) for k, v in mapping.items()}
                 for dim, mapping in form.labels.items()
@@ -67,6 +109,20 @@ class DescribeStep(Step):
 
 
 def _serialize_info(info: dict) -> dict:
+    def value(item):
+        if isinstance(item, np.generic):
+            return value(item.item())
+        if isinstance(item, np.ndarray):
+            return value(item.tolist())
+        if isinstance(item, (list, tuple)):
+            return [value(v) for v in item]
+        if isinstance(item, dict):
+            return {str(k): value(v) for k, v in item.items()}
+        if isinstance(item, float) and not np.isfinite(item):
+            return str(item)
+        if isinstance(item, (str, int, float, bool)) or item is None:
+            return item
+        return str(item)
     out: dict = {}
     for k, v in info.items():
         if k == "encoders":
@@ -83,12 +139,6 @@ def _serialize_info(info: dict) -> dict:
                 }
                 for dim, cols in v.items()
             }
-        elif isinstance(v, (int, float, str, bool)) or v is None:
-            out[k] = v
-        elif isinstance(v, (list, tuple)):
-            out[k] = list(v)
-        elif isinstance(v, dict):
-            out[k] = v
         else:
-            out[k] = str(v)
+            out[k] = value(v)
     return out

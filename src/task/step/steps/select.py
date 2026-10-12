@@ -8,6 +8,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import MISSING, param, port
 
 
 class SelectStep(Step):
@@ -22,6 +23,10 @@ class SelectStep(Step):
     name = "select"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(dims=[param("dim")], labels=[{"dim": param("dim"), "values": param("labels")}])]
+    output_contract = {"mode": "select"}
+    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -50,19 +55,8 @@ class SelectStep(Step):
         axis = form.dims.index(dim)
         positions = [dim_labels[l] for l in labels]
 
-        index = [slice(None)] * form.data.ndim
-        index[axis] = positions
-        new_data = form.data[tuple(index)].copy()
-
-        new_labels = {k: dict(v) for k, v in form.labels.items()}
-        new_labels[dim] = {l: i for i, l in enumerate(labels)}
-
-        ctx[out_name] = Form(
-            data=new_data.astype(np.float32),
-            dims=list(form.dims),
-            labels=new_labels,
-            info=dict(form.info),
-        )
+        new_form = form.subset_axis(dim, positions)
+        ctx[out_name] = new_form
 
         self._export_data = {
             "dim": dim,
@@ -73,7 +67,7 @@ class SelectStep(Step):
 
         print(
             f"[select] dim '{dim}': {len(labels)} labels kept "
-            f"-> {out_name}, shape={new_data.shape}"
+            f"-> {out_name}, shape={new_form.data.shape}"
         )
 
     def export(self, ctx: Context) -> dict:

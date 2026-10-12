@@ -41,11 +41,14 @@ import numpy as np
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
 class BgenReader(Reader):
     """Reader for .bgen files."""
+
+    output_contract = reader_contract(representation="dosage", ploidy=2)
 
     extensions = [".bgen"]
     handles_compression = True
@@ -97,7 +100,7 @@ class BgenReader(Reader):
             data=data,
             dims=list(dims),
             labels=final,
-            info={"missing_code": np.nan, "ploidy": 2},
+            info={"missing_code": np.nan, "ploidy": 2, "representation": "dosage"},
         )
 
 

@@ -44,11 +44,14 @@ import numpy as np
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
 class H5adReader(Reader):
     """Reader for .h5ad files."""
+
+    output_contract = reader_contract()
 
     extensions = [".h5ad"]
     handles_compression = True

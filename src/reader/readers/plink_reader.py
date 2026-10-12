@@ -63,10 +63,10 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from bed_reader import open_bed
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
@@ -81,11 +81,17 @@ _FAM_COLUMNS = ["FID", "IID", "PID", "MID", "SEX", "PHENO"]
 class Plink1Reader(Reader):
     """Reader for PLINK 1.x .bed / .bim / .fam triplets."""
 
+    output_contract = reader_contract(representation="hard_call", ploidy=2, coordinates=True)
+
     extensions = [".bed"]
     requires_siblings = [".bim", ".fam"]
     handles_compression = True
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
+        try:
+            from bed_reader import open_bed
+        except ImportError as exc:
+            raise ReaderError("PLINK .bed input requires the 'bed-reader' package") from exc
         if len(dims) != 2:
             raise ReaderError(
                 f"PLINK 1.x reader requires exactly two dims, got {dims}"
@@ -134,6 +140,7 @@ class Plink1Reader(Reader):
             labels=final,
             info={
                 "missing_code": np.nan,
+                "representation": "hard_call",
                 "ploidy": 2,
                 "chrom": bim["CHROM"].astype(str).tolist(),
                 "pos": bim["POS"].astype(int).tolist(),
@@ -148,6 +155,8 @@ class Plink1Reader(Reader):
 
 class Plink2Reader(Reader):
     """Reader for PLINK 2.x .pgen / .pvar / .psam triplets."""
+
+    output_contract = reader_contract(representation="hard_call", ploidy=2, coordinates=True)
 
     extensions = [".pgen"]
     requires_siblings = [".pvar", ".psam"]
@@ -258,6 +267,7 @@ class Plink2Reader(Reader):
             labels=final,
             info={
                 "missing_code": np.nan,
+                "representation": "hard_call",
                 "ploidy": 2,
                 "chrom": chroms,
                 "pos": positions,

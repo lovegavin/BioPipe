@@ -9,6 +9,8 @@ import statsmodels.api as sm
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.forms.metadata import project_metadata
+from src.core.contracts import MISSING, param, port
 
 
 class CorrectionStep(Step):
@@ -26,6 +28,10 @@ class CorrectionStep(Step):
     name = "correction"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(ndim=2, dims=[param("dim", "statistic")], labels=[{"dim": param("dim", "statistic"), "values": param("pfield", "P")}], values="pvalue")]
+    output_contract = {"mode": "correction"}
+    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -96,6 +102,8 @@ class CorrectionStep(Step):
             axis=stat_axis,
         ).astype(np.float32)
 
+        if {"Q_VALUE", "SIGNIFICANT"} & form.labels[dim].keys():
+            raise StepError("correction: Q_VALUE or SIGNIFICANT already exists")
         existing = form.labels[dim]
         next_pos = max(existing.values()) + 1
         new_dim_labels = dict(existing)
@@ -105,11 +113,16 @@ class CorrectionStep(Step):
         new_labels = {k: dict(v) for k, v in form.labels.items()}
         new_labels[dim] = new_dim_labels
 
+        new_info, new_axis_info = project_metadata(form)
+        for field in new_axis_info.get(dim, []):
+            new_info[field] = list(new_info[field]) + [None, None]
+        new_info["correction_method"] = method
         ctx[out_name] = Form(
             data=new_data,
             dims=list(form.dims),
             labels=new_labels,
-            info={},
+            info=new_info,
+            axis_info=new_axis_info,
         )
 
         n_sig = int(significant.sum())

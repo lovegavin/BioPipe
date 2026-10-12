@@ -17,6 +17,7 @@ from src.core import Form, StepError
 from src.reader.readers._encoder import get_encoder
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import MISSING, param, port
 
 
 class AttachInfoStep(Step):
@@ -35,6 +36,10 @@ class AttachInfoStep(Step):
     name = "attach_info"
     inputs_arity = 2
     outputs = []
+    input_contracts = [port(dims=[param("target_dim")]), port(parallel=[{"fields": param("fields")}])]
+    output_contract = {"mode": "attach"}
+    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         target, source = inputs
@@ -95,7 +100,7 @@ class AttachInfoStep(Step):
         target_labels = target.labels[target_dim]
 
         lookup: list[int | None] = [
-            source_labels.get(lab) for lab in target_labels
+            source_labels.get(lab) for lab, _ in sorted(target_labels.items(), key=lambda item: item[1])
         ]
 
         new_info = {k: v for k, v in target.info.items()}
@@ -107,11 +112,17 @@ class AttachInfoStep(Step):
         encoded_fields: list[str] = []
 
         for f in fields:
+            for bound_dim, bound_fields in new_axis_info.items():
+                if bound_dim != target_dim and f in bound_fields:
+                    raise StepError(f"attach_info: {f} already belongs to {bound_dim}")
             arr = source.info[f]
             raw = [
                 arr[p] if p is not None else None for p in lookup
             ]
 
+            existing = {d: dict(v) for d, v in new_info.get("encoders", {}).items()}
+            existing.get(target_dim, {}).pop(f, None)
+            new_info["encoders"] = {d: v for d, v in existing.items() if v}
             numeric = True
             try:
                 _ = np.array(
@@ -128,7 +139,10 @@ class AttachInfoStep(Step):
                     for v in raw
                 ]
                 encoder.fit_transform(str_vals)
-                existing = dict(new_info.get("encoders", {}))
+                # Copy both mapping levels: an input may already have a
+                # durable cache copy, so mutating its nested metadata would
+                # make resident and reloaded versions disagree.
+                existing = {dim: dict(columns) for dim, columns in new_info.get("encoders", {}).items()}
                 existing.setdefault(target_dim, {})[f] = encoder
                 new_info["encoders"] = existing
                 encoded_fields.append(f)

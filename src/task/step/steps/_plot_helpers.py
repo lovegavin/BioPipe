@@ -41,11 +41,12 @@ def setup_style() -> None:
 
 
 def save_figure(fig, ctx, filename: str) -> str:
-    """Save ``fig`` under ``output/figures/<filename>``.
+    """Save ``fig`` in the current run's figures directory.
 
     Returns the absolute path as a string.
     """
-    fig_dir = ctx.out_dir / "figures"
+    base = ctx.memory.run_dir if ctx.memory else ctx.out_dir
+    fig_dir = base / "figures"
     fig_dir.mkdir(parents=True, exist_ok=True)
     out_path = fig_dir / filename
     fig.tight_layout()

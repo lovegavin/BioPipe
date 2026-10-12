@@ -51,6 +51,7 @@ import numpy as np
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
 
@@ -65,6 +66,8 @@ _PROTEIN_CHARS = set("ACDEFGHIKLMNPQRSTVWY")
 
 class FastaReader(Reader):
     """Reader for .fasta / .fa / .fna / .faa files."""
+
+    output_contract = reader_contract(extra={"alphabet": {"type": "string"}})
 
     extensions = [".fasta", ".fa", ".fna", ".faa"]
     handles_compression = False

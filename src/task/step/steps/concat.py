@@ -1,243 +1,102 @@
-# src/task/step/steps/concat.py
-"""Concat step: stack several forms along one dimension.
-
-Every input must carry a label mapping for every dim. Alignment on
-non-axis dims uses those labels: the intersection is taken in the
-first input's order.
-
-Along the axis dim, labels are concatenated with cumulative offsets.
-When ``label`` is given, the key columns collapse into a single
-output label of that name.
-"""
-
-from __future__ import annotations
-
+"""Concatenate tensors and their annotations after explicit axis alignment."""
 import numpy as np
 
 from src.core import Form, StepError
-from src.task.context import Context
+from src.core.contracts import param, port
+from src.core.forms.metadata import concat_metadata, equal_metadata
 from src.task.step.base import Step
 
 
 class ConcatStep(Step):
-    """Concatenate several forms along one dimension.
-
-    Params:
-        axis   : dimension to concatenate along
-        align  : optional ``{dim: name, key: {input: label}}``
-        label  : optional name for the merged key column
-        output : context key for the result
-    """
-
+    """Concatenate inputs on axis; align other axes by label or a unique key."""
     name = "concat"
     inputs_arity = "*"
     outputs = []
+    input_contracts = [port(dims=[param("axis")])]
+    output_contract = {"mode": "concat"}
+    output_parameter = "output"
 
-    def run(self, ctx: Context, inputs) -> None:
+    def run(self, ctx, inputs):
         if len(inputs) < 2:
             raise StepError("concat needs at least two inputs")
-
-        axis_name = ctx.step_params["axis"]
+        axis = ctx.step_params["axis"]
         out_name = ctx.step_params["output"]
-        align_cfg = ctx.step_params.get("align")
+        align = ctx.step_params.get("align")
         merged_label = ctx.step_params.get("label")
-        input_names = ctx.step_params.get("_input_names", [])
-
+        names = ctx.step_params.get("_input_names", [])
         ref = inputs[0]
-        for i, form in enumerate(inputs):
-            if form.dims != ref.dims:
-                raise StepError(
-                    f"Input {i} dims {form.dims} != input 0 dims "
-                    f"{ref.dims}"
-                )
-        if axis_name not in ref.dims:
-            raise StepError(
-                f"Dim '{axis_name}' not in inputs. "
-                f"Available: {ref.dims}"
-            )
-        axis = ref.dims.index(axis_name)
-
-        key_positions: list[int] | None = None
-        align_dims: dict[str, list] = {}
-
-        if align_cfg:
-            align_dim = align_cfg["dim"]
-            key_map = align_cfg["key"]
-            subsets = _align_by_key(
-                inputs, input_names, align_dim, key_map, axis_name
-            )
-
-            if merged_label is not None:
-                key_positions = []
-                for name, form in zip(input_names, inputs):
-                    kn = key_map[name]
-                    if kn not in form.labels.get(axis_name, {}):
-                        raise StepError(
-                            f"Key '{kn}' not on dim '{axis_name}' "
-                            f"of input '{name}'"
-                        )
-                    key_positions.append(form.labels[axis_name][kn])
-
-                trimmed = []
-                for i, (sub, kp) in enumerate(
-                    zip(subsets, key_positions)
-                ):
-                    if i == 0:
-                        trimmed.append(sub)
-                    else:
-                        keep = [
-                            j for j in range(sub.shape[axis])
-                            if j != kp
-                        ]
-                        idx = [slice(None)] * sub.ndim
-                        idx[axis] = keep
-                        trimmed.append(sub[tuple(idx)])
-                subsets = trimmed
+        if axis not in ref.dims or any(f.dims != ref.dims for f in inputs):
+            raise StepError("concat: inputs must have identical dimensions including axis")
+        aligned = list(inputs)
+        key_labels = []
+        if align:
+            dim = align["dim"]
+            if ref.data.ndim != 2 or dim not in ref.dims or dim == axis:
+                raise StepError("concat: key alignment requires a separate axis on a 2D tensor")
+            keys, encoders = [], []
+            for name, form in zip(names, inputs):
+                label = align["key"].get(name)
+                if label not in form.labels[axis]:
+                    raise StepError(f"concat: missing key label for {name}")
+                key_labels.append(label)
+                values = np.take(form.data, form.labels[axis][label], axis=form.axis(axis)).tolist()
+                if len(set(values)) != len(values) or not np.isfinite(values).all():
+                    raise StepError("concat: alignment keys must be unique and nonmissing")
+                keys.append(values)
+                encoders.append(form.info.get("encoders", {}).get(axis, {}).get(label))
+            if len(keys) != len(inputs):
+                raise StepError("concat: input names required for key alignment")
+            if any(not equal_metadata(encoders[0], encoder) for encoder in encoders[1:]):
+                raise StepError("concat: alignment key encodings differ")
+            common = set(keys[0]).intersection(*(set(values) for values in keys[1:]))
+            order = [value for value in keys[0] if value in common]
+            if not order:
+                raise StepError("concat: no common alignment keys")
+            for i, (form, values) in enumerate(zip(inputs, keys)):
+                positions = {key: pos for pos, key in enumerate(values)}
+                aligned[i] = form.subset_axis(dim, [positions[key] for key in order])
+                aligned[i].labels[dim] = dict(aligned[0].labels[dim])
         else:
-            align_dims, subsets = _align_by_labels(
-                ref, inputs, axis_name
-            )
-
-        merged = np.concatenate(subsets, axis=axis)
-
-        out_labels: dict[str, dict[str, int]] = {}
-
-        for dim_name in ref.dims:
-            if dim_name == axis_name:
-                continue
-            if dim_name in align_dims:
-                out_labels[dim_name] = {
-                    l: i for i, l in enumerate(align_dims[dim_name])
-                }
-
-        if align_cfg:
-            for dim_name in ref.dims:
-                if dim_name == axis_name:
+            for dim in ref.dims:
+                if dim == axis:
                     continue
-                if dim_name in out_labels:
-                    continue
-                out_labels[dim_name] = dict(ref.labels[dim_name])
-
-        axis_labels: dict[str, int] = {}
-        offset = 0
-        for i, (form, sub) in enumerate(zip(inputs, subsets)):
-            kp = key_positions[i] if key_positions is not None else None
-            if kp is not None and i != 0:
-                remap = {}
-                j = 0
-                for orig in range(form.data.shape[axis]):
-                    if orig == kp:
-                        continue
-                    remap[orig] = j
-                    j += 1
-            else:
-                remap = {p: p for p in range(form.data.shape[axis])}
-
-            for lab, pos in form.labels.get(axis_name, {}).items():
-                if kp is not None and pos == kp:
-                    if i == 0:
-                        final = merged_label
-                    else:
-                        continue
+                order = [label for label, _ in sorted(ref.labels[dim].items(), key=lambda item: item[1])
+                         if all(label in f.labels[dim] for f in inputs)]
+                if not order:
+                    raise StepError(f"concat: no common labels on {dim}")
+                for i, form in enumerate(aligned):
+                    # Independent takes avoid advanced indexing's diagonal selection.
+                    aligned[i] = form.subset_axis(dim, [form.labels[dim][label] for label in order])
+        if align and merged_label is not None:
+            for i, form in enumerate(aligned):
+                key = key_labels[i]
+                pos = form.labels[axis][key]
+                if i:
+                    aligned[i] = form.subset_axis(axis, [j for j in range(form.data.shape[form.axis(axis)]) if j != pos])
                 else:
-                    final = lab
-                if final in axis_labels:
-                    raise StepError(
-                        f"Duplicate label '{final}' on axis "
-                        f"'{axis_name}'"
-                    )
-                axis_labels[final] = offset + remap[pos]
-            offset += sub.shape[axis]
+                    if merged_label != key and merged_label in form.labels[axis]:
+                        raise StepError("concat: merged key label already exists")
+                    form.labels[axis] = {merged_label if label == key else label: p for label, p in form.labels[axis].items()}
+                    fields = form.info.get("encoders", {}).get(axis, {})
+                    if key in fields:
+                        fields[merged_label] = fields.pop(key)
+        labels, offset = {}, 0
+        for form in aligned:
+            for label, pos in form.labels[axis].items():
+                if label in labels:
+                    raise StepError(f"concat: duplicate label {label!r} on {axis}")
+                labels[label] = offset + pos
+            offset += form.data.shape[form.axis(axis)]
+        info, axis_info = concat_metadata(aligned, axis)
+        merged = np.concatenate([f.data for f in aligned], axis=ref.axis(axis)).astype(np.float32)
+        out_labels = {dim: dict(mapping) for dim, mapping in aligned[0].labels.items()}
+        out_labels[axis] = labels
+        ctx[out_name] = Form(merged, list(ref.dims), out_labels, info, axis_info)
+        self._export_data = {"axis": axis, "n_inputs": len(inputs), "input_names": names,
+                             "input_shapes": [list(f.data.shape) for f in inputs],
+                             "output_shape": list(merged.shape), "output_dims": list(ref.dims),
+                             "output_label_counts": {d: len(m) for d, m in out_labels.items()}}
+        print(f"[concat] {len(inputs)} forms along '{axis}' -> {out_name}, shape={merged.shape}")
 
-        if axis_labels:
-            out_labels[axis_name] = axis_labels
-
-        ctx[out_name] = Form(
-            data=merged.astype(np.float32),
-            dims=list(ref.dims),
-            labels=out_labels,
-            info=dict(ref.info),
-        )
-
-        self._export_data = {
-            "axis": axis_name,
-            "n_inputs": len(inputs),
-            "input_names": list(input_names),
-            "input_shapes": [list(f.data.shape) for f in inputs],
-            "output_shape": list(merged.shape),
-            "output_dims": list(ref.dims),
-            "output_label_counts": {
-                dim: len(mapping)
-                for dim, mapping in out_labels.items()
-            },
-        }
-
-        print(
-            f"[concat] {len(inputs)} forms along '{axis_name}' "
-            f"-> {out_name}, shape={merged.shape}"
-        )
-
-    def export(self, ctx: Context) -> dict:
+    def export(self, ctx):
         return self._export_data
-
-
-def _align_by_key(inputs, input_names, align_dim, key_map, axis_name):
-    keys = []
-    for name, form in zip(input_names, inputs):
-        kn = key_map.get(name)
-        if kn is None:
-            raise StepError(f"align.key missing input '{name}'")
-        if align_dim not in form.dims:
-            raise StepError(f"Input '{name}' has no dim '{align_dim}'")
-        if kn not in form.labels.get(axis_name, {}):
-            raise StepError(
-                f"Key '{kn}' not on axis '{axis_name}' of input '{name}'"
-            )
-        axis_pos = form.labels[axis_name][kn]
-        idx = [slice(None)] * form.data.ndim
-        idx[form.dims.index(axis_name)] = axis_pos
-        keys.append(form.data[tuple(idx)])
-
-    ref_keys = keys[0]
-    common = set(ref_keys.tolist())
-    for k in keys[1:]:
-        common &= set(k.tolist())
-    if not common:
-        raise StepError(f"No common keys on '{align_dim}'")
-    order = [v for v in ref_keys.tolist() if v in common]
-
-    align_axis = inputs[0].dims.index(align_dim)
-    subsets = []
-    for form, kv in zip(inputs, keys):
-        pos_of = {v: i for i, v in enumerate(kv.tolist())}
-        positions = [pos_of[v] for v in order]
-        idx = [slice(None)] * form.data.ndim
-        idx[align_axis] = positions
-        subsets.append(form.data[tuple(idx)])
-    return subsets
-
-
-def _align_by_labels(ref, inputs, axis_name):
-    align_dims: dict[str, list] = {}
-    for dim_name in ref.dims:
-        if dim_name == axis_name:
-            continue
-        order = list(ref.labels[dim_name].keys())
-        common = set(order)
-        for f in inputs:
-            common &= set(f.labels[dim_name].keys())
-        kept = [l for l in order if l in common]
-        if not kept:
-            raise StepError(
-                f"concat: no common labels on dim '{dim_name}'"
-            )
-        align_dims[dim_name] = kept
-
-    subsets = []
-    for form in inputs:
-        idx = [slice(None)] * form.data.ndim
-        for dim_name, labels in align_dims.items():
-            a = form.dims.index(dim_name)
-            idx[a] = [form.labels[dim_name][l] for l in labels]
-        subsets.append(form.data[tuple(idx)])
-    return align_dims, subsets

@@ -57,6 +57,7 @@ import pandas as pd
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
 
@@ -71,6 +72,8 @@ _BED_COLUMNS = [
 
 class BedReader(Reader):
     """Reader for UCSC .bed files."""
+
+    output_contract = reader_contract()
 
     extensions = [".bed"]
     excludes_siblings = [".bim", ".fam", ".pgen"]

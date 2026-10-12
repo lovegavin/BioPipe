@@ -8,6 +8,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import MISSING, param, port
 
 
 class DropStep(Step):
@@ -22,6 +23,10 @@ class DropStep(Step):
     name = "drop"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(dims=[param("dim")], labels=[{"dim": param("dim"), "values": param("labels")}])]
+    output_contract = {"mode": "drop"}
+    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -53,26 +58,8 @@ class DropStep(Step):
                 f"'{dim}'. Refuse to produce a form with zero positions."
             )
 
-        index = [slice(None)] * form.data.ndim
-        index[axis] = keep
-        new_data = form.data[tuple(index)]
-
-        pos_to_label = {p: l for l, p in dim_labels.items()}
-        new_dim_labels = {
-            pos_to_label[old]: new_pos
-            for new_pos, old in enumerate(keep)
-            if old in pos_to_label
-        }
-
-        new_labels = {k: dict(v) for k, v in form.labels.items()}
-        new_labels[dim] = new_dim_labels
-
-        ctx[out_name] = Form(
-            data=new_data.astype(np.float32),
-            dims=list(form.dims),
-            labels=new_labels,
-            info=dict(form.info),
-        )
+        new_form = form.subset_axis(dim, keep)
+        ctx[out_name] = new_form
 
         self._export_data = {
             "dim": dim,
@@ -83,7 +70,7 @@ class DropStep(Step):
 
         print(
             f"[drop] removed {len(drop_positions)} from '{dim}' "
-            f"-> {out_name}, shape={new_data.shape}"
+            f"-> {out_name}, shape={new_form.data.shape}"
         )
 
     def export(self, ctx: Context) -> dict:

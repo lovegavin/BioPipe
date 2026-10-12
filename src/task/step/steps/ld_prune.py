@@ -8,6 +8,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import MISSING, param, port
 
 
 class LdPruneStep(Step):
@@ -23,6 +24,10 @@ class LdPruneStep(Step):
     name = "ld_prune"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(info={"missing_code": MISSING}, dims=[param("dim")])]
+    output_contract = {"mode": "subset"}
+    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

@@ -8,6 +8,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.core.contracts import MISSING, param, port
 
 
 class MafStep(Step):
@@ -22,6 +23,10 @@ class MafStep(Step):
     name = "maf"
     inputs_arity = 1
     outputs = []
+    input_contracts = [port(info={"missing_code": MISSING, "ploidy": {"type": "integer", "min": 1}, "representation": {"type": "string", "enum": ["hard_call", "dosage"]}}, dims=[param("dim")], values="allele_count")]
+    output_contract = {"mode": "subset"}
+    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
