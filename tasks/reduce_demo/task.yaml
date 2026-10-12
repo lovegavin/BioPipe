@@ -1,0 +1,76 @@
+name: reduce_demo
+
+sources:
+  counts:
+    path: input/filtered_gene_bc_matrices/hg19/matrix.mtx
+    dims: [gene, cell]
+    labels:
+      gene: builtin
+      cell: builtin
+
+steps:
+  # 预处理
+  - name: reduce_axis
+    inputs: [counts]
+    params:
+      dim: gene
+      stats: [sum, nonzero]
+      output: cell_qc
+
+  - name: filter_by
+    inputs: [counts, cell_qc]
+    params:
+      dim: cell
+      rules:
+        - {field: nonzero, min: 200}
+      output: counts_filtered
+
+  - name: normalize
+    inputs: [counts_filtered]
+    params:
+      method: total
+      dim: cell
+      target_sum: 1e4
+      output: counts_norm
+
+  - name: log_transform
+    inputs: [counts_norm]
+    params:
+      base: "e"
+      pseudocount: 1
+      output: counts_log
+
+  - name: rank_axis
+    inputs: [counts_log]
+    params:
+      dim: gene
+      by: variance
+      top_n: 2000
+      output: hvg
+
+  # 降维
+  - name: reduce
+    inputs: [hvg]
+    params:
+      dim: gene
+      method: pca
+      n_components: 50
+      standardize: true
+      output: pcs
+
+  - name: reduce
+    inputs: [hvg]
+    params:
+      dim: gene
+      method: umap
+      n_components: 2
+      n_neighbors: 15
+      min_dist: 0.3
+      random_state: 0
+      output: umap_coords
+
+  - name: describe
+    inputs: [pcs]
+
+  - name: describe
+    inputs: [umap_coords]

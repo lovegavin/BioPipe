@@ -2,13 +2,14 @@ name: compare_groups_demo
 
 sources:
   counts:
-    path: input/airway_counts.csv
+    path: input/airway_counts_raw.csv
     dims: [gene, sample]
     labels:
       gene: {sample: 0}
       sample: builtin
+
   meta:
-    path: input/airway_colData.csv
+    path: input/airway_colData_raw.csv
     dims: [sample, feature]
     labels:
       sample: {feature: 0}
@@ -23,6 +24,7 @@ steps:
       min_samples: 3
       output: counts_filtered
 
+  # 两组（保持原来的行为）
   - name: compare_groups
     inputs: [counts_filtered, meta]
     params:
@@ -31,8 +33,36 @@ steps:
       group_label: dex
       group_a: untrt
       group_b: trt
-      method: deseq2
-      output: de_result
+      method: welch
+      output: de_dex
+
+  # 多组 one_vs_rest：每个细胞系 vs 其余
+  - name: compare_groups
+    inputs: [counts_filtered, meta]
+    params:
+      dim: gene
+      group_dim: sample
+      group_label: cell
+      mode: one_vs_rest
+      method: welch
+      output: per_cell
+
+  # 多组 pairwise：细胞系两两比较
+  - name: compare_groups
+    inputs: [counts_filtered, meta]
+    params:
+      dim: gene
+      group_dim: sample
+      group_label: cell
+      mode: pairwise
+      method: welch
+      output: pairwise_cell
 
   - name: describe
-    inputs: [de_result]
+    inputs: [de_dex]
+
+  - name: describe
+    inputs: [per_cell]
+
+  - name: describe
+    inputs: [pairwise_cell]

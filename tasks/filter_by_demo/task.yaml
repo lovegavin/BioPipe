@@ -1,0 +1,31 @@
+name: filter_by_demo
+
+sources:
+  counts:
+    path: input/filtered_gene_bc_matrices/hg19/matrix.mtx
+    dims: [gene, cell]
+    labels:
+      gene: builtin
+      cell: builtin
+
+steps:
+  # 1. 先算每个 cell 的指标
+  - name: reduce_axis
+    inputs: [counts]
+    params:
+      dim: gene
+      stats: [sum, nonzero]
+      output: cell_qc
+
+  # 2. 按指标筛选 cell
+  - name: filter_by
+    inputs: [counts, cell_qc]
+    params:
+      dim: cell
+      rules:
+        - {field: nonzero, min: 200}
+        - {field: sum, min: 500}
+      output: counts_filtered
+
+  - name: describe
+    inputs: [counts_filtered]

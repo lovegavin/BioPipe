@@ -1,6 +1,6 @@
 {
   "backendRoot": ".",
-  "python": "auto",
+  "python": "C:/Users/Lenovo/AppData/Local/Programs/Python/Python311/python.exe",
   "entryPoint": "scripts/desktop_server.py",
   "frontend": "frontend"
 }

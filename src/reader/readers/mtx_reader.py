@@ -29,8 +29,9 @@ Label rules accepted:
 A missing dim entry defaults to ``builtin``. Duplicate labels are
 disambiguated by appending ``#<position>``.
 
-Non-numeric identifiers are encoded. The encoder instance used for
-each axis is recorded in ``info["encoders"]``.
+Feature and barcode identifiers are used as labels directly. They
+are not encoded: the row (or column) index of each entry in the
+label map already identifies the position.
 
 Reference
 ---------
@@ -40,7 +41,6 @@ https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/l
 Info fields set:
 
     missing_code      np.nan
-    encoders          present only when an axis was encoded
 """
 
 from __future__ import annotations
@@ -54,15 +54,11 @@ from scipy.io import mmread
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
-from src.core.contracts import reader_contract
-from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
 
 
 class MtxReader(Reader):
     """Reader for MatrixMarket .mtx files."""
-
-    output_contract = reader_contract()
 
     extensions = [".mtx"]
     handles_compression = True
@@ -73,8 +69,6 @@ class MtxReader(Reader):
                 f"MTX reader requires exactly two dims, got {dims}"
             )
         gene_dim, cell_dim = dims[0], dims[1]
-
-        encoders_cfg = args.get("encoders", {})
 
         path = Path(path)
         parent = path.parent
@@ -111,36 +105,26 @@ class MtxReader(Reader):
 
         data = matrix.toarray().astype(np.float32)
 
-        encoders_used: dict[str, dict[str, object]] = {}
-
         gene_rule = labels.get(gene_dim, "builtin")
-        gene_labels, gene_encs = _resolve_axis(
-            gene_rule, gene_ids, gene_dim, encoders_cfg, "mtx"
+        gene_labels = _resolve_axis(
+            gene_rule, gene_ids, gene_dim, "mtx"
         )
-        if gene_encs:
-            encoders_used[gene_dim] = gene_encs
 
         cell_rule = labels.get(cell_dim, "builtin")
-        cell_labels, cell_encs = _resolve_axis(
-            cell_rule, barcodes, cell_dim, encoders_cfg, "mtx"
+        cell_labels = _resolve_axis(
+            cell_rule, barcodes, cell_dim, "mtx"
         )
-        if cell_encs:
-            encoders_used[cell_dim] = cell_encs
 
         final: dict[str, dict[str, int]] = {
             gene_dim: gene_labels,
             cell_dim: cell_labels,
         }
 
-        info: dict = {"missing_code": np.nan}
-        if encoders_used:
-            info["encoders"] = encoders_used
-
         return Form(
             data=data,
             dims=list(dims),
             labels=final,
-            info=info,
+            info={"missing_code": np.nan},
         )
 
 
@@ -178,31 +162,14 @@ def _read_tsv_column(path: Path, col: int) -> list[str]:
     return values
 
 
-def _resolve_axis(rule, builtin_values, dim_name,
-                  encoders_cfg, source):
+def _resolve_axis(rule, builtin_values, dim_name, source):
     if rule in (None, "builtin"):
-        return _encode_labels(
-            builtin_values, dim_name, encoders_cfg, source
-        )
+        return unique_labels(builtin_values, dim_name, source)
     if rule == "auto":
-        return {str(i): i for i in range(len(builtin_values))}, {}
+        return {str(i): i for i in range(len(builtin_values))}
     if isinstance(rule, dict):
-        return {str(k): int(v) for k, v in rule.items()}, {}
+        return {str(k): int(v) for k, v in rule.items()}
     raise ReaderError(
         f"MTX reader: unsupported label rule for "
         f"'{dim_name}': {rule!r}"
     )
-
-
-def _encode_labels(values, dim_name, encoders_cfg, source):
-    try:
-        _ = np.asarray(values, dtype=np.float32)
-        return unique_labels(values, dim_name, source), {}
-    except (ValueError, TypeError):
-        pass
-
-    enc_name = encoders_cfg.get("all", "labelencoder")
-    encoder = get_encoder(enc_name)
-    codes = encoder.fit_transform(values)
-    labels_map = unique_labels(values, dim_name, source)
-    return labels_map, {dim_name: encoder}

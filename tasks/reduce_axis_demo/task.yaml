@@ -1,0 +1,20 @@
+name: reduce_axis_demo
+
+sources:
+  counts:
+    path: input/filtered_gene_bc_matrices/hg19/matrix.mtx
+    dims: [gene, cell]
+    labels:
+      gene: builtin
+      cell: builtin
+
+steps:
+  - name: reduce_axis
+    inputs: [counts]
+    params:
+      dim: gene
+      stats: [sum, nonzero, mean]
+      output: cell_qc
+
+  - name: describe
+    inputs: [cell_qc]
