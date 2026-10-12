@@ -1,0 +1,18 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/impute_demo
+generated : 2026-10-12T02:28:09.117260+00:00
+steps     : 3
+elapsed   : 0.000s
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   missing                 0.000s   steps/01_missing.json
+2   impute                  0.000s   steps/02_impute.json
+3   describe                0.000s   steps/03_describe.json
+
+============================================================
+Per-step details are in output/steps/. This file is an index only.
+============================================================

@@ -2,8 +2,8 @@
 """Normalize a Form along one dimension.
 
 Applies a sample-level normalization. Standard second step after
-filtering, for any count-based matrix (RNA-seq, single-cell,
-metagenomics, proteomics).
+filtering, for any count or intensity matrix (RNA-seq, proteomics,
+metabolomics, single-cell).
 
 Supported methods
 -----------------
@@ -12,6 +12,10 @@ Supported methods
     total              divide each sample by its total (sum = 1)
     median_of_ratios   DESeq2 size factors: per-gene geometric mean,
                        per-sample median of ratios
+    quantile           quantile normalization: for each rank position,
+                       replace the value with the mean of that rank
+                       across all samples
+    zscore             z-score each sample (mean 0, std 1)
 
 Layout
 ------
@@ -22,7 +26,8 @@ Output has the same dims, labels, info and axis_info as the input.
 Only ``data`` is replaced.
 
 Params:
-    method     : "cpm" | "total" | "median_of_ratios"
+    method     : "cpm" | "total" | "median_of_ratios" | "quantile"
+                 | "zscore"
     dim        : sample dimension
     target_sum : target total for ``cpm`` (default 1e6)
     output     : context key for the result (default: step name)
@@ -37,7 +42,10 @@ from src.task.context import Context
 from src.task.step.base import Step
 
 
-_METHODS = ("cpm", "total", "median_of_ratios")
+_METHODS = (
+    "cpm", "total", "median_of_ratios", "quantile", "zscore",
+)
+_SIZE_FACTOR_METHODS = ("cpm", "total", "median_of_ratios")
 
 
 class NormalizeStep(Step):
@@ -49,8 +57,8 @@ class NormalizeStep(Step):
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
-        method = ctx.step_params["method"]
-        dim = ctx.step_params["dim"]
+        method = ctx.step_params.get("method")
+        dim = ctx.step_params.get("dim")
         target_sum = float(ctx.step_params.get("target_sum", 1e6))
         out_name = ctx.step_params.get("output", self.name)
 
@@ -59,6 +67,8 @@ class NormalizeStep(Step):
                 f"normalize: method must be one of {_METHODS}, "
                 f"got {method!r}"
             )
+        if dim is None:
+            raise StepError("normalize: 'dim' is required")
         if dim not in form.dims:
             raise StepError(
                 f"normalize: dim '{dim}' is not present. "
@@ -80,22 +90,24 @@ class NormalizeStep(Step):
         else:
             valid = flat != missing_code
 
+        size_factors = None
         if method == "cpm":
             size_factors = _cpm(flat, valid, target_sum)
         elif method == "total":
             size_factors = _total(flat, valid)
-        else:
+        elif method == "median_of_ratios":
             size_factors = _median_of_ratios(flat, valid)
 
-        with np.errstate(invalid="ignore", divide="ignore"):
-            normalized = np.where(
-                valid,
-                flat / size_factors[:, None],
-                np.nan,
-            )
+        if method in _SIZE_FACTOR_METHODS:
+            with np.errstate(invalid="ignore", divide="ignore"):
+                normalized = np.where(
+                    valid, flat / size_factors[:, None], np.nan,
+                )
+        elif method == "quantile":
+            normalized = _quantile(flat, valid)
+        else:  # zscore
+            normalized = _zscore(flat, valid)
 
-        # Compute per-sample statistics in the flat layout,
-        # before moveaxis shuffles the axes.
         pos_to_label = {v: k for k, v in form.labels[dim].items()}
         masked_before = np.where(valid, flat, np.nan)
         masked_after = np.where(valid, normalized, np.nan)
@@ -107,8 +119,8 @@ class NormalizeStep(Step):
             after_row = masked_after[i]
             finite_before = before_row[np.isfinite(before_row)]
             finite_after = after_row[np.isfinite(after_row)]
-            per_sample[label] = {
-                "size_factor": float(size_factors[i]),
+
+            entry = {
                 "sum_before": float(np.nansum(before_row)),
                 "sum_after": float(np.nansum(after_row)),
                 "min_before": (
@@ -144,8 +156,10 @@ class NormalizeStep(Step):
                     if finite_after.size else None
                 ),
             }
+            if size_factors is not None:
+                entry["size_factor"] = float(size_factors[i])
+            per_sample[label] = entry
 
-        # Now reshape and move axes for the Form.
         normalized = normalized.reshape(moved.shape)
         normalized = np.moveaxis(normalized, 0, axis).astype(np.float32)
 
@@ -168,22 +182,29 @@ class NormalizeStep(Step):
         ctx.metadata.setdefault(self.name, {})[out_name] = {
             "method": method,
             "dim": dim,
-            "target_sum": target_sum if method == "cpm" else None,
             "n_samples": int(n_samples),
-            "min_size_factor": float(size_factors.min()),
-            "max_size_factor": float(size_factors.max()),
         }
 
-        print(
-            f"[normalize] method='{method}' dim='{dim}' "
-            f"n_samples={n_samples} "
-            f"size factors [{size_factors.min():.4g}, "
-            f"{size_factors.max():.4g}]"
-        )
+        if size_factors is not None:
+            print(
+                f"[normalize] method='{method}' dim='{dim}' "
+                f"n_samples={n_samples} "
+                f"size factors [{size_factors.min():.4g}, "
+                f"{size_factors.max():.4g}]"
+            )
+        else:
+            print(
+                f"[normalize] method='{method}' dim='{dim}' "
+                f"n_samples={n_samples}"
+            )
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
 
+
+# ------------------------------------------------------------------ #
+# Size-factor methods
+# ------------------------------------------------------------------ #
 
 def _cpm(flat, valid, target_sum):
     masked = np.where(valid, flat, 0.0)
@@ -192,7 +213,8 @@ def _cpm(flat, valid, target_sum):
     if bad.size:
         raise StepError(
             f"normalize/cpm: {bad.size} sample(s) have zero total "
-            f"count and cannot be normalized (positions {bad.tolist()[:5]})."
+            f"count and cannot be normalized "
+            f"(positions {bad.tolist()[:5]})."
         )
     return totals / target_sum
 
@@ -204,7 +226,8 @@ def _total(flat, valid):
     if bad.size:
         raise StepError(
             f"normalize/total: {bad.size} sample(s) have zero total "
-            f"count and cannot be normalized (positions {bad.tolist()[:5]})."
+            f"count and cannot be normalized "
+            f"(positions {bad.tolist()[:5]})."
         )
     return totals
 
@@ -214,9 +237,8 @@ def _median_of_ratios(flat, valid):
 
     For each gene, compute the geometric mean of its valid positive
     counts. A gene is eligible only if all of its valid counts are
-    strictly positive (no zero among valid entries). For each
-    sample, the size factor is the median over eligible genes of
-    (count / geometric mean).
+    strictly positive. For each sample, the size factor is the median
+    over eligible genes of (count / geometric mean).
     """
     positive = valid & (flat > 0)
     valid_zero = valid & (flat == 0)
@@ -260,3 +282,69 @@ def _median_of_ratios(flat, valid):
         )
 
     return size_factors
+
+
+# ------------------------------------------------------------------ #
+# Quantile normalization
+# ------------------------------------------------------------------ #
+
+def _quantile(flat, valid):
+    """Quantile normalization.
+
+    Rows of ``flat`` are samples, columns are features. For each rank
+    position k (0-indexed), the target value is the mean of the k-th
+    smallest valid value across all samples. Each sample's sorted
+    values are then replaced by these target values.
+
+    When samples have different numbers of valid values, the ranking
+    depth is the minimum valid count across samples. The remaining
+    values in a sample keep the last target value.
+    """
+    n_samples, n_features = flat.shape
+    result = np.full_like(flat, np.nan, dtype=np.float64)
+
+    n_valid = valid.sum(axis=1)
+    if n_valid.min() == 0:
+        raise StepError(
+            "normalize/quantile: a sample has no valid values."
+        )
+
+    n_q = int(n_valid.min())
+
+    sorted_trimmed = np.full((n_samples, n_q), np.nan, dtype=np.float64)
+    for i in range(n_samples):
+        vals = flat[i][valid[i]]
+        sorted_trimmed[i] = np.sort(vals)[:n_q]
+
+    target = sorted_trimmed.mean(axis=0)
+
+    for i in range(n_samples):
+        vals = flat[i]
+        vmask = valid[i]
+        n = int(vmask.sum())
+        order = np.argsort(vals[vmask])
+        if n <= n_q:
+            new_vals = target[:n]
+        else:
+            tail = np.full(n - n_q, target[-1])
+            new_vals = np.concatenate([target, tail])
+        filled = np.empty(n, dtype=np.float64)
+        filled[order] = new_vals
+        result[i, vmask] = filled
+
+    return result
+
+
+# ------------------------------------------------------------------ #
+# Z-score
+# ------------------------------------------------------------------ #
+
+def _zscore(flat, valid):
+    masked = np.where(valid, flat, np.nan)
+    with np.errstate(invalid="ignore"):
+        mu = np.nanmean(masked, axis=1, keepdims=True)
+        sd = np.nanstd(masked, axis=1, keepdims=True)
+    sd = np.where(sd > 1e-12, sd, 1.0)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        normalized = (flat - mu) / sd
+    return np.where(valid, normalized, np.nan)

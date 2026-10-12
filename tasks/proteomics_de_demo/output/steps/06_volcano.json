@@ -1,0 +1,30 @@
+{
+  "kind": "volcano",
+  "filename": "volcano.png",
+  "path": "/home/lovagavin/biopipe/tasks/proteomics_de_demo/output/figures/volcano.png",
+  "dim": "protein",
+  "stat_dim": "statistic",
+  "lfc_label": "log2FC",
+  "p_label": "Q_VALUE",
+  "lfc_threshold": 0.5,
+  "p_threshold": 0.05,
+  "n_total": 9846,
+  "n_valid": 9846,
+  "n_up": 0,
+  "n_down": 0,
+  "n_ns": 9846,
+  "up_labels": [],
+  "down_labels": [],
+  "annotated_labels": [
+    "ENSG00000103152.12",
+    "ENSG00000148498.16",
+    "ENSG00000110367.13",
+    "ENSG00000151726.14",
+    "ENSG00000126787.13",
+    "ENSG00000168143.9",
+    "ENSG00000163808.17",
+    "ENSG00000122966.16",
+    "ENSG00000163798.13",
+    "ENSG00000132361.17"
+  ]
+}

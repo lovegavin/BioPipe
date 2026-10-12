@@ -1,0 +1,18 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/normalize_quantile_demo
+generated : 2026-10-12T02:32:16.604362+00:00
+steps     : 3
+elapsed   : 0.002s
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   impute                  0.000s   steps/01_impute.json
+2   normalize               0.002s   steps/02_normalize.json
+3   describe                0.000s   steps/03_describe.json
+
+============================================================
+Per-step details are in output/steps/. This file is an index only.
+============================================================

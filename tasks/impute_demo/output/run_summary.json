@@ -1,0 +1,47 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/impute_demo",
+  "generated_at": "2026-10-12T02:28:09.117260+00:00",
+  "n_steps": 3,
+  "total_elapsed": 0.0003,
+  "steps": [
+    {
+      "index": 1,
+      "name": "missing",
+      "elapsed": 0.0001,
+      "inputs": [
+        "proteins"
+      ],
+      "params": {
+        "dim": "protein",
+        "threshold": 0.5,
+        "output": "proteins_filtered"
+      },
+      "export_path": "steps/01_missing.json"
+    },
+    {
+      "index": 2,
+      "name": "impute",
+      "elapsed": 0.0001,
+      "inputs": [
+        "proteins_filtered"
+      ],
+      "params": {
+        "method": "min",
+        "dim": "protein",
+        "min_scale": 1.0,
+        "output": "proteins_imputed"
+      },
+      "export_path": "steps/02_impute.json"
+    },
+    {
+      "index": 3,
+      "name": "describe",
+      "elapsed": 0.0001,
+      "inputs": [
+        "proteins_imputed"
+      ],
+      "params": {},
+      "export_path": "steps/03_describe.json"
+    }
+  ]
+}

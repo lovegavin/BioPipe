@@ -1,0 +1,11 @@
+{
+  "method": "min",
+  "dim": "protein",
+  "min_scale": 1.0,
+  "n_total": 1600,
+  "n_missing_before": 156,
+  "n_imputed": 156,
+  "fill_value": 5.508307933807373,
+  "per_feature_fill": null,
+  "all_missing_features": []
+}

@@ -1,0 +1,46 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/normalize_quantile_demo",
+  "generated_at": "2026-10-12T02:32:16.604362+00:00",
+  "n_steps": 3,
+  "total_elapsed": 0.0022,
+  "steps": [
+    {
+      "index": 1,
+      "name": "impute",
+      "elapsed": 0.0001,
+      "inputs": [
+        "proteins"
+      ],
+      "params": {
+        "method": "min",
+        "dim": "protein",
+        "output": "proteins_imputed"
+      },
+      "export_path": "steps/01_impute.json"
+    },
+    {
+      "index": 2,
+      "name": "normalize",
+      "elapsed": 0.0019,
+      "inputs": [
+        "proteins_imputed"
+      ],
+      "params": {
+        "method": "quantile",
+        "dim": "sample",
+        "output": "proteins_qn"
+      },
+      "export_path": "steps/02_normalize.json"
+    },
+    {
+      "index": 3,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "proteins_qn"
+      ],
+      "params": {},
+      "export_path": "steps/03_describe.json"
+    }
+  ]
+}

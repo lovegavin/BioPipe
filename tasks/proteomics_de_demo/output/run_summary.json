@@ -1,0 +1,169 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/proteomics_de_demo",
+  "generated_at": "2026-10-12T02:55:37.087710+00:00",
+  "n_steps": 10,
+  "total_elapsed": 4.973,
+  "steps": [
+    {
+      "index": 1,
+      "name": "missing",
+      "elapsed": 0.006,
+      "inputs": [
+        "proteins"
+      ],
+      "params": {
+        "dim": "protein",
+        "threshold": 0.5,
+        "output": "proteins_filtered"
+      },
+      "export_path": "steps/01_missing.json"
+    },
+    {
+      "index": 2,
+      "name": "impute",
+      "elapsed": 0.0135,
+      "inputs": [
+        "proteins_filtered"
+      ],
+      "params": {
+        "method": "min",
+        "dim": "protein",
+        "output": "proteins_imputed"
+      },
+      "export_path": "steps/02_impute.json"
+    },
+    {
+      "index": 3,
+      "name": "normalize",
+      "elapsed": 0.0926,
+      "inputs": [
+        "proteins_imputed"
+      ],
+      "params": {
+        "method": "quantile",
+        "dim": "sample",
+        "output": "proteins_qn"
+      },
+      "export_path": "steps/03_normalize.json"
+    },
+    {
+      "index": 4,
+      "name": "compare_groups",
+      "elapsed": 3.7824,
+      "inputs": [
+        "proteins_qn",
+        "meta"
+      ],
+      "params": {
+        "dim": "protein",
+        "group_dim": "sample",
+        "group_label": "Stage",
+        "group_a": "Stage II",
+        "group_b": "Stage III",
+        "method": "welch",
+        "output": "de_raw"
+      },
+      "export_path": "steps/04_compare_groups.json"
+    },
+    {
+      "index": 5,
+      "name": "correction",
+      "elapsed": 0.019,
+      "inputs": [
+        "de_raw"
+      ],
+      "params": {
+        "method": "fdr",
+        "alpha": 0.05,
+        "output": "de_result"
+      },
+      "export_path": "steps/05_correction.json"
+    },
+    {
+      "index": 6,
+      "name": "volcano",
+      "elapsed": 0.2125,
+      "inputs": [
+        "de_result"
+      ],
+      "params": {
+        "dim": "protein",
+        "stat_dim": "statistic",
+        "lfc_label": "log2FC",
+        "p_label": "Q_VALUE",
+        "lfc_threshold": 0.5,
+        "p_threshold": 0.05,
+        "filename": "volcano.png",
+        "title": "CPTAC BRCA: Stage III vs Stage II",
+        "label_top": 10
+      },
+      "export_path": "steps/06_volcano.json"
+    },
+    {
+      "index": 7,
+      "name": "ma_plot",
+      "elapsed": 0.1332,
+      "inputs": [
+        "de_result"
+      ],
+      "params": {
+        "dim": "protein",
+        "stat_dim": "statistic",
+        "lfc_label": "log2FC",
+        "mean_a_label": "mean_a",
+        "mean_b_label": "mean_b",
+        "p_label": "Q_VALUE",
+        "p_threshold": 0.05,
+        "filename": "ma.png",
+        "title": "CPTAC BRCA: Stage III vs Stage II"
+      },
+      "export_path": "steps/07_ma_plot.json"
+    },
+    {
+      "index": 8,
+      "name": "transpose",
+      "elapsed": 0.0041,
+      "inputs": [
+        "proteins_qn"
+      ],
+      "params": {
+        "order": [
+          "sample",
+          "protein"
+        ],
+        "output": "samples_by_protein"
+      },
+      "export_path": "steps/08_transpose.json"
+    },
+    {
+      "index": 9,
+      "name": "heatmap",
+      "elapsed": 0.701,
+      "inputs": [
+        "samples_by_protein"
+      ],
+      "params": {
+        "dim": "protein",
+        "other_dim": "sample",
+        "select": "variance",
+        "top_n": 50,
+        "standardize": "row",
+        "cluster_rows": true,
+        "cluster_cols": true,
+        "filename": "heatmap.png",
+        "title": "Top 50 variable proteins"
+      },
+      "export_path": "steps/09_heatmap.json"
+    },
+    {
+      "index": 10,
+      "name": "describe",
+      "elapsed": 0.0087,
+      "inputs": [
+        "de_result"
+      ],
+      "params": {},
+      "export_path": "steps/10_describe.json"
+    }
+  ]
+}

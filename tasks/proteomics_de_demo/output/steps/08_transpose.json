@@ -1,0 +1,18 @@
+{
+  "input_dims": [
+    "protein",
+    "sample"
+  ],
+  "output_dims": [
+    "sample",
+    "protein"
+  ],
+  "input_shape": [
+    9846,
+    122
+  ],
+  "output_shape": [
+    122,
+    9846
+  ]
+}

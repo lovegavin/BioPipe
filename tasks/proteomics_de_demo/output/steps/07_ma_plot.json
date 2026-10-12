@@ -1,0 +1,18 @@
+{
+  "kind": "ma_plot",
+  "filename": "ma.png",
+  "path": "/home/lovagavin/biopipe/tasks/proteomics_de_demo/output/figures/ma.png",
+  "dim": "protein",
+  "stat_dim": "statistic",
+  "lfc_label": "log2FC",
+  "mean_a_label": "mean_a",
+  "mean_b_label": "mean_b",
+  "p_label": "Q_VALUE",
+  "p_threshold": 0.05,
+  "n_total": 9846,
+  "n_valid": 9846,
+  "n_significant": 0,
+  "n_ns": 9846,
+  "significant_labels": [],
+  "annotated_labels": []
+}
