@@ -8,10 +8,11 @@ env/
 .pytest_cache/
 .mypy_cache/
 .ipynb_checkpoints/
+.idea
 
 # 任务数据与结果
 tasks/*/input/
-#tasks/*/output/
+tasks/*/output/steps
 input/
 #output/
 

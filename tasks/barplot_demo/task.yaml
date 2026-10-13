@@ -1,0 +1,55 @@
+name: barplot_demo
+
+sources:
+  otu:
+    path: input/OTU_CB_rarefied20k.csv
+    dims: [species, sample]
+    labels:
+      species: {sample: 0}
+      sample: builtin
+    args:
+      reader: csv
+      sep: ","
+
+steps:
+  # 1. 过滤低丰度 OTU
+  - name: filter_min
+    inputs: [otu]
+    params:
+      dim: species
+      min_value: 10
+      min_samples: 5
+      output: otu_filtered
+
+  # 2. 转置为 [sample, species]，让堆叠轴是 species
+  - name: transpose
+    inputs: [otu_filtered]
+    params:
+      order: [sample, species]
+      output: samples_by_species
+
+  # 3. 相对丰度
+  - name: normalize
+    inputs: [samples_by_species]
+    params:
+      method: total
+      dim: sample
+      output: otu_rel
+
+  # 4. 堆叠柱状图：每个样本的物种组成
+  - name: barplot
+    inputs: [otu_rel]
+    params:
+      dim: species
+      sample_dim: sample
+      top_n: 15
+      other_label: "Other"
+      normalize: false
+      filename: composition.png
+      title: "COMPASS-DOE: top 15 species per sample"
+      cmap: tab20
+      legend_ncol: 3
+      rotate_labels: true
+
+  - name: describe
+    inputs: [otu_rel]

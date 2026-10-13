@@ -1,0 +1,47 @@
+name: diversity_demo
+
+sources:
+  otu:
+    path: input/OTU_CB_rarefied20k.csv
+    dims: [species, sample]
+    labels:
+      species: {sample: 0}
+      sample: builtin
+    args:
+      reader: csv
+      sep: ","
+
+  meta:
+    path: input/sample_metadata_cb.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args:
+      reader: csv
+      sep: ","
+
+steps:
+  # 1. 过滤低丰度/低流行度 OTU
+  - name: filter_min
+    inputs: [otu]
+    params:
+      dim: species
+      min_value: 10
+      min_samples: 5
+      output: otu_filtered
+
+  # 2. 每个样本的 alpha 多样性
+  - name: diversity
+    inputs: [otu_filtered]
+    params:
+      dim: species
+      metrics: [shannon, simpson, richness, evenness]
+      output: alpha_div
+
+  # 3. 查看结果
+  - name: describe
+    inputs: [alpha_div]
+
+  - name: describe
+    inputs: [otu_filtered]

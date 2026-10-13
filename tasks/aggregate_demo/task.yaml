@@ -1,0 +1,84 @@
+name: aggregate_demo
+
+sources:
+  otu:
+    path: input/OTU_CB_rarefied20k.csv
+    dims: [species, sample]
+    labels:
+      species: {sample: 0}
+      sample: builtin
+    args:
+      reader: csv
+      sep: ","
+
+  meta:
+    path: input/sample_metadata_cb.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args:
+      reader: csv
+      sep: ","
+
+steps:
+  # 1. 过滤低丰度 OTU
+  - name: filter_min
+    inputs: [otu]
+    params:
+      dim: species
+      min_value: 10
+      min_samples: 5
+      output: otu_filtered
+
+  # 2. 转置为 [sample, species]，让 sample 作为共享轴
+  - name: transpose
+    inputs: [otu_filtered]
+    params:
+      order: [sample, species]
+      output: samples_by_species
+
+  # 3. 转置 metadata：sample 维放前面，才能作为 aggregate 的共享轴
+  # metadata 本身已经是 [sample, feature]，可以直接用
+  # 我们要按 meta 的某列（比如 site）对 species 做聚合——但方向不对。
+  #
+  # aggregate 的语义是：把 species 按某个分组聚合到属。
+  # 这需要 species 有一个"属"标签。COMPASS 的 OTU 表 ID 本身就是
+  # 分类名（比如 "Proteobacteria; Alphaproteobacteria; ..."）。
+  # 我们可以用一个字符串切分把属提取出来，但那需要新算子。
+  #
+  # 换一个用法：按 sample 的分组聚合样本，得到每个 site 的平均丰度。
+  # 需要 metadata 有 sample→site 的映射，而 samples_by_species
+  # 的第一维正好是 sample。
+
+  - name: normalize
+    inputs: [samples_by_species]
+    params:
+      method: total
+      dim: sample
+      output: otu_rel
+
+  # 用 sample 维作为共享轴：把 metadata 的 site 列作为 group_col
+  # metadata 的 dims 就是 [sample, feature]，符合 aggregate 的要求
+  - name: aggregate
+    inputs: [otu_rel, meta]
+    params:
+      dim: sample
+      group_col: site
+      method: mean
+      output: site_mean_abundance
+
+  # 也做一次 sum，看看每个 site 的总丰度
+  - name: aggregate
+    inputs: [otu_rel, meta]
+    params:
+      dim: sample
+      group_col: horizon
+      method: mean
+      output: horizon_mean_abundance
+
+  - name: describe
+    inputs: [site_mean_abundance]
+
+  - name: describe
+    inputs: [horizon_mean_abundance]

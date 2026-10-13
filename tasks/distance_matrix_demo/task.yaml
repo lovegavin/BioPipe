@@ -1,0 +1,59 @@
+name: distance_matrix_demo
+
+sources:
+  otu:
+    path: input/OTU_CB_rarefied20k.csv
+    dims: [species, sample]
+    labels:
+      species: {sample: 0}
+      sample: builtin
+    args:
+      reader: csv
+      sep: ","
+
+steps:
+  # 1. 过滤低丰度/低流行度 OTU
+  - name: filter_min
+    inputs: [otu]
+    params:
+      dim: species
+      min_value: 10
+      min_samples: 5
+      output: otu_filtered
+
+  # 2. 转置为 [sample, species]
+  - name: transpose
+    inputs: [otu_filtered]
+    params:
+      order: [sample, species]
+      output: samples_by_species
+
+  # 3. 相对丰度归一化
+  - name: normalize
+    inputs: [samples_by_species]
+    params:
+      method: total
+      dim: sample
+      output: otu_rel
+
+  # 4. 样本间 Bray-Curtis 距离
+  - name: distance_matrix
+    inputs: [otu_rel]
+    params:
+      dim: sample
+      metric: braycurtis
+      output: sample_dist
+
+  # 5. 也跑一次 Jaccard
+  - name: distance_matrix
+    inputs: [samples_by_species]
+    params:
+      dim: sample
+      metric: jaccard
+      output: sample_jaccard
+
+  - name: describe
+    inputs: [sample_dist]
+
+  - name: describe
+    inputs: [sample_jaccard]
