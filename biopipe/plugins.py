@@ -295,9 +295,19 @@ class PluginManager:
             python = environment / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
             site_path = Path(run_process([python, "-c", "import sysconfig; print(sysconfig.get_path('purelib'))"]).strip())
             import sysconfig
-            (site_path / "biopipe-runtime.pth").write_text(str(Path(sysconfig.get_path("purelib"))) + "\n" + str(ROOT) + "\n", encoding="utf-8")
-            protected = {canonicalize_name(d.metadata["Name"]): d.version for d in metadata.distributions()
-                         if d.metadata["Name"] and canonicalize_name(d.metadata["Name"]) not in {p["name"] for p in packages}}
+            # Process the parent's .pth files too: merely adding its directory
+            # loses editable installs and dependencies inherited by that runtime.
+            runtime_site = str(Path(sysconfig.get_path("purelib")))
+            (site_path / "biopipe-runtime.pth").write_text(
+                f"import site; site.addsitedir({runtime_site!r})\n{ROOT}\n", encoding="utf-8")
+            protected = {}
+            managed = {p["name"] for p in packages}
+            for distribution in metadata.distributions():
+                name = distribution.metadata["Name"]
+                if name and canonicalize_name(name) not in managed:
+                    # Match importlib.metadata.version/sys.path precedence when
+                    # a parent environment also contains an older distribution.
+                    protected.setdefault(canonicalize_name(name), distribution.version)
             constraints = environment / "constraints.txt"
             constraints.write_text("\n".join(f"{name}=={version}" for name, version in sorted(protected.items())), encoding="utf-8")
             wheel_packages = [p for p in packages if p.get("origin") != "bundled"]

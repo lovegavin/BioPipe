@@ -34,6 +34,7 @@ def refresh():
 
 
 def build_package(name, output):
+    from biopipe import __version__
     from biopipe.packages import bundled_manifest
     from biopipe.developer import build
     package = next((p for p in bundled_manifest()["packages"] if p["name"] == name), None)
@@ -74,7 +75,7 @@ def build_package(name, output):
     (target / "definitions.json").write_text(json.dumps(definitions, ensure_ascii=False), encoding="utf-8")
     project = ['[build-system]', 'requires = ["setuptools>=69"]', 'build-backend = "setuptools.build_meta"',
                '[project]', f'name = "{name}"', f'version = "{package["version"]}"', 'requires-python = ">=3.11"',
-               'dependencies = ["biopipe-studio>=0.2,<0.3"]', '[tool.setuptools.package-data]', f'{module} = ["definitions.json"]']
+               f'dependencies = ["biopipe-studio=={__version__}"]', '[tool.setuptools.package-data]', f'{module} = ["definitions.json"]']
     for kind, group in (("operator", "operators"), ("reader", "readers")):
         if entries[kind]:
             project += [f'[project.entry-points."biopipe.{group}"]', *entries[kind]]
