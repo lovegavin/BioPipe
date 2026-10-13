@@ -1,0 +1,85 @@
+name: join_demo
+
+sources:
+  otu:
+    path: input/OTU_CB_rarefied20k.csv
+    dims: [species, sample]
+    labels:
+      species: {sample: 0}
+      sample: builtin
+    args:
+      reader: csv
+      sep: ","
+
+  meta:
+    path: input/sample_metadata_cb.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args:
+      reader: csv
+      sep: ","
+
+steps:
+  - name: filter_min
+    inputs: [otu]
+    params:
+      dim: species
+      min_value: 10
+      min_samples: 5
+      output: otu_filtered
+
+  - name: transpose
+    inputs: [otu_filtered]
+    params:
+      order: [sample, species]
+      output: samples_by_species
+
+  - name: normalize
+    inputs: [samples_by_species]
+    params:
+      method: total
+      dim: sample
+      output: otu_rel
+
+  - name: distance_matrix
+    inputs: [otu_rel]
+    params:
+      dim: sample
+      metric: braycurtis
+      output: sample_dist
+
+  - name: reduce
+    inputs: [sample_dist]
+    params:
+      dim: sample
+      method: pcoa
+      n_components: 5
+      output: pcoa_coords
+
+  # 关键一步：把 PCoA 坐标和 metadata 的分组列合并
+  - name: join
+    inputs: [pcoa_coords, meta]
+    params:
+      dim: sample
+      columns: [site, horizon, transect]
+      how: inner
+      prefix: "meta_"
+      output: pcoa_with_meta
+
+  # 用 join 后的 Form 画 PCoA 散点图
+  - name: scatter
+    inputs: [pcoa_with_meta]
+    params:
+      dim: component
+      x_label: PCo1
+      y_label: PCo2
+      color_label: meta_site
+      filename: pcoa_by_site.png
+      title: "PCoA colored by site"
+      point_size: 30
+      alpha: 0.7
+
+  - name: describe
+    inputs: [pcoa_with_meta]

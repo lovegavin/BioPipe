@@ -1,0 +1,126 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/bin_demo",
+  "generated_at": "2026-10-13T03:44:12.182136+00:00",
+  "n_steps": 8,
+  "total_elapsed": 0.0476,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.01,
+      "inputs": [
+        "otu"
+      ],
+      "params": {
+        "dim": "species",
+        "min_value": 10,
+        "min_samples": 5,
+        "output": "otu_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "transpose",
+      "elapsed": 0.0279,
+      "inputs": [
+        "otu_filtered"
+      ],
+      "params": {
+        "order": [
+          "sample",
+          "species"
+        ],
+        "output": "samples_by_species"
+      },
+      "export_path": "steps/02_transpose.json"
+    },
+    {
+      "index": 3,
+      "name": "reduce_axis",
+      "elapsed": 0.001,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "dim": "species",
+        "stats": [
+          "sum"
+        ],
+        "output": "sample_totals"
+      },
+      "export_path": "steps/03_reduce_axis.json"
+    },
+    {
+      "index": 4,
+      "name": "bin",
+      "elapsed": 0.0004,
+      "inputs": [
+        "sample_totals"
+      ],
+      "params": {
+        "dim": "sample",
+        "bins": 5,
+        "method": "quantile",
+        "value_label": "sum",
+        "output": "sample_bins"
+      },
+      "export_path": "steps/04_bin.json"
+    },
+    {
+      "index": 5,
+      "name": "diversity",
+      "elapsed": 0.0076,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "dim": "species",
+        "metrics": [
+          "shannon",
+          "richness"
+        ],
+        "output": "alpha_div"
+      },
+      "export_path": "steps/05_diversity.json"
+    },
+    {
+      "index": 6,
+      "name": "aggregate",
+      "elapsed": 0.0004,
+      "inputs": [
+        "alpha_div",
+        "sample_bins"
+      ],
+      "params": {
+        "dim": "sample",
+        "group_col": "bin",
+        "method": "mean",
+        "output": "div_by_bin"
+      },
+      "export_path": "steps/06_aggregate.json"
+    },
+    {
+      "index": 7,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "sample_bins"
+      ],
+      "params": {},
+      "export_path": "steps/07_describe.json"
+    },
+    {
+      "index": 8,
+      "name": "describe",
+      "elapsed": 0.0001,
+      "inputs": [
+        "div_by_bin"
+      ],
+      "params": {},
+      "export_path": "steps/08_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

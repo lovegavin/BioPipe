@@ -1,0 +1,23 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/aggregate_demo
+generated : 2026-10-13T03:42:01.421189+00:00
+steps     : 7
+elapsed   : 0.062s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   filter_min              0.013s   steps/01_filter_min.json
+2   transpose               0.022s   steps/02_transpose.json
+3   normalize               0.020s   steps/03_normalize.json
+4   aggregate               0.001s   steps/04_aggregate.json
+5   aggregate               0.001s   steps/05_aggregate.json
+6   describe                0.003s   steps/06_describe.json
+7   describe                0.002s   steps/07_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

@@ -1,0 +1,38 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/microbiome_demo
+generated : 2026-10-13T03:46:52.596535+00:00
+steps     : 22
+elapsed   : 11.248s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   filter_min              0.010s   steps/01_filter_min.json
+2   transpose               0.015s   steps/02_transpose.json
+3   normalize               0.020s   steps/03_normalize.json
+4   diversity               0.010s   steps/04_diversity.json
+5   distance_matrix         0.026s   steps/05_distance_matrix.json
+6   distance_matrix         0.062s   steps/06_distance_matrix.json
+7   reduce                  0.068s   steps/07_reduce.json
+8   join                    0.000s   steps/08_join.json
+9   scatter                 0.147s   steps/09_scatter.json
+10  scatter                 0.086s   steps/10_scatter.json
+11  scatter                 0.086s   steps/11_scatter.json
+12  permanova               0.127s   steps/12_permanova.json
+13  permanova               0.038s   steps/13_permanova.json
+14  permanova               0.043s   steps/14_permanova.json
+15  correlation             9.113s   steps/15_correlation.json
+16  heatmap                 1.187s   steps/16_heatmap.json
+17  aggregate               0.001s   steps/17_aggregate.json
+18  rename_dim              0.017s   steps/18_rename_dim.json
+19  barplot                 0.189s   steps/19_barplot.json
+20  describe                0.000s   steps/20_describe.json
+21  describe                0.000s   steps/21_describe.json
+22  describe                0.000s   steps/22_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

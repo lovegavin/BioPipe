@@ -1,0 +1,20 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/diversity_demo
+generated : 2026-10-13T02:55:51.237080+00:00
+steps     : 4
+elapsed   : 0.025s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   filter_min              0.015s   steps/01_filter_min.json
+2   diversity               0.007s   steps/02_diversity.json
+3   describe                0.000s   steps/03_describe.json
+4   describe                0.003s   steps/04_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

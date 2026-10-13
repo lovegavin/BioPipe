@@ -1,0 +1,26 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/permanova_demo
+generated : 2026-10-13T03:19:42.990187+00:00
+steps     : 10
+elapsed   : 0.270s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   filter_min              0.012s   steps/01_filter_min.json
+2   transpose               0.014s   steps/02_transpose.json
+3   normalize               0.025s   steps/03_normalize.json
+4   distance_matrix         0.015s   steps/04_distance_matrix.json
+5   permanova               0.117s   steps/05_permanova.json
+6   permanova               0.038s   steps/06_permanova.json
+7   permanova               0.048s   steps/07_permanova.json
+8   describe                0.000s   steps/08_describe.json
+9   describe                0.000s   steps/09_describe.json
+10  describe                0.000s   steps/10_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

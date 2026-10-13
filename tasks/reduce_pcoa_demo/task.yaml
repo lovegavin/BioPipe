@@ -1,0 +1,63 @@
+name: reduce_pcoa_demo
+
+sources:
+  otu:
+    path: input/OTU_CB_rarefied20k.csv
+    dims: [species, sample]
+    labels:
+      species: {sample: 0}
+      sample: builtin
+    args:
+      reader: csv
+      sep: ","
+
+  meta:
+    path: input/sample_metadata_cb.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args:
+      reader: csv
+      sep: ","
+
+steps:
+  - name: filter_min
+    inputs: [otu]
+    params:
+      dim: species
+      min_value: 10
+      min_samples: 5
+      output: otu_filtered
+
+  - name: transpose
+    inputs: [otu_filtered]
+    params:
+      order: [sample, species]
+      output: samples_by_species
+
+  - name: normalize
+    inputs: [samples_by_species]
+    params:
+      method: total
+      dim: sample
+      output: otu_rel
+
+  - name: distance_matrix
+    inputs: [otu_rel]
+    params:
+      dim: sample
+      metric: braycurtis
+      output: sample_dist
+
+  # PCoA 降维
+  - name: reduce
+    inputs: [sample_dist]
+    params:
+      dim: sample
+      method: pcoa
+      n_components: 10
+      output: pcoa_coords
+
+  - name: describe
+    inputs: [pcoa_coords]

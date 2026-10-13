@@ -1,0 +1,366 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/microbiome_demo",
+  "generated_at": "2026-10-13T03:46:52.596535+00:00",
+  "n_steps": 22,
+  "total_elapsed": 11.2477,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.0099,
+      "inputs": [
+        "otu"
+      ],
+      "params": {
+        "dim": "species",
+        "min_value": 10,
+        "min_samples": 5,
+        "output": "otu_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "transpose",
+      "elapsed": 0.015,
+      "inputs": [
+        "otu_filtered"
+      ],
+      "params": {
+        "order": [
+          "sample",
+          "species"
+        ],
+        "output": "samples_by_species"
+      },
+      "export_path": "steps/02_transpose.json"
+    },
+    {
+      "index": 3,
+      "name": "normalize",
+      "elapsed": 0.0203,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "method": "total",
+        "dim": "sample",
+        "output": "otu_rel"
+      },
+      "export_path": "steps/03_normalize.json"
+    },
+    {
+      "index": 4,
+      "name": "diversity",
+      "elapsed": 0.0098,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "dim": "species",
+        "metrics": [
+          "shannon",
+          "simpson",
+          "richness",
+          "evenness"
+        ],
+        "output": "alpha_div"
+      },
+      "export_path": "steps/04_diversity.json"
+    },
+    {
+      "index": 5,
+      "name": "distance_matrix",
+      "elapsed": 0.0261,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "dim": "sample",
+        "metric": "braycurtis",
+        "output": "bray_dist"
+      },
+      "export_path": "steps/05_distance_matrix.json"
+    },
+    {
+      "index": 6,
+      "name": "distance_matrix",
+      "elapsed": 0.0619,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "dim": "sample",
+        "metric": "jaccard",
+        "output": "jaccard_dist"
+      },
+      "export_path": "steps/06_distance_matrix.json"
+    },
+    {
+      "index": 7,
+      "name": "reduce",
+      "elapsed": 0.0684,
+      "inputs": [
+        "bray_dist"
+      ],
+      "params": {
+        "dim": "sample",
+        "method": "pcoa",
+        "n_components": 5,
+        "output": "pcoa_coords"
+      },
+      "export_path": "steps/07_reduce.json"
+    },
+    {
+      "index": 8,
+      "name": "join",
+      "elapsed": 0.0003,
+      "inputs": [
+        "pcoa_coords",
+        "meta"
+      ],
+      "params": {
+        "dim": "sample",
+        "columns": [
+          "site",
+          "horizon",
+          "transect"
+        ],
+        "how": "inner",
+        "prefix": "meta_",
+        "output": "pcoa_with_meta"
+      },
+      "export_path": "steps/08_join.json"
+    },
+    {
+      "index": 9,
+      "name": "scatter",
+      "elapsed": 0.1473,
+      "inputs": [
+        "pcoa_with_meta"
+      ],
+      "params": {
+        "dim": "component",
+        "x_label": "PCo1",
+        "y_label": "PCo2",
+        "color_label": "meta_site",
+        "filename": "pcoa_by_site.png",
+        "title": "PCoA (Bray-Curtis), colored by site",
+        "point_size": 30,
+        "alpha": 0.75
+      },
+      "export_path": "steps/09_scatter.json"
+    },
+    {
+      "index": 10,
+      "name": "scatter",
+      "elapsed": 0.0865,
+      "inputs": [
+        "pcoa_with_meta"
+      ],
+      "params": {
+        "dim": "component",
+        "x_label": "PCo1",
+        "y_label": "PCo2",
+        "color_label": "meta_horizon",
+        "filename": "pcoa_by_horizon.png",
+        "title": "PCoA (Bray-Curtis), colored by horizon",
+        "point_size": 30,
+        "alpha": 0.75
+      },
+      "export_path": "steps/10_scatter.json"
+    },
+    {
+      "index": 11,
+      "name": "scatter",
+      "elapsed": 0.0858,
+      "inputs": [
+        "pcoa_with_meta"
+      ],
+      "params": {
+        "dim": "component",
+        "x_label": "PCo1",
+        "y_label": "PCo2",
+        "color_label": "meta_transect",
+        "filename": "pcoa_by_transect.png",
+        "title": "PCoA (Bray-Curtis), colored by transect",
+        "point_size": 30,
+        "alpha": 0.75
+      },
+      "export_path": "steps/11_scatter.json"
+    },
+    {
+      "index": 12,
+      "name": "permanova",
+      "elapsed": 0.1273,
+      "inputs": [
+        "bray_dist",
+        "meta"
+      ],
+      "params": {
+        "dist_dim": "sample",
+        "group_dim": "sample",
+        "group_label": "site",
+        "pairwise": true,
+        "n_permutations": 999,
+        "random_state": 0,
+        "output": "permanova_site"
+      },
+      "export_path": "steps/12_permanova.json"
+    },
+    {
+      "index": 13,
+      "name": "permanova",
+      "elapsed": 0.0383,
+      "inputs": [
+        "bray_dist",
+        "meta"
+      ],
+      "params": {
+        "dist_dim": "sample",
+        "group_dim": "sample",
+        "group_label": "horizon",
+        "n_permutations": 999,
+        "random_state": 0,
+        "output": "permanova_horizon"
+      },
+      "export_path": "steps/13_permanova.json"
+    },
+    {
+      "index": 14,
+      "name": "permanova",
+      "elapsed": 0.0431,
+      "inputs": [
+        "bray_dist",
+        "meta"
+      ],
+      "params": {
+        "dist_dim": "sample",
+        "group_dim": "sample",
+        "group_label": "transect",
+        "n_permutations": 999,
+        "random_state": 0,
+        "output": "permanova_transect"
+      },
+      "export_path": "steps/14_permanova.json"
+    },
+    {
+      "index": 15,
+      "name": "correlation",
+      "elapsed": 9.1127,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "dim": "sample",
+        "metric": "spearman",
+        "min_valid": 20,
+        "output": "sample_corr"
+      },
+      "export_path": "steps/15_correlation.json"
+    },
+    {
+      "index": 16,
+      "name": "heatmap",
+      "elapsed": 1.1873,
+      "inputs": [
+        "sample_corr"
+      ],
+      "params": {
+        "dim": "sample",
+        "other_dim": "sample_b",
+        "select": "all",
+        "standardize": "none",
+        "cluster_rows": true,
+        "cluster_cols": true,
+        "cmap": "RdBu_r",
+        "filename": "sample_correlation.png",
+        "title": "Sample-sample Spearman correlation"
+      },
+      "export_path": "steps/16_heatmap.json"
+    },
+    {
+      "index": 17,
+      "name": "aggregate",
+      "elapsed": 0.0013,
+      "inputs": [
+        "samples_by_species",
+        "meta"
+      ],
+      "params": {
+        "dim": "sample",
+        "group_col": "site",
+        "method": "mean",
+        "output": "site_mean"
+      },
+      "export_path": "steps/17_aggregate.json"
+    },
+    {
+      "index": 18,
+      "name": "rename_dim",
+      "elapsed": 0.0171,
+      "inputs": [
+        "site_mean"
+      ],
+      "params": {
+        "from": "feature",
+        "to": "site",
+        "output": "site_mean_renamed"
+      },
+      "export_path": "steps/18_rename_dim.json"
+    },
+    {
+      "index": 19,
+      "name": "barplot",
+      "elapsed": 0.1888,
+      "inputs": [
+        "site_mean_renamed"
+      ],
+      "params": {
+        "dim": "species",
+        "sample_dim": "site",
+        "top_n": 15,
+        "other_label": "Other",
+        "normalize": true,
+        "filename": "site_composition.png",
+        "title": "Average species composition per site",
+        "cmap": "tab20",
+        "legend_ncol": 3,
+        "rotate_labels": false
+      },
+      "export_path": "steps/19_barplot.json"
+    },
+    {
+      "index": 20,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "alpha_div"
+      ],
+      "params": {},
+      "export_path": "steps/20_describe.json"
+    },
+    {
+      "index": 21,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "permanova_site"
+      ],
+      "params": {},
+      "export_path": "steps/21_describe.json"
+    },
+    {
+      "index": 22,
+      "name": "describe",
+      "elapsed": 0.0001,
+      "inputs": [
+        "permanova_horizon"
+      ],
+      "params": {},
+      "export_path": "steps/22_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

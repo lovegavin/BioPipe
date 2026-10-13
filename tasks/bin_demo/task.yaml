@@ -1,0 +1,75 @@
+name: bin_demo
+
+sources:
+  otu:
+    path: input/OTU_CB_rarefied20k.csv
+    dims: [species, sample]
+    labels:
+      species: {sample: 0}
+      sample: builtin
+    args:
+      reader: csv
+      sep: ","
+
+  meta:
+    path: input/sample_metadata_cb.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args:
+      reader: csv
+      sep: ","
+
+steps:
+  - name: filter_min
+    inputs: [otu]
+    params:
+      dim: species
+      min_value: 10
+      min_samples: 5
+      output: otu_filtered
+
+  - name: transpose
+    inputs: [otu_filtered]
+    params:
+      order: [sample, species]
+      output: samples_by_species
+
+  - name: reduce_axis
+    inputs: [samples_by_species]
+    params:
+      dim: species
+      stats: [sum]
+      output: sample_totals
+
+  # 用 value_label=sum 直接读取 statistic 维里名为 "sum" 的列
+  - name: bin
+    inputs: [sample_totals]
+    params:
+      dim: sample
+      bins: 5
+      method: quantile
+      value_label: sum
+      output: sample_bins
+
+  - name: diversity
+    inputs: [samples_by_species]
+    params:
+      dim: species
+      metrics: [shannon, richness]
+      output: alpha_div
+
+  - name: aggregate
+    inputs: [alpha_div, sample_bins]
+    params:
+      dim: sample
+      group_col: bin
+      method: mean
+      output: div_by_bin
+
+  - name: describe
+    inputs: [sample_bins]
+
+  - name: describe
+    inputs: [div_by_bin]

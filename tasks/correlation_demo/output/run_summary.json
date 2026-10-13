@@ -1,0 +1,70 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/correlation_demo",
+  "generated_at": "2026-10-13T03:36:14.371371+00:00",
+  "n_steps": 4,
+  "total_elapsed": 0.2474,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.0114,
+      "inputs": [
+        "otu"
+      ],
+      "params": {
+        "dim": "species",
+        "min_value": 10,
+        "min_samples": 5,
+        "output": "otu_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "transpose",
+      "elapsed": 0.0135,
+      "inputs": [
+        "otu_filtered"
+      ],
+      "params": {
+        "order": [
+          "sample",
+          "species"
+        ],
+        "output": "samples_by_species"
+      },
+      "export_path": "steps/02_transpose.json"
+    },
+    {
+      "index": 3,
+      "name": "log_transform",
+      "elapsed": 0.0247,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "base": 2,
+        "pseudocount": 1,
+        "output": "otu_log"
+      },
+      "export_path": "steps/03_log_transform.json"
+    },
+    {
+      "index": 4,
+      "name": "correlation",
+      "elapsed": 0.1978,
+      "inputs": [
+        "otu_log"
+      ],
+      "params": {
+        "dim": "sample",
+        "metric": "pearson",
+        "min_valid": 10,
+        "output": "sample_corr_pearson"
+      },
+      "export_path": "steps/04_correlation.json"
+    }
+  ],
+  "status": "failed",
+  "error": ""
+}

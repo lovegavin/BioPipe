@@ -1,0 +1,64 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/diversity_demo",
+  "generated_at": "2026-10-13T02:55:51.237080+00:00",
+  "n_steps": 4,
+  "total_elapsed": 0.0253,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.0145,
+      "inputs": [
+        "otu"
+      ],
+      "params": {
+        "dim": "species",
+        "min_value": 10,
+        "min_samples": 5,
+        "output": "otu_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "diversity",
+      "elapsed": 0.0073,
+      "inputs": [
+        "otu_filtered"
+      ],
+      "params": {
+        "dim": "species",
+        "metrics": [
+          "shannon",
+          "simpson",
+          "richness",
+          "evenness"
+        ],
+        "output": "alpha_div"
+      },
+      "export_path": "steps/02_diversity.json"
+    },
+    {
+      "index": 3,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "alpha_div"
+      ],
+      "params": {},
+      "export_path": "steps/03_describe.json"
+    },
+    {
+      "index": 4,
+      "name": "describe",
+      "elapsed": 0.0033,
+      "inputs": [
+        "otu_filtered"
+      ],
+      "params": {},
+      "export_path": "steps/04_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

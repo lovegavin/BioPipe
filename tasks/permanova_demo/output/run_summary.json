@@ -1,0 +1,156 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/permanova_demo",
+  "generated_at": "2026-10-13T03:19:42.990187+00:00",
+  "n_steps": 10,
+  "total_elapsed": 0.2702,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.0124,
+      "inputs": [
+        "otu"
+      ],
+      "params": {
+        "dim": "species",
+        "min_value": 10,
+        "min_samples": 5,
+        "output": "otu_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "transpose",
+      "elapsed": 0.0141,
+      "inputs": [
+        "otu_filtered"
+      ],
+      "params": {
+        "order": [
+          "sample",
+          "species"
+        ],
+        "output": "samples_by_species"
+      },
+      "export_path": "steps/02_transpose.json"
+    },
+    {
+      "index": 3,
+      "name": "normalize",
+      "elapsed": 0.0254,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "method": "total",
+        "dim": "sample",
+        "output": "otu_rel"
+      },
+      "export_path": "steps/03_normalize.json"
+    },
+    {
+      "index": 4,
+      "name": "distance_matrix",
+      "elapsed": 0.0148,
+      "inputs": [
+        "otu_rel"
+      ],
+      "params": {
+        "dim": "sample",
+        "metric": "braycurtis",
+        "output": "sample_dist"
+      },
+      "export_path": "steps/04_distance_matrix.json"
+    },
+    {
+      "index": 5,
+      "name": "permanova",
+      "elapsed": 0.1172,
+      "inputs": [
+        "sample_dist",
+        "meta"
+      ],
+      "params": {
+        "dist_dim": "sample",
+        "group_dim": "sample",
+        "group_label": "site",
+        "pairwise": true,
+        "n_permutations": 999,
+        "random_state": 0,
+        "output": "permanova_site"
+      },
+      "export_path": "steps/05_permanova.json"
+    },
+    {
+      "index": 6,
+      "name": "permanova",
+      "elapsed": 0.0378,
+      "inputs": [
+        "sample_dist",
+        "meta"
+      ],
+      "params": {
+        "dist_dim": "sample",
+        "group_dim": "sample",
+        "group_label": "horizon",
+        "pairwise": false,
+        "n_permutations": 999,
+        "random_state": 0,
+        "output": "permanova_horizon"
+      },
+      "export_path": "steps/06_permanova.json"
+    },
+    {
+      "index": 7,
+      "name": "permanova",
+      "elapsed": 0.0481,
+      "inputs": [
+        "sample_dist",
+        "meta"
+      ],
+      "params": {
+        "dist_dim": "sample",
+        "group_dim": "sample",
+        "group_label": "transect",
+        "pairwise": false,
+        "n_permutations": 999,
+        "random_state": 0,
+        "output": "permanova_transect"
+      },
+      "export_path": "steps/07_permanova.json"
+    },
+    {
+      "index": 8,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "permanova_site"
+      ],
+      "params": {},
+      "export_path": "steps/08_describe.json"
+    },
+    {
+      "index": 9,
+      "name": "describe",
+      "elapsed": 0.0001,
+      "inputs": [
+        "permanova_horizon"
+      ],
+      "params": {},
+      "export_path": "steps/09_describe.json"
+    },
+    {
+      "index": 10,
+      "name": "describe",
+      "elapsed": 0.0001,
+      "inputs": [
+        "permanova_transect"
+      ],
+      "params": {},
+      "export_path": "steps/10_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

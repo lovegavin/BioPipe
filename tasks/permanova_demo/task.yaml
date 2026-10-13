@@ -1,0 +1,96 @@
+name: permanova_demo
+
+sources:
+  otu:
+    path: input/OTU_CB_rarefied20k.csv
+    dims: [species, sample]
+    labels:
+      species: {sample: 0}
+      sample: builtin
+    args:
+      reader: csv
+      sep: ","
+
+  meta:
+    path: input/sample_metadata_cb.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args:
+      reader: csv
+      sep: ","
+
+steps:
+  - name: filter_min
+    inputs: [otu]
+    params:
+      dim: species
+      min_value: 10
+      min_samples: 5
+      output: otu_filtered
+
+  - name: transpose
+    inputs: [otu_filtered]
+    params:
+      order: [sample, species]
+      output: samples_by_species
+
+  - name: normalize
+    inputs: [samples_by_species]
+    params:
+      method: total
+      dim: sample
+      output: otu_rel
+
+  - name: distance_matrix
+    inputs: [otu_rel]
+    params:
+      dim: sample
+      metric: braycurtis
+      output: sample_dist
+
+  # PERMANOVA: site 分组（3 个采样地点，样本均匀）
+  - name: permanova
+    inputs: [sample_dist, meta]
+    params:
+      dist_dim: sample
+      group_dim: sample
+      group_label: site
+      pairwise: true
+      n_permutations: 999
+      random_state: 0
+      output: permanova_site
+
+  # PERMANOVA: horizon 分组（3 个土层）
+  - name: permanova
+    inputs: [sample_dist, meta]
+    params:
+      dist_dim: sample
+      group_dim: sample
+      group_label: horizon
+      pairwise: false
+      n_permutations: 999
+      random_state: 0
+      output: permanova_horizon
+
+  # PERMANOVA: transect 分组（4 个样带）
+  - name: permanova
+    inputs: [sample_dist, meta]
+    params:
+      dist_dim: sample
+      group_dim: sample
+      group_label: transect
+      pairwise: false
+      n_permutations: 999
+      random_state: 0
+      output: permanova_transect
+
+  - name: describe
+    inputs: [permanova_site]
+
+  - name: describe
+    inputs: [permanova_horizon]
+
+  - name: describe
+    inputs: [permanova_transect]

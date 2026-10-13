@@ -1,0 +1,134 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/join_demo",
+  "generated_at": "2026-10-13T03:40:22.996893+00:00",
+  "n_steps": 8,
+  "total_elapsed": 0.3782,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.0163,
+      "inputs": [
+        "otu"
+      ],
+      "params": {
+        "dim": "species",
+        "min_value": 10,
+        "min_samples": 5,
+        "output": "otu_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "transpose",
+      "elapsed": 0.0168,
+      "inputs": [
+        "otu_filtered"
+      ],
+      "params": {
+        "order": [
+          "sample",
+          "species"
+        ],
+        "output": "samples_by_species"
+      },
+      "export_path": "steps/02_transpose.json"
+    },
+    {
+      "index": 3,
+      "name": "normalize",
+      "elapsed": 0.0206,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "method": "total",
+        "dim": "sample",
+        "output": "otu_rel"
+      },
+      "export_path": "steps/03_normalize.json"
+    },
+    {
+      "index": 4,
+      "name": "distance_matrix",
+      "elapsed": 0.018,
+      "inputs": [
+        "otu_rel"
+      ],
+      "params": {
+        "dim": "sample",
+        "metric": "braycurtis",
+        "output": "sample_dist"
+      },
+      "export_path": "steps/04_distance_matrix.json"
+    },
+    {
+      "index": 5,
+      "name": "reduce",
+      "elapsed": 0.0813,
+      "inputs": [
+        "sample_dist"
+      ],
+      "params": {
+        "dim": "sample",
+        "method": "pcoa",
+        "n_components": 5,
+        "output": "pcoa_coords"
+      },
+      "export_path": "steps/05_reduce.json"
+    },
+    {
+      "index": 6,
+      "name": "join",
+      "elapsed": 0.0004,
+      "inputs": [
+        "pcoa_coords",
+        "meta"
+      ],
+      "params": {
+        "dim": "sample",
+        "columns": [
+          "site",
+          "horizon",
+          "transect"
+        ],
+        "how": "inner",
+        "prefix": "meta_",
+        "output": "pcoa_with_meta"
+      },
+      "export_path": "steps/06_join.json"
+    },
+    {
+      "index": 7,
+      "name": "scatter",
+      "elapsed": 0.2246,
+      "inputs": [
+        "pcoa_with_meta"
+      ],
+      "params": {
+        "dim": "component",
+        "x_label": "PCo1",
+        "y_label": "PCo2",
+        "color_label": "meta_site",
+        "filename": "pcoa_by_site.png",
+        "title": "PCoA colored by site",
+        "point_size": 30,
+        "alpha": 0.7
+      },
+      "export_path": "steps/07_scatter.json"
+    },
+    {
+      "index": 8,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "pcoa_with_meta"
+      ],
+      "params": {},
+      "export_path": "steps/08_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

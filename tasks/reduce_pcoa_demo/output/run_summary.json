@@ -1,0 +1,94 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/reduce_pcoa_demo",
+  "generated_at": "2026-10-13T03:24:30.569854+00:00",
+  "n_steps": 6,
+  "total_elapsed": 0.1854,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.0111,
+      "inputs": [
+        "otu"
+      ],
+      "params": {
+        "dim": "species",
+        "min_value": 10,
+        "min_samples": 5,
+        "output": "otu_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "transpose",
+      "elapsed": 0.0148,
+      "inputs": [
+        "otu_filtered"
+      ],
+      "params": {
+        "order": [
+          "sample",
+          "species"
+        ],
+        "output": "samples_by_species"
+      },
+      "export_path": "steps/02_transpose.json"
+    },
+    {
+      "index": 3,
+      "name": "normalize",
+      "elapsed": 0.0319,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "method": "total",
+        "dim": "sample",
+        "output": "otu_rel"
+      },
+      "export_path": "steps/03_normalize.json"
+    },
+    {
+      "index": 4,
+      "name": "distance_matrix",
+      "elapsed": 0.0158,
+      "inputs": [
+        "otu_rel"
+      ],
+      "params": {
+        "dim": "sample",
+        "metric": "braycurtis",
+        "output": "sample_dist"
+      },
+      "export_path": "steps/04_distance_matrix.json"
+    },
+    {
+      "index": 5,
+      "name": "reduce",
+      "elapsed": 0.1116,
+      "inputs": [
+        "sample_dist"
+      ],
+      "params": {
+        "dim": "sample",
+        "method": "pcoa",
+        "n_components": 10,
+        "output": "pcoa_coords"
+      },
+      "export_path": "steps/05_reduce.json"
+    },
+    {
+      "index": 6,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "pcoa_coords"
+      ],
+      "params": {},
+      "export_path": "steps/06_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

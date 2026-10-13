@@ -1,0 +1,24 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/join_demo
+generated : 2026-10-13T03:40:22.996893+00:00
+steps     : 8
+elapsed   : 0.378s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   filter_min              0.016s   steps/01_filter_min.json
+2   transpose               0.017s   steps/02_transpose.json
+3   normalize               0.021s   steps/03_normalize.json
+4   distance_matrix         0.018s   steps/04_distance_matrix.json
+5   reduce                  0.081s   steps/05_reduce.json
+6   join                    0.000s   steps/06_join.json
+7   scatter                 0.225s   steps/07_scatter.json
+8   describe                0.000s   steps/08_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

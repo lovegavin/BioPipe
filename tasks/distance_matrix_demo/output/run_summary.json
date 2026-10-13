@@ -1,0 +1,103 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/distance_matrix_demo",
+  "generated_at": "2026-10-13T03:13:50.435501+00:00",
+  "n_steps": 7,
+  "total_elapsed": 0.1218,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.0127,
+      "inputs": [
+        "otu"
+      ],
+      "params": {
+        "dim": "species",
+        "min_value": 10,
+        "min_samples": 5,
+        "output": "otu_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "transpose",
+      "elapsed": 0.0249,
+      "inputs": [
+        "otu_filtered"
+      ],
+      "params": {
+        "order": [
+          "sample",
+          "species"
+        ],
+        "output": "samples_by_species"
+      },
+      "export_path": "steps/02_transpose.json"
+    },
+    {
+      "index": 3,
+      "name": "normalize",
+      "elapsed": 0.0234,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "method": "total",
+        "dim": "sample",
+        "output": "otu_rel"
+      },
+      "export_path": "steps/03_normalize.json"
+    },
+    {
+      "index": 4,
+      "name": "distance_matrix",
+      "elapsed": 0.0208,
+      "inputs": [
+        "otu_rel"
+      ],
+      "params": {
+        "dim": "sample",
+        "metric": "braycurtis",
+        "output": "sample_dist"
+      },
+      "export_path": "steps/04_distance_matrix.json"
+    },
+    {
+      "index": 5,
+      "name": "distance_matrix",
+      "elapsed": 0.0396,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "dim": "sample",
+        "metric": "jaccard",
+        "output": "sample_jaccard"
+      },
+      "export_path": "steps/05_distance_matrix.json"
+    },
+    {
+      "index": 6,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "sample_dist"
+      ],
+      "params": {},
+      "export_path": "steps/06_describe.json"
+    },
+    {
+      "index": 7,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "sample_jaccard"
+      ],
+      "params": {},
+      "export_path": "steps/07_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null
+}

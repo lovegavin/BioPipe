@@ -1,0 +1,23 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/distance_matrix_demo
+generated : 2026-10-13T03:13:50.435501+00:00
+steps     : 7
+elapsed   : 0.122s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   filter_min              0.013s   steps/01_filter_min.json
+2   transpose               0.025s   steps/02_transpose.json
+3   normalize               0.023s   steps/03_normalize.json
+4   distance_matrix         0.021s   steps/04_distance_matrix.json
+5   distance_matrix         0.040s   steps/05_distance_matrix.json
+6   describe                0.000s   steps/06_describe.json
+7   describe                0.000s   steps/07_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

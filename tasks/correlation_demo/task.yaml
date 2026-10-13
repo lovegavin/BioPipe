@@ -1,0 +1,83 @@
+name: correlation_demo
+
+sources:
+  otu:
+    path: input/OTU_CB_rarefied20k.csv
+    dims: [species, sample]
+    labels:
+      species: {sample: 0}
+      sample: builtin
+    args:
+      reader: csv
+      sep: ","
+
+steps:
+  # 1. 过滤低丰度 OTU
+  - name: filter_min
+    inputs: [otu]
+    params:
+      dim: species
+      min_value: 10
+      min_samples: 5
+      output: otu_filtered
+
+  # 2. 转置为 [sample, species]，让样本轴是待比较的位置
+  - name: transpose
+    inputs: [otu_filtered]
+    params:
+      order: [sample, species]
+      output: samples_by_species
+
+  # 3. 对数变换（压缩动态范围）
+  - name: log_transform
+    inputs: [samples_by_species]
+    params:
+      base: 2
+      pseudocount: 1
+      output: otu_log
+
+  # 4. Pearson 相关矩阵
+  - name: correlation
+    inputs: [otu_log]
+    params:
+      dim: sample
+      metric: pearson
+      min_valid: 10
+      output: sample_corr_pearson
+
+  # 5. Spearman 秩相关矩阵
+  - name: correlation
+    inputs: [samples_by_species]
+    params:
+      dim: sample
+      metric: spearman
+      min_valid: 10
+      output: sample_corr_spearman
+
+  # 6. 距离矩阵（对比）
+  - name: distance_matrix
+    inputs: [samples_by_species]
+    params:
+      dim: sample
+      metric: braycurtis
+      output: sample_dist
+
+  # 7. 相关矩阵热图
+  - name: heatmap
+    inputs: [sample_corr_pearson]
+    params:
+      dim: sample
+      other_dim: sample_b
+      select: all
+      standardize: none
+      cluster_rows: true
+      cluster_cols: true
+      cmap: RdBu_r
+      filename: sample_correlation.png
+      title: "Sample-sample Pearson correlation"
+
+  - name: describe
+    inputs: [sample_corr_pearson]
+
+  - name: describe
+    inputs: [sample_corr_spearman]

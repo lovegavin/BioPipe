@@ -1,0 +1,20 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/correlation_demo
+generated : 2026-10-13T03:36:14.371371+00:00
+steps     : 4
+elapsed   : 0.247s
+status    : failed
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   filter_min              0.011s   steps/01_filter_min.json
+2   transpose               0.013s   steps/02_transpose.json
+3   log_transform           0.025s   steps/03_log_transform.json
+4   correlation             0.198s   steps/04_correlation.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================
