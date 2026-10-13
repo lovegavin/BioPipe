@@ -50,6 +50,9 @@ def create_app(settings=None):
     @asynccontextmanager
     async def lifespan(app):
         bridge.publish(getattr(app.state, "instance_url", None) or settings.instance_url)
+        if not settings.testing:
+            from biopipe.runtime import remember_runtime
+            remember_runtime()
         yield
         bridge.close()
         service.shutdown()

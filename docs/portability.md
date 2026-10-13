@@ -33,10 +33,14 @@ need their packages from `requirements-readers.txt`; analysis extensions use
 `requirements-analysis.txt`. For CLI, SDK and plugin development install the
 repository package with `python -m pip install -e ".[agent,dev]"` in that environment.
 
-`python: "auto"` discovers a usable project environment, active venv/Conda environment
-or PATH interpreter. If necessary, set `BIOPIPE_PYTHON` or the desktop config's
-`python` field to the intended runtime. That explicit personal override must be
-updated after moving; application source does not need editing.
+`python: "auto"` discovers a usable project environment, a previously used BioPipe
+interpreter, active venv/Conda, PATH Python, Conda environment records and Windows
+Python registrations. It does not require an activated terminal. If none works,
+select the environment's `python.exe` in the desktop prompt. Successful startup
+remembers the current interpreter in `~/.biopipe/runtime.json`; every candidate is
+revalidated on the target machine. This personal file is not part of a release.
+An explicit `BIOPIPE_PYTHON` or desktop `python` setting overrides discovery and
+must be updated after moving; source and packaged defaults never need editing.
 
 ```text
 python scripts/studio.py
@@ -72,9 +76,19 @@ ephemeral: starting Studio publishes a fresh endpoint; no backend port is assume
 ```text
 python -m pytest -q tests/test_portability.py
 python scripts/verify_portability.py
+python scripts/verify_runtime_discovery.py
+python scripts/audit_portability.py
+python scripts/audit_portability.py --package <extracted-desktop-directory>
 ```
 
 The unit/integration tests cover graph exports, relocated code/data and historical
 array/image/cache access. The Windows script starts a relocated executable and
 WebView2 from a path containing spaces/non-ASCII characters, checks runtime discovery
 and invalid-environment diagnostics, and uses isolated data rather than user routes.
+
+The active-source/package audit rejects literal drive paths and personal home
+paths. Packaging runs the same audit before creating a ZIP. Release assemblies
+omit source/PDB debug paths. Historical `tasks/*/output` reports and the immutable
+`legacy/` snapshot can contain original paths as historical evidence; neither is
+used as a current default or included in desktop packages. Verification output,
+virtual environments, runtime hints and user profiles are also excluded.

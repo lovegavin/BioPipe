@@ -27,6 +27,7 @@ def main():
     exe = ROOT / "dist/BioPipe Studio/BioPipe Studio.exe"
     env = {key: value for key, value in os.environ.items() if key not in ("BIOPIPE_STUDIO_HOME", "BIOPIPE_STUDIO_DATA")}
     env.update(PYTHONUTF8="1", PYTHONIOENCODING="utf-8")
+    env["BIOPIPE_RUNTIME_CONFIG"] = str(test / "runtime.json")
     startup = subprocess.STARTUPINFO()
     startup.dwFlags = subprocess.STARTF_USESHOWWINDOW
     startup.wShowWindow = 0
