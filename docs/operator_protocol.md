@@ -1,6 +1,6 @@
 # BioPipe Operator Protocol v1
 
-Status: implemented for BioPipe Studio 0.2 and SDK 1.0. Python 3.11 or newer is required.
+Status: protocol v1, implemented for BioPipe Studio 0.3 and SDK 1.2. Python 3.11 or newer is required.
 This document is the public contract for new Python plugins. Existing `Step`, `Reader`,
 YAML tasks, graph v1/v2 files and route snapshots remain supported through adapters.
 

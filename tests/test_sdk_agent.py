@@ -176,7 +176,7 @@ def test_view_changes_do_not_invalidate_graph_revision(gateway):
     assert response.json()["revision"] == 0
 
 
-def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path):
+def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeypatch):
     from biopipe.developer import scaffold, build
     from biopipe.plugins import PluginManager
     client, app, data, state = gateway
@@ -187,8 +187,27 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path):
     with zipfile.ZipFile(wheel) as archive:
         descriptor_file = next(name for name in archive.namelist() if name.endswith(".dist-info/biopipe.json"))
         assert json.loads(archive.read(descriptor_file))["descriptors"][0]["id"] == "example.scale_plugin"
+    # Runtimes can inherit dependencies through .pth files (including editable
+    # installations). A plugin worker must resolve the same transitive paths.
+    import sysconfig
+    runtime_site = tmp_path / "runtime_site"
+    runtime_site.mkdir()
+    indirect = tmp_path / "indirect_dependency"
+    indirect.mkdir()
+    (indirect / "biopipe_test_dependency.py").write_text("VALUE = 42\n", encoding="utf-8")
+    original_get_path = sysconfig.get_path
+    parent_site = original_get_path("purelib")
+    (runtime_site / "dependencies.pth").write_text(
+        f"import site; site.addsitedir({parent_site!r})\n{indirect}\n", encoding="utf-8")
+    monkeypatch.setattr(sysconfig, "get_path", lambda name, *args, **kwargs:
+        str(runtime_site) if name == "purelib" else original_get_path(name, *args, **kwargs))
     manager = app.state.service.plugins
     installed = manager.install(wheel)
+    dependency = subprocess.run([manager.python_for(installed), "-c",
+        "import biopipe_test_dependency; print(biopipe_test_dependency.VALUE)"],
+        cwd=tmp_path, capture_output=True, text=True, timeout=30)
+    assert dependency.returncode == 0, dependency.stderr
+    assert dependency.stdout.strip() == "42"
     assert len([d for d in installed["descriptors"] if d['distribution'] == 'scale-plugin']) == 1
     catalog = client.get("/api/operators").json()
     assert len(catalog["operators"]) == len(STEPS) + 1

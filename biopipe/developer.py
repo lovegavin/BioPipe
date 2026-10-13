@@ -14,6 +14,7 @@ import tomllib
 import zipfile
 
 from biopipe.plugins import run_process
+from biopipe import __version__
 from biopipe_sdk.protocol import describe_operator, describe_reader, validate_extension
 
 
@@ -37,7 +38,7 @@ build-backend = "setuptools.build_meta"
 name = "{package}"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["biopipe-studio>=0.2,<0.3"]
+dependencies = ["biopipe-studio>={__version__},<{int(__version__.split('.')[0]) + 1}"]
 
 [project.entry-points."biopipe.{group}"]
 {module} = "{module}:{cls}"
