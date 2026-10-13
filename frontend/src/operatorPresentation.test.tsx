@@ -26,13 +26,20 @@ describe("operator presentation", () => {
     }
   });
 
-  it.each(Object.keys(builtinPresentation))("renders %s artwork in nodes/library and inspector", name => {
+  it.each(Object.keys(builtinPresentation))("renders %s with the appropriate level of detail", name => {
     const spec = presentOperator(operators.find(o => o.name === name)!);
     const art = renderToStaticMarkup(<OperatorArtwork spec={spec}/>);
-    expect(spec.preview?.kind).toBeTruthy();
-    expect(art).toContain(`data-glyph="${spec.preview!.kind}"`);
-    expect(art).toContain('aria-hidden="true"');
-    expect(renderToStaticMarkup(<OperatorPreview spec={spec}/>)).toContain(spec.preview!.caption);
+    if (spec.category === "可视化") {
+      expect(spec.preview?.kind).toBeTruthy();
+      expect(art).toContain(`data-glyph="${spec.preview!.kind}"`);
+      expect(art).toContain('aria-hidden="true"');
+      expect(renderToStaticMarkup(<OperatorPreview spec={spec}/>)).toContain(spec.preview!.caption);
+    } else {
+      expect(spec.preview).toBeUndefined();
+      expect(art).toContain('width="20"');
+      expect(art).not.toContain('data-glyph');
+      expect(renderToStaticMarkup(<OperatorPreview spec={spec}/>)).toBe("");
+    }
   });
 
   it("does not silently render any shipped operator as a generic placeholder", () => {
