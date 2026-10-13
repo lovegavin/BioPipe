@@ -40,6 +40,9 @@ def main():
     for source in (root / 'tasks').rglob('*'):
         if source.is_file() and source.suffix in {'.py', '.yaml', '.yml'} and 'output' not in source.relative_to(root).parts:
             copy(source, source.relative_to(root))
+    for source in (root / 'routes').rglob('*'):
+        if source.is_file() and source.suffix in {'.json', '.yaml', '.yml'}:
+            copy(source, source.relative_to(root))
     for source in root.glob('requirements*.txt'):
         copy(source, source.name)
     for name_ in ('README.md', 'pyproject.toml'):

@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 import time
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -28,6 +29,36 @@ def context(tmp_path, budget=8, **options):
 
 def events(ctx):
     return [json.loads(line) for line in ctx.memory.event_path.read_text(encoding="utf-8").splitlines()]
+
+
+@pytest.mark.parametrize("available", [256 * 1024**2, 1024**3, 16 * 1024**3, 128 * 1024**3])
+def test_automatic_budget_uses_ninety_percent_without_fixed_cap(monkeypatch, available):
+    calls = []
+    monkeypatch.setattr("psutil.virtual_memory", lambda: calls.append(1) or SimpleNamespace(available=available))
+    config = MemoryConfig.parse({"runtime": {"memory": {"enabled": True}}})
+    assert config.budget_bytes == int(available * .9)
+    assert config.available_at_start_bytes == available
+    assert calls == [1]
+
+
+def test_manual_budget_and_validation_do_not_scan(monkeypatch):
+    monkeypatch.setattr("psutil.virtual_memory", lambda: pytest.fail("must not scan RAM"))
+    manual = MemoryConfig.parse({"runtime": {"memory": {"budget_mb": 3072}}})
+    assert manual.budget_bytes == 3072 * 1024**2
+    assert manual.available_at_start_bytes is None
+    pending = MemoryConfig.parse({"runtime": {"memory": {"enabled": True}}}, detect_available=False)
+    assert pending.budget_bytes == 0 and pending.available_at_start_bytes is None
+
+
+def test_automatic_budget_has_no_fixed_fallback(monkeypatch):
+    def unavailable():
+        raise OSError("memory scan unavailable")
+    monkeypatch.setattr("psutil.virtual_memory", unavailable)
+    with pytest.raises(ManifestError, match="Cannot scan available memory"):
+        MemoryConfig.parse({"runtime": {"memory": {"enabled": True}}})
+    monkeypatch.setattr("psutil.virtual_memory", lambda: SimpleNamespace(available=0))
+    with pytest.raises(ManifestError, match="No available memory"):
+        MemoryConfig.parse({"runtime": {"memory": {"enabled": True}}})
 
 
 def test_lossless_spill_metadata_noncontiguous_and_reload(tmp_path):

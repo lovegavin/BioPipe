@@ -1,4 +1,5 @@
 export type Parameter = {
+  description?: string;
   key: string;
   label: string;
   type: "string" | "number" | "integer" | "list" | "choice" | "boolean" | "json" | "scalar";
@@ -9,6 +10,10 @@ export type Parameter = {
   step?: number;
   options?: (string | number)[];
 };
+export type PluginOperation = {id: string; status: 'running' | 'complete' | 'failed'; error: string | null};
+export type PluginPackage = {name: string; title?: string; version: string; sha256: string; origin?: 'bundled' | 'wheel'; enabled?: boolean};
+export type PluginState = {generation: string | null; packages: PluginPackage[]; bundled_packages?: PluginPackage[];
+  descriptors: {id: string; kind: 'reader' | 'operator'; title: string; distribution: string; resources?: {memory_modes: string[]}}[]};
 export type Operator = {
   name: string;
   title: string;
@@ -29,7 +34,11 @@ export type Operator = {
   parameters: Parameter[];
   contracts?: { version: number; inputs: PortContract[] | null; output: { mode: string } | null };
 };
-export type Catalog = { schema_version: 1; contract_version?: number; operators: Operator[]; readers?: { name: string; extensions: string[]; output_contract: PortContract | null }[] };
+export type ReaderSpec = { name: string; extensions: string[]; output_contract: PortContract | null;
+  parameters?: Parameter[];
+  requires_siblings?: string[]; handles_compression?: boolean;
+  file_input?: { dims?: string[]; labels?: Record<string, unknown>; compression?: string[]; companions?: string[][] } };
+export type Catalog = { schema_version: 1; contract_version?: number; operators: Operator[]; readers?: ReaderSpec[] };
 export type InfoRule = { type?: string | string[]; items?: string | string[]; const?: unknown; enum?: unknown[]; optional?: boolean; min?: number; display?: string };
 export type PortContract = {
   version?: number;
@@ -55,6 +64,7 @@ export type DataSource = {
   args: Record<string, unknown>;
 };
 export type GraphNode = {
+  context_params?: Record<string, unknown>;
   id: string;
   kind: "source" | "operator" | "route";
   route?: RouteDefinition | null;
@@ -82,6 +92,9 @@ export type Memory = {
   [key: string]: unknown;
 };
 export type Graph = {
+  params?: Record<string, unknown>;
+  runtime?: Record<string, unknown>;
+  manifest_extra?: Record<string, unknown>;
   schema_version: 1 | 2;
   name: string;
   base_dir: string;
@@ -156,6 +169,8 @@ export type Preview = {
   points: (number | null)[][];
 };
 export type Bootstrap = {
+  automatic_memory_fraction?: number;
+  automatic_memory_budget_bytes?: number | null;
   agent_config?: {command: string; args: string[]};
   desktop?: boolean;
   draft?: Graph | null;
@@ -163,5 +178,5 @@ export type Bootstrap = {
   catalog: Catalog;
   demo: Graph;
   history: Job[];
-  upload_limit_mb: number;
+  upload_limit_mb: number | null;
 };

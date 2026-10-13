@@ -64,6 +64,8 @@ class VcfReader(Reader):
 
     output_contract = reader_contract(representation="hard_call", coordinates=True)
 
+    file_input = {'dims': ['variant', 'sample'], 'labels': {'variant': 'builtin', 'sample': 'builtin'}, 'compression': ['.gz']}
+
     extensions = [".vcf"]
     handles_compression = True
 

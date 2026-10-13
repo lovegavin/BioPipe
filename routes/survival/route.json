@@ -1,0 +1,7 @@
+{
+  "id": "route_bf78f7a6e12f",
+  "key": "survival",
+  "name": "生存分析",
+  "source_commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95",
+  "base_dir": ".studio/builtin-inputs/survival"
+}

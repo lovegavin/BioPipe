@@ -53,8 +53,69 @@ class H5adReader(Reader):
 
     output_contract = reader_contract()
 
+    file_input = {'dims': ['sample', 'feature'], 'labels': {'sample': 'builtin', 'feature': 'builtin'}}
+
     extensions = [".h5ad"]
     handles_compression = True
+    supports_disk_read = True
+    disk_protocol = "dense-writer-v1"
+
+    @staticmethod
+    def _matrix(handle, args):
+        key = "X" if args.get("layer") is None else "layers/" + str(args["layer"])
+        if key not in handle:
+            raise ReaderError(f"H5AD matrix {key!r} does not exist")
+        return handle[key]
+
+    def probe(self, path, **args):
+        import h5py
+        with h5py.File(path, "r") as handle:
+            matrix = self._matrix(handle, args)
+            shape = tuple(int(n) for n in (matrix.shape if isinstance(matrix, h5py.Dataset) else matrix.attrs["shape"]))
+            if len(shape) != 2:
+                raise ReaderError("H5AD matrix must have two axes")
+            return {"file_bytes": Path(path).stat().st_size, "shape": shape,
+                    "dtype": "float32", "dense_bytes": int(shape[0]) * int(shape[1]) * 4,
+                    "preparation_bytes": int(shape[0]) * int(shape[1]) * (4 + (matrix["data"].dtype.itemsize if isinstance(matrix, h5py.Group) else 0))}
+
+    def read_to_disk(self, path, dims, labels, writer, chunk_bytes, **args):
+        import h5py
+        from anndata.io import read_elem
+        if len(dims) != 2:
+            raise ReaderError("H5AD reader requires exactly two dims")
+        with h5py.File(path, "r") as handle:
+            matrix = self._matrix(handle, args)
+            if isinstance(matrix, h5py.Dataset):
+                width = max(1, chunk_bytes // max(8, matrix.dtype.itemsize * 2))
+                for row in range(writer.shape[0]):
+                    for column in range(0, writer.shape[1], width):
+                        writer.write(row, column, matrix[row, column:column + width])
+            else:
+                encoding = matrix.attrs.get("encoding-type", "")
+                if encoding not in ("csr_matrix", "csc_matrix"):
+                    raise ReaderError(f"Unsupported H5AD sparse encoding: {encoding}")
+                from src.reader.disk import accumulator
+                with accumulator(writer, matrix["data"].dtype, chunk_bytes) as sums:
+                    csr = encoding == "csr_matrix"
+                    count = writer.shape[0 if csr else 1]
+                    width = max(1, chunk_bytes // 32)
+                    for major in range(count):
+                        start, stop = map(int, matrix["indptr"][major:major + 2])
+                        for offset in range(start, stop, width):
+                            end = min(stop, offset + width)
+                            indices = matrix["indices"][offset:end]
+                            values = matrix["data"][offset:end]
+                            for minor, value in zip(indices, values):
+                                sums.add(major if csr else int(minor), int(minor) if csr else major, value)
+            # Read only axis indexes, not all obs/var columns, layers or embeddings.
+            indexes = []
+            for axis in ("obs", "var"):
+                group = handle[axis]
+                indexes.append([str(v) for v in read_elem(group[group.attrs.get("_index", "_index")])])
+            if tuple(map(len, indexes)) != writer.shape:
+                raise ReaderError("H5AD axis indexes do not match matrix shape")
+            return {"dims": list(dims), "labels": _resolve_labels(labels, *dims, *indexes),
+                    "info": {"missing_code": np.nan}, "axis_info": {}}
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:

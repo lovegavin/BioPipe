@@ -1,5 +1,12 @@
 # Plugin installation and version lifecycle
 
+All 39 builtin operators and 13 readers now ship as six preinstalled packages.
+The microbiome provider adds eight operators; see [16S analysis](microbiome.md).
+Use [registry maintenance](registry_maintenance.md) for source/module additions.
+The same registry manages bundled and wheel providers. See
+[unified package/resource protocol](package_protocol.md) for package ownership,
+hot replacement, enable/disable/restore, and public stream/disk hooks.
+
 Studio, CLI and MCP locate the same data directory through `src/web/profile.py`.
 The default is `~/.biopipe/studio/workspace/.studio`. A user can select a profile
 with `BIOPIPE_STUDIO_HOME` or `--profile-dir`, or use an explicit `--workspace`.
@@ -9,6 +16,7 @@ with `BIOPIPE_STUDIO_HOME` or `--profile-dir`, or use an explicit `--workspace`.
   operators.json
   plugins/
     registry.json                 active generation and descriptors
+    snapshots/<generation>.json   non-installation lifecycle snapshots
     packages/<sha256>/<file>.whl   immutable cached packages
     environments/<generation>/
       lock.json                   package identities and descriptors
@@ -38,7 +46,8 @@ collection in v1 because old jobs/routes can still reference them.
 ## Upgrade, removal and saved routes
 
 An inserted/saved graph is pinned when prepared, saved or launched. A pin contains
-the package name, package version and wheel digest. Nested route snapshots retain
+the package name, package version and implementation digest (wheel or bundled
+content fingerprint). Nested route snapshots retain
 their pins. New unpinned insertions use the current generation. Running jobs record
 and keep their original Python environment even if another installation finishes.
 
@@ -79,3 +88,20 @@ code based on graph labels. MCP defaults permit context and graph editing, with 
 execution and plugin installation requiring separate capabilities.
 
 See [quickstart](sdk_quickstart.md) and [agent interface](agent_api.md).
+
+## Studio plugin manager
+
+Open **算子包管理** (package management) in the operator library to install a local `.whl`, inspect
+installed packages and their Reader/operator entries, or remove a package from the
+active generation. Wheels execute Python code during installation/probing: install
+only packages you trust. Installation runs outside the HTTP event loop and publishes
+the registry only after validation. The dialog reports running, complete or failed
+status, then refreshes the library. Existing version-pinned canvases retain their
+archived environments after removal. The CLI remains supported.
+
+The local session-token-protected API provides `GET /api/plugins`,
+`POST /api/plugins/install?filename=<wheel>` (streamed raw bytes),
+`POST /api/plugins/remove` (`{"name":"distribution-name"}`),
+`POST /api/plugins/manage` (`{"name":"distribution-name","action":"enable|disable|restore"}`), and
+`GET /api/plugins/operations/<id>`. The optional upload cap also applies to wheels.
+These routes do not grant install permission to an external agent token.

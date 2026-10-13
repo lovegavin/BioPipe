@@ -1,0 +1,242 @@
+name: microbiome_demo
+
+runtime:
+  memory:
+    enabled: true
+
+sources:
+  otu:
+    path: input/OTU_CB_rarefied20k.csv
+    dims: [species, sample]
+    labels:
+      species: {sample: 0}
+      sample: builtin
+    args:
+      reader: csv
+      sep: ","
+
+  meta:
+    path: input/sample_metadata_cb.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args:
+      reader: csv
+      sep: ","
+
+steps:
+  # ------------------------------------------------------------------
+  # 1. 预处理
+  # ------------------------------------------------------------------
+  - name: filter_min
+    inputs: [otu]
+    params:
+      dim: species
+      min_value: 10
+      min_samples: 5
+      output: otu_filtered
+
+  - name: transpose
+    inputs: [otu_filtered]
+    params:
+      order: [sample, species]
+      output: samples_by_species
+
+  - name: normalize
+    inputs: [samples_by_species]
+    params:
+      method: total
+      dim: sample
+      output: otu_rel
+
+  # ------------------------------------------------------------------
+  # 2. Alpha 多样性
+  # ------------------------------------------------------------------
+  - name: diversity
+    inputs: [samples_by_species]
+    params:
+      dim: species
+      metrics: [shannon, simpson, richness, evenness]
+      output: alpha_div
+
+  # ------------------------------------------------------------------
+  # 3. 距离矩阵
+  # ------------------------------------------------------------------
+  - name: distance_matrix
+    inputs: [samples_by_species]
+    params:
+      dim: sample
+      metric: braycurtis
+      output: bray_dist
+
+  - name: distance_matrix
+    inputs: [samples_by_species]
+    params:
+      dim: sample
+      metric: jaccard
+      output: jaccard_dist
+
+  # ------------------------------------------------------------------
+  # 4. PCoA 降维
+  # ------------------------------------------------------------------
+  - name: reduce
+    inputs: [bray_dist]
+    params:
+      dim: sample
+      method: pcoa
+      n_components: 5
+      output: pcoa_coords
+
+  # ------------------------------------------------------------------
+  # 5. 把 metadata 的分组列贴到 PCoA 坐标上
+  # ------------------------------------------------------------------
+  - name: join
+    inputs: [pcoa_coords, meta]
+    params:
+      dim: sample
+      columns: [site, horizon, transect]
+      how: inner
+      prefix: "meta_"
+      output: pcoa_with_meta
+
+  # ------------------------------------------------------------------
+  # 6. 可视化
+  # ------------------------------------------------------------------
+  - name: scatter
+    inputs: [pcoa_with_meta]
+    params:
+      dim: component
+      x_label: PCo1
+      y_label: PCo2
+      color_label: meta_site
+      filename: pcoa_by_site.png
+      title: "PCoA (Bray-Curtis), colored by site"
+      point_size: 30
+      alpha: 0.75
+
+  - name: scatter
+    inputs: [pcoa_with_meta]
+    params:
+      dim: component
+      x_label: PCo1
+      y_label: PCo2
+      color_label: meta_horizon
+      filename: pcoa_by_horizon.png
+      title: "PCoA (Bray-Curtis), colored by horizon"
+      point_size: 30
+      alpha: 0.75
+
+  - name: scatter
+    inputs: [pcoa_with_meta]
+    params:
+      dim: component
+      x_label: PCo1
+      y_label: PCo2
+      color_label: meta_transect
+      filename: pcoa_by_transect.png
+      title: "PCoA (Bray-Curtis), colored by transect"
+      point_size: 30
+      alpha: 0.75
+
+  # ------------------------------------------------------------------
+  # 7. PERMANOVA：检验分组差异
+  # ------------------------------------------------------------------
+  - name: permanova
+    inputs: [bray_dist, meta]
+    params:
+      dist_dim: sample
+      group_dim: sample
+      group_label: site
+      pairwise: true
+      n_permutations: 999
+      random_state: 0
+      output: permanova_site
+
+  - name: permanova
+    inputs: [bray_dist, meta]
+    params:
+      dist_dim: sample
+      group_dim: sample
+      group_label: horizon
+      n_permutations: 999
+      random_state: 0
+      output: permanova_horizon
+
+  - name: permanova
+    inputs: [bray_dist, meta]
+    params:
+      dist_dim: sample
+      group_dim: sample
+      group_label: transect
+      n_permutations: 999
+      random_state: 0
+      output: permanova_transect
+
+  # ------------------------------------------------------------------
+  # 8. 样本间相关矩阵
+  # ------------------------------------------------------------------
+  - name: correlation
+    inputs: [samples_by_species]
+    params:
+      dim: sample
+      metric: spearman
+      min_valid: 20
+      output: sample_corr
+
+  - name: heatmap
+    inputs: [sample_corr]
+    params:
+      dim: sample
+      other_dim: sample_b
+      select: all
+      standardize: none
+      cluster_rows: true
+      cluster_cols: true
+      cmap: RdBu_r
+      filename: sample_correlation.png
+      title: "Sample-sample Spearman correlation"
+
+  # ------------------------------------------------------------------
+  # 9. 每个 site 的平均组成柱状图
+  # ------------------------------------------------------------------
+  - name: aggregate
+    inputs: [samples_by_species, meta]
+    params:
+      dim: sample
+      group_col: site
+      method: mean
+      output: site_mean
+
+  - name: rename_dim
+    inputs: [site_mean]
+    params:
+      from: feature
+      to: site
+      output: site_mean_renamed
+
+  - name: barplot
+    inputs: [site_mean_renamed]
+    params:
+      dim: species
+      sample_dim: site
+      top_n: 15
+      other_label: "Other"
+      normalize: true
+      filename: site_composition.png
+      title: "Average species composition per site"
+      cmap: tab20
+      legend_ncol: 3
+      rotate_labels: false
+
+  # ------------------------------------------------------------------
+  # 10. 摘要
+  # ------------------------------------------------------------------
+  - name: describe
+    inputs: [alpha_div]
+
+  - name: describe
+    inputs: [permanova_site]
+
+  - name: describe
+    inputs: [permanova_horizon]

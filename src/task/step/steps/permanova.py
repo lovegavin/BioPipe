@@ -59,6 +59,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
 
 
 _STAT_LABELS = {"F": 0, "R2": 1, "P": 2, "n_perm": 3}
@@ -70,6 +71,17 @@ class PermanovaStep(Step):
     name = "permanova"
     inputs_arity = 2
     outputs = []
+    title = 'PERMANOVA'
+    category = "Microbiome"
+    builtin_package = "biopipe-microbiome"
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['permanova']
+    input_contracts, output_contract = CONTRACTS['permanova']
+    output_parameter = "output"
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         dist_form, meta_form = inputs
@@ -109,10 +121,10 @@ class PermanovaStep(Step):
         dist_labels = dist_form.labels[dist_dim]
         dist_b_labels = dist_form.labels[f"{dist_dim}_b"]
 
-        if set(dist_labels) != set(dist_b_labels):
+        if dist_labels != dist_b_labels:
             raise StepError(
                 "permanova: distance matrix axes do not share the "
-                "same label set"
+                "same label positions"
             )
 
         other_dims = [d for d in meta_form.dims if d != group_dim]
@@ -152,6 +164,7 @@ class PermanovaStep(Step):
         else:
             raw_codes = raw_codes.ravel()
         raw_codes = np.asarray(raw_codes).ravel()
+        raw_codes = np.where(raw_codes == meta_form.info.get("missing_code", np.nan), np.nan, raw_codes)
 
         encoders = meta_form.info.get("encoders", {})
         encoder = None
@@ -259,7 +272,7 @@ class PermanovaStep(Step):
                 "comparison": comp_labels,
                 "statistic": dict(_STAT_LABELS),
             },
-            info={"missing_code": np.nan},
+            info={"missing_code": np.nan, "representation": "permanova"},
         )
 
         self._export_data = {

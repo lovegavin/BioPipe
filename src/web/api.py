@@ -15,13 +15,16 @@ from fastapi.staticfiles import StaticFiles
 import yaml
 
 from src.core import ManifestError
+from biopipe import __version__
 from src.task import STEPS
 from src.task.operator_catalog import build_catalog
+from src.task.memory.config import AUTO_BUDGET_FRACTION, MemoryConfig
 from .graph import GraphError, compile_graph, import_manifest, project_path, relative_manifest
 from .models import Graph, ManifestImport, SaveWorkflow, RegisterRoutes, Workspace, LibraryAction
 from .routes import prepare_interface
 from .contracts import analyze_graph
 from .service import JobService, Settings, read_json, safe_json
+from .assets import AssetImports, accepted_extensions
 
 
 def create_app(settings=None):
@@ -35,18 +38,28 @@ def create_app(settings=None):
         migrate_profile(settings, catalog)
     service = JobService(settings, catalog)
     catalog = service.catalog
+    imports = AssetImports(service)
     token = secrets.token_urlsafe(32)
+    # One startup preview for the UI. Each worker still takes its own single
+    # execution snapshot; repeated bootstrap requests must not rescan RAM.
+    try:
+        startup_memory = MemoryConfig.parse({"runtime": {"memory": {"enabled": True}}})
+        automatic_memory_budget = startup_memory.budget_bytes
+    except ManifestError:
+        automatic_memory_budget = None
     @asynccontextmanager
     async def lifespan(app):
         bridge.publish(getattr(app.state, "instance_url", None) or settings.instance_url)
         yield
         bridge.close()
         service.shutdown()
-    app = FastAPI(title="BioPipe Studio", version="0.2.0", lifespan=lifespan)
+    app = FastAPI(title="BioPipe Studio", version=__version__, lifespan=lifespan)
     app.state.service, app.state.token = service, token
     from biopipe.bridge import Bridge
     bridge = Bridge(app, service, token)
     app.state.bridge = bridge
+    from .plugin_api import mount_plugins
+    mount_plugins(app, service)
 
     @app.middleware("http")
     async def local_boundary(request, call_next):
@@ -59,13 +72,6 @@ def create_app(settings=None):
         if request.method not in ("GET", "HEAD", "OPTIONS") and not request.url.path.startswith("/api/agent/"):
             if not hmac.compare_digest(request.headers.get("x-studio-token", ""), token):
                 return JSONResponse({"message": "本地会话已更新，请刷新页面。"}, status_code=403)
-        if request.url.path.startswith("/api") and not request.url.path.startswith("/api/assets"):
-            try:
-                length = int(request.headers.get("content-length", "0"))
-            except ValueError:
-                return JSONResponse({"message": "请求长度无效。"}, status_code=400)
-            if length > 2 * 1024**2:
-                return JSONResponse({"message": "工作流配置超过 2 MiB，请缩小配置。"}, status_code=413)
         try:
             service.refresh_catalog()
             response = await call_next(request)
@@ -98,15 +104,19 @@ def create_app(settings=None):
     @app.get("/health")
     @app.get("/ready")
     def health():
-        return {"status": "ok", "studio": "0.2.0"}
+        return {"status": "ok", "studio": __version__}
 
     @app.get("/api/bootstrap")
     def bootstrap():
         import sys
         agent_args = ["-m", "biopipe", "--workspace", str(service.root), "--data-dir", str(service.directory), "mcp"]
         return {"token": token, "catalog": catalog, "demo": service.demo,
+                "automatic_memory_fraction": AUTO_BUDGET_FRACTION,
+                "automatic_memory_budget_bytes": automatic_memory_budget,
                 "agent_config": {"command": sys.executable, "args": agent_args},
-                "history": service.history(), "upload_limit_mb": settings.max_upload // 1024**2,
+                "history": service.history(),
+                "upload_limit_mb": settings.max_upload / 1024**2 if settings.max_upload is not None else None,
+                "upload_extensions": accepted_extensions(catalog),
                 "storage": settings.profile or {"workspace": str(service.root), "data_dir": str(service.directory),
                                                 "registry": str(service.routes.directory / "registry.json")},
                 "desktop": settings.desktop, "draft": service.load_draft() if settings.desktop else None}
@@ -192,25 +202,50 @@ def create_app(settings=None):
         except yaml.YAMLError as exc:
             raise GraphError("YAML 格式有误，请检查缩进及字段。") from exc
 
+    @app.post("/api/assets/batches")
+    async def begin_upload(request: Request):
+        payload = await request.json()
+        return imports.create(payload.get('filenames') if isinstance(payload, dict) else None)
+
+    @app.post("/api/assets/batches/{key}/complete")
+    async def complete_upload(key: str, request: Request):
+        payload = await request.json()
+        return imports.complete(key, payload.get('base_dir', '.'))
+
+    @app.post("/api/assets/batches/{key}/cancel")
+    def cancel_upload(key: str):
+        imports.cancel(key)
+        return {'cancelled': True}
+
     @app.post("/api/assets")
-    async def upload(request: Request, filename: str = "data.csv"):
-        filename = Path(filename).name
-        if not filename.lower().endswith((".csv", ".csv.gz")) or any(c in filename for c in "\\/:"):
-            raise GraphError("首版上传支持 CSV 或 CSV.gz；其他格式可使用项目内文件路径。")
-        suffix = ".csv.gz" if filename.lower().endswith(".csv.gz") else ".csv"
-        path = service.assets_dir / (uuid.uuid4().hex + suffix)
+    async def upload(request: Request, filename: str = "data.csv", batch: str | None = None):
+        single = batch is None
+        if single:
+            batch = imports.create([filename])['id']
+        path = imports.target(batch, filename)
+        temporary = path.with_name('.' + path.name + '.part')
         total = 0
+        owns_temporary = False
         try:
-            with open(path, "xb") as file:
+            with open(temporary, "xb") as file:
+                owns_temporary = True
                 async for block in request.stream():
                     total += len(block)
-                    if total > settings.max_upload:
+                    if settings.max_upload is not None and total > settings.max_upload:
                         raise HTTPException(413, "文件超过本地上传上限。")
                     file.write(block)
             if not total:
                 raise GraphError("上传的文件为空。")
-        except BaseException:
-            path.unlink(missing_ok=True)
+            temporary.replace(path)
+            if single:
+                imports.complete(batch)
+        except BaseException as exc:
+            if owns_temporary:
+                temporary.unlink(missing_ok=True)
+            if single:
+                imports.cancel(batch)
+            if isinstance(exc, FileExistsError):
+                raise GraphError('文件正在上传，请勿重复提交。') from exc
             raise
         return {"path": str(path.relative_to(settings.root)).replace("\\", "/"), "filename": filename, "bytes": total}
 

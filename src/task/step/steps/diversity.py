@@ -1,9 +1,8 @@
 # src/task/step/steps/diversity.py
 """Diversity metrics along one axis of a form.
 
-For each position along ``dim``, computes one or more diversity
-metrics over the other axes. The output has one row per position
-along ``dim`` and one column per metric.
+Reduce ``dim`` into one or more diversity metrics, preserving every other
+axis. The output replaces the reduced axis with a final ``metric`` axis.
 
 Metrics
 -------
@@ -35,6 +34,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
 
 
 _METRICS = ("shannon", "simpson", "richness", "evenness", "gini")
@@ -46,6 +46,17 @@ class DiversityStep(Step):
     name = "diversity"
     inputs_arity = 1
     outputs = []
+    title = 'Alpha diversity'
+    category = "Microbiome"
+    builtin_package = "biopipe-microbiome"
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['diversity']
+    input_contracts, output_contract = CONTRACTS['diversity']
+    output_parameter = "output"
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -95,7 +106,9 @@ class DiversityStep(Step):
         n_reduced = original_shape[-1]
         flat = moved.reshape(-1, n_reduced)
         flat_missing = moved_missing.reshape(-1, n_reduced)
-        valid = ~flat_missing
+        valid = ~flat_missing & np.isfinite(flat)
+        if (flat[valid] < 0).any():
+            raise StepError("diversity: abundance values must be non-negative")
 
         masked = np.where(valid, flat, np.nan)
         totals = np.nansum(masked, axis=1)
@@ -114,25 +127,8 @@ class DiversityStep(Step):
             m: i for i, m in enumerate(metrics)
         }
 
-        reduced_parallel = set(form.axis_info.get(dim, []))
-        out_info: dict = {}
-        for k, v in form.info.items():
-            if k in reduced_parallel:
-                continue
-            if k == "encoders" and isinstance(v, dict):
-                trimmed = {
-                    d: enc for d, enc in v.items() if d != dim
-                }
-                if trimmed:
-                    out_info[k] = trimmed
-                continue
-            out_info[k] = v
-
-        out_axis_info = {
-            d: list(keys)
-            for d, keys in form.axis_info.items()
-            if d != dim
-        }
+        out_info, out_axis_info = metadata(form, out_dims[:-1], "diversity")
+        stacked = stacked.reshape(original_shape[:-1] + (len(metrics),))
 
         ctx[out_name] = Form(
             data=stacked,
@@ -207,16 +203,16 @@ def _compute_metric(name, masked, totals, valid):
 
         if name == "gini":
             sorted_vals = np.sort(
-                np.where(valid, masked, 0.0), axis=1
+                np.where(valid, masked, np.inf), axis=1
             )
+            sorted_vals = np.where(np.isfinite(sorted_vals), sorted_vals, 0.0)
             n = valid.sum(axis=1).astype(np.float64)
-            cum = np.cumsum(sorted_vals, axis=1)
             g = (
                 (2.0 * np.arange(1, sorted_vals.shape[1] + 1)
-                 - sorted_vals.shape[1] - 1)
+                 - n[:, None] - 1)
                 * sorted_vals
             ).sum(axis=1)
-            denom = n * cum[:, -1]
+            denom = n * sorted_vals.sum(axis=1)
             return np.where(denom > 0, g / denom, np.nan)
 
     raise StepError(f"diversity: no implementation for '{name}'")

@@ -63,6 +63,7 @@ class MemoryRuntime:
         self.pipeline_hash = hashlib.sha256(snapshot.encode("utf-8")).hexdigest()
         (self.run_dir / "pipeline.json").write_text(snapshot, encoding="utf-8")
         self.event("run_started", run_id=self.run_id, budget_bytes=config.budget_bytes,
+                   available_at_start_bytes=config.available_at_start_bytes,
                    process_limit_bytes=config.process_limit_bytes, cache_dir=str(cache_root),
                    algorithm="fixed-order-next-use-heap", optimality="heuristic",
                    pipeline_sha256=self.pipeline_hash)
@@ -178,26 +179,31 @@ class MemoryRuntime:
             entry = self.store.entry(spec["inputs"][0])
             with self.store.lock:
                 if entry.form is None and entry.disk is None:
-                    self.store._load(entry)
+                    self.store.stage_source(entry)
+                    if entry.disk is None:
+                        self.store._load(entry)
                 can_stream = entry.dtype.kind in "biuf"
         if can_stream:
             entry = self.store.entry(spec["inputs"][0])
             with self.store.lock:
                 if entry.form is None and entry.disk is None:
-                    self.store._load(entry)  # Current readers still materialize one source.
-                metadata_reserve = int(entry.metadata_size * 2.50) + 8192
+                    self.store._load(entry)  # Legacy readers without a disk preparation protocol.
+                metadata_reserve = int(entry.metadata_size * 2.50) + 8192 + cls.stream_fixed_bytes
                 pinned = entry.size if entry.form is not None else 0
                 elements = block_elements(self.config.budget_bytes - pinned - metadata_reserve,
-                                          entry.dtype, self.config.chunk_bytes)
+                                          entry.dtype, self.config.chunk_bytes, cls.stream_buffer_multiplier)
                 if not elements and entry.form is not None and self.config.auto_spill:
                     self.store.spill(entry, "prepare_stream", preparing_stream=True)
                     elements = block_elements(self.config.budget_bytes - metadata_reserve,
-                                              entry.dtype, self.config.chunk_bytes)
+                                              entry.dtype, self.config.chunk_bytes, cls.stream_buffer_multiplier)
                 if not elements:
                     raise MemoryBudgetError("Stream metadata plus minimum block cannot fit the managed budget")
-                chunk_reservation = elements * (max(entry.dtype.itemsize, 8) * 4 + 1)
+                chunk_reservation = elements * (max(entry.dtype.itemsize, 8) * cls.stream_buffer_multiplier + 1)
                 self.workspace, self.remaining_output = metadata_reserve + chunk_reservation, 0
                 self.store.reserved = self.workspace
+                excess = self.store.managed + self.store.reserved - self.config.budget_bytes
+                if excess > 0:
+                    self.store.trim_source_blocks(entry, excess, "stream_admission")
                 self.store.ensure(0, "stream_admission")
                 metadata = ({k: getattr(entry.form, k) for k in ("dims", "labels", "info", "axis_info")}
                             if entry.form is not None else self.store.read_metadata(entry))
@@ -280,6 +286,7 @@ class MemoryRuntime:
             self.report = {"run_id": self.run_id, "status": status, "error": self.failure,
                            "pipeline_sha256": self.pipeline_hash,
                            "budget_bytes": self.config.budget_bytes,
+                           "available_at_start_bytes": self.config.available_at_start_bytes,
                            "process_limit_bytes": self.config.process_limit_bytes,
                            "managed_peak_bytes": self.store.peak_managed,
                            "admitted_peak_estimate_bytes": self.store.admitted_peak,

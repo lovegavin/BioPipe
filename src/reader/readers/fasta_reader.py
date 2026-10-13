@@ -24,9 +24,7 @@ A missing dim entry defaults to ``auto`` for position and
 ``builtin`` for sequence. Duplicate identifiers are disambiguated by
 appending ``#<position>``.
 
-Sequence identifiers are used as labels directly. They are not
-encoded: the axis position of each entry in the label map already
-identifies the sequence.
+Sequence identifiers remain string axis labels; they are not data encoders.
 
 The alphabet is inferred from the observed characters and recorded
 in ``info["alphabet"]`` as one of ``"dna"``, ``"rna"`` or
@@ -51,6 +49,7 @@ import numpy as np
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
@@ -64,6 +63,10 @@ _PROTEIN_CHARS = set("ACDEFGHIKLMNPQRSTVWY")
 
 class FastaReader(Reader):
     """Reader for .fasta / .fa / .fna / .faa files."""
+
+    output_contract = reader_contract(extra={"alphabet": {"type": "string"}})
+
+    file_input = {'dims': ['sequence', 'position'], 'labels': {'sequence': 'builtin', 'position': 'auto'}}
 
     extensions = [".fasta", ".fa", ".fna", ".faa"]
     handles_compression = False
@@ -93,9 +96,7 @@ class FastaReader(Reader):
 
         seq_rule = labels.get(sequence_dim, "builtin")
         if seq_rule in (None, "builtin"):
-            final[sequence_dim] = unique_labels(
-                ids, sequence_dim, "fasta"
-            )
+            final[sequence_dim] = unique_labels(ids, sequence_dim, "fasta")
         elif seq_rule == "auto":
             final[sequence_dim] = {str(i): i for i in range(n)}
         elif isinstance(seq_rule, dict):

@@ -46,7 +46,7 @@ export const WorkflowNode = memo(function WorkflowNode({
       ? `${node.params.n_components ?? 10} 个主成分 · ${node.params.dim}`
       : node.operator === "missing"
         ? `缺失比例 ≤ ${Number(node.params.threshold ?? 0.1) * 100}%`
-        : spec?.description || node.operator;
+        : typeof node.params.method === "string" ? node.params.method : "";
   return (
     <div
       className={`workflow-node ${overview ? "overview" : ""} ${source ? "source-node" : ""} ${node.kind === "route" ? "route-node" : ""} ${selected ? "is-selected" : ""} ${invalid ? "is-invalid" : ""} ${status || ""}`}
@@ -68,7 +68,7 @@ export const WorkflowNode = memo(function WorkflowNode({
           />
         ))}
       </InfoPort>
-      <div className="node-body" style={{ minHeight: NODE_LAYOUT.bodyHeight }}>
+      <div className="node-body" title={spec?.description} style={{ minHeight: NODE_LAYOUT.bodyHeight }}>
         <div
           className={`node-icon category-${source ? "source" : spec?.category === "统计分析" ? "analysis" : spec?.category === "可视化" ? "plot" : "data"}`}
         >
@@ -81,7 +81,7 @@ export const WorkflowNode = memo(function WorkflowNode({
           >
             {title}
           </strong>
-          <p>{subtitle}</p>
+          {subtitle && <p>{subtitle}</p>}
         </div>
         <span className="node-state">
           {status === "finished" ? (

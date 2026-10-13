@@ -5,12 +5,15 @@ Lazy exports keep plugin discovery independent of engine import order.
 """
 from importlib import import_module
 
-__version__ = "1.0.0"
+__version__ = "1.2.0"
 PROTOCOL_VERSION = 1
 _EXPORTS = {
     "Form": ("src.core", "Form"),
     "Step": ("src.task.step.base", "Step"),
     "Reader": ("src.reader.base", "Reader"),
+    "DenseDiskWriter": ("src.reader.disk", "DenseDiskWriter"),
+    "StreamInput": ("biopipe_sdk.resources", "StreamInput"),
+    "SourceProbe": ("biopipe_sdk.resources", "SourceProbe"),
     "Operator": ("biopipe_sdk.operator", "Operator"),
     "Context": ("src.task.context.base", "Context"),
     "StepError": ("src.core", "StepError"),

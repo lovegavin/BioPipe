@@ -56,6 +56,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._microbiome import metadata
 
 
 _STATS = (
@@ -70,6 +72,17 @@ class RankAxisStep(Step):
     name = "rank_axis"
     inputs_arity = 1
     outputs = []
+    title = 'Rank features'
+    category = 'Analysis'
+    builtin_package = 'biopipe-core'
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['rank_axis']
+    input_contracts, output_contract = CONTRACTS['rank_axis']
+    output_parameter = 'output'
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate_axis(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

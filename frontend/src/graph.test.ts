@@ -152,3 +152,13 @@ describe("visual DAG contract", () => {
     });
   });
 });
+
+it('preserves imported global configuration and the disabled memory flag', () => {
+  const imported = {...graph, memory:{enabled:false}, params:{seed:42}, runtime:{custom:true}, manifest_extra:{notes:'lab'}};
+  const restored = normalizeGraph(imported);
+  expect(restored.memory.enabled).toBe(false);
+  expect(restored.params).toEqual({seed:42});
+  expect(restored.runtime).toEqual({custom:true});
+  expect(restored.manifest_extra).toEqual({notes:'lab'});
+  expect(runSignature(restored)).not.toBe(runSignature({...restored,params:{seed:43}}));
+});

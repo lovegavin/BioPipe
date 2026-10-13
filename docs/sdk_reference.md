@@ -1,6 +1,6 @@
 # BioPipe SDK reference
 
-The supported import surface is `biopipe_sdk`. SDK version is `1.0.0`; protocol
+The supported import surface is `biopipe_sdk`. SDK version is `1.2.0`; protocol
 version is `1`. The SDK currently ships with the `biopipe-studio` distribution.
 
 | Export | Use |
@@ -38,14 +38,20 @@ or fill missing biological semantics. Failures appear in job logs and summaries.
 Set `extensions` to suffixes such as `[".npy"]`. Optional `requires_siblings` and
 `excludes_siblings` describe companion files. Implementing arbitrary custom
 `matches()` logic is outside the static desktop contract: make routing describable
-with these fields. The first matching reader wins; do not use a plugin to override
-a built-in extension. For overlapping plugin formats use distinct suffixes or
-mutually exclusive sibling requirements.
+with these fields. Exactly one reader must match; ambiguity is an error. For
+overlapping formats use distinct suffixes or mutually exclusive sibling requirements.
+A complete replacement for `biopipe-readers` replaces that provider's entries,
+rather than appending a second set of readers for the same formats.
 
 When `handles_compression` is false, the framework decompresses supported compressed
 files before calling `read`; when true, it passes the original path. `parameters_schema`
 validates reader `args`, independently of engine-supplied `path`, `dims` and `labels`.
 Callers may supply format-specific label modes; support them or reject them clearly.
+
+SDK 1.1 exports `StreamInput`, `SourceProbe` and `DenseDiskWriter` for bounded
+execution. The supported hook signatures, admission estimates and ownership rules
+are in [package/resource protocol](package_protocol.md). The runnable
+`examples/resource_plugin` package uses only public SDK imports.
 
 ## Metadata helpers
 
@@ -86,3 +92,25 @@ dependencies and historical plugin versions.
 Memory estimates and descriptor fields are defined in the
 [operator protocol](operator_protocol.md). There is no general public chunk or GPU
 allocator API in v1; native full-memory operators cannot be preempted mid-allocation.
+
+## Studio file import metadata
+
+Readers may declare `file_input` to suggest dimensions, label rules, supported
+compression suffixes and required companion filename groups. These fields are
+exported in reader descriptors and inspected without loading optional parsers.
+See [input formats](input_formats.md#reader-extension-metadata) for the schema and
+defaults. Existing readers and plugin descriptors without these hints remain valid.
+
+
+## SDK 1.2 output inference
+
+`project` can remove `drop_dims`, add `prepend_dims`/`append_dims`, copy axis labels
+and derive dimension names from parameters or another input. `choose` selects a
+rule by a method parameter. These are serialized declarations consumed equally
+by Studio and the runtime, not callable Python hooks. See the examples in
+[operator protocol](operator_protocol.md). A backend with SDK 1.2 is required for
+these additional rules; an older packaged desktop backend must be updated first.
+
+Use `biopipe registry check` to validate local extension declarations and generated
+indexes without starting Studio. New source files with missing schemas/contracts
+are reported, not silently converted into permissive plugins.

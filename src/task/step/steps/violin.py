@@ -36,6 +36,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._microbiome import metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -48,6 +50,17 @@ class ViolinStep(Step):
     name = "violin"
     inputs_arity = 2
     outputs = []
+    title = 'Violin plot'
+    category = 'Visualization'
+    builtin_package = 'biopipe-plots'
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['violin']
+    input_contracts, output_contract = CONTRACTS['violin']
+    output_parameter = None
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate_axis(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

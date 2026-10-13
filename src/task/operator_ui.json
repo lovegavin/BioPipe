@@ -338,6 +338,17 @@
         "type": "string",
         "default": "feature",
         "required": true
+      },
+      {
+        "key": "align",
+        "label": "Alignment",
+        "type": "json",
+        "description": "For example: {\"dim\":\"sample\",\"key\":{\"left\":\"id\",\"right\":\"id\"}}"
+      },
+      {
+        "key": "label",
+        "label": "Merged key label",
+        "type": "string"
       }
     ]
   },
@@ -400,6 +411,40 @@
         "type": "string",
         "default": "scatter.png",
         "required": true
+      },
+      {
+        "key": "alpha",
+        "label": "Opacity",
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      {
+        "key": "color_label",
+        "label": "Color field",
+        "type": "string"
+      },
+      {
+        "key": "point_size",
+        "label": "Point size",
+        "type": "number",
+        "min": 0
+      },
+      {
+        "key": "title",
+        "label": "Title",
+        "type": "string"
+      },
+      {
+        "key": "xlabel",
+        "label": "X axis label",
+        "type": "string"
+      },
+      {
+        "key": "ylabel",
+        "label": "Y axis label",
+        "type": "string"
       }
     ],
     "preview": {
@@ -441,6 +486,26 @@
         "type": "string",
         "default": "histogram.png",
         "required": true
+      },
+      {
+        "key": "log_y",
+        "label": "Log Y axis",
+        "type": "boolean"
+      },
+      {
+        "key": "title",
+        "label": "Title",
+        "type": "string"
+      },
+      {
+        "key": "xlabel",
+        "label": "X axis label",
+        "type": "string"
+      },
+      {
+        "key": "ylabel",
+        "label": "Y axis label",
+        "type": "string"
       }
     ],
     "preview": {
@@ -482,6 +547,26 @@
         "type": "string",
         "default": "line.png",
         "required": true
+      },
+      {
+        "key": "sort",
+        "label": "Sort by X",
+        "type": "boolean"
+      },
+      {
+        "key": "title",
+        "label": "Title",
+        "type": "string"
+      },
+      {
+        "key": "xlabel",
+        "label": "X axis label",
+        "type": "string"
+      },
+      {
+        "key": "ylabel",
+        "label": "Y axis label",
+        "type": "string"
       }
     ],
     "preview": {
@@ -536,6 +621,30 @@
         "type": "string",
         "default": "manhattan.png",
         "required": true
+      },
+      {
+        "key": "alpha",
+        "label": "Opacity",
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
+      },
+      {
+        "key": "point_size",
+        "label": "Point size",
+        "type": "number",
+        "min": 0
+      },
+      {
+        "key": "threshold",
+        "label": "Significance threshold",
+        "type": "number"
+      },
+      {
+        "key": "title",
+        "label": "Title",
+        "type": "string"
       }
     ],
     "preview": {

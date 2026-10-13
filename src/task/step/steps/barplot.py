@@ -52,6 +52,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -61,6 +62,16 @@ class BarplotStep(Step):
     name = "barplot"
     inputs_arity = 1
     outputs = []
+    title = 'Composition barplot'
+    category = "Microbiome"
+    builtin_package = "biopipe-microbiome"
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['barplot']
+    input_contracts, output_contract = CONTRACTS['barplot']
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

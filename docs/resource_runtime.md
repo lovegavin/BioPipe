@@ -31,8 +31,16 @@ additional workspace/output, excluding the interpreter/imported-library baseline
 are different budgets, not interchangeable memory measurements.
 
 Without an explicit budget, available physical memory is scanned **once just before
-execution**: use 25%, capped at 2 GiB. Manifest validation, Studio editing and export
-do not scan available RAM. Budget and execution order remain fixed during a run;
+execution**: use **90% of that available-memory snapshot**, with no fixed byte cap.
+The snapshot uses available RAM, not installed RAM. An explicit `budget_mb` remains
+a manual override. Studio scans once at backend startup to display a numeric budget
+preview; the run-start event replaces this preview with that run's actual budget.
+Manifest validation, editing, repeated bootstrap requests and export do not rescan
+available RAM. If scanning fails, automatic execution reports an error instead
+of silently selecting a fixed fallback; fix the scanner or supply a manual budget.
+The run-start event and memory report record `available_at_start_bytes` alongside
+`budget_bytes` (the snapshot is null for manual budgets).
+Budget and execution order remain fixed during a run;
 actual sizes refine step admission and emergency spill reacts to pressure without
 repeated system-free-memory scans.
 
@@ -44,6 +52,7 @@ python scripts/run.py .verification/resource_demo/managed --memory-mb 128 --proc
 CLI overrides include `--memory-mb`, `--process-memory-mb`, `--disk-mb`, `--cache-dir`
 and `--no-auto-spill`. Disabling automatic spill disables pressure eviction and
 background spill monitoring; successful runs still persist requested outputs.
+Bounded source preparation still writes its required disk representation.
 `keep` retains selected intermediate Forms; terminal outputs are also retained.
 Unneeded data and temporary disk copies are released after the last consumer.
 
@@ -168,3 +177,43 @@ An in-memory genotype fixture exercises all 16 GWAS steps and checks QC, PCA,
 regression, correction, annotation and three figures; it bypasses the VCF reader.
 These are small deterministic fixtures with tight budgets, not large cohort stress
 tests. They do not validate CUDA, general streaming or every optional native format.
+
+## Two-phase source preparation
+
+The run freezes its configured memory budget before execution. File size is obtained
+with filesystem metadata; it is recorded separately from expanded numeric size.
+H5AD shape/dtype metadata and MatrixMarket header dimensions estimate dense float32
+bytes without reading or densifying the complete matrix. This estimate excludes
+Python axis labels, annotations, parser buffers and library overhead.
+
+With memory management enabled, H5AD (dense, CSR, CSC, including named layers) and
+10x coordinate MTX (including gzip, duplicate entries and real symmetric data) use
+bounded source preparation. Blocks are written into one canonical C-order NPY file;
+there is no final full-RAM concatenate. MTX entries can be unsorted. Axis indexes
+remain in memory; large metadata can still exceed a small budget.
+
+1. Preparation uses a bounded block cache derived from the frozen budget and
+   `chunk_mb`. At its watermark, or at the configured process RSS threshold,
+   dirty blocks are flushed and released. No system-free-memory rescan occurs.
+2. After preparation, a complete disk copy is committed atomically. Recently used
+   clean blocks can remain cached. Operator admission releases only as many of
+   these blocks as it needs; streamed consumers reuse retained blocks and read
+   missing blocks from disk. Whole-Form consumers drop the block cache and reserve
+   the complete Form before loading. They fail admission if it cannot fit.
+
+Events distinguish `source_prepare_started`, `densify_block_spill` (buffer watermark
+or RSS pressure), `source_prepare_complete`, and `source_blocks_released` from
+operator planning. Preparation spills are not evidence of a failed operator plan.
+Sparse duplicates are accumulated on disk at source precision before a bounded
+float32 conversion. The temporary accumulator is included in the preparation disk
+estimate (for example, 12 bytes/cell for a float64 accumulator plus float32 output).
+Disk quota and available disk space are checked before dense allocation. Source
+files are retained if preparation fails, and incomplete private cache files are
+removed. The disk-space estimate is not a guarantee against other processes filling
+the disk during a write.
+
+This is not universal out-of-core execution. Other readers still use their existing
+read implementations, and most analysis operators still require complete Forms.
+The legacy path (`runtime.memory.enabled: false`) intentionally retains original
+eager reading behavior. RSS monitoring requires `process_limit_mb`; this mechanism
+does not provide a hard process-memory ceiling or monitor other processes' free RAM.

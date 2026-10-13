@@ -1,19 +1,28 @@
 # BioPipe
 
-BioPipe is a local bioinformatics pipeline engine with a visual desktop workspace, typed data contracts, bounded resource planning and an extensible operator SDK. Create branched workflows, reuse saved routes as operators, and connect your own AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
+BioPipe is a local bioinformatics pipeline engine with a visual desktop workspace,
+typed data contracts, bounded resource planning and an extensible operator SDK.
+Create branched workflows, reuse saved routes as operators, and connect your own
+AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-The project has two halves. The upstream Python engine is documented below from the **Engine reference** section onward. The downstream Studio workspace, plugin SDK, resource runtime and agent interface are documented from the **Start Studio** section up to the engine reference. Upstream and downstream have independent release cycles and changelogs.
+Studio 0.3.0 preserves upstream Python Steps, Readers and YAML
+tasks, with **46 built-in operators, 13 readers, six provider packages and five
+reusable route templates**: GWAS, RNA-seq DE, Proteomics DE, survival analysis and
+[16S microbiome](docs/microbiome.md). The desktop package includes this catalog and
+the latest editor. Seven additional upstream axis/single-cell building blocks and
+multi-group comparisons are also registered; their example YAML remains under `tasks/`.
 
-- Upstream changelog: `docs/changelog/upstream/`
-- Downstream release notes: `docs/releases/`
+Download the ready-built Windows desktop package from
+[GitHub Releases](https://github.com/lovegavin/BioPipe/releases/latest).
+Extract the complete ZIP, configure a Python environment as described in its
+`START_HERE.txt`, then double-click `BioPipe Studio.exe`. Python and analysis
+dependencies are not bundled. The repository contains development source;
+compiled desktop distributions are release attachments.
 
-Download the ready-built Windows desktop package from GitHub Releases. Extract the complete ZIP, configure a Python environment as described in its `START_HERE.txt`, then double-click `BioPipe Studio.exe`. Python and analysis dependencies are not bundled. The repository contains development source; compiled desktop distributions are release attachments.
-
----
+See [release notes](docs/releases/v0.3.0.md) for this version and
+[legacy/](legacy/README.md) for the archived previous source.
 
 ## Start Studio
-
-Studio 0.2.0 preserves the upstream Python Steps, Readers and YAML tasks, with 31 built-in operators, 13 readers and four reusable route templates: GWAS, RNA-seq DE, Proteomics DE and survival analysis.
 
 Use Python 3.11+ (tested with 3.12). Build the frontend with Node 22.12+:
 
@@ -28,13 +37,39 @@ cd ..
 python scripts/studio.py
 ```
 
-Open <http://127.0.0.1:8765>. The generated CSV demo runs immediately. Format-specific dependencies are listed in `requirements-readers.txt`; DESeq2 and survival analyses use `requirements-analysis.txt`. Dependencies can also be installed with `uv`.
+Open `http://127.0.0.1:8765`. The generated CSV demo runs immediately. The input picker
+accepts all registered reader formats, including PLINK and 10x MTX file sets;
+uploading and saving do not require optional reader libraries. See
+[input formats and file groups](docs/input_formats.md). Format-specific
+dependencies are listed in `requirements-readers.txt`; DESeq2 and survival analyses
+use `requirements-analysis.txt`. Dependencies can also be installed with uv.
 
-On Windows, a built desktop distribution starts by double-clicking `dist/BioPipe Studio/BioPipe Studio.exe`. The host bundles the frontend and backend startup logic. Python, the backend source and analysis dependencies remain separate. See **desktop setup and portability**.
+On Windows, a built desktop distribution starts by double-clicking
+`dist/BioPipe Studio/BioPipe Studio.exe`. The host bundles the frontend and backend
+startup logic. Python, the backend source and analysis dependencies remain separate.
+See [desktop setup](docs/desktop.md) and [portability](docs/portability.md).
 
-Both desktop and development entry points use `~/.biopipe/studio` by default. `BIOPIPE_STUDIO_HOME` or `--profile-dir` selects another shared profile; `--workspace` explicitly isolates a workspace. CLI and MCP use the same resolver. No developer username, installation drive or fixed backend port is embedded.
+Both desktop and development entry points use `~/.biopipe/studio` by default.
+`BIOPIPE_STUDIO_HOME` or `--profile-dir` selects another shared profile;
+`--workspace` explicitly isolates a workspace. CLI and MCP use the same resolver.
+No developer username, installation drive or fixed backend port is embedded.
 
-### Extend and automate
+## Maintain built-in registries
+
+```bash
+python -m biopipe registry discover
+python -m biopipe registry check
+python -m biopipe registry build
+# Optional, after git fetch origin main:
+python -m biopipe registry discover --source-ref origin/main
+```
+
+The tool discovers new Step/Reader modules and route YAML, validates protocols and
+DAG interfaces, and generates both JSON indexes. Routes come from `routes/**/task.yaml`
+or `task.yml`; no route-name list is hardcoded in the generator. Invalid declarations
+leave the existing indexes intact. See [registry maintenance](docs/registry_maintenance.md).
+
+## Extend and automate
 
 ```text
 biopipe plugin init ./lab_scale
@@ -47,25 +82,33 @@ biopipe context get
 biopipe mcp
 ```
 
-New plugins use the stable `biopipe_sdk` imports, JSON Schema parameters, explicit info/axis contracts and standard Python entry points. Wheel installation updates the JSON registry while Studio is open. Saved graphs and running jobs retain their plugin version pins. Start with the 30-minute SDK tutorial.
+New plugins use the stable `biopipe_sdk` imports, JSON Schema parameters, explicit
+info/axis contracts and standard Python entry points. Wheel installation updates
+the JSON registry while Studio is open. Saved graphs and running jobs retain their
+plugin version pins. Start with the [30-minute SDK tutorial](docs/sdk_quickstart.md).
 
-Agents read semantic selection context and issue revision-checked edit batches. Each batch is visible immediately and creates one undo entry. Execution is a separate action; MCP requires `--allow-run` for it. The Agent panel also provides copyable selection context and client revocation. See CLI/MCP setup.
+Agents read semantic selection context and issue revision-checked edit batches.
+Each batch is visible immediately and creates one undo entry. Execution is a
+separate action; MCP requires `--allow-run` for it. The Agent panel also provides
+copyable selection context and client revocation. See [CLI/MCP setup](docs/agent_api.md).
 
-### Downstream Documentation
+## Documentation
 
 | Guide | Contents |
-|---|---|
-| Operator protocol | Descriptor, parameters, ports, outputs, versions and compatibility |
-| SDK quickstart / reference | Operator and reader templates, testing and public Python APIs |
-| Plugin lifecycle | Hot installation, dependency isolation, pins and migration |
-| Agent interface | CLI, MCP, context, atomic commands, permissions and events |
-| Data contracts | Static compatibility, runtime checks and metadata propagation |
-| Reusable routes | Save/register separation, nested graphs and version snapshots |
-| Studio interaction | Canvas editing, panels, results and visual design |
-| Resource runtime | Fixed budget, admission, spill, cache format and limits |
-| Desktop / portability | Build, launch, profiles and moving computers |
+| --- | --- |
+| [Registry maintenance](docs/registry_maintenance.md) | Discover additions, validate declarations, generate portable package/route indexes |
+| [16S microbiome](docs/microbiome.md) | Abundance inputs, branches, new operators and resource behavior |
+| [Operator protocol](docs/operator_protocol.md) | Descriptor, parameters, ports, outputs, versions and compatibility |
+| [SDK quickstart](docs/sdk_quickstart.md) / [reference](docs/sdk_reference.md) | Operator and reader templates, testing and public Python APIs |
+| [Plugin lifecycle](docs/plugins.md) | Hot installation, dependency isolation, pins and migration |
+| [Agent interface](docs/agent_api.md) | CLI, MCP, context, atomic commands, permissions and events |
+| [Data contracts](docs/data_contracts.md) | Static compatibility, runtime checks and metadata propagation |
+| [Reusable routes](docs/route_operators.md) | Save/register separation, nested graphs and version snapshots |
+| [Studio interaction](docs/frontend_requirements.md) | Canvas editing, panels, results and visual design |
+| [Resource runtime](docs/resource_runtime.md) | Fixed budget, admission, spill, cache format and limits |
+| [Desktop](docs/desktop.md) / [portability](docs/portability.md) | Build, launch, profiles and moving computers |
 
-### Downstream Validation
+## Validation
 
 ```text
 python -m pytest -q
@@ -74,79 +117,80 @@ npm test
 npm run build
 ```
 
-Install the `agent` and `dev` extras for the complete suite. Tests cover actual plugin wheels/workers, reader dispatch, plugin upgrade/removal, route compatibility, CLI processes, MCP stdio, revision conflicts, shared undo and data propagation. Windows desktop verification is available in `scripts/verify_desktop.py`.
+Install the `agent` and `dev` extras for the complete suite. Tests cover actual
+plugin wheels/workers, reader dispatch, plugin upgrade/removal, route compatibility,
+CLI processes, MCP stdio, revision conflicts, shared undo and data propagation.
+Windows desktop verification is available in `scripts/verify_desktop.py`.
 
-The resource budget is chosen once before a run. Actual sizes refine step admission; emergency spill protects evictable data. It cannot preempt an active native allocation. New SDK plugins currently execute in full-memory mode; built-in `describe` retains its real chunk implementation. CUDA kernels and a generic chunk SDK are future work.
+The resource budget is chosen once before a run. Actual sizes refine step admission;
+emergency spill protects evictable data. It cannot preempt an active native allocation.
+SDK plugins can implement the documented `flat-reduction-v1` stream or
+`dense-writer-v1` Reader protocols. Built-in `describe` and H5AD/MTX retain those
+capabilities. The new 16S kernels use full-memory execution with dedicated estimates;
+CUDA kernels and arbitrary streaming transforms are not provided.
 
----
+## Engine and upstream task reference
 
-## Engine reference
-
-The engine section below documents the upstream Python implementation. New external extensions should follow the SDK guides above; the YAML engine and its built-in operators are covered here.
+The following sections document the existing YAML engine and built-in implementation.
+New external extensions should follow the SDK guides above.
 
 A declarative, plugin-based bioinformatics pipeline framework.
 
-BioPipe writes task workflows in `task.yaml`, reads external files into unified `Form` objects, and applies pluggable `Step` operators to filter, compute statistics, model, and plot those `Form` objects. The core goals are: **format and algorithm decoupling, label alignment safety, traceable outputs, zero-registration extensibility**.
+BioPipe writes task workflows in `task.yaml`, reads external files into unified `Form` objects, and applies pluggable `Step` operators to filter, compute statistics, model, and plot those `Form` objects. The core goals are: **format and algorithm decoupling, label alignment safety, traceable outputs, validated extension registration**.
 
 Repository: <https://github.com/lovegavin/BioPipe>
 
-Engine changelog: `docs/changelog/upstream/`.
+---
 
-### Engine Table of Contents
+## Table of Contents
 
-- Engine version 2 summary
-- Engine Features
-- Engine Quick Start
-- Core Architecture: Four Protocols
-- Runtime: Context and Runner
-- Built-in Readers
-- Built-in Steps
-- End-to-End Pipelines
-- Operator Demos
-- Output Structure
-- Extension Guide
-- Design Principles
-- Engine Directory Structure
-- Engine Development and Testing
-- Engine License
+- [Features](#features)
+- [Quick Start](#quick-start)
+  - [Environment Setup](#environment-setup)
+  - [Install Dependencies](#install-dependencies)
+  - [Write task.yaml](#write-taskyaml)
+  - [Run](#run)
+  - [Output Overview](#output-overview)
+- [Core Architecture: Four Protocols](#core-architecture-four-protocols)
+  - [Protocol 1: Manifest Task Protocol](#protocol-1-manifest-task-protocol)
+  - [Protocol 2: Reader Protocol](#protocol-2-reader-protocol)
+  - [Protocol 3: Step Protocol](#protocol-3-step-protocol)
+  - [Protocol 4: Form Data Protocol](#protocol-4-form-data-protocol)
+- [Runtime: Context and Runner](#runtime-context-and-runner)
+- [Built-in Readers](#built-in-readers)
+- [Built-in Steps](#built-in-steps)
+- [Full Example: GWAS Pipeline](#full-example-gwas-pipeline)
+- [Output Structure](#output-structure)
+- [Extension Guide](#extension-guide)
+  - [Add a Reader](#add-a-reader)
+  - [Add a Step](#add-a-step)
+- [Design Principles](#design-principles)
+- [Directory Structure](#directory-structure)
+- [Development and Testing](#development-and-testing)
+- [License](#license)
 
 ---
 
-### Engine version 2 summary
-
-Upstream v2 expands the engine from a GWAS-focused operator set into a general pipeline framework serving five classical analysis paths: bulk RNA-seq DE, proteomics DE, survival analysis, single-cell, and microbiome.
-
-- 28 new built-in Steps across filtering, transformation, statistical modeling, dimensionality reduction, diversity, distance, survival, and visualization.
-- 1 new Reader (`TxtReader`) and a new `sep` parameter for `CsvReader`.
-- Multi-group comparison integrated into `compare_groups`. Two-group mode is the default and remains fully backward compatible.
-- Encoder contract tightened: matrix Readers no longer declare whole-dimension encoders.
-- Five end-to-end pipelines and one demo task per operator.
-
-Full history: `docs/changelog/upstream/v2.md`.
-
----
-
-### Engine Features
+## Features
 
 - **Declarative orchestration**: describe "what to read, in what order to do what" in YAML.
-- **Plugin Readers**: adding a new file format only requires a new module, no registry changes.
-- **Plugin Steps**: adding a new operator only requires a new module, auto-discovered.
+- **Plugin Readers**: add a protocol-compliant module and rebuild the index, or hot-install a Reader wheel.
+- **Plugin Steps**: maintenance discovers new modules; protocol validation gates registration.
 - **Unified Form model**: all data is an N-dimensional tensor with named dimensions, labels, and info.
 - **Complete label coverage**: every axis position must have a label; filtering, merging and alignment never lose positions.
 - **Axis-parallel metadata sync**: `axis_info` guarantees that arrays such as chromosome and position are trimmed together with axis subsets.
 - **Full export**: every Step's complete result is written to `output/steps/`, with a run index in `run_summary.*`.
 - **Explicit error hierarchy**: `BioPipeError` with `ReaderError`, `ManifestError`, `StepError`, `ValidationError`, `ContextError`.
-- **Classical backends**: statistical tests delegate to `scipy`, `statsmodels`, `lifelines`, and `pydeseq2`. No statistical model is re-implemented.
 
 ---
 
-### Engine Quick Start
+## Quick Start
 
-#### Environment Setup
+### Environment Setup
 
-Python 3.11+ is required. Conda is recommended.
+Python 3.11+ is required. Conda is recommended for environment management.
 
-#### Install Dependencies
+### Install Dependencies
 
 **Option 1: Conda (recommended)**
 
@@ -157,7 +201,7 @@ conda env create -f environment.yml
 conda activate biopipe
 ```
 
-`environment.yml` declares a portable CPU environment for the engine. It has no machine-specific prefix, local build paths, or mandatory CUDA toolchain.
+`environment.yml` declares a portable CPU environment for the engine and Studio. It has no machine-specific prefix, local build paths, or mandatory CUDA toolchain.
 
 **Option 2: pip**
 
@@ -167,21 +211,11 @@ cd BioPipe
 pip install -r requirements.txt
 ```
 
-`requirements.txt` installs the engine through portable package requirements — supported version ranges, not a platform-specific lock.
+`requirements.txt` installs the engine and Studio through portable package requirements. These are supported version ranges, not a platform-specific environment lock.
 
-CSV, text, FASTA and MTX support is included. Install `requirements-readers.txt` for the additional Parquet, AnnData, PLINK, BGEN, and VCF Readers, or install only the packages for the formats you use. Native Reader dependencies must be available for the target OS; they are loaded only when that format is used.
+CSV, text annotation, FASTA and MTX support is included. Install `requirements-readers.txt` for the additional Parquet, AnnData, PLINK, BGEN and VCF readers, or install only the required reader's package. Native reader dependencies must be available for the target OS; they are loaded only when that format is used. The desktop launcher and core pipeline do not require CUDA.
 
-Some Steps require optional analysis dependencies:
-
-| Step family | Package source |
-|---|---|
-| `compare_groups(method=deseq2)` | `requirements-analysis.txt` |
-| `kaplan_meier`, `logrank_test`, `cox_regression` | `requirements-analysis.txt` (lifelines) |
-| `reduce(method=umap)` | `pip install umap-learn` |
-| `reduce(method=tsne)`, `cluster_axis(method=kmeans)` | `pip install scikit-learn` |
-| `cluster_axis(method=louvain)` | `pip install networkx` |
-
-#### Write task.yaml
+### Write task.yaml
 
 Create `task.yaml` in the task directory. The following minimal example reads a CSV and prints its description:
 
@@ -201,15 +235,15 @@ steps:
     inputs: [data]
 ```
 
-This example comes from `tasks/csv_demo/task.yaml`. It demonstrates the three most basic things: declaring a source, specifying label rules, and invoking the `describe` Step.
+This example comes from `tasks/csv_demo/task.yaml` in the repository. It demonstrates the three most basic things: declaring a source, specifying label rules, and invoking the `describe` Step.
 
-#### Run
+### Run
 
 ```bash
 python scripts/run.py tasks/csv_demo
 ```
 
-#### Output Overview
+### Output Overview
 
 After a run, the task directory contains:
 
@@ -229,9 +263,9 @@ output/
 
 ---
 
-### Core Architecture: Four Protocols
+## Core Architecture: Four Protocols
 
-BioPipe is four protocols/contracts plus two runtime components. The four protocols are the heart of the project; understanding them means understanding the whole framework.
+BioPipe can be summarized as **four protocols/contracts**, plus two runtime components. The four protocols are the heart of the project; understanding them means understanding the whole framework.
 
 | Protocol | Defined in | Question it answers | Key interface |
 |---|---|---|---|
@@ -245,15 +279,16 @@ Runtime components:
 - **Context**: holds `forms`, `params`, `step_params`, `metadata`, `artifacts`; manages output directories; writes `run_summary.*` at the end.
 - **Runner**: executes steps in order, resolves inputs, checks outputs, writes per-step JSON.
 
-In one sentence: **Manifest orchestrates, Reader ingests, Step processes, Form unifies, Context/Runner runs.**
+In one sentence:
+**Manifest orchestrates, Reader ingests, Step processes, Form unifies, Context/Runner runs.**
 
 ---
 
-#### Protocol 1: Manifest Task Protocol
+## Protocol 1: Manifest Task Protocol
 
 The Manifest is the declarative orchestration layer. Users only write YAML, no Python.
 
-**Top-level structure**
+### Top-level structure
 
 ```yaml
 name: my_task
@@ -265,7 +300,7 @@ steps:
 
 Optional top-level `params` is read by `Context` as task-level parameters.
 
-**sources specification**
+### sources specification
 
 Each source is a mapping:
 
@@ -293,7 +328,7 @@ sources:
 - `args`: extra arguments passed to the Reader, optional, must be a mapping.
 - Unknown keys are not allowed.
 
-**steps specification**
+### steps specification
 
 Each step is a mapping:
 
@@ -314,7 +349,7 @@ steps:
 - `params`: parameters passed to the Step, optional, must be a mapping.
 - Unknown keys are not allowed.
 
-**Execution flow**
+### Execution flow
 
 Runner executes in order:
 
@@ -329,11 +364,11 @@ Runner executes in order:
 
 ---
 
-#### Protocol 2: Reader Protocol
+## Protocol 2: Reader Protocol
 
-The Reader is the input adaptation layer, converting heterogeneous files such as FASTA, VCF, BED, CSV, H5AD, PLINK, and BGEN into a unified `Form`.
+The Reader is the input adaptation layer, converting heterogeneous files such as FASTA, VCF, BED, CSV, H5AD, PLINK, BGEN into a unified `Form`.
 
-**Base class contract**
+### Base class contract
 
 ```python
 class Reader(ABC):
@@ -357,14 +392,13 @@ class Reader(ABC):
   - `False`: the framework decompresses to a temp file first; the Reader only sees a plain file.
   - `True`: the Reader handles compression itself, or needs the original path and same-directory siblings.
 
-**Routing and auto-discovery**
+### Routing and auto-discovery
 
-`src/reader/__init__.py` scans the `src.reader.readers` package:
-
-- Imports each module.
-- Finds `Reader` subclasses.
-- Instantiates them and adds to `READERS`.
-- New Readers only need a new module; no registry change.
+`src/reader/__init__.py` loads explicit entry points from
+`biopipe/builtin_packages.json`. The 13 readers ship as the `biopipe-readers`
+package; a hot-installed replacement uses the same IDs and resource contracts.
+Scanning is a maintenance command (`python scripts/build_builtin_packages.py --refresh`),
+not a runtime registration mechanism.
 
 `read_source(path, dims, labels, **args)` is the unified entry:
 
@@ -372,7 +406,7 @@ class Reader(ABC):
 2. If the Reader does not handle compression, decompresses to a temp file via `_decompressed`.
 3. Calls `reader.read(...)`.
 
-**Label rules**
+### Label rules
 
 Label rules per dim support:
 
@@ -383,22 +417,22 @@ Label rules per dim support:
 
 Duplicate labels are handled by `unique_labels`; the second occurrence gets `#<position>` appended.
 
-**Encoding and info**
+### Encoding and info
 
-Two kinds of encoders exist in the framework, distinguished by where they apply:
-
-- **Column encoders** — used by wide-table Readers (CSV, BED, GFF3, GTF, Parquet). A single column is a string variable; the encoder is recorded under `info["encoders"][dim][column_label]`. The column label must appear in `form.labels[dim]`.
-- **No encoders at all** — matrix Readers (MTX, FASTA, VCF, PLINK, BGEN, H5AD) treat the whole axis as one categorical dimension. Positions along the axis are identified by their row/column index, and the label map already encodes every position. Matrix Readers do not create encoders.
-
-`info` typically contains `missing_code`, usually `np.nan`. Genotype Readers also write `ploidy`, `chrom`, `pos`, etc. If an info entry is parallel to an axis, it must be declared in `axis_info`; `Form.subset_axis` then trims those arrays in sync.
+- Non-numeric columns are encoded.
+- Encoder instances are recorded in `info["encoders"]`.
+- `info` typically contains `missing_code`, usually `np.nan`.
+- Genotype Readers also write `ploidy`, `chrom`, `pos`, etc.
+- If an info entry is parallel to an axis, it must be declared in `axis_info`.
+- This allows `Form.subset_axis` to trim those arrays in sync.
 
 ---
 
-#### Protocol 3: Step Protocol
+## Protocol 3: Step Protocol
 
-Step is the operator layer. Filtering, selection, merging, transposition, normalization, group comparison, PCA, regression, HWE, MAF, LD pruning, plotting — all are pluggable Steps.
+Step is the operator layer. Filtering, selection, merging, transposition, PCA, regression, HWE, MAF, LD pruning, plotting — all are pluggable Steps.
 
-**Base class contract**
+### Base class contract
 
 ```python
 class Step(ABC):
@@ -422,31 +456,28 @@ class Step(ABC):
 - `run`: executes the step.
 - `export`: returns a JSON-serializable complete result; Runner writes it to `output/steps/`.
 
-**Parameters and outputs**
+### Parameters and outputs
 
 - Parameters are read from `ctx.step_params`.
 - Runner injects `ctx.step_params["_input_names"]`.
 - Steps register outputs via `ctx[out_name] = Form(...)`.
 - `Context.__setitem__` automatically calls `form.validate()`.
 
-**Auto-discovery**
+### Auto-discovery
 
-`src/task/step/__init__.py` scans `src.task.step.steps`:
+`src/task/step/__init__.py` loads the checked-in package manifest into `STEPS`.
+The 39 operators ship in core, genetics, expression, visualization and microbiome packages.
+Package installation validates entry points and atomically publishes a new registry.
+New workers load the selected package generation; running workers keep their lock.
 
-- Imports modules.
-- Finds `Step` subclasses.
-- Requires `name != "unnamed"`.
-- Builds `STEPS[name] = class`.
-- Duplicate names raise an error.
-
-**Error handling**
+### Error handling
 
 - Input, parameter, and execution errors should raise `StepError`.
 - Some Steps have explicit failure policies, e.g. `regress` only skips known non-fittable cases.
 
 ---
 
-#### Protocol 4: Form Data Protocol
+## Protocol 4: Form Data Protocol
 
 Form is the shared language between Readers and Steps.
 
@@ -460,7 +491,7 @@ class Form:
     axis_info: dict[str, list[str]] = field(default_factory=dict)
 ```
 
-**Constraints**
+### Constraints
 
 - `len(dims) == data.ndim`.
 - `dims` must not contain duplicates.
@@ -471,7 +502,7 @@ class Form:
 - `subset_axis` trims data, labels, and axis-parallel info in sync.
 - `get_parallel(field, dim)` retrieves a data column by label, or an info array by `axis_info`.
 
-**Main methods**
+### Main methods
 
 - `axis(name)`: returns the axis index.
 - `get_parallel(field, dim)`: retrieves the parallel array.
@@ -480,9 +511,9 @@ class Form:
 
 ---
 
-### Runtime: Context and Runner
+## Runtime: Context and Runner
 
-**Context**
+### Context
 
 Location: `src/task/context/base.py`
 
@@ -491,9 +522,11 @@ Responsibilities:
 - Holds `forms`, `params`, `step_params`, `metadata`, `artifacts`.
 - Manages `out_dir`.
 - `__setitem__` automatically calls `form.validate()`.
-- `finalize()` writes `output/run_summary.json` and `output/run_summary.txt`.
+- `finalize()` writes:
+  - `output/run_summary.json`
+  - `output/run_summary.txt`
 
-**Runner**
+### Runner
 
 Location: `src/task/runner.py`
 
@@ -510,7 +543,7 @@ Responsibilities:
 
 ---
 
-### Built-in Readers
+## Built-in Readers
 
 | Reader | Extensions | Main layout | Notes |
 |---|---|---|---|
@@ -520,208 +553,233 @@ Responsibilities:
 | GtfReader | `.gtf` | row × 9 columns | GTF annotation |
 | VcfReader | `.vcf` `.vcf.gz` | variant × sample | GT to ALT count |
 | BedReader | `.bed` | row × column | UCSC BED, 3–12 columns |
-| CsvReader | `.csv` | row × column | Header supported, `sep` parameter |
+| CsvReader | `.csv` | row × column | Header supported |
 | ParquetReader | `.parquet` | row × column | Column names from metadata |
 | MtxReader | `.mtx` | gene × cell | 10x MEX |
 | Plink1Reader | `.bed` + `.bim` + `.fam` | variant × sample | PLINK 1.x |
 | Plink2Reader | `.pgen` + `.pvar` + `.psam` | variant × sample | PLINK 2.x |
 | BgenReader | `.bgen` | variant × sample | Expected ALT dosage |
-| TxtReader | `.txt` `.tsv` `.tab` | delegated | Delegates to another Reader via `reader` arg (default `csv`) |
 
 ---
 
-### Built-in Steps
+## Built-in Steps
 
-Every Step is domain-agnostic: it operates on any `Form` whose dimensions match its parameters. Steps are grouped by purpose.
-
-**Data inspection**
-
-- `describe` — print and export a summary of one input form.
-
-**Dimension and label**
-
-- `transpose` — reorder the axes of a form.
-- `rename_dim` — rename a single dimension.
-- `select` — keep only the listed labels along one dimension.
-- `drop` — remove named labels from one dimension.
-- `concat` — concatenate several forms along one dimension.
-- `attach_info` — attach axis-parallel info arrays from one form to another, aligned by label.
-- `join` — attach selected columns from a second form to the first, aligned by label.
-- `aggregate` — collapse rows into groups using a group column.
-
-**QC filtering**
-
-- `filter_min` — drop positions whose value doesn't reach a threshold in enough samples.
-- `filter_by` — drop positions using rules defined on a second form.
-- `missing` — filter positions by missing rate.
-- `maf` — filter positions by minor allele frequency.
-- `hwe` — filter positions by Hardy–Weinberg exact test.
-- `ld_prune` — prune positions by pairwise LD.
-
-**Transformation**
-
-- `normalize` — scale along one axis. Methods: `cpm`, `total`, `median_of_ratios`, `quantile`, `zscore`.
-- `log_transform` — `log_base(x + pseudocount)` elementwise.
-- `impute` — fill missing cells. Methods: `min`, `median`, `mean`. Works on N-dimensional input.
-- `bin` — discretize a continuous axis into quantile or uniform bins.
-
-**Dimensionality and ranking**
-
-- `pca` — principal component analysis of a 2D form (kept for backward compatibility).
-- `reduce` — general dimensionality reduction. Methods: `pca`, `umap`, `tsne`, `pcoa`.
-- `reduce_axis` — collapse one axis into a statistic: `sum`, `mean`, `std`, `var`, `min`, `max`, `median`, `nonzero`, `count`.
-- `rank_axis` — rank positions along an axis and keep the top N by a statistic.
-- `cluster_axis` — cluster positions along an axis. Methods: `kmeans`, `hierarchical`, `louvain`.
-
-**Statistical modeling**
-
-- `compare_groups` — group comparison along one dimension of a form. Modes: `two_groups` (default), `one_vs_rest`, `pairwise`. Methods: `ttest`, `welch`, `mannwhitney` (alias `wilcoxon`), `deseq2`.
-- `regress` — multiple regression over one dimension of a wide form.
-- `correction` — multiple-testing correction: `bonferroni` or `fdr`.
-
-**Diversity and distance**
-
-- `diversity` — per-position diversity metrics: `shannon`, `simpson`, `richness`, `evenness`, `gini`.
-- `distance_matrix` — pairwise distances: `euclidean`, `manhattan`, `cosine`, `correlation`, `braycurtis`, `jaccard`, `hamming`.
-- `correlation` — pairwise correlations: `pearson`, `spearman`, `kendall`, `cosine`, `jaccard`, `overlap`.
-- `permanova` — permutation-based multivariate analysis of variance on a distance matrix.
-
-**Survival analysis**
-
-- `kaplan_meier` — Kaplan–Meier survival curves grouped by a label column.
-- `logrank_test` — log-rank test across groups (overall and optional pairwise).
-- `cox_regression` — Cox proportional hazards model.
-- `forest_plot` — forest plot of hazard ratios.
-
-**Plotting**
-
-All plotting steps write to `output/figures/<filename>` and do not modify the Context.
-
-- `histogram` — histogram of one labeled column.
-- `scatter` — scatter plot of two labeled columns.
-- `line` — line plot of one column against another.
-- `manhattan` — genome-wide Manhattan plot.
-- `volcano` — volcano plot of log2FC vs −log10(P).
-- `ma_plot` — MA plot.
-- `heatmap` — matrix heatmap with optional row selection, standardization, and clustering.
-- `boxplot` — box plot of a value column split by groups.
-- `violin` — violin plot of a value column split by groups.
-- `dotplot` — dot plot of features × groups (value = color, proportion = size).
-- `barplot` — stacked bar plot of a composition matrix.
-
-Full parameter references for every Step are in the source files under `src/task/step/steps/`. Each module docstring documents its parameters.
+| Category | Step |
+|---|---|
+| Data inspection | `describe` |
+| Dimension/label | `transpose`, `rename_dim`, `select`, `drop`, `concat`, `attach_info` |
+| QC filtering | `missing`, `maf`, `hwe`, `ld_prune` |
+| Statistical modeling | `pca`, `regress`, `correction` |
+| Plotting | `histogram`, `scatter`, `line`, `manhattan` |
 
 ---
 
-### End-to-End Pipelines
+## Full Example: GWAS Pipeline
 
-Six complete pipelines are shipped as demonstration tasks. Each downloads real public data and runs end to end.
+The following example comes from `tasks/gwas_demo/task.yaml` in the repository, showing a complete GWAS analysis workflow:
 
-| Task | Path | Data |
-|---|---|---|
-| Bulk RNA-seq DE | `tasks/rnaseq_de_demo` | airway (GSE52778) |
-| Proteomics DE | `tasks/proteomics_de_demo` | CPTAC BRCA |
-| Survival analysis | `tasks/survival_demo` | TCGA BRCA |
-| Single-cell | `tasks/scrnaseq_demo` | 10x PBMC 3k |
-| Microbiome | `tasks/microbiome_demo` | COMPASS-DOE 16S |
-| GWAS | `tasks/gwas_demo` | synthetic VCF + phenotype |
+```yaml
+name: gwas_demo
 
-Run any of them with:
+sources:
+  geno:
+    path: input/geno.vcf
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample: builtin
+  pheno:
+    path: input/phenotype.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+  covar:
+    path: input/covariates.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+steps:
+  - name: missing
+    inputs: [geno]
+    params: {dim: sample, threshold: 0.10, output: geno_sm}
+  - name: missing
+    inputs: [geno_sm]
+    params: {dim: variant, threshold: 0.05, output: geno_vm}
+  - name: maf
+    inputs: [geno_vm]
+    params: {dim: variant, threshold: 0.05, output: geno_maf}
+  - name: hwe
+    inputs: [geno_maf]
+    params: {dim: variant, threshold: 1.0e-4, output: geno_hwe}
+  - name: ld_prune
+    inputs: [geno_hwe]
+    params: {dim: variant, window: 50, r2: 0.2, output: geno_pruned}
+  - name: pca
+    inputs: [geno_pruned]
+    params: {dim: variant, n_components: 10, output: pcs}
+  - name: transpose
+    inputs: [geno_hwe]
+    params: {order: [sample, variant], output: geno_T}
+  - name: rename_dim
+    inputs: [geno_T]
+    params: {from: variant, to: feature, output: geno_f}
+  - name: concat
+    inputs: [geno_f, pheno, covar]
+    params: {axis: feature, output: combined}
+  - name: regress
+    inputs: [combined]
+    params:
+      dim: feature
+      response: trait_value
+      covariates: [sex, batch]
+      output: raw
+  - name: correction
+    inputs: [raw]
+    params: {method: fdr, alpha: 0.05, output: assoc_result}
+  - name: attach_info
+    inputs: [assoc_result, geno_hwe]
+    params:
+      fields: [chrom, pos]
+      target_dim: feature
+      output: assoc_with_pos
+  - name: manhattan
+    inputs: [assoc_with_pos]
+    params:
+      dim: feature
+      chrom_label: chrom
+      pos_label: pos
+      p_dim: statistic
+      p_label: P
+      filename: manhattan.png
+      title: GWAS Manhattan plot
+  - name: scatter
+    inputs: [pcs]
+    params:
+      dim: component
+      x_label: PC1
+      y_label: PC2
+      filename: pca_scatter.png
+  - name: histogram
+    inputs: [assoc_result]
+    params:
+      dim: statistic
+      value_label: P
+      bins: 20
+      filename: pvalue_hist.png
+  - name: describe
+    inputs: [assoc_result]
+```
+
+Run:
 
 ```bash
-python scripts/run.py tasks/<name>
+python scripts/run.py tasks/gwas_demo
 ```
 
 ---
 
-### Operator Demos
-
-Each operator has a dedicated demo task under `tasks/<operator>_demo/`. The demo reads real data, runs the operator in a minimal pipeline, and produces a JSON export plus optional figures.
-
-| Demo | Operator |
-|---|---|
-| `csv_demo` | `describe` |
-| `filter_min_demo` | `filter_min` |
-| `normalize_demo` | `normalize` |
-| `log_transform_demo` | `log_transform` |
-| `impute_demo` | `impute` |
-| `compare_groups_demo` | `compare_groups` (including multi-group) |
-| `volcano_demo` | `volcano` |
-| `ma_plot_demo` | `ma_plot` |
-| `heatmap_demo` | `heatmap` |
-| `boxplot_demo` | `boxplot` |
-| `reduce_axis_demo` | `reduce_axis` |
-| `filter_by_demo` | `filter_by` |
-| `rank_axis_demo` | `rank_axis` |
-| `reduce_demo` | `reduce` (pca / umap / tsne) |
-| `reduce_pcoa_demo` | `reduce(method=pcoa)` |
-| `cluster_axis_demo` | `cluster_axis` |
-| `dotplot_demo` | `dotplot` |
-| `violin_demo` | `violin` |
-| `diversity_demo` | `diversity` |
-| `distance_matrix_demo` | `distance_matrix` |
-| `permanova_demo` | `permanova` |
-| `correlation_demo` | `correlation` |
-| `join_demo` | `join` |
-| `aggregate_demo` | `aggregate` |
-| `bin_demo` | `bin` |
-| `barplot_demo` | `barplot` |
-| `kaplan_meier_demo` | `kaplan_meier` |
-| `logrank_test_demo` | `logrank_test` |
-| `cox_regression_demo` | `cox_regression` |
-| `forest_plot_demo` | `forest_plot` |
-
----
-
-### Output Structure
+## Output Structure
 
 ```text
 output/
-  run_summary.json          # machine-readable run index
-  run_summary.txt           # human-readable run index
+  run_summary.json
+  run_summary.txt
   steps/
-    01_step_name.json       # full export of each Step
-    02_step_name.json
-    ...
+    01_missing.json
+    02_missing.json
+    03_maf.json
+    04_hwe.json
+    05_ld_prune.json
+    06_pca.json
+    07_transpose.json
+    08_rename_dim.json
+    09_concat.json
+    10_regress.json
+    11_correction.json
+    12_attach_info.json
+    13_manhattan.json
+    14_scatter.json
+    15_histogram.json
+    16_describe.json
   figures/
-    *.png                   # outputs of plotting steps
+    manhattan.png
+    pca_scatter.png
+    pvalue_hist.png
 ```
 
-- `run_summary.json`: step names, timings, inputs, parameters, export paths.
-- `run_summary.txt`: same, human-readable.
-- `steps/*.json`: full export of each Step, as returned by `export()`.
-- `figures/*`: images produced by plotting steps.
+- `run_summary.json`: run index with step names, timings, inputs, parameters, export paths.
+- `run_summary.txt`: human-readable index.
+- `steps/*.json`: full export of each Step.
+- `figures/*`: outputs of plotting steps.
 
 ---
 
-### Extension Guide
+## Extension Guide
 
-**Add a Reader**
+For external plugins, use the [SDK quickstart](docs/sdk_quickstart.md) and
+[protocol](docs/operator_protocol.md). The instructions below are for maintaining
+built-ins inside the engine repository. Refresh the package index after source
+changes, then build and hot-install the affected package to update an open Studio:
+
+```bash
+python scripts/build_builtin_packages.py --refresh
+python scripts/build_builtin_packages.py --package biopipe-core --output build/packages
+biopipe plugin install build/packages/biopipe-core/dist/biopipe_core-1.0.0-py3-none-any.whl
+```
+
+Bump the package version in the manifest for a published update. Direct edits to
+the application's source still require a restart. See [unified packages and resource
+protocols](docs/package_protocol.md) for disable/remove/restore, version locking,
+streaming operators, disk readers and an executable SDK-only example.
+
+### Add a Reader
 
 1. Create a new module in `src/reader/readers/`.
 2. Subclass `Reader`.
-3. Declare `extensions`, `requires_siblings`, `excludes_siblings`, `handles_compression`.
-4. Implement `read(self, path, dims, labels, **args) -> Form`.
-5. Use `unique_labels` to build labels.
-6. For wide-table Readers only, use `get_encoder` for per-column encoding. Matrix Readers should not create encoders.
+3. Declare:
+   - `extensions`
+   - `requires_siblings`
+   - `excludes_siblings`
+   - `handles_compression`
+4. Implement:
+   ```python
+   def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
+       ...
+   ```
+5. Use `unique_labels` to handle labels.
+6. Use `get_encoder` for encoding when necessary.
 7. Fill `info` and `axis_info`.
-8. Auto-discovered; no registration needed.
+8. Declare `parameters_schema` and `output_contract`; run `biopipe registry build` and review the generated index.
 
-**Add a Step**
+### Add a Step
 
 1. Create a new module in `src/task/step/steps/`.
 2. Subclass `Step`.
-3. Declare `name`, `inputs_arity`, `outputs`.
-4. Implement `run(self, ctx, inputs) -> None`.
-5. Optionally implement `export(self, ctx) -> dict`.
+3. Declare:
+   - `name`
+   - `inputs_arity`
+   - `outputs`
+4. Implement:
+   ```python
+   def run(self, ctx: Context, inputs: list[Form]) -> None:
+       ...
+   ```
+5. Optionally implement:
+   ```python
+   def export(self, ctx: Context) -> dict:
+       ...
+   ```
 6. Output via `ctx[out_name] = Form(...)`.
-7. Auto-discovered; no registration needed.
+7. Declare `parameters_schema`, `input_contracts`, `output_contract` and any dynamic `output_parameter`; run `biopipe registry build`.
 
 ---
 
-### Design Principles
+## Design Principles
 
-- **Declarative orchestration**: `task.yaml` describes the pipeline.
+- **Declarative orchestration**: task.yaml describes the pipeline.
 - **Plugin Readers**: adding formats does not touch the core.
 - **Plugin Steps**: adding operators does not touch the core.
 - **Unified Form**: all data shares one model.
@@ -729,11 +787,10 @@ output/
 - **Axis-parallel metadata sync**: `axis_info` guarantees subset safety.
 - **Explicit errors**: a clear exception hierarchy.
 - **Full export**: every step's result is traceable.
-- **Classical backends**: `compare_groups`, `logrank_test`, `cox_regression`, and friends delegate to `scipy`, `statsmodels`, `lifelines`, and `pydeseq2`. The engine does not re-implement any statistical model.
 
 ---
 
-### Engine Directory Structure
+## Directory Structure
 
 ```text
 scripts/
@@ -746,14 +803,13 @@ src/
       form.py               # Form data protocol
 
   reader/
-    __init__.py             # read_source, pick_reader, auto-discovery
+    __init__.py             # read_source, pick_reader, indexed providers
     base.py                 # Reader base class
     readers/                # format-specific Readers
       fasta_reader.py
       vcf_reader.py
       bed_reader.py
       csv_reader.py
-      txt_reader.py
       h5ad_reader.py
       plink_reader.py
       bgen_reader.py
@@ -767,107 +823,67 @@ src/
     context/
       base.py               # Context
     step/
-      __init__.py           # Step auto-discovery
+      __init__.py           # Indexed Step providers and maintenance scanning
       base.py               # Step base class
       steps/                # operators
-        describe.py
-        transpose.py
-        rename_dim.py
-        select.py
-        drop.py
-        concat.py
-        attach_info.py
-        join.py
-        aggregate.py
-        filter_min.py
-        filter_by.py
-        missing.py
         maf.py
         hwe.py
-        ld_prune.py
-        normalize.py
-        log_transform.py
-        impute.py
-        bin.py
         pca.py
-        reduce.py
-        reduce_axis.py
-        rank_axis.py
-        cluster_axis.py
-        compare_groups.py
         regress.py
         correction.py
-        diversity.py
-        distance_matrix.py
-        correlation.py
-        permanova.py
-        kaplan_meier.py
-        logrank_test.py
-        cox_regression.py
-        forest_plot.py
-        histogram.py
-        scatter.py
-        line.py
         manhattan.py
-        volcano.py
-        ma_plot.py
-        heatmap.py
-        boxplot.py
-        violin.py
-        dotplot.py
-        barplot.py
-        _plot_helpers.py
+        scatter.py
+        ...
 
 tasks/
-  csv_demo/
-  gwas_demo/
-  rnaseq_de_demo/
-  proteomics_de_demo/
-  survival_demo/
-  scrnaseq_demo/
-  microbiome_demo/
-  <operator>_demo/         # one per operator
-
-docs/
-  changelog/
-    upstream/
-      README.md
-      v1.md
-      v2.md
+  csv_demo/                 # minimal CSV example
+  gwas_demo/                # full GWAS pipeline example
+  fasta_demo/               # FASTA example
+  vcf_demo/                 # VCF example
+  ...
 
 environment.yml             # Conda environment definition
 requirements.txt            # pip dependency manifest
-requirements-readers.txt    # optional format-specific readers
-requirements-analysis.txt   # optional analysis dependencies
 ```
 
 ---
 
-### Engine Development and Testing
+## Development and Testing
+
+An opt-in fixed-order resource planner now supports lazy sources, run-local
+disk spill/reload, per-run logs, an RSS spill monitor, and streaming `describe`.
+See [Resource runtime](docs/resource_runtime.md) for budgets, limitations and
+reproducible verification. Use `requirements-runtime.txt` for the portable CPU
+runtime; format-specific Readers require their optional dependencies.
 
 ```bash
 # Activate the environment
 conda activate biopipe
 
-# Run the full test suite
+# Run tests
 pytest
 
 # Run an example task
 python scripts/run.py tasks/csv_demo
-
-# Run any operator demo
-python tasks/<operator>_demo/test_<operator>.py
-python scripts/run.py tasks/<operator>_demo
 ```
-
-An opt-in fixed-order resource planner supports lazy sources, run-local disk spill/reload, per-run logs, and streaming `describe`. Use `requirements-runtime.txt` for the portable CPU runtime; format-specific Readers require their optional dependencies.
 
 ---
 
-### Engine License
+## License
 
 Copyright (c) 2026 Haojian Li. All rights reserved.
 
 This software is proprietary. No part of this software may be copied, modified, distributed, sublicensed, or used for commercial purposes without the prior written permission of the copyright holder.
 
 For commercial licensing, custom development, or collaboration, please contact: email: lovegavin118@outlook.com / WeChat: mylovegavin118 / No. 13727316173.
+
+### Source preparation and Studio configuration
+
+Managed H5AD and 10x MTX inputs now prepare dense disk arrays in bounded blocks,
+then hand their actual size and retained clean blocks to the fixed-budget planner.
+Large full-mode analysis still requires enough RAM; see [runtime details](docs/resource_runtime.md).
+Studio preserves global YAML parameters and disabled memory settings, renames axis
+label rules with dimensions, and supports configuration saves larger than 2 MiB.
+Reader and plotting options are described in the registry and exposed in forms.
+Use **Plugin management** in the operator library to install or remove local wheels;
+see [plugin lifecycle](docs/plugins.md) and [input formats](docs/input_formats.md).

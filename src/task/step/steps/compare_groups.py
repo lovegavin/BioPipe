@@ -58,6 +58,10 @@ from scipy import stats
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._microbiome import metadata
+from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._microbiome import metadata
 
 
 _METHODS = (
@@ -79,6 +83,25 @@ class CompareGroupsStep(Step):
     name = "compare_groups"
     inputs_arity = 2
     outputs = []
+    parameters_schema = SCHEMAS['compare_groups']
+    input_contracts, output_contract = CONTRACTS['compare_groups']
+    output_parameter = 'output'
+    legacy_parameters = False
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate_axis(cls.name, inputs, params, profiles)
+    title = 'Group comparison'
+    category = 'Analysis'
+    builtin_package = 'biopipe-expression'
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['compare_groups']
+    input_contracts, output_contract = CONTRACTS['compare_groups']
+    output_parameter = 'output'
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate_axis(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         data_form, meta_form = inputs
@@ -181,6 +204,8 @@ class CompareGroupsStep(Step):
         pos_to_feature = {
             v: k for k, v in data_form.labels[dim].items()
         }
+        info, axes = metadata(data_form, [dim], "comparison")
+        info, axes = metadata(data_form, [dim], "comparison")
         ctx[out_name] = Form(
             data=block.astype(np.float32),
             dims=[dim, "statistic"],
@@ -188,7 +213,7 @@ class CompareGroupsStep(Step):
                 dim: {pos_to_feature[i]: i for i in range(n_features)},
                 "statistic": stat_labels,
             },
-            info={"missing_code": np.nan},
+            info=info, axis_info=axes,
         )
 
         n_tested = int(np.isfinite(block[:, 4]).sum())
@@ -357,6 +382,8 @@ class CompareGroupsStep(Step):
         if use_deseq2:
             stat_labels["Q_VALUE"] = 6
 
+        info, axes = metadata(data_form, [dim], "comparison")
+        info, axes = metadata(data_form, [dim], "comparison")
         ctx[out_name] = Form(
             data=results.astype(np.float32),
             dims=[dim, "comparison", "statistic"],
@@ -365,7 +392,7 @@ class CompareGroupsStep(Step):
                 "comparison": comparison_labels,
                 "statistic": stat_labels,
             },
-            info={"missing_code": np.nan},
+            info=info, axis_info=axes,
         )
 
         stat_keys = list(stat_labels.keys())
@@ -570,6 +597,13 @@ def _deseq2_test(flat, mask_a, mask_b):
             "Install with: pip install pydeseq2"
         ) from exc
 
+    # Other metadata groups must never silently enter group B. DESeq2 needs
+    # raw integer counts; rounding normalized data would change the analysis.
+    selected = mask_a | mask_b
+    flat = flat[:, selected]
+    mask_a, mask_b = mask_a[selected], mask_b[selected]
+    if not np.isfinite(flat).all() or (flat < 0).any() or not np.equal(flat, np.rint(flat)).all():
+        raise StepError("compare_groups/deseq2: use finite, non-negative raw integer counts before normalization or log transformation")
     n_features, n_samples = flat.shape
     counts = pd.DataFrame(
         np.rint(flat).astype(int).T,
@@ -585,12 +619,13 @@ def _deseq2_test(flat, mask_a, mask_b):
     dds = DeseqDataSet(
         counts=counts,
         metadata=meta,
-        design_factors="group",
-        ref_level=["group", "A"],
+        design="~group",
+        n_cpus=1,
+        quiet=True,
     )
     dds.deseq2()
 
-    stat_res = DeseqStats(dds, contrast=["group", "B", "A"])
+    stat_res = DeseqStats(dds, contrast=["group", "B", "A"], n_cpus=1, quiet=True)
     stat_res.summary()
     res = stat_res.results_df
 
@@ -613,3 +648,12 @@ def _deseq2_test(flat, mask_a, mask_b):
     result[:, 6] = padj
 
     return result, {"Q_VALUE": 6}
+
+def _safe_float(v) -> float | None:
+    if v is None:
+        return None
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return None
+    return f if np.isfinite(f) else None

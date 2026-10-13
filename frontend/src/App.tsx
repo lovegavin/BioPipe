@@ -1,3 +1,4 @@
+import { PluginPanel } from "./PluginPanel";
 import {
   Component,
   memo,
@@ -31,6 +32,7 @@ import {
   FloppyDisk,
   GearSix,
   Lightning,
+  Keyboard,
   List,
   MagnifyingGlass,
   Minus,
@@ -45,6 +47,7 @@ import {
   Copy,
   Clipboard,
   PauseCircle,
+  Package,
   PlayCircle,
   Trash,
 } from "@phosphor-icons/react";
@@ -76,6 +79,8 @@ import { WorkflowNode } from "./WorkflowNode";
 import { WorkflowEdge } from "./WorkflowEdge";
 import type { Block } from "./WorkflowNode";
 import { Inspector } from "./Inspector";
+import { HelpTip } from "./HelpTip";
+import { LibrarySection } from "./LibrarySection";
 import { Results, statusLabel } from "./Results";
 import { OperatorIcon } from "./icons";
 import { OperatorArtwork } from "./OperatorArtwork";
@@ -172,6 +177,7 @@ function Studio() {
   const agentBridge = useRef<CanvasBridge | null>(null);
   const [agentReady, setAgentReady] = useState(false), [agentPanel, setAgentPanel] = useState(false);
   const [routes, setRoutes] = useState<RouteDefinition[]>([]);
+  const [pluginsOpen, setPluginsOpen] = useState(false);
   const [libraryState, setLibraryState] = useState<LibraryState>({disabled: [], hidden: []});
   const [showHidden, setShowHidden] = useState(false);
   const [panelWidths, setPanelWidths] = useState<PanelWidths>(automaticPanels);
@@ -428,7 +434,6 @@ function Studio() {
     try {
       const saved: SavedWorkflow[] = [];
       for (const file of Array.from(files)) {
-        if (file.size > 2 * 1024 ** 2) throw Error("路线文件超过 2 MiB。");
         const graph = normalizeGraph(JSON.parse(await file.text()));
         saved.push(await api.saveWorkflow(graph));
       }
@@ -592,6 +597,11 @@ function Studio() {
         done: boolean;
       };
       setJob((previous) => ({ ...payload.job, graph: previous?.graph }));
+      const memoryStart = payload.events.find(event => event.event === "run_started" && typeof event.available_at_start_bytes === "number");
+      if (memoryStart && typeof memoryStart.budget_bytes === "number") {
+        const budget = memoryStart.budget_bytes;
+        setBootstrap(previous => previous ? {...previous, automatic_memory_budget_bytes: budget} : previous);
+      }
       warned = false;
       setEvents((previous) => {
         const keys = new Set(previous.map((e) => JSON.stringify(e)));
@@ -937,7 +947,6 @@ function Studio() {
     if (!file) return;
     setAction("import");
     try {
-      if (file.size > 2 * 1024 ** 2) throw Error("工作流配置超过 2 MiB。");
       const text = await file.text();
       const next = file.name.toLowerCase().endsWith(".json")
         ? normalizeGraph(JSON.parse(text))
@@ -1283,25 +1292,18 @@ function Studio() {
             <Plus size={15} />
           </button>
           <div className="library-scroll">
-            {(!search || routes.some(route => route.name.toLowerCase().includes(search.toLowerCase()))) && <div className="library-category route-library">
-              <div className="category-title">路线算子 <span>{routes.length}</span></div>
+            {(!search || routes.some(route => route.name.toLowerCase().includes(search.toLowerCase()))) && <LibrarySection name="路线算子" count={routes.filter(route => route.name.toLowerCase().includes(search.toLowerCase())).length} sectionKey="routes" search={search} className="route-library">
               {!routes.length && <button className="route-empty" onClick={() => setPicker("register")}>
-                <Stack size={22} weight="light"/><strong>添加已保存路线</strong><span>把多个算子组合为一个算子</span><small>选择路线 <Plus size={12}/></small>
+                <Stack size={20}/><strong>添加已保存路线</strong><Plus size={14}/>
               </button>}
               {routes.filter(route => route.name.toLowerCase().includes(search.toLowerCase())).map(route => <button key={route.id} className={`operator-item route-item ${libraryState.disabled.includes(route.id) ? "is-library-disabled" : ""}`} title={`${routeSpec(route).description} · 右键管理`} disabled={busy} aria-disabled={libraryState.disabled.includes(route.id)} draggable={!busy && !libraryState.disabled.includes(route.id)}
                 onClick={() => add(route.id)} onContextMenu={event => {event.preventDefault(); setContextMenu({x: event.clientX, y: event.clientY, route, libraryKey: route.id});}}
                 onDragStart={event => {event.dataTransfer.setData("application/biopipe", route.id); event.dataTransfer.effectAllowed = "move";}}>
                 <span className="operator-icon"><Stack size={18}/></span><span><strong>{route.name}</strong><small>{libraryState.disabled.includes(route.id) ? "已禁用 · " : ""}{route.graph.interface?.inputs.length} → {route.graph.interface?.outputs.length} · v{route.version}</small></span><Plus className="add-hint" size={14}/>
               </button>)}
-            </div>}
+            </LibrarySection>}
             {categories.map((category) => (
-              <div className="library-category" key={category}>
-                <div className="category-title">
-                  {category}
-                  <span>
-                    {filtered.filter((o) => o.category === category).length}
-                  </span>
-                </div>
+              <LibrarySection key={category} name={category} count={filtered.filter(o => o.category === category).length} sectionKey={`operator:${category}`} search={search}>
                 {filtered
                   .filter((o) => o.category === category)
                   .map((spec) => (
@@ -1327,12 +1329,12 @@ function Studio() {
                       </span>
                       <span>
                         <strong>{spec.title}</strong>
-                        {libraryState.hidden.includes(spec.name) ? <small>已删除 · 右键恢复</small> : libraryState.disabled.includes(spec.name) ? <small>已禁用</small> : null}
+                        {libraryState.hidden.includes(spec.name) ? <small>已删除</small> : libraryState.disabled.includes(spec.name) ? <small>已禁用</small> : null}
                       </span>
                       <Plus className="add-hint" size={14} />
                     </button>
                   ))}
-              </div>
+              </LibrarySection>
             ))}
             {!filtered.length && !routes.some(r => r.name.toLowerCase().includes(search.toLowerCase())) && (
               <div className="search-empty">
@@ -1345,9 +1347,7 @@ function Studio() {
             )}
           </div>
           <div className="library-footer">
-            <span className="status-dot complete" />
-            <span>本地清单已加载</span>
-            <small>v1</small>
+            <button className="library-packages" onClick={() => setPluginsOpen(true)}><Package size={16}/>算子包管理</button>
           </div>
           <PanelResizeHandle side="library" width={displayedPanels.library} min={panelLimits.library.min}
             max={panelMaximum("library", displayedPanels, windowWidth)} onResize={value => resizePanel("library", value)}
@@ -1539,9 +1539,12 @@ function Studio() {
             </ReactFlow>
             {!graph.nodes.length && (
               <div className="canvas-empty">
-                <SquaresFour size={38} weight="light" />
-                <h2>从数据开始，连接灵感。</h2>
-                <p>添加一个数据节点，再选择你的第一个算子。</p>
+                <div className="empty-workflow" aria-hidden="true">
+                  <span className="empty-workflow-source"><OperatorIcon name="Database" size={24}/></span>
+                  <svg viewBox="0 0 86 96"><path d="M0 48H22C44 48 40 18 62 18H86M22 48C44 48 40 78 62 78H86"/></svg>
+                  <span className="empty-workflow-target"><SquaresFour size={20}/></span>
+                  <span className="empty-workflow-target"><Rows size={20}/></span>
+                </div>
                 <button className="primary-button canvas-empty-action" onClick={() => add()}>
                   <Plus size={16} aria-hidden="true" />
                   <span>添加输入数据</span>
@@ -1549,9 +1552,13 @@ function Studio() {
               </div>
             )}
             <div className="canvas-bottomline">
-              <span className="canvas-tip">
-                Shift 框选 · Ctrl 多选 · 中键拖动 · Ctrl+C / V
-              </span>
+              <HelpTip label="画布快捷键" icon={<Keyboard size={18}/>} above>
+                <span className="shortcut-row"><span>框选</span><kbd>Shift + 拖动</kbd></span>
+                <span className="shortcut-row"><span>多选</span><kbd>Ctrl + 单击</kbd></span>
+                <span className="shortcut-row"><span>平移</span><kbd>中键拖动</kbd></span>
+                <span className="shortcut-row"><span>复制 / 粘贴</span><kbd>Ctrl + C / V</kbd></span>
+                <span className="shortcut-row"><span>查看参数</span><kbd>双击 / Enter</kbd></span>
+              </HelpTip>
               <div className="zoom-controls">
                 <button
                   className="icon-button"
@@ -1638,8 +1645,11 @@ function Studio() {
             settings={settings}
             busy={!!busy}
             uploadLimit={bootstrap.upload_limit_mb}
+            automaticMemoryFraction={bootstrap.automatic_memory_fraction}
+            automaticMemoryBudget={bootstrap.automatic_memory_budget_bytes}
             onNode={updateNode}
             onMemory={(memory) => commit((current) => ({ ...current, memory }))}
+            onParams={(params) => commit((current) => ({...current, params}))}
             onDelete={(id) => deleteNodes([id])}
             onError={notify}
             onClose={closeInspector}
@@ -1650,15 +1660,15 @@ function Studio() {
       <footer className="statusbar">
         <span>
           <span className="status-dot complete" />
-          {saved ? "页面草稿已保存" : "正在保存页面…"}
+          {saved ? "已保存" : "保存中…"}
         </span>
         <span className="execution-caption">
           {job ? statusLabel[job.status] : "就绪"}
           <span className="meta-dot" />
-          固定顺序 · {order.length} 个算子
+          {order.length} 个算子
         </span>
         <span>
-          BioPipe Studio <span className="mono">0.2</span>
+          BioPipe Studio <span className="mono">0.3</span>
         </span>
       </footer>
       {contextMenu && <>
@@ -1681,6 +1691,7 @@ function Studio() {
           </>}
         </div>
       </>}
+      {pluginsOpen && <PluginPanel onClose={() => setPluginsOpen(false)} onChanged={async () => {const latest = await api.catalog(); setBootstrap(current => current ? {...current, catalog: latest} : current);}}/>}
       {picker && <WorkflowPicker mode={picker} onClose={() => setPicker(null)} onOpen={openSaved} onRegister={refreshRoutes} onImport={() => routeImport.current?.click()}/>}
       {saveDialog && <SaveWorkflowDialog graph={saveDialog} catalog={catalog} workflowId={documents.find(doc=>doc.id===activeId)?.workflow_id} version={documents.find(doc=>doc.id===activeId)?.workflow_version} onClose={() => setSaveDialog(null)} onSaved={savedWorkflow}/>}
       {agentPanel && <AgentPanel sessionId={agentBridge.current?.state?.id} command={bootstrap.agent_config} onClose={() => setAgentPanel(false)} onCopySelection={() => void copyAgentContext()}/>}

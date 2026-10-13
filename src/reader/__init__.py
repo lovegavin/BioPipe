@@ -44,11 +44,19 @@ def _discover() -> list[Reader]:
                 and attr is not Reader
                 and getattr(attr, "extensions", None)
             ):
+                from .schemas import builtin_schema
+                if attr.parameters_schema is None:
+                    attr.parameters_schema = builtin_schema(attr.__name__)
                 instances.append(attr())
     return instances
 
 
-READERS: list[Reader] = _discover()
+def _from_packages():
+    from biopipe.packages import bundled_entries, load_entry
+    return [load_entry(descriptor)() for _, descriptor in bundled_entries("reader")]
+
+
+READERS: list[Reader] = [] if os.getenv("BIOPIPE_REGISTRY_MAINTENANCE") == "1" else _from_packages()
 
 
 def pick_reader(path: Path) -> Reader:

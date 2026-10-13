@@ -70,6 +70,10 @@ class Entry:
     key: str = field(default_factory=lambda: uuid.uuid4().hex)
     form: Form | None = None
     loader: object = None
+    disk_loader: object = None
+    source_probe: dict = field(default_factory=dict)
+    source_blocks: dict = field(default_factory=dict)
+    source_block_bytes: int = 0
     source_uri: str | None = None
     disk: Path | None = None
     disk_bytes: int = 0
@@ -149,12 +153,95 @@ class ArtifactStore(MutableMapping):
                 raise ContextError("Cannot delete a pinned input/output")
             self._remove(entry)
 
-    def register_source(self, name, loader, uri):
+    def register_source(self, name, loader, uri, probe=None, disk_loader=None):
         with self.lock:
             entry = Entry(name, -1, loader=loader, source_uri=str(uri), keep=name in self.config.keep)
+            entry.source_probe = probe or {}
+            entry.disk_loader = disk_loader
+            entry.size = int(entry.source_probe.get("dense_bytes") or 0)
             self.entries[entry.key] = entry
             self.aliases[name] = entry.key
-            self.event("source_registered", name=name, source_uri=str(uri), storage="source")
+            self.event("source_registered", name=name, source_uri=str(uri), storage="source", **entry.source_probe)
+
+    def stage_source(self, entry):
+        """Complete bounded source preparation before operator admission."""
+        if entry.disk is not None or entry.disk_loader is None:
+            return
+        from src.reader.disk import DenseDiskWriter
+        temporary = Path(tempfile.mkdtemp(prefix=".source-", dir=self.cache_root))
+        writer = None
+        try:
+            required = int(entry.source_probe.get("preparation_bytes", entry.source_probe["dense_bytes"])) + 512
+            if self.config.disk_limit_bytes is not None and self.disk_bytes + required > self.config.disk_limit_bytes:
+                raise DiskBudgetError("Dense source exceeds disk quota before allocation")
+            if shutil.disk_usage(self.cache_root).free < required:
+                raise DiskBudgetError("Insufficient disk space for dense source")
+            # Leave room for parser blocks and Python axis metadata. No second
+            # system-available scan: this derives from the frozen run budget.
+            chunk = max(4, min(self.config.chunk_bytes, self.config.budget_bytes // 8))
+            reservation = min(self.config.budget_bytes, chunk * 4)
+            self.ensure(reservation, "source_staging")
+            self.event("source_prepare_started", name=entry.name, chunk_bytes=chunk,
+                       buffer_budget_bytes=chunk * 2, **entry.source_probe)
+            process = None
+            if self.config.process_limit_bytes and self.config.auto_spill:
+                import psutil
+                process = psutil.Process()
+            writer = DenseDiskWriter(temporary / "data.npy", entry.source_probe["shape"],
+                                     entry.source_probe["dtype"], block_bytes=min(chunk, self.config.io_buffer_bytes),
+                                     budget_bytes=chunk * 2, event=self.event,
+                                     pressure=lambda: bool(process and process.memory_info().rss >
+                                         self.config.process_limit_bytes * self.config.spill_fraction))
+            metadata = entry.disk_loader(writer, chunk)
+            writer.close(retain=True)
+            peak = writer.peak_bytes
+            blocks, block_bytes = writer.blocks, writer.block_bytes
+            writer = None
+            # Validation examines shape, dtype and annotations, without allocating
+            # a dense placeholder. These readers declare no value-level contracts.
+            shape = tuple(entry.source_probe["shape"])
+            dtype = np.dtype(entry.source_probe["dtype"])
+            placeholder = np.broadcast_to(np.zeros((), dtype=dtype), shape)
+            Form(placeholder, **metadata).validate()
+            metadata_size = sum(footprint(metadata).values())
+            self.ensure(metadata_size + sum(map(len, blocks.values())), "source_metadata")
+            with open(temporary / "metadata.pkl", "wb") as file:
+                pickle.dump(metadata, file, protocol=5)
+            written = sum(p.stat().st_size for p in temporary.iterdir())
+            if self.config.disk_limit_bytes is not None and self.disk_bytes + written > self.config.disk_limit_bytes:
+                raise DiskBudgetError("Dense source metadata exceeds disk quota")
+            final = self.cache_root / entry.key
+            os.replace(temporary, final)
+            entry.disk, entry.disk_bytes = final, written
+            entry.shape, entry.dtype, entry.metadata_size = shape, dtype, metadata_size
+            entry.size = int(entry.source_probe["dense_bytes"]) + metadata_size + 8192
+            self.disk_bytes += written
+            entry.source_blocks, entry.source_block_bytes = blocks, block_bytes
+            self.managed += sum(len(block) for block in blocks.values())
+            self.peak_managed = max(self.peak_managed, self.managed)
+            self.resident_keys.add(entry.key)
+            self.refresh(entry)
+            self.event("source_prepare_complete", buffer_peak_bytes=peak, **self.describe(entry))
+        except BaseException:
+            if writer is not None and not writer.file.closed:
+                # Failure discards the staging copy; do not flush more blocks.
+                writer.file.close()
+            self._delete_folder(temporary)
+            raise
+
+    def trim_source_blocks(self, entry, bytes_to_free, reason):
+        """Drop only as many clean staging blocks as subsequent admission needs."""
+        released = 0
+        while entry.source_blocks and released < bytes_to_free:
+            key = next(iter(entry.source_blocks))
+            released += len(entry.source_blocks.pop(key))
+        self.managed -= released
+        if released:
+            self.event("source_blocks_released", name=entry.name, bytes=released, reason=reason,
+                       retained_bytes=sum(map(len, entry.source_blocks.values())))
+        if entry.form is None and not entry.source_blocks:
+            self.resident_keys.discard(entry.key)
+        return released
 
     def _account(self, entry):
         # Managed numeric payloads are immutable while registered. Operators
@@ -191,7 +278,7 @@ class ArtifactStore(MutableMapping):
 
     def refresh(self, entry):
         entry.heap_version += 1
-        if entry.form is not None:
+        if entry.form is not None or entry.source_blocks:
             next_use = self.plan.next_use(entry.name, self.position, entry.generated) if self.plan else NEVER
             heapq.heappush(self.heap, (-next_use, -entry.size, entry.heap_version, entry.key))
         if len(self.heap) > 2 * len(self.resident_keys) + 64:
@@ -239,6 +326,8 @@ class ArtifactStore(MutableMapping):
     def _load(self, entry):
         if entry.form is not None:
             return
+        self.stage_source(entry)
+        self.trim_source_blocks(entry, float("inf"), "full_mode_admission")
         self.ensure(entry.size, "load_reservation")
         if entry.disk is not None:
             payload = self.read_metadata(entry)
@@ -283,13 +372,18 @@ class ArtifactStore(MutableMapping):
                 item = heapq.heappop(self.heap)
                 _, _, version, key = item
                 entry = self.entries.get(key)
-                if entry is None or entry.form is None or entry.heap_version != version:
+                if entry is None or (entry.form is None and not entry.source_blocks) or entry.heap_version != version:
                     continue
                 if entry.pins:
                     skipped.append(item)
                     continue
                 try:
-                    self.spill(entry, reason)
+                    if entry.source_blocks:
+                        self.trim_source_blocks(entry, self.managed - max(0, target), reason)
+                        if entry.source_blocks:
+                            self.refresh(entry)
+                    else:
+                        self.spill(entry, reason)
                 except (DiskBudgetError, OSError) as exc:
                     # A different victim may already have a durable copy and
                     # can be evicted without consuming additional disk quota.
@@ -419,13 +513,25 @@ class ArtifactStore(MutableMapping):
                 if fortran or dtype.hasobject or shape != entry.shape or dtype != entry.dtype:
                     raise ContextError("Cache descriptor/header mismatch")
                 remaining = int(np.prod(shape, dtype=np.int64))
+                position = 0
                 while remaining:
                     count = min(elements, remaining)
-                    chunk = np.fromfile(file, dtype=dtype, count=count)
+                    cached = None
+                    if entry.source_block_bytes:
+                        key, offset = divmod(position * dtype.itemsize, entry.source_block_bytes)
+                        count = min(count, (entry.source_block_bytes - offset) // dtype.itemsize)
+                        cached = entry.source_blocks.get(key)
+                    if cached is not None:
+                        chunk = np.frombuffer(cached, dtype=dtype, count=count, offset=offset)
+                        chunk.setflags(write=False)
+                        file.seek(count * dtype.itemsize, 1)
+                    else:
+                        chunk = np.fromfile(file, dtype=dtype, count=count)
                     if chunk.size != count:
                         raise ContextError("Truncated cache payload")
                     yield chunk
                     remaining -= count
+                    position += count
 
     def _delete_folder(self, folder):
         folder = folder.resolve()
@@ -435,6 +541,7 @@ class ArtifactStore(MutableMapping):
             shutil.rmtree(folder)
 
     def _remove(self, entry):
+        self.trim_source_blocks(entry, float("inf"), "last_use")
         self._unaccount(entry)
         entry.form = None
         if entry.disk:
@@ -452,6 +559,7 @@ class ArtifactStore(MutableMapping):
                 "shape": list(entry.shape), "dtype": str(entry.dtype),
                 "contract_version": VERSION,
                 "ram_estimate_bytes": entry.size, "disk_bytes": entry.disk_bytes,
+                "cached_source_bytes": sum(map(len, entry.source_blocks.values())),
                 "storage": "ram" if entry.form is not None else "disk" if entry.disk else "source",
                 "disk_uri": str(entry.disk) if entry.disk else None,
                 "source_uri": entry.source_uri, "pins": entry.pins}

@@ -5,14 +5,15 @@ import {
   Cpu,
   FileArrowUp,
   HardDrives,
-  Info,
   Trash,
   X,
 } from "@phosphor-icons/react";
 import { OperatorArtwork, OperatorPreview } from "./OperatorArtwork";
 import { OperatorIcon } from "./icons";
+import { HelpTip } from "./HelpTip";
 import { api } from "./api";
-import { displayTitle, inputCount, outputCount, specFor, retainedOutputs } from "./graph";
+import { inputAccept, renameSourceDimensions, readerForPath } from "./readerInput";
+import { bytes, displayTitle, inputCount, outputCount, specFor, retainedOutputs } from "./graph";
 import type { Catalog, Graph, GraphNode, Parameter, RouteDefinition } from "./types";
 
 function JsonField({
@@ -61,6 +62,41 @@ function JsonField({
     </label>
   );
 }
+function CommaSeparatedInput({
+  value,
+  onChange,
+  commitOnBlur = false,
+  ...props
+}: {
+  value: unknown;
+  onChange: (value: string[]) => void;
+  id?: string;
+  disabled: boolean;
+  placeholder?: string;
+  commitOnBlur?: boolean;
+}) {
+  const items = Array.isArray(value) ? value.map(String) : [];
+  const serialized = JSON.stringify(items);
+  const [text, setText] = useState(() => items.join(", "));
+  const lastEmitted = useRef(serialized);
+  useEffect(() => {
+    // Preserve separators and spaces during our own edits; accept external edits/undo.
+    if (serialized !== lastEmitted.current) {
+      setText((JSON.parse(serialized) as string[]).join(", "));
+      lastEmitted.current = serialized;
+    }
+  }, [serialized]);
+  const commit = () => onChange(text.split(/[,，]/).map(item => item.trim()).filter(Boolean));
+  return <input {...props} value={text} onBlur={() => {if (commitOnBlur) commit();}}
+    onKeyDown={event => {if (commitOnBlur && event.key === 'Enter') event.currentTarget.blur();}} onChange={(event) => {
+    const raw = event.target.value;
+    const next = raw.split(/[,，]/).map(item => item.trim()).filter(Boolean);
+    setText(raw);
+    lastEmitted.current = JSON.stringify(next);
+    if (!commitOnBlur) onChange(next);
+  }} />;
+}
+
 function ParameterField({
   field,
   value,
@@ -107,32 +143,22 @@ function ParameterField({
             onChange(e.target.value === "" ? undefined : Number(e.target.value))
           }
         />
+      ) : field.type === "list" ? (
+        <CommaSeparatedInput id={id} value={value} disabled={disabled}
+          placeholder="用逗号分隔，如 PC1, PC2" onChange={onChange} />
       ) : (
         <input
           id={id}
-          value={
-            field.type === "list"
-              ? Array.isArray(value)
-                ? value.join(", ")
-                : ""
-              : String(value ?? "")
-          }
+          value={String(value ?? "")}
           disabled={disabled}
-          placeholder={
-            field.type === "list" ? "用逗号分隔，如 PC1, PC2" : undefined
-          }
           onChange={(e) =>
             onChange(
-              field.type === "list"
-                ? e.target.value
-                    .split(/[,，]/)
-                    .map((v) => v.trim())
-                    .filter(Boolean)
-                : field.type === "scalar" && e.target.value.trim() !== "" && Number.isFinite(Number(e.target.value)) ? Number(e.target.value) : e.target.value,
+              field.type === "scalar" && e.target.value.trim() !== "" && Number.isFinite(Number(e.target.value)) ? Number(e.target.value) : e.target.value,
             )
           }
         />
       )}
+      {field.description && <small className="field-hint">{field.description}</small>}
     </label>
   );
 }
@@ -143,8 +169,11 @@ export function Inspector({
   settings,
   busy,
   uploadLimit,
+  automaticMemoryFraction,
+  automaticMemoryBudget,
   onNode,
   onMemory,
+  onParams,
   onDelete,
   onError,
   onClose,
@@ -155,9 +184,12 @@ export function Inspector({
   nodeId: string | null;
   settings: boolean;
   busy: boolean;
-  uploadLimit: number;
+  uploadLimit: number | null;
+  automaticMemoryFraction?: number;
+  automaticMemoryBudget?: number | null;
   onNode: (id: string, patch: Partial<GraphNode>) => void;
   onMemory: (value: Graph["memory"]) => void;
+  onParams: (value: Record<string, unknown>) => void;
   onDelete: (id: string) => void;
   onError: (message: string) => void;
   onClose: () => void;
@@ -172,6 +204,8 @@ export function Inspector({
   }, [node?.id, settings]);
   const [uploading, setUploading] = useState(false);
   const memory = graph.memory;
+  const automaticPercent = automaticMemoryFraction == null ? undefined : automaticMemoryFraction * 100;
+  const reader = node?.source ? readerForPath(catalog, node.source.path) : undefined;
   const retainedNames = node ? retainedOutputs(node, spec) : [];
   function param(key: string, value: unknown) {
     if (!node) return;
@@ -180,16 +214,17 @@ export function Inspector({
     else next[key] = value;
     onNode(node.id, { params: next });
   }
-  async function upload(file?: File) {
-    if (!file || !node?.source) return;
-    if (file.size > uploadLimit * 1024 ** 2)
-      return onError(`文件超过 ${uploadLimit} MiB，可改用项目内路径。`);
+  async function upload(selection: FileList | null) {
+    const files = Array.from(selection ?? []);
+    if (!files.length || !node?.source) return;
+    if (uploadLimit != null && files.some(file => file.size > uploadLimit * 1024 ** 2))
+      return onError(`单个文件超过 ${uploadLimit} MiB，可改用项目内路径。`);
     setUploading(true);
     try {
-      const result = await api.upload(file);
+      const result = await api.uploadFiles(files, graph.base_dir);
       onNode(node.id, {
-        source: { ...node.source, path: result.path },
-        title: file.name.replace(/\.csv(?:\.gz)?$/i, ""),
+        source: result.source,
+        title: result.filename.replace(/\.(?:gz|bz2|xz)$/i, '').replace(/\.[^.]+$/, ''),
       });
     } catch (error) {
       onError((error as Error).message);
@@ -222,8 +257,13 @@ export function Inspector({
                 <HardDrives size={20} />
               </div>
               <h3>内存预算</h3>
-              <p>先确定预算，再沿固定顺序执行。运行期间保留紧急溢写。</p>
+              <HelpTip label="内存规划说明">显示启动时的预算估算，运行开始后更新为该次运行的实际预算。每次运行前扫描一次可用内存；运行期间由紧急溢写应对内存压力。</HelpTip>
             </div>
+            <label className="toggle-field">
+              <span><strong>内存管理</strong></span>
+              <input type="checkbox" aria-label="内存管理" checked={memory.enabled} disabled={busy}
+                onChange={e => onMemory({...memory, enabled: e.target.checked})}/><span className="toggle-track"/>
+            </label>
             <div className="field">
               <span>数据内存预算</span>
               <div className="segmented">
@@ -265,18 +305,14 @@ export function Inspector({
                 />
               </label>
             ) : (
-              <div className="note">
-                <Info size={15} />
-                <p>
-                  运行前扫描一次，取可用内存的 25%，上限 2
-                  GiB。检查与编辑不会扫描。
-                </p>
+              <div className="budget-summary">
+                <dl><div><dt>分配比例</dt><dd>{automaticPercent == null ? "自动" : <>{automaticPercent}<small>%</small></>}</dd></div><div><dt>预算上限</dt><dd className="budget-value">{automaticMemoryBudget == null ? "无法读取" : bytes(automaticMemoryBudget)}</dd></div></dl>
+                {automaticPercent != null && <div className="budget-proportion" aria-hidden="true"><span style={{width: `${automaticPercent}%`}}/></div>}
               </div>
             )}
             <label className="toggle-field">
               <span>
-                <strong>紧急溢写</strong>
-                <small>触及固定压力阈值时，释放未锁定数据</small>
+                <strong title="触及固定压力阈值时，释放未锁定数据">紧急溢写</strong>
               </span>
               <input
                 type="checkbox"
@@ -319,14 +355,19 @@ export function Inspector({
                 RSS 包含 Python 和库的内存。数据预算只管理
                 Form、元数据与估算的工作区。
               </p>
+              <JsonField label="完整内存配置 JSON" value={memory} disabled={busy}
+                onChange={value => {
+                  if (typeof value.enabled !== 'boolean') throw Error('enabled must be boolean');
+                  onMemory(value as Graph['memory']);
+                }}/>
+            </details>
+            <details className="advanced"><summary>全局参数 <CaretDown size={14}/></summary>
+              <JsonField label="Pipeline params" value={graph.params || {}} disabled={busy} onChange={onParams}/>
             </details>
             <div className="section-rule" />
-            <div className="capability">
+            <div className="capability" title="支线按依赖排序后依次运行。分块由算子的实际能力决定。">
               <Cpu size={17} />
-              <div>
-                <strong>固定顺序 · CPU</strong>
-                <p>支线按依赖排序后依次运行。分块由算子的实际能力决定。</p>
-              </div>
+              <span>CPU · 顺序执行</span>
             </div>
           </>
         ) : node ? (
@@ -336,11 +377,7 @@ export function Inspector({
                 <OperatorArtwork spec={spec} source={node.kind === "source"}/>
               </div>
               <h3>{displayTitle(node, spec)}</h3>
-              <p>
-                {node.kind === "source"
-                  ? "读取项目内文件，或上传 CSV 作为输入。"
-                  : spec?.description}
-              </p>
+              {spec?.description && node.kind !== "source" && <HelpTip label="算子说明">{spec.description}</HelpTip>}
             </div>
             <OperatorPreview spec={spec}/>
             <label className="field">
@@ -357,10 +394,11 @@ export function Inspector({
                 <input
                   ref={fileInput}
                   type="file"
-                  accept=".csv,.gz"
+                  accept={inputAccept(catalog)}
+                  multiple
                   className="sr-only"
-                  aria-label="选择 CSV 文件"
-                  onChange={(e) => void upload(e.target.files?.[0])}
+                  aria-label="选择数据文件"
+                  onChange={(e) => void upload(e.target.files)}
                 />
                 <button
                   className="upload-button"
@@ -368,9 +406,12 @@ export function Inspector({
                   onClick={() => fileInput.current?.click()}
                 >
                   <FileArrowUp size={22} />
-                  <strong>{uploading ? "正在上传…" : "选择 CSV 文件"}</strong>
-                  <small>CSV / CSV.gz · 上限 {uploadLimit} MiB</small>
+                  <strong>{uploading ? "正在上传…" : "选择数据文件"}</strong>
+                  {uploadLimit != null && <small>每个文件上限 {uploadLimit} MiB</small>}
                 </button>
+                <details className="advanced input-format-help"><summary>多文件格式 <CaretDown size={14}/></summary>
+                  <p className="helper">PLINK：同时选择同名的 .bed、.bim、.fam。10x MTX：同时选择 matrix、barcodes 和 features / genes。</p>
+                </details>
                 <label className="field">
                   <span>项目内文件路径</span>
                   <textarea
@@ -387,25 +428,30 @@ export function Inspector({
                 </label>
                 <label className="field">
                   <span>维度名称</span>
-                  <input
-                    value={node.source.dims.join(", ")}
+                  <CommaSeparatedInput
+                    key={node.id}
+                    commitOnBlur
+                    value={node.source.dims}
                     disabled={busy}
-                    onChange={(e) =>
-                      onNode(node.id, {
-                        source: {
-                          ...node.source!,
-                          dims: e.target.value
-                            .split(/[,，]/)
-                            .map((v) => v.trim())
-                            .filter(Boolean),
-                        },
-                      })
-                    }
+                    onChange={(dims) => {
+                      try { onNode(node.id, {source: renameSourceDimensions(node.source!, dims)}); }
+                      catch (error) { onError((error as Error).message); }
+                    }}
                   />
                 </label>
+                {!!reader?.parameters?.length && <div className="reader-options">
+                  <p className="section-caption">{reader.name} · 读取参数</p>
+                  {reader.parameters?.map(field => <ParameterField key={`${node.id}-${field.key}`} field={field}
+                    value={node.source!.args[field.key] ?? field.default} disabled={busy}
+                    onChange={value => {
+                      const args = {...node.source!.args};
+                      if (value === undefined || value === '') delete args[field.key]; else args[field.key] = value;
+                      onNode(node.id, {source: {...node.source!, args}});
+                    }}/>) }
+                </div>}
                 <details className="advanced">
                   <summary>
-                    标签与读取选项 <CaretDown size={14} />
+                    标签与完整读取选项 <CaretDown size={14} />
                   </summary>
                   <JsonField
                     label="维度标签 JSON"
@@ -423,17 +469,12 @@ export function Inspector({
                       onNode(node.id, { source: { ...node.source!, args } })
                     }
                   />
-                  <p className="helper">
-                    CSV 默认第一行为列名。示例的 sample 标签自动生成，feature
-                    标签来自表头。
-                  </p>
                 </details>
               </>
             ) : (
               <>
                 {node.kind === "route" && node.route && <div className="route-inspector">
-                  <span className="route-version">路线算子 · v{node.route.version}</span>
-                  <p className="helper">参数保存在内部算子图中。当前画布保留这个版本的快照。</p>
+                  <span className="route-version" title="当前画布保留这个版本的快照">路线算子 · v{node.route.version}</span>
                   <button className="subtle-button" onClick={() => onOpenRoute(node.route!)}><OperatorIcon name="Stack" size={17}/>打开路线的算子图</button>
                   <p className="helper">输入：{node.route.graph.interface?.inputs.map(p=>p.label).join(" / ") || "无"}</p>
                   <p className="helper">输出：{node.route.graph.interface?.outputs.map(p=>p.label).join(" / ") || "报告与图片"}</p>
@@ -444,9 +485,9 @@ export function Inspector({
                 </div>
                 {spec?.parameters.map((field) => (
                   <ParameterField
-                    key={field.key}
+                    key={`${node.id}:${field.key}`}
                     field={field}
-                    value={node.params[field.key]}
+                    value={node.params[field.key] === undefined ? spec.runtime_defaults?.[field.key] : node.params[field.key]}
                     disabled={busy}
                     onChange={(value) => param(field.key, value)}
                   />
@@ -496,7 +537,7 @@ export function Inspector({
                 <div className="capability">
                   <Cpu size={16} />
                   <span>
-                    CPU
+                    {spec?.supports_cuda ? "CPU / CUDA" : "CPU"}
                     {node.kind === "route" ? " · 共享外层内存规划" : spec?.memory_modes.includes("stream")
                       ? " · 支持分块"
                       : " · 整体处理"}
@@ -505,7 +546,7 @@ export function Inspector({
               </>
             )}
             {retainedNames.map((name, index) => (
-              <label className="check-field" key={name}>
+              <label className="check-field" key={name} title="末端输出会自动保存，便于下载">
                 <input
                   type="checkbox"
                   checked={(memory.keep || []).includes(name)}
@@ -523,7 +564,6 @@ export function Inspector({
                   {node.kind === "route" ? `额外保留 ${node.route?.graph.interface?.outputs[index]?.label || `输出 ${index + 1}`}` : retainedNames.length > 1
                     ? `保留 ${name}`
                     : "额外保留这份数据"}
-                  <small>末端输出会自动保存，便于下载</small>
                 </span>
               </label>
             ))}
@@ -562,11 +602,8 @@ export function Inspector({
           </>
         ) : (
           <div className="inspector-empty">
-            <OperatorIcon size={34} weight="light" />
+            <div className="inspector-empty-glyph" aria-hidden="true"><OperatorIcon size={24} weight="light"/><span/><span/></div>
             <h3>双击查看节点</h3>
-            <p>
-              单击选中，双击查看输入、参数与输出。也可以聚焦节点后按 Enter。
-            </p>
           </div>
         )}
       </div>

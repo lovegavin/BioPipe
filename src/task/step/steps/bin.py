@@ -69,6 +69,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._microbiome import metadata
 
 
 _METHODS = ("quantile", "uniform")
@@ -81,6 +83,17 @@ class BinStep(Step):
     name = "bin"
     inputs_arity = 1
     outputs = []
+    title = 'Bin'
+    category = 'Analysis'
+    builtin_package = 'biopipe-core'
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['bin']
+    input_contracts, output_contract = CONTRACTS['bin']
+    output_parameter = 'output'
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate_axis(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -168,6 +181,7 @@ class BinStep(Step):
         ]
 
         out_data = bin_ids.astype(np.float32).reshape(-1, 1)
+        info, axes = metadata(form, [dim], 'bins')
         ctx[out_name] = Form(
             data=out_data,
             dims=[dim, "bin"],
@@ -175,7 +189,7 @@ class BinStep(Step):
                 dim: dict(form.labels[dim]),
                 "bin": {"bin": 0},
             },
-            info={},
+            info=info, axis_info=axes,
         )
 
         bin_edges_list = [float(e) for e in edges]

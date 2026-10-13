@@ -1,0 +1,6 @@
+{
+  "key": "microbiome",
+  "name": "16S Microbiome",
+  "source_commit": "fa267bc46a30ee9c9483b7442ff119b9aefcf62c",
+  "base_dir": ".studio/builtin-inputs/microbiome"
+}

@@ -77,6 +77,18 @@ def legacy_locations(code_root, *, environ=None, home=None):
             yield workspace.resolve(), data.resolve()
 
 
+def upload_limit_from_env():
+    """Optional explicit limit shared by both launchers; unset/zero is unlimited."""
+    raw = os.environ.get("BIOPIPE_STUDIO_MAX_UPLOAD_MB", "0")
+    try:
+        value = int(raw)
+    except ValueError as exc:
+        raise ValueError("BIOPIPE_STUDIO_MAX_UPLOAD_MB must be a non-negative integer (MiB)") from exc
+    if value < 0:
+        raise ValueError("BIOPIPE_STUDIO_MAX_UPLOAD_MB must be a non-negative integer (MiB)")
+    return value * 1024**2 if value else None
+
+
 def make_settings(code_root, frontend, *, desktop=False, profile_dir=None,
                   workspace=None, data_dir=None, migrate_legacy=None):
     from .service import Settings
@@ -84,5 +96,6 @@ def make_settings(code_root, frontend, *, desktop=False, profile_dir=None,
     profile.data_dir.mkdir(parents=True, exist_ok=True)
     os.environ["MPLCONFIGDIR"] = str(profile.data_dir / "matplotlib")
     return Settings(profile.workspace, profile.data_dir, Path(frontend).resolve(),
+                    max_upload=upload_limit_from_env(),
                     code_root=Path(code_root).resolve(), desktop=desktop, profile=profile.as_dict(),
                     migrate_legacy=profile.migrate_legacy if migrate_legacy is None else migrate_legacy, builtin_routes=True)

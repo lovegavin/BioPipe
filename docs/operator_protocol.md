@@ -4,6 +4,11 @@ Status: implemented for BioPipe Studio 0.2 and SDK 1.0. Python 3.11 or newer is 
 This document is the public contract for new Python plugins. Existing `Step`, `Reader`,
 YAML tasks, graph v1/v2 files and route snapshots remain supported through adapters.
 
+Reader descriptors may also provide optional `file_input` metadata for Studio's
+file picker, default dimensions/labels and companion-file checks. See the
+[input metadata contract](input_formats.md#reader-extension-metadata). Existing
+descriptors without this additive field remain valid.
+
 ## Identity and discovery
 
 A distribution exposes classes through standard Python entry points:
@@ -18,7 +23,8 @@ matrix = "my_lab:ArrayReader"
 
 The class `name` is the stable registry ID, such as `my_lab.scale`. New plugin IDs
 must contain a namespace separator (`.`), match `[A-Za-z_][A-Za-z0-9_.-]{0,79}`,
-and be unique across readers and operators. IDs cannot shadow built-ins.
+and be unique across readers and operators. A replacement for a bundled package
+may retain that package's existing IDs; unrelated packages cannot claim them.
 The entry-point key is not the operator ID. `version` uses three numeric components
 with an optional prerelease or build suffix. The distribution version identifies
 the installed wheel; an individual operator version describes its interface.
@@ -28,7 +34,8 @@ in the wheel's `.dist-info/biopipe.json`, with an updated wheel RECORD. Installa
 checks the descriptor against the implementation in a separate probe process.
 Ordinary wheels built by other Python tools may omit this generated file; their
 entry points are probed once during installation. The GUI reads JSON metadata and
-never imports plugin Python. Built-in discovery runs once at service startup.
+never imports plugin Python. Bundled entry points come from a checked-in package
+manifest; scanning is only used to maintain that manifest.
 
 ## Descriptor envelope
 
@@ -122,7 +129,8 @@ Output inference supports the following common rules:
 | `passthrough` | Preserve the first input's data schema |
 | `subset`, `select`, `drop` | Preserve semantics while filtering labels/annotations |
 | `transform` | Preserve axes, clear invalid genotype semantics, declare `representation` |
-| `project` | Keep `keep_dims` and their annotations; optionally clear invalid semantics with `derived` |
+| `project` | Keep/drop axes, prepend/append declared axes, optionally clear obsolete semantics with `derived` |
+| `choose` | Select an output rule by a parameter, with an optional fallback |
 | `declare` | Supply a complete inferred schema under `schema`; parameters may be referenced |
 | `rename`, `transpose`, `concat`, `attach` | Use the corresponding established metadata operation |
 | `unknown` | No static guarantee beyond runtime Form validation |
@@ -132,6 +140,31 @@ Output inference supports the following common rules:
 `axis_info: {dim: [fields]}`, `info: {field: rule}`), not the input port's lists.
 The `info` map on an output rule can add guarantees, including a new representation. A custom algorithm must
 actually perform the declared transformation; a descriptor does not transform data.
+
+SDK 1.2 adds data-independent axis composition. For example, a pairwise matrix:
+
+```python
+output_contract = {
+    "mode": "project", "keep_dims": [param("dim")], "derived": True,
+    "append_dims": [{"name": {"param": "dim", "suffix": "_b"},
+                     "labels_from": param("dim")}],
+    "info": {"missing_code": MISSING,
+             "representation": {"type": "string", "const": "distance"}},
+}
+```
+
+`drop_dims` removes axes from the kept set. Added dimensions use `name` and optional
+`labels` (a list, parameter reference, or unknown/null), `labels_from` (a kept axis),
+or `input_axis: [input_index, axis_index]` for a name obtained from another input.
+Copied labels do not duplicate axis annotations onto a new axis. `labels_unknown`
+discards label guarantees, and `axis_info_unknown` discards annotation guarantees
+when membership changes in a way the analyzer cannot know. Unknown remains unknown;
+no input matrix is read or synthetic fact asserted during inference.
+
+A method-dependent rule uses `{"mode": "choose", "param": "method", "default":
+"pca", "cases": {"pcoa": <rule>}, "otherwise": <rule>}`. Each branch is validated
+recursively. Parameter references may specify a string `suffix`, as above. These
+rules require the SDK 1.2 backend; protocol version remains 1.
 
 The backend analyzer reports `compatible`, `incompatible`, or `unknown` without
 loading the full input. Known incompatibilities block wiring/compilation. Unknown
@@ -158,13 +191,15 @@ An active NumPy allocation cannot be interrupted or spilled; underestimating an
 algorithm's scratch space can still exhaust memory. A CUDA capability declaration
 does not allocate GPU memory or implement a CUDA kernel.
 
-Plugin v1 supports full-memory operator execution. New plugins declaring streaming
-are rejected until a generic chunk protocol exists. Existing built-in streaming
-implementations remain available and unchanged.
+SDK 1.1 adds explicit `flat-reduction-v1` and `dense-writer-v1` resource contracts
+without changing descriptor protocol version 1. Both bundled and wheel providers
+use these contracts. Bare capability booleans without the corresponding protocol
+and hooks are rejected. See [package/resource protocol](package_protocol.md).
 
 ## Compatibility and persistence
 
-The 31 existing Steps and 13 Readers publish this descriptor through adapters;
+The 31 legacy Steps retain compatibility adapters; eight new microbiome Steps
+declare strict schemas. All 13 Readers publish the same descriptor protocol;
 their names and YAML entry points are unchanged. New plugins import from
 `biopipe_sdk`, avoiding dependencies on private engine modules.
 
@@ -176,3 +211,23 @@ carry graph structure and contracts, but not Python code or input data.
 
 See [SDK quickstart](sdk_quickstart.md), [SDK reference](sdk_reference.md),
 [plugin lifecycle](plugins.md), and [agent interface](agent_api.md).
+
+## Workflow configuration preservation
+
+Graph v1/v2 accepts optional `params` (pipeline globals), `runtime` (non-memory
+runtime fields) and `manifest_extra` (additional top-level YAML fields). Missing
+fields default to empty objects, so older canvases remain valid. The existing graph
+`memory` field owns `runtime.memory` on export. An explicit disabled memory flag is
+preserved; importing YAML without memory configuration retains CLI eager semantics.
+
+Node `context_params` optionally overrides pipeline globals for that step. Route
+expansion merges enclosing and route globals into this field, preserving independent
+route instances. The runner exposes the merged values as `context.params` for the
+step and restores outer context afterward. Data alias changes also rewrite builtin
+`concat.align.key` and retention references. Arbitrary plugin-specific strings are
+not guessed to be data references.
+
+Configuration import and autosave no longer impose a fixed 2 MiB transport limit.
+Graph structural limits (nodes, edges, nesting and tabs) remain validated. This is
+independent of the optional scientific-data upload cap. CLI/MCP `configure` commands
+can also edit `params`, `runtime` and `manifest_extra` atomically with undo.

@@ -5,14 +5,18 @@ export function runSignature(graph: Graph): string {
   const execution = {
     base_dir: graph.base_dir,
     memory: graph.memory,
+    params: graph.params || {},
+    runtime: graph.runtime || {},
+    manifest_extra: graph.manifest_extra || {},
     plugin_lock: graph.plugin_lock || {},
     edges: graph.edges,
     nodes: graph.nodes.map(
-      ({ id, kind, operator, params, source, input_count, route }) => ({
+      ({ id, kind, operator, params, source, input_count, route, context_params }) => ({
         id,
         kind,
         operator: operator ?? null,
         params,
+        context_params: context_params || {},
         source: source ?? null,
         input_count,
         route: route ? { id: route.id, version: route.version, interface: route.graph.interface, execution: runSignature(route.graph) } : null,
@@ -41,11 +45,14 @@ export function normalizeGraph(value: Graph): Graph {
     schema_version: value.schema_version,
     interface: value.interface,
     plugin_lock: value.plugin_lock || {},
+    params: value.params || {},
+    runtime: value.runtime || {},
+    manifest_extra: value.manifest_extra || {},
     name: value.name || "我的工作流",
     base_dir: value.base_dir || ".",
     memory: {
       ...value.memory,
-      enabled: true,
+      enabled: value.memory?.enabled ?? true,
       auto_spill: value.memory?.auto_spill ?? true,
     },
     nodes: value.nodes.map((node) => ({

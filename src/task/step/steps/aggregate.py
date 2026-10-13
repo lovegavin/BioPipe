@@ -57,6 +57,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
 
 
 _METHODS = ("sum", "mean", "median", "min", "max", "count")
@@ -68,6 +69,17 @@ class AggregateStep(Step):
     name = "aggregate"
     inputs_arity = 2
     outputs = []
+    title = 'Aggregate'
+    category = "Microbiome"
+    builtin_package = "biopipe-microbiome"
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['aggregate']
+    input_contracts, output_contract = CONTRACTS['aggregate']
+    output_parameter = "output"
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         data_form, groups_form = inputs
@@ -132,6 +144,7 @@ class AggregateStep(Step):
         # Extract the group code for each shared row.
         col_pos = groups_form.labels[group_dim][group_col]
         group_codes_raw = groups_form.data[group_idx, col_pos]
+        group_codes_raw = np.where(group_codes_raw == groups_form.info.get("missing_code", np.nan), np.nan, group_codes_raw)
 
         # Recover the human-readable group label.
         encoders = groups_form.info.get("encoders", {})
@@ -200,11 +213,13 @@ class AggregateStep(Step):
             other_dim: dict(data_form.labels[other_dim]),
         }
 
+        out_info, out_axes = metadata(data_form, [other_dim], "aggregate")
         ctx[out_name] = Form(
             data=out_data.astype(np.float32),
             dims=[group_dim, other_dim],
             labels=out_labels,
-            info={"missing_code": np.nan},
+            info=out_info,
+            axis_info=out_axes,
         )
 
         group_sizes = {}

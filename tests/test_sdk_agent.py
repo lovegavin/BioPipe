@@ -34,7 +34,7 @@ def gateway(tmp_path):
 
 def test_all_legacy_descriptors_are_public_and_preserve_names():
     catalog = build_catalog(STEPS)
-    assert len(catalog["operators"]) == 31 and len(catalog["readers"]) == 13
+    assert len(catalog["operators"]) == len(STEPS) == 46 and len(catalog["readers"]) == 13
     assert {d["id"] for d in catalog["operators"]} == set(STEPS)
     for descriptor in catalog["operators"] + catalog["readers"]:
         assert Descriptor.model_validate(descriptor).protocol_version == 1
@@ -84,7 +84,7 @@ def test_union_parameters_and_large_generated_graph():
     from biopipe_sdk.protocol import schema_to_fields
     from biopipe.documents import layout
     fields = schema_to_fields({"type": "object", "properties": {"value": {"type": ["number", "null"]}}})
-    assert fields[0]["type"] == "json"
+    assert fields[0]["type"] == "number"
     graph = {"nodes": [{"id": f"n{i}"} for i in range(1000)],
              "edges": [{"source": f"n{i}", "target": f"n{i+1}"} for i in range(999)]}
     assert layout(graph)["nodes"][-1]["position"]["x"] == 60 + 999 * 300
@@ -189,9 +189,9 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path):
         assert json.loads(archive.read(descriptor_file))["descriptors"][0]["id"] == "example.scale_plugin"
     manager = app.state.service.plugins
     installed = manager.install(wheel)
-    assert len(installed["descriptors"]) == 1
+    assert len([d for d in installed["descriptors"] if d['distribution'] == 'scale-plugin']) == 1
     catalog = client.get("/api/operators").json()
-    assert len(catalog["operators"]) == 32
+    assert len(catalog["operators"]) == len(STEPS) + 1
     graph = deepcopy(data["demo"])
     graph["nodes"] = [graph["nodes"][0], {"id": "scale", "kind": "operator", "operator": "example.scale_plugin",
                                         "position": {"x": 400, "y": 80}, "params": {"factor": 3, "output": "scaled"}}]
@@ -219,7 +219,7 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path):
     assert manager.pin(Graph.model_validate(graph)).plugin_lock["example.scale_plugin"]["version"] == "0.2.0"
     # Uninstall hides the item but retains the generation needed by saved graphs.
     manager.install(None, remove="scale-plugin")
-    assert len(client.get("/api/operators").json()["operators"]) == 31
+    assert len(client.get("/api/operators").json()["operators"]) == len(STEPS)
     assert client.post("/api/validate", json=pinned).status_code == 200
     saved = client.post("/api/workflows/save", json={"graph": pinned})
     assert saved.status_code == 200, saved.text

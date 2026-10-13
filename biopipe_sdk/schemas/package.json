@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "Descriptor": {
+      "additionalProperties": true,
+      "properties": {
+        "protocol_version": {
+          "const": 1,
+          "default": 1,
+          "title": "Protocol Version",
+          "type": "integer"
+        },
+        "id": {
+          "pattern": "^[A-Za-z_][A-Za-z0-9_.-]{0,79}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][A-Za-z0-9.-]+)?$",
+          "title": "Version",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "operator",
+            "reader"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "entry_point": {
+          "title": "Entry Point",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "parameters_schema": {
+          "additionalProperties": true,
+          "title": "Parameters Schema",
+          "type": "object"
+        },
+        "contracts": {
+          "additionalProperties": true,
+          "title": "Contracts",
+          "type": "object"
+        },
+        "resources": {
+          "additionalProperties": true,
+          "title": "Resources",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "kind",
+        "entry_point",
+        "title",
+        "parameters_schema",
+        "contracts",
+        "resources"
+      ],
+      "title": "Descriptor",
+      "type": "object"
+    }
+  },
+  "additionalProperties": true,
+  "description": "One installation unit; operator identities remain independent of origin.",
+  "properties": {
+    "protocol_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Protocol Version",
+      "type": "integer"
+    },
+    "name": {
+      "pattern": "^[a-z0-9][a-z0-9.-]*$",
+      "title": "Name",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "title": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Title"
+    },
+    "origin": {
+      "default": "wheel",
+      "enum": [
+        "bundled",
+        "wheel"
+      ],
+      "title": "Origin",
+      "type": "string"
+    },
+    "descriptors": {
+      "items": {
+        "$ref": "#/$defs/Descriptor"
+      },
+      "title": "Descriptors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "name",
+    "version",
+    "descriptors"
+  ],
+  "title": "PackageDescriptor",
+  "type": "object"
+}

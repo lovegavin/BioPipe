@@ -28,6 +28,7 @@ class GraphNode(StrictModel):
     title: str = Field(default="", max_length=120)
     position: Position
     params: dict[str, Any] = Field(default_factory=dict)
+    context_params: dict[str, Any] = Field(default_factory=dict)
     source: Source | None = None
     input_count: int = Field(default=1, ge=0, le=20)
     route: RouteDefinition | None = None
@@ -67,6 +68,9 @@ class Graph(StrictModel):
     nodes: list[GraphNode] = Field(max_length=1000)
     edges: list[GraphEdge] = Field(max_length=5000)
     memory: dict[str, Any] = Field(default_factory=lambda: {"enabled": True, "auto_spill": True})
+    params: dict[str, Any] = Field(default_factory=dict)
+    runtime: dict[str, Any] = Field(default_factory=dict)
+    manifest_extra: dict[str, Any] = Field(default_factory=dict)
     interface: RouteInterface | None = None
     plugin_lock: dict[str, dict[str, str]] = Field(default_factory=dict)
 
@@ -138,5 +142,5 @@ RouteDefinition.model_rebuild()
 
 
 class ManifestImport(StrictModel):
-    text: str = Field(max_length=2 * 1024**2)
+    text: str
     base_dir: str = Field(default=".", max_length=2048)

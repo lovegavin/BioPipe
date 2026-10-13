@@ -20,7 +20,7 @@ def build_catalog(registry):
             "memory_modes": ["full", "stream"] if getattr(cls, "supports_streaming", False) else ["full"],
             "supports_cuda": bool(getattr(cls, "supports_cuda", False)),
             "title": name, "category": "扩展算子", "input_type": "Form",
-            "output_type": "Form" if cls.outputs or name in FORM_STEPS else "Report",
+            "output_type": "Form" if cls.outputs or getattr(cls, "output_parameter", None) or name in FORM_STEPS else "Report",
             "description": (cls.__doc__ or "").strip().split("\n")[0], "parameters": [],
         }
         descriptor.update(definitions.get(name, {}))

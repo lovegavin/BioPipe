@@ -42,6 +42,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._microbiome import metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -55,6 +57,17 @@ class DotplotStep(Step):
     name = "dotplot"
     inputs_arity = 2
     outputs = []
+    title = 'Dot plot'
+    category = 'Visualization'
+    builtin_package = 'biopipe-plots'
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['dotplot']
+    input_contracts, output_contract = CONTRACTS['dotplot']
+    output_parameter = None
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate_axis(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

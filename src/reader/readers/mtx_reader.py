@@ -29,9 +29,7 @@ Label rules accepted:
 A missing dim entry defaults to ``builtin``. Duplicate labels are
 disambiguated by appending ``#<position>``.
 
-Feature and barcode identifiers are used as labels directly. They
-are not encoded: the row (or column) index of each entry in the
-label map already identifies the position.
+Identifiers remain string axis labels, separate from the numeric count matrix.
 
 Reference
 ---------
@@ -54,14 +52,67 @@ from scipy.io import mmread
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
 class MtxReader(Reader):
     """Reader for MatrixMarket .mtx files."""
 
+    output_contract = reader_contract()
+
+    file_input = {'dims': ['gene', 'cell'], 'labels': {'gene': 'builtin', 'cell': 'builtin'}, 'compression': ['.gz'], 'companions': [['barcodes.tsv', 'barcodes.tsv.gz'], ['features.tsv', 'features.tsv.gz', 'genes.tsv', 'genes.tsv.gz']]}
+
     extensions = [".mtx"]
     handles_compression = True
+    supports_disk_read = True
+    disk_protocol = "dense-writer-v1"
+
+    def probe(self, path, **args):
+        with _open_maybe_gz(Path(path)) as handle:
+            _, _, shape, _ = _header(handle)
+        return {"file_bytes": Path(path).stat().st_size, "shape": shape,
+                "dtype": "float32", "dense_bytes": shape[0] * shape[1] * 4,
+                "preparation_bytes": shape[0] * shape[1] * 12}
+
+    def read_to_disk(self, path, dims, labels, writer, chunk_bytes, **args):
+        if len(dims) != 2:
+            raise ReaderError("MTX reader requires exactly two dims")
+        path = Path(path)
+        with _open_maybe_gz(path) as handle:
+            field, symmetry, shape, nnz = _header(handle)
+            if shape != writer.shape:
+                raise ReaderError("MTX dimensions changed since inspection")
+            from src.reader.disk import accumulator
+            dtype = np.int64 if field in ('integer', 'pattern') else np.float64
+            with accumulator(writer, dtype, chunk_bytes) as sums:
+                seen = 0
+                for line in handle:
+                    if not line.strip() or line.lstrip().startswith("%"):
+                        continue
+                    parts = line.split()
+                    if len(parts) != (2 if field == "pattern" else 3):
+                        raise ReaderError("Invalid MatrixMarket coordinate")
+                    row, column = int(parts[0]) - 1, int(parts[1]) - 1
+                    value = 1 if field == "pattern" else int(parts[2]) if field == "integer" else float(parts[2])
+                    sums.add(row, column, value)
+                    if symmetry != "general" and row != column:
+                        sums.add(column, row, -value if symmetry == "skew-symmetric" else value)
+                    seen += 1
+                    if seen > nnz:
+                        raise ReaderError("MTX has more entries than declared")
+                if seen != nnz:
+                    raise ReaderError("MTX is truncated")
+        barcodes = _find_sibling(path.parent, "barcodes.tsv")
+        features = _find_sibling(path.parent, "features.tsv") or _find_sibling(path.parent, "genes.tsv")
+        if barcodes is None or features is None:
+            raise ReaderError("MTX requires barcodes.tsv and features.tsv/genes.tsv")
+        indexes = [_read_tsv_column(features, 0), _read_tsv_column(barcodes, 0)]
+        if tuple(map(len, indexes)) != shape:
+            raise ReaderError("MTX axis labels do not match matrix shape")
+        return {"dims": list(dims), "labels": {
+            dim: _resolve_axis(labels.get(dim, "builtin"), values, dim, "mtx")
+            for dim, values in zip(dims, indexes)}, "info": {"missing_code": np.nan}, "axis_info": {}}
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:
@@ -120,11 +171,13 @@ class MtxReader(Reader):
             cell_dim: cell_labels,
         }
 
+        info: dict = {"missing_code": np.nan}
+
         return Form(
             data=data,
             dims=list(dims),
             labels=final,
-            info={"missing_code": np.nan},
+            info=info,
         )
 
 
@@ -134,6 +187,22 @@ def _open_maybe_gz(path: Path):
     if magic == b"\x1f\x8b":
         return gzip.open(path, "rt", encoding="utf-8")
     return open(path, encoding="utf-8")
+
+
+def _header(handle):
+    header = handle.readline().strip().lower().split()
+    if len(header) != 5 or header[:3] != ["%%matrixmarket", "matrix", "coordinate"]:
+        raise ReaderError("Disk MTX reading requires MatrixMarket coordinate format")
+    field, symmetry = header[3:]
+    if field not in ("real", "integer", "pattern") or symmetry not in ("general", "symmetric", "skew-symmetric", "hermitian"):
+        raise ReaderError("Unsupported MatrixMarket field or symmetry")
+    for line in handle:
+        if line.strip() and not line.lstrip().startswith("%"):
+            rows, columns, nnz = map(int, line.split())
+            if min(rows, columns, nnz) < 0 or (symmetry != "general" and rows != columns):
+                raise ReaderError("Invalid MatrixMarket dimensions")
+            return field, symmetry, (rows, columns), nnz
+    raise ReaderError("Missing MatrixMarket dimensions")
 
 
 def _find_sibling(parent: Path, stem: str) -> Path | None:

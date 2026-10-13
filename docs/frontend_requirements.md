@@ -41,6 +41,25 @@ and layered panels. Panels overlap the canvas visually rather than forming one f
 surface. Menus/drawers use short transitions and visible keyboard focus; reduced
 motion disables unnecessary animation.
 
+Layout should provide the guidance. Use grouping, alignment, spacing, familiar
+icons, restrained emphasis and visible state to make the next action apparent.
+Avoid persistent instructional paragraphs, repeated subtitles and marketing copy
+in the working canvas. An empty canvas uses a small branching diagram and a single
+input action; package management lives in the library footer. Node cards show
+file names or meaningful parameter summaries instead of operator descriptions.
+
+Keep labels, units, required parameter semantics, errors and real run status
+visible. Longer operator descriptions and shortcut reminders belong in contextual
+help, available on hover, keyboard focus or click and dismissible with Escape.
+Multi-file input requirements remain available in an expandable section. Budget
+summary values describe the allocation policy, not a live memory measurement.
+The allocation fraction comes from the backend (currently 90%). Studio shows a
+numeric budget preview captured once at backend startup, replaced by the actual
+budget when a run starts. There is no fixed byte cap or recurring free-RAM polling.
+Every library category, including routes, can collapse independently. The browser
+remembers its state; searching reveals matching categories and clearing the query
+restores the previous layout.
+
 Standard one-input/one-output nodes are 232×130 px with three layers. `nodeLayout.ts`
 centralizes dimensions, port rows and measured positions. Unselected nodes have
 soft multi-layer gray shadows; hover and selection deepen/enlarge them using a
@@ -75,14 +94,14 @@ Execution signatures ignore object key order, display titles and node positions.
 Changing inputs, parameters, connections, plugin pins or memory settings marks old
 results as stale. Measured UI dimensions are never stored as analysis configuration.
 
-Built-ins are scanned at startup and merged with UI metadata; plugins add generated
-descriptors after successful installation. Parameter forms use schemas with JSON
+Built-ins use generated package and route indexes maintained with `biopipe registry`;
+plugins add validated descriptors after successful installation. Parameter forms use schemas with JSON
 fallbacks. The browser never scans Python. The API is loopback-only, with authenticated
 writes and origin restrictions; each job runs in a separate directory/process.
 Uploads stream to local files instead of base64 JSON. Optional formats need their
 reader dependencies.
 
-Automatic memory selection occurs only immediately before running. Real sizes,
+The worker selects its automatic memory budget once immediately before running. Real sizes,
 RSS and spill records come from the manager; previews and figures come from actual
 artifacts. Cancel terminates that worker and records cancellation. Intermediate
 results are retained when explicitly requested. History can restore a job's graph.
@@ -108,8 +127,9 @@ python scripts/studio.py
 ```
 
 Use Python 3.11+ and Node 22.12+. The default localhost port is 8765; `--port` selects
-another. `npm run dev` proxies API requests to a separately running backend. Rebuild
-the desktop's resource copy after changing frontend source.
+another. `npm run dev` proxies API requests to a separately running backend. Frontend
+source builds update the development preview; copying those assets into the desktop
+distribution is a separate release step.
 
 The generated demo is a 128×24 CSV matrix with QC branching into PCA and describe.
 Acceptance covers real insertion/wiring/editing, save/restore, cross-tab copy/paste,

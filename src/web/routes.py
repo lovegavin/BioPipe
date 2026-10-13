@@ -128,7 +128,9 @@ def expand_routes(graph, catalog):
         flat_nodes.append(node)
         owners[node.id] = owner
 
-    def visit(current, path=(), bindings=None, ancestry=(), owner=None):
+    def visit(current, path=(), bindings=None, ancestry=(), owner=None, inherited_params=None):
+        from .references import remap_params
+        scoped_params = {**(inherited_params or {}), **current.params}
         nonlocal serial
         if len(path) > 6:
             fail("路线嵌套最多支持 6 层。", owner)
@@ -154,6 +156,7 @@ def expand_routes(graph, catalog):
                 endpoints[node.id] = [bindings[node.id]]
                 continue
             copied = node.model_copy(deep=True)
+            copied.context_params = {**scoped_params, **copied.context_params}
             if path:
                 digest = sha256("/".join((*path, node.id)).encode()).hexdigest()[:20]
                 copied.id = f"r_{digest}"
@@ -194,7 +197,7 @@ def expand_routes(graph, catalog):
                 fail(f"{node.title or definition.name}需要 {len(ports)} 个输入，请连接全部端口。", owner or node.id)
             wired = {port.node_id: source_endpoint(incoming[node_id][i].source, incoming[node_id][i].sourceHandle)
                      for i, port in enumerate(ports)}
-            inner = visit(definition.graph, (*path, node_id), wired, (*ancestry, definition.id), owner or node.id)
+            inner = visit(definition.graph, (*path, node_id), wired, (*ancestry, definition.id), owner or node.id, scoped_params)
             values = [inner(port.node_id, port.handle) for port in definition.graph.interface.outputs]
             endpoints[node_id] = values
             for alias, endpoint in zip(output_names(node, registry), values):
@@ -205,6 +208,15 @@ def expand_routes(graph, catalog):
 
         for node in current.nodes:
             resolve_node(node.id)
+        for name, endpoint in (bindings or {}).items():
+            produced = next(n for n in flat_nodes if n.id == endpoint[0])
+            local_names[name] = output_names(produced, registry)[port_index(endpoint[1])]
+        for node in current.nodes:
+            if node.kind != "operator":
+                continue
+            target_id = node.id if not path else "r_" + sha256("/".join((*path, node.id)).encode()).hexdigest()[:20]
+            copied = next(n for n in flat_nodes if n.id == target_id)
+            copied.params = remap_params(copied.operator, copied.params, local_names)
         for edge in current.edges:
             if nodes[edge.target].kind == "route":
                 continue

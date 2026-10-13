@@ -2,8 +2,8 @@ param([switch]$SkipFrontend, [string]$OutputDirectory)
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 $output = if ($OutputDirectory) { [System.IO.Path]::GetFullPath($OutputDirectory, $repo) } else { Join-Path $repo 'dist\BioPipe Studio' }
-$env:DOTNET_CLI_HOME = Join-Path $repo '.local\dotnet'
-$env:NUGET_PACKAGES = Join-Path $repo '.local\nuget'
+if (-not $env:DOTNET_CLI_HOME) { $env:DOTNET_CLI_HOME = Join-Path $repo '.local\dotnet' }
+if (-not $env:NUGET_PACKAGES) { $env:NUGET_PACKAGES = Join-Path $repo '.local\nuget' }
 $env:DOTNET_CLI_TELEMETRY_OPTOUT = '1'
 $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE = '1'
 $env:DOTNET_NOLOGO = '1'

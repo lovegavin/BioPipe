@@ -45,7 +45,9 @@ import numpy as np
 
 from src.core import Form, StepError
 from src.task.context import Context
+from src.core.forms.metadata import project_metadata
 from src.task.step.base import Step
+from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
 
 
 class JoinStep(Step):
@@ -54,6 +56,17 @@ class JoinStep(Step):
     name = "join"
     inputs_arity = 2
     outputs = []
+    title = 'Join'
+    category = "Microbiome"
+    builtin_package = "biopipe-microbiome"
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['join']
+    input_contracts, output_contract = CONTRACTS['join']
+    output_parameter = "output"
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         data_form, meta_form = inputs
@@ -170,13 +183,14 @@ class JoinStep(Step):
         for i, l in enumerate(common):
             if l in data_row_labels:
                 row = data_form.data[data_row_labels[l], :]
-                out_data[i, :n_data_feat] = row
+                code = data_form.info.get("missing_code", np.nan)
+                out_data[i, :n_data_feat] = np.where(row == code, np.nan, row)
             if l in meta_row_labels:
                 row = meta_form.data[meta_row_labels[l], :]
                 for k, c in enumerate(selected_cols):
-                    out_data[i, n_data_feat + k] = (
-                        row[meta_feature_labels[c]]
-                    )
+                    value = row[meta_feature_labels[c]]
+                    code = meta_form.info.get("missing_code", np.nan)
+                    out_data[i, n_data_feat + k] = np.nan if value == code else value
 
         out_labels = {
             dim: {l: i for i, l in enumerate(common)},
@@ -200,7 +214,14 @@ class JoinStep(Step):
                 new_encoders[new_name] = meta_encoders[c]
                 encoder_note.append(new_name)
 
-        out_info: dict = {"missing_code": np.nan}
+        # Keep row annotations aligned to the joined order. Feature-axis
+        # annotations gain missing entries for columns introduced by the join.
+        out_info, out_axes = project_metadata(data_form, {dim: [data_row_labels[label] for label in common]})
+        for field in out_axes.get(data_other_dim, []):
+            out_info[field] = list(out_info[field]) + [None] * len(attached_names)
+        out_info.update(missing_code=np.nan, representation="joined")
+        out_info.pop("ploidy", None)
+        out_info.pop("alphabet", None)
         if new_encoders:
             out_info["encoders"] = {data_other_dim: new_encoders}
 
@@ -209,6 +230,7 @@ class JoinStep(Step):
             dims=[dim, data_other_dim],
             labels=out_labels,
             info=out_info,
+            axis_info=out_axes,
         )
 
         n_unmatched = sum(
