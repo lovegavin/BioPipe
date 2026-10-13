@@ -1,4 +1,5 @@
 import { PluginPanel } from "./PluginPanel";
+import { version as studioVersion } from "../package.json";
 import {
   Component,
   memo,
@@ -1665,7 +1666,7 @@ function Studio() {
           {order.length} 个算子
         </span>
         <span>
-          BioPipe Studio <span className="mono">0.3</span>
+          BioPipe Studio <span className="mono">{studioVersion}</span>
         </span>
       </footer>
       {contextMenu && <>
