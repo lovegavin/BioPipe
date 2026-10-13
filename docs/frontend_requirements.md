@@ -117,6 +117,24 @@ event cursors and client-side context behavior. No model provider is built in.
 
 ## Development and acceptance
 
+### Operator presentation
+
+`frontend/src/operatorPresentation.ts` normalizes known category aliases, including
+English plugin categories, into the existing library groups. Unknown plugin
+categories remain available and sort after the standard groups. Built-in operators
+are grouped by function rather than their provider package or source workflow.
+
+The same `OperatorArtwork` renderer serves the library, canvas and inspector.
+`OperatorArtwork.tsx` contains deterministic monochrome SVG diagrams; these are
+illustrations of the operation, never actual analysis results. The presentation
+adapter supplies diagrams for the upstream axis and microbiome operators and
+preserves an explicit `preview` supplied by a provider. Presentation does not
+rewrite execution contracts, operator IDs, saved graphs or package fingerprints.
+
+When adding a built-in operator, supply its presentation and verify its glyph in
+all three surfaces. The frontend tests read the shipped registry and reject any
+built-in operator that falls back to the generic placeholder icon.
+
 ```text
 python -m pip install -e ".[agent,dev]"
 cd frontend

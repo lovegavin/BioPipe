@@ -84,6 +84,7 @@ import { LibrarySection } from "./LibrarySection";
 import { Results, statusLabel } from "./Results";
 import { OperatorIcon } from "./icons";
 import { OperatorArtwork } from "./OperatorArtwork";
+import { compareCategories, presentCatalog } from "./operatorPresentation";
 import { PanelResizeHandle } from "./PanelResizeHandle";
 import { automaticPanels, panelLimits, panelMaximum, resolvePanels } from "./panelLayout";
 import type { PanelSide, PanelWidths } from "./panelLayout";
@@ -236,10 +237,10 @@ function Studio() {
     canvas = useRef<HTMLDivElement>(null);
   const flow = useReactFlow<Block>(),
     busy = job?.status === "running";
-  const catalog = bootstrap?.catalog || {
+  const catalog = useMemo(() => presentCatalog(bootstrap?.catalog || {
     schema_version: 1 as const,
     operators: [],
-  };
+  }), [bootstrap?.catalog]);
   const inspectNode = useCallback((id: string | null) => {
     setSelected(id);
     setInspected(id);
@@ -1079,11 +1080,7 @@ function Studio() {
       .toLowerCase()
       .includes(search.toLowerCase()),
   );
-  const categories = [...new Set(filtered.map((o) => o.category))].sort(
-    (a, b) =>
-      ["质量控制", "统计分析", "数据整理", "可视化", "扩展算子"].indexOf(a) -
-      ["质量控制", "统计分析", "数据整理", "可视化", "扩展算子"].indexOf(b),
-  );
+  const categories = [...new Set(filtered.map((o) => o.category))].sort(compareCategories);
   return (
     <div
       className={`studio-shell ${resultsExpanded ? "results-expanded" : ""} ${resultsCollapsed ? "results-collapsed" : ""} ${resizingPanel ? "is-resizing-panel" : ""}`}
