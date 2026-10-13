@@ -125,11 +125,13 @@ categories remain available and sort after the standard groups. Built-in operato
 are grouped by function rather than their provider package or source workflow.
 
 The same `OperatorArtwork` renderer serves the library, canvas and inspector.
-`OperatorArtwork.tsx` contains deterministic monochrome SVG diagrams; these are
-illustrations of the operation, never actual analysis results. The presentation
-adapter supplies diagrams for the upstream axis and microbiome operators and
-preserves an explicit `preview` supplied by a provider. Presentation does not
-rewrite execution contracts, operator IDs, saved graphs or package fingerprints.
+Non-visual operators use compact monochrome functional icons, without chart frames
+or large inspector illustrations. For example, Bin uses equal-height interval
+columns to represent discretization. Plot operators retain deterministic SVG
+diagrams in `OperatorArtwork.tsx`; these illustrate chart families, never actual
+analysis results. The presentation adapter preserves an explicit `preview` supplied
+by a provider. Presentation does not rewrite execution contracts, operator IDs,
+saved graphs or package fingerprints.
 
 When adding a built-in operator, supply its presentation and verify its glyph in
 all three surfaces. The frontend tests read the shipped registry and reject any
