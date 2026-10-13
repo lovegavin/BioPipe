@@ -242,8 +242,21 @@
               "encoders": {
                 "type": "object",
                 "title": "Encoders",
-                "description": "Per-field encoder configuration.",
                 "additionalProperties": true
+              },
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Columns"
+              },
+              "info_columns": {
+                "type": "object",
+                "title": "Info columns",
+                "additionalProperties": {
+                  "type": "string"
+                }
               }
             },
             "additionalProperties": true
@@ -298,8 +311,19 @@
               "key": "encoders",
               "label": "Encoders",
               "type": "json",
-              "required": false,
-              "description": "Per-field encoder configuration."
+              "required": false
+            },
+            {
+              "key": "columns",
+              "label": "Columns",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "info_columns",
+              "label": "Info columns",
+              "type": "json",
+              "required": false
             }
           ],
           "name": "CsvReader",
@@ -433,6 +457,92 @@
               },
               "alphabet": {
                 "type": "string"
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "GafReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.gaf_reader:GafReader",
+          "title": "GafReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [],
+          "name": "GafReader",
+          "module": "src.reader.readers.gaf_reader",
+          "extensions": [
+            ".gaf"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": true,
+          "file_input": {
+            "dims": [
+              "annotation",
+              "field"
+            ],
+            "labels": {
+              "annotation": "auto",
+              "field": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
               }
             },
             "dims": [],
@@ -1240,6 +1350,148 @@
         },
         {
           "protocol_version": 1,
+          "id": "TsvReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.tsv_reader:TsvReader",
+          "title": "TsvReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "header": {
+                "type": "boolean",
+                "title": "Header row",
+                "default": true
+              },
+              "encoders": {
+                "type": "object",
+                "title": "Encoders",
+                "additionalProperties": true
+              },
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Columns"
+              },
+              "info_columns": {
+                "type": "object",
+                "title": "Info columns",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "header",
+              "label": "Header row",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            },
+            {
+              "key": "columns",
+              "label": "Columns",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "info_columns",
+              "label": "Info columns",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "TsvReader",
+          "module": "src.reader.readers.tsv_reader",
+          "extensions": [
+            ".tsv"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": true,
+          "file_input": {
+            "dims": [
+              "sample",
+              "feature"
+            ],
+            "labels": {
+              "sample": "auto",
+              "feature": "builtin"
+            },
+            "compression": [
+              ".gz",
+              ".bz2",
+              ".xz"
+            ]
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "TxtReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -1263,6 +1515,22 @@
                 "title": "Encoders",
                 "description": "Per-field encoder configuration.",
                 "additionalProperties": true
+              },
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Columns",
+                "description": "Restrict the reader to these header names, in order. Label indices still refer to the original file."
+              },
+              "info_columns": {
+                "type": "object",
+                "title": "Info columns",
+                "description": "Map a header name to an info field. The column is read as strings into info[field] and declared parallel to the row dimension.",
+                "additionalProperties": {
+                  "type": "string"
+                }
               },
               "reader": {
                 "type": "string",
@@ -1325,6 +1593,20 @@
               "description": "Per-field encoder configuration."
             },
             {
+              "key": "columns",
+              "label": "Columns",
+              "type": "list",
+              "required": false,
+              "description": "Restrict the reader to these header names, in order. Label indices still refer to the original file."
+            },
+            {
+              "key": "info_columns",
+              "label": "Info columns",
+              "type": "json",
+              "required": false,
+              "description": "Map a header name to an info field. The column is read as strings into info[field] and declared parallel to the row dimension."
+            },
+            {
               "key": "reader",
               "label": "Delegate reader",
               "type": "string",
@@ -1336,7 +1618,6 @@
           "module": "src.reader.readers.txt_reader",
           "extensions": [
             ".txt",
-            ".tsv",
             ".tab"
           ],
           "requires_siblings": [],
@@ -1522,6 +1803,143 @@
       "version": "1.0.0",
       "origin": "bundled",
       "descriptors": [
+        {
+          "protocol_version": 1,
+          "id": "annotate",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.annotate:AnnotateStep",
+          "title": "annotate",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "target_dim": {
+                "type": "string",
+                "title": "Target key dimension",
+                "description": "Dimension on the target form to align on."
+              },
+              "source_dim": {
+                "type": "string",
+                "title": "Reference key dimension",
+                "description": "Dimension on the reference form to align on."
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Fields to attach",
+                "minItems": 1,
+                "description": "Names of reference data columns or reference info fields. Data columns are looked up by their label on the field dimension; info fields must be declared parallel to the source key dimension."
+              },
+              "field_dim": {
+                "type": "string",
+                "title": "Reference field dimension"
+              },
+              "output": {
+                "type": "string",
+                "title": "Output key"
+              }
+            },
+            "required": [
+              "target_dim",
+              "source_dim",
+              "fields"
+            ]
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "target_dim",
+                    "default": null
+                  }
+                ],
+                "labels": [],
+                "parallel": []
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "source_dim",
+                    "default": null
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "unknown"
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "annotate",
+          "module": "src.task.step.steps.annotate",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "category": "扩展算子",
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Attach reference fields onto a target by key label.",
+          "parameters": [
+            {
+              "key": "target_dim",
+              "label": "Target key dimension",
+              "type": "string",
+              "required": true,
+              "description": "Dimension on the target form to align on."
+            },
+            {
+              "key": "source_dim",
+              "label": "Reference key dimension",
+              "type": "string",
+              "required": true,
+              "description": "Dimension on the reference form to align on."
+            },
+            {
+              "key": "fields",
+              "label": "Fields to attach",
+              "type": "list",
+              "required": true,
+              "description": "Names of reference data columns or reference info fields. Data columns are looked up by their label on the field dimension; info fields must be declared parallel to the source key dimension."
+            },
+            {
+              "key": "field_dim",
+              "label": "Reference field dimension",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "output",
+              "label": "Output key",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {},
+          "legacy_parameters": false
+        },
         {
           "protocol_version": 1,
           "id": "attach_info",
@@ -2228,6 +2646,453 @@
         },
         {
           "protocol_version": 1,
+          "id": "enrich_go",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.enrich_go:EnrichGoStep",
+          "title": "enrich_go",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "gene_dim": {
+                "type": "string",
+                "title": "Gene dimension",
+                "default": "gene"
+              },
+              "term_dim": {
+                "type": "string",
+                "title": "Term dimension",
+                "default": "go_term"
+              },
+              "correction": {
+                "type": "string",
+                "title": "Multiple-testing correction",
+                "enum": [
+                  "fdr",
+                  "bonferroni",
+                  "holm",
+                  "hommel",
+                  "fdr_by"
+                ],
+                "default": "fdr"
+              },
+              "min_term_size": {
+                "type": "integer",
+                "title": "Minimum term size",
+                "minimum": 1,
+                "default": 1
+              },
+              "output": {
+                "type": "string",
+                "title": "Output key"
+              }
+            }
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  },
+                  {
+                    "param": "term_dim",
+                    "default": "go_term"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  },
+                  {
+                    "param": "term_dim",
+                    "default": "go_term"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "enrich_go",
+          "module": "src.task.step.steps.enrich_go",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "category": "扩展算子",
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Hypergeometric enrichment of one term axis over two inputs.",
+          "parameters": [
+            {
+              "key": "gene_dim",
+              "label": "Gene dimension",
+              "type": "string",
+              "required": false,
+              "default": "gene"
+            },
+            {
+              "key": "term_dim",
+              "label": "Term dimension",
+              "type": "string",
+              "required": false,
+              "default": "go_term"
+            },
+            {
+              "key": "correction",
+              "label": "Multiple-testing correction",
+              "type": "choice",
+              "required": false,
+              "default": "fdr",
+              "options": [
+                "fdr",
+                "bonferroni",
+                "holm",
+                "hommel",
+                "fdr_by"
+              ]
+            },
+            {
+              "key": "min_term_size",
+              "label": "Minimum term size",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "Output key",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "gene_dim": "gene",
+            "term_dim": "go_term",
+            "correction": "fdr",
+            "min_term_size": 1
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "enrichment_plot",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.enrichment_plot:EnrichmentPlotStep",
+          "title": "enrichment_plot",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "term_dim": {
+                "type": "string",
+                "title": "Term dimension"
+              },
+              "statistic_dim": {
+                "type": "string",
+                "title": "Statistic dimension",
+                "default": "statistic"
+              },
+              "q_column": {
+                "type": "string",
+                "title": "Q-value column",
+                "default": "Q_VALUE"
+              },
+              "size_column": {
+                "type": "string",
+                "title": "Color column",
+                "default": "n_hit"
+              },
+              "top_n": {
+                "type": "integer",
+                "title": "Top N terms",
+                "minimum": 1,
+                "default": 20
+              },
+              "filename": {
+                "type": "string",
+                "title": "Output filename",
+                "default": "enrichment.png"
+              },
+              "title": {
+                "type": "string",
+                "title": "Plot title"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "report"
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "enrichment_plot",
+          "module": "src.task.step.steps.enrichment_plot",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": null,
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "category": "扩展算子",
+          "input_type": "Form",
+          "output_type": "Report",
+          "description": "Horizontal bar plot of enrichment results.",
+          "parameters": [
+            {
+              "key": "term_dim",
+              "label": "Term dimension",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "statistic_dim",
+              "label": "Statistic dimension",
+              "type": "string",
+              "required": false,
+              "default": "statistic"
+            },
+            {
+              "key": "q_column",
+              "label": "Q-value column",
+              "type": "string",
+              "required": false,
+              "default": "Q_VALUE"
+            },
+            {
+              "key": "size_column",
+              "label": "Color column",
+              "type": "string",
+              "required": false,
+              "default": "n_hit"
+            },
+            {
+              "key": "top_n",
+              "label": "Top N terms",
+              "type": "integer",
+              "required": false,
+              "default": 20,
+              "min": 1
+            },
+            {
+              "key": "filename",
+              "label": "Output filename",
+              "type": "string",
+              "required": false,
+              "default": "enrichment.png"
+            },
+            {
+              "key": "title",
+              "label": "Plot title",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "statistic_dim": "statistic",
+            "q_column": "Q_VALUE",
+            "size_column": "n_hit",
+            "top_n": 20,
+            "filename": "enrichment.png"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "explode",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.explode:ExplodeStep",
+          "title": "explode",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "dim": {
+                "type": "string",
+                "title": "Dimension to expand"
+              },
+              "field": {
+                "type": "string",
+                "title": "Multi-valued field",
+                "description": "Info field declared parallel to 'dim'. Each cell is split by 'sep'."
+              },
+              "sep": {
+                "type": "string",
+                "title": "Separator",
+                "default": ";",
+                "minLength": 1
+              },
+              "keep_empty": {
+                "type": "boolean",
+                "title": "Keep empty",
+                "default": false
+              },
+              "output": {
+                "type": "string",
+                "title": "Output key"
+              }
+            },
+            "required": [
+              "dim",
+              "field"
+            ]
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "dim",
+                    "default": null
+                  }
+                ],
+                "labels": [],
+                "parallel": [
+                  {
+                    "fields": {
+                      "param": "field",
+                      "default": null
+                    },
+                    "dim": {
+                      "param": "dim",
+                      "default": null
+                    }
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "explode",
+          "module": "src.task.step.steps.explode",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "category": "扩展算子",
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Expand a multi-valued info field into separate positions.",
+          "parameters": [
+            {
+              "key": "dim",
+              "label": "Dimension to expand",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "field",
+              "label": "Multi-valued field",
+              "type": "string",
+              "required": true,
+              "description": "Info field declared parallel to 'dim'. Each cell is split by 'sep'."
+            },
+            {
+              "key": "sep",
+              "label": "Separator",
+              "type": "string",
+              "required": false,
+              "default": ";"
+            },
+            {
+              "key": "keep_empty",
+              "label": "Keep empty",
+              "type": "boolean",
+              "required": false,
+              "default": false
+            },
+            {
+              "key": "output",
+              "label": "Output key",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sep": ";",
+            "keep_empty": false
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "filter_by",
           "version": "1.0.0",
           "kind": "operator",
@@ -2353,6 +3218,419 @@
             }
           ],
           "runtime_defaults": {},
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "order_axis",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.order_axis:OrderAxisStep",
+          "title": "order_axis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "dim": {
+                "type": "string",
+                "title": "Dimension to reorder"
+              },
+              "by": {
+                "type": "string",
+                "title": "Ordering field",
+                "description": "Numeric info field declared parallel to 'dim'."
+              },
+              "descending": {
+                "type": "boolean",
+                "title": "Descending",
+                "default": false
+              },
+              "output": {
+                "type": "string",
+                "title": "Output key"
+              }
+            },
+            "required": [
+              "dim",
+              "by"
+            ]
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "dim",
+                    "default": null
+                  }
+                ],
+                "labels": [],
+                "parallel": [
+                  {
+                    "fields": {
+                      "param": "by",
+                      "default": null
+                    },
+                    "dim": {
+                      "param": "dim",
+                      "default": null
+                    }
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "mode": "unknown"
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "order_axis",
+          "module": "src.task.step.steps.order_axis",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "category": "扩展算子",
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Reorder an axis by a numeric info field, keeping all positions.",
+          "parameters": [
+            {
+              "key": "dim",
+              "label": "Dimension to reorder",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "by",
+              "label": "Ordering field",
+              "type": "string",
+              "required": true,
+              "description": "Numeric info field declared parallel to 'dim'."
+            },
+            {
+              "key": "descending",
+              "label": "Descending",
+              "type": "boolean",
+              "required": false,
+              "default": false
+            },
+            {
+              "key": "output",
+              "label": "Output key",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "descending": false
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "pivot",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.pivot:PivotStep",
+          "title": "pivot",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "index_label": {
+                "type": "string",
+                "title": "Index column",
+                "description": "Column label that becomes the row axis."
+              },
+              "columns_label": {
+                "type": "string",
+                "title": "Columns column",
+                "description": "Column label that becomes the column axis."
+              },
+              "values_label": {
+                "type": "string",
+                "title": "Values column",
+                "description": "Optional column supplying cell values. Without it every observed pair contributes 1."
+              },
+              "index_name": {
+                "type": "string",
+                "title": "Row axis name"
+              },
+              "columns_name": {
+                "type": "string",
+                "title": "Column axis name"
+              },
+              "agg": {
+                "type": "string",
+                "title": "Aggregation",
+                "enum": [
+                  "sum",
+                  "first",
+                  "max",
+                  "min",
+                  "count"
+                ],
+                "default": "sum"
+              },
+              "output": {
+                "type": "string",
+                "title": "Output key"
+              }
+            },
+            "required": [
+              "index_label",
+              "columns_label"
+            ]
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "pivot",
+          "module": "src.task.step.steps.pivot",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "category": "扩展算子",
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Pivot a long 2D table into a wide matrix by two categorical columns.",
+          "parameters": [
+            {
+              "key": "index_label",
+              "label": "Index column",
+              "type": "string",
+              "required": true,
+              "description": "Column label that becomes the row axis."
+            },
+            {
+              "key": "columns_label",
+              "label": "Columns column",
+              "type": "string",
+              "required": true,
+              "description": "Column label that becomes the column axis."
+            },
+            {
+              "key": "values_label",
+              "label": "Values column",
+              "type": "string",
+              "required": false,
+              "description": "Optional column supplying cell values. Without it every observed pair contributes 1."
+            },
+            {
+              "key": "index_name",
+              "label": "Row axis name",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "columns_name",
+              "label": "Column axis name",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "agg",
+              "label": "Aggregation",
+              "type": "choice",
+              "required": false,
+              "default": "sum",
+              "options": [
+                "sum",
+                "first",
+                "max",
+                "min",
+                "count"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "Output key",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "agg": "sum"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "prioritize",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.prioritize:PrioritizeStep",
+          "title": "prioritize",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "dim": {
+                "type": "string",
+                "title": "Dimension to sort",
+                "description": "Axis along which positions are ranked."
+              },
+              "by": {
+                "type": "string",
+                "title": "Ranking field",
+                "description": "Numeric info field declared parallel to 'dim'. Cannot be an encoded field."
+              },
+              "top_n": {
+                "type": "integer",
+                "title": "Top N",
+                "minimum": 1
+              },
+              "ascending": {
+                "type": "boolean",
+                "title": "Ascending",
+                "default": false,
+                "description": "False ranks largest first; True ranks smallest first."
+              },
+              "output": {
+                "type": "string",
+                "title": "Output key"
+              }
+            },
+            "required": [
+              "dim",
+              "by",
+              "top_n"
+            ]
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "dim",
+                    "default": null
+                  }
+                ],
+                "labels": [],
+                "parallel": [
+                  {
+                    "fields": {
+                      "param": "by",
+                      "default": null
+                    },
+                    "dim": {
+                      "param": "dim",
+                      "default": null
+                    }
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "mode": "subset"
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "prioritize",
+          "module": "src.task.step.steps.prioritize",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "category": "扩展算子",
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Keep the top positions along a dimension, ranked by an info field.",
+          "parameters": [
+            {
+              "key": "dim",
+              "label": "Dimension to sort",
+              "type": "string",
+              "required": true,
+              "description": "Axis along which positions are ranked."
+            },
+            {
+              "key": "by",
+              "label": "Ranking field",
+              "type": "string",
+              "required": true,
+              "description": "Numeric info field declared parallel to 'dim'. Cannot be an encoded field."
+            },
+            {
+              "key": "top_n",
+              "label": "Top N",
+              "type": "integer",
+              "required": true,
+              "min": 1
+            },
+            {
+              "key": "ascending",
+              "label": "Ascending",
+              "type": "boolean",
+              "required": false,
+              "description": "False ranks largest first; True ranks smallest first.",
+              "default": false
+            },
+            {
+              "key": "output",
+              "label": "Output key",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "ascending": false
+          },
           "legacy_parameters": false
         },
         {

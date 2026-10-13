@@ -1,9 +1,8 @@
 # src/reader/readers/txt_reader.py
 """Generic text reader that delegates to another reader.
 
-Handles .txt, .tsv, .tab and similar extensions that have no
-dedicated reader. Parsing is delegated to another registered reader,
-selected by name.
+Handles .txt and .tab extensions that have no dedicated reader.
+Parsing is delegated to another registered reader, selected by name.
 
 Params:
     reader : name of the reader to delegate to, matched against the
@@ -13,7 +12,7 @@ Params:
     All other args are forwarded to the delegated reader.
 
 When the delegate is CsvReader and ``sep`` is not given, a tab
-separator is assumed for .txt, .tsv, and .tab files.
+separator is assumed for .txt and .tab files.
 """
 
 from __future__ import annotations
@@ -33,7 +32,7 @@ class TxtReader(Reader):
 
     file_input = {'dims': ['sample', 'feature'], 'labels': {'sample': 'auto', 'feature': 'builtin'}}
 
-    extensions = [".txt", ".tsv", ".tab"]
+    extensions = [".txt", ".tab"]
     handles_compression = False
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
@@ -49,7 +48,7 @@ class TxtReader(Reader):
         # Sensible default separator for the CSV delegate.
         if type(delegate).__name__ == "CsvReader" and "sep" not in args:
             ext = path.suffix.lower()
-            if ext in (".tsv", ".tab", ".txt"):
+            if ext in (".tab", ".txt"):
                 args["sep"] = "\t"
 
         form = delegate.read(path, dims, labels, **args)

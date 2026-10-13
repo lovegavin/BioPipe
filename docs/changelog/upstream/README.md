@@ -6,6 +6,7 @@ Version history of the BioPipe Python engine and its operators.
 |---|---|---|
 | v1 | initial | Four-protocol engine, 12 Readers, 18 Steps, GWAS demo |
 | v2 | current | 28 new Steps, 1 new Reader, 1 Reader change, five end-to-end paths |
+| v3 | current | GO enrichment pipeline, 2 new Readers, 7 new Steps, reader-owns-format principle |
 
 Each entry lists the new Readers, new Steps, contract changes, and end-to-end pipelines added in that version. Breaking changes are marked explicitly.
 

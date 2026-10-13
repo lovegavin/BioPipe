@@ -1,0 +1,34 @@
+name: annotate_demo
+
+sources:
+  variants:
+    path: input/gwas-catalog-associations-full.tsv
+    dims: [variant, field]
+    labels:
+      variant: {field: 21}
+      field: builtin
+    args:
+      columns: ["SNPS", "P-VALUE", "OR or BETA"]
+
+  reference:
+    path: input/gwas-catalog-associations-full.tsv
+    dims: [variant_id, field]
+    labels:
+      variant_id: {field: 21}
+      field: builtin
+    args:
+      columns: ["SNPS", "MAPPED_GENE", "CONTEXT", "RISK ALLELE FREQUENCY"]
+      info_columns:
+        "RISK ALLELE FREQUENCY": risk_allele_frequency
+
+steps:
+  - name: annotate
+    inputs: [variants, reference]
+    params:
+      target_dim: variant
+      source_dim: variant_id
+      fields: [MAPPED_GENE, CONTEXT, risk_allele_frequency]
+      output: annotated
+
+  - name: describe
+    inputs: [annotated]

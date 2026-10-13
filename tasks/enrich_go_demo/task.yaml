@@ -1,0 +1,40 @@
+name: enrich_go_demo
+
+sources:
+  gaf:
+    path: input/goa_human.gaf.gz
+    dims: [annotation, field]
+    labels:
+      annotation: auto
+      field: builtin
+
+steps:
+  - name: pivot
+    inputs: [gaf]
+    params:
+      index_label: db_object_symbol
+      columns_label: go_id
+      index_name: gene
+      columns_name: go_term
+      agg: first
+      output: universe
+
+  - name: rank_axis
+    inputs: [universe]
+    params:
+      dim: gene
+      by: sum
+      top_n: 200
+      output: hits
+
+  - name: enrich_go
+    inputs: [hits, universe]
+    params:
+      gene_dim: gene
+      term_dim: go_term
+      correction: fdr
+      min_term_size: 5
+      output: enriched
+
+  - name: describe
+    inputs: [enriched]

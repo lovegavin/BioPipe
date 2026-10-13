@@ -1,0 +1,21 @@
+name: explode_demo
+
+sources:
+  gaf:
+    path: input/goa_human.gaf.gz
+    dims: [annotation, field]
+    labels:
+      annotation: auto
+      field: builtin
+
+steps:
+  - name: explode
+    inputs: [gaf]
+    params:
+      dim: annotation
+      field: db_object_synonym
+      sep: "|"
+      output: annotation_synonym_long
+
+  - name: describe
+    inputs: [annotation_synonym_long]

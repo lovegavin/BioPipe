@@ -91,8 +91,8 @@ class DescribeStep(Step):
         print(f"  shape:  {tuple(data.shape)}")
         print(f"  dims:   {form.dims}")
         print(f"  info:   {form.info}")
-        if form.labels:
-            print(f"  labels: {form.labels}")
+        # if form.labels:
+        #     print(f"  labels: {form.labels}")
         if finite.size > 0:
             print(
                 f"  global: min={float(np.min(finite)):.4f} "
