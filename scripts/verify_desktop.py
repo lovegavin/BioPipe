@@ -4,6 +4,7 @@ from __future__ import annotations
 from datetime import datetime
 import argparse
 import json
+import os
 from pathlib import Path
 import socket
 import subprocess
@@ -30,6 +31,7 @@ def main():
     executable = parser.parse_args().executable.resolve()
     profile = ROOT / ".verification" / ("desktop-lifecycle-" + datetime.now().strftime("%Y%m%d-%H%M%S"))
     profile.mkdir(parents=True)
+    os.environ["BIOPIPE_RUNTIME_CONFIG"] = str(profile / "runtime.json")
     log = profile / "logs" / ("desktop-" + datetime.now().strftime("%Y%m%d") + ".log")
     def log_text():
         return log.read_text(encoding="utf-8-sig") if log.exists() else ""

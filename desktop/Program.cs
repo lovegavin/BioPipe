@@ -28,17 +28,27 @@ internal static class Program
         string? profileOverride = null;
         var smoke = false;
         var checkProfile = false;
+        var selectRuntime = false;
         for (var i = 0; i < args.Length; i++)
         {
             if ((args[i] == "--data-dir" || args[i] == "--profile-dir") && i + 1 < args.Length) profileOverride = args[++i];
             else if (args[i] == "--smoke-test") smoke = true;
             else if (args[i] == "--check-profile") checkProfile = true;
+            else if (args[i] == "--select-runtime") selectRuntime = true;
             else return 2;
         }
         RuntimePaths runtime;
         ProfilePaths profile;
         try {
-            runtime = RuntimeLocator.Resolve(AppContext.BaseDirectory).GetAwaiter().GetResult();
+            if (selectRuntime && (smoke || checkProfile)) return 2;
+            try {
+                if (selectRuntime) throw new RuntimeNotFoundException("Python 3.11+ · 已安装 requirements-studio.txt", true);
+                runtime = RuntimeLocator.Resolve(AppContext.BaseDirectory).GetAwaiter().GetResult();
+            } catch (RuntimeNotFoundException error) when (error.Automatic && !smoke && !checkProfile) {
+                using var picker = new RuntimeSelectionDialog(AppContext.BaseDirectory, error.Message);
+                if (picker.ShowDialog() != DialogResult.OK || picker.SelectedRuntime is null) return 1;
+                runtime = picker.SelectedRuntime;
+            }
             profile = RuntimeLocator.ResolveProfile(runtime, profileOverride).GetAwaiter().GetResult();
             if (checkProfile) {
                 Console.SetOut(new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(false)) { AutoFlush = true });

@@ -10,6 +10,8 @@ import subprocess
 import tomllib
 import zipfile
 
+from audit_portability import audit_files
+
 
 def main():
     root = Path(__file__).resolve().parents[1]
@@ -70,20 +72,29 @@ def main():
     (destination / 'START_HERE.txt').write_text(f'''BioPipe Studio {version} - Windows x64
 
 1. Extract this entire folder. Keep the executable and adjacent files together.
-2. Install Python 3.11+ and Microsoft Edge WebView2 Runtime if needed.
-3. In this folder, create/configure your Python environment:
+2. Double-click BioPipe Studio.exe. An existing BioPipe environment is discovered
+   automatically, including remembered environments and registered Conda/Python.
+   If prompted, select your environment's python.exe; the choice is remembered.
+3. If this computer has no suitable environment, install Python 3.11+ and
+   Microsoft Edge WebView2 Runtime as needed, then create/configure an environment:
    python -m venv .venv
    .venv\\Scripts\\python.exe -m pip install -e ".[agent]"
-4. Double-click BioPipe Studio.exe.
+4. Double-click BioPipe Studio.exe again.
 
 For survival analysis and DESeq2, install requirements-analysis.txt in that environment.
 For optional input formats, install requirements-readers.txt as needed.
 Existing environments may be selected with BIOPIPE_PYTHON or biopipe-desktop.json.
+To select an interpreter again, use BioPipe Studio.exe --select-runtime.
+The local runtime hint ~/.biopipe/runtime.json is never included in this package.
 Python and analysis dependencies are not bundled; .NET and the UI are bundled.
 User data and route registries are stored under ~/.biopipe/studio by default.
 Start Studio before connecting your own agent through MCP. See docs/agent_api.md.
 There is no bundled AI service. Graph edits do not execute analyses.
 ''', encoding='utf-8')
+    audit = audit_files((p for p in destination.rglob('*') if p.is_file()
+                        and 'THIRD_PARTY_NOTICES' not in p.relative_to(destination).parts), destination)
+    if audit['findings']:
+        raise RuntimeError('Developer paths in release: ' + json.dumps(audit['findings']))
     commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
     manifest = {'version': version, 'source_commit': commit, 'python_bundled': False, 'files': []}
     for file in sorted(destination.rglob('*')):

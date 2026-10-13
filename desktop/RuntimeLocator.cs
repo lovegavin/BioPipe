@@ -14,6 +14,10 @@ internal sealed class DesktopConfiguration
 
 internal sealed record RuntimePaths(string BackendRoot, string Python, string EntryPoint, string Frontend);
 internal sealed record ProfilePaths(string ProfileDir, string Workspace, string DataDir, string Registry, bool MigrateLegacy);
+internal sealed class RuntimeNotFoundException(string message, bool automatic) : InvalidOperationException(message)
+{
+    public bool Automatic { get; } = automatic;
+}
 
 internal static class RuntimeLocator
 {
@@ -46,7 +50,7 @@ internal static class RuntimeLocator
             data.GetProperty("migrate_legacy").GetBoolean());
     }
 
-    public static async Task<RuntimePaths> Resolve(string install)
+    public static async Task<RuntimePaths> Resolve(string install, string? pythonOverride = null)
     {
         var configuration = JsonSerializer.Deserialize<DesktopConfiguration>(
             File.ReadAllText(Path.Combine(install, "biopipe-desktop.json")),
@@ -61,7 +65,7 @@ internal static class RuntimeLocator
                 "或设置 biopipe-desktop.json 的 backendRoot / BIOPIPE_BACKEND_ROOT。\n" + script);
         if (!File.Exists(Path.Combine(frontend, "index.html")))
             throw new FileNotFoundException("前端资源不完整。请保留 exe 旁边的 frontend 文件夹。");
-        var setting = Environment.GetEnvironmentVariable("BIOPIPE_PYTHON") ?? configuration.Python;
+        var setting = pythonOverride ?? Environment.GetEnvironmentVariable("BIOPIPE_PYTHON") ?? configuration.Python;
         var automatic = string.IsNullOrWhiteSpace(setting) || setting.Equals("auto", StringComparison.OrdinalIgnoreCase);
         var candidates = automatic ? Candidates(backendRoot) : Explicit(setting, backendRoot);
         var failures = new List<string>();
@@ -77,9 +81,11 @@ internal static class RuntimeLocator
             catch (Exception error) when (error is not OutOfMemoryException)
             { failures.Add(candidate.File + ": " + error.Message); }
         }
-        throw new InvalidOperationException("未找到可运行 BioPipe 的 Python 3.11+ 环境。" +
+        throw new RuntimeNotFoundException("未找到可运行 BioPipe 的 Python 3.11+ 环境。" +
             "请在已有环境安装 requirements-studio.txt，或用 BIOPIPE_PYTHON / biopipe-desktop.json 的 python 指定解释器。" +
-            "\n虚拟环境不能直接从另一台电脑复制，请在目标电脑创建。\n\n" + string.Join("\n", failures));
+            (automatic ? "\n已检查已记住的环境、项目环境、活动环境、PATH、Conda 环境记录和 Windows Python 注册项。"
+                : "\n明确指定的解释器未通过检查。") +
+            "\n\n" + string.Join("\n", failures), automatic);
     }
 
     private static string Expand(string path, string root) =>
@@ -102,7 +108,9 @@ internal static class RuntimeLocator
 
     private static IEnumerable<Candidate> Candidates(string root)
     {
-        // A project environment wins; a broken/copied venv does not hide a usable system environment.
+        // A remembered selection wins, including an environment chosen with the picker.
+        // Stale hints and broken/copied venvs never hide a usable fallback.
+        if (RuntimePreferences.Read() is string remembered) yield return new(remembered);
         foreach (var relative in new[] { ".venv/Scripts/python.exe", ".venv/bin/python", "venv/Scripts/python.exe", "venv/bin/python" })
         {
             var path = Path.Combine(root, relative);
@@ -111,7 +119,7 @@ internal static class RuntimeLocator
         foreach (var variable in new[] { "VIRTUAL_ENV", "CONDA_PREFIX" })
         {
             var prefix = Environment.GetEnvironmentVariable(variable);
-            if (string.IsNullOrWhiteSpace(prefix)) continue;
+            if (string.IsNullOrWhiteSpace(prefix) || !Path.IsPathFullyQualified(prefix)) continue;
             foreach (var relative in new[] { "Scripts/python.exe", "python.exe", "bin/python" })
             {
                 var path = Path.Combine(prefix, relative);
@@ -121,6 +129,14 @@ internal static class RuntimeLocator
         foreach (var command in new[] { "python", "python3" })
             foreach (var path in OnPath(command)) yield return new(path);
         foreach (var path in OnPath("py")) yield return new(path, "-3");
+        foreach (var prefix in RuntimePreferences.CondaPrefixes())
+            foreach (var relative in new[] { "python.exe", "Scripts/python.exe", "bin/python" })
+            {
+                var path = Path.Combine(prefix, relative);
+                if (File.Exists(path)) yield return new(path);
+            }
+        foreach (var path in RuntimePreferences.RegisteredPython())
+            if (File.Exists(path)) yield return new(path);
     }
 
     private static IEnumerable<string> OnPath(string command)

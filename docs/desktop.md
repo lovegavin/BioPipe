@@ -15,9 +15,23 @@ The adjacent `biopipe-desktop.json` uses relative defaults:
 ```
 
 `backendRoot` and `frontend` are relative to the executable. `entryPoint` is relative
-to the backend root. Auto-discovery checks project `.venv`/`venv`, active venv/Conda,
-PATH Python commands and the Windows Python Launcher, validating Python version and
-core dependencies. Invalid environments and Windows Store aliases are skipped.
+to the backend root. Auto-discovery checks the remembered interpreter, project
+`.venv`/`venv`, active venv/Conda, PATH Python commands, the Windows Python Launcher,
+Conda's `~/.conda/environments.txt` and Windows Python registrations (PEP 514).
+Each candidate is checked for Python 3.11+ and core dependencies. Invalid
+environments and Windows Store aliases are skipped; no whole-disk scan is used.
+
+Successful development/desktop startup remembers its interpreter in
+`~/.biopipe/runtime.json`. This machine-local bootstrap hint is shared across
+release folders and is independent of canvas profiles, because the host needs
+Python before it can resolve the full profile. It is never bundled into releases.
+`BIOPIPE_RUNTIME_CONFIG` can select a separate file (relative paths are relative
+to the user home). Missing, stale or corrupt hints do not prevent other discovery.
+
+If automatic discovery fails, the desktop offers a file picker for an existing
+environment's `python.exe`. Validation runs before it is remembered. Use
+`BioPipe Studio.exe --select-runtime` to choose again. Explicit config/environment
+overrides still take priority over remembered hints on subsequent launches.
 
 `python` can also be a path relative to the backend, an absolute path or a PATH
 command. `BIOPIPE_PYTHON` and `BIOPIPE_BACKEND_ROOT` override config fields; environment
@@ -56,7 +70,8 @@ Python to resolve it. The default does not use AppData or depend on cwd.
     migrations/<source-id>/    source copies, backups and migration receipts
 ```
 
-Registries are ordinary JSON files; BioPipe does not modify the Windows registry.
+BioPipe registries are ordinary JSON files; discovery reads, but never modifies,
+the Windows registry.
 First launch installs GWAS, RNA-seq DE, Proteomics DE, survival and 16S microbiome templates. Saving
 a graph does not register it: select saved routes with the library plus button.
 
@@ -127,6 +142,10 @@ live profile, workspace and registry when diagnosing a running instance.
 fallback, process-tree cleanup and draft/task recovery in isolated test profiles.
 `python scripts/verify_portability.py` additionally checks relocated paths, alternate
 working directories and runtime discovery. Evidence is saved under `.verification`.
+`python scripts/verify_runtime_discovery.py` covers a remembered environment with
+empty PATH and no activated shell, stale records, explicit overrides, Conda records
+and a complete real WebView2 startup/shutdown. Test runtime hints are isolated from
+the user's own hint. `--check-runtime` remains read-only and never opens a picker.
 
 For agents, use the Agent panel's generated MCP configuration; it uses the actual
 runtime and workspace, avoiding PATH/profile mismatches. Moving the application

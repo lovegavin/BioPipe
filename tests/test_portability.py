@@ -60,6 +60,11 @@ def test_dependency_manifests_do_not_reference_local_builds():
     assert not any("cuda" in str(dep) or "_libgcc_mutex" in str(dep) for dep in environment["dependencies"])
 
 
+def test_active_source_has_no_developer_paths():
+    from scripts.audit_portability import active_files, audit_files
+    assert audit_files(active_files(ROOT), ROOT)["findings"] == []
+
+
 def test_export_runs_after_moving_code_and_data_from_unrelated_cwd(tmp_path):
     original = tmp_path / "first checkout"
     original.mkdir()
