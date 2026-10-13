@@ -1,5 +1,6 @@
 """Visual graph compilation and real local-worker API integration."""
 from copy import deepcopy
+import json
 from pathlib import Path
 import time
 from types import SimpleNamespace
@@ -98,8 +99,41 @@ def test_only_run_start_scans_available_memory(tmp_path, monkeypatch):
     compile_graph(graph, catalog, tmp_path)
     assert calls == []
     ctx = Context(tmp_path, manifest)
-    assert calls == [1] and ctx.memory.config.budget_bytes == 256 * 1024**2
+    assert calls == [1] and ctx.memory.config.budget_bytes == int(1024**3 * .9)
+    assert ctx.memory.config.available_at_start_bytes == 1024**3
+    ctx.memory.configure([], STEPS)
     ctx.memory.close("failed")
+    assert calls == [1]
+    assert ctx.memory.report["available_at_start_bytes"] == 1024**3
+    started = json.loads(ctx.memory.event_path.read_text(encoding="utf-8").splitlines()[0])
+    assert started["available_at_start_bytes"] == 1024**3
+    assert started["budget_bytes"] == int(1024**3 * .9)
+
+
+def test_bootstrap_publishes_memory_policy_without_scanning(studio, monkeypatch):
+    client, _ = studio
+    monkeypatch.setattr("psutil.virtual_memory", lambda: pytest.fail("bootstrap must not scan RAM"))
+    assert client.get("/api/bootstrap").json()["automatic_memory_fraction"] == .9
+
+
+def test_startup_budget_preview_is_cached_and_has_no_fixed_cap(tmp_path, monkeypatch):
+    calls = []
+    monkeypatch.setattr("psutil.virtual_memory", lambda: calls.append(1) or SimpleNamespace(available=128 * 1024**3))
+    app = create_app(Settings(tmp_path, tmp_path / "s", ROOT / "frontend/dist", testing=True, code_root=ROOT))
+    with TestClient(app) as client:
+        for _ in range(2):
+            data = client.get("/api/bootstrap").json()
+            assert data["automatic_memory_budget_bytes"] == int(128 * 1024**3 * .9)
+    assert calls == [1]
+
+
+def test_unavailable_memory_preview_does_not_invent_a_budget(tmp_path, monkeypatch):
+    def unavailable():
+        raise OSError("scanner unavailable")
+    monkeypatch.setattr("psutil.virtual_memory", unavailable)
+    app = create_app(Settings(tmp_path, tmp_path / "s", ROOT / "frontend/dist", testing=True, code_root=ROOT))
+    with TestClient(app) as client:
+        assert client.get("/api/bootstrap").json()["automatic_memory_budget_bytes"] is None
 
 
 def test_session_token_and_streamed_upload(studio):

@@ -28,7 +28,7 @@ def test_builtin_install_library_controls_and_persisted_removal(tmp_path):
     with TestClient(app) as client:
         client.headers["X-Studio-Token"] = client.get("/api/bootstrap").json()["token"]
         routes = client.get("/api/routes").json()
-        assert {r["name"] for r in routes} == {"GWAS", "RNA-seq DE", "Proteomics DE", "生存分析"}
+        assert {r["name"] for r in routes} == {"GWAS", "RNA-seq DE", "Proteomics DE", "生存分析", "16S Microbiome"}
         key = routes[0]["id"]
         for operator in (key, "pca"):
             result = client.post("/api/library/manage", json={"key": operator, "action": "disable"})
@@ -39,11 +39,11 @@ def test_builtin_install_library_controls_and_persisted_removal(tmp_path):
         for operator in (key, "pca"):
             assert client.post("/api/library/manage", json={"key": operator, "action": "delete"}).status_code == 200
         restarted.install_builtins()
-        assert len(restarted.routes()) == 3  # Startup must not resurrect deleted templates.
+        assert len(restarted.routes()) == len(BUNDLE) - 1  # Startup must not resurrect deleted templates.
         assert restarted.get(key)["graph"] == routes[0]["graph"]
         assert restarted.library_state() == {"disabled": [], "hidden": ["pca"]}
         assert client.post("/api/library/manage", json={"key": "pca", "action": "restore"}).json()["state"]["hidden"] == []
-        assert len(client.post("/api/routes/register", json={"workflow_ids": [key]}).json()) == 4
+        assert len(client.post("/api/routes/register", json={"workflow_ids": [key]}).json()) == len(BUNDLE)
         assert client.post("/api/library/manage", json={"key": "unknown", "action": "delete"}).status_code == 404
         assert client.post("/api/library/manage", json={"key": "pca", "action": "invalid"}).status_code == 422
 
@@ -68,6 +68,11 @@ def synthetic_sources(graph, directory):
             frame = pd.DataFrame({"id": samples, "trait_value": rng.normal(size=n)})
         elif node.id == "covar":
             frame = pd.DataFrame({"id": samples, "sex": rng.integers(0, 2, n), "batch": rng.integers(0, 3, n)})
+        elif node.id == "otu":
+            frame = pd.DataFrame(rng.poisson(30, (40, n)), index=[f"otu{i}" for i in range(40)], columns=samples).reset_index(names="id")
+        elif node.id == "meta" and graph.name == "16S Microbiome":
+            frame = pd.DataFrame({"id": samples, "site": [f"site{i % 4}" for i in range(n)],
+                                  "horizon": [f"h{i % 2}" for i in range(n)], "transect": [f"t{i % 3}" for i in range(n)]})
         elif node.id in ("counts", "proteins"):
             m = 40
             values = rng.negative_binomial(12, .2, (m, n)) if node.id == "counts" else rng.lognormal(3, .6, (m, n))
@@ -110,7 +115,7 @@ def test_each_shipped_route_expands_and_executes_all_branches(tmp_path, definiti
             ctx[key] = form
         run(ctx, manifest["steps"])
         assert len(ctx.artifacts["exports"]) == len(order)
-        expected_figures = {"GWAS": 3, "RNA-seq DE": 5, "Proteomics DE": 3, "生存分析": 2}[route.name]
+        expected_figures = {"GWAS": 3, "RNA-seq DE": 5, "Proteomics DE": 3, "生存分析": 2, "16S Microbiome": 5}[route.name]
         assert len(list((ctx.memory.run_dir / "figures").glob("*.png"))) == expected_figures
     finally:
         ctx.memory.close("complete" if ctx._run_status == "complete" else "failed")

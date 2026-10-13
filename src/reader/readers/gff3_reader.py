@@ -68,6 +68,8 @@ class Gff3Reader(Reader):
 
     output_contract = reader_contract()
 
+    file_input = {'dims': ['record', 'field'], 'labels': {'record': 'auto', 'field': 'builtin'}}
+
     extensions = [".gff", ".gff3"]
     handles_compression = False
 

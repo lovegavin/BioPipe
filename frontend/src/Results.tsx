@@ -31,6 +31,10 @@ const eventNames: Record<string, string> = {
   spill: "数据落盘",
   load: "数据回读",
   source_loaded: "读取输入",
+  source_prepare_started: "开始分块稠密化",
+  densify_block_spill: "稠密化缓冲块落盘",
+  source_prepare_complete: "稠密化完成，交接规划器",
+  source_blocks_released: "释放稠密化缓存块",
   emergency_spill: "紧急溢写检查",
   registered: "注册产物",
   register: "注册产物",
@@ -48,6 +52,9 @@ const reasons: Record<string, string> = {
   step_boundary: "步骤边界校正",
   stream_admission: "分块预留",
   cache_admission: "缓存准入",
+  buffer_watermark: "稠密化缓冲水位",
+  phase_handoff: "阶段交接",
+  full_mode_admission: "整体计算预留",
 };
 export function spillCounts(events: RunEvent[]): SpillCounts {
   const result: SpillCounts = {
@@ -256,7 +263,7 @@ export function Results({
               <span className="mono run-id">{job.id.slice(-8)}</span>
             </>
           ) : (
-            <span>运行后，结果会显示在这里</span>
+            <span>未运行</span>
           )}
           <button
             className={`icon-button result-toggle ${collapsed ? "closed" : ""}`}
@@ -311,7 +318,7 @@ export function Results({
             ) : (
               <div className="results-empty">
                 <Clock size={29} weight="light" />
-                <p>还没有运行记录。每次运行会保存自己的配置与日志。</p>
+                <p>暂无运行记录</p>
               </div>
             )}
           </div>
@@ -345,7 +352,7 @@ export function Results({
               ) : (
                 <div className="results-empty">
                   <Terminal size={29} weight="light" />
-                  <p>开始运行后，可查看规划、数据回读和溢写的真实事件。</p>
+                  <p>暂无运行日志</p>
                 </div>
               )}
             </div>
@@ -382,11 +389,7 @@ export function Results({
               <Play size={23} weight="light" />
             </div>
             <div>
-              <h3>从一个分支开始</h3>
-              <p>
-                示例已连接质量控制、PCA
-                和数据概览。点「运行」，查看真实分析结果。
-              </p>
+              <h3>暂无运行结果</h3>
             </div>
           </div>
         ) : job.error ? (
@@ -407,9 +410,6 @@ export function Results({
             </div>
             <div>
               <h3>正在执行工作流</h3>
-              <p>
-                预算保持固定，步骤进度和存储事件会持续更新。完成后可预览与下载数据。
-              </p>
             </div>
           </div>
         ) : (

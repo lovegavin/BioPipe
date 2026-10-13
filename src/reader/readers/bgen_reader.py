@@ -50,6 +50,8 @@ class BgenReader(Reader):
 
     output_contract = reader_contract(representation="dosage", ploidy=2)
 
+    file_input = {'dims': ['variant', 'sample'], 'labels': {'variant': 'builtin', 'sample': 'builtin'}}
+
     extensions = [".bgen"]
     handles_compression = True
 

@@ -23,6 +23,7 @@ class DescribeStep(Step):
     output_contract = {"mode": "report"}
 
     supports_streaming = True
+    stream_protocol = "flat-reduction-v1"
 
     def run_stream(self, ctx: Context, stream: dict) -> None:
         """Bounded finite-cell statistics; float64 moments may differ by rounding."""

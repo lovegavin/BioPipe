@@ -47,7 +47,7 @@ class Settings:
     root: Path
     data_dir: Path
     dist_dir: Path
-    max_upload: int = 256 * 1024**2
+    max_upload: int | None = None
     testing: bool = False
     code_root: Path | None = None
     desktop: bool = False

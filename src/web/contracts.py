@@ -35,13 +35,13 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=()):
                 if len(candidates) == 1:
                     reader = candidates[0]
                     if reader["name"] == "TxtReader":
-                        from src.reader.readers.txt_reader import _find_reader
-                        from src.core import ReaderError
-                        try:
-                            from biopipe_sdk.protocol import describe_reader
-                            reader = describe_reader(_find_reader(source.args.get("reader", "csv")))
-                        except (ReaderError, AttributeError):
+                        name = source.args.get("reader", "csv")
+                        delegates = [item for item in catalog["readers"] if isinstance(name, str)
+                                     and item["name"] != "TxtReader" and name.lower() in
+                                     (item["name"].lower(), item["name"].removesuffix("Reader").lower())]
+                        if len(delegates) != 1:
                             raise GraphError("TxtReader 的 reader 参数无效。", node.id)
+                        reader = delegates[0]
                     schema = source_schema(reader["output_contract"], source.dims)
                     schema["reader"] = reader["name"]
             ports[node.id] = {"inputs": [], "outputs": [schema]}

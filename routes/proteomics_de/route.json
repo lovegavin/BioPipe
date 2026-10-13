@@ -1,0 +1,7 @@
+{
+  "id": "route_88fb083f4238",
+  "key": "proteomics_de",
+  "name": "Proteomics DE",
+  "source_commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95",
+  "base_dir": ".studio/builtin-inputs/proteomics_de"
+}

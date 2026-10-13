@@ -201,9 +201,8 @@ def test_cluster_ids_are_sequential():
     print("PASS test_cluster_ids_are_sequential")
 
 
-def test_axis_info_ignored():
-    """Cluster_axis does not carry axis_info from the input; the
-    output form has no parallel info."""
+def test_axis_info_preserved_on_surviving_axis():
+    """Cluster labels retain annotations for the unchanged cell axis."""
     rng = np.random.default_rng(5)
     X = rng.normal(size=(8, 3))
     form = make_form(X, dims=("cell", "feature"))
@@ -213,8 +212,9 @@ def test_axis_info_ignored():
         "dim": "cell", "method": "kmeans",
         "n_clusters": 2, "output": "o",
     })
-    assert out.axis_info == {}
-    assert out.info == {}
+    assert out.axis_info == {"cell": ["batch"]}
+    assert out.info["batch"] == ["b0"] * 8
+    assert out.info["representation"] == "clusters"
     print("PASS test_axis_info_ignored")
 
 

@@ -45,6 +45,22 @@ class Reader(ABC):
     # decompresses to a temporary file first.
     handles_compression: ClassVar[bool] = False
 
+    # Declarative Studio import hints. No optional parser is loaded to inspect these.
+    # Compression defaults to the framework's gzip/bzip2/xz wrapper for readers
+    # that do not handle compression themselves; native readers opt in explicitly.
+    file_input: ClassVar[dict | None] = None
+
+    supports_disk_read: ClassVar[bool] = False
+    disk_protocol: ClassVar[str | None] = None
+
+    def probe(self, path: Path, **args) -> dict:
+        """Inspect metadata only. File bytes are never treated as RAM bytes."""
+        return {"file_bytes": Path(path).stat().st_size, "dense_bytes": None}
+
+    def read_to_disk(self, path, dims, labels, writer, chunk_bytes, **args):
+        """Write numeric blocks into writer and return Form metadata, without data."""
+        raise NotImplementedError
+
     def matches(self, path: Path) -> bool:
         ext = primary_ext(path)
         if ext not in self.extensions:

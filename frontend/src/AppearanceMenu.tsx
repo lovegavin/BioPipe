@@ -155,7 +155,6 @@ export function AppearanceMenu() {
                 {preference === value && <Check size={15} weight="bold" />}
               </button>
             ))}
-            <p className="appearance-note">主题偏好保存在此浏览器</p>
           </div>
         </>
       )}

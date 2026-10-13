@@ -5,6 +5,8 @@ import math
 
 from src.core import ContextError, ManifestError
 
+AUTO_BUDGET_FRACTION = 0.90
+
 
 class MemoryBudgetError(ContextError):
     """The declared execution contract cannot currently fit the budget."""
@@ -29,6 +31,7 @@ class MemoryConfig:
     cache_dir: str | None = None
     keep: list[str] = field(default_factory=list)
     profiles: dict = field(default_factory=dict)
+    available_at_start_bytes: int | None = None
 
     @classmethod
     def parse(cls, manifest: dict, *, detect_available: bool = True) -> "MemoryConfig":
@@ -57,14 +60,20 @@ class MemoryConfig:
                 raise ManifestError(f"runtime.memory.{key} must be a finite positive number")
             return max(1, int(value * scale))
 
-        automatic = 512 * 1024**2
+        # Validation has no allocation budget until execution takes its snapshot.
+        automatic = 0
+        available_at_start = None
         if detect_available and "budget_mb" not in raw:
             try:
                 import psutil
-                automatic = min(2 * 1024**3, int(psutil.virtual_memory().available * 0.25))
-            except ImportError:
-                pass
-        budget = positive("budget_mb", max(1, automatic) / 1024**2, 1024**2)
+                available_at_start = int(psutil.virtual_memory().available)
+            except (ImportError, OSError, RuntimeError) as error:
+                raise ManifestError("Cannot scan available memory for an automatic budget; "
+                                    "ensure psutil is available or set runtime.memory.budget_mb explicitly") from error
+            automatic = int(available_at_start * AUTO_BUDGET_FRACTION)
+            if automatic <= 0:
+                raise ManifestError("No available memory for an automatic budget; retry when memory is available")
+        budget = positive("budget_mb", 0, 1024**2) if "budget_mb" in raw else automatic
         target, spill = raw.get("target_fraction", .70), raw.get("spill_fraction", .85)
         if any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) for v in (target, spill)) or not 0 < target < spill <= 1:
             raise ManifestError("Require 0 < target_fraction < spill_fraction <= 1")
@@ -89,4 +98,4 @@ class MemoryConfig:
                    float(target), float(spill), raw.get("auto_spill", True),
                    positive("poll_ms", 100) / 1000,
                    positive("chunk_mb", 4, 1024**2), positive("io_buffer_kb", 64, 1024),
-                   cache_dir, keep, profiles)
+                   cache_dir, keep, profiles, available_at_start)

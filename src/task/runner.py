@@ -16,10 +16,12 @@ from src.core.contracts import (compatible, describe_form, describe_metadata, in
 def run(ctx: Context, steps: list[dict]) -> None:
     exports = ctx.artifacts["exports"] = []
     ctx._run_status = "running"
+    global_params = ctx.params
     try:
         if ctx.memory:
             ctx.memory.configure(steps, STEPS)
         for i, spec in enumerate(steps, start=1):
+            ctx.params = {**global_params, **spec.get("context_params", {})}
             name = spec["name"]
             cls = STEPS.get(name)
             if cls is None:
@@ -28,7 +30,7 @@ def run(ctx: Context, steps: list[dict]) -> None:
             names = spec.get("inputs", [])
             _check_arity(name, step.inputs_arity, names)
             ctx.step_params = dict(spec.get("params", {}))
-            if cls.parameters_schema is not None:
+            if cls.parameters_schema is not None and not getattr(cls, "legacy_parameters", False):
                 from biopipe_sdk.protocol import validate_parameters
                 output = ctx.step_params.pop(cls.output_parameter, None) if cls.output_parameter else None
                 ctx.step_params = validate_parameters(cls.parameters_schema, ctx.step_params)
@@ -123,6 +125,8 @@ def run(ctx: Context, steps: list[dict]) -> None:
     except BaseException as exc:
         ctx._run_status, ctx._run_error = "failed", exc
         raise
+    finally:
+        ctx.params = global_params
 
 
 def _check_arity(name: str, arity, form_names: list[str]) -> None:

@@ -50,6 +50,8 @@ class ParquetReader(Reader):
 
     output_contract = reader_contract()
 
+    file_input = {'dims': ['sample', 'feature'], 'labels': {'sample': 'auto', 'feature': 'builtin'}}
+
     extensions = [".parquet"]
     handles_compression = True
 

@@ -1,4 +1,4 @@
-import type { Bootstrap, Graph, Job, Preview, ContractAnalysis, Workspace, SavedWorkflow, WorkflowSummary, RouteDefinition } from "./types";
+import type { Bootstrap, Graph, Job, Preview, ContractAnalysis, Workspace, SavedWorkflow, WorkflowSummary, RouteDefinition, DataSource } from "./types";
 import type { LibraryState, LibraryAction } from "./types";
 
 const base =
@@ -45,6 +45,18 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
   return value as T;
 }
 export const api = {
+  plugins: () => request<import('./types').PluginState>('/api/plugins'),
+  pluginOperation: (id: string) => request<import('./types').PluginOperation>(`/api/plugins/operations/${encodeURIComponent(id)}`),
+  removePlugin: (name: string) => request<import('./types').PluginOperation>('/api/plugins/remove', {name}),
+  managePlugin: (name: string, action: 'enable' | 'disable' | 'restore') => request<import('./types').PluginOperation>('/api/plugins/manage', {name, action}),
+  installPlugin: async (file: File): Promise<import('./types').PluginOperation> => {
+    const response = await fetch(base + '/api/plugins/install?filename=' + encodeURIComponent(file.name), {
+      method: 'POST', headers: {'X-Studio-Token': token, 'Content-Type': 'application/octet-stream'}, body: file,
+    });
+    const result = await response.json();
+    if (!response.ok) throw Error(result.message || result.detail || '插件安装未完成');
+    return result;
+  },
   agent: <T,>(path: string, body?: unknown) => request<T>("/api/agent" + path, body),
   catalog: () => request<Bootstrap["catalog"]>("/api/operators"),
   workspace: () => request<Workspace | null>("/api/workspace"),
@@ -93,9 +105,20 @@ export const api = {
       `/api/jobs/${encodeURIComponent(id)}/exports/${index}`,
     ),
   url: (path: string) => base + path,
-  upload: async (file: File) => {
+  uploadFiles: async (files: File[], base_dir: string) => {
+    const batch = await request<{ id: string }>("/api/assets/batches", {filenames: files.map(file => file.name)});
+    try {
+      for (const file of files) await api.upload(file, batch.id);
+      return await request<{source: DataSource; filename: string; reader: string; files: string[]}>(
+        `/api/assets/batches/${batch.id}/complete`, {base_dir});
+    } catch (error) {
+      await request(`/api/assets/batches/${batch.id}/cancel`, {}).catch(() => undefined);
+      throw error;
+    }
+  },
+  upload: async (file: File, batch?: string) => {
     const response = await fetch(
-      `${base}/api/assets?filename=${encodeURIComponent(file.name)}`,
+      `${base}/api/assets?filename=${encodeURIComponent(file.name)}${batch ? `&batch=${encodeURIComponent(batch)}` : ''}`,
       {
         method: "POST",
         headers: {

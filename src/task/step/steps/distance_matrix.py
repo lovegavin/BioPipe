@@ -32,16 +32,15 @@ and ``jaccard`` are normally applied.
 
 Size guard
 ----------
-The output is a dense ``n x n`` matrix. To avoid accidental
-allocation of hundreds of gigabytes, the operator refuses to run if
-``n > max_positions`` (default 10000). Raise it explicitly if you
-know what you are doing.
+The output is a dense ``n x n`` matrix. The memory planner reserves its
+quadratic workspace/output before execution. An optional ``max_positions``
+adds a user-selected count limit; no fixed count cap is imposed by default.
 
 Params:
     dim            : axis to compute distances along (required)
     metric         : metric name (default "euclidean")
     max_positions  : refuse if dim has more positions than this
-                     (default 10000)
+                     (default None; governed by the memory budget)
     output         : context key for the result (default: step name)
 """
 
@@ -52,6 +51,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
 
 
 _METRICS = (
@@ -66,14 +66,25 @@ class DistanceMatrixStep(Step):
     name = "distance_matrix"
     inputs_arity = 1
     outputs = []
+    title = 'Distance matrix'
+    category = "Microbiome"
+    builtin_package = "biopipe-microbiome"
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['distance_matrix']
+    input_contracts, output_contract = CONTRACTS['distance_matrix']
+    output_parameter = "output"
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
         dim = ctx.step_params.get("dim")
         metric = ctx.step_params.get("metric", "euclidean")
-        max_positions = int(
-            ctx.step_params.get("max_positions", 10000)
-        )
+        max_positions = ctx.step_params.get("max_positions")
+        if max_positions is not None:
+            max_positions = int(max_positions)
         out_name = ctx.step_params.get("output", self.name)
 
         if not dim:
@@ -88,7 +99,7 @@ class DistanceMatrixStep(Step):
                 f"distance_matrix: metric must be one of "
                 f"{list(_METRICS)}, got {metric!r}"
             )
-        if max_positions < 1:
+        if max_positions is not None and max_positions < 1:
             raise StepError(
                 f"distance_matrix: max_positions must be >= 1, "
                 f"got {max_positions}"
@@ -96,7 +107,7 @@ class DistanceMatrixStep(Step):
 
         axis = form.dims.index(dim)
         n_positions = form.data.shape[axis]
-        if n_positions > max_positions:
+        if max_positions is not None and n_positions > max_positions:
             raise StepError(
                 f"distance_matrix: dim '{dim}' has {n_positions} "
                 f"positions, which would produce a "
@@ -132,11 +143,13 @@ class DistanceMatrixStep(Step):
             out_dim_b: dict(form.labels[dim]),
         }
 
+        out_info, out_axes = metadata(form, [dim], 'distance')
         ctx[out_name] = Form(
             data=dist.astype(np.float32),
             dims=[dim, out_dim_b],
             labels=out_labels,
-            info={"missing_code": np.nan},
+            info=out_info,
+            axis_info=out_axes,
         )
 
         finite = dist[np.isfinite(dist)]

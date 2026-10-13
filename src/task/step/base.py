@@ -30,6 +30,9 @@ class Step(ABC):
     output_contract: ClassVar[dict | None] = None
     output_parameter: ClassVar[str | None] = None
     supports_streaming: ClassVar[bool] = False
+    stream_protocol: ClassVar[str | None] = None
+    stream_buffer_multiplier: ClassVar[int] = 4
+    stream_fixed_bytes: ClassVar[int] = 0
     version: ClassVar[str] = "1.0.0"
     parameters_schema: ClassVar[dict | None] = None
 

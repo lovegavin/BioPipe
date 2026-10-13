@@ -67,6 +67,8 @@ class GtfReader(Reader):
 
     output_contract = reader_contract()
 
+    file_input = {'dims': ['record', 'field'], 'labels': {'record': 'auto', 'field': 'builtin'}}
+
     extensions = [".gtf"]
     handles_compression = False
 

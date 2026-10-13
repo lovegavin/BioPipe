@@ -1,0 +1,110 @@
+name: proteomics_de_demo
+
+sources:
+  proteins:
+    path: input/proteomics_raw.txt
+    dims: [protein, sample]
+    labels:
+      protein: {sample: 0}
+      sample: builtin
+    args:
+      reader: csv
+      sep: "\t"
+
+  meta:
+    path: input/clinical_raw.txt
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args:
+      reader: csv
+      sep: "\t"
+
+steps:
+  - name: missing
+    inputs: [proteins]
+    params:
+      dim: protein
+      threshold: 0.5
+      output: proteins_filtered
+
+  - name: impute
+    inputs: [proteins_filtered]
+    params:
+      method: min
+      dim: protein
+      output: proteins_imputed
+
+  - name: normalize
+    inputs: [proteins_imputed]
+    params:
+      method: quantile
+      dim: sample
+      output: proteins_qn
+
+  - name: compare_groups
+    inputs: [proteins_qn, meta]
+    params:
+      dim: protein
+      group_dim: sample
+      group_label: Stage
+      group_a: "Stage II"
+      group_b: "Stage III"
+      method: welch
+      output: de_raw
+
+  - name: correction
+    inputs: [de_raw]
+    params:
+      method: fdr
+      alpha: 0.05
+      output: de_result
+
+  - name: volcano
+    inputs: [de_result]
+    params:
+      dim: protein
+      stat_dim: statistic
+      lfc_label: log2FC
+      p_label: Q_VALUE
+      lfc_threshold: 0.5
+      p_threshold: 0.05
+      filename: volcano.png
+      title: "CPTAC BRCA: Stage III vs Stage II"
+      label_top: 10
+
+  - name: ma_plot
+    inputs: [de_result]
+    params:
+      dim: protein
+      stat_dim: statistic
+      lfc_label: log2FC
+      mean_a_label: mean_a
+      mean_b_label: mean_b
+      p_label: Q_VALUE
+      p_threshold: 0.05
+      filename: ma.png
+      title: "CPTAC BRCA: Stage III vs Stage II"
+
+  - name: transpose
+    inputs: [proteins_qn]
+    params:
+      order: [sample, protein]
+      output: samples_by_protein
+
+  - name: heatmap
+    inputs: [samples_by_protein]
+    params:
+      dim: protein
+      other_dim: sample
+      select: variance
+      top_n: 50
+      standardize: row
+      cluster_rows: true
+      cluster_cols: true
+      filename: heatmap.png
+      title: "Top 50 variable proteins"
+
+  - name: describe
+    inputs: [de_result]

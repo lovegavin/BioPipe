@@ -9,6 +9,7 @@ import yaml
 from src.task.manifest import _validate_sources, _validate_steps
 from src.task.memory import MemoryConfig
 from .models import Graph, GraphNode, GraphEdge, Position, Source
+from .references import remap_params
 
 
 class GraphError(ValueError):
@@ -74,7 +75,8 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
             if node.operator not in registry:
                 raise GraphError(f"未找到算子 {node.operator!r}；请更新算子清单。", node.id)
             spec = registry[node.operator]
-            if spec.get("implementation"):
+            strict_parameters = spec.get("parameters_schema") and not spec.get("legacy_parameters")
+            if strict_parameters:
                 from biopipe_sdk.protocol import validate_parameters
                 params = dict(node.params)
                 if spec.get("output_parameter"):
@@ -85,7 +87,7 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
                     raise GraphError(str(error), node.id) from error
             outputs[node.id] = ([str(node.params.get("output", node.id))] if spec["output_parameter"]
                                 else spec["outputs"])
-            for field in spec["parameters"]:
+            for field in ([] if strict_parameters else spec["parameters"]):
                 value = node.params.get(field["key"])
                 if field.get("required") and (value is None or value == "" or value == []):
                     raise GraphError(f"请填写{field['label']}。", node.id)
@@ -174,15 +176,17 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
             filename = params.get("filename")
             if filename is not None and (not isinstance(filename, str) or Path(filename).name != filename or "/" in filename or "\\" in filename or ":" in filename):
                 raise GraphError("图片文件名不能包含目录或驱动器。", key)
-            steps.append({"name": node.operator, "inputs": inputs, "params": params})
+            steps.append({"name": node.operator, "inputs": inputs, "params": params,
+                          **({"context_params": node.context_params} if node.context_params else {})})
             step_ids.append(key)
     if not steps:
         raise GraphError("至少添加一个分析算子。")
     memory = dict(graph.memory)
-    memory["enabled"] = True
+    memory.setdefault("enabled", True)
     if "cache_dir" in memory:
         memory["cache_dir"] = str(project_path(root, memory["cache_dir"], graph.base_dir))
-    manifest = {"name": graph.name, "sources": sources, "steps": steps, "runtime": {"memory": memory}}
+    manifest = {**graph.manifest_extra, "name": graph.name, "sources": sources, "steps": steps,
+                "params": graph.params, "runtime": {**graph.runtime, "memory": memory}}
     _validate_sources(sources)
     _validate_steps(steps)
     MemoryConfig.parse(manifest, detect_available=False)
@@ -218,7 +222,8 @@ def import_manifest(text, base_dir, catalog, root):
         return candidate
     for i, (alias, spec) in enumerate(raw["sources"].items()):
         key = unique(alias)
-        nodes.append(GraphNode(id=key, kind="source", title=alias, position=Position(x=70, y=100+i*200), source=Source(**spec)))
+        nodes.append(GraphNode(id=key, kind="source", title=alias, position=Position(x=70, y=100+i*200),
+                               source=Source(**{**spec, "labels": spec.get("labels", {})})))
         latest[alias] = (key, "out")
     for i, spec in enumerate(raw["steps"]):
         name = spec["name"]
@@ -227,6 +232,13 @@ def import_manifest(text, base_dir, catalog, root):
         key = unique(f"{name}_{i+1}")
         params = dict(registry[name].get("runtime_defaults", {}))
         params.update(spec.get("params") or {})
+        aliases = {}
+        for alias, (producer, handle) in latest.items():
+            node = next(n for n in nodes if n.id == producer)
+            aliases[alias] = (node.id if node.kind == "source" else node.params["output"]
+                             if registry[node.operator]["output_parameter"] else
+                             registry[node.operator]["outputs"][int(handle[4:])])
+        params = remap_params(name, params, aliases)
         for port, alias in enumerate(spec.get("inputs", [])):
             if alias not in latest:
                 raise GraphError(f"步骤 {i+1} 引用了尚未生成的数据 {alias!r}。")
@@ -244,8 +256,10 @@ def import_manifest(text, base_dir, catalog, root):
                 latest[alias] = (key, f"out-{j}")
         nodes.append(GraphNode(id=key, kind="operator", operator=name, title=registry[name]["title"],
                                params=params, input_count=len(spec.get("inputs", [])),
+                               context_params=spec.get("context_params", {}),
                                position=Position(x=360+(i%3)*280, y=100+(i//3)*200)))
-    memory = dict(raw.get("runtime", {}).get("memory", {}) or {"enabled": True})
+    # The CLI disables management when no memory block was supplied.
+    memory = dict(raw.get("runtime", {}).get("memory", {}) or {"enabled": False})
     if memory.get("keep"):
         retained = []
         for alias in memory["keep"]:
@@ -257,6 +271,9 @@ def import_manifest(text, base_dir, catalog, root):
                             if registry[node.operator]["output_parameter"] else
                             registry[node.operator]["outputs"][int(handle[4:])])
         memory["keep"] = retained
-    graph = Graph(name=raw.get("name", "导入的工作流"), base_dir=base_dir, nodes=nodes, edges=edges, memory=memory)
+    graph = Graph(name=raw.get("name", "导入的工作流"), base_dir=base_dir, nodes=nodes, edges=edges, memory=memory,
+                  params=raw.get("params", {}),
+                  runtime={k: v for k, v in raw.get("runtime", {}).items() if k != "memory"},
+                  manifest_extra={k: v for k, v in raw.items() if k not in ("name", "sources", "steps", "runtime", "params")})
     compile_graph(graph, catalog, root)
     return graph

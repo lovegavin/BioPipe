@@ -8,11 +8,10 @@ env/
 .pytest_cache/
 .mypy_cache/
 .ipynb_checkpoints/
-.idea
 
 # 任务数据与结果
 tasks/*/input/
-tasks/*/output/steps
+#tasks/*/output/
 input/
 #output/
 
@@ -50,7 +49,9 @@ Thumbs.db
 # Local Studio assets, worker jobs and verification output
 .local/
 .verification/
+.tmp/
 .idea/
+.registry-maintenance.lock
 
 # Desktop build output (source and build scripts remain tracked)
 desktop/bin/

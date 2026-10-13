@@ -38,13 +38,55 @@ class Context:
 
     def register_source(self, name: str, spec: dict) -> None:
         """Managed sources are read on first use; legacy mode stays eager."""
-        from src.reader import read_source
+        from src.reader import read_source, pick_reader
         path = self.task_dir / spec["path"]
         def loader():
             return read_source(path, dims=spec["dims"], labels=spec.get("labels", {}),
                                **spec.get("args", {}))
         if self.memory:
-            self.forms.register_source(name, loader, path.resolve())
+            reader = pick_reader(path)
+            args = dict(spec.get("args", {}))
+            if reader.parameters_schema is not None:
+                from biopipe_sdk.protocol import validate_parameters
+                args = validate_parameters(reader.parameters_schema, args)
+            from contextlib import nullcontext
+            from src.reader import _decompressed
+            def reader_path():
+                return nullcontext(path) if reader.handles_compression else _decompressed(path)
+            if reader.supports_disk_read:
+                with reader_path() as actual_path:
+                    probe = reader.probe(actual_path, **args)
+            else:
+                probe = reader.probe(path, **args)
+            probe["file_bytes"] = path.stat().st_size
+            disk_loader = None
+            if reader.supports_disk_read:
+                from biopipe_sdk.resources import validate_probe
+                validate_probe(probe)
+                def disk_loader(writer, chunk):
+                    import numpy as np
+                    from src.core.contracts import validate_form, validate_output, source_schema
+                    with reader_path() as actual_path:
+                        metadata = reader.read_to_disk(actual_path, spec["dims"], spec.get("labels", {}), writer, chunk, **args)
+                    placeholder = Form(np.broadcast_to(np.zeros((), dtype=writer.dtype), writer.shape), **metadata)
+                    requirement = {k: v for k, v in reader.output_contract.items() if k != "values"}
+                    validate_form(placeholder, requirement, f"reader {type(reader).__name__} metadata")
+                    validate_output(placeholder, source_schema(reader.output_contract, spec["dims"]),
+                                    f"reader {type(reader).__name__} metadata")
+                    # Validate real numeric blocks after flushing, never a fake
+                    # zero array. A disk reader's values contract covers all cells.
+                    if reader.output_contract.get("values"):
+                        from src.core.contracts import validate_values
+                        writer.close(retain=True)
+                        with writer.path.open("rb") as source:
+                            source.seek(writer.offset)
+                            while True:
+                                values = np.fromfile(source, dtype=writer.dtype, count=max(1, chunk // writer.dtype.itemsize))
+                                if not values.size:
+                                    break
+                                validate_values(values, metadata["info"], reader.output_contract, f"reader {type(reader).__name__} output")
+                    return metadata
+            self.forms.register_source(name, loader, path.resolve(), probe, disk_loader)
         else:
             self[name] = loader()
             print(f"[source] {name}: shape={self[name].data.shape}, dims={self[name].dims}")

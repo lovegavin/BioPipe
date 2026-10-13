@@ -103,7 +103,8 @@ def main():
         assert bootstraps[0]["desktop"] and not bootstraps[1]["desktop"]
         assert bootstraps[0]["storage"]["registry"] == bootstraps[1]["storage"]["registry"] == custom["Registry"]
         baseline = len(clients[0].get("/api/routes").json())
-        assert baseline == 4
+        bundled_routes = json.loads((ROOT / "src/web/builtin_routes.json").read_text(encoding="utf-8"))["routes"]
+        assert baseline == len(bundled_routes)
         for client, name in zip(clients, ("Desktop registered", "Development registered")):
             graph = {**bootstraps[0]["demo"], "name": name}
             saved = client.post("/api/workflows/save", json={"graph": graph}).raise_for_status().json()
@@ -118,7 +119,9 @@ def main():
         assert len(json.loads(Path(custom["Registry"]).read_text(encoding="utf-8"))) == baseline + 2
         assert len(clients[1].get("/api/routes").json()) == baseline + 2
         log = next((profile / "logs").glob("desktop-*.log")).read_text(encoding="utf-8-sig")
-        assert log.count("Frontend ready") == 2 and log.count("Host stopped") == 2
+        launches = log.split("Host starting;")[1:]
+        assert len(launches) == 2
+        assert all("Frontend ready" in launch and "Host stopped" in launch for launch in launches)
         result = {"status": "passed", "default": defaults, "isolated": custom,
                   "registered_routes": baseline + 2, "native_smoke_runs": 2,
                   "checks": ["three launcher path equality", "cwd independence", "shared env override",

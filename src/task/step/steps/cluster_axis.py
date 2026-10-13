@@ -39,6 +39,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._microbiome import metadata
 
 
 _METHODS = ("kmeans", "hierarchical", "louvain")
@@ -50,6 +52,17 @@ class ClusterAxisStep(Step):
     name = "cluster_axis"
     inputs_arity = 1
     outputs = []
+    title = 'Clustering'
+    category = 'Analysis'
+    builtin_package = 'biopipe-core'
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['cluster_axis']
+    input_contracts, output_contract = CONTRACTS['cluster_axis']
+    output_parameter = 'output'
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate_axis(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -130,6 +143,7 @@ class ClusterAxisStep(Step):
         ]
 
         data = labels.astype(np.float32).reshape(-1, 1)
+        info, axes = metadata(form, [dim], 'clusters')
         ctx[out_name] = Form(
             data=data,
             dims=[dim, "cluster"],
@@ -137,7 +151,7 @@ class ClusterAxisStep(Step):
                 dim: dict(form.labels[dim]),
                 "cluster": {"cluster": 0},
             },
-            info={},
+            info=info, axis_info=axes,
         )
 
         sizes: dict[str, int] = {}

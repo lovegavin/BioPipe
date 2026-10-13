@@ -5,12 +5,6 @@ A two-dimensional, comma-separated table. The first line is treated
 as a header by default; set ``header: false`` in args to read every
 line as data.
 
-Separator
----------
-``sep`` selects the field separator (default ``","``). ``TxtReader``
-passes ``"\\t"`` automatically for ``.txt`` / ``.tsv`` / ``.tab``
-files.
-
 Compression (.gz, .bz2, .xz) is handled by pandas directly; this
 reader receives the original path.
 
@@ -44,12 +38,17 @@ import pandas as pd
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
+from src.core.contracts import reader_contract
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
 
 
 class CsvReader(Reader):
     """Reader for .csv files."""
+
+    output_contract = reader_contract()
+
+    file_input = {'dims': ['sample', 'feature'], 'labels': {'sample': 'auto', 'feature': 'builtin'}, 'compression': ['.gz', '.bz2', '.xz']}
 
     extensions = [".csv"]
     handles_compression = True
@@ -63,27 +62,13 @@ class CsvReader(Reader):
 
         has_header = bool(args.get("header", True))
         sep = args.get("sep", ",")
-        if not isinstance(sep, str) or sep == "":
-            raise ReaderError(
-                f"CSV reader: 'sep' must be a non-empty string, "
-                f"got {sep!r}"
-            )
+        if not isinstance(sep, str) or not sep:
+            raise ReaderError(f"CSV reader: 'sep' must be a non-empty string, got {sep!r}")
         encoders_cfg = args.get("encoders", {})
 
-        df = pd.read_csv(
-            path, header=0 if has_header else None, sep=sep,
-        )
+        df = pd.read_csv(path, header=0 if has_header else None, sep=sep)
         if df.shape[0] == 0:
-            raise ReaderError(
-                f"CSV reader: file has zero data rows: {path}"
-            )
-        if df.shape[1] < 2:
-            raise ReaderError(
-                f"CSV reader: file parsed into {df.shape[1]} column(s) "
-                f"with sep={sep!r}: {path}. "
-                f"Check that 'sep' matches the file."
-            )
-
+            raise ReaderError(f"CSV reader: file has zero data rows: {path}")
         if has_header:
             col_names = [str(c) for c in df.columns]
         else:
@@ -146,11 +131,7 @@ class CsvReader(Reader):
 
         keep = [i for i in range(df.shape[1]) if i not in cols_to_drop]
         if not keep:
-            raise ReaderError(
-                f"CSV reader: all {df.shape[1]} column(s) were "
-                f"consumed as row labels. Dropped indices: "
-                f"{sorted(cols_to_drop)}. Check the label rules."
-            )
+            raise ReaderError("CSV reader: all columns were consumed as row labels; check the label rules")
         kept_names = [col_names[i] for i in keep]
 
         encoders_used: dict[str, object] = {}

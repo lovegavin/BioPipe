@@ -2,3 +2,8 @@
 # No machine-specific paths, CUDA runtime, or frozen developer environment.
 lifelines>=0.30,<0.31
 pydeseq2==0.5.4
+
+# Axis clustering and optional nonlinear embeddings.
+scikit-learn>=1.5
+networkx>=3.2
+umap-learn>=0.5

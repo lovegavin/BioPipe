@@ -50,6 +50,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._microbiome import metadata
 
 
 _KNOWN_STATS = (
@@ -64,6 +66,17 @@ class ReduceAxisStep(Step):
     name = "reduce_axis"
     inputs_arity = 1
     outputs = []
+    title = 'Axis statistics'
+    category = 'Analysis'
+    builtin_package = 'biopipe-core'
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['reduce_axis']
+    input_contracts, output_contract = CONTRACTS['reduce_axis']
+    output_parameter = 'output'
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate_axis(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -128,25 +141,7 @@ class ReduceAxisStep(Step):
             s: i for i, s in enumerate(stats)
         }
 
-        reduced_parallel = set(form.axis_info.get(dim, []))
-        out_info: dict = {}
-        for k, v in form.info.items():
-            if k in reduced_parallel:
-                continue
-            if k == "encoders" and isinstance(v, dict):
-                trimmed = {
-                    d: enc for d, enc in v.items() if d != dim
-                }
-                if trimmed:
-                    out_info[k] = trimmed
-                continue
-            out_info[k] = v
-
-        out_axis_info = {
-            d: list(keys)
-            for d, keys in form.axis_info.items()
-            if d != dim
-        }
+        out_info, out_axis_info = metadata(form, [d for d in form.dims if d != dim], "summary")
 
         ctx[out_name] = Form(
             data=out_data,

@@ -12,7 +12,7 @@ from src.task.memory.config import MemoryConfig
 
 
 _SOURCE_KEYS = {"path", "dims", "labels", "args"}
-_STEP_KEYS = {"name", "inputs", "params"}
+_STEP_KEYS = {"name", "inputs", "params", "context_params"}
 _LABEL_STRINGS = {"builtin", "auto"}
 
 
@@ -113,6 +113,8 @@ def _validate_steps(steps: list) -> None:
 
         if "name" not in spec:
             raise ManifestError(f"Step {i} missing 'name'")
+        if not isinstance(spec.get("context_params", {}), dict):
+            raise ManifestError(f"Step {i}: context_params must be a mapping")
 
         unknown = set(spec) - _STEP_KEYS
         if unknown:

@@ -36,9 +36,9 @@ correlation matrices.
 
 Size guard
 ----------
-The output is a dense ``n x n`` matrix. The operator refuses to run
-if ``n > max_positions`` (default 10000). Raise it explicitly if
-you know what you are doing.
+The output is a dense ``n x n`` matrix. The memory planner accounts for its
+quadratic allocation. An optional ``max_positions`` adds a count limit;
+the default is None, leaving admission to the configured memory budget.
 
 Params:
     dim            : axis to compute correlations along (required)
@@ -46,7 +46,7 @@ Params:
     min_valid      : minimum number of valid positions per pair
                      (default 3)
     max_positions  : refuse if dim has more positions than this
-                     (default 10000)
+                     (default None; governed by the memory budget)
     output         : context key for the result (default: step name)
 """
 
@@ -57,6 +57,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
 
 
 _METRICS = (
@@ -71,15 +72,26 @@ class CorrelationStep(Step):
     name = "correlation"
     inputs_arity = 1
     outputs = []
+    title = 'Correlation'
+    category = "Microbiome"
+    builtin_package = "biopipe-microbiome"
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['correlation']
+    input_contracts, output_contract = CONTRACTS['correlation']
+    output_parameter = "output"
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
         dim = ctx.step_params.get("dim")
         metric = ctx.step_params.get("metric", "pearson")
         min_valid = int(ctx.step_params.get("min_valid", 3))
-        max_positions = int(
-            ctx.step_params.get("max_positions", 10000)
-        )
+        max_positions = ctx.step_params.get("max_positions")
+        if max_positions is not None:
+            max_positions = int(max_positions)
         out_name = ctx.step_params.get("output", self.name)
 
         if not dim:
@@ -99,7 +111,7 @@ class CorrelationStep(Step):
                 f"correlation: min_valid must be >= 2, "
                 f"got {min_valid}"
             )
-        if max_positions < 1:
+        if max_positions is not None and max_positions < 1:
             raise StepError(
                 f"correlation: max_positions must be >= 1, "
                 f"got {max_positions}"
@@ -107,7 +119,7 @@ class CorrelationStep(Step):
 
         axis = form.dims.index(dim)
         n_positions = form.data.shape[axis]
-        if n_positions > max_positions:
+        if max_positions is not None and n_positions > max_positions:
             raise StepError(
                 f"correlation: dim '{dim}' has {n_positions} "
                 f"positions, which would produce a "
@@ -145,11 +157,13 @@ class CorrelationStep(Step):
             out_dim_b: dict(form.labels[dim]),
         }
 
+        out_info, out_axes = metadata(form, [dim], 'correlation')
         ctx[out_name] = Form(
             data=corr.astype(np.float32),
             dims=[dim, out_dim_b],
             labels=out_labels,
-            info={"missing_code": np.nan},
+            info=out_info,
+            axis_info=out_axes,
         )
 
         off_diag = corr[~np.eye(n_positions, dtype=bool)]

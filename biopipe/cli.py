@@ -19,6 +19,12 @@ def parser():
     root.add_argument("--session")
     root.add_argument("--json", action="store_true", help="JSON is the default output format")
     commands = root.add_subparsers(dest="command", required=True)
+    registry = commands.add_parser("registry", help="Discover, validate and build repository indexes without a running Studio")
+    registry.add_argument("action", choices=["discover", "check", "build"])
+    registry.add_argument("--source-ref")
+    registry.add_argument("--route-root", action="append")
+    registry.add_argument("--output-dir", type=Path)
+    registry.add_argument("--scope", choices=["all", "packages", "routes"], default="all")
     commands.add_parser("sessions").add_argument("action", choices=["list"], default="list", nargs="?")
     context = commands.add_parser("context")
     context.add_argument("action", choices=["get"], default="get", nargs="?")
@@ -43,11 +49,11 @@ def parser():
     jobs.add_argument("action", choices=["get", "cancel"])
     jobs.add_argument("id")
     plugin = commands.add_parser("plugin")
-    plugin.add_argument("action", choices=["init", "check", "test", "build", "install", "list", "remove"])
+    plugin.add_argument("action", choices=["init", "check", "test", "build", "install", "list", "remove", "enable", "disable", "restore"])
     plugin.add_argument("path", nargs="?")
     plugin.add_argument("--template", choices=["operator", "reader"], default="operator")
     schema = commands.add_parser("schema")
-    schema.add_argument("name", choices=["operator", "graph", "workspace"])
+    schema.add_argument("name", choices=["operator", "package", "graph", "workspace"])
     mcp = commands.add_parser("mcp")
     mcp.add_argument("--allow-run", action="store_true")
     mcp.add_argument("--read-only", action="store_true")
@@ -56,10 +62,17 @@ def parser():
 
 
 def execute(args):
+    if args.command == "registry":
+        from .registry import inventory, maintain
+        if args.source_ref and args.action != "discover":
+            raise ValueError("--source-ref is for static discovery only")
+        os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
+        return inventory(source_ref=args.source_ref, route_roots=args.route_root) if args.action == "discover" else maintain(
+            args.action, route_roots=args.route_root, output_dir=args.output_dir, scope=args.scope)
     if args.command == "schema":
-        from biopipe_sdk.protocol import Descriptor
+        from biopipe_sdk.protocol import Descriptor, PackageDescriptor
         from src.web.models import Graph, Workspace
-        return {"operator": Descriptor, "graph": Graph, "workspace": Workspace}[args.name].model_json_schema()
+        return {"operator": Descriptor, "package": PackageDescriptor, "graph": Graph, "workspace": Workspace}[args.name].model_json_schema()
     if args.command == "plugin":
         from . import developer
         from .plugins import PluginManager, run_process
@@ -77,6 +90,8 @@ def execute(args):
         manager = PluginManager(data_directory(args.profile_dir, args.workspace, args.data_dir))
         if args.action == "list":
             return manager.state()
+        if args.action in {"enable", "disable", "restore"}:
+            return manager.manage(args.path, args.action)
         return manager.install(args.path, remove=args.path if args.action == "remove" else None)
     if args.command == "mcp":
         from .mcp_server import serve
@@ -164,6 +179,8 @@ def main(argv=None):
                 result = execute(args)
         if result is not None:
             print(json.dumps(result, ensure_ascii=False, allow_nan=False, indent=2))
+            if args.command == "registry" and (result["errors"] or (args.action == "check" and result["changed"])):
+                raise SystemExit(1)
     except KeyboardInterrupt:
         raise SystemExit(130)
     except Exception as error:

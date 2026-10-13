@@ -44,7 +44,8 @@ def reader_contract(*, representation=None, ploidy=None, coordinates=False, ndim
 def resolve(value, params):
     if isinstance(value, dict):
         if "param" in value:
-            return params.get(value["param"], resolve(value.get("default"), params))
+            resolved = params.get(value["param"], resolve(value.get("default"), params))
+            return str(resolved) + value["suffix"] if resolved is not None and "suffix" in value else resolved
         return {key: resolve(item, params) for key, item in value.items()}
     if isinstance(value, list):
         return [resolve(item, params) for item in value]
@@ -235,6 +236,9 @@ def infer_output(rule, inputs, params):
     if not rule or rule.get("mode") == "unknown":
         return unknown()
     mode = rule["mode"]
+    if mode == "choose":
+        choice = params.get(rule["param"], rule.get("default"))
+        return infer_output(rule.get("cases", {}).get(str(choice), rule.get("otherwise")), inputs, params)
     if mode == "declare":
         # A plugin can state a conservative, parameter-dependent output schema
         # without adding a named branch to the engine. Runtime checks promises.
@@ -245,6 +249,8 @@ def infer_output(rule, inputs, params):
         keep = resolve(rule.get("keep_dims", result.get("dims")), params)
         if keep is None:
             return unknown()
+        dropped = resolve(rule.get("drop_dims", []), params)
+        keep = [d for d in keep if d not in dropped]
         for axis, fields in list(result["axis_info"].items()):
             if axis not in keep:
                 for key in fields:
@@ -255,6 +261,35 @@ def infer_output(rule, inputs, params):
         if rule.get("derived", False):
             for key in ("representation", "ploidy", "alphabet", "encoders"):
                 result["info"].pop(key, None)
+        # Added axes are parameter-dependent or reference an axis of an input.
+        # No tensor data is read to infer these guarantees.
+        for side in ("prepend_dims", "append_dims"):
+            added = []
+            for declaration in rule.get(side, []):
+                name = resolve(declaration.get("name"), params)
+                reference = declaration.get("input_axis")
+                if reference is not None:
+                    source = inputs[reference[0]].get("dims") if reference[0] < len(inputs) else None
+                    name = source[reference[1]] if source and reference[1] < len(source) else None
+                if name is None:
+                    return {**unknown(), "ndim": len(keep) + len(rule.get("prepend_dims", [])) + len(rule.get("append_dims", [])), "numeric": True}
+                added.append(name)
+                labels = resolve(declaration.get("labels"), params)
+                if "labels_from" in declaration:
+                    labels = result["labels"].get(resolve(declaration["labels_from"], params))
+                result["labels"][name] = [labels] if isinstance(labels, str) else labels
+            result["dims"] = added + result["dims"] if side == "prepend_dims" else result["dims"] + added
+        result["ndim"] = len(result["dims"])
+        if rule.get("labels_unknown"):
+            result["labels"] = {d: None for d in result["dims"]}
+        if rule.get("axis_info_unknown"):
+            for fields in result["axis_info"].values():
+                for field in fields:
+                    result["info"].pop(field, None)
+            result["axis_info"] = {}
+            result["axis_info_open"] = True
+        if "encoders" in result["info"]:
+            result["info"]["encoders"]["optional"] = True
     dims = result.get("dims")
     dim = params.get("dim")
     if mode == "subset" and dim:
@@ -306,6 +341,9 @@ def infer_output(rule, inputs, params):
         result["labels"] = {**({kept: known} if kept else {}), added: None if mode == "pca" else ["BETA", "SE", "P", "N"]}
         if mode == "compare_groups":
             result["labels"][added] = ["log2FC", "mean_a", "mean_b", "stat", "P", "N"] + (["Q_VALUE"] if params.get("method") == "deseq2" else [])
+            if params.get("mode", "two_groups") != "two_groups":
+                result.update(ndim=3, dims=[kept, "comparison", added] if kept else None)
+                result["labels"]["comparison"] = None
     elif mode == "correction":
         dim = params.get("dim", "statistic")
         known = result["labels"].get(dim)

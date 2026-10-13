@@ -158,12 +158,19 @@ def check_source(path):
             if not cls.output_contract or (kind == "operator" and cls.input_contracts is None):
                 raise ValueError(f"Missing contracts: {entry}")
             descriptor = describe_operator(cls) if kind == "operator" else describe_reader(cls())
-            if "." not in descriptor["id"]:
+            from biopipe.packages import owns_legacy_id
+            from packaging.utils import canonicalize_name
+            if "." not in descriptor["id"] and not owns_legacy_id(canonicalize_name(project["name"]), descriptor["id"]):
                 raise ValueError("Use a namespaced ID such as lab.scale")
             descriptors.append(descriptor)
     if not descriptors:
         raise ValueError("No BioPipe entry points declared")
-    return {"protocol_version": 1, "package": project["name"], "version": project["version"], "descriptors": descriptors}
+    from biopipe_sdk.protocol import PackageDescriptor
+    value = {"protocol_version": 1, "name": canonicalize_name(project["name"]),
+             "package": project["name"], "version": project["version"], "origin": "wheel",
+             "dependencies": project.get("dependencies", []), "descriptors": descriptors}
+    PackageDescriptor.model_validate(value)
+    return value
 
 
 def build(path):

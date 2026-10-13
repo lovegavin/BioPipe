@@ -75,6 +75,8 @@ class BedReader(Reader):
 
     output_contract = reader_contract()
 
+    file_input = {'dims': ['region', 'field'], 'labels': {'region': 'auto', 'field': 'builtin'}}
+
     extensions = [".bed"]
     excludes_siblings = [".bim", ".fam", ".pgen"]
     handles_compression = False

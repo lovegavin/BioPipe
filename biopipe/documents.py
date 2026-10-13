@@ -207,7 +207,8 @@ class DocumentHub:
                     "selection": presence, "name": graph["name"], "scope": scope,
                     "nodes": [deepcopy(n) for n in graph["nodes"] if n["id"] in included],
                     "edges": [deepcopy(e) for e in graph["edges"] if e["source"] in included and e["target"] in included],
-                    "memory": graph["memory"], "plugin_lock": graph.get("plugin_lock", {}), "contracts": analysis,
+                    "memory": graph["memory"], "params": graph.get("params", {}),
+                    "runtime": graph.get("runtime", {}), "plugin_lock": graph.get("plugin_lock", {}), "contracts": analysis,
                     "empty_selection": not bool(selected), "total_nodes": len(graph["nodes"])}
 
     def apply(self, session, document, revision, commands, actor="agent", request_id=None):
@@ -250,8 +251,8 @@ class DocumentHub:
                     graph["edges"] = [e for e in graph["edges"] if e["id"] != command["id"]]
                 elif op == "configure":
                     patch = command["patch"]
-                    if set(patch) - {"name", "memory", "base_dir"}:
-                        raise CommandError("invalid_patch", "configure accepts name, memory and base_dir")
+                    if set(patch) - {"name", "memory", "base_dir", "params", "runtime", "manifest_extra"}:
+                        raise CommandError("invalid_patch", "configure accepts name, memory, base_dir, params, runtime and manifest_extra")
                     graph.update(deepcopy(patch))
                 else:
                     raise CommandError("invalid_command", f"Unknown edit operation: {op}")

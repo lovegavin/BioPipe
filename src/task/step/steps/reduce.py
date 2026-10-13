@@ -62,6 +62,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
 
 
 _METHODS = ("pca", "umap", "tsne", "pcoa")
@@ -80,6 +81,17 @@ class ReduceStep(Step):
     name = "reduce"
     inputs_arity = 1
     outputs = []
+    title = 'PCA / PCoA / UMAP / t-SNE'
+    category = "Microbiome"
+    builtin_package = "biopipe-microbiome"
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['reduce']
+    input_contracts, output_contract = CONTRACTS['reduce']
+    output_parameter = "output"
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
@@ -150,11 +162,13 @@ class ReduceStep(Step):
             "component": {f"{prefix}{i + 1}": i for i in range(k)},
         }
 
+        out_info, out_axes = metadata(form, [obs_dim_name], "scores")
         ctx[out_name] = Form(
             data=scores.astype(np.float32),
             dims=[obs_dim_name, "component"],
             labels=out_labels,
-            info={},
+            info=out_info,
+            axis_info=out_axes,
         )
 
         self._export_data = {
@@ -330,7 +344,7 @@ def _looks_like_distance(form: Form, dim: str) -> bool:
     if form.dims[1] != f"{dim}_b":
         return False
     # Labels must match on both axes.
-    return set(form.labels[dim]) == set(form.labels[f"{dim}_b"])
+    return form.labels[dim] == form.labels[f"{dim}_b"]
 
 
 # ---------------------------------------------------------------------- #

@@ -42,6 +42,8 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._microbiome import metadata
 
 
 class FilterByStep(Step):
@@ -50,6 +52,17 @@ class FilterByStep(Step):
     name = "filter_by"
     inputs_arity = 2
     outputs = []
+    title = 'Filter by metrics'
+    category = 'Analysis'
+    builtin_package = 'biopipe-core'
+    legacy_parameters = False
+    parameters_schema = SCHEMAS['filter_by']
+    input_contracts, output_contract = CONTRACTS['filter_by']
+    output_parameter = 'output'
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return estimate_axis(cls.name, inputs, params, profiles)
 
     def run(self, ctx: Context, inputs) -> None:
         data_form, metrics_form = inputs

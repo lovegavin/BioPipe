@@ -46,6 +46,21 @@
           "title": "Memory",
           "type": "object"
         },
+        "params": {
+          "additionalProperties": true,
+          "title": "Params",
+          "type": "object"
+        },
+        "runtime": {
+          "additionalProperties": true,
+          "title": "Runtime",
+          "type": "object"
+        },
+        "manifest_extra": {
+          "additionalProperties": true,
+          "title": "Manifest Extra",
+          "type": "object"
+        },
         "interface": {
           "anyOf": [
             {
@@ -155,6 +170,11 @@
         "params": {
           "additionalProperties": true,
           "title": "Params",
+          "type": "object"
+        },
+        "context_params": {
+          "additionalProperties": true,
+          "title": "Context Params",
           "type": "object"
         },
         "source": {

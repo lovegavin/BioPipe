@@ -1,0 +1,7 @@
+{
+  "id": "route_274abd24ce8d",
+  "key": "rnaseq_de",
+  "name": "RNA-seq DE",
+  "source_commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95",
+  "base_dir": ".studio/builtin-inputs/rnaseq_de"
+}

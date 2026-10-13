@@ -78,17 +78,22 @@ No installation drive or username is hard-coded.
 
 ## Bundled routes and library management
 
-First launch registers four templates from `src/web/builtin_routes.json`:
+First launch registers five templates from `src/web/builtin_routes.json`:
 
 | Route | Inputs | Outputs | Internal nodes |
 | --- | ---: | ---: | ---: |
-| GWAS | 3 | 2 | 16 |
-| RNA-seq DE | 2 | 3 | 12 |
-| Proteomics DE | 2 | 2 | 10 |
-| Survival analysis | 1 | 2 | 5 |
+| GWAS | 3 | 2 | 19 |
+| RNA-seq DE | 2 | 3 | 14 |
+| Proteomics DE | 2 | 2 | 12 |
+| Survival analysis | 1 | 2 | 6 |
+| 16S Microbiome | 2 | 9 | 24 |
 
-`scripts/build_builtin_routes.py` generates the manifest from adapted upstream
-examples. Templates retain example group names, clinical fields and gene choices;
+Node counts include input nodes.
+
+`biopipe registry build` discovers `routes/**/task.yaml` and `task.yml`, validates
+the operators and generates the manifest. `scripts/build_builtin_routes.py` is a
+compatibility wrapper; it contains no route list or default historical Git ref.
+See [registry maintenance](registry_maintenance.md). Templates retain example group names, clinical fields and gene choices;
 open their internal graph, adjust, save and register for your own data. Placeholder
 input paths are replaced by external inputs. Research datasets are not bundled.
 
@@ -105,7 +110,8 @@ The local framework incorporates algorithms from upstream revision
 `ab439ab9af3a36220941d6a8b27c580a268b7c95`: minimum-expression filtering, normalization,
 log transform, imputation, group comparisons (including DESeq2), KM, Log-rank, Cox,
 Volcano, MA plot, Heatmap, Boxplot and Forest plot. TxtReader delegates `.txt`, `.tsv`
-and `.tab`, using tab-separated CSV by default. There are 31 atomic operators and
+and `.tab`, using tab-separated CSV by default. Eight additional operators from revision `fa267bc46a30ee9c9483b7442ff119b9aefcf62c`
+support the [16S template](microbiome.md). There are 39 atomic operators and
 13 readers, all with contracts and metadata/resource adapters.
 
 DESeq2 uses only the two selected groups of raw integer counts and defaults to one

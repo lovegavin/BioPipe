@@ -83,6 +83,8 @@ class Plink1Reader(Reader):
 
     output_contract = reader_contract(representation="hard_call", ploidy=2, coordinates=True)
 
+    file_input = {'dims': ['variant', 'sample'], 'labels': {'variant': 'builtin', 'sample': 'builtin'}}
+
     extensions = [".bed"]
     requires_siblings = [".bim", ".fam"]
     handles_compression = True
@@ -157,6 +159,8 @@ class Plink2Reader(Reader):
     """Reader for PLINK 2.x .pgen / .pvar / .psam triplets."""
 
     output_contract = reader_contract(representation="hard_call", ploidy=2, coordinates=True)
+
+    file_input = {'dims': ['variant', 'sample'], 'labels': {'variant': 'builtin', 'sample': 'builtin'}}
 
     extensions = [".pgen"]
     requires_siblings = [".pvar", ".psam"]
