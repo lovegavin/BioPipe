@@ -1,0 +1,5 @@
+# Development and tests are opt-in; ordinary desktop users do not need pytest.
+-r requirements-agent.txt
+pytest>=8
+build>=1.2
+setuptools>=69

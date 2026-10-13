@@ -21,6 +21,17 @@ follow `START_HERE.txt`. Python and analysis
 dependencies are not bundled. The repository contains development source;
 compiled desktop distributions are release attachments.
 
+For a repeatable Windows x64 install, use the tested version constraints matching
+your Python version. In a Python 3.11 environment:
+
+```text
+python -m pip install -c constraints-py311-windows.txt -e ".[agent]"
+```
+
+For Python 3.12, use `constraints-py312-windows.txt`. See
+[installation and dependency versions](docs/installation.md) for development
+dependencies, optional analyses and troubleshooting resolver backtracking.
+
 See [release notes](docs/releases/v0.3.2.md) for this version and
 [legacy/](legacy/README.md) for the archived previous source.
 
@@ -213,7 +224,10 @@ cd BioPipe
 pip install -r requirements.txt
 ```
 
-`requirements.txt` installs the engine and Studio through portable package requirements. These are supported version ranges, not a platform-specific environment lock.
+`requirements.txt` installs the engine and Studio through supported version ranges.
+Use `-c constraints-py311-windows.txt` (or the Python 3.12 counterpart) to select
+fixed versions on Windows x64. `pytest` is a development dependency; install
+`requirements-dev.txt` or the `dev` extra only when developing or running tests.
 
 CSV, text annotation, FASTA and MTX support is included. Install `requirements-readers.txt` for the additional Parquet, AnnData, PLINK, BGEN and VCF readers, or install only the required reader's package. Native reader dependencies must be available for the target OS; they are loaded only when that format is used. The desktop launcher and core pipeline do not require CUDA.
 
@@ -861,6 +875,9 @@ runtime; format-specific Readers require their optional dependencies.
 ```bash
 # Activate the environment
 conda activate biopipe
+
+# Install the opt-in test dependencies
+python -m pip install -r requirements-dev.txt
 
 # Run tests
 pytest
