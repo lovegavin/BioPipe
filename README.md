@@ -5,7 +5,7 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Studio 0.3.1 preserves upstream Python Steps, Readers and YAML
+Studio 0.3.2 preserves upstream Python Steps, Readers and YAML
 tasks, with **46 built-in operators, 13 readers, six provider packages and five
 reusable route templates**: GWAS, RNA-seq DE, Proteomics DE, survival analysis and
 [16S microbiome](docs/microbiome.md). The desktop package includes this catalog and
@@ -14,12 +14,25 @@ multi-group comparisons are also registered; their example YAML remains under `t
 
 Download the ready-built Windows desktop package from
 [GitHub Releases](https://github.com/lovegavin/BioPipe/releases/latest).
-Extract the complete ZIP, configure a Python environment as described in its
-`START_HERE.txt`, then double-click `BioPipe Studio.exe`. Python and analysis
+Extract the complete ZIP and double-click `BioPipe Studio.exe`. Existing BioPipe,
+Conda and registered Python environments are discovered and checked; if needed,
+select your environment's `python.exe` in the startup prompt. For a new environment,
+follow `START_HERE.txt`. Python and analysis
 dependencies are not bundled. The repository contains development source;
 compiled desktop distributions are release attachments.
 
-See [release notes](docs/releases/v0.3.1.md) for this version and
+For a repeatable Windows x64 install, use the tested version constraints matching
+your Python version. In a Python 3.11 environment:
+
+```text
+python -m pip install -c constraints-py311-windows.txt -e ".[agent]"
+```
+
+For Python 3.12, use `constraints-py312-windows.txt`. See
+[installation and dependency versions](docs/installation.md) for development
+dependencies, optional analyses and troubleshooting resolver backtracking.
+
+See [release notes](docs/releases/v0.3.2.md) for this version and
 [legacy/](legacy/README.md) for the archived previous source.
 
 ## Start Studio
@@ -211,7 +224,10 @@ cd BioPipe
 pip install -r requirements.txt
 ```
 
-`requirements.txt` installs the engine and Studio through portable package requirements. These are supported version ranges, not a platform-specific environment lock.
+`requirements.txt` installs the engine and Studio through supported version ranges.
+Use `-c constraints-py311-windows.txt` (or the Python 3.12 counterpart) to select
+fixed versions on Windows x64. `pytest` is a development dependency; install
+`requirements-dev.txt` or the `dev` extra only when developing or running tests.
 
 CSV, text annotation, FASTA and MTX support is included. Install `requirements-readers.txt` for the additional Parquet, AnnData, PLINK, BGEN and VCF readers, or install only the required reader's package. Native reader dependencies must be available for the target OS; they are loaded only when that format is used. The desktop launcher and core pipeline do not require CUDA.
 
@@ -859,6 +875,9 @@ runtime; format-specific Readers require their optional dependencies.
 ```bash
 # Activate the environment
 conda activate biopipe
+
+# Install the opt-in test dependencies
+python -m pip install -r requirements-dev.txt
 
 # Run tests
 pytest

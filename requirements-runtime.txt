@@ -1,4 +1,4 @@
-# Portable CPU runtime for the pipeline engine and resource-manager tests.
+# Portable CPU runtime for the pipeline engine.
 # Format-specific dependencies (cyvcf2, bed-reader, h5py, etc.) remain optional.
 numpy>=1.26
 pandas>=2.0
@@ -7,7 +7,6 @@ scipy>=1.11
 statsmodels>=0.14
 matplotlib>=3.8
 psutil>=5.9
-pytest>=8.0
 jsonschema>=4.23,<5
 pydantic>=2.7
 packaging>=24
