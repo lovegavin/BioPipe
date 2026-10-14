@@ -6,11 +6,11 @@ Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
 Studio 0.3.3 preserves upstream Python Steps, Readers and YAML
-tasks, with **46 built-in operators, 13 readers, six provider packages and five
+tasks, with **53 built-in operators, 15 readers, six provider packages and five
 reusable route templates**: GWAS, RNA-seq DE, Proteomics DE, survival analysis and
 [16S microbiome](docs/microbiome.md). The desktop package includes this catalog and
-the latest editor. Seven additional upstream axis/single-cell building blocks and
-multi-group comparisons are also registered; their example YAML remains under `tasks/`.
+the latest editor. The catalog includes upstream axis/single-cell building blocks,
+multi-group comparisons and GO enrichment; example YAML remains under `tasks/`.
 
 Download the ready-built Windows desktop package from
 [GitHub Releases](https://github.com/lovegavin/BioPipe/releases/latest).
@@ -414,7 +414,7 @@ class Reader(ABC):
 ### Routing and auto-discovery
 
 `src/reader/__init__.py` loads explicit entry points from
-`biopipe/builtin_packages.json`. The 13 readers ship as the `biopipe-readers`
+`biopipe/builtin_packages.json`. The 15 readers ship as the `biopipe-readers`
 package; a hot-installed replacement uses the same IDs and resource contracts.
 Scanning is a maintenance command (`python scripts/build_builtin_packages.py --refresh`),
 not a runtime registration mechanism.

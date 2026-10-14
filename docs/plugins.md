@@ -1,7 +1,7 @@
 # Plugin installation and version lifecycle
 
-All 39 builtin operators and 13 readers now ship as six preinstalled packages.
-The microbiome provider adds eight operators; see [16S analysis](microbiome.md).
+All built-in operators and Readers ship as six preinstalled packages.
+These include the eight microbiome operators; see [16S analysis](microbiome.md).
 Use [registry maintenance](registry_maintenance.md) for source/module additions.
 The same registry manages bundled and wheel providers. See
 [unified package/resource protocol](package_protocol.md) for package ownership,

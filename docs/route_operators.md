@@ -109,10 +109,11 @@ prevents deleted bundled routes from reappearing on restart. Preferences live in
 The local framework incorporates algorithms from upstream revision
 `ab439ab9af3a36220941d6a8b27c580a268b7c95`: minimum-expression filtering, normalization,
 log transform, imputation, group comparisons (including DESeq2), KM, Log-rank, Cox,
-Volcano, MA plot, Heatmap, Boxplot and Forest plot. TxtReader delegates `.txt`, `.tsv`
-and `.tab`, using tab-separated CSV by default. Eight additional operators from revision `fa267bc46a30ee9c9483b7442ff119b9aefcf62c`
-support the [16S template](microbiome.md). There are 39 atomic operators and
-13 readers, all with contracts and metadata/resource adapters.
+Volcano, MA plot, Heatmap, Boxplot and Forest plot. TxtReader handles `.txt` and
+`.tab`; TsvReader handles `.tsv`. Eight additional operators from revision `fa267bc46a30ee9c9483b7442ff119b9aefcf62c`
+support the [16S template](microbiome.md). Later additions include axis/single-cell
+operations and GO enrichment. All atomic operators and Readers have contracts
+and metadata/resource adapters; the generated registry is the current inventory.
 
 DESeq2 uses only the two selected groups of raw integer counts and defaults to one
 process. Install `requirements-analysis.txt` for PyDESeq2/lifelines. These kernels
