@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from biopipe.run_log import RunLog
 
 from src.core import ContextError, Form
 from src.task.memory.config import MemoryConfig
@@ -15,7 +16,7 @@ from src.task.memory.runtime import MemoryRuntime
 class Context:
     """Holds forms, params and task-scoped state."""
 
-    def __init__(self, task_dir: Path, manifest: dict):
+    def __init__(self, task_dir: Path, manifest: dict, *, run_log=None):
         self.task_dir = Path(task_dir).resolve()
         self.manifest = manifest
         self.params = manifest.get("params", {})
@@ -31,10 +32,21 @@ class Context:
         self._run_status = "created"
         self._run_error = None
         self.memory = None
-        config = MemoryConfig.parse(manifest)
-        if config.enabled:
-            self.memory = MemoryRuntime(config, self.out_dir, manifest)
-            self.forms = self.memory.store
+        self.run_log = run_log or RunLog(self.out_dir)
+        try:
+            config = MemoryConfig.parse(manifest)
+            if config.enabled:
+                self.memory = MemoryRuntime(config, self.out_dir, manifest, self.run_log)
+                self.forms = self.memory.store
+            else:
+                self.event("run_started", run_id=self.run_log.run_id, memory_enabled=False)
+        except BaseException as exc:
+            if run_log is None:
+                try:
+                    self.run_log.bootstrap_failure(self.task_dir, exc)
+                finally:
+                    self.run_log.close()
+            raise
 
     def register_source(self, name: str, spec: dict) -> None:
         """Managed sources are read on first use; legacy mode stays eager."""
@@ -89,6 +101,7 @@ class Context:
             self.forms.register_source(name, loader, path.resolve(), probe, disk_loader)
         else:
             self[name] = loader()
+            self.event("source_loaded", name=name, shape=list(self[name].data.shape), dims=self[name].dims)
             print(f"[source] {name}: shape={self[name].data.shape}, dims={self[name].dims}")
 
     def __getitem__(self, name: str) -> Form:
@@ -109,13 +122,18 @@ class Context:
     def has(self, name: str) -> bool:
         return name in self.forms
 
+    def event(self, action: str, **details) -> None:
+        if self.memory:
+            self.memory.event(action, **details)
+        else:
+            self.run_log.event(action, **details)
+
     def log(self, message: str, **details) -> None:
         """Write a structured plugin event and a human-readable console line."""
         event = {"message": str(message), **details}
         # Fail early rather than corrupting the JSONL log with arbitrary values.
         json.dumps(event, allow_nan=False)
-        if self.memory:
-            self.memory.event("operator_log", **event)
+        self.event("operator_log", **event)
         self.metadata.setdefault("operator_logs", []).append(event)
         print(str(message), flush=True)
 
@@ -132,6 +150,13 @@ class Context:
         return target
 
     def finalize(self) -> None:
+        """Persist the summary and close the event journal in every memory mode."""
+        try:
+            self._write_summary()
+        finally:
+            self.run_log.close()
+
+    def _write_summary(self) -> None:
         """Write the run summary.
 
         Reads ``artifacts["exports"]`` populated by the runner and
@@ -153,6 +178,8 @@ class Context:
                 close_error = exc
                 self._run_status, self._run_error = "failed", exc
                 memory_report = self.memory.close("failed", exc)
+        else:
+            self.event("run_finished", status=self._run_status, error=str(self._run_error) if self._run_error else None)
 
         summary = {
             "task_dir": str(self.task_dir),
@@ -164,6 +191,8 @@ class Context:
             "steps": exports,
             "status": self._run_status,
             "error": str(self._run_error) if self._run_error else None,
+            "run_id": self.run_log.run_id,
+            "event_log": str(self.run_log.event_path),
         }
         if memory_report:
             summary["run_id"] = self.memory.run_id
@@ -178,9 +207,8 @@ class Context:
         txt_path = self.out_dir / "run_summary.txt"
         with open(txt_path, "w", encoding="utf-8") as f:
             f.write(self._render_text(summary))
-        if self.memory:
-            (self.memory.run_dir / "run_summary.json").write_text(
-                json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
+        (self.run_log.run_dir / "run_summary.json").write_text(
+            json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
         if close_error:
             raise close_error
 

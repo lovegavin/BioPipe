@@ -56,6 +56,8 @@ class Scale(Operator):
     name = "example.{module}"
     version = "0.1.0"
     title = "Scale matrix"
+    category = "data"
+    icon = "SlidersHorizontal"  # Optional; omit for Studio's default icon.
     input_contracts = [port(ndim=2)]
     output_contract = {{"mode": "transform", "representation": "scaled"}}
     parameters_schema = {{

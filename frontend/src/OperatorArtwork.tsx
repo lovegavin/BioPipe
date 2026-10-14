@@ -29,7 +29,7 @@ export function ChartGlyph({ kind, className = "" }: { kind: string; className?:
 export function OperatorArtwork({ spec, source, size = 20 }: { spec?: Operator; source?: boolean; size?: number }) {
   return !source && spec?.preview && charts[spec.preview.kind]
     ? <ChartGlyph kind={spec.preview.kind}/>
-    : <OperatorIcon name={source ? "Database" : spec?.icon} size={size}/>;
+    : <OperatorIcon name={source ? "Database" : spec?.icon ?? undefined} size={size}/>;
 }
 
 export function OperatorPreview({ spec }: { spec?: Operator }) {

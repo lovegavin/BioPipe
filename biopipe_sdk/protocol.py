@@ -17,6 +17,8 @@ class Descriptor(BaseModel):
     kind: Literal["operator", "reader"]
     entry_point: str
     title: str
+    category: str | None = Field(default=None, description="Operator library category, independent of package origin. Custom labels are allowed.")
+    icon: str | None = Field(default=None, description="Optional Studio icon name. Missing or unknown names use the default icon.")
     parameters_schema: dict[str, Any]
     contracts: dict[str, Any]
     resources: dict[str, Any]
@@ -134,12 +136,21 @@ def describe_operator(cls, legacy=None):
                             **({"stream_protocol": cls.stream_protocol,
                                 "stream_buffer_multiplier": cls.stream_buffer_multiplier,
                                 "stream_fixed_bytes": cls.stream_fixed_bytes} if cls.supports_streaming else {})})
-    value["category"] = getattr(cls, "category", value.get("category", "Plugins"))
+    # Declarations travel through source scans and wheel manifests alike. A base
+    # class's None defaults must not erase older packaged presentation metadata.
+    for field in ("category", "icon"):
+        declared = getattr(cls, field, None)
+        if declared is not None:
+            value[field] = declared
+    if value.get("category") is None:
+        value["category"] = "Plugins"
     value.setdefault("description", (cls.__doc__ or "").strip())
     value.setdefault("input_type", "Form")
     value.setdefault("output_type", "Form" if cls.outputs or output_parameter else "Report")
     value.update(memory_modes=value["resources"]["memory_modes"], supports_cuda=value["resources"]["supports_cuda"])
-    return Descriptor.model_validate(value).model_dump()
+    # Preserve the shape of previously built wheel manifests: optional display
+    # fields that were never declared must not suddenly appear as null.
+    return Descriptor.model_validate(value).model_dump(exclude_unset=True)
 
 
 def describe_reader(reader):
@@ -157,7 +168,7 @@ def describe_reader(reader):
                       requires_siblings=list(reader.requires_siblings), excludes_siblings=list(reader.excludes_siblings),
                       handles_compression=reader.handles_compression,
                       **({"file_input": deepcopy(reader.file_input)} if reader.file_input is not None else {}),
-                      output_contract=reader.output_contract).model_dump()
+                      output_contract=reader.output_contract).model_dump(exclude_unset=True)
 
 
 def validate_output_rule(rule):

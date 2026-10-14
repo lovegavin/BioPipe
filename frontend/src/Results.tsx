@@ -23,6 +23,14 @@ export const statusLabel: Record<Job["status"], string> = {
   interrupted: "已中断",
 };
 const eventNames: Record<string, string> = {
+  worker_launching: "启动进程",
+  worker_spawned: "进程已启动",
+  worker_started: "初始化引擎",
+  worker_start_failed: "启动失败",
+  worker_finished: "进程退出",
+  worker_interrupted: "进程中断",
+  step_started: "步骤开始",
+  operator_log: "算子日志",
   run_started: "运行开始",
   plan_compiled: "固定顺序已编译",
   step_plan: "步骤规划",
@@ -145,6 +153,8 @@ function Scatter({ preview }: { preview: Preview }) {
 export function Results({
   job,
   events,
+  consoleText = "",
+  consoleTruncated = false,
   history,
   tab,
   onTab,
@@ -157,6 +167,8 @@ export function Results({
 }: {
   job: Job | null;
   events: RunEvent[];
+  consoleText?: string;
+  consoleTruncated?: boolean;
   history: Job[];
   tab: string;
   onTab: (tab: string) => void;
@@ -325,10 +337,11 @@ export function Results({
         ) : tab === "logs" ? (
           <div className="log-layout">
             <div className="event-list">
+              {job?.error && <div className="log-error" role="alert"><WarningCircle size={18} /><span>{job.error}</span></div>}
               {events.length ? (
                 events.slice(-200).map((event, index) => (
                   <div
-                    className={`event-line ${event.event === "spill_blocked" ? "warn" : ""}`}
+                    className={`event-line ${event.error || event.event === "spill_blocked" ? "warn" : ""}`}
                     key={`${event.time}-${index}`}
                   >
                     <time>
@@ -339,6 +352,7 @@ export function Results({
                     <strong>{eventNames[event.event] || event.event}</strong>
                     <span>
                       {event.name || ""}
+                      {event.message ? `${event.name ? " · " : ""}${event.message}` : ""}
                       {event.reason
                         ? ` · ${reasons[event.reason] || event.reason}`
                         : ""}
@@ -349,11 +363,17 @@ export function Results({
                     </span>
                   </div>
                 ))
-              ) : (
+              ) : !job?.error && !consoleText ? (
                 <div className="results-empty">
                   <Terminal size={29} weight="light" />
                   <p>暂无运行日志</p>
                 </div>
+              ) : null}
+              {consoleText && (
+                <details className="process-console" key={job?.id} open={job?.status === "failed" || !events.length}>
+                  <summary><Terminal size={16} />进程输出{consoleTruncated ? " · 最近输出" : ""}</summary>
+                  <pre>{consoleText}</pre>
+                </details>
               )}
             </div>
             <div className="resource-metrics">

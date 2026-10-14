@@ -21,7 +21,9 @@ version is `1`. The SDK currently ships with the `biopipe-studio` distribution.
   receives only calculation parameters through its `params` argument.
 - `context[name]`: access a named Form; assignment validates and registers a fresh
   output. Prefer the return-value API for a single output.
-- `context.log(message, **fields)`: emit an `operator_log` event and console log.
+- `context.log(message, **fields)`: emit an `operator_log` event and console log,
+  including when memory management is disabled. Studio displays the message and
+  process output in Run logs. Fields must be JSON-compatible.
   Fields should be JSON-compatible summaries, not full matrices or secrets.
 - `context.artifact_path(name)`: obtain a path under the run output's `artifacts`
   directory. Parent traversal and paths escaping this directory are rejected.
@@ -32,6 +34,20 @@ version is `1`. The SDK currently ships with the `biopipe-studio` distribution.
 The runner creates a new instance per execution, calls `run`, then calls `export`.
 Raise a clear exception on unsupported input; do not silently change an algorithm
 or fill missing biological semantics. Failures appear in job logs and summaries.
+
+## Operator display metadata
+
+`Step` and `Operator` accept optional class attributes `category: str | None`
+and `icon: str | None`. Source scans, plugin checks and wheel builds export these
+attributes into the same descriptor read by Studio. For example,
+`category = "analysis"` groups a wheel-installed operator with statistical
+operators, and `icon = "Sigma"` selects its icon. Neither field changes execution,
+data contracts, resource capabilities or package ownership.
+
+Use `quality_control`, `analysis`, `data`, `visualization`, or a custom category.
+Missing categories use Uncategorized; missing or unknown icon names use
+`SquaresFour`. See [categories and icons](operator_protocol.md#operator-categories-and-icons)
+for aliases, the supported icon set and registry refresh commands.
 
 ## Reader dispatch
 

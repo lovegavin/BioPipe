@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from collections import Counter
-from datetime import datetime, timezone
 import gc
 import json
 import hashlib
@@ -10,23 +9,21 @@ import os
 from pathlib import Path
 import threading
 import time
-import uuid
 
 from src.core import ManifestError
+from biopipe.run_log import RunLog
 from .config import DiskBudgetError, MemoryBudgetError
 from .planner import LifetimePlan, NEVER, block_elements, full_estimate
 from .store import ArtifactStore
 
 
 class MemoryRuntime:
-    def __init__(self, config, out_dir, manifest):
+    def __init__(self, config, out_dir, manifest, run_log=None):
         self.config, self.out_dir = config, Path(out_dir)
-        self.run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:12]
-        self.run_dir = self.out_dir / "runs" / self.run_id
-        self.run_dir.mkdir(parents=True)
-        self.event_path = self.run_dir / "events.jsonl"
-        self.log = open(self.event_path, "a", encoding="utf-8", buffering=1)
-        self.log_lock = threading.RLock()
+        self.run_log = run_log or RunLog(self.out_dir)
+        self.run_id, self.run_dir = self.run_log.run_id, self.run_log.run_dir
+        self.event_path = self.run_log.event_path
+        self.log, self.log_lock = self.run_log.stream, self.run_log.lock
         self.counts = Counter()
         self.rss_peak = 0
         self.step_rss_peak = 0
@@ -72,8 +69,7 @@ class MemoryRuntime:
         with self.log_lock:
             self.counts[action] += 1
             if not self._closed:
-                self.log.write(json.dumps({"time": datetime.now(timezone.utc).isoformat(),
-                                           "event": action, **details}, ensure_ascii=False, default=str) + "\n")
+                self.run_log.event(action, **details)
 
     def configure(self, steps, registry):
         start = time.perf_counter()
@@ -299,5 +295,5 @@ class MemoryRuntime:
             (self.run_dir / "memory_report.json").write_text(json.dumps(self.report, indent=2), encoding="utf-8")
             with self.log_lock:
                 self._closed = True
-                self.log.close()
+                self.run_log.close()
         return self.report

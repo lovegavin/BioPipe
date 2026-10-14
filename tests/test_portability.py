@@ -46,7 +46,7 @@ def finished(client, key):
 
 def copy_code(destination):
     destination.mkdir(parents=True)
-    for name in ("src", "scripts"):
+    for name in ("src", "scripts", "biopipe", "biopipe_sdk"):
         shutil.copytree(ROOT / name, destination / name, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     shutil.copytree(ROOT / "frontend/dist", destination / "frontend/dist")
 

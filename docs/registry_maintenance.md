@@ -59,6 +59,10 @@ the user's active plugin registry.
 2. Declare the SDK parameter schema, input/output contracts, stable ID, output
    ports and actual resource capabilities. A Step producing a Form must declare
    `output_parameter = "output"` or fixed `outputs`.
+   Set `category` to its purpose (`quality_control`, `analysis`, `data`,
+   `visualization`, or a custom label). Optionally declare an `icon` name, for
+   example `icon = "Funnel"`; otherwise Studio uses its default icon. See
+   [display metadata](operator_protocol.md#operator-categories-and-icons).
 3. Run `discover`, then `check` to see missing declarations and duplicate IDs.
 4. Add numerical/metadata tests, run `build`, and review the JSON diff.
 
@@ -74,7 +78,7 @@ unit. New provider metadata starts at version `1.0.0`; review its title/version
 in the package manifest before distribution. Moving an already-owned ID into a
 different provider is rejected to protect version locks.
 
-`check` validates parameter schemas, port declarations, output modes, arity,
+`check` validates display field types, parameter schemas, port declarations, output modes, arity,
 resource hooks and duplicate identities. It does not prove numerical correctness
 or that an optional dependency is installed. `run_stream` and disk-reader hooks
 must have real implementations; merely setting capability flags fails validation.

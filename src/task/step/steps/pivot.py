@@ -54,6 +54,8 @@ class PivotStep(Step):
     """Pivot a long 2D table into a wide matrix by two categorical columns."""
 
     name = "pivot"
+    category = "data"
+    icon = "Columns"
     inputs_arity = 1
     outputs = []
     input_contracts = [port(ndim=2)]

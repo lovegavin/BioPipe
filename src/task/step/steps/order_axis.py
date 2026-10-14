@@ -38,6 +38,8 @@ class OrderAxisStep(Step):
     """Reorder an axis by a numeric info field, keeping all positions."""
 
     name = "order_axis"
+    category = "data"
+    icon = "SortAscending"
     inputs_arity = 1
     outputs = []
     input_contracts = [

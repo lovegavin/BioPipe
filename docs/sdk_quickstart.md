@@ -42,6 +42,8 @@ class Scale(Operator):
     name = "my_lab.scale"
     version = "0.1.0"
     title = "Scale matrix"
+    category = "data"
+    icon = "SlidersHorizontal"  # Optional; omit for the default icon.
     input_contracts = [port(ndim=2)]
     output_contract = {"mode": "transform", "representation": "scaled"}
     parameters_schema = {
@@ -69,6 +71,13 @@ The example converts a finite missing sentinel such as `-9` to NaN before scalin
 and preserves existing NaNs.
 Declare any additional pip dependencies in the plugin's `pyproject.toml`.
 The generated memory estimate should be adjusted for your algorithm.
+
+Choose `quality_control`, `analysis`, `data` or `visualization` for the library
+category, or use your own label. `kind` is inferred from the base class; do not
+set it to a category name. An omitted category uses the Uncategorized group.
+An omitted or unknown icon name uses the default icon. See the
+[display metadata reference](operator_protocol.md#operator-categories-and-icons)
+for the available names. The generated template includes these optional fields.
 
 ## 15–20 minutes: check and test
 

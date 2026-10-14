@@ -1669,6 +1669,7 @@ strong {
   height: 100%;
 }
 .event-list {
+  min-width: 0;
   overflow: auto;
   padding: var(--space-3) var(--space-6);
 }
@@ -1691,6 +1692,36 @@ strong {
 }
 .event-line.warn {
   color: var(--warning);
+}
+.event-line > span {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.log-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+  color: var(--error);
+  overflow-wrap: anywhere;
+}
+.log-error svg { flex-shrink: 0; }
+.process-console {
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-3);
+}
+.process-console summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+}
+.process-console summary svg { vertical-align: middle; margin-right: var(--space-2); }
+.process-console pre {
+  font: var(--font-xs)/1.7 var(--font-mono);
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 .history-list {
   padding: var(--space-1) var(--space-6);

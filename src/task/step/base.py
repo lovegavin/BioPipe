@@ -24,6 +24,9 @@ class Step(ABC):
     """
 
     name: ClassVar[str] = "unnamed"
+    # Optional presentation metadata; execution kind is inferred from the base.
+    category: ClassVar[str | None] = None
+    icon: ClassVar[str | None] = None
     inputs_arity: ClassVar[int | str] = 0
     outputs: ClassVar[list[str]] = []
     input_contracts: ClassVar[list[dict] | None] = None

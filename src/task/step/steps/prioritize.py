@@ -43,6 +43,8 @@ class PrioritizeStep(Step):
     """Keep the top positions along a dimension, ranked by an info field."""
 
     name = "prioritize"
+    category = "data"
+    icon = "Funnel"
     inputs_arity = 1
     outputs = []
     input_contracts = [

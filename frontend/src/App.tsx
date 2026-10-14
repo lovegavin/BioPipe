@@ -224,6 +224,8 @@ function Studio() {
   const [job, setJob] = useState<Job | null>(null),
     [history, setHistory] = useState<Job[]>([]),
     [events, setEvents] = useState<RunEvent[]>([]);
+  const [consoleText, setConsoleText] = useState("");
+  const [consoleTruncated, setConsoleTruncated] = useState(false);
   // React Flow's measurements preserve port bounds across controlled-node updates.
   // They belong to the current view, not the saved workflow or its run identity.
   const [nodeMeasurements, setNodeMeasurements] = useState<
@@ -590,6 +592,8 @@ function Studio() {
   useEffect(() => {
     if (!job?.id) return;
     setEvents([]);
+    setConsoleText("");
+    setConsoleTruncated(false);
     const source = new EventSource(api.url(`/api/jobs/${job.id}/events`));
     let warned = false;
     source.addEventListener("update", (event) => {
@@ -597,8 +601,14 @@ function Studio() {
         job: Job;
         events: RunEvent[];
         done: boolean;
+        console?: string;
+        console_truncated?: boolean;
       };
       setJob((previous) => ({ ...payload.job, graph: previous?.graph }));
+      if (payload.console !== undefined) {
+        setConsoleText(payload.console);
+        setConsoleTruncated(payload.console_truncated === true);
+      }
       const memoryStart = payload.events.find(event => event.event === "run_started" && typeof event.available_at_start_bytes === "number");
       if (memoryStart && typeof memoryStart.budget_bytes === "number") {
         const budget = memoryStart.budget_bytes;
@@ -648,7 +658,7 @@ function Studio() {
     let current = -1;
     if (stale) return result;
     for (const event of events) {
-      if (event.event === "step_plan") {
+      if (event.event === "step_started" || event.event === "step_plan") {
         current = Number(event.index) - 1;
         const id = job?.order?.[current];
         if (id) result[id] = "running";
@@ -1603,6 +1613,8 @@ function Studio() {
           <Results
             job={job}
             events={events}
+            consoleText={consoleText}
+            consoleTruncated={consoleTruncated}
             history={history}
             tab={tab}
             onTab={(value) => {

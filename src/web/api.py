@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 import uuid
 
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
+from fastapi.responses import JSONResponse, FileResponse, StreamingResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 import yaml
 
@@ -272,34 +272,39 @@ def create_app(settings=None):
     async def events(key: str, request: Request):
         service.require(key)
         async def stream():
-            offset = 0
+            offsets = {}
+            console_signature = None
             sequence = 0
             while not await request.is_disconnected():
-                path = service.events_path(key)
+                # Read completion first: a terminal snapshot guarantees all logs
+                # were flushed. Reading it after the files can lose their last rows.
+                job = service.details(key)
+                terminal = job["status"] != "running" and job.get("logs_complete", True)
                 batch, eof = [], True
-                if path:
+                for path in service.event_paths(key):
                     with open(path, encoding="utf-8") as file:
-                        file.seek(offset)
+                        file.seek(offsets.get(path, 0))
                         for _ in range(200):
                             previous = file.tell()
                             line = file.readline()
-                            if not line or not line.endswith("\n"):
-                                offset = previous
+                            if not line or (not terminal and not line.endswith("\n")):
+                                offsets[path] = previous
                                 break
-                            offset = file.tell()
+                            offsets[path] = file.tell()
                             try:
                                 batch.append(json.loads(line))
                             except json.JSONDecodeError:
                                 continue
                         else:
                             eof = False
-                job = service.details(key)
+                batch.sort(key=lambda event: event.get("time", ""))
+                console_signature, console = service.console_snapshot(key, job, console_signature)
                 # The graph is fetched once at launch/restore, not retransmitted
                 # every 400 ms for a large DAG.
                 job.pop("graph", None)
-                done = job["status"] != "running" and eof
+                done = terminal and eof
                 sequence += 1
-                payload = safe_json({"job": job, "events": batch, "done": done})
+                payload = safe_json({"job": job, "events": batch, "done": done, **(console or {})})
                 yield f"id: {sequence}\nevent: update\ndata: {json.dumps(payload, ensure_ascii=False, allow_nan=False)}\n\n"
                 if done:
                     break
@@ -333,8 +338,11 @@ def create_app(settings=None):
 
     @app.get("/api/jobs/{key}/console")
     def console(key: str):
-        service.require(key)
+        job = service.require(key)
         path = service.jobs_dir / key / "console.log"
+        if not path.is_file() or path.stat().st_size == 0:
+            _, snapshot = service.console_snapshot(key, job)
+            return PlainTextResponse(snapshot["console"])
         return FileResponse(path, media_type="text/plain", filename="console.log")
 
     if settings.dist_dir.is_dir():

@@ -33,8 +33,10 @@ def gateway(tmp_path):
 
 
 def test_all_legacy_descriptors_are_public_and_preserve_names():
+    from src.reader import READERS
     catalog = build_catalog(STEPS)
-    assert len(catalog["operators"]) == len(STEPS) == 46 and len(catalog["readers"]) == 13
+    assert len(catalog["operators"]) == len(STEPS)
+    assert {d["id"] for d in catalog["readers"]} == {type(reader).__name__ for reader in READERS}
     assert {d["id"] for d in catalog["operators"]} == set(STEPS)
     for descriptor in catalog["operators"] + catalog["readers"]:
         assert Descriptor.model_validate(descriptor).protocol_version == 1
@@ -186,7 +188,10 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeyp
     import zipfile
     with zipfile.ZipFile(wheel) as archive:
         descriptor_file = next(name for name in archive.namelist() if name.endswith(".dist-info/biopipe.json"))
-        assert json.loads(archive.read(descriptor_file))["descriptors"][0]["id"] == "example.scale_plugin"
+        descriptor = json.loads(archive.read(descriptor_file))["descriptors"][0]
+        assert descriptor["id"] == "example.scale_plugin"
+        assert descriptor["category"] == "data"
+        assert descriptor["icon"] == "SlidersHorizontal"
     # Runtimes can inherit dependencies through .pth files (including editable
     # installations). A plugin worker must resolve the same transitive paths.
     import sysconfig
@@ -211,6 +216,9 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeyp
     assert len([d for d in installed["descriptors"] if d['distribution'] == 'scale-plugin']) == 1
     catalog = client.get("/api/operators").json()
     assert len(catalog["operators"]) == len(STEPS) + 1
+    installed_descriptor = next(d for d in catalog["operators"] if d["id"] == "example.scale_plugin")
+    assert installed_descriptor["category"] == "data"
+    assert installed_descriptor["icon"] == "SlidersHorizontal"
     graph = deepcopy(data["demo"])
     graph["nodes"] = [graph["nodes"][0], {"id": "scale", "kind": "operator", "operator": "example.scale_plugin",
                                         "position": {"x": 400, "y": 80}, "params": {"factor": 3, "output": "scaled"}}]
@@ -258,8 +266,10 @@ def test_reader_plugin_is_discovered_and_runs_in_worker(gateway, tmp_path):
     source = tmp_path / "array_plugin"
     scaffold(source, "reader")
     manager = app.state.service.plugins
+    previous_readers = {reader["id"] for reader in client.get("/api/operators").json()["readers"]}
     manager.install(build(source)["wheels"][0])
-    assert len(client.get("/api/operators").json()["readers"]) == 14
+    installed_readers = {reader["id"] for reader in client.get("/api/operators").json()["readers"]}
+    assert previous_readers < installed_readers and len(installed_readers - previous_readers) == 1
     np.save(tmp_path / "matrix.npy", np.arange(12, dtype=float).reshape(3, 4))
     graph = deepcopy(data["demo"])
     graph["nodes"] = [graph["nodes"][0], graph["nodes"][-1]]

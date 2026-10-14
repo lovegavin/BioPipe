@@ -8,10 +8,12 @@ from pathlib import Path, PurePosixPath, PureWindowsPath
 import subprocess
 import sys
 import threading
+import traceback
 import uuid
 
 import numpy as np
 import yaml
+from biopipe.run_log import append_event
 
 from .graph import GraphError, compile_graph, relative_manifest
 from .models import Graph
@@ -96,7 +98,7 @@ class JobService:
         for record in self.jobs_dir.glob("*/job.json"):
             value = read_json(record)
             if value:
-                if value["status"] == "running":
+                if value["status"] == "running" or value.get("logs_complete") is False:
                     owner = value.get("owner", {})
                     try:
                         alive = psutil.Process(owner["pid"]).create_time() == owner["created"]
@@ -105,8 +107,12 @@ class JobService:
                     except psutil.AccessDenied:
                         alive = True  # Insufficient permission is not proof of a dead worker.
                     if not alive:
-                        value["status"] = "interrupted"
-                        value["error"] = "本地服务重启，之前的任务未完成。"
+                        if value["status"] == "running":
+                            value["status"] = "interrupted"
+                            value["error"] = "本地服务重启，之前的任务未完成。"
+                        self._launcher_event(value, "worker_interrupted", status=value["status"], error=value.get("error"))
+                        value["finished_at"] = datetime.now(timezone.utc).isoformat()
+                        value["logs_complete"] = True
                         write_json(record, value)
                 self.jobs[value["id"]] = value
 
@@ -158,7 +164,7 @@ class JobService:
         manifest, order = compile_graph(graph, catalog, self.root, require_files=True)
         with self.lock:
             self._refresh_jobs()
-            if any(job["status"] == "running" for job in self.jobs.values()):
+            if any(job["status"] == "running" or job.get("logs_complete") is False for job in self.jobs.values()):
                 raise GraphError("已有任务正在运行，请等它结束或先停止。")
             key = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8]
             directory = self.jobs_dir / key
@@ -166,30 +172,45 @@ class JobService:
             write_json(directory / "plugins.lock.json", plugin_snapshot)
             (directory / "task.yaml").write_text(yaml.safe_dump(relative_manifest(manifest, directory), sort_keys=False, allow_unicode=True), encoding="utf-8")
             job = {"id": key, "name": graph.name, "status": "running", "created_at": datetime.now(timezone.utc).isoformat(),
-                   "finished_at": None, "error": None, "order": order, "graph": graph.model_dump(mode="json"), "owner": self.owner}
+                   "finished_at": None, "error": None, "exit_code": None, "logs_complete": False,
+                   "order": order, "graph": graph.model_dump(mode="json"), "owner": self.owner}
             job["plugins"] = {"generation": plugin_snapshot["generation"], "packages": plugin_snapshot["packages"]}
             if any(node.kind == "route" for node in graph.nodes):
                 _, job["node_owners"] = expand_routes(graph, self.catalog)
             self.jobs[key] = job
             write_json(directory / "job.json", job)
-            temporary = directory / "tmp"
-            temporary.mkdir()
-            env = dict(os.environ, PYTHONUNBUFFERED="1", PYTHONIOENCODING="utf-8", TEMP=str(temporary), TMP=str(temporary),
-                       MPLCONFIGDIR=str(self.directory / "matplotlib"))
-            console = open(directory / "console.log", "w", encoding="utf-8")
+            console = None
             try:
+                console = open(directory / "console.log", "a", encoding="utf-8")
+                temporary = directory / "tmp"
+                temporary.mkdir()
+                env = dict(os.environ, PYTHONUNBUFFERED="1", PYTHONIOENCODING="utf-8", PYTHONFAULTHANDLER="1", TEMP=str(temporary), TMP=str(temporary),
+                           MPLCONFIGDIR=str(self.directory / "matplotlib"))
                 code_root = self.settings.code_root or self.root
+                python = self.plugins.python_for(plugin_snapshot)
+                console.write(f"[BioPipe launcher] Job {key}\nPython: {python}\nTask: {directory}\n")
+                console.flush()
+                self._launcher_event(job, "worker_launching", python=python, message="Starting analysis worker")
                 # stdin belongs to the desktop host's control pipe. Inheriting it
                 # can block Python startup on Windows while watch_host reads it.
-                process = subprocess.Popen([self.plugins.python_for(plugin_snapshot), str(code_root / "scripts/run.py"), str(directory)],
+                process = subprocess.Popen([python, str(code_root / "scripts/run.py"), str(directory)],
                                            cwd=self.root, env=env, stdin=subprocess.DEVNULL,
                                            stdout=console, stderr=subprocess.STDOUT,
                                            creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
-            except BaseException as exc:
-                console.close()
-                job["status"], job["error"] = "failed", str(exc)
+            except Exception as exc:
+                job["status"], job["error"] = "failed", f"{type(exc).__name__}: {exc}"
+                if console is not None:
+                    try:
+                        console.write(traceback.format_exc())
+                        console.close()
+                    except OSError:
+                        pass
+                self._launcher_event(job, "worker_start_failed", error=job["error"])
+                job["finished_at"] = datetime.now(timezone.utc).isoformat()
+                job["logs_complete"] = True
                 write_json(directory / "job.json", job)
-                raise
+                return self.details(key)
+            self._launcher_event(job, "worker_spawned", pid=process.pid)
             self.processes[key] = process
             watcher = threading.Thread(target=self._watch, args=(key, process, console), daemon=True)
             self.threads[key] = watcher
@@ -198,17 +219,40 @@ class JobService:
 
     def _watch(self, key, process, console):
         code = process.wait()
-        console.close()
         with self.lock:
             job = self.jobs[key]
             summary = read_json(self.jobs_dir / key / "output/run_summary.json", {})
             if job["status"] != "cancelled":
                 job["status"] = "complete" if code == 0 and summary.get("status") == "complete" else "failed"
-                job["error"] = summary.get("error") or (None if job["status"] == "complete" else "任务未完成，详情见运行日志。")
+                job["error"] = summary.get("error") or (None if job["status"] == "complete" else
+                    f"Worker exited with code {code} (0x{code & 0xffffffff:08X}) "
+                    + ("without producing a run summary." if not summary else "without completing the run."))
+            job["exit_code"] = code
+            try:
+                console.write(f"\n[BioPipe launcher] Worker exit code {code} (0x{code & 0xffffffff:08X}); status={job['status']}\n")
+                if job.get("error"):
+                    console.write(job["error"] + "\n")
+            except OSError as exc:
+                job["log_error"] = str(exc)
+            finally:
+                try:
+                    console.close()
+                except OSError as exc:
+                    job["log_error"] = str(exc)
+            self._launcher_event(job, "worker_finished", exit_code=code, status=job["status"], error=job.get("error"))
             job["finished_at"] = datetime.now(timezone.utc).isoformat()
+            # Publish terminal completion only after both writers have flushed.
+            job["logs_complete"] = True
             write_json(self.jobs_dir / key / "job.json", job)
             self.processes.pop(key, None)
             self.threads.pop(key, None)
+
+    def _launcher_event(self, job, event, **details):
+        # Separate journal: the parent never competes with the worker's JSONL writer.
+        try:
+            append_event(self.jobs_dir / job["id"] / "launcher.events.jsonl", event, **details)
+        except OSError as exc:
+            job["log_error"] = str(exc)
 
     def require(self, key):
         # Jobs created by the other launcher become visible without restarting.
@@ -223,6 +267,35 @@ class JobService:
         self.require(key)
         paths = list((self.jobs_dir / key / "output/runs").glob("*/events.jsonl"))
         return paths[0] if paths else None
+
+    def event_paths(self, key):
+        self.require(key)
+        directory = self.jobs_dir / key
+        return [p for p in [directory / "launcher.events.jsonl",
+                *sorted((directory / "output/runs").glob("*/events.jsonl"))] if p.is_file()]
+
+    def console_snapshot(self, key, job, previous=None, limit=64 * 1024):
+        """A bounded display tail; the downloadable file remains complete."""
+        path = self.jobs_dir / key / "console.log"
+        try:
+            stat = path.stat()
+            signature = (stat.st_size, stat.st_mtime_ns, job.get("status"), job.get("error"))
+            if signature == previous:
+                return signature, None
+            if stat.st_size:
+                with path.open("rb") as file:
+                    file.seek(max(0, stat.st_size - limit))
+                    content = file.read(limit).decode("utf-8", errors="replace")
+                return signature, {"console": content, "console_truncated": stat.st_size > limit}
+        except FileNotFoundError:
+            signature = (None, job.get("status"), job.get("error"))
+            if signature == previous:
+                return signature, None
+        # Old empty files are evidence too: display a fallback without rewriting them.
+        content = f"No worker output was captured for this run.\nStatus: {job['status']}\n"
+        if job.get("error"):
+            content += f"Recorded error: {job['error']}\n"
+        return signature, {"console": content, "console_truncated": False}
 
     def details(self, key):
         with self.lock:

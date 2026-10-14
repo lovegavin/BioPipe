@@ -52,6 +52,8 @@ class EnrichGoStep(Step):
     """Hypergeometric enrichment of one term axis over two inputs."""
 
     name = "enrich_go"
+    category = "analysis"
+    icon = "Intersect"
     inputs_arity = 2
     outputs = []
     input_contracts = [

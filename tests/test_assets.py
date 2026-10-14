@@ -44,7 +44,9 @@ def upload(client, files, base_dir='.'):
 
 @pytest.mark.parametrize(('reader', 'files'), [
     ('CsvReader', {'a.csv': b'a,b\n1,2\n'}),
-    ('TxtReader', {'a.tsv': b'a\tb\n1\t2\n'}),
+    ('TxtReader', {'a.txt': b'a\tb\n1\t2\n'}),
+    ('TsvReader', {'a.tsv': b'a\tb\n1\t2\n'}),
+    ('GafReader', {'a.gaf': b'!gaf-version: 2.2\n'}),
     ('BedReader', {'a.bed': b'chr1\t0\t10\n'}),
     ('Gff3Reader', {'a.gff3': b'##gff-version 3\n'}),
     ('GtfReader', {'a.gtf': b'#fixture\n'}),

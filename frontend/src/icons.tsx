@@ -67,6 +67,6 @@ export function OperatorIcon({
   name,
   ...props
 }: IconProps & { name?: string }) {
-  const Icon = icons[name || ""] || SquaresFour;
+  const Icon = name && Object.hasOwn(icons, name) ? icons[name] : SquaresFour;
   return <Icon {...props} />;
 }

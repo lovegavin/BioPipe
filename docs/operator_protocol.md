@@ -46,7 +46,8 @@ Every reader and operator has these fields:
 | `protocol_version` | Exactly `1` |
 | `id`, `version`, `kind` | Stable identity; kind is `operator` or `reader` |
 | `entry_point` | Python `module:Class` |
-| `title`, `description`, `category` | Display metadata |
+| `title`, `description` | Display text |
+| `category`, `icon` | Optional library category and Studio icon name; see below |
 | `parameters_schema` | Self-contained JSON Schema 2020-12 object schema |
 | `contracts` | Version 1 input and output data contracts |
 | `resources` | Supported memory modes, CUDA declaration, estimation hook |
@@ -70,6 +71,65 @@ biopipe schema workspace
 
 Checked-in copies are in `biopipe_sdk/schemas/`. The descriptor envelope is
 extensible; semantic validation also checks arity, parameter schemas and contracts.
+
+## Operator categories and icons
+
+`kind` is the execution type. The SDK sets it to `operator` for `Step`/`Operator`
+subclasses and `reader` for `Reader` subclasses. Use `category` for the operator's
+purpose in the library. Package `origin` (`bundled` or `wheel`) describes how code
+was installed; installing a plugin does not force it into a separate category.
+
+Declare display metadata directly on the operator class:
+
+```python
+class EnrichGoStep(Step):
+    name = "my_lab.enrich_go"
+    category = "analysis"
+    icon = "Intersect"  # Optional; omit to use the default icon.
+    # Declare parameter schema, contracts and run() as usual.
+```
+
+Recommended category keys are:
+
+| Key | Library group |
+| --- | --- |
+| `quality_control` | Quality control |
+| `analysis` | Statistical analysis |
+| `data` | Data preparation |
+| `visualization` | Visualization |
+
+Custom category strings are also supported. Studio localizes common aliases so
+equivalent English and Chinese categories appear in one group. Omitted or empty
+categories appear under **Uncategorized**. Older `Plugins`/`Extensions` defaults
+also appear there; their operator kind and package ownership remain unchanged.
+Established bundled operators retain legacy presentation adapters.
+
+`icon` is an optional, case-sensitive name from Studio's bundled Phosphor icon
+set. Missing, empty, null or unknown names render `SquaresFour`, so an older
+frontend can still show an operator that requests a newer icon. The field accepts
+strings or null; paths, URLs and SVG content are not loaded as image assets.
+Supported names in this frontend are:
+
+```text
+ArrowsDownUp ArrowsIn ChartBar ChartLine ChartScatter CheckSquare
+CirclesThree Columns Database Dna Funnel Function Intersect ListBullets
+MinusSquare PuzzlePiece Ruler Scales Selection Shuffle Sigma
+SlidersHorizontal SortAscending SquaresFour Stack Tag TextT
+TreeStructure TrendUp Unite
+```
+
+Category and icon are optional typed fields in the public operator/package JSON
+schemas. Both source registry maintenance and wheel builds copy declarations into
+their descriptors. Explicit class values take precedence over older descriptor
+defaults. Omitting an icon preserves any legacy bundled icon or chart preview.
+
+For a source module, run `python -m biopipe registry build`, then
+`python -m biopipe registry check`; restart a source-based Studio after publishing
+its bundled index. For a wheel, increment its version, rebuild and hot-install
+it. The library refreshes from the installed descriptor. Editing an already-built
+wheel or Python file alone does not update a published registry. Source-based
+Studio and packaged desktop releases each consume their own shipped source/index.
+See [registry maintenance](registry_maintenance.md) and [plugin lifecycle](plugins.md).
 
 ## Parameters
 

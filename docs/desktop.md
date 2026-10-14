@@ -96,6 +96,33 @@ multi-user collaboration system. The most recently persisted workspace is restor
 on the next fresh launch. Job ownership prevents one window from marking a live
 worker in another window as interrupted.
 
+## Run diagnostics
+
+Open **Run logs** for structured engine events, operator messages and the actual
+process output. The view shows the last 64 KiB of process output; **Full process
+log** downloads the complete file. This is a display bound, not a stored-log limit.
+
+Each job directory in the active profile contains:
+
+- `job.json`: status, recorded error, timestamps, worker exit code and whether logs
+  have finished flushing. Windows exit codes are also printed in hexadecimal.
+- `console.log`: launcher header, Python stdout/stderr, tracebacks and exit record.
+- `launcher.events.jsonl`: startup/exit events written by the backend independently
+  of the analysis worker. A failed process launch returns a failed job with logs.
+- `output/runs/<run-id>/events.jsonl`: engine and operator events, also generated
+  when memory management is disabled.
+- `output/run_summary.json`: final summary, including failures during engine import,
+  plugin loading or task initialization. A native crash or forced process exit may
+  prevent this summary; the launcher still records the exit code. Python fault
+  handling is enabled for native failures that Python can report.
+
+The UI waits for final log flushing before closing its event connection, including
+after cancellation. Reopening a completed run reads its stored logs. Historical
+empty/missing console files show the recorded job error with an explicit notice
+that no worker output was captured; the original files are not rewritten and an
+unrecorded historical exit code cannot be reconstructed. The profile is resolved
+on the user's computer; none of these paths refer to the developer's computer.
+
 ## Startup and shutdown
 
 1. One desktop instance owns a profile; repeated launches focus its window.

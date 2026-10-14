@@ -60,4 +60,26 @@ describe("operator presentation", () => {
     expect(["Spatial biology", "可视化", "质量控制"].sort(compareCategories))
       .toEqual(["质量控制", "可视化", "Spatial biology"]);
   });
+
+  it("uses the default icon for absent or unknown names and renders declared icons", () => {
+    const plugin = {...operators[0], name: "example.custom", category: "analysis", preview: undefined};
+    const renderIcon = (icon?: string | null) => renderToStaticMarkup(<OperatorArtwork spec={presentOperator({...plugin, icon})}/>);
+    expect(presentOperator(plugin).category).toBe("统计分析");
+    expect(renderIcon("Intersect")).not.toBe(renderIcon());
+    expect(renderIcon("UnknownFutureIcon")).toBe(renderIcon());
+    expect(renderIcon("")).toBe(renderIcon());
+    expect(renderIcon(null)).toBe(renderIcon());
+    for (const name of ["constructor", "toString", "__proto__"]) {
+      expect(renderIcon(name)).toBe(renderIcon());
+    }
+  });
+
+  it("keeps missing categories distinct from package origin", () => {
+    for (const category of ["", "Plugins", "Extensions", "扩展算子"]) {
+      expect(presentOperator({...operators[0], name: "example.custom", category}).category).toBe("未分类");
+    }
+    expect(categoryLabel("Spatial biology")).toBe("Spatial biology");
+    expect(categoryLabel("constructor")).toBe("constructor");
+    expect(categoryLabel("__proto__")).toBe("__proto__");
+  });
 });

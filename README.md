@@ -5,7 +5,7 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Studio 0.3.2 preserves upstream Python Steps, Readers and YAML
+Studio 0.3.3 preserves upstream Python Steps, Readers and YAML
 tasks, with **46 built-in operators, 13 readers, six provider packages and five
 reusable route templates**: GWAS, RNA-seq DE, Proteomics DE, survival analysis and
 [16S microbiome](docs/microbiome.md). The desktop package includes this catalog and
@@ -32,7 +32,7 @@ For Python 3.12, use `constraints-py312-windows.txt`. See
 [installation and dependency versions](docs/installation.md) for development
 dependencies, optional analyses and troubleshooting resolver backtracking.
 
-See [release notes](docs/releases/v0.3.2.md) for this version and
+See [release notes](docs/releases/v0.3.3.md) for this version and
 [legacy/](legacy/README.md) for the archived previous source.
 
 ## Start Studio
@@ -98,7 +98,10 @@ biopipe mcp
 New plugins use the stable `biopipe_sdk` imports, JSON Schema parameters, explicit
 info/axis contracts and standard Python entry points. Wheel installation updates
 the JSON registry while Studio is open. Saved graphs and running jobs retain their
-plugin version pins. Start with the [30-minute SDK tutorial](docs/sdk_quickstart.md).
+plugin version pins. Declare `category` to place an operator in the appropriate
+library group and optionally set `icon` to a bundled icon name; omitted or unknown
+icons use a default. See [categories and icons](docs/operator_protocol.md#operator-categories-and-icons)
+and the [30-minute SDK tutorial](docs/sdk_quickstart.md).
 
 Agents read semantic selection context and issue revision-checked edit batches.
 Each batch is visible immediately and creates one undo entry. Execution is a

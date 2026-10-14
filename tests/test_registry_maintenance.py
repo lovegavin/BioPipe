@@ -33,6 +33,8 @@ def cli(root, *args):
 NEW_OPERATOR = '''from biopipe_sdk import Step, port
 class Probe(Step):
     name = "example.probe"
+    category = "analysis"
+    icon = "Sigma"
     inputs_arity = 1
     parameters_schema = {"type": "object", "properties": {}, "additionalProperties": False}
     input_contracts = [port(ndim=2)]
@@ -73,7 +75,11 @@ steps:
     code, check = cli(checkout, "check")
     assert code == 1 and check["changed"] and not check["errors"] and indexes(checkout) == before
     code, built = cli(checkout, "build")
-    assert code == 0 and built["operators"] == len(bundled_state()["descriptors"]) - 13 + 1 and built["routes"] == 6
+    operator_count = sum(d["kind"] == "operator" for d in bundled_state()["descriptors"])
+    assert code == 0 and built["operators"] == operator_count + 1 and built["routes"] == 6
+    manifest = json.loads((checkout / "biopipe/builtin_packages.json").read_text(encoding="utf-8"))
+    descriptor = next(d for p in manifest["packages"] for d in p["descriptors"] if d["id"] == "example.probe")
+    assert descriptor["category"] == "analysis" and descriptor["icon"] == "Sigma"
     code, check = cli(checkout, "check")
     assert code == 0 and not check["changed"]
     assert next(r for r in cli(checkout, "discover")[1]["routes"] if r["name"] == "Custom report")["indexed"]

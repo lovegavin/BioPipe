@@ -39,6 +39,8 @@ class EnrichmentPlotStep(Step):
     """Horizontal bar plot of enrichment results."""
 
     name = "enrichment_plot"
+    category = "visualization"
+    icon = "ChartBar"
     inputs_arity = 1
     outputs = []
     input_contracts = [port(ndim=2)]

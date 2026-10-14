@@ -22,7 +22,7 @@ export type Operator = {
   runtime_defaults?: Record<string, unknown>;
   category: string;
   description: string;
-  icon?: string;
+  icon?: string | null;
   preview?: { kind: string; caption: string };
   inputs_arity: number | "*";
   outputs: string[];

@@ -23,6 +23,7 @@ def run(ctx: Context, steps: list[dict]) -> None:
         for i, spec in enumerate(steps, start=1):
             ctx.params = {**global_params, **spec.get("context_params", {})}
             name = spec["name"]
+            ctx.event("step_started", name=name, index=i)
             cls = STEPS.get(name)
             if cls is None:
                 raise StepError(f"Unknown step '{name}'. Available: {sorted(STEPS)}")
@@ -101,8 +102,7 @@ def run(ctx: Context, steps: list[dict]) -> None:
                                 "inputs": list(names), "params": spec.get("params", {}),
                                 "export_path": relative})
                 ctx.metadata.setdefault("steps", []).append({"name": name, "elapsed": elapsed})
-                if ctx.memory:
-                    ctx.memory.event("contract_checked", name=name, inputs=len(names), outputs=declared_outputs, contract_version=1)
+                ctx.event("contract_checked", name=name, inputs=len(names), outputs=declared_outputs, contract_version=1)
                 successful = True
                 print(f"[{i}/{len(steps)}] {name} done in {elapsed:.3f}s")
             finally:
@@ -121,6 +121,8 @@ def run(ctx: Context, steps: list[dict]) -> None:
                         ctx.memory.finish(spec, elapsed)
                     else:
                         ctx.memory.abort_step()
+                elif successful:
+                    ctx.event("step_finished", name=name, index=i, seconds=elapsed)
         ctx._run_status = "complete"
     except BaseException as exc:
         ctx._run_status, ctx._run_error = "failed", exc

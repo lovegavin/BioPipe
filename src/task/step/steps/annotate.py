@@ -55,6 +55,8 @@ class AnnotateStep(Step):
     """Attach reference fields onto a target by key label."""
 
     name = "annotate"
+    category = "data"
+    icon = "Tag"
     inputs_arity = 2
     outputs = []
     input_contracts = [

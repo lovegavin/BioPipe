@@ -35,6 +35,32 @@
           "title": "Title",
           "type": "string"
         },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Operator library category, independent of package origin. Custom labels are allowed.",
+          "title": "Category"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Studio icon name. Missing or unknown names use the default icon.",
+          "title": "Icon"
+        },
         "parameters_schema": {
           "additionalProperties": true,
           "title": "Parameters Schema",

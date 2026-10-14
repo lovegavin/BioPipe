@@ -36,6 +36,8 @@ class ExplodeStep(Step):
     """Expand a multi-valued info field into separate positions."""
 
     name = "explode"
+    category = "data"
+    icon = "ArrowsDownUp"
     inputs_arity = 1
     outputs = []
     input_contracts = [
