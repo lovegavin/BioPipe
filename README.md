@@ -5,7 +5,7 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Studio 0.3.3 preserves upstream Python Steps, Readers and YAML
+Studio 0.3.4 preserves upstream Python Steps, Readers and YAML
 tasks, with **53 built-in operators, 15 readers, six provider packages and five
 reusable route templates**: GWAS, RNA-seq DE, Proteomics DE, survival analysis and
 [16S microbiome](docs/microbiome.md). The desktop package includes this catalog and
@@ -32,7 +32,7 @@ For Python 3.12, use `constraints-py312-windows.txt`. See
 [installation and dependency versions](docs/installation.md) for development
 dependencies, optional analyses and troubleshooting resolver backtracking.
 
-See [release notes](docs/releases/v0.3.3.md) for this version and
+See [release notes](docs/releases/v0.3.4.md) for this version and
 [legacy/](legacy/README.md) for the archived previous source.
 
 ## Start Studio

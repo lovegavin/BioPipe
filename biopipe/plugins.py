@@ -34,11 +34,16 @@ GROUPS = {"biopipe.operators": "operator", "biopipe.readers": "reader"}
 
 
 def run_process(args, *, timeout=180, env=None):
-    result = subprocess.run(list(map(str, args)), cwd=ROOT, env=env, stdin=subprocess.DEVNULL,
+    # JSON descriptors contain arbitrary Unicode. Parent and Python child must
+    # agree on the wire encoding even on Windows with an ANSI/GBK console locale.
+    child_env = dict(os.environ if env is None else env)
+    child_env["PYTHONIOENCODING"] = "utf-8"
+    result = subprocess.run(list(map(str, args)), cwd=ROOT, env=child_env, stdin=subprocess.DEVNULL,
                             capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout,
                             creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
     if result.returncode:
-        raise ValueError((result.stderr or result.stdout)[-6000:])
+        # pip writes dependency-conflict details to stdout and its error to stderr.
+        raise ValueError((result.stdout + "\n" + result.stderr).strip()[-6000:])
     return result.stdout
 
 

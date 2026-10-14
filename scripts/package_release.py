@@ -54,6 +54,9 @@ def main():
     for name_ in ('desktop_server.py', 'run.py'):
         copy(root / 'scripts' / name_, Path('scripts') / name_)
     shutil.copytree(root / 'docs', destination / 'docs')
+    # Ship the small source example referenced by the hot-refresh guide.
+    shutil.copytree(root / 'examples/dropins', destination / 'examples/dropins',
+                    ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
     shutil.copytree(root / 'THIRD_PARTY_NOTICES', destination / 'THIRD_PARTY_NOTICES')
     # Regenerate frontend notices from the lockfile actually used for this build.
     lock = json.loads((root / 'frontend/package-lock.json').read_text(encoding='utf-8'))

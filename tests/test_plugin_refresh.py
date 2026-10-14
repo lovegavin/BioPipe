@@ -1,5 +1,6 @@
 """Drop-ins are validated transactions, with real workers and version retention."""
 import json
+import os
 from pathlib import Path
 import shutil
 import sys
@@ -12,7 +13,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from biopipe.dropins import single_file_wheel, snapshot
-from biopipe.plugins import PluginManager
+from biopipe.plugins import PluginManager, run_process
 from src.web.api import create_app
 from src.web.models import Graph
 from src.web.service import Settings
@@ -30,6 +31,19 @@ class Hello(Step):
     def run(self, ctx, inputs): pass
     def export(self, ctx): return {"value": 1}
 '''
+
+
+def test_probe_transport_preserves_unicode_and_failure_details(monkeypatch):
+    monkeypatch.setenv('PYTHONIOENCODING', 'ascii')
+    script = 'print(chr(0x4e2d) + chr(0xb2))'
+    for environment in (None, dict(os.environ)):
+        assert run_process([sys.executable, '-c', script], env=environment).strip() == '\u4e2d\u00b2'
+    with pytest.raises(ValueError) as failure:
+        run_process([sys.executable, '-c',
+            'import sys; print("Dependency conflict details"); '
+            'print("Resolver failed", file=sys.stderr); sys.exit(2)'])
+    assert 'Dependency conflict details' in str(failure.value)
+    assert 'Resolver failed' in str(failure.value)
 
 
 def test_single_file_wrapper_is_deterministic_and_does_not_execute(tmp_path):
