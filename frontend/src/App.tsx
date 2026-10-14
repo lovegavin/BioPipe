@@ -180,6 +180,7 @@ function Studio() {
   const [agentReady, setAgentReady] = useState(false), [agentPanel, setAgentPanel] = useState(false);
   const [routes, setRoutes] = useState<RouteDefinition[]>([]);
   const [pluginsOpen, setPluginsOpen] = useState(false);
+  const [refreshingPlugins, setRefreshingPlugins] = useState(false);
   const [libraryState, setLibraryState] = useState<LibraryState>({disabled: [], hidden: []});
   const [showHidden, setShowHidden] = useState(false);
   const [panelWidths, setPanelWidths] = useState<PanelWidths>(automaticPanels);
@@ -418,6 +419,23 @@ function Studio() {
   async function refreshRoutes() {
     const [registered, state] = await Promise.all([api.routes(), api.libraryState()]);
     setRoutes(registered); setLibraryState(state);
+  }
+  async function refreshPlugins() {
+    if (refreshingPlugins) return;
+    setRefreshingPlugins(true);
+    try {
+      let operation = await api.refreshPlugins();
+      while (operation.status === "running") {
+        await new Promise(resolve => setTimeout(resolve, 800));
+        operation = await api.pluginOperation(operation.id);
+      }
+      if (operation.status === "failed") throw Error(operation.error || "算子库刷新失败");
+      const latest = await api.catalog();
+      setBootstrap(current => current ? {...current, catalog: latest} : current);
+      const count = operation.result?.updated.length || 0;
+      notify(count ? "算子库已更新，即刻可用。" : "算子库已是最新。", "success");
+    } catch (error) {failure(error);}
+    finally {setRefreshingPlugins(false);}
   }
   async function manageLibrary(key: string, action: LibraryAction) {
     setContextMenu(null);
@@ -1264,6 +1282,7 @@ function Studio() {
             <h2>算子库</h2>
             <span className="count-badge">{catalog.operators.filter(item => !libraryState.hidden.includes(item.name)).length + routes.length}</span>
             <button className="icon-button register-route-button" aria-label="添加路线算子" title="从已保存路线添加算子" onClick={() => setPicker("register")}><Plus size={18}/></button>
+            <button className="icon-button library-refresh" aria-label="刷新算子库" title="扫描算子与 Reader 目录并热更新" disabled={refreshingPlugins} onClick={() => void refreshPlugins()}><ArrowClockwise size={16} className={refreshingPlugins ? "spin" : ""}/></button>
             <button
               className="icon-button mobile-close"
               aria-label="关闭算子库"
@@ -1355,7 +1374,7 @@ function Studio() {
             )}
           </div>
           <div className="library-footer">
-            <button className="library-packages" onClick={() => setPluginsOpen(true)}><Package size={16}/>算子包管理</button>
+            <button className="library-packages" onClick={() => setPluginsOpen(true)}><Package size={16}/>算子库管理</button>
           </div>
           <PanelResizeHandle side="library" width={displayedPanels.library} min={panelLimits.library.min}
             max={panelMaximum("library", displayedPanels, windowWidth)} onResize={value => resizePanel("library", value)}

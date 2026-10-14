@@ -84,12 +84,22 @@ leave the existing indexes intact. See [registry maintenance](docs/registry_main
 
 ## Extend and automate
 
+The whole operator library supports hot refresh. Open **算子库管理 → 算子目录 / Reader 目录**,
+add or edit a normal protocol-compliant Python module, and click **刷新算子库**.
+Studio scans the existing source directories, validates declarations, updates the
+active registry and loads the code without a restart or manual packaging. Failed
+updates retain the previous working library. A writable additional folder also
+accepts self-contained `.py` files, wheels and SDK projects. Start with
+[the single-file example](examples/dropins/scale.py) and
+[drop-folder instructions](docs/plugins.md#drop-refresh-use).
+
 ```text
 biopipe plugin init ./lab_scale
 biopipe plugin check ./lab_scale
 biopipe plugin test ./lab_scale
 biopipe plugin build ./lab_scale
 biopipe plugin install ./lab_scale/dist/lab_scale-0.1.0-py3-none-any.whl
+biopipe plugin refresh
 biopipe sessions list
 biopipe context get
 biopipe mcp

@@ -55,6 +55,7 @@ def main():
     if not 0 <= args.port <= 65535:
         parser.error("port must be between 0 and 65535")
     os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
+    os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
     from src.web.api import create_app
     import uvicorn
 

@@ -1,7 +1,10 @@
 """Local, token-protected plugin management; installations run off the UI loop."""
 import asyncio
+import os
 from pathlib import Path
 import shutil
+import subprocess
+import sys
 import uuid
 
 from fastapi import HTTPException, Request
@@ -15,7 +18,12 @@ def mount_plugins(app, service):
         state = service.plugins.state()
         from biopipe.packages import bundled_state
         result = {key: state[key] for key in ("generation", "packages", "descriptors")}
+        source_managed = set(state.get("source_library", {}).get("packages", []))
+        result["packages"] = [{**p, "source_managed": p["name"] in source_managed} for p in state["packages"]]
         result["bundled_packages"] = bundled_state()["packages"]
+        result["inbox"] = str(service.plugins.inbox)
+        from biopipe.source_library import directories
+        result["source_directories"] = {kind: str(path) for kind, path in directories(service.plugins.source_root).items()}
         return result
 
     def check_idle():
@@ -24,7 +32,9 @@ def mount_plugins(app, service):
 
     async def execute(key, wheel=None, remove=None, temporary=None, name=None, action=None):
         try:
-            if action:
+            if action == "refresh":
+                operations[key]["result"] = await asyncio.to_thread(service.plugins.refresh)
+            elif action:
                 await asyncio.to_thread(service.plugins.manage, name, action)
             else:
                 await asyncio.to_thread(service.plugins.install, wheel, remove=remove)
@@ -56,6 +66,29 @@ def mount_plugins(app, service):
         if key not in operations:
             raise HTTPException(404, "插件操作不存在。")
         return operations[key]
+
+    @app.post("/api/plugins/refresh")
+    async def refresh():
+        check_idle()
+        key = uuid.uuid4().hex
+        active.add(key)
+        return start(key, action="refresh")
+
+    @app.post("/api/plugins/open-folder")
+    def open_folder(payload: dict):
+        # The request cannot select arbitrary paths or executable files.
+        from biopipe.source_library import directories
+        paths = {**directories(service.plugins.source_root), "extra": service.plugins.inbox}
+        kind = payload.get("kind", "operator")
+        if not isinstance(kind, str) or kind not in paths:
+            raise HTTPException(422, "请选择算子或 Reader 目录。")
+        directory = paths[kind]
+        if os.name == "nt":
+            os.startfile(directory)
+        else:
+            subprocess.Popen(["open" if sys.platform == "darwin" else "xdg-open", str(directory)],
+                             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return {"directory": str(directory)}
 
     @app.post("/api/plugins/install")
     async def install(request: Request, filename: str):

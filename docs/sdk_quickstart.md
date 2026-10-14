@@ -4,6 +4,16 @@ This walkthrough assumes a working BioPipe Python environment and an existing
 small algorithm. It scaffolds a real wheel, tests contracts, hot-installs it and
 makes it available in the desktop. BioPipe does not need an AI provider.
 
+For a self-contained operator, the shortest path is to copy
+[scale.py](../examples/dropins/scale.py) into **算子库管理 → 算子目录**, edit it,
+and click **刷新算子库**. Studio discovers the normal source module, validates its
+contracts and hot-loads the library; no plugin project is needed. Install required
+algorithm dependencies into the active runtime. For optional independent extensions,
+**附加目录** accepts single files with `BIOPIPE_PLUGIN` dependency metadata, complete
+SDK projects and wheels; see
+[drop-folder installation](plugins.md#drop-refresh-use). The wheel workflow below
+remains useful for multi-file plugins, tests and distribution.
+
 ## 0–5 minutes: prepare the development environment
 
 From the BioPipe repository, using the same Python environment as Studio:

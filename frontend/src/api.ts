@@ -46,6 +46,8 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
 }
 export const api = {
   plugins: () => request<import('./types').PluginState>('/api/plugins'),
+  refreshPlugins: () => request<import('./types').PluginOperation>('/api/plugins/refresh', {}),
+  openPluginFolder: (kind: 'operator' | 'reader' | 'extra' = 'operator') => request<{directory: string}>('/api/plugins/open-folder', {kind}),
   pluginOperation: (id: string) => request<import('./types').PluginOperation>(`/api/plugins/operations/${encodeURIComponent(id)}`),
   removePlugin: (name: string) => request<import('./types').PluginOperation>('/api/plugins/remove', {name}),
   managePlugin: (name: string, action: 'enable' | 'disable' | 'restore') => request<import('./types').PluginOperation>('/api/plugins/manage', {name, action}),

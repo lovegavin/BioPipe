@@ -112,6 +112,10 @@
 .plugin-panel-body { padding: 4px 24px 20px; }
 .plugin-toolbar {display:flex; align-items:center; gap:10px; padding-top:20px;}
 .plugin-toolbar .context-help {margin-left:auto;}
+.plugin-folder-row {display:flex; align-items:center; gap:12px; margin-top:12px; min-width:0;}
+.plugin-folder-row .subtle-button {flex-shrink:0;}
+.plugin-folder-row code {overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-secondary); font-size:11px;}
+.library-refresh {width:26px; height:26px; flex-shrink:0;}
 .plugin-note { color: var(--text-secondary, #888); font-size: 12px; line-height: 1.7; margin: 12px 0; }
 .plugin-packages { margin: 20px 0; max-height: 42vh; overflow: auto; }
 .plugin-package { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border, #333); }

@@ -49,7 +49,7 @@ def parser():
     jobs.add_argument("action", choices=["get", "cancel"])
     jobs.add_argument("id")
     plugin = commands.add_parser("plugin")
-    plugin.add_argument("action", choices=["init", "check", "test", "build", "install", "list", "remove", "enable", "disable", "restore"])
+    plugin.add_argument("action", choices=["init", "check", "test", "build", "install", "list", "refresh", "remove", "enable", "disable", "restore"])
     plugin.add_argument("path", nargs="?")
     plugin.add_argument("--template", choices=["operator", "reader"], default="operator")
     schema = commands.add_parser("schema")
@@ -89,7 +89,11 @@ def execute(args):
             return developer.build(args.path)
         manager = PluginManager(data_directory(args.profile_dir, args.workspace, args.data_dir))
         if args.action == "list":
-            return manager.state()
+            from .source_library import directories
+            return {**manager.state(), "inbox": str(manager.inbox),
+                    "source_directories": {kind: str(path) for kind, path in directories(manager.source_root).items()}}
+        if args.action == "refresh":
+            return manager.refresh()
         if args.action in {"enable", "disable", "restore"}:
             return manager.manage(args.path, args.action)
         return manager.install(args.path, remove=args.path if args.action == "remove" else None)

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Package, Plus, Trash, Power, ArrowCounterClockwise } from '@phosphor-icons/react';
+import { Package, Plus, Trash, Power, ArrowCounterClockwise, ArrowClockwise, FolderOpen } from '@phosphor-icons/react';
 import { Modal } from './RouteDialogs';
 import { HelpTip } from './HelpTip';
 import { api } from './api';
@@ -16,7 +16,7 @@ export function PluginPanel({onClose, onChanged}: {onClose: () => void; onChange
     return () => {mounted.current = false;};
   }, []);
   async function operate(begin: () => Promise<PluginOperation>) {
-    setPending(true); setError(''); setMessage('正在准备插件环境，完成后自动刷新算子库…');
+    setPending(true); setError(''); setMessage('正在扫描、校验并更新算子库…');
     try {
       let operation = await begin();
       while (operation.status === 'running') {
@@ -26,27 +26,34 @@ export function PluginPanel({onClose, onChanged}: {onClose: () => void; onChange
       }
       if (operation.status === 'failed') throw Error(operation.error || '插件操作失败');
       const latest = await api.plugins();
-      if (mounted.current) {setState(latest); setMessage('已完成，算子库已更新。');}
+      if (mounted.current) {setState(latest); setMessage(operation.result
+        ? operation.result.updated.length ? '算子库已更新，即刻可用。' : '没有发现新文件或修改。'
+        : '已完成，算子库已更新。');}
       await onChanged();
     } catch (e) {if (mounted.current) {setError((e as Error).message); setMessage('');}}
     finally {if (mounted.current) setPending(false);}
   }
-  return <Modal dismissDisabled={pending} title="算子包管理" onClose={() => {if (!pending) onClose();}}>
+  return <Modal dismissDisabled={pending} title="算子库管理" onClose={() => {if (!pending) onClose();}}>
     <div className="plugin-panel-body">
       <input ref={file} hidden type="file" accept=".whl" onChange={event => {
         const selected = event.target.files?.[0]; event.target.value = '';
         if (selected) void operate(() => api.installPlugin(selected));
       }}/>
       <div className="plugin-toolbar">
-        <button className="primary-button" disabled={pending} onClick={() => file.current?.click()}><Plus size={16}/>安装 / 更新包</button>
-        <span className="route-version">.whl</span>
-        <HelpTip label="算子包说明">插件会运行 Python 代码，请选择可信来源。安装与更新即时生效；禁用或移除后，已锁定版本的画布与运行中任务保留原环境。预装包可恢复。</HelpTip>
+        <button className="primary-button" disabled={pending} onClick={() => void operate(api.refreshPlugins)}><ArrowClockwise size={16} className={pending ? 'spin' : ''}/>刷新算子库</button>
+        <button className="subtle-button" disabled={pending} onClick={() => file.current?.click()}><Plus size={16}/>导入包</button>
+        <HelpTip label="算子目录说明">将算子或 Reader 文件放入对应目录，点击刷新即可扫描、校验并加载。也可导入 .whl。代码须来自可信来源；更新失败保留当前算子库。</HelpTip>
+      </div>
+      <div className="plugin-folder-row">
+        <button className="subtle-button" title={state.source_directories?.operator} onClick={() => void api.openPluginFolder('operator').catch(e => setError(e.message))}><FolderOpen size={16}/>算子目录</button>
+        <button className="subtle-button" title={state.source_directories?.reader} onClick={() => void api.openPluginFolder('reader').catch(e => setError(e.message))}><FolderOpen size={16}/>Reader 目录</button>
+        <button className="subtle-button" title={state.inbox} onClick={() => void api.openPluginFolder('extra').catch(e => setError(e.message))}>附加目录</button>
       </div>
       <div className="plugin-packages">
         {!state.packages.length && <div className="modal-empty"><Package size={30}/><p>尚未安装算子包</p></div>}
         {state.packages.map(item => <article className="plugin-package" key={item.name}>
           <div><strong>{item.title || item.name}</strong><span className="route-version">v{item.version}</span>
-            <p>{item.name} · {item.origin === 'bundled' ? '预装' : '已安装'} · {item.enabled === false ? '已禁用' : '已启用'}</p>
+            <p>{item.name} · {item.source_managed ? '本地算子' : item.origin === 'bundled' ? '预装' : '已安装'} · {item.enabled === false ? '已禁用' : '已启用'}</p>
             <details><summary>{state.descriptors.filter(d => d.distribution === item.name).length} 个算子 / Reader</summary>
               {state.descriptors.filter(d => d.distribution === item.name).map(d => <p key={d.id}>{d.title} <small>{d.resources?.memory_modes.map(mode => ({full: '完整矩阵', stream: '分块流式', disk: '分块落盘'}[mode] || mode)).join(' · ')}</small></p>)}
             </details>
@@ -56,7 +63,7 @@ export function PluginPanel({onClose, onChanged}: {onClose: () => void; onChange
           <button className="icon-button" title={`移除 ${item.name}`} aria-label={`移除 ${item.name}`} disabled={pending} onClick={() => void operate(() => api.removePlugin(item.name))}><Trash size={17}/></button>
           </div>
         </article>)}
-        {state.bundled_packages?.filter(item => !state.packages.some(p => p.name === item.name && p.origin === 'bundled')).map(item =>
+        {state.bundled_packages?.filter(item => !state.packages.some(p => p.name === item.name && (p.origin === 'bundled' || p.source_managed))).map(item =>
           <article className="plugin-package" key={'restore-' + item.name}><div><strong>{item.title || item.name}</strong><p>可恢复预装版本 v{item.version}</p></div>
             <button className="subtle-button" disabled={pending} onClick={() => void operate(() => api.managePlugin(item.name, 'restore'))}><ArrowCounterClockwise size={15}/>恢复</button></article>)}
       </div>

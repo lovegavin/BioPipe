@@ -31,6 +31,9 @@ def main():
         parser.error("Build the UI first: cd frontend && npm install && npm run build")
     if not 1 <= args.port <= 65535:
         parser.error("port must be between 1 and 65535")
+    # Studio renders the persisted metadata catalog. Source imports belong to
+    # isolated scan/worker processes, so an unfinished edit cannot break startup.
+    os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
     from src.web.api import create_app
     import uvicorn
     settings = make_settings(ROOT, args.frontend, **options)

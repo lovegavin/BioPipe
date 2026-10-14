@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import sys
+import os
 import argparse
 from pathlib import Path
 
@@ -27,8 +28,12 @@ def main() -> None:
     run_log.event("worker_started", message="Loading the analysis engine")
     ctx = None
     try:
-        from src.task import Context, load_manifest, run
         plugin_lock = task_dir / "plugins.lock.json"
+        # A frozen generation must not eagerly import a source file currently
+        # being edited (or containing a failed hot-update candidate).
+        if plugin_lock.is_file():
+            os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
+        from src.task import Context, load_manifest, run
         if plugin_lock.is_file():
             import json
             from biopipe.plugins import load_runtime

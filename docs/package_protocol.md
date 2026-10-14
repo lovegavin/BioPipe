@@ -34,9 +34,13 @@ authority for pip dependencies, and manifest identity must match wheel metadata.
 
 ## Management and hot replacement
 
-Studio's **算子包管理** lists both bundled and wheel providers, their entries and
+Studio's **算子库管理** lists both bundled and wheel providers, their entries and
 resource modes. Installation/update accepts a local wheel. Enable, disable, remove
 and restore publish a new registry generation without restarting the application.
+The primary **Refresh library** action also discovers changes directly in the normal
+operator/Reader directories. Authors need only save their Python modules; scanning,
+protocol validation and immutable provider packaging happen internally. See
+[whole-library refresh](plugins.md#drop-refresh-use).
 
 ```bash
 biopipe plugin list

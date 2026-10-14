@@ -10,9 +10,11 @@ export type Parameter = {
   step?: number;
   options?: (string | number)[];
 };
-export type PluginOperation = {id: string; status: 'running' | 'complete' | 'failed'; error: string | null};
-export type PluginPackage = {name: string; title?: string; version: string; sha256: string; origin?: 'bundled' | 'wheel'; enabled?: boolean};
-export type PluginState = {generation: string | null; packages: PluginPackage[]; bundled_packages?: PluginPackage[];
+export type PluginRefresh = {generation: string; updated: string[]; unchanged: string[]; directory: string; operators: number; readers: number};
+export type PluginOperation = {id: string; status: 'running' | 'complete' | 'failed'; error: string | null; result?: PluginRefresh};
+export type PluginPackage = {name: string; title?: string; version: string; sha256: string; origin?: 'bundled' | 'wheel'; enabled?: boolean; source_managed?: boolean};
+export type PluginState = {generation: string | null; packages: PluginPackage[]; bundled_packages?: PluginPackage[]; inbox?: string;
+  source_directories?: {operator: string; reader: string};
   descriptors: {id: string; kind: 'reader' | 'operator'; title: string; distribution: string; resources?: {memory_modes: string[]}}[]};
 export type Operator = {
   name: string;

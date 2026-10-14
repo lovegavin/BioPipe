@@ -11,6 +11,13 @@ descriptors without this additive field remain valid.
 
 ## Identity and discovery
 
+Studio's **Refresh library** scans normal Python modules in its operator/Reader
+directories and registers their declarations without requiring authors to build a
+package. The same descriptors and validation apply to source modules and installed
+wheels. See [whole-library refresh](plugins.md#drop-refresh-use). A library source
+module can retain the original built-in naming style; existing package ownership
+cannot be reassigned by an update.
+
 A distribution exposes classes through standard Python entry points:
 
 ```toml

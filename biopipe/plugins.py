@@ -8,6 +8,7 @@ from __future__ import annotations
 from copy import deepcopy
 import hashlib
 import importlib.metadata as metadata
+import inspect
 import json
 import os
 from pathlib import Path
@@ -21,7 +22,7 @@ import zipfile
 from packaging.utils import canonicalize_name
 from biopipe_sdk.protocol import describe_operator, describe_reader, validate_extension
 from src.web.storage import FileLock, atomic_json
-from biopipe.packages import bundled_state, owns_legacy_id
+from biopipe.packages import bundled_manifest, bundled_state, owns_legacy_id
 
 
 def active_descriptors(state):
@@ -46,9 +47,26 @@ def entry_descriptors():
     from src.task.step.base import Step
     from src.reader.base import Reader
     records = []
+    entries = []
     for group, kind in GROUPS.items():
         for entry in metadata.entry_points(group=group):
-            cls = entry.load()
+            entries.append((entry, kind, entry.load()))
+    # Single-file drop-ins are wrapped in ordinary wheels. Discover only classes
+    # defined by their module, in this isolated probe (never the HTTP process).
+    for entry in metadata.entry_points(group="biopipe.modules"):
+        try:
+            module = entry.load()
+            for cls in vars(module).values():
+                if not inspect.isclass(cls) or cls.__module__ != module.__name__ or inspect.isabstract(cls):
+                    continue
+                if issubclass(cls, Step):
+                    entries.append((entry, "operator", cls))
+                elif issubclass(cls, Reader):
+                    entries.append((entry, "reader", cls))
+        except Exception as exc:
+            raise ValueError(f"{entry.dist.metadata['Name']}: {exc}") from exc
+    for entry, kind, cls in entries:
+        try:
             validate_extension(cls, kind)
             base = Step if kind == "operator" else Reader
             if not isinstance(cls, type) or not issubclass(cls, base):
@@ -58,7 +76,8 @@ def entry_descriptors():
             descriptor = describe_operator(cls) if kind == "operator" else describe_reader(cls())
             dist = entry.dist
             package_name = canonicalize_name(dist.metadata["Name"])
-            if "." not in descriptor["id"] and not owns_legacy_id(package_name, descriptor["id"]):
+            bundled_names = {p["name"] for p in bundled_manifest()["packages"]}
+            if "." not in descriptor["id"] and package_name not in bundled_names:
                 raise ValueError("Plugin IDs must be namespaced, for example lab.scale")
             manifest = dist.read_text("biopipe.json")
             if manifest is not None:
@@ -74,6 +93,8 @@ def entry_descriptors():
             descriptor["distribution"] = canonicalize_name(dist.metadata["Name"])
             descriptor["package_version"] = dist.version
             records.append(descriptor)
+        except Exception as exc:
+            raise ValueError(f"{entry.dist.metadata['Name']} / {getattr(cls, '__name__', entry.value)}: {exc}") from exc
     ids = [item["id"] for item in records]
     if len(ids) != len(set(ids)):
         raise ValueError("Two plugin entry points declare the same ID")
@@ -90,7 +111,11 @@ def load_runtime(lock):
         READERS.clear()
     for descriptor in active_descriptors(lock):
         module, name = descriptor["entry_point"].split(":", 1)
-        cls = getattr(importlib.import_module(module), name)
+        if descriptor.get("origin") == "bundled":
+            from biopipe.packages import load_entry
+            cls = load_entry(descriptor)
+        else:
+            cls = getattr(importlib.import_module(module), name)
         validate_extension(cls, descriptor["kind"])
         actual = describe_operator(cls) if descriptor["kind"] == "operator" else describe_reader(cls())
         if (actual["id"] != descriptor["id"] or actual["version"] != descriptor["version"]
@@ -109,8 +134,9 @@ def load_runtime(lock):
 
 
 class PluginManager:
-    def __init__(self, data_dir):
+    def __init__(self, data_dir, *, source_root=ROOT):
         self.directory = Path(data_dir) / "plugins"
+        self.source_root = Path(source_root).resolve() if source_root is not None else None
         self.registry = self.directory / "registry.json"
         self.lock = FileLock(self.directory / ".install.lock", timeout=600)
 
@@ -255,96 +281,124 @@ class PluginManager:
         """Install a wheel transactionally; a failed probe never changes registry."""
         if remove:
             return self.manage(canonicalize_name(remove), "remove")
+        return self.install_many([wheel])
+
+    @property
+    def inbox(self):
+        path = self.directory / "inbox"
+        path.mkdir(parents=True, exist_ok=True)
+        return path
+
+    def refresh(self):
+        """Explicit, incremental scan; publish the entire batch or nothing."""
+        from biopipe.dropins import refresh
         self.state()
         with self.lock:
-            current = self.state()
-            packages = deepcopy(current["packages"])
-            if remove:
-                packages = [item for item in packages if item["name"] != canonicalize_name(remove)]
-                if len(packages) == len(current["packages"]):
-                    raise ValueError(f"Plugin package is not installed: {remove}")
-            else:
-                wheel = Path(wheel).resolve(strict=True)
-                if wheel.suffix != ".whl":
-                    raise ValueError("Install a built .whl package; use plugin build for a source directory")
-                with wheel.open("rb") as source:
-                    digest = hashlib.file_digest(source, "sha256").hexdigest()
-                with zipfile.ZipFile(wheel) as archive:
-                    entries = [name for name in archive.namelist() if name.endswith(".dist-info/METADATA")]
-                    if len(entries) != 1:
-                        raise ValueError("Invalid wheel metadata")
-                    from email.parser import BytesParser
-                    info = BytesParser().parsebytes(archive.read(entries[0]))
-                name = canonicalize_name(info["Name"])
-                if not re.fullmatch(r"[a-z0-9][a-z0-9.-]*", name):
-                    raise ValueError("Invalid package name")
-                cached = self.directory / "packages" / digest / wheel.name
-                cached.parent.mkdir(parents=True, exist_ok=True)
-                if not cached.exists():
-                    shutil.copy2(wheel, cached)
-                packages = [item for item in packages if item["name"] != name]
-                packages.append({"protocol_version": 1, "origin": "wheel", "enabled": True,
-                                 "name": name, "version": info["Version"], "sha256": digest,
-                                 "wheel": str(cached.relative_to(self.directory))})
-            generation = uuid.uuid4().hex
-            environment = self.directory / "environments" / generation
-            environment.mkdir(parents=True)
-            # Parent dependencies are inherited read-only and constrained to the
-            # active runtime versions. New plugin dependencies live in this venv.
-            run_process([sys.executable, "-m", "venv", "--system-site-packages", environment])
-            python = environment / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
-            site_path = Path(run_process([python, "-c", "import sysconfig; print(sysconfig.get_path('purelib'))"]).strip())
-            import sysconfig
-            # Process the parent's .pth files too: merely adding its directory
-            # loses editable installs and dependencies inherited by that runtime.
-            runtime_site = str(Path(sysconfig.get_path("purelib")))
-            (site_path / "biopipe-runtime.pth").write_text(
-                f"import site; site.addsitedir({runtime_site!r})\n{ROOT}\n", encoding="utf-8")
-            protected = {}
-            managed = {p["name"] for p in packages}
-            for distribution in metadata.distributions():
-                name = distribution.metadata["Name"]
-                if name and canonicalize_name(name) not in managed:
-                    # Match importlib.metadata.version/sys.path precedence when
-                    # a parent environment also contains an older distribution.
-                    protected.setdefault(canonicalize_name(name), distribution.version)
-            constraints = environment / "constraints.txt"
-            constraints.write_text("\n".join(f"{name}=={version}" for name, version in sorted(protected.items())), encoding="utf-8")
-            wheel_packages = [p for p in packages if p.get("origin") != "bundled"]
-            if wheel_packages:
-                run_process([python, "-m", "pip", "install", "--disable-pip-version-check", "--constraint", constraints,
-                             *[self.directory / p["wheel"] for p in wheel_packages]], timeout=600)
-            result_file = environment / "probe.json"
-            run_process([python, "-m", "biopipe.plugins", "probe", result_file])
-            descriptors = json.loads(result_file.read_text(encoding="utf-8"))
-            from src.task import STEPS
-            from src.reader import READERS
-            base_ids = set(STEPS) | {type(reader).__name__ for reader in READERS}
-            for descriptor in descriptors:
-                if descriptor["id"] in base_ids and not owns_legacy_id(descriptor["distribution"], descriptor["id"]):
-                    raise ValueError(f"Plugin shadows a built-in: {descriptor['id']}")
-                package = next((p for p in packages if p["name"] == descriptor["distribution"]), None)
-                if package is None:
-                    raise ValueError("Unexpected plugin entry point inherited from the base environment")
-                descriptor["implementation"] = {"package": package["name"], "version": package["version"], "sha256": package["sha256"]}
-                descriptor["origin"] = "wheel"
-            if wheel_packages and not descriptors:
-                raise ValueError("Package does not expose biopipe.operators or biopipe.readers entry points")
-            for package in wheel_packages:
-                if not any(d["distribution"] == package["name"] for d in descriptors):
-                    raise ValueError(f"No BioPipe entry points in {package['name']}")
-                owned = {d["id"] for d in bundled_state()["descriptors"] if d["distribution"] == package["name"]}
-                actual = {d["id"] for d in descriptors if d["distribution"] == package["name"]}
-                if owned and not owned <= actual:
-                    raise ValueError(f"Replacement package must preserve its legacy IDs: {sorted(owned - actual)}")
-            bundled_names = {p["name"] for p in packages if p.get("origin") == "bundled"}
-            descriptors = [d for d in bundled_state()["descriptors"] if d["distribution"] in bundled_names] + descriptors
-            state = {"protocol_version": 1, "package_protocol_version": 1, "generation": generation, "packages": packages, "descriptors": descriptors,
-                     "python": str(python.relative_to(self.directory)), "base_dependencies": protected,
-                     "bundled_seen": current.get("bundled_seen", [])}
-            atomic_json(environment / "lock.json", state)
-            atomic_json(self.registry, state)
-            return state
+            return refresh(self, self.state())
+
+    def install_many(self, wheels):
+        self.state()
+        with self.lock:
+            return self._install_many(wheels, self.state())
+
+    def _install_many(self, wheels, current, *, receipts=None, source_library=None):
+        # Caller owns the cross-process lock, including source snapshotting.
+        packages = deepcopy(current["packages"])
+        replacements = set()
+        for wheel in wheels:
+            wheel = Path(wheel).resolve(strict=True)
+            if wheel.suffix.lower() != ".whl":
+                raise ValueError("Install a built .whl package; use plugin build for a source directory")
+            with wheel.open("rb") as source:
+                digest = hashlib.file_digest(source, "sha256").hexdigest()
+            with zipfile.ZipFile(wheel) as archive:
+                entries = [name for name in archive.namelist() if name.endswith(".dist-info/METADATA")]
+                if len(entries) != 1:
+                    raise ValueError("Invalid wheel metadata")
+                from email.parser import BytesParser
+                info = BytesParser().parsebytes(archive.read(entries[0]))
+            name = canonicalize_name(info["Name"])
+            if not re.fullmatch(r"[a-z0-9][a-z0-9.-]*", name):
+                raise ValueError("Invalid package name")
+            if name in replacements:
+                raise ValueError(f"More than one input supplies package {name}; keep one version in the plugin folder")
+            replacements.add(name)
+            cached = self.directory / "packages" / digest / wheel.name
+            cached.parent.mkdir(parents=True, exist_ok=True)
+            if not cached.exists():
+                shutil.copy2(wheel, cached)
+            previous = next((item for item in packages if item["name"] == name), {})
+            packages = [item for item in packages if item["name"] != name]
+            packages.append({"protocol_version": 1, "origin": "wheel", "enabled": previous.get("enabled", True),
+                             "name": name, "version": info["Version"], "sha256": digest,
+                             "wheel": str(cached.relative_to(self.directory))})
+        generation = uuid.uuid4().hex
+        environment = self.directory / "environments" / generation
+        environment.mkdir(parents=True)
+        # Parent dependencies are inherited read-only and constrained to the
+        # active runtime versions. New plugin dependencies live in this venv.
+        run_process([sys.executable, "-m", "venv", "--system-site-packages", environment])
+        python = environment / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+        site_path = Path(run_process([python, "-c", "import sysconfig; print(sysconfig.get_path('purelib'))"]).strip())
+        import sysconfig
+        # Process the parent's .pth files too: merely adding its directory
+        # loses editable installs and dependencies inherited by that runtime.
+        runtime_site = str(Path(sysconfig.get_path("purelib")))
+        (site_path / "biopipe-runtime.pth").write_text(
+            f"import site; site.addsitedir({runtime_site!r})\n{ROOT}\n", encoding="utf-8")
+        protected = {}
+        managed = {p["name"] for p in packages}
+        for distribution in metadata.distributions():
+            name = distribution.metadata["Name"]
+            if name and canonicalize_name(name) not in managed:
+                # Match importlib.metadata.version/sys.path precedence when
+                # a parent environment also contains an older distribution.
+                protected.setdefault(canonicalize_name(name), distribution.version)
+        constraints = environment / "constraints.txt"
+        constraints.write_text("\n".join(f"{name}=={version}" for name, version in sorted(protected.items())), encoding="utf-8")
+        wheel_packages = [p for p in packages if p.get("origin") != "bundled"]
+        if wheel_packages:
+            run_process([python, "-m", "pip", "install", "--disable-pip-version-check", "--constraint", constraints,
+                         *[self.directory / p["wheel"] for p in wheel_packages]], timeout=600)
+        result_file = environment / "probe.json"
+        run_process([python, "-m", "biopipe.plugins", "probe", result_file],
+                    env=dict(os.environ, BIOPIPE_REGISTRY_MAINTENANCE="1"))
+        descriptors = json.loads(result_file.read_text(encoding="utf-8"))
+        base_ids = {d["id"] for d in bundled_state()["descriptors"]}
+        for descriptor in descriptors:
+            if descriptor["id"] in base_ids and not owns_legacy_id(descriptor["distribution"], descriptor["id"]):
+                raise ValueError(f"Plugin shadows a built-in: {descriptor['id']}")
+            package = next((p for p in packages if p["name"] == descriptor["distribution"]), None)
+            if package is None:
+                raise ValueError("Unexpected plugin entry point inherited from the base environment")
+            descriptor["implementation"] = {"package": package["name"], "version": package["version"], "sha256": package["sha256"]}
+            descriptor["origin"] = "wheel"
+        if wheel_packages and not descriptors:
+            raise ValueError("Package does not expose BioPipe operator or reader entry points")
+        for package in wheel_packages:
+            if not any(d["distribution"] == package["name"] for d in descriptors):
+                raise ValueError(f"No BioPipe entry points in {package['name']}")
+            owned = {d["id"] for d in bundled_state()["descriptors"] if d["distribution"] == package["name"]}
+            actual = {d["id"] for d in descriptors if d["distribution"] == package["name"]}
+            if owned and not owned <= actual:
+                raise ValueError(f"Replacement package must preserve its legacy IDs: {sorted(owned - actual)}")
+        bundled_names = {p["name"] for p in packages if p.get("origin") == "bundled"}
+        descriptors = [d for d in bundled_state()["descriptors"] if d["distribution"] in bundled_names] + descriptors
+        ids = [d["id"] for d in descriptors]
+        if len(ids) != len(set(ids)):
+            raise ValueError("Two packages declare the same operator or reader ID")
+        source_receipt = deepcopy(source_library if source_library is not None else current.get("source_library", {}))
+        if source_library is None:
+            # An explicitly installed provider takes precedence over local sources.
+            source_receipt["packages"] = [name for name in source_receipt.get("packages", []) if name not in replacements]
+        state = {"protocol_version": 1, "package_protocol_version": 1, "generation": generation, "packages": packages, "descriptors": descriptors,
+                 "python": str(python.relative_to(self.directory)), "base_dependencies": protected,
+                 "bundled_seen": current.get("bundled_seen", []),
+                 "dropin_receipts": receipts if receipts is not None else current.get("dropin_receipts", {}),
+                 "source_library": source_receipt}
+        atomic_json(environment / "lock.json", state)
+        atomic_json(self.registry, state)
+        return state
 
     def python_for(self, state):
         return str(self.directory / state["python"]) if state.get("python") else sys.executable
