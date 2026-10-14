@@ -4,19 +4,16 @@
 Parses the GT field into per-ALT allele counts. Multi-allelic records
 are split into one output row per ALT. Missing alleles become NaN.
 
-Backed by cyvcf2 (htslib). Compressed input (.vcf.gz) is handled
-directly; this reader receives the original path.
+Backend selection
+-----------------
+On Linux/macOS this uses cyvcf2 (htslib), which is fast.
+On Windows, cyvcf2/htslib is experimental and crashes the interpreter
+with STATUS_HEAP_CORRUPTION (0xC0000374) on many real VCFs. There we
+fall back to a pure Python parser. Same input, same output.
 
 Layout
 ------
     axis 0 = variant, axis 1 = sample.
-
-The VCF record layout is fixed by the specification:
-
-    #CHROM  POS  ID  REF  ALT  QUAL  FILTER  INFO  FORMAT  sample1...
-
-Only ``GT`` is consumed from the FORMAT column. All other per-sample
-fields are ignored.
 
 Variant ID policy
 -----------------
@@ -24,31 +21,17 @@ Variant ID policy
     ID present, multi ALT    ``{id}:{alt}`` per split row
     ID missing               ``{CHROM}:{POS}:{ALT}`` per split row
 
-Sample identifiers come from the #CHROM header line.
-
-Label rules accepted
---------------------
-    builtin           variant: derived IDs (above)
-                      sample:  header sample names
-    auto              position indices ``"0"``, ``"1"``, ...
-    {name: pos, ...}  explicit mapping
-
-A missing dim entry defaults to ``builtin``. Duplicate labels are
-disambiguated by appending ``#<position>`` (see ``_labels.py``).
-
 Info fields set
 ---------------
     missing_code      ``np.nan``
     ploidy            inferred from the first non-missing GT
     chrom             ``list[str]``, length = number of variant rows
     pos               ``list[int]``, length = number of variant rows
-
-The ``chrom`` and ``pos`` arrays are parallel to the variant axis and
-are kept in sync when the axis is subset (see ``Form.subset_axis``).
 """
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import numpy as np
@@ -59,82 +42,203 @@ from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
+def _parse_gt(gt_str: str) -> list[int]:
+    """Return allele indices for one sample; -1 means missing."""
+    if not gt_str or gt_str == ".":
+        return [-1]
+    parts = gt_str.replace("|", "/").split("/")
+    out = []
+    for p in parts:
+        if p in (".", ""):
+            out.append(-1)
+        else:
+            try:
+                out.append(int(p))
+            except ValueError:
+                out.append(-1)
+    return out
+
+
+def _iter_vcf(path: Path):
+    """Yield (chrom, pos, id, alts, sample_alleles) for each record.
+
+    Pure Python; gzip is transparent. sample_alleles is a list of
+    allele-index lists, one per sample, in header order.
+    """
+    import gzip
+
+    opener = gzip.open if str(path).endswith(".gz") else open
+    with opener(path, "rt", encoding="utf-8") as f:
+        samples: list[str] = []
+        for line in f:
+            if line.startswith("##"):
+                continue
+            if line.startswith("#CHROM"):
+                header = line.rstrip("\n").split("\t")
+                samples = header[9:]
+                break
+        else:
+            raise ReaderError("VCF header (#CHROM) is missing")
+        if not samples:
+            raise ReaderError("VCF has no samples")
+
+        for line in f:
+            if not line or line.startswith("#"):
+                continue
+            fields = line.rstrip("\n").split("\t")
+            if len(fields) < 10:
+                continue
+            chrom = fields[0]
+            try:
+                pos = int(fields[1])
+            except ValueError:
+                continue
+            vid = fields[2]
+            alt_field = fields[4]
+            alts = [] if alt_field in (".", "") else alt_field.split(",")
+
+            fmt_keys = fields[8].split(":") if fields[8] else []
+            try:
+                gt_idx = fmt_keys.index("GT")
+            except ValueError:
+                gt_idx = -1
+
+            sample_alleles = []
+            for cell in fields[9:]:
+                if gt_idx < 0:
+                    sample_alleles.append([-1])
+                    continue
+                parts = cell.split(":")
+                if gt_idx >= len(parts):
+                    sample_alleles.append([-1])
+                    continue
+                sample_alleles.append(_parse_gt(parts[gt_idx]))
+            yield chrom, pos, vid, alts, sample_alleles, samples
+
+
+def _read_pure_python(path: Path):
+    """Pure Python read. Returns the same tuple shape the cyvcf2 path builds."""
+    variant_ids: list[str] = []
+    chroms: list[str] = []
+    positions: list[int] = []
+    rows: list[np.ndarray] = []
+    ploidy: int | None = None
+    samples: list[str] = []
+
+    for chrom, pos, vid, alts, sample_alleles, samples in _iter_vcf(path):
+        if not alts:
+            continue
+        # Per-sample allele arrays; find this record's ploidy
+        arr = np.array(sample_alleles, dtype=np.int32)  # (n_samples, ploidy)
+        if arr.ndim != 2 or arr.shape[0] == 0:
+            continue
+        if ploidy is None:
+            ploidy = int(arr.shape[1])
+        if arr.shape[1] != ploidy or (arr < -1).any():
+            raise ReaderError(
+                "VCF contains mixed ploidy; a single info.ploidy cannot describe these calls"
+            )
+        missing = (arr == -1).any(axis=1)
+        has_real_id = vid not in ("", ".")
+
+        if has_real_id and len(alts) == 1:
+            counts = (arr == 1).sum(axis=1).astype(np.float32)
+            counts[missing] = np.nan
+            variant_ids.append(vid)
+            chroms.append(chrom)
+            positions.append(pos)
+            rows.append(counts)
+        else:
+            base = vid if has_real_id else f"{chrom}:{pos}"
+            for k, alt in enumerate(alts, start=1):
+                counts = (arr == k).sum(axis=1).astype(np.float32)
+                counts[missing] = np.nan
+                variant_ids.append(f"{base}:{alt}" if has_real_id else f"{base}:{alt}")
+                chroms.append(chrom)
+                positions.append(pos)
+                rows.append(counts)
+
+    return variant_ids, samples, chroms, positions, rows, ploidy
+
+
+def _read_cyvcf2(path: Path):
+    """cyvcf2 path. Only used on non-Windows platforms."""
+    from cyvcf2 import VCF
+
+    vcf = VCF(str(path))
+    samples = list(vcf.samples)
+    if not samples:
+        raise ReaderError("VCF has no samples")
+
+    variant_ids: list[str] = []
+    chroms: list[str] = []
+    positions: list[int] = []
+    rows: list[np.ndarray] = []
+    ploidy: int | None = None
+
+    for variant in vcf:
+        arr = variant.genotype.array()
+        alleles = arr[:, :-1]
+        if ploidy is None and alleles.shape[1] > 0:
+            ploidy = int(alleles.shape[1])
+        if alleles.shape[1] != ploidy or (alleles < -1).any():
+            vcf.close()
+            raise ReaderError(
+                "VCF contains mixed ploidy; a single info.ploidy cannot describe these calls"
+            )
+        missing = (alleles == -1).any(axis=1)
+        alts = variant.ALT or []
+        if not alts:
+            continue
+        vid_raw = variant.ID or ""
+        has_real_id = vid_raw not in ("", ".")
+        if has_real_id and len(alts) == 1:
+            counts = (alleles == 1).sum(axis=1).astype(np.float32)
+            counts[missing] = np.nan
+            variant_ids.append(vid_raw)
+            chroms.append(str(variant.CHROM))
+            positions.append(int(variant.POS))
+            rows.append(counts)
+        else:
+            base = vid_raw if has_real_id else f"{variant.CHROM}:{variant.POS}"
+            for k, alt in enumerate(alts, start=1):
+                counts = (alleles == k).sum(axis=1).astype(np.float32)
+                counts[missing] = np.nan
+                variant_ids.append(f"{base}:{alt}" if has_real_id else f"{base}:{alt}")
+                chroms.append(str(variant.CHROM))
+                positions.append(int(variant.POS))
+                rows.append(counts)
+    vcf.close()
+    return variant_ids, samples, chroms, positions, rows, ploidy
+
+
 class VcfReader(Reader):
     """Reader for .vcf and .vcf.gz files."""
 
     output_contract = reader_contract(representation="hard_call", coordinates=True)
 
-    file_input = {'dims': ['variant', 'sample'], 'labels': {'variant': 'builtin', 'sample': 'builtin'}, 'compression': ['.gz']}
+    file_input = {
+        "dims": ["variant", "sample"],
+        "labels": {"variant": "builtin", "sample": "builtin"},
+        "compression": [".gz"],
+    }
 
     extensions = [".vcf"]
     handles_compression = True
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
-        try:
-            from cyvcf2 import VCF
-        except ImportError as exc:
-            raise ReaderError("VCF input requires the 'cyvcf2' package") from exc
         if len(dims) != 2:
-            raise ReaderError(
-                f"VCF reader requires exactly two dims, got {dims}"
-            )
+            raise ReaderError(f"VCF reader requires exactly two dims, got {dims}")
         variant_dim, sample_dim = dims[0], dims[1]
 
-        vcf = VCF(str(path))
-        samples = list(vcf.samples)
-        if not samples:
-            raise ReaderError("VCF has no samples")
-
-        variant_ids: list[str] = []
-        chroms: list[str] = []
-        positions: list[int] = []
-        rows: list[np.ndarray] = []
-        ploidy: int | None = None
-
-        for variant in vcf:
-            arr = variant.genotype.array()
-            alleles = arr[:, :-1]
-            if ploidy is None and alleles.shape[1] > 0:
-                ploidy = int(alleles.shape[1])
-            if alleles.shape[1] != ploidy or (alleles < -1).any():
-                vcf.close()
-                raise ReaderError("VCF contains mixed ploidy; a single info.ploidy cannot describe these calls")
-            missing = (alleles == -1).any(axis=1)
-
-            alts = variant.ALT or []
-            if not alts:
-                continue
-
-            vid_raw = variant.ID or ""
-            has_real_id = vid_raw not in ("", ".")
-
-            if has_real_id:
-                if len(alts) == 1:
-                    counts = (alleles == 1).sum(axis=1).astype(np.float32)
-                    counts[missing] = np.nan
-                    variant_ids.append(vid_raw)
-                    chroms.append(str(variant.CHROM))
-                    positions.append(int(variant.POS))
-                    rows.append(counts)
-                else:
-                    for k, alt in enumerate(alts, start=1):
-                        counts = (alleles == k).sum(axis=1).astype(np.float32)
-                        counts[missing] = np.nan
-                        variant_ids.append(f"{vid_raw}:{alt}")
-                        chroms.append(str(variant.CHROM))
-                        positions.append(int(variant.POS))
-                        rows.append(counts)
-            else:
-                base = f"{variant.CHROM}:{variant.POS}"
-                for k, alt in enumerate(alts, start=1):
-                    counts = (alleles == k).sum(axis=1).astype(np.float32)
-                    counts[missing] = np.nan
-                    variant_ids.append(f"{base}:{alt}")
-                    chroms.append(str(variant.CHROM))
-                    positions.append(int(variant.POS))
-                    rows.append(counts)
-
-        vcf.close()
+        # Windows: cyvcf2/htslib crashes natively. Always use pure Python there.
+        if os.name == "nt":
+            variant_ids, samples, chroms, positions, rows, ploidy = _read_pure_python(path)
+        else:
+            try:
+                variant_ids, samples, chroms, positions, rows, ploidy = _read_cyvcf2(path)
+            except ImportError:
+                variant_ids, samples, chroms, positions, rows, ploidy = _read_pure_python(path)
 
         if not rows:
             raise ReaderError("VCF has no variant records")
@@ -147,40 +251,26 @@ class VcfReader(Reader):
 
         variant_rule = labels.get(variant_dim, "builtin")
         if variant_rule in (None, "builtin"):
-            final[variant_dim] = unique_labels(
-                variant_ids, variant_dim, "vcf"
-            )
+            final[variant_dim] = unique_labels(variant_ids, variant_dim, "vcf")
         elif variant_rule == "auto":
-            final[variant_dim] = {
-                str(i): i for i in range(len(variant_ids))
-            }
+            final[variant_dim] = {str(i): i for i in range(len(variant_ids))}
         elif isinstance(variant_rule, dict):
-            final[variant_dim] = {
-                str(k): int(v) for k, v in variant_rule.items()
-            }
+            final[variant_dim] = {str(k): int(v) for k, v in variant_rule.items()}
         else:
             raise ReaderError(
-                f"VCF reader: unsupported label rule for "
-                f"'{variant_dim}': {variant_rule!r}"
+                f"VCF reader: unsupported label rule for '{variant_dim}': {variant_rule!r}"
             )
 
         sample_rule = labels.get(sample_dim, "builtin")
         if sample_rule in (None, "builtin"):
-            final[sample_dim] = unique_labels(
-                samples, sample_dim, "vcf"
-            )
+            final[sample_dim] = unique_labels(samples, sample_dim, "vcf")
         elif sample_rule == "auto":
-            final[sample_dim] = {
-                str(i): i for i in range(len(samples))
-            }
+            final[sample_dim] = {str(i): i for i in range(len(samples))}
         elif isinstance(sample_rule, dict):
-            final[sample_dim] = {
-                str(k): int(v) for k, v in sample_rule.items()
-            }
+            final[sample_dim] = {str(k): int(v) for k, v in sample_rule.items()}
         else:
             raise ReaderError(
-                f"VCF reader: unsupported label rule for "
-                f"'{sample_dim}': {sample_rule!r}"
+                f"VCF reader: unsupported label rule for '{sample_dim}': {sample_rule!r}"
             )
 
         return Form(
