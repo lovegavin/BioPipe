@@ -250,8 +250,8 @@ def _load_rows(path: Path) -> list[list[str]]:
     rows: list[list[str]] = []
     with opener(path, "rt", encoding="utf-8") as fh:
         for line in fh:
-            line = line.rstrip("\n")
-            if not line or line.startswith("!"):
+            line = line.rstrip("\r\n")
+            if not line.strip() or line.startswith("!"):
                 continue
             parts = line.split("\t")
             if len(parts) != _N_COLUMNS:

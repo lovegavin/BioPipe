@@ -1,0 +1,13 @@
+{"message": "Loading the analysis engine", "time": "2026-10-15T13:48:39.640915+00:00", "event": "worker_started"}
+{"run_id": "20261015T134839-897cb0cd6a74", "memory_enabled": false, "time": "2026-10-15T13:48:41.667267+00:00", "event": "run_started"}
+{"name": "annot", "shape": [28695, 9], "dims": ["record", "field"], "time": "2026-10-15T13:48:42.011352+00:00", "event": "source_loaded"}
+{"name": "gff_feature_stats", "index": 1, "time": "2026-10-15T13:48:42.011535+00:00", "event": "step_started"}
+{"name": "gff_feature_stats", "inputs": 1, "outputs": ["stats"], "contract_version": 1, "time": "2026-10-15T13:48:42.062285+00:00", "event": "contract_checked"}
+{"name": "gff_feature_stats", "index": 1, "seconds": 0.04180749799999717, "time": "2026-10-15T13:48:42.062485+00:00", "event": "step_finished"}
+{"name": "describe", "index": 2, "time": "2026-10-15T13:48:42.062604+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-15T13:48:42.063273+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 2, "seconds": 0.00025139999999623797, "time": "2026-10-15T13:48:42.063331+00:00", "event": "step_finished"}
+{"name": "scatter", "index": 3, "time": "2026-10-15T13:48:42.063373+00:00", "event": "step_started"}
+{"name": "scatter", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-15T13:48:42.295271+00:00", "event": "contract_checked"}
+{"name": "scatter", "index": 3, "seconds": 0.23120528799998397, "time": "2026-10-15T13:48:42.295346+00:00", "event": "step_finished"}
+{"status": "complete", "error": null, "time": "2026-10-15T13:48:42.295393+00:00", "event": "run_finished"}

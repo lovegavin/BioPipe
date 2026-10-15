@@ -74,7 +74,7 @@ def _iter_vcf(path: Path):
             if line.startswith("##"):
                 continue
             if line.startswith("#CHROM"):
-                header = line.rstrip("\n").split("\t")
+                header = line.rstrip("\r\n").split("\t")
                 samples = header[9:]
                 break
         else:
@@ -83,9 +83,9 @@ def _iter_vcf(path: Path):
             raise ReaderError("VCF has no samples")
 
         for line in f:
-            if not line or line.startswith("#"):
+            if not line.strip() or line.startswith("#"):
                 continue
-            fields = line.rstrip("\n").split("\t")
+            fields = line.rstrip("\r\n").split("\t")
             if len(fields) != 9 + len(samples):
                 raise ReaderError("VCF record sample count does not match the #CHROM header")
             chrom = fields[0]

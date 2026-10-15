@@ -1,0 +1,117 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/go_enrichment_demo",
+  "generated_at": "2026-10-15T13:33:22.364714+00:00",
+  "n_steps": 5,
+  "total_elapsed": 5.0379,
+  "steps": [
+    {
+      "index": 1,
+      "name": "pivot",
+      "elapsed": 2.0588,
+      "inputs": [
+        "gaf"
+      ],
+      "params": {
+        "index_label": "db_object_symbol",
+        "columns_label": "go_id",
+        "index_name": "gene",
+        "columns_name": "go_term",
+        "agg": "first",
+        "output": "universe"
+      },
+      "export_path": "steps/01_pivot.json"
+    },
+    {
+      "index": 2,
+      "name": "select",
+      "elapsed": 1.7316,
+      "inputs": [
+        "universe"
+      ],
+      "params": {
+        "dim": "gene",
+        "labels": [
+          "ATM",
+          "ATR",
+          "CHEK1",
+          "CHEK2",
+          "TP53",
+          "MDM2",
+          "MDM4",
+          "CDKN1A",
+          "CDKN2A",
+          "GADD45A",
+          "GADD45B",
+          "BAX",
+          "BBC3",
+          "PMAIP1",
+          "BID",
+          "CASP3",
+          "CASP8",
+          "CASP9",
+          "PTEN",
+          "TSC2",
+          "CDK1",
+          "CDK2",
+          "CDK4",
+          "CDK6",
+          "CCNB1",
+          "CCND1",
+          "CCNE1",
+          "SERPINB5",
+          "SFN",
+          "THBS1"
+        ],
+        "output": "hits"
+      },
+      "export_path": "steps/02_select.json"
+    },
+    {
+      "index": 3,
+      "name": "enrich_go",
+      "elapsed": 0.9823,
+      "inputs": [
+        "hits",
+        "universe"
+      ],
+      "params": {
+        "gene_dim": "gene",
+        "term_dim": "go_term",
+        "correction": "fdr",
+        "min_term_size": 5,
+        "output": "enriched"
+      },
+      "export_path": "steps/03_enrich_go.json"
+    },
+    {
+      "index": 4,
+      "name": "enrichment_plot",
+      "elapsed": 0.2638,
+      "inputs": [
+        "enriched"
+      ],
+      "params": {
+        "q_column": "Q_VALUE",
+        "size_column": "n_hit",
+        "top_n": 20,
+        "filename": "go_enrichment_p53.png",
+        "title": "GO enrichment: KEGG p53 signaling pathway members"
+      },
+      "export_path": "steps/04_enrichment_plot.json"
+    },
+    {
+      "index": 5,
+      "name": "describe",
+      "elapsed": 0.0014,
+      "inputs": [
+        "enriched"
+      ],
+      "params": {},
+      "export_path": "steps/05_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null,
+  "run_id": "20261015T133311-0cb4ab1fc887",
+  "event_log": "/home/lovagavin/biopipe/tasks/go_enrichment_demo/output/runs/20261015T133311-0cb4ab1fc887/events.jsonl"
+}

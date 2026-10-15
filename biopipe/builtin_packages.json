@@ -4789,6 +4789,288 @@
         },
         {
           "protocol_version": 1,
+          "id": "peak_nearest_gene",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.peak_nearest_gene:PeakNearestGeneStep",
+          "title": "peak_nearest_gene",
+          "category": "analysis",
+          "icon": "Dna",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "a_region_dim": {
+                "type": "string",
+                "default": "region"
+              },
+              "a_field_dim": {
+                "type": "string",
+                "default": "field"
+              },
+              "a_chrom_field": {
+                "type": "string",
+                "default": "chrom"
+              },
+              "a_start_field": {
+                "type": "string",
+                "default": "chromStart"
+              },
+              "a_end_field": {
+                "type": "string",
+                "default": "chromEnd"
+              },
+              "b_record_dim": {
+                "type": "string",
+                "default": "record"
+              },
+              "b_field_dim": {
+                "type": "string",
+                "default": "field"
+              },
+              "b_chrom_field": {
+                "type": "string",
+                "default": "seqid"
+              },
+              "b_start_field": {
+                "type": "string",
+                "default": "start"
+              },
+              "b_end_field": {
+                "type": "string",
+                "default": "end"
+              },
+              "b_strand_field": {
+                "type": "string",
+                "default": "strand"
+              },
+              "feature_type": {
+                "type": "string",
+                "default": "gene"
+              },
+              "max_distance": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "default": null
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "a_region_dim",
+                    "default": "region"
+                  },
+                  {
+                    "param": "a_field_dim",
+                    "default": "field"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "b_record_dim",
+                    "default": "record"
+                  },
+                  {
+                    "param": "b_field_dim",
+                    "default": "field"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "peak_nearest_gene",
+          "module": "src.task.step.steps.peak_nearest_gene",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Assign every BED interval to its nearest annotated gene.",
+          "parameters": [
+            {
+              "key": "a_region_dim",
+              "label": "a_region_dim",
+              "type": "string",
+              "required": false,
+              "default": "region"
+            },
+            {
+              "key": "a_field_dim",
+              "label": "a_field_dim",
+              "type": "string",
+              "required": false,
+              "default": "field"
+            },
+            {
+              "key": "a_chrom_field",
+              "label": "a_chrom_field",
+              "type": "string",
+              "required": false,
+              "default": "chrom"
+            },
+            {
+              "key": "a_start_field",
+              "label": "a_start_field",
+              "type": "string",
+              "required": false,
+              "default": "chromStart"
+            },
+            {
+              "key": "a_end_field",
+              "label": "a_end_field",
+              "type": "string",
+              "required": false,
+              "default": "chromEnd"
+            },
+            {
+              "key": "b_record_dim",
+              "label": "b_record_dim",
+              "type": "string",
+              "required": false,
+              "default": "record"
+            },
+            {
+              "key": "b_field_dim",
+              "label": "b_field_dim",
+              "type": "string",
+              "required": false,
+              "default": "field"
+            },
+            {
+              "key": "b_chrom_field",
+              "label": "b_chrom_field",
+              "type": "string",
+              "required": false,
+              "default": "seqid"
+            },
+            {
+              "key": "b_start_field",
+              "label": "b_start_field",
+              "type": "string",
+              "required": false,
+              "default": "start"
+            },
+            {
+              "key": "b_end_field",
+              "label": "b_end_field",
+              "type": "string",
+              "required": false,
+              "default": "end"
+            },
+            {
+              "key": "b_strand_field",
+              "label": "b_strand_field",
+              "type": "string",
+              "required": false,
+              "default": "strand"
+            },
+            {
+              "key": "feature_type",
+              "label": "feature_type",
+              "type": "string",
+              "required": false,
+              "default": "gene"
+            },
+            {
+              "key": "max_distance",
+              "label": "max_distance",
+              "type": "integer",
+              "required": false,
+              "default": null,
+              "min": 0
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "a_region_dim": "region",
+            "a_field_dim": "field",
+            "a_chrom_field": "chrom",
+            "a_start_field": "chromStart",
+            "a_end_field": "chromEnd",
+            "b_record_dim": "record",
+            "b_field_dim": "field",
+            "b_chrom_field": "seqid",
+            "b_start_field": "start",
+            "b_end_field": "end",
+            "b_strand_field": "strand",
+            "feature_type": "gene",
+            "max_distance": null
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "pivot",
           "version": "1.0.0",
           "kind": "operator",

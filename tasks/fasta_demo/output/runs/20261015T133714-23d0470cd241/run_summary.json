@@ -1,0 +1,22 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/fasta_demo",
+  "generated_at": "2026-10-15T13:37:16.075648+00:00",
+  "n_steps": 1,
+  "total_elapsed": 0.0035,
+  "steps": [
+    {
+      "index": 1,
+      "name": "describe",
+      "elapsed": 0.0035,
+      "inputs": [
+        "seqs"
+      ],
+      "params": {},
+      "export_path": "steps/01_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null,
+  "run_id": "20261015T133714-23d0470cd241",
+  "event_log": "/home/lovagavin/biopipe/tasks/fasta_demo/output/runs/20261015T133714-23d0470cd241/events.jsonl"
+}

@@ -2,18 +2,18 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/sequence_stats_demo
-generated : 2026-10-15T12:04:30.202803+00:00
+generated : 2026-10-15T13:48:30.361530+00:00
 steps     : 4
-elapsed   : 0.186s
+elapsed   : 0.369s
 status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   sequence_stats          0.000s   steps/01_sequence_stats.json
+1   sequence_stats          0.001s   steps/01_sequence_stats.json
 2   describe                0.000s   steps/02_describe.json
-3   histogram               0.113s   steps/03_histogram.json
-4   scatter                 0.072s   steps/04_scatter.json
+3   histogram               0.191s   steps/03_histogram.json
+4   scatter                 0.177s   steps/04_scatter.json
 
 ============================================================
 Per-step details are at the export paths above. This file is an index only.

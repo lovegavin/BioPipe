@@ -1,0 +1,21 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/go_enrichment_demo
+generated : 2026-10-15T13:33:22.364714+00:00
+steps     : 5
+elapsed   : 5.038s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   pivot                   2.059s   steps/01_pivot.json
+2   select                  1.732s   steps/02_select.json
+3   enrich_go               0.982s   steps/03_enrich_go.json
+4   enrichment_plot         0.264s   steps/04_enrichment_plot.json
+5   describe                0.001s   steps/05_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

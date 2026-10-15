@@ -2,18 +2,18 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/gene_structure_demo
-generated : 2026-10-15T12:39:48.380081+00:00
+generated : 2026-10-15T13:48:45.350609+00:00
 steps     : 4
-elapsed   : 0.212s
+elapsed   : 0.412s
 status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   gene_structure          0.027s   steps/01_gene_structure.json
+1   gene_structure          0.072s   steps/01_gene_structure.json
 2   describe                0.001s   steps/02_describe.json
-3   histogram               0.113s   steps/03_histogram.json
-4   histogram               0.072s   steps/04_histogram.json
+3   histogram               0.175s   steps/03_histogram.json
+4   histogram               0.164s   steps/04_histogram.json
 
 ============================================================
 Per-step details are at the export paths above. This file is an index only.

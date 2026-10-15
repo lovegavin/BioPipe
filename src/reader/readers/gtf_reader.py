@@ -214,8 +214,8 @@ def _load_rows(path: Path) -> list[list[str]]:
     rows: list[list[str]] = []
     with open(path, encoding="utf-8") as fh:
         for line in fh:
-            line = line.rstrip("\n")
-            if not line or line.startswith("#"):
+            line = line.rstrip("\r\n")
+            if not line.strip() or line.startswith("#"):
                 continue
             rows.append(line.split("\t"))
     return rows

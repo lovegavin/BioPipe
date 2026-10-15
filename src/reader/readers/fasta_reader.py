@@ -152,8 +152,8 @@ def _parse_fasta(path: Path) -> tuple[list[str], list[str]]:
 
     with open(path, encoding="utf-8") as fh:
         for line in fh:
-            line = line.rstrip("\n")
-            if not line:
+            line = line.rstrip("\r\n")
+            if not line.strip():
                 continue
             if line.startswith(">"):
                 if current:
@@ -164,7 +164,7 @@ def _parse_fasta(path: Path) -> tuple[list[str], list[str]]:
                 sid = parts[0] if parts else f"seq{len(ids)}"
                 ids.append(sid)
             else:
-                current.append(line)
+                current.append(line.rstrip())
 
     if current:
         seqs.append("".join(current))

@@ -1,13 +1,13 @@
 {
   "task_dir": "/home/lovagavin/biopipe/tasks/interval_stats_demo",
-  "generated_at": "2026-10-15T13:06:40.435581+00:00",
+  "generated_at": "2026-10-15T13:47:38.489947+00:00",
   "n_steps": 4,
-  "total_elapsed": 0.6354,
+  "total_elapsed": 1.2304,
   "steps": [
     {
       "index": 1,
       "name": "interval_stats",
-      "elapsed": 0.4124,
+      "elapsed": 0.7901,
       "inputs": [
         "ccre"
       ],
@@ -19,7 +19,7 @@
     {
       "index": 2,
       "name": "describe",
-      "elapsed": 0.001,
+      "elapsed": 0.0003,
       "inputs": [
         "stats"
       ],
@@ -29,7 +29,7 @@
     {
       "index": 3,
       "name": "histogram",
-      "elapsed": 0.1278,
+      "elapsed": 0.2349,
       "inputs": [
         "stats"
       ],
@@ -46,7 +46,7 @@
     {
       "index": 4,
       "name": "histogram",
-      "elapsed": 0.0942,
+      "elapsed": 0.2051,
       "inputs": [
         "stats"
       ],
@@ -63,6 +63,6 @@
   ],
   "status": "complete",
   "error": null,
-  "run_id": "20261015T130634-d2bac855b91e",
-  "event_log": "/home/lovagavin/biopipe/tasks/interval_stats_demo/output/runs/20261015T130634-d2bac855b91e/events.jsonl"
+  "run_id": "20261015T134727-0fc392b49b57",
+  "event_log": "/home/lovagavin/biopipe/tasks/interval_stats_demo/output/runs/20261015T134727-0fc392b49b57/events.jsonl"
 }

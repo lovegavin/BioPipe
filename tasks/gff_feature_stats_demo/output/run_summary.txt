@@ -2,17 +2,17 @@
 Run summary
 ============================================================
 task      : /home/lovagavin/biopipe/tasks/gff_feature_stats_demo
-generated : 2026-10-15T12:37:45.688460+00:00
+generated : 2026-10-15T13:48:42.295451+00:00
 steps     : 3
-elapsed   : 0.136s
+elapsed   : 0.273s
 status    : complete
 
 ------------------------------------------------------------
 #   step                   elapsed   export
 ------------------------------------------------------------
-1   gff_feature_stats       0.022s   steps/01_gff_feature_stats.json
+1   gff_feature_stats       0.042s   steps/01_gff_feature_stats.json
 2   describe                0.000s   steps/02_describe.json
-3   scatter                 0.114s   steps/03_scatter.json
+3   scatter                 0.231s   steps/03_scatter.json
 
 ============================================================
 Per-step details are at the export paths above. This file is an index only.
