@@ -1,0 +1,19 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/motif_scan_demo
+generated : 2026-10-15T12:26:33.887608+00:00
+steps     : 3
+elapsed   : 0.150s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   motif_scan              0.042s   steps/01_motif_scan.json
+2   describe                0.000s   steps/02_describe.json
+3   heatmap                 0.109s   steps/03_heatmap.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

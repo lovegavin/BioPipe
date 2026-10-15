@@ -1,0 +1,33 @@
+# tasks/kmer_count_demo/task.yaml
+name: kmer_count_demo
+
+sources:
+  seqs:
+    path: input/sequences.fasta
+    dims: [sequence, position]
+    labels:
+      sequence: builtin
+      position: auto
+
+steps:
+  - name: kmer_count
+    inputs: [seqs]
+    params:
+      k: 3
+      output: kmers
+
+  - name: describe
+    inputs: [kmers]
+
+  - name: heatmap
+    inputs: [kmers]
+    params:
+      dim: kmer
+      other_dim: sequence
+      select: variance
+      top_n: 40
+      standardize: row
+      cluster_rows: true
+      cluster_cols: false
+      filename: kmer_heatmap.png
+      title: "Top-40 3-mers across sequences"

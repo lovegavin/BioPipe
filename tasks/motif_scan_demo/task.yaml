@@ -1,0 +1,35 @@
+name: motif_scan_demo
+
+sources:
+  seqs:
+    path: input/sequences.fasta
+    dims: [sequence, position]
+    labels:
+      sequence: builtin
+      position: auto
+
+steps:
+  - name: motif_scan
+    inputs: [seqs]
+    params:
+      motifs:
+        TATA_box: "TATAAA"
+        Kozak: "GCCACC"
+        polyA: "AATAAA"
+        start: "ATG"
+      output: hits
+
+  - name: describe
+    inputs: [hits]
+
+  - name: heatmap
+    inputs: [hits]
+    params:
+      dim: motif
+      other_dim: sequence
+      select: all
+      standardize: row
+      cluster_rows: false
+      cluster_cols: false
+      filename: motif_heatmap.png
+      title: "Motif counts per sequence"

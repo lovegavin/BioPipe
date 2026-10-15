@@ -1,0 +1,28 @@
+name: gff_feature_stats_demo
+
+sources:
+  annot:
+    path: input/genome.gff3.gz
+    dims: [record, field]
+    labels:
+      record: auto
+      field: builtin
+
+steps:
+  - name: gff_feature_stats
+    inputs: [annot]
+    params: {output: stats}
+
+  - name: describe
+    inputs: [stats]
+
+  - name: scatter
+    inputs: [stats]
+    params:
+      dim: statistic
+      x_label: count
+      y_label: mean_length
+      filename: feature_count_vs_length.png
+      title: "Feature type: count vs mean length"
+      xlabel: "Count"
+      ylabel: "Mean length (bp)"

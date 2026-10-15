@@ -1,0 +1,20 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/interval_stats_demo
+generated : 2026-10-15T13:06:40.435581+00:00
+steps     : 4
+elapsed   : 0.635s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   interval_stats          0.412s   steps/01_interval_stats.json
+2   describe                0.001s   steps/02_describe.json
+3   histogram               0.128s   steps/03_histogram.json
+4   histogram               0.094s   steps/04_histogram.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

@@ -1,0 +1,77 @@
+name: annotation_qc_demo
+
+sources:
+  annot:
+    path: input/genome.gff3.gz
+    dims: [record, field]
+    labels:
+      record: auto
+      field: builtin
+
+steps:
+  # ---- 分支 A：feature type 组成 ----
+  - name: gff_feature_stats
+    inputs: [annot]
+    params: {output: feature_stats}
+
+  - name: describe
+    inputs: [feature_stats]
+
+  - name: scatter
+    inputs: [feature_stats]
+    params:
+      dim: statistic
+      x_label: count
+      y_label: mean_length
+      filename: feature_count_vs_length.png
+      title: "Feature type: count vs mean length"
+      xlabel: "Count"
+      ylabel: "Mean length (bp)"
+
+  # ---- 分支 B：每个基因的结构 ----
+  - name: gene_structure
+    inputs: [annot]
+    params: {output: structures}
+
+  - name: describe
+    inputs: [structures]
+
+  - name: histogram
+    inputs: [structures]
+    params:
+      dim: statistic
+      value_label: n_exons
+      bins: 30
+      filename: exon_count_hist.png
+      title: "Exons per gene"
+      xlabel: "Exon count"
+
+  - name: histogram
+    inputs: [structures]
+    params:
+      dim: statistic
+      value_label: cds_total
+      bins: 40
+      filename: cds_length_hist.png
+      title: "CDS total length per gene"
+      xlabel: "CDS length (bp)"
+
+  # ---- 分支 C：基因间间隔 ----
+  - name: annotation_gaps
+    inputs: [annot]
+    params:
+      min_gap: 500
+      output: gaps
+
+  - name: describe
+    inputs: [gaps]
+
+  - name: histogram
+    inputs: [gaps]
+    params:
+      dim: statistic
+      value_label: gap_length
+      bins: 40
+      filename: gap_length_hist.png
+      title: "Inter-gene gap lengths (min 500 bp)"
+      xlabel: "Gap length (bp)"

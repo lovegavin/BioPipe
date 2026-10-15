@@ -409,6 +409,16 @@
                 },
                 "alphabet": {
                   "type": "string"
+                },
+                "representation": {
+                  "type": "string",
+                  "const": "sequence_codes"
+                },
+                "alphabet_map": {
+                  "type": "object"
+                },
+                "unknown_code": {
+                  "type": "integer"
                 }
               },
               "dims": [],
@@ -463,6 +473,16 @@
               },
               "alphabet": {
                 "type": "string"
+              },
+              "representation": {
+                "type": "string",
+                "const": "sequence_codes"
+              },
+              "alphabet_map": {
+                "type": "object"
+              },
+              "unknown_code": {
+                "type": "integer"
               }
             },
             "dims": [],
@@ -1975,6 +1995,136 @@
         },
         {
           "protocol_version": 1,
+          "id": "annotation_gaps",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.annotation_gaps:AnnotationGapsStep",
+          "title": "annotation_gaps",
+          "category": "analysis",
+          "icon": "Ruler",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "record_dim": {
+                "type": "string",
+                "default": "record"
+              },
+              "field_dim": {
+                "type": "string",
+                "default": "field"
+              },
+              "min_gap": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "record_dim",
+                    "default": "record"
+                  },
+                  {
+                    "param": "field_dim",
+                    "default": "field"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "annotation_gaps",
+          "module": "src.task.step.steps.annotation_gaps",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Inter-gene gap lengths for GFF3/GTF annotation QC.",
+          "parameters": [
+            {
+              "key": "record_dim",
+              "label": "record_dim",
+              "type": "string",
+              "required": false,
+              "default": "record"
+            },
+            {
+              "key": "field_dim",
+              "label": "field_dim",
+              "type": "string",
+              "required": false,
+              "default": "field"
+            },
+            {
+              "key": "min_gap",
+              "label": "min_gap",
+              "type": "integer",
+              "required": false,
+              "default": 0,
+              "min": 0
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "record_dim": "record",
+            "field_dim": "field",
+            "min_gap": 0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "attach_info",
           "version": "1.0.0",
           "kind": "operator",
@@ -3266,6 +3416,1259 @@
         },
         {
           "protocol_version": 1,
+          "id": "find_orfs",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.find_orfs:FindOrfsStep",
+          "title": "find_orfs",
+          "category": "analysis",
+          "icon": "Intersect",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sequence_dim": {
+                "type": "string",
+                "default": "sequence"
+              },
+              "position_dim": {
+                "type": "string",
+                "default": "position"
+              },
+              "min_aa": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "alphabet": {
+                    "type": "string",
+                    "enum": [
+                      "dna",
+                      "rna"
+                    ]
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "sequence_dim",
+                    "default": "sequence"
+                  },
+                  {
+                    "param": "position_dim",
+                    "default": "position"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "find_orfs",
+          "module": "src.task.step.steps.find_orfs",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Locate complete ATG..stop ORFs on both strands.",
+          "parameters": [
+            {
+              "key": "sequence_dim",
+              "label": "sequence_dim",
+              "type": "string",
+              "required": false,
+              "default": "sequence"
+            },
+            {
+              "key": "position_dim",
+              "label": "position_dim",
+              "type": "string",
+              "required": false,
+              "default": "position"
+            },
+            {
+              "key": "min_aa",
+              "label": "min_aa",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sequence_dim": "sequence",
+            "position_dim": "position",
+            "min_aa": 1
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "gene_structure",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.gene_structure:GeneStructureStep",
+          "title": "gene_structure",
+          "category": "analysis",
+          "icon": "TreeStructure",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "record_dim": {
+                "type": "string",
+                "default": "record"
+              },
+              "field_dim": {
+                "type": "string",
+                "default": "field"
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "record_dim",
+                    "default": "record"
+                  },
+                  {
+                    "param": "field_dim",
+                    "default": "field"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "gene_structure",
+          "module": "src.task.step.steps.gene_structure",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Per-gene exon/intron/CDS summary for GFF3/GTF.",
+          "parameters": [
+            {
+              "key": "record_dim",
+              "label": "record_dim",
+              "type": "string",
+              "required": false,
+              "default": "record"
+            },
+            {
+              "key": "field_dim",
+              "label": "field_dim",
+              "type": "string",
+              "required": false,
+              "default": "field"
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "record_dim": "record",
+            "field_dim": "field"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "gff_feature_stats",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.gff_feature_stats:GffFeatureStatsStep",
+          "title": "gff_feature_stats",
+          "category": "analysis",
+          "icon": "Columns",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "record_dim": {
+                "type": "string",
+                "default": "record"
+              },
+              "field_dim": {
+                "type": "string",
+                "default": "field"
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "record_dim",
+                    "default": "record"
+                  },
+                  {
+                    "param": "field_dim",
+                    "default": "field"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "gff_feature_stats",
+          "module": "src.task.step.steps.gff_feature_stats",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Per-feature-type length and count statistics for GFF3/GTF.",
+          "parameters": [
+            {
+              "key": "record_dim",
+              "label": "record_dim",
+              "type": "string",
+              "required": false,
+              "default": "record"
+            },
+            {
+              "key": "field_dim",
+              "label": "field_dim",
+              "type": "string",
+              "required": false,
+              "default": "field"
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "record_dim": "record",
+            "field_dim": "field"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "interval_merge",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.interval_merge:IntervalMergeStep",
+          "title": "interval_merge",
+          "category": "analysis",
+          "icon": "Unite",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "region_dim": {
+                "type": "string",
+                "default": "region"
+              },
+              "field_dim": {
+                "type": "string",
+                "default": "field"
+              },
+              "chrom_field": {
+                "type": "string",
+                "default": "chrom"
+              },
+              "start_field": {
+                "type": "string",
+                "default": "chromStart"
+              },
+              "end_field": {
+                "type": "string",
+                "default": "chromEnd"
+              },
+              "min_overlap": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "region_dim",
+                    "default": "region"
+                  },
+                  {
+                    "param": "field_dim",
+                    "default": "field"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "interval_merge",
+          "module": "src.task.step.steps.interval_merge",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Merge overlapping BED intervals per chromosome.",
+          "parameters": [
+            {
+              "key": "region_dim",
+              "label": "region_dim",
+              "type": "string",
+              "required": false,
+              "default": "region"
+            },
+            {
+              "key": "field_dim",
+              "label": "field_dim",
+              "type": "string",
+              "required": false,
+              "default": "field"
+            },
+            {
+              "key": "chrom_field",
+              "label": "chrom_field",
+              "type": "string",
+              "required": false,
+              "default": "chrom"
+            },
+            {
+              "key": "start_field",
+              "label": "start_field",
+              "type": "string",
+              "required": false,
+              "default": "chromStart"
+            },
+            {
+              "key": "end_field",
+              "label": "end_field",
+              "type": "string",
+              "required": false,
+              "default": "chromEnd"
+            },
+            {
+              "key": "min_overlap",
+              "label": "min_overlap",
+              "type": "integer",
+              "required": false,
+              "default": 0,
+              "min": 0
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "region_dim": "region",
+            "field_dim": "field",
+            "chrom_field": "chrom",
+            "start_field": "chromStart",
+            "end_field": "chromEnd",
+            "min_overlap": 0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "interval_overlap",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.interval_overlap:IntervalOverlapStep",
+          "title": "interval_overlap",
+          "category": "analysis",
+          "icon": "Intersect",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "a_region_dim": {
+                "type": "string",
+                "default": "region"
+              },
+              "a_field_dim": {
+                "type": "string",
+                "default": "field"
+              },
+              "a_chrom_field": {
+                "type": "string",
+                "default": "chrom"
+              },
+              "a_start_field": {
+                "type": "string",
+                "default": "chromStart"
+              },
+              "a_end_field": {
+                "type": "string",
+                "default": "chromEnd"
+              },
+              "b_region_dim": {
+                "type": "string",
+                "default": "region"
+              },
+              "b_field_dim": {
+                "type": "string",
+                "default": "field"
+              },
+              "b_chrom_field": {
+                "type": "string",
+                "default": "chrom"
+              },
+              "b_start_field": {
+                "type": "string",
+                "default": "chromStart"
+              },
+              "b_end_field": {
+                "type": "string",
+                "default": "chromEnd"
+              },
+              "min_overlap": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1
+              },
+              "max_output": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1000000
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "a_region_dim",
+                    "default": "region"
+                  },
+                  {
+                    "param": "a_field_dim",
+                    "default": "field"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "b_region_dim",
+                    "default": "region"
+                  },
+                  {
+                    "param": "b_field_dim",
+                    "default": "field"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "interval_overlap",
+          "module": "src.task.step.steps.interval_overlap",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Pairwise overlap of intervals between two BED forms.",
+          "parameters": [
+            {
+              "key": "a_region_dim",
+              "label": "a_region_dim",
+              "type": "string",
+              "required": false,
+              "default": "region"
+            },
+            {
+              "key": "a_field_dim",
+              "label": "a_field_dim",
+              "type": "string",
+              "required": false,
+              "default": "field"
+            },
+            {
+              "key": "a_chrom_field",
+              "label": "a_chrom_field",
+              "type": "string",
+              "required": false,
+              "default": "chrom"
+            },
+            {
+              "key": "a_start_field",
+              "label": "a_start_field",
+              "type": "string",
+              "required": false,
+              "default": "chromStart"
+            },
+            {
+              "key": "a_end_field",
+              "label": "a_end_field",
+              "type": "string",
+              "required": false,
+              "default": "chromEnd"
+            },
+            {
+              "key": "b_region_dim",
+              "label": "b_region_dim",
+              "type": "string",
+              "required": false,
+              "default": "region"
+            },
+            {
+              "key": "b_field_dim",
+              "label": "b_field_dim",
+              "type": "string",
+              "required": false,
+              "default": "field"
+            },
+            {
+              "key": "b_chrom_field",
+              "label": "b_chrom_field",
+              "type": "string",
+              "required": false,
+              "default": "chrom"
+            },
+            {
+              "key": "b_start_field",
+              "label": "b_start_field",
+              "type": "string",
+              "required": false,
+              "default": "chromStart"
+            },
+            {
+              "key": "b_end_field",
+              "label": "b_end_field",
+              "type": "string",
+              "required": false,
+              "default": "chromEnd"
+            },
+            {
+              "key": "min_overlap",
+              "label": "min_overlap",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1
+            },
+            {
+              "key": "max_output",
+              "label": "max_output",
+              "type": "integer",
+              "required": false,
+              "default": 1000000,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "a_region_dim": "region",
+            "a_field_dim": "field",
+            "a_chrom_field": "chrom",
+            "a_start_field": "chromStart",
+            "a_end_field": "chromEnd",
+            "b_region_dim": "region",
+            "b_field_dim": "field",
+            "b_chrom_field": "chrom",
+            "b_start_field": "chromStart",
+            "b_end_field": "chromEnd",
+            "min_overlap": 1,
+            "max_output": 1000000
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "interval_stats",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.interval_stats:IntervalStatsStep",
+          "title": "interval_stats",
+          "category": "analysis",
+          "icon": "Ruler",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "region_dim": {
+                "type": "string",
+                "default": "region"
+              },
+              "field_dim": {
+                "type": "string",
+                "default": "field"
+              },
+              "chrom_field": {
+                "type": "string",
+                "default": "chrom"
+              },
+              "start_field": {
+                "type": "string",
+                "default": "chromStart"
+              },
+              "end_field": {
+                "type": "string",
+                "default": "chromEnd"
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "region_dim",
+                    "default": "region"
+                  },
+                  {
+                    "param": "field_dim",
+                    "default": "field"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "interval_stats",
+          "module": "src.task.step.steps.interval_stats",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Per-chromosome interval count and length statistics.",
+          "parameters": [
+            {
+              "key": "region_dim",
+              "label": "region_dim",
+              "type": "string",
+              "required": false,
+              "default": "region"
+            },
+            {
+              "key": "field_dim",
+              "label": "field_dim",
+              "type": "string",
+              "required": false,
+              "default": "field"
+            },
+            {
+              "key": "chrom_field",
+              "label": "chrom_field",
+              "type": "string",
+              "required": false,
+              "default": "chrom"
+            },
+            {
+              "key": "start_field",
+              "label": "start_field",
+              "type": "string",
+              "required": false,
+              "default": "chromStart"
+            },
+            {
+              "key": "end_field",
+              "label": "end_field",
+              "type": "string",
+              "required": false,
+              "default": "chromEnd"
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "region_dim": "region",
+            "field_dim": "field",
+            "chrom_field": "chrom",
+            "start_field": "chromStart",
+            "end_field": "chromEnd"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "kmer_count",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.kmer_count:KmerCountStep",
+          "title": "kmer_count",
+          "category": "analysis",
+          "icon": "Function",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sequence_dim": {
+                "type": "string",
+                "default": "sequence"
+              },
+              "position_dim": {
+                "type": "string",
+                "default": "position"
+              },
+              "k": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 6,
+                "default": 3
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "alphabet": {
+                    "type": "string",
+                    "enum": [
+                      "dna",
+                      "rna"
+                    ]
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "sequence_dim",
+                    "default": "sequence"
+                  },
+                  {
+                    "param": "position_dim",
+                    "default": "position"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "kmer_count",
+          "module": "src.task.step.steps.kmer_count",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Count k-mers per sequence for any sequence-codes Form.",
+          "parameters": [
+            {
+              "key": "sequence_dim",
+              "label": "sequence_dim",
+              "type": "string",
+              "required": false,
+              "default": "sequence"
+            },
+            {
+              "key": "position_dim",
+              "label": "position_dim",
+              "type": "string",
+              "required": false,
+              "default": "position"
+            },
+            {
+              "key": "k",
+              "label": "k",
+              "type": "integer",
+              "required": false,
+              "default": 3,
+              "min": 1,
+              "max": 6
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sequence_dim": "sequence",
+            "position_dim": "position",
+            "k": 3
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "motif_scan",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.motif_scan:MotifScanStep",
+          "title": "motif_scan",
+          "category": "analysis",
+          "icon": "Funnel",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sequence_dim": {
+                "type": "string",
+                "default": "sequence"
+              },
+              "position_dim": {
+                "type": "string",
+                "default": "position"
+              },
+              "motifs": {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "motifs"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "alphabet": {
+                    "type": "string",
+                    "enum": [
+                      "dna",
+                      "rna"
+                    ]
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "sequence_dim",
+                    "default": "sequence"
+                  },
+                  {
+                    "param": "position_dim",
+                    "default": "position"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "motif_scan",
+          "module": "src.task.step.steps.motif_scan",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Count IUPAC motif occurrences per sequence.",
+          "parameters": [
+            {
+              "key": "sequence_dim",
+              "label": "sequence_dim",
+              "type": "string",
+              "required": false,
+              "default": "sequence"
+            },
+            {
+              "key": "position_dim",
+              "label": "position_dim",
+              "type": "string",
+              "required": false,
+              "default": "position"
+            },
+            {
+              "key": "motifs",
+              "label": "motifs",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sequence_dim": "sequence",
+            "position_dim": "position"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "order_axis",
           "version": "1.0.0",
           "kind": "operator",
@@ -4168,6 +5571,135 @@
           ],
           "runtime_defaults": {},
           "legacy_parameters": true
+        },
+        {
+          "protocol_version": 1,
+          "id": "sequence_stats",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.sequence_stats:SequenceStatsStep",
+          "title": "sequence_stats",
+          "category": "analysis",
+          "icon": "Ruler",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sequence_dim": {
+                "type": "string",
+                "default": "sequence"
+              },
+              "position_dim": {
+                "type": "string",
+                "default": "position"
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "alphabet": {
+                    "type": "string",
+                    "enum": [
+                      "dna",
+                      "rna"
+                    ]
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "sequence_dim",
+                    "default": "sequence"
+                  },
+                  {
+                    "param": "position_dim",
+                    "default": "position"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "sequence_stats",
+          "module": "src.task.step.steps.sequence_stats",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Per-sequence length, GC and N content for any sequence-codes Form.",
+          "parameters": [
+            {
+              "key": "sequence_dim",
+              "label": "sequence_dim",
+              "type": "string",
+              "required": false,
+              "default": "sequence"
+            },
+            {
+              "key": "position_dim",
+              "label": "position_dim",
+              "type": "string",
+              "required": false,
+              "default": "position"
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sequence_dim": "sequence",
+            "position_dim": "position"
+          },
+          "legacy_parameters": false
         },
         {
           "protocol_version": 1,

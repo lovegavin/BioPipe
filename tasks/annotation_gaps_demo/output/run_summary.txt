@@ -1,0 +1,19 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/annotation_gaps_demo
+generated : 2026-10-15T12:40:36.198884+00:00
+steps     : 3
+elapsed   : 0.093s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   annotation_gaps         0.008s   steps/01_annotation_gaps.json
+2   describe                0.004s   steps/02_describe.json
+3   histogram               0.081s   steps/03_histogram.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

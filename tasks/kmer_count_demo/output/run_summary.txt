@@ -1,0 +1,19 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/kmer_count_demo
+generated : 2026-10-15T12:08:11.182276+00:00
+steps     : 3
+elapsed   : 0.202s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   kmer_count              0.041s   steps/01_kmer_count.json
+2   describe                0.000s   steps/02_describe.json
+3   heatmap                 0.161s   steps/03_heatmap.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

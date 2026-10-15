@@ -1,0 +1,37 @@
+name: gene_structure_demo
+
+sources:
+  annot:
+    path: input/genome.gff3.gz
+    dims: [record, field]
+    labels:
+      record: auto
+      field: builtin
+
+steps:
+  - name: gene_structure
+    inputs: [annot]
+    params: {output: structures}
+
+  - name: describe
+    inputs: [structures]
+
+  - name: histogram
+    inputs: [structures]
+    params:
+      dim: statistic
+      value_label: n_exons
+      bins: 30
+      filename: exon_count_hist.png
+      title: "Exons per gene (S. cerevisiae)"
+      xlabel: "Exon count"
+
+  - name: histogram
+    inputs: [structures]
+    params:
+      dim: statistic
+      value_label: cds_total
+      bins: 40
+      filename: cds_length_hist.png
+      title: "CDS total length per gene"
+      xlabel: "CDS length (bp)"

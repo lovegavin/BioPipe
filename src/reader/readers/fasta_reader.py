@@ -64,7 +64,12 @@ _PROTEIN_CHARS = set("ACDEFGHIKLMNPQRSTVWY")
 class FastaReader(Reader):
     """Reader for .fasta / .fa / .fna / .faa files."""
 
-    output_contract = reader_contract(extra={"alphabet": {"type": "string"}})
+    output_contract = reader_contract(extra={
+        "alphabet": {"type": "string"},
+        "representation": {"type": "string", "const": "sequence_codes"},
+        "alphabet_map": {"type": "object"},
+        "unknown_code": {"type": "integer"},
+    })
 
     file_input = {'dims': ['sequence', 'position'], 'labels': {'sequence': 'builtin', 'position': 'auto'}}
 
@@ -127,6 +132,9 @@ class FastaReader(Reader):
         info: dict = {
             "missing_code": np.nan,
             "alphabet": alphabet,
+            "representation": "sequence_codes",
+            "alphabet_map": dict(_CHAR_MAP),
+            "unknown_code": _UNKNOWN,
         }
 
         return Form(

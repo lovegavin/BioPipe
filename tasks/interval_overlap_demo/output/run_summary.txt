@@ -1,0 +1,20 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/interval_overlap_demo
+generated : 2026-10-15T13:04:49.571776+00:00
+steps     : 4
+elapsed   : 8.414s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   interval_overlap        4.023s   steps/01_interval_overlap.json
+2   describe                4.103s   steps/02_describe.json
+3   histogram               0.186s   steps/03_histogram.json
+4   histogram               0.103s   steps/04_histogram.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================
