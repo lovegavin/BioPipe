@@ -173,7 +173,7 @@ def test_encoder_reused_verbatim():
         "fields": ["gene"],
         "output": "o",
     })
-    assert out.info["gene"] == [0.0, 1.0]
+    np.testing.assert_array_equal(out.info["gene"], [0.0, 1.0])
     assert out.info["encoders"]["variant"]["gene"] is enc
     assert exp["encoded_fields"] == ["gene"]
     print("PASS test_encoder_reused_verbatim")

@@ -8,6 +8,7 @@ Run:
 from __future__ import annotations
 
 import sys
+import math
 from pathlib import Path
 
 import numpy as np
@@ -71,6 +72,20 @@ def run(form, params):
 # Two groups
 # ------------------------------------------------------------------ #
 
+
+def _separated_groups_reference(n):
+    """Exact risk-set calculation: n early A events, then n late B events.
+
+    There is one uncensored event per time. During the first n events,
+    P(A) = (n-i)/(2n-i); subsequent events have no group-A variance.
+    The chi-square(1) survival probability equals erfc(sqrt(chi2/2)).
+    """
+    probabilities = [(n - i) / (2 * n - i) for i in range(n)]
+    expected = sum(probabilities)
+    variance = sum(p * (1 - p) for p in probabilities)
+    statistic = (n - expected) ** 2 / variance
+    return statistic, math.erfc(math.sqrt(statistic / 2))
+
 def test_two_groups_clear_difference():
     """Two groups with obvious survival difference should yield a
     small p-value."""
@@ -103,7 +118,9 @@ def test_two_groups_clear_difference():
     assert exp["n_events"] == 20
     # Overall test
     assert exp["overall"]["df"] == 1
-    assert exp["overall"]["P"] < 1e-6, exp["overall"]["P"]
+    chi2, probability = _separated_groups_reference(10)
+    np.testing.assert_allclose(exp["overall"]["chi2"], chi2, rtol=1e-10)
+    np.testing.assert_allclose(exp["overall"]["P"], probability, rtol=1e-10)
     # No pairwise for two groups
     assert exp["pairwise"] == []
     # Form output
@@ -164,9 +181,12 @@ def test_three_groups_pairwise():
     assert len(exp["pairwise"]) == 3
     labels = {p["comparison"] for p in exp["pairwise"]}
     assert labels == {"A vs B", "A vs C", "B vs C"}
-    # All pairwise also significant
+    # Each pair has eight early and eight late uncensored events.
+    # Separation alone does not imply an arbitrary P < 1e-6 threshold.
+    chi2, probability = _separated_groups_reference(8)
     for p in exp["pairwise"]:
-        assert p["P"] < 1e-6, p
+        np.testing.assert_allclose(p["chi2"], chi2, rtol=1e-10)
+        np.testing.assert_allclose(p["P"], probability, rtol=1e-10)
         assert p["df"] == 1
     # Form has 1 + 3 rows
     assert out.data.shape == (4, 3)
