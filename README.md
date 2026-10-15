@@ -5,7 +5,7 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Studio 0.3.4 preserves upstream Python Steps, Readers and YAML
+Studio 0.4.0 preserves upstream Python Steps, Readers and YAML
 tasks, with **53 built-in operators, 15 readers, six provider packages and five
 reusable route templates**: GWAS, RNA-seq DE, Proteomics DE, survival analysis and
 [16S microbiome](docs/microbiome.md). The desktop package includes this catalog and
@@ -14,12 +14,19 @@ multi-group comparisons and GO enrichment; example YAML remains under `tasks/`.
 
 Download the ready-built Windows desktop package from
 [GitHub Releases](https://github.com/lovegavin/BioPipe/releases/latest).
-Extract the complete ZIP and double-click `BioPipe Studio.exe`. Existing BioPipe,
-Conda and registered Python environments are discovered and checked; if needed,
-select your environment's `python.exe` in the startup prompt. For a new environment,
-follow `START_HERE.txt`. Python and analysis
-dependencies are not bundled. The repository contains development source;
-compiled desktop distributions are release attachments.
+Extract the complete ZIP and double-click `BioPipe Studio.exe`. The **full Windows
+x64 package includes Python and the built-in CPU analysis/Reader dependencies**.
+No Python, Conda or compiler setup is required. Keep the `runtime` folder beside
+the EXE. If WebView2 is missing, its official Microsoft installer prepares it
+automatically; that one-time step requires internet access.
+
+Studio checks Reader/Step dependencies at startup and after library changes, and
+retains successful checks for the session. Compatible operators share the runtime;
+conflicting operators use private dependency directories and subprocesses with the
+same Python. New dependencies need internet access and compatible Windows packages.
+The repository contains development source; desktop distributions are release
+attachments. Releases before 0.4.0 require a separately configured environment.
+See [bundled runtime and dependency management](docs/installation.md#bundled-windows-runtime).
 
 For a repeatable Windows x64 install, use the tested version constraints matching
 your Python version. In a Python 3.11 environment:
@@ -32,7 +39,7 @@ For Python 3.12, use `constraints-py312-windows.txt`. See
 [installation and dependency versions](docs/installation.md) for development
 dependencies, optional analyses and troubleshooting resolver backtracking.
 
-See [release notes](docs/releases/v0.3.4.md) for this version and
+See [release notes](docs/releases/v0.4.0.md) for this version and
 [legacy/](legacy/README.md) for the archived previous source.
 
 ## Start Studio
@@ -109,8 +116,10 @@ New plugins use the stable `biopipe_sdk` imports, JSON Schema parameters, explic
 info/axis contracts and standard Python entry points. Wheel installation updates
 the JSON registry while Studio is open. Saved graphs and running jobs retain their
 plugin version pins. Declare `category` to place an operator in the appropriate
-library group and optionally set `icon` to a bundled icon name; omitted or unknown
-icons use a default. See [categories and icons](docs/operator_protocol.md#operator-categories-and-icons)
+library group and optionally set `icon` to a relative image path such as
+`icons/scale.svg` (PNG, JPEG, WebP and GIF also work), or an existing bundled icon
+name. Omitted or unknown icons use the category default. Image bytes travel with
+the registry and update on library refresh. See [categories and icons](docs/operator_protocol.md#operator-categories-and-icons)
 and the [30-minute SDK tutorial](docs/sdk_quickstart.md).
 
 Agents read semantic selection context and issue revision-checked edit batches.
@@ -127,6 +136,8 @@ copyable selection context and client revocation. See [CLI/MCP setup](docs/agent
 | [Operator protocol](docs/operator_protocol.md) | Descriptor, parameters, ports, outputs, versions and compatibility |
 | [SDK quickstart](docs/sdk_quickstart.md) / [reference](docs/sdk_reference.md) | Operator and reader templates, testing and public Python APIs |
 | [Plugin lifecycle](docs/plugins.md) | Hot installation, dependency isolation, pins and migration |
+| [Write a Reader](docs/reader_extensions.md) | File formats, contracts, dependency declarations and bounded disk reads |
+| [Write a Step](docs/step_extensions.md) | Runnable operator example, metadata, icons, memory and streaming |
 | [Agent interface](docs/agent_api.md) | CLI, MCP, context, atomic commands, permissions and events |
 | [Data contracts](docs/data_contracts.md) | Static compatibility, runtime checks and metadata propagation |
 | [Reusable routes](docs/route_operators.md) | Save/register separation, nested graphs and version snapshots |
@@ -919,3 +930,10 @@ label rules with dimensions, and supports configuration saves larger than 2 MiB.
 Reader and plotting options are described in the registry and exposed in forms.
 Use **Plugin management** in the operator library to install or remove local wheels;
 see [plugin lifecycle](docs/plugins.md) and [input formats](docs/input_formats.md).
+
+## Dependency conflicts
+
+Compatible entries share the runtime. Only conflicting entries use a private
+dependency directory and subprocess with the same Python executable. See
+[selective dependency isolation](docs/dependency_isolation.md) for declarations, streaming,
+memory accounting and supported metadata.

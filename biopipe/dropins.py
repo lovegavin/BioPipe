@@ -17,6 +17,7 @@ import zipfile
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 from packaging.version import Version
+from biopipe_sdk.icons import icon_path, is_image_icon
 
 from biopipe.plugins import run_process
 
@@ -53,6 +54,30 @@ def snapshot(source, target):
     return digest.hexdigest()
 
 
+def icon_assets(content):
+    """Literal image declarations in a single-file drop-in, without importing it."""
+    paths = set()
+    for node in ast.walk(ast.parse(content)):
+        targets = node.targets if isinstance(node, ast.Assign) else [node.target] if isinstance(node, ast.AnnAssign) else []
+        if any(isinstance(t, ast.Name) and t.id == "icon" for t in targets):
+            try:
+                value = ast.literal_eval(node.value)
+            except (ValueError, TypeError):
+                continue
+            if is_image_icon(value):
+                paths.add(value)
+    return sorted(paths)
+
+
+def snapshot_module(source, target):
+    digest = hashlib.sha256(snapshot(source, target).encode())
+    for relative in icon_assets((target / source.name).read_bytes()):
+        path = icon_path(source.parent, relative)
+        destination = target / relative.replace("\\", "/")
+        digest.update(relative.encode() + snapshot(path, destination.parent).encode())
+    return digest.hexdigest()
+
+
 def single_file_wheel(source, output):
     """No build tool needed for a single module; metadata is read without imports."""
     content = source.read_bytes()
@@ -77,14 +102,23 @@ def single_file_wheel(source, output):
     dependencies = settings.get("dependencies", [])
     if not isinstance(dependencies, list) or any(not isinstance(item, str) or "\n" in item or "\r" in item for item in dependencies):
         raise ValueError("BIOPIPE_PLUGIN.dependencies must be a list of requirement strings")
-    dependencies = [str(Requirement(item)) for item in dependencies]
+    from biopipe_sdk.dependencies import source_requirements, source_entries
     module = "biopipe_dropin_" + hashlib.sha256(name.encode()).hexdigest()[:16]
     distribution = name.replace("-", "_").replace(".", "_")
     info = f"{distribution}-{version}.dist-info"
     files = {
-        f"{module}.py": content,
+        f"{module}/__init__.py": content,
         f"{info}/entry_points.txt": f"[biopipe.modules]\ndropin = {module}\n".encode(),
     }
+    per_class = source_entries(content, module)
+    if per_class:
+        import json
+        files[f'{info}/biopipe.entries.json'] = json.dumps(per_class).encode()
+    else:
+        dependencies = sorted(set(dependencies) | set(source_requirements(content)))
+    for relative in icon_assets(content):
+        path = icon_path(source.parent, relative)
+        files[f"{module}/{relative.replace(chr(92), '/')}"] = path.read_bytes()
     return write_wheel(files, name, version, dependencies, output)
 
 
@@ -129,7 +163,8 @@ def refresh(manager, current):
     inbox = manager.inbox
     receipts = deepcopy(current.get("dropin_receipts", {}))
     sources = [p for p in sorted(inbox.iterdir()) if not p.name.startswith((".", "_")) and
-               (p.suffix.lower() in {".py", ".whl"} or p.is_dir())]
+               (p.suffix.lower() in {".py", ".whl"} or p.is_dir()) and
+               not (p.is_dir() and p.name in {"icons", "assets"} and not (p / "pyproject.toml").exists())]
     staging = manager.directory / "staging"
     staging.mkdir(parents=True, exist_ok=True)
     changed, skipped, wheels, owners, extra_packages = [], [], [], {}, set()
@@ -144,7 +179,7 @@ def refresh(manager, current):
         for index, source in enumerate(sources):
             try:
                 target = temporary / str(index) / "source"
-                digest = snapshot(source, target)
+                digest = snapshot_module(source, target) if source.suffix.lower() == ".py" else snapshot(source, target)
                 previous = receipts.get(source.name, {})
                 if previous.get("sha256") == digest:
                     skipped.append(source.name)

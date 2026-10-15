@@ -5,5 +5,5 @@ h5py>=3.9
 pyarrow>=14
 bed-reader>=1.0
 bgen-reader>=4.0
-cyvcf2>=0.30
+cyvcf2>=0.30; sys_platform != 'win32'
 pgenlib>=0.90

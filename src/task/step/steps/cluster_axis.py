@@ -48,6 +48,8 @@ _METHODS = ("kmeans", "hierarchical", "louvain")
 
 class ClusterAxisStep(Step):
     """Cluster positions along one axis."""
+    dependencies = ['scikit-learn>=1.5', 'networkx>=3.2']
+    dependency_imports = ['sklearn', 'networkx']
 
     name = "cluster_axis"
     inputs_arity = 1

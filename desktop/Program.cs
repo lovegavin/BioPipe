@@ -138,8 +138,8 @@ internal sealed class StudioWindow : Form
         try
         {
             Log("Host starting; pid=" + Environment.ProcessId);
-            // Fail before launching Python if the required browser runtime is absent.
-            var browserVersion = CoreWebView2Environment.GetAvailableBrowserVersionString();
+            var browserVersion = await WebViewBootstrap.Ensure(AppContext.BaseDirectory,
+                text => { status.Text = text; Log(text); }, stopped.Token);
             Log("WebView2 " + browserVersion);
             stopped.Token.ThrowIfCancellationRequested();
             var python = runtime.Python;
@@ -158,12 +158,15 @@ internal sealed class StudioWindow : Form
                 RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true,
                 StandardOutputEncoding = Encoding.UTF8, StandardErrorEncoding = Encoding.UTF8,
             };
-            foreach (var value in new[] { "-B", "-u", script, "--profile-dir", dataDir, "--frontend", frontend,
+            foreach (var value in new[] { "-I", "-X", "utf8", "-B", "-u", script, "--profile-dir", dataDir, "--frontend", frontend,
                 "--port", preferredPort.ToString(), "--wait-for-host" })
                 start.ArgumentList.Add(value);
             if (profile.MigrateLegacy) start.ArgumentList.Add("--migrate-legacy");
             start.Environment["PYTHONIOENCODING"] = "utf-8";
             start.Environment["PYTHONUTF8"] = "1";
+            start.Environment.Remove("PYTHONHOME");
+            start.Environment.Remove("PYTHONPATH");
+            start.Environment["PYTHONNOUSERSITE"] = "1";
             lifetime = new ProcessLifetime();
             backend = new Process { StartInfo = start, EnableRaisingEvents = true };
             backend.OutputDataReceived += (_, e) => {

@@ -56,8 +56,22 @@
         }
       ],
       "default": null,
-      "description": "Optional Studio icon name. Missing or unknown names use the default icon.",
+      "description": "Optional module-relative image path or Studio icon name. Missing or unknown names use the category default.",
       "title": "Icon"
+    },
+    "icon_image": {
+      "anyOf": [
+        {
+          "pattern": "^data:image/(png|jpeg|webp|gif|svg\\+xml);base64,[A-Za-z0-9+/]+={0,2}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "SDK-generated portable image data; authors declare a relative path in icon.",
+      "title": "Icon Image"
     },
     "parameters_schema": {
       "additionalProperties": true,
@@ -73,6 +87,22 @@
       "additionalProperties": true,
       "title": "Resources",
       "type": "object"
+    },
+    "dependencies": {
+      "description": "PEP 508 dependencies; compatible versions share the host runtime, conflicting versions use a private dependency directory and subprocess with the same Python.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Dependencies",
+      "type": "array"
+    },
+    "dependency_imports": {
+      "description": "Optional import smoke checks, run outside the UI process.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Dependency Imports",
+      "type": "array"
     }
   },
   "required": [

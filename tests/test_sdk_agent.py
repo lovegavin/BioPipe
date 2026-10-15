@@ -194,25 +194,21 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeyp
         assert descriptor["icon"] == "SlidersHorizontal"
     # Runtimes can inherit dependencies through .pth files (including editable
     # installations). A plugin worker must resolve the same transitive paths.
-    import sysconfig
-    runtime_site = tmp_path / "runtime_site"
-    runtime_site.mkdir()
     indirect = tmp_path / "indirect_dependency"
     indirect.mkdir()
     (indirect / "biopipe_test_dependency.py").write_text("VALUE = 42\n", encoding="utf-8")
-    original_get_path = sysconfig.get_path
-    parent_site = original_get_path("purelib")
-    (runtime_site / "dependencies.pth").write_text(
-        f"import site; site.addsitedir({parent_site!r})\n{indirect}\n", encoding="utf-8")
-    monkeypatch.setattr(sysconfig, "get_path", lambda name, *args, **kwargs:
-        str(runtime_site) if name == "purelib" else original_get_path(name, *args, **kwargs))
     manager = app.state.service.plugins
     installed = manager.install(wheel)
-    dependency = subprocess.run([manager.python_for(installed), "-c",
-        "import biopipe_test_dependency; print(biopipe_test_dependency.VALUE)"],
-        cwd=tmp_path, capture_output=True, text=True, timeout=30)
-    assert dependency.returncode == 0, dependency.stderr
-    assert dependency.stdout.strip() == "42"
+    # The same executable is retained; private targets are selected by the
+    # bootstrap, not by returning another venv's Python path. Already-processed
+    # parent .pth paths remain available without executing .pth in target dirs.
+    monkeypatch.syspath_prepend(str(indirect))
+    from biopipe.targets import invoke
+    request, response = tmp_path / 'probe-request.json', tmp_path / 'probe-response.json'
+    request.write_text(json.dumps([{'id': 'inherited', 'dependency_imports': ['biopipe_test_dependency']}]))
+    invoke([], 'biopipe.dependencies', [request, response], tmp_path)
+    assert json.loads(response.read_text())['inherited']['status'] == 'passed'
+    assert manager.python_for(installed) == sys.executable
     assert len([d for d in installed["descriptors"] if d['distribution'] == 'scale-plugin']) == 1
     catalog = client.get("/api/operators").json()
     assert len(catalog["operators"]) == len(STEPS) + 1

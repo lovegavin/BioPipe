@@ -59,6 +59,8 @@ _STAT_LABELS = {
 
 class CoxRegressionStep(Step):
     """Fit a Cox proportional hazards model."""
+    dependencies = ['lifelines>=0.30,<0.31']
+    dependency_imports = ['lifelines']
 
     name = "cox_regression"
     inputs_arity = 1

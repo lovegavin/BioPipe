@@ -28,6 +28,11 @@ Delete removes selected items, Ctrl+Z undoes and Ctrl+Shift+Z redoes. Text field
 retain native shortcuts. `/` focuses library search. Ctrl+S explicitly saves a route;
 it does not register an operator. Ctrl+Shift+T reopens a closed page.
 
+Left-double-clicking empty canvas or clicking the fit control fits the graph into
+view. A single background click only clears selection. Catalog refreshes, result
+panel changes, graph imports and automatic node layout do not refit the viewport.
+Opening a page restores its saved viewport; a new page starts at the default view.
+
 Tabs retain independent graphs/viewports; double-click renames a tab and arrow keys
 navigate adjacent tabs. Up to 20 pages can be open. All open pages and recently
 closed pages are autosaved to the backend. Layout/viewport and panel preferences

@@ -1,4 +1,4 @@
-"""Copy this file into Studio's plugin folder, then click Refresh."""
+"""Copy this file and icons/ into the operator directory, then click Refresh."""
 import numpy as np
 from biopipe_sdk import Operator, Form, port, project_metadata
 
@@ -10,7 +10,7 @@ class Scale(Operator):
     version = "0.1.0"
     title = "Scale matrix"
     category = "data"
-    icon = "SlidersHorizontal"  # Optional; omit for the default icon.
+    icon = "icons/scale.svg"  # Relative to this file; omit for the category default.
     input_contracts = [port(ndim=2)]
     output_contract = {"mode": "transform", "representation": "scaled"}
     parameters_schema = {

@@ -167,6 +167,12 @@
             ],
             "supports_cuda": false
           },
+          "dependencies": [
+            "bgen-reader>=4.0"
+          ],
+          "dependency_imports": [
+            "bgen_reader"
+          ],
           "parameters": [],
           "name": "BgenReader",
           "module": "src.reader.readers.bgen_reader",
@@ -812,6 +818,14 @@
             "supports_cuda": false,
             "disk_protocol": "dense-writer-v1"
           },
+          "dependencies": [
+            "anndata>=0.10",
+            "h5py>=3.9"
+          ],
+          "dependency_imports": [
+            "anndata",
+            "h5py"
+          ],
           "parameters": [
             {
               "key": "layer",
@@ -1016,6 +1030,12 @@
             ],
             "supports_cuda": false
           },
+          "dependencies": [
+            "pyarrow>=14"
+          ],
+          "dependency_imports": [
+            "pyarrow"
+          ],
           "parameters": [
             {
               "key": "encoders",
@@ -1136,6 +1156,12 @@
             ],
             "supports_cuda": false
           },
+          "dependencies": [
+            "bed-reader>=1.0"
+          ],
+          "dependency_imports": [
+            "bed_reader"
+          ],
           "parameters": [],
           "name": "Plink1Reader",
           "module": "src.reader.readers.plink_reader",
@@ -1277,6 +1303,12 @@
             ],
             "supports_cuda": false
           },
+          "dependencies": [
+            "pgenlib>=0.90"
+          ],
+          "dependency_imports": [
+            "pgenlib"
+          ],
           "parameters": [],
           "name": "Plink2Reader",
           "module": "src.reader.readers.plink_reader",
@@ -2319,6 +2351,14 @@
             "supports_cuda": false,
             "estimate": "estimate_memory"
           },
+          "dependencies": [
+            "networkx>=3.2",
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "networkx",
+            "sklearn"
+          ],
           "name": "cluster_axis",
           "module": "src.task.step.steps.cluster_axis",
           "inputs_arity": 1,
@@ -5204,6 +5244,12 @@
             "supports_cuda": false,
             "estimate": "estimate_memory"
           },
+          "dependencies": [
+            "pydeseq2==0.5.4"
+          ],
+          "dependency_imports": [
+            "pydeseq2"
+          ],
           "name": "compare_groups",
           "module": "src.task.step.steps.compare_groups",
           "inputs_arity": 2,
@@ -5383,6 +5429,12 @@
             "supports_cuda": false,
             "estimate": "estimate_memory"
           },
+          "dependencies": [
+            "lifelines<0.31,>=0.30"
+          ],
+          "dependency_imports": [
+            "lifelines"
+          ],
           "name": "cox_regression",
           "module": "src.task.step.steps.cox_regression",
           "inputs_arity": 1,
@@ -5833,6 +5885,12 @@
             "supports_cuda": false,
             "estimate": "estimate_memory"
           },
+          "dependencies": [
+            "lifelines<0.31,>=0.30"
+          ],
+          "dependency_imports": [
+            "lifelines"
+          ],
           "name": "logrank_test",
           "module": "src.task.step.steps.logrank_test",
           "inputs_arity": 1,
@@ -10231,6 +10289,14 @@
             "supports_cuda": false,
             "estimate": "estimate_memory"
           },
+          "dependencies": [
+            "scikit-learn>=1.5",
+            "umap-learn>=0.5"
+          ],
+          "dependency_imports": [
+            "sklearn",
+            "umap"
+          ],
           "name": "reduce",
           "module": "src.task.step.steps.reduce",
           "inputs_arity": 1,

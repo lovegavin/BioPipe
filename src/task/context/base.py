@@ -52,6 +52,9 @@ class Context:
         """Managed sources are read on first use; legacy mode stays eager."""
         from src.reader import read_source, pick_reader
         path = self.task_dir / spec["path"]
+        selected_reader = pick_reader(path)
+        if hasattr(selected_reader, '_context'):
+            selected_reader._context = self
         def loader():
             return read_source(path, dims=spec["dims"], labels=spec.get("labels", {}),
                                **spec.get("args", {}))

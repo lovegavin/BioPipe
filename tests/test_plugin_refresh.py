@@ -177,6 +177,7 @@ def test_refresh_api_is_async_token_protected_and_reports_errors(tmp_path, monke
 
 
 def test_source_library_discovers_plain_author_modules_without_manifest_edits(tmp_path, monkeypatch):
+    import re
     from biopipe.source_library import SOURCE_DIRS
     source_root = tmp_path / 'code'
     for relative in [*SOURCE_DIRS.values(), 'src/task/operator_ui.json', 'biopipe/builtin_packages.json']:
@@ -184,16 +185,23 @@ def test_source_library_discovers_plain_author_modules_without_manifest_edits(tm
         if source.is_dir():
             target.mkdir(parents=True)
             for file in source.glob('*.py'):
-                shutil.copy2(file, target / file.name)
+                # This lifecycle fixture exercises source registration and disk
+                # hooks without downloading every optional native reader. Real
+                # dependency declarations/repairs have their own tests.
+                code = file.read_text(encoding='utf-8')
+                code = re.sub(r'(?m)^    (dependencies|dependency_imports) = .+$', r'    \1 = []', code)
+                (target / file.name).write_text(code, encoding='utf-8')
         else:
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source, target)
     manifest_before = (source_root / 'biopipe/builtin_packages.json').read_bytes()
     new_operator = source_root / SOURCE_DIRS['operator'] / 'hello.py'
     # Existing author style: original, unqualified IDs are accepted in their provider.
-    new_operator.write_text(REPORT.replace('lab.hello', 'hello_hot'))
+    new_operator.write_text(REPORT.replace('lab.hello', 'hello_hot').replace('CheckCircle', 'assets/hello.svg'))
     (new_operator.parent / 'assets').mkdir()
     (new_operator.parent / 'assets/hello.txt').write_text('retained resource')
+    icon = new_operator.parent / 'assets/hello.svg'
+    icon.write_text('<svg xmlns="http://www.w3.org/2000/svg"><circle r="8" fill="red"/></svg>')
     new_reader = source_root / SOURCE_DIRS['reader'] / 'hot_reader.py'
     new_reader.write_text((ROOT / 'examples/resource_plugin/resource_example/__init__.py').read_text().replace(
         'NpyReader', 'HotArrayReader').replace('example.disk_npy', 'HotArrayReader'))
@@ -204,6 +212,7 @@ def test_source_library_discovers_plain_author_modules_without_manifest_edits(tm
     descriptor = next(d for d in state['descriptors'] if d['id'] == 'hello_hot')
     assert descriptor['distribution'] == 'biopipe-core'
     assert descriptor['category'] == 'Quality control'
+    assert descriptor['icon_image'].startswith('data:image/svg+xml;base64,')
     core = next(p for p in state['packages'] if p['name'] == 'biopipe-core')
     with zipfile.ZipFile(manager.directory / core['wheel']) as archive:
         resource_file = next(n for n in archive.namelist() if n.endswith('/steps/assets/hello.txt'))
@@ -220,8 +229,10 @@ def test_source_library_discovers_plain_author_modules_without_manifest_edits(tm
         scoped.setattr(manager, '_install_many', lambda *a, **kw: pytest.fail('unchanged library was rebuilt'))
         assert manager.refresh()['updated'] == []
     new_operator.write_text(new_operator.read_text().replace('"value": 1', '"value": 2'))
+    icon.write_text(icon.read_text().replace('red', 'blue'))
     manager.refresh()
     newer = manager.state()
+    assert next(d for d in newer['descriptors'] if d['id'] == 'hello_hot')['icon_image'] != descriptor['icon_image']
     # A failed source edit retains the successfully frozen code and catalog.
     new_operator.write_text('class Broken(')
     with pytest.raises(ValueError, match='hello.py'):

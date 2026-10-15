@@ -50,6 +50,8 @@ from src.reader.readers._labels import unique_labels
 
 class H5adReader(Reader):
     """Reader for .h5ad files."""
+    dependencies = ['anndata>=0.10', 'h5py>=3.9']
+    dependency_imports = ['anndata', 'h5py']
 
     output_contract = reader_contract()
 

@@ -77,6 +77,8 @@ _COMPONENT_PREFIX = {
 
 class ReduceStep(Step):
     """Reduce one axis of a 2D form to a small number of components."""
+    dependencies = ['scikit-learn>=1.5', 'umap-learn>=0.5']
+    dependency_imports = ['sklearn', 'umap']
 
     name = "reduce"
     inputs_arity = 1

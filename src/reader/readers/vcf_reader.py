@@ -86,13 +86,13 @@ def _iter_vcf(path: Path):
             if not line or line.startswith("#"):
                 continue
             fields = line.rstrip("\n").split("\t")
-            if len(fields) < 10:
-                continue
+            if len(fields) != 9 + len(samples):
+                raise ReaderError("VCF record sample count does not match the #CHROM header")
             chrom = fields[0]
             try:
                 pos = int(fields[1])
-            except ValueError:
-                continue
+            except ValueError as exc:
+                raise ReaderError(f"Invalid VCF position: {fields[1]!r}") from exc
             vid = fields[2]
             alt_field = fields[4]
             alts = [] if alt_field in (".", "") else alt_field.split(",")
@@ -128,22 +128,29 @@ def _read_pure_python(path: Path):
     for chrom, pos, vid, alts, sample_alleles, samples in _iter_vcf(path):
         if not alts:
             continue
-        # Per-sample allele arrays; find this record's ploidy
-        arr = np.array(sample_alleles, dtype=np.int32)  # (n_samples, ploidy)
-        if arr.ndim != 2 or arr.shape[0] == 0:
-            continue
-        if ploidy is None:
-            ploidy = int(arr.shape[1])
-        if arr.shape[1] != ploidy or (arr < -1).any():
-            raise ReaderError(
-                "VCF contains mixed ploidy; a single info.ploidy cannot describe these calls"
-            )
-        missing = (arr == -1).any(axis=1)
+        # A bare '.' has no implied ploidy. Infer it only from calls with at
+        # least one observed allele; do not turn ragged missing calls into a
+        # rectangular NumPy array or mistake them for haploid genotypes.
+        for alleles in sample_alleles:
+            if any(a < -1 or a > len(alts) for a in alleles):
+                raise ReaderError("VCF GT allele index is outside the REF/ALT range")
+            if any(a >= 0 for a in alleles):
+                if ploidy is None:
+                    ploidy = len(alleles)
+                if len(alleles) != ploidy:
+                    raise ReaderError(
+                        "VCF contains mixed ploidy; a single info.ploidy cannot describe these calls"
+                    )
+        missing = np.array([any(a == -1 for a in call) for call in sample_alleles])
+
+        def alt_counts(allele):
+            counts = np.array([call.count(allele) for call in sample_alleles], dtype=np.float32)
+            counts[missing] = np.nan
+            return counts
         has_real_id = vid not in ("", ".")
 
         if has_real_id and len(alts) == 1:
-            counts = (arr == 1).sum(axis=1).astype(np.float32)
-            counts[missing] = np.nan
+            counts = alt_counts(1)
             variant_ids.append(vid)
             chroms.append(chrom)
             positions.append(pos)
@@ -151,8 +158,7 @@ def _read_pure_python(path: Path):
         else:
             base = vid if has_real_id else f"{chrom}:{pos}"
             for k, alt in enumerate(alts, start=1):
-                counts = (arr == k).sum(axis=1).astype(np.float32)
-                counts[missing] = np.nan
+                counts = alt_counts(k)
                 variant_ids.append(f"{base}:{alt}" if has_real_id else f"{base}:{alt}")
                 chroms.append(chrom)
                 positions.append(pos)

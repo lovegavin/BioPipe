@@ -192,6 +192,21 @@ def embed_manifest(wheel, manifest):
     """Publish metadata inside the wheel, updating its standard RECORD hashes."""
     with zipfile.ZipFile(wheel) as archive:
         entries = {item.filename: (item, archive.read(item)) for item in archive.infolist()}
+    # Catch forgotten package-data before sharing a wheel that only works from
+    # the author's checkout. Discovery has already validated relative paths.
+    from pathlib import PurePosixPath
+    from biopipe_sdk.icons import IMAGE_TYPES
+    for descriptor in manifest["descriptors"]:
+        if not descriptor.get("icon_image"):
+            continue
+        module = descriptor["entry_point"].split(":")[0].replace(".", "/")
+        entry = module + ".py" if module + ".py" in entries else module + "/__init__.py"
+        asset = str(PurePosixPath(entry).parent / descriptor["icon"].replace("\\", "/"))
+        if asset not in entries:
+            raise ValueError(f"Missing icon in wheel: {asset}. Include it in setuptools package-data.")
+        uri = f"data:{IMAGE_TYPES[PurePosixPath(asset).suffix.lower()]};base64," + base64.b64encode(entries[asset][1]).decode("ascii")
+        if uri != descriptor["icon_image"]:
+            raise ValueError(f"Icon changed while building wheel: {asset}; rebuild the package")
     record = next(name for name in entries if name.endswith(".dist-info/RECORD"))
     target = record.rsplit("/", 1)[0] + "/biopipe.json"
     data = json.dumps(manifest, ensure_ascii=False, indent=2, allow_nan=False).encode("utf-8")

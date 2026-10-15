@@ -47,6 +47,8 @@ from src.reader.readers._labels import unique_labels
 
 class ParquetReader(Reader):
     """Reader for .parquet files."""
+    dependencies = ['pyarrow>=14']
+    dependency_imports = ['pyarrow']
 
     output_contract = reader_contract()
 

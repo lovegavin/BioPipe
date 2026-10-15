@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { Operator } from "./types";
 import { OperatorIcon } from "./icons";
 
@@ -26,10 +26,25 @@ export function ChartGlyph({ kind, className = "" }: { kind: string; className?:
   return <svg className={`chart-glyph ${className}`} data-glyph={kind} viewBox="0 0 64 44" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{charts[kind]}</svg>;
 }
 
+function ImageIcon({ src, category, size }: { src: string; category?: string; size: number }) {
+  const [failed, setFailed] = useState(false);
+  return failed ? <OperatorIcon category={category} size={size}/> :
+    <img className="operator-image-icon" src={src} alt="" aria-hidden="true" draggable={false}
+      width={size} height={size} style={{objectFit: "contain", display: "block", flexShrink: 0}}
+      onError={() => setFailed(true)}/>;
+}
+
 export function OperatorArtwork({ spec, source, size = 20 }: { spec?: Operator; source?: boolean; size?: number }) {
+  if (!source && spec?.icon_image) {
+    // Catalogs can also come from imported graphs. Never fetch arbitrary URLs.
+    if (/^data:image\/(png|jpeg|webp|gif|svg\+xml);base64,[A-Za-z0-9+/]+={0,2}$/.test(spec.icon_image)) {
+      return <ImageIcon key={spec.icon_image} src={spec.icon_image} category={spec.category} size={size}/>;
+    }
+    return <OperatorIcon category={spec.category} size={size}/>;
+  }
   return !source && spec?.preview && charts[spec.preview.kind]
     ? <ChartGlyph kind={spec.preview.kind}/>
-    : <OperatorIcon name={source ? "Database" : spec?.icon ?? undefined} size={size}/>;
+    : <OperatorIcon name={source ? "Database" : spec?.icon ?? undefined} category={spec?.category} size={size}/>;
 }
 
 export function OperatorPreview({ spec }: { spec?: Operator }) {

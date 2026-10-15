@@ -10,6 +10,7 @@ internal sealed class DesktopConfiguration
     public string Python { get; set; } = "auto";
     public string EntryPoint { get; set; } = "scripts/desktop_server.py";
     public string Frontend { get; set; } = "frontend";
+    public bool BundledRuntime { get; set; }
 }
 
 internal sealed record RuntimePaths(string BackendRoot, string Python, string EntryPoint, string Frontend);
@@ -30,7 +31,7 @@ internal static class RuntimeLocator
             RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true,
             StandardOutputEncoding = Encoding.UTF8, StandardErrorEncoding = Encoding.UTF8,
         };
-        foreach (var value in new[] { "-B", runtime.EntryPoint, "--resolve-profile" }) start.ArgumentList.Add(value);
+        foreach (var value in new[] { "-I", "-X", "utf8", "-B", runtime.EntryPoint, "--resolve-profile" }) start.ArgumentList.Add(value);
         if (profileOverride is not null) {
             start.ArgumentList.Add("--profile-dir"); start.ArgumentList.Add(profileOverride);
         }
@@ -56,8 +57,8 @@ internal static class RuntimeLocator
             File.ReadAllText(Path.Combine(install, "biopipe-desktop.json")),
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
             ?? throw new InvalidDataException("桌面配置文件无效。");
-        var backendRoot = Expand(Environment.GetEnvironmentVariable("BIOPIPE_BACKEND_ROOT")
-            ?? configuration.BackendRoot, install);
+        var backendRoot = Expand(configuration.BundledRuntime ? configuration.BackendRoot
+            : Environment.GetEnvironmentVariable("BIOPIPE_BACKEND_ROOT") ?? configuration.BackendRoot, install);
         var script = Expand(configuration.EntryPoint, backendRoot);
         var frontend = Expand(configuration.Frontend, install);
         if (!File.Exists(script))
@@ -65,7 +66,11 @@ internal static class RuntimeLocator
                 "或设置 biopipe-desktop.json 的 backendRoot / BIOPIPE_BACKEND_ROOT。\n" + script);
         if (!File.Exists(Path.Combine(frontend, "index.html")))
             throw new FileNotFoundException("前端资源不完整。请保留 exe 旁边的 frontend 文件夹。");
-        var setting = pythonOverride ?? Environment.GetEnvironmentVariable("BIOPIPE_PYTHON") ?? configuration.Python;
+        // A full package owns its interpreter. Do not silently use a remembered
+        // or system Python when the bundled environment is missing or damaged.
+        var bundled = configuration.BundledRuntime && pythonOverride is null;
+        var setting = bundled ? Path.Combine(install, "runtime", "python", "python.exe")
+            : pythonOverride ?? Environment.GetEnvironmentVariable("BIOPIPE_PYTHON") ?? configuration.Python;
         var automatic = string.IsNullOrWhiteSpace(setting) || setting.Equals("auto", StringComparison.OrdinalIgnoreCase);
         var candidates = automatic ? Candidates(backendRoot) : Explicit(setting, backendRoot);
         var failures = new List<string>();
@@ -81,6 +86,9 @@ internal static class RuntimeLocator
             catch (Exception error) when (error is not OutOfMemoryException)
             { failures.Add(candidate.File + ": " + error.Message); }
         }
+        if (bundled)
+            throw new RuntimeNotFoundException("随附运行环境不完整或无法启动。请重新解压完整发行包，并保留 runtime 文件夹。\n\n" +
+                string.Join("\n", failures), false);
         throw new RuntimeNotFoundException("未找到可运行 BioPipe 的 Python 3.11+ 环境。" +
             "请在已有环境安装 requirements-studio.txt，或用 BIOPIPE_PYTHON / biopipe-desktop.json 的 python 指定解释器。" +
             (automatic ? "\n已检查已记住的环境、项目环境、活动环境、PATH、Conda 环境记录和 Windows Python 注册项。"
@@ -108,6 +116,10 @@ internal static class RuntimeLocator
 
     private static IEnumerable<Candidate> Candidates(string root)
     {
+        // Full releases own their runtime. A remembered interpreter from another
+        // installation must never take precedence over the adjacent tested one.
+        var bundled = Path.Combine(root, "runtime", "python", "python.exe");
+        if (File.Exists(bundled)) yield return new(bundled);
         // A remembered selection wins, including an environment chosen with the picker.
         // Stale hints and broken/copied venvs never hide a usable fallback.
         if (RuntimePreferences.Read() is string remembered) yield return new(remembered);

@@ -54,10 +54,12 @@ Every reader and operator has these fields:
 | `id`, `version`, `kind` | Stable identity; kind is `operator` or `reader` |
 | `entry_point` | Python `module:Class` |
 | `title`, `description` | Display text |
-| `category`, `icon` | Optional library category and Studio icon name; see below |
+| `category`, `icon` | Optional library category and module-relative image path or Studio icon name; see below |
 | `parameters_schema` | Self-contained JSON Schema 2020-12 object schema |
 | `contracts` | Version 1 input and output data contracts |
 | `resources` | Supported memory modes, CUDA declaration, estimation hook |
+| `dependencies` | Optional PEP 508 requirement strings, such as `numpy>=1.26` |
+| `dependency_imports` | Optional Python module names to verify in an isolated process |
 | `implementation` | Installed package name, version and wheel SHA-256 |
 
 Operators additionally expose `inputs_arity`, `outputs`, and `output_parameter`.
@@ -79,6 +81,33 @@ biopipe schema workspace
 Checked-in copies are in `biopipe_sdk/schemas/`. The descriptor envelope is
 extensible; semantic validation also checks arity, parameter schemas and contracts.
 
+## Dependency declarations
+
+Readers and Steps use the same optional class declarations:
+
+```python
+dependencies = ["scikit-learn>=1.5"]
+dependency_imports = ["sklearn"]
+```
+
+Use distribution names in `dependencies` and importable module names in
+`dependency_imports`; these names can differ. Versions, extras and environment
+markers follow PEP 508. URLs, machine paths and pip flags are rejected. Keep
+source declarations literal lists so Refresh can read them before importing
+the module. Declare package-wide requirements in wheel `project.dependencies`; these are
+merged into every installed entry. Keep conflicting per-operator requirements on
+the individual classes and in the SDK manifest, not in the common package list.
+An omitted declaration remains compatible with older extensions, but BioPipe
+cannot infer undeclared dependencies from arbitrary Python code.
+
+Studio checks enabled entries at startup and after library changes. A passing
+result stays valid for that implementation for the current session; retries only
+visit unchecked or failed entries. Installation prepares a candidate generation
+and preserves existing dependency versions. Failed resolution or native imports
+leave the previous generation active. Version conflicts select private dependency
+directories and subprocesses using the same Python; compatible entries stay shared.
+See [selective isolation](dependency_isolation.md) and [dependency states](installation.md#dependency-state).
+
 ## Operator categories and icons
 
 `kind` is the execution type. The SDK sets it to `operator` for `Step`/`Operator`
@@ -92,18 +121,19 @@ Declare display metadata directly on the operator class:
 class EnrichGoStep(Step):
     name = "my_lab.enrich_go"
     category = "analysis"
-    icon = "Intersect"  # Optional; omit to use the default icon.
+    icon = "icons/enrichment.svg"  # Optional; relative to this Python file.
     # Declare parameter schema, contracts and run() as usual.
 ```
 
 Recommended category keys are:
 
-| Key | Library group |
-| --- | --- |
-| `quality_control` | Quality control |
-| `analysis` | Statistical analysis |
-| `data` | Data preparation |
-| `visualization` | Visualization |
+| Key | Library group | Default icon |
+| --- | --- | --- |
+| `quality_control` | Quality control | CheckSquare |
+| `analysis` | Statistical analysis | Sigma |
+| `data` | Data preparation | SlidersHorizontal |
+| `visualization` | Visualization | ChartBar |
+| `microbiome` | Microbiome | CirclesThree |
 
 Custom category strings are also supported. Studio localizes common aliases so
 equivalent English and Chinese categories appear in one group. Omitted or empty
@@ -111,11 +141,47 @@ categories appear under **Uncategorized**. Older `Plugins`/`Extensions` defaults
 also appear there; their operator kind and package ownership remain unchanged.
 Established bundled operators retain legacy presentation adapters.
 
-`icon` is an optional, case-sensitive name from Studio's bundled Phosphor icon
-set. Missing, empty, null or unknown names render `SquaresFour`, so an older
-frontend can still show an operator that requests a newer icon. The field accepts
-strings or null; paths, URLs and SVG content are not loaded as image assets.
-Supported names in this frontend are:
+`icon` optionally names an image relative to the Python module defining the class:
+
+```text
+steps/
+  enrichment.py         # icon = "icons/enrichment.svg"
+  icons/
+    enrichment.svg
+```
+
+PNG, JPEG (`.jpg`/`.jpeg`), WebP, GIF and static SVG are supported. Images keep their
+original colors and aspect ratio in the library, canvas and inspector. Use a square
+asset with transparency where possible. A supplied image takes priority over the
+existing chart glyph. SVG supports basic shapes, text, gradients, clipping and local
+references; scripts, embedded HTML, external resources, DTDs and stylesheets are
+rejected. Use presentation attributes or ordinary inline styles. Absolute paths,
+parent traversal and remote URLs are not accepted.
+
+Discovery validates and embeds the image in the generated `icon_image` data URI.
+Authors only set `icon`; do not write `icon_image` manually. The registry contains
+the actual bytes, so rendering is offline and independent of the author's source
+location. Immutable generations retain their original image. Source-library refresh
+also detects image-only edits. A missing or invalid declared asset fails validation
+without replacing the previous registry; a browser image decoding failure uses the
+category default.
+
+For SDK wheels, include assets in package data, for example:
+
+```toml
+[tool.setuptools.package-data]
+"my_lab" = ["icons/*.svg", "icons/*.png"]
+```
+
+`biopipe plugin build` checks that the wheel includes the exact declared images.
+Normal operator-directory refresh copies image resources automatically. For a
+single-file inbox drop-in, use a literal path such as `icon = "icons/enrichment.svg"`
+and copy the `icons/` or `assets/` directory alongside the file. Those resource
+directories are not treated as separate plugin projects.
+
+Existing case-sensitive Phosphor names, such as `icon = "Intersect"`, remain
+supported. Missing, empty, null or unknown names use the category default above;
+unknown/custom categories use `SquaresFour`. Supported names are:
 
 ```text
 ArrowsDownUp ArrowsIn ChartBar ChartLine ChartScatter CheckSquare
@@ -130,12 +196,12 @@ schemas. Both source registry maintenance and wheel builds copy declarations int
 their descriptors. Explicit class values take precedence over older descriptor
 defaults. Omitting an icon preserves any legacy bundled icon or chart preview.
 
-For a source module, run `python -m biopipe registry build`, then
-`python -m biopipe registry check`; restart a source-based Studio after publishing
-its bundled index. For a wheel, increment its version, rebuild and hot-install
-it. The library refreshes from the installed descriptor. Editing an already-built
-wheel or Python file alone does not update a published registry. Source-based
-Studio and packaged desktop releases each consume their own shipped source/index.
+For a source module or image edit, click **Refresh operator library** or run
+`biopipe plugin refresh`; no application restart is needed. Maintainers additionally
+run `biopipe registry build` and `biopipe registry check` before publishing the
+repository's bundled index. For a wheel, rebuild and hot-install it. Refresh scans
+the source directories shown by the running instance and publishes to its selected
+profile; it does not edit the repository's checked-in manifests.
 See [registry maintenance](registry_maintenance.md) and [plugin lifecycle](plugins.md).
 
 ## Parameters

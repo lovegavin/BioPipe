@@ -43,6 +43,8 @@ _STAT_LABELS = {"chi2": 0, "df": 1, "P": 2}
 
 class LogrankTestStep(Step):
     """Log-rank test for survival differences across groups."""
+    dependencies = ['lifelines>=0.30,<0.31']
+    dependency_imports = ['lifelines']
 
     name = "logrank_test"
     inputs_arity = 1

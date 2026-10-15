@@ -1,4 +1,3 @@
-# D:\biopipe\scripts\repin_all.py
 """Recursively repin every plugin_lock anywhere in a BioPipe profile."""
 from __future__ import annotations
 

@@ -33,6 +33,9 @@ def main() -> None:
         # being edited (or containing a failed hot-update candidate).
         if plugin_lock.is_file():
             os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
+            import json
+            from biopipe.targets import activate
+            activate(json.loads(plugin_lock.read_text(encoding='utf-8')))
         from src.task import Context, load_manifest, run
         if plugin_lock.is_file():
             import json

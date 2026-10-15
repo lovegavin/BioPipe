@@ -3,7 +3,7 @@ from copy import deepcopy
 from typing import Any, Literal
 
 from jsonschema import Draft202012Validator
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 PROTOCOL_VERSION = 1
 
@@ -18,10 +18,25 @@ class Descriptor(BaseModel):
     entry_point: str
     title: str
     category: str | None = Field(default=None, description="Operator library category, independent of package origin. Custom labels are allowed.")
-    icon: str | None = Field(default=None, description="Optional Studio icon name. Missing or unknown names use the default icon.")
+    icon: str | None = Field(default=None, description="Optional module-relative image path or Studio icon name. Missing or unknown names use the category default.")
+    icon_image: str | None = Field(default=None, pattern=r"^data:image/(png|jpeg|webp|gif|svg\+xml);base64,[A-Za-z0-9+/]+={0,2}$", description="SDK-generated portable image data; authors declare a relative path in icon.")
     parameters_schema: dict[str, Any]
     contracts: dict[str, Any]
     resources: dict[str, Any]
+    dependencies: list[str] = Field(default_factory=list, description="PEP 508 dependencies; compatible versions share the host runtime, conflicting versions use a private dependency directory and subprocess with the same Python.")
+    dependency_imports: list[str] = Field(default_factory=list, description="Optional import smoke checks, run outside the UI process.")
+
+    @field_validator('dependencies')
+    @classmethod
+    def validate_dependencies(cls, value):
+        from .dependencies import requirements
+        return requirements(value)
+
+    @field_validator('dependency_imports')
+    @classmethod
+    def validate_imports(cls, value):
+        from .dependencies import imports
+        return imports(value)
 
 
 class PackageDescriptor(BaseModel):
@@ -144,6 +159,10 @@ def describe_operator(cls, legacy=None):
             value[field] = declared
     if value.get("category") is None:
         value["category"] = "Plugins"
+    from biopipe_sdk.icons import resolve_icon
+    resolve_icon(cls, value)
+    from biopipe_sdk.dependencies import declarations
+    value.update(declarations(cls, value))
     value.setdefault("description", (cls.__doc__ or "").strip())
     value.setdefault("input_type", "Form")
     value.setdefault("output_type", "Form" if cls.outputs or output_parameter else "Report")
@@ -155,6 +174,7 @@ def describe_operator(cls, legacy=None):
 
 def describe_reader(reader):
     cls = type(reader)
+    from biopipe_sdk.dependencies import declarations
     schema = getattr(cls, "parameters_schema", None) or {"type": "object", "additionalProperties": True}
     validate_schema(schema)
     return Descriptor(protocol_version=1, id=getattr(cls, "name", None) or cls.__name__,
@@ -168,7 +188,7 @@ def describe_reader(reader):
                       requires_siblings=list(reader.requires_siblings), excludes_siblings=list(reader.excludes_siblings),
                       handles_compression=reader.handles_compression,
                       **({"file_input": deepcopy(reader.file_input)} if reader.file_input is not None else {}),
-                      output_contract=reader.output_contract).model_dump(exclude_unset=True)
+                      output_contract=reader.output_contract, **declarations(cls, getattr(cls, '_package_descriptor', None))).model_dump(exclude_unset=True)
 
 
 def validate_output_rule(rule):

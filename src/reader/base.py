@@ -34,6 +34,8 @@ class Reader(ABC):
 
     output_contract: ClassVar[dict | None] = None
     version: ClassVar[str] = "1.0.0"
+    dependencies: ClassVar[list[str] | None] = None
+    dependency_imports: ClassVar[list[str] | None] = None
     parameters_schema: ClassVar[dict | None] = None
 
     extensions: ClassVar[list[str]] = []

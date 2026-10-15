@@ -79,6 +79,8 @@ _STAT_LABELS = {
 
 class CompareGroupsStep(Step):
     """Compare groups along one dimension."""
+    dependencies = ['pydeseq2==0.5.4']
+    dependency_imports = ['pydeseq2']
 
     name = "compare_groups"
     inputs_arity = 2

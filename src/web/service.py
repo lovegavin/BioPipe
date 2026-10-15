@@ -66,6 +66,9 @@ class JobService:
         self.directory = settings.data_dir.resolve()
         from biopipe.plugins import PluginManager
         self.plugins = PluginManager(self.directory)
+        from biopipe.dependencies import DependencySession
+        self.dependencies = DependencySession(self.plugins)
+        self.dependencies.sync(self.plugins.state())
         self.catalog = self.plugins.extend_catalog(catalog)
         if not self.directory.is_relative_to(self.root):
             raise ValueError("Studio data directory must be inside the project")
@@ -89,9 +92,12 @@ class JobService:
     def refresh_catalog(self):
         state = self.plugins.state()
         if state["generation"] != self.catalog.get("plugin_generation"):
+            self.dependencies.sync(state)
             value = self.plugins.extend_catalog(self.base_catalog)
             self.catalog.update(value)
             write_json(self.directory / "operators.json", self.catalog)
+            return True
+        return False
 
     def _refresh_jobs(self):
         import psutil
@@ -363,11 +369,20 @@ class JobService:
                 if key not in self.processes:
                     raise GraphError("任务由另一个 BioPipe 窗口运行，请在启动它的窗口停止。")
                 job["status"] = "cancelled"
-                self.processes[key].terminate()
+                # Isolated calls poll this request and can flush their failure
+                # log and clean exchange files before the fallback tree kill.
+                (self.jobs_dir / key / 'cancel.requested').touch()
+                process = self.processes[key]
+                try:
+                    process.wait(timeout=1)
+                except subprocess.TimeoutExpired:
+                    from biopipe.processes import stop_tree
+                    stop_tree(process)
                 write_json(self.jobs_dir / key / "job.json", job)
             return self.details(key)
 
     def shutdown(self):
+        self.dependencies.cancel.set()
         for key in list(self.processes):
             self.cancel(key)
         for watcher in list(self.threads.values()):

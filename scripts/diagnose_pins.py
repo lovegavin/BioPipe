@@ -1,4 +1,3 @@
-# D:\biopipe\scripts\diagnose_pins.py
 """Report every stored pin and whether it matches the current bundled state."""
 from __future__ import annotations
 

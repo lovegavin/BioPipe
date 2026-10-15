@@ -111,6 +111,7 @@ import type {
 const DRAFT_KEY = "biopipe-studio-draft-v1";
 const nodeTypes = { block: WorkflowNode };
 const edgeTypes = { workflow: WorkflowEdge };
+const defaultViewport = { x: 0, y: 0, zoom: 1 };
 const emptyGraph: Graph = {
   schema_version: 1,
   name: "我的工作流",
@@ -384,7 +385,7 @@ function Studio() {
     setPast(editing?.past || []); setFuture(editing?.future || []); setSelection(editing?.selection || []);
     setSelected(null); setSelectedEdges([]); setNodeMeasurements({}); setHoveredNode(null); setInvalid(undefined); setContractResult(null);
     closeInspector(); setContextMenu(null); setSaved(false);
-    requestAnimationFrame(() => {if (doc.viewport) void flow.setViewport(doc.viewport); else fit();});
+    requestAnimationFrame(() => {void flow.setViewport(doc.viewport ?? defaultViewport);});
   }
   function switchPage(id: string) {if(id === activeIdRef.current) return; stashPage(); activatePage(id);}
   function openPages(items: {graph: Graph; workflow_id?: string; workflow_version?: number}[]) {
@@ -531,7 +532,7 @@ function Studio() {
     } catch (error) {
       setBootError((error as Error).message);
     }
-  }, [fit, notify, putGraph]);
+  }, [notify, putGraph]);
   useEffect(() => {
     void load();
   }, []);
@@ -553,9 +554,6 @@ function Studio() {
       document.removeEventListener("visibilitychange", refresh);
     };
   }, [bootstrap]);
-  useEffect(() => {
-    if (bootstrap) fit();
-  }, [resultsCollapsed, resultsExpanded, bootstrap, fit]);
   useEffect(() => {
     if (!bootstrap || !documentsRef.current.length) return;
     const timer = setTimeout(async () => {
@@ -986,7 +984,6 @@ function Studio() {
       closeInspector();
       setJob(null);
       setEvents([]);
-      fit();
       notify("已载入工作流，可检查后运行。", "success");
     } catch (error) {
       failure(error);
@@ -1196,7 +1193,6 @@ function Studio() {
                       setSelected("pca");
                       closeInspector();
                       setExportOpen(false);
-                      fit();
                     }}
                   >
                     <ArrowCounterClockwise size={16} />
@@ -1427,12 +1423,11 @@ function Studio() {
                   <span className="toolbar-divider" />
                   <button
                     className="text-button"
-                    title="自动排布并适配画布"
+                    title="自动排布节点"
                     disabled={busy || !graph.nodes.length}
                     onClick={() => {
                       try {
                         commit(autoLayout(graphRef.current));
-                        fit();
                       } catch (error) {
                         failure(error);
                       }
@@ -1468,6 +1463,7 @@ function Studio() {
               </div>
             </div>
             <ReactFlow<Block>
+              defaultViewport={documents.find(doc => doc.id === activeId)?.viewport ?? defaultViewport}
               nodes={blocks}
               edges={edges}
               nodeTypes={nodeTypes}
@@ -1489,7 +1485,10 @@ function Studio() {
                   return;
                 inspectNode(node.id);
               }}
-              onPaneClick={() => {
+              onPaneClick={(event) => {
+                // Pane events exclude nodes/edges; use the native click count so
+                // only a left-button double click on empty canvas requests a fit.
+                if (event.button === 0 && event.detail === 2) fit();
                 setContextMenu(null);
                 setSelected(null);
                 setSelection([]);
@@ -1585,6 +1584,7 @@ function Studio() {
                 <span className="shortcut-row"><span>平移</span><kbd>中键拖动</kbd></span>
                 <span className="shortcut-row"><span>复制 / 粘贴</span><kbd>Ctrl + C / V</kbd></span>
                 <span className="shortcut-row"><span>查看参数</span><kbd>双击 / Enter</kbd></span>
+                <span className="shortcut-row"><span>适配画布</span><kbd>双击空白处</kbd></span>
               </HelpTip>
               <div className="zoom-controls">
                 <button
@@ -1621,7 +1621,7 @@ function Studio() {
                 <button
                   className="icon-button"
                   aria-label="适配画布"
-                  title="适配画布"
+                  title="适配画布 · 双击空白处"
                   onClick={fit}
                 >
                   <ArrowsOut size={17} />
@@ -1647,7 +1647,6 @@ function Studio() {
             onToggle={() => {
               setResultsCollapsed(!resultsCollapsed);
               setResultsExpanded(true);
-              requestAnimationFrame(fit);
             }}
             onJob={(id) => {
               void api.job(id).then(setJob).catch(failure);
@@ -1658,7 +1657,6 @@ function Studio() {
               setJob(value);
               setSelected(null);
               closeInspector();
-              fit();
               notify("已载入这次运行的画布与参数。", "success");
             }}
           />

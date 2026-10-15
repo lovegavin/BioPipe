@@ -22,7 +22,7 @@ def directories(root=ROOT):
     return {kind: root / relative for kind, relative in SOURCE_DIRS.items()}
 
 
-def describe(root, output):
+def describe(root, output, sources=None):
     """Child process only: replace source-module search paths before discovery."""
     os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
     for relative in SOURCE_DIRS.values():
@@ -31,7 +31,10 @@ def describe(root, output):
     from src.task import operator_catalog
     operator_catalog.__file__ = str(root / "src/task/operator_catalog.py")
     from biopipe.registry import scan_sources, package_manifest, PACKAGE_INDEX, read_json
-    descriptors, errors = scan_sources(root)
+    descriptors, errors = scan_sources(root, sources)
+    if sources is not None:
+        output.write_text(json.dumps({'descriptors': descriptors, 'errors': errors}, ensure_ascii=False), encoding='utf-8')
+        return
     if errors:
         raise ValueError("\n".join(f"{e['source']}: {e['error']}" for e in errors))
     manifest = package_manifest(descriptors, read_json(root / PACKAGE_INDEX, {"packages": []}))
@@ -68,11 +71,14 @@ def provider_wheel(package, root, output):
         descriptor["module"] = descriptor["entry_point"].split(":")[0]
         source_module, clsname = descriptor["entry_point"].split(":")
         alias = f"Entry{index}"
-        init.extend([f"{alias} = getattr(import_module({source_module!r}), {clsname!r})",
-                     f"{alias}.parameters_schema = _definitions[{index}]['parameters_schema']",
-                     f"{alias}.legacy_parameters = _definitions[{index}].get('legacy_parameters', True)",
-                     f"{alias}._package_descriptor = _definitions[{index}]"])
+        # __getattr__ resolves only the selected entry.
         groups[descriptor["kind"]].append(f"{alias} = {module}:{alias}")
+    init.extend(["def __getattr__(name):", "    index = int(name[5:]) if name.startswith('Entry') and name[5:].isdigit() else -1",
+                 "    if index < 0 or index >= len(_definitions): raise AttributeError(name)",
+                 "    d = _definitions[index]", "    module, clsname = d['entry_point'].split(':')",
+                 "    cls = getattr(import_module(module), clsname)",
+                 "    cls.parameters_schema = d['parameters_schema']", "    cls.legacy_parameters = d.get('legacy_parameters', True)",
+                 "    cls._package_descriptor = d", "    return cls"])
     files[f"{module}/__init__.py"] = ("\n".join(init) + "\n").encode()
     files[f"{module}/definitions.json"] = json.dumps(definitions, ensure_ascii=False, sort_keys=True).encode()
     info = f"{name.replace('-', '_').replace('.', '_')}-{version}.dist-info"
@@ -81,6 +87,9 @@ def provider_wheel(package, root, output):
         if groups[kind]:
             entries.extend([f"[biopipe.{group}]", *groups[kind], ""])
     files[f"{info}/entry_points.txt"] = "\n".join(entries).encode()
+    # Requirements belong to each descriptor; a package may contain conflicts.
+    files[f"{info}/biopipe.json"] = json.dumps({"protocol_version": 1, "name": name, "version": version,
+        "descriptors": definitions}).encode()
     return write_wheel(files, name, version, [], output)
 
 
@@ -102,8 +111,41 @@ def prepare(manager, current, temporary):
         return {"wheels": [], "updated": [], "unchanged": ["operator / Reader source directories"], "receipt": previous}
     output = temporary / "manifest.json"
     environment = dict(os.environ, BIOPIPE_REGISTRY_MAINTENANCE="1")
-    run_process([manager.python_for(current), "-m", "biopipe.source_library", staged, output], env=environment)
-    manifest = json.loads(output.read_text(encoding="utf-8"))
+    # Scan in the shared runtime first. Only modules that actually need an
+    # unavailable/conflicting import are retried in a prepared dependency target.
+    # Optional lazy imports do not prevent unrelated operators from registering.
+    from biopipe_sdk.dependencies import source_requirements
+    from biopipe.targets import TargetBuilder, invoke, paths_for
+    from biopipe.registry import package_manifest, read_json, PACKAGE_INDEX
+    builder = TargetBuilder(manager, current)
+    source_paths = [p.relative_to(staged).as_posix() for relative in SOURCE_DIRS.values()
+                    for p in sorted((staged / relative).glob('*.py')) if not p.name.startswith('_')]
+    selected = temporary / 'sources.json'
+    selected.write_text(json.dumps(source_paths), encoding='utf-8')
+    invoke(paths_for({**current, '_runtime_root': str(manager.directory.resolve())}),
+           'biopipe.source_library', [staged, output, selected], temporary)
+    scan = json.loads(output.read_text(encoding='utf-8'))
+    records = scan['descriptors']
+    for failure in scan['errors']:
+        source = failure['source']
+        try:
+            declared = source_requirements((staged / source).read_bytes())
+            if not declared:
+                raise ValueError(failure['error'])
+            execution = builder.prepare(declared)
+            paths = execution.get('paths', []) if execution['mode'] == 'isolated' else builder.shared
+            selected.write_text(json.dumps([source]), encoding='utf-8')
+            invoke([manager.directory / p for p in paths], 'biopipe.source_library', [staged, output, selected], temporary)
+            retry = json.loads(output.read_text(encoding='utf-8'))
+            if retry['errors']:
+                raise ValueError(retry['errors'][0]['error'])
+            records.extend(retry['descriptors'])
+        except Exception as exc:
+            raise ValueError(f'{source}: {exc}') from exc
+    ids = [r[0]['id'] for r in records]
+    if len(ids) != len(set(ids)):
+        raise ValueError('Duplicate extension ID in source library')
+    manifest = package_manifest(records, read_json(staged / PACKAGE_INDEX, {'packages': []}))
     installed = {p["name"]: p for p in current["packages"]}
     source_managed = set(previous.get("packages", []))
     seen = set(current.get("bundled_seen", []))
@@ -117,6 +159,6 @@ def prepare(manager, current, temporary):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
+    if len(sys.argv) not in (3, 4):
         raise SystemExit("Use: python -m biopipe.source_library <snapshot-root> <output.json>")
-    describe(Path(sys.argv[1]), Path(sys.argv[2]))
+    describe(Path(sys.argv[1]), Path(sys.argv[2]), json.loads(Path(sys.argv[3]).read_text()) if len(sys.argv) == 4 else None)

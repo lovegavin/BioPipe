@@ -44,7 +44,7 @@ describe("operator presentation", () => {
 
   it("does not silently render any shipped operator as a generic placeholder", () => {
     for (const spec of presentCatalog(catalog).operators) {
-      const generic = renderToStaticMarkup(<OperatorArtwork spec={{...spec, icon: undefined, preview: undefined}}/>);
+      const generic = renderToStaticMarkup(<OperatorArtwork spec={{...spec, category: "", icon: undefined, preview: undefined}}/>);
       expect(renderToStaticMarkup(<OperatorArtwork spec={spec}/>), spec.name).not.toBe(generic);
     }
   });
@@ -66,6 +66,7 @@ describe("operator presentation", () => {
     const renderIcon = (icon?: string | null) => renderToStaticMarkup(<OperatorArtwork spec={presentOperator({...plugin, icon})}/>);
     expect(presentOperator(plugin).category).toBe("统计分析");
     expect(renderIcon("Intersect")).not.toBe(renderIcon());
+    expect(renderIcon("SquaresFour")).not.toBe(renderIcon());
     expect(renderIcon("UnknownFutureIcon")).toBe(renderIcon());
     expect(renderIcon("")).toBe(renderIcon());
     expect(renderIcon(null)).toBe(renderIcon());
@@ -81,5 +82,31 @@ describe("operator presentation", () => {
     expect(categoryLabel("Spatial biology")).toBe("Spatial biology");
     expect(categoryLabel("constructor")).toBe("constructor");
     expect(categoryLabel("__proto__")).toBe("__proto__");
+  });
+
+  it("chooses category defaults for new operators without display declarations", () => {
+    const render = (category: string) => renderToStaticMarkup(<OperatorArtwork spec={{...operators[0],
+      name: "example.new", category, icon: undefined, preview: undefined}}/>);
+    expect(render("analysis")).toBe(render("统计分析"));
+    expect(render("qc")).toBe(render("质量控制"));
+    const groups = ["analysis", "data", "visualization", "quality_control", "microbiome", "Custom"];
+    expect(new Set(groups.map(render)).size).toBe(groups.length);
+  });
+
+  it("uses a portable author image ahead of chart previews and blocks external image URLs", () => {
+    const image = "data:image/svg+xml;base64,PHN2Zy8+";
+    const spec = {...operators[0], name: "example.picture", category: "analysis", icon: "icons/custom.svg",
+      icon_image: image, preview: {kind: "scatter", caption: "Plot"}};
+    const art = renderToStaticMarkup(<OperatorArtwork spec={spec} size={18}/>);
+    expect(art).toContain(`<img`);
+    expect(art).toContain(`src="${image}"`);
+    expect(art).toContain('width="18" height="18"');
+    expect(art).not.toContain("data-glyph");
+    expect(renderToStaticMarkup(<OperatorArtwork spec={spec} source/>)).not.toContain("<img");
+    for (const url of ["https://example.com/icon.png", "file:///icons/icon.png", "data:text/html;base64,PHN2Zy8+"]) {
+      const invalid = renderToStaticMarkup(<OperatorArtwork spec={{...spec, icon_image: url}}/>);
+      const fallback = renderToStaticMarkup(<OperatorArtwork spec={{...spec, icon: undefined, icon_image: undefined, preview: undefined}}/>);
+      expect(invalid).toBe(fallback);
+    }
   });
 });

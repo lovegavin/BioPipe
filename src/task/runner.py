@@ -21,6 +21,8 @@ def run(ctx: Context, steps: list[dict]) -> None:
         if ctx.memory:
             ctx.memory.configure(steps, STEPS)
         for i, spec in enumerate(steps, start=1):
+            if (ctx.task_dir / 'cancel.requested').exists():
+                raise StepError('Run cancelled by user')
             ctx.params = {**global_params, **spec.get("context_params", {})}
             name = spec["name"]
             ctx.event("step_started", name=name, index=i)
@@ -38,6 +40,8 @@ def run(ctx: Context, steps: list[dict]) -> None:
                 if output is not None:
                     ctx.step_params[cls.output_parameter] = output
             ctx.step_params["_input_names"] = list(names)
+            if getattr(cls, '_isolated', False):
+                cls.bind_context(ctx)
             forms, stream = [], None
             schemas, expected = [], None
             successful = False
@@ -114,6 +118,8 @@ def run(ctx: Context, steps: list[dict]) -> None:
                 forms.clear()
                 stream = None
                 del step
+                if getattr(cls, '_isolated', False):
+                    cls._context = None
                 if "content" in locals():
                     del content
                 if ctx.memory:

@@ -27,6 +27,8 @@ class Step(ABC):
     # Optional presentation metadata; execution kind is inferred from the base.
     category: ClassVar[str | None] = None
     icon: ClassVar[str | None] = None
+    dependencies: ClassVar[list[str] | None] = None
+    dependency_imports: ClassVar[list[str] | None] = None
     inputs_arity: ClassVar[int | str] = 0
     outputs: ClassVar[list[str]] = []
     input_contracts: ClassVar[list[dict] | None] = None

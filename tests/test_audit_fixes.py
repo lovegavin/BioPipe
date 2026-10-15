@@ -241,6 +241,9 @@ def test_plugin_endpoints_use_worker_and_publish_only_success(studio, monkeypatc
             raise ValueError('invalid wheel')
         return manager.state()
     monkeypatch.setattr(manager, 'install', install)
+    # This test isolates transactional publication; dependency subprocesses have
+    # their own integration tests and may legitimately exceed the UI poll loop.
+    monkeypatch.setattr(app.state.service.dependencies, 'check', lambda **kwargs: None)
     for content, expected in [(b'wheel', 'complete'), (b'bad', 'failed')]:
         response = client.post('/api/plugins/install?filename=lab-1-py3-none-any.whl', content=content)
         assert response.status_code == 200, response.text

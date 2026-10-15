@@ -47,6 +47,8 @@ from src.reader.readers._labels import unique_labels
 
 class BgenReader(Reader):
     """Reader for .bgen files."""
+    dependencies = ['bgen-reader>=4.0']
+    dependency_imports = ['bgen_reader']
 
     output_contract = reader_contract(representation="dosage", ploidy=2)
 

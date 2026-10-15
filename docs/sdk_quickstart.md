@@ -8,11 +8,16 @@ For a self-contained operator, the shortest path is to copy
 [scale.py](../examples/dropins/scale.py) into **算子库管理 → 算子目录**, edit it,
 and click **刷新算子库**. Studio discovers the normal source module, validates its
 contracts and hot-loads the library; no plugin project is needed. Install required
-algorithm dependencies into the active runtime. For optional independent extensions,
+algorithm dependencies through literal class `dependencies` declarations; Studio
+prepares them during refresh. For optional independent extensions,
 **附加目录** accepts single files with `BIOPIPE_PLUGIN` dependency metadata, complete
 SDK projects and wheels; see
 [drop-folder installation](plugins.md#drop-refresh-use). The wheel workflow below
 remains useful for multi-file plugins, tests and distribution.
+
+Detailed extension guides: [Readers](reader_extensions.md) and
+[Steps/Operators](step_extensions.md). Both include complete examples and explain
+how to retain the existing streaming and disk-backed execution capabilities.
 
 ## 0–5 minutes: prepare the development environment
 
@@ -85,9 +90,15 @@ The generated memory estimate should be adjusted for your algorithm.
 Choose `quality_control`, `analysis`, `data` or `visualization` for the library
 category, or use your own label. `kind` is inferred from the base class; do not
 set it to a category name. An omitted category uses the Uncategorized group.
-An omitted or unknown icon name uses the default icon. See the
+An omitted or unknown icon name uses the category's default icon. To supply your
+own image, set `icon = "icons/scale.svg"` (PNG, JPEG, WebP and GIF also work), place
+it relative to the operator's Python file, and include it in the wheel's
+`[tool.setuptools.package-data]`. Source-directory refresh carries these resources
+automatically; SDK wheel builds report missing packaged images. See the
 [display metadata reference](operator_protocol.md#operator-categories-and-icons)
-for the available names. The generated template includes these optional fields.
+for image packaging details and available icon names. A working image example is
+[scale.py](../examples/dropins/scale.py), with its adjacent `icons/` directory.
+The generated template includes these optional fields.
 
 ## 15–20 minutes: check and test
 
@@ -160,3 +171,10 @@ Readers must return complete labels and truthful metadata before registration.
 
 For the full API and resource limitations, see [SDK reference](sdk_reference.md)
 and [protocol](operator_protocol.md).
+
+## Dependency conflicts
+
+Compatible entries share the runtime. Only conflicting entries use a private
+dependency directory and subprocess with the same Python executable. See
+[selective dependency isolation](dependency_isolation.md) for declarations, streaming,
+memory accounting and supported metadata.

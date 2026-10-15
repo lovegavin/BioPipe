@@ -107,6 +107,16 @@ class MemoryRuntime:
 
     def _sample(self):
         rss = self.process.memory_info().rss if self.process else 0
+        if self.process:
+            import psutil
+            try:
+                for child in self.process.children(recursive=True):
+                    try:
+                        rss += child.memory_info().rss
+                    except psutil.Error:
+                        pass
+            except psutil.Error:
+                pass
         self.rss_peak = max(self.rss_peak, rss)
         self.step_rss_peak = max(self.step_rss_peak, rss)
         return rss
@@ -184,7 +194,8 @@ class MemoryRuntime:
             with self.store.lock:
                 if entry.form is None and entry.disk is None:
                     self.store._load(entry)  # Legacy readers without a disk preparation protocol.
-                metadata_reserve = int(entry.metadata_size * 2.50) + 8192 + cls.stream_fixed_bytes
+                metadata_factor = 5.0 if getattr(cls, '_isolated', False) else 2.5
+                metadata_reserve = int(entry.metadata_size * metadata_factor) + 8192 + cls.stream_fixed_bytes
                 pinned = entry.size if entry.form is not None else 0
                 elements = block_elements(self.config.budget_bytes - pinned - metadata_reserve,
                                           entry.dtype, self.config.chunk_bytes, cls.stream_buffer_multiplier)

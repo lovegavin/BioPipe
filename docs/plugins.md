@@ -22,9 +22,8 @@ with `BIOPIPE_STUDIO_HOME` or `--profile-dir`, or use an explicit `--workspace`.
     packages/<sha256>/<file>.whl   immutable cached packages
     environments/<generation>/
       lock.json                   package identities and descriptors
-      constraints.txt             inherited runtime dependency versions
-      probe.json                  installation-time descriptor output
-      Scripts/python.exe          Windows worker (bin/python on POSIX)
+      code/                       immutable provider code (no interpreter)
+    targets/<id>/                 shared or private dependency files
   jobs/<job>/plugins.lock.json     exact worker generation selected for a job
 ```
 
@@ -44,6 +43,13 @@ memory capabilities. No extra plugin project, hand-written registry or manual
 packaging step is required. Existing built-in authoring style and IDs are supported;
 `builtin_package` selects a provider when needed. Existing ownership is preserved.
 
+Authors may set `icon = "icons/my-operator.png"` (also JPEG, WebP, GIF or static SVG)
+and place that image relative to the operator's Python file. Refresh freezes the
+image with the descriptor; editing only the image is enough to trigger an update.
+No absolute paths or external image server are needed. Omit `icon` for an automatic
+category default, or keep an existing bundled icon name. See the
+[image declaration reference](operator_protocol.md#operator-categories-and-icons).
+
 The scanner snapshots both source trees and the legacy UI metadata, imports them
 in a separate process, validates the public protocol, and prepares immutable
 provider code internally. Only a completely successful scan/installation replaces
@@ -62,8 +68,22 @@ application installation can instead use the writable **附加目录** (addition
 
 Source refresh updates the **active profile**, not the checked-in JSON manifests.
 Maintainers still run `biopipe registry build` before committing/publishing source
-changes. Keep required algorithm dependencies available in the selected runtime;
-missing imports are reported by the isolated scan and leave the active library intact.
+changes. Declare algorithm dependencies on the Reader/Step class as literal
+`dependencies = ["package>=version"]` and, optionally,
+`dependency_imports = ["module_name"]`. Refresh reads those declarations before
+importing source and prepares missing compatible dependencies automatically.
+Undeclared imports cannot be installed reliably; scan failures leave the active
+library intact. Wheel projects must also use standard `project.dependencies`.
+See the [dependency contract](operator_protocol.md#dependency-declarations).
+
+Startup and completed library changes check dependency readiness for enabled
+entries. Passed results remain cached for the session, while **Repair dependencies**
+retries failures. The manager displays status and error details and writes
+`logs/dependencies.jsonl` under the resolved data directory. Compatible entries
+share dependencies; conflicting entries use private dependency directories and
+subprocesses with the same Python executable.
+The GUI remains responsive during preparation, and closing Studio cancels its
+dependency subprocesses. See [installation](installation.md#dependency-state).
 
 ## Optional additional folder and package imports
 
@@ -98,8 +118,12 @@ the version defaults to `0.1.0`. The operator's `name` remains its own declared 
 Keep the filename stable, or declare a stable package name before sharing. A source
 change is detected by content hash even if its version number is unchanged.
 Use stable SDK imports; files relying on relative imports, helper modules or data
-files should be distributed as a complete project folder/wheel instead.
-See [the single-file example](../examples/dropins/scale.py).
+files should be distributed as a complete project folder/wheel instead. Declared
+image icons are an exception: literal `icon` paths are copied into the generated
+package. Put shared images in `icons/` or `assets/`; these folders are skipped as
+standalone projects unless they contain `pyproject.toml`.
+See [the single-file example](../examples/dropins/scale.py); copy its `icons/` folder
+too, or remove the `icon` declaration to use the category default.
 
 Refresh takes one snapshot of each input, skips unchanged content, prepares all
 changed packages in one new environment, and publishes the registry **only after
@@ -128,11 +152,11 @@ Refresh never edits the scanned source files or fetches code from GitHub.
 ## Installation transaction
 
 1. Accept a local wheel, validate its metadata and cache it by SHA-256.
-2. Take the cross-process installation lock. Build a new environment containing
-   the complete requested plugin set; normal catalog reads continue during this work.
-3. Inherit the application's current runtime dependencies and constrain their
-   versions. Resolve additional dependencies inside the new environment. A conflict
-   with the active runtime fails rather than upgrading the application's environment.
+2. Take the cross-process installation lock. Stage the provider code in a new
+   immutable generation; catalog reads continue during this work.
+3. Preserve shared versions. Add compatible dependencies to shared target
+   directories; resolve conflicting entries into private dependency directories.
+   Every call still uses the same Python executable. No new venv is created.
 4. Probe entry points in a separate process. Check descriptors, namespace uniqueness,
    contracts and any embedded manifest. The GUI process never imports plugin code.
 5. Publish `lock.json`, then atomically replace `registry.json`. Studio detects the
@@ -148,17 +172,17 @@ An inserted/saved graph is pinned when prepared, saved or launched. A pin contai
 the package name, package version and implementation digest (wheel or bundled
 content fingerprint). Nested route snapshots retain
 their pins. New unpinned insertions use the current generation. Running jobs record
-and keep their original Python environment even if another installation finishes.
+and keep their original dependency paths even if another installation finishes.
 
 `biopipe plugin remove <distribution-name>` publishes a generation without that
 package. It does not delete its wheels or historical environments. Saved pinned
 graphs can still run against a matching generation. Route saving and registration
 also validate against the graph's pinned catalog, including after removal.
 
-One execution uses one compatible plugin environment. Combining snapshots pinned
-to incompatible plugin sets fails with an explicit message; v1 does not build a
-cross-version environment automatically or run different nodes in different Python
-interpreters. To deliberately upgrade a saved graph, export it, clear the relevant
+A pipeline may combine different dependency versions through isolated processes.
+Combining conflicting pins for the same operator identity still fails explicitly.
+See [selective dependency isolation](dependency_isolation.md).
+To deliberately upgrade a saved graph, export it, clear the relevant
 `plugin_lock` entries (also inside nested snapshots), validate, and save as a new
 version. Existing route instances are never silently rewritten.
 
@@ -171,10 +195,10 @@ present alongside the task. Original built-in-only YAML tasks remain unchanged.
 
 Transfer source/wheels, graph JSON and required input data. Install BioPipe in a
 working environment on the target computer, then install the original wheels there.
-Matching wheel digests allow the saved pins to resolve. Do not copy Python virtual
-environments between computers: interpreter paths and native binaries are local.
-The cached lock stores relative environment paths, but the generated Python
-environment itself is not portable. Reinstall from wheels after moving the runtime.
+Matching wheel digests allow saved pins to resolve. New generations use relative
+dependency-directory paths; old venv generations remain readable. Reinstall from
+wheels after changing Python ABI, architecture or operating system because native
+dependency files are platform-specific.
 Runtime logs may contain resolved absolute paths for auditing; application defaults
 do not contain developer-specific paths.
 

@@ -25,7 +25,7 @@ def read_json(path, default):
     return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else deepcopy(default)
 
 
-def scan_sources(root=ROOT):
+def scan_sources(root=ROOT, sources=None):
     """Import fresh declarations, collect every error, and reject duplicate IDs."""
     from biopipe_sdk.protocol import validate_extension, describe_reader
     from src.task.step.base import Step
@@ -39,6 +39,8 @@ def scan_sources(root=ROOT):
     for folder, base, kind in (("src/task/step/steps", Step, "operator"), ("src/reader/readers", Reader, "reader")):
         for path in sorted((root / folder).glob("*.py")):
             if path.name.startswith("_"):
+                continue
+            if sources is not None and path.relative_to(root).as_posix() not in sources:
                 continue
             module_name = path.relative_to(root).with_suffix("").as_posix().replace("/", ".")
             try:

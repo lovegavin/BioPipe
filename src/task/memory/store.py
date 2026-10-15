@@ -95,6 +95,8 @@ class ArtifactStore(MutableMapping):
         self.entries: dict[str, Entry] = {}
         self.allocations: dict[int, list[int]] = {}
         self.managed = self.peak_managed = self.disk_bytes = 0
+        self.transport_disk_bytes = 0
+        self.staging_disk_bytes = 0
         self.admitted_peak = 0
         self.reserved = 0
         self.position = -1
@@ -172,14 +174,16 @@ class ArtifactStore(MutableMapping):
         writer = None
         try:
             required = int(entry.source_probe.get("preparation_bytes", entry.source_probe["dense_bytes"])) + 512
-            if self.config.disk_limit_bytes is not None and self.disk_bytes + required > self.config.disk_limit_bytes:
+            if self.config.disk_limit_bytes is not None and self.disk_bytes + self.transport_disk_bytes + required > self.config.disk_limit_bytes:
                 raise DiskBudgetError("Dense source exceeds disk quota before allocation")
             if shutil.disk_usage(self.cache_root).free < required:
                 raise DiskBudgetError("Insufficient disk space for dense source")
+            self.staging_disk_bytes = required
             # Leave room for parser blocks and Python axis metadata. No second
             # system-available scan: this derives from the frozen run budget.
-            chunk = max(4, min(self.config.chunk_bytes, self.config.budget_bytes // 8))
-            reservation = min(self.config.budget_bytes, chunk * 4)
+            isolated = entry.source_probe.get('isolated', False)
+            chunk = max(4, min(self.config.chunk_bytes, self.config.budget_bytes // (16 if isolated else 8)))
+            reservation = min(self.config.budget_bytes, chunk * (8 if isolated else 4))
             self.ensure(reservation, "source_staging")
             self.event("source_prepare_started", name=entry.name, chunk_bytes=chunk,
                        buffer_budget_bytes=chunk * 2, **entry.source_probe)
@@ -208,7 +212,7 @@ class ArtifactStore(MutableMapping):
             with open(temporary / "metadata.pkl", "wb") as file:
                 pickle.dump(metadata, file, protocol=5)
             written = sum(p.stat().st_size for p in temporary.iterdir())
-            if self.config.disk_limit_bytes is not None and self.disk_bytes + written > self.config.disk_limit_bytes:
+            if self.config.disk_limit_bytes is not None and self.disk_bytes + self.transport_disk_bytes + written > self.config.disk_limit_bytes:
                 raise DiskBudgetError("Dense source metadata exceeds disk quota")
             final = self.cache_root / entry.key
             os.replace(temporary, final)
@@ -228,6 +232,8 @@ class ArtifactStore(MutableMapping):
                 writer.file.close()
             self._delete_folder(temporary)
             raise
+        finally:
+            self.staging_disk_bytes = 0
 
     def trim_source_blocks(self, entry, bytes_to_free, reason):
         """Drop only as many clean staging blocks as subsequent admission needs."""
@@ -423,7 +429,7 @@ class ArtifactStore(MutableMapping):
             def __init__(self, path):
                 self.file = open(path, "wb")
             def write(self, data):
-                if store.config.disk_limit_bytes is not None and store.disk_bytes + written[0] + len(data) > store.config.disk_limit_bytes:
+                if store.config.disk_limit_bytes is not None and store.disk_bytes + store.staging_disk_bytes + store.transport_disk_bytes + written[0] + len(data) > store.config.disk_limit_bytes:
                     raise DiskBudgetError("Spill quota exhausted; original RAM copy retained")
                 n = self.file.write(data)
                 if n != len(data):

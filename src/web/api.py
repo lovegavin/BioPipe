@@ -53,6 +53,7 @@ def create_app(settings=None):
         if not settings.testing:
             from biopipe.runtime import remember_runtime
             remember_runtime()
+            app.state.check_dependencies()
         yield
         bridge.close()
         service.shutdown()
@@ -76,7 +77,8 @@ def create_app(settings=None):
             if not hmac.compare_digest(request.headers.get("x-studio-token", ""), token):
                 return JSONResponse({"message": "本地会话已更新，请刷新页面。"}, status_code=403)
         try:
-            service.refresh_catalog()
+            if service.refresh_catalog() and not settings.testing:
+                app.state.check_dependencies_if_idle()
             response = await call_next(request)
         except Exception:
             logging.exception("studio request failure", extra={"request_id": request_id})

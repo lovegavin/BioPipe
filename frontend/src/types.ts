@@ -14,6 +14,7 @@ export type PluginRefresh = {generation: string; updated: string[]; unchanged: s
 export type PluginOperation = {id: string; status: 'running' | 'complete' | 'failed'; error: string | null; result?: PluginRefresh};
 export type PluginPackage = {name: string; title?: string; version: string; sha256: string; origin?: 'bundled' | 'wheel'; enabled?: boolean; source_managed?: boolean};
 export type PluginState = {generation: string | null; packages: PluginPackage[]; bundled_packages?: PluginPackage[]; inbox?: string;
+  dependencies?: {running: boolean; entries: {id: string; title: string; status: 'unchecked' | 'checking' | 'installing' | 'passed' | 'failed'; error: string; execution?: {mode: 'shared' | 'isolated'; reason?: string}}[]};
   source_directories?: {operator: string; reader: string};
   descriptors: {id: string; kind: 'reader' | 'operator'; title: string; distribution: string; resources?: {memory_modes: string[]}}[]};
 export type Operator = {
@@ -25,6 +26,7 @@ export type Operator = {
   category: string;
   description: string;
   icon?: string | null;
+  icon_image?: string | null;
   preview?: { kind: string; caption: string };
   inputs_arity: number | "*";
   outputs: string[];

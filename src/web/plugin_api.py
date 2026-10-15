@@ -24,6 +24,7 @@ def mount_plugins(app, service):
         result["inbox"] = str(service.plugins.inbox)
         from biopipe.source_library import directories
         result["source_directories"] = {kind: str(path) for kind, path in directories(service.plugins.source_root).items()}
+        result['dependencies'] = service.dependencies.snapshot()
         return result
 
     def check_idle():
@@ -32,12 +33,15 @@ def mount_plugins(app, service):
 
     async def execute(key, wheel=None, remove=None, temporary=None, name=None, action=None):
         try:
-            if action == "refresh":
+            if action == 'dependencies':
+                pass
+            elif action == "refresh":
                 operations[key]["result"] = await asyncio.to_thread(service.plugins.refresh)
             elif action:
                 await asyncio.to_thread(service.plugins.manage, name, action)
             else:
                 await asyncio.to_thread(service.plugins.install, wheel, remove=remove)
+            await asyncio.to_thread(service.dependencies.check, repair=not service.settings.testing)
             service.refresh_catalog()
             operations[key].update(status="complete")
         except Exception as exc:
@@ -56,6 +60,19 @@ def mount_plugins(app, service):
         return operations[key]
 
     app.state.plugin_tasks = set()
+
+    def check_dependencies():
+        check_idle()
+        key = uuid.uuid4().hex
+        active.add(key)
+        return start(key, action='dependencies')
+
+    app.state.check_dependencies = check_dependencies
+    app.state.check_dependencies_if_idle = lambda: None if active else check_dependencies()
+
+    @app.post('/api/plugins/dependencies')
+    async def dependencies():
+        return check_dependencies()
 
     @app.get("/api/plugins")
     def plugins():

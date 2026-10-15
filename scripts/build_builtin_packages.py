@@ -60,9 +60,6 @@ def build_package(name, output):
         alias = f"Entry{i}"
         descriptor["entry_point"] = f"{module}.{source.stem}:{clsname}"
         definitions.append(descriptor)
-        init.extend([f"{alias} = getattr(import_module({(module + '.' + source.stem)!r}), {clsname!r})",
-                     f"{alias}.parameters_schema = _definitions[{i}]['parameters_schema']",
-                     f"{alias}.legacy_parameters = _definitions[{i}].get('legacy_parameters', True)", f"{alias}._package_descriptor = _definitions[{i}]"])
         entries[descriptor["kind"]].append(f'{alias} = "{module}:{alias}"')
     # Shared helpers and delegated readers are implementation dependencies.
     helper_sources = list((ROOT / "src/task/step/steps").glob("_*.py")) + list((ROOT / "src/reader/readers").glob("_*.py"))
@@ -71,6 +68,12 @@ def build_package(name, output):
     for source in helper_sources:
         if source.name != "__init__.py" and not (target / source.name).exists():
             (target / source.name).write_text(source.read_text(encoding="utf-8").replace("src.task.step.steps", module).replace("src.reader.readers", module), encoding="utf-8")
+    init.extend(["def __getattr__(name):", "    index = int(name[5:]) if name.startswith('Entry') and name[5:].isdigit() else -1",
+                 "    if index < 0 or index >= len(_definitions): raise AttributeError(name)",
+                 "    d = _definitions[index]", "    module, clsname = d['entry_point'].split(':')",
+                 "    cls = getattr(import_module(module), clsname)",
+                 "    cls.parameters_schema = d['parameters_schema']", "    cls.legacy_parameters = d.get('legacy_parameters', True)",
+                 "    cls._package_descriptor = d", "    return cls"])
     (target / "__init__.py").write_text("\n".join(init) + "\n", encoding="utf-8")
     (target / "definitions.json").write_text(json.dumps(definitions, ensure_ascii=False), encoding="utf-8")
     project = ['[build-system]', 'requires = ["setuptools>=69"]', 'build-backend = "setuptools.build_meta"',

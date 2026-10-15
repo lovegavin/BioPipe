@@ -18,6 +18,8 @@ import subprocess
 import sys
 import uuid
 import zipfile
+import threading
+import time
 
 from packaging.utils import canonicalize_name
 from biopipe_sdk.protocol import describe_operator, describe_reader, validate_extension
@@ -31,6 +33,7 @@ def active_descriptors(state):
 
 ROOT = Path(__file__).resolve().parents[1]
 GROUPS = {"biopipe.operators": "operator", "biopipe.readers": "reader"}
+process_context = threading.local()
 
 
 def run_process(args, *, timeout=180, env=None):
@@ -38,9 +41,41 @@ def run_process(args, *, timeout=180, env=None):
     # agree on the wire encoding even on Windows with an ANSI/GBK console locale.
     child_env = dict(os.environ if env is None else env)
     child_env["PYTHONIOENCODING"] = "utf-8"
-    result = subprocess.run(list(map(str, args)), cwd=ROOT, env=child_env, stdin=subprocess.DEVNULL,
-                            capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout,
-                            creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
+    cancel = getattr(process_context, 'cancel', None)
+    options = dict(cwd=ROOT, env=child_env, stdin=subprocess.DEVNULL,
+                   text=True, encoding='utf-8', errors='replace',
+                   creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+    if cancel is None:
+        result = subprocess.run(list(map(str, args)), capture_output=True, timeout=timeout, **options)
+    else:
+        if cancel.is_set():
+            raise ValueError('Dependency preparation cancelled: Studio is closing')
+        with subprocess.Popen(list(map(str, args)), stdout=subprocess.PIPE, stderr=subprocess.PIPE, **options) as child:
+            deadline = time.monotonic() + timeout
+            try:
+                while True:
+                    if cancel.is_set() or time.monotonic() >= deadline:
+                        raise ValueError('Dependency preparation cancelled or timed out')
+                    try:
+                        stdout, stderr = child.communicate(timeout=.2)
+                        result = subprocess.CompletedProcess(args, child.returncode, stdout, stderr)
+                        break
+                    except subprocess.TimeoutExpired:
+                        continue
+            except BaseException:
+                import psutil
+                descendants = []
+                try:
+                    descendants = psutil.Process(child.pid).children(recursive=True)
+                    for descendant in reversed(descendants):
+                        try: descendant.kill()
+                        except psutil.Error: pass
+                except psutil.Error:
+                    pass
+                if child.poll() is None: child.kill()
+                child.communicate()
+                psutil.wait_procs(descendants, timeout=5)
+                raise
     if result.returncode:
         # pip writes dependency-conflict details to stdout and its error to stderr.
         raise ValueError((result.stdout + "\n" + result.stderr).strip()[-6000:])
@@ -97,6 +132,8 @@ def entry_descriptors():
                     raise ValueError(f"Wheel descriptor differs from implementation: {descriptor['id']}")
             descriptor["distribution"] = canonicalize_name(dist.metadata["Name"])
             descriptor["package_version"] = dist.version
+            from biopipe_sdk.dependencies import requirements
+            descriptor['dependencies'] = requirements(list(set(descriptor.get('dependencies', [])) | set(dist.requires or [])))
             records.append(descriptor)
         except Exception as exc:
             raise ValueError(f"{entry.dist.metadata['Name']} / {getattr(cls, '__name__', entry.value)}: {exc}") from exc
@@ -115,12 +152,20 @@ def load_runtime(lock):
         STEPS.clear()
         READERS.clear()
     for descriptor in active_descriptors(lock):
+        if descriptor.get('execution', {}).get('mode') == 'isolated':
+            from biopipe.isolation import proxy_step, proxy_reader
+            if descriptor['kind'] == 'operator':
+                STEPS[descriptor['id']] = proxy_step(descriptor, lock)
+            else:
+                READERS.append(proxy_reader(descriptor, lock)())
+            continue
         module, name = descriptor["entry_point"].split(":", 1)
         if descriptor.get("origin") == "bundled":
             from biopipe.packages import load_entry
             cls = load_entry(descriptor)
         else:
-            cls = getattr(importlib.import_module(module), name)
+            from biopipe.install_targets import load_class
+            cls = load_class(descriptor)
         validate_extension(cls, descriptor["kind"])
         actual = describe_operator(cls) if descriptor["kind"] == "operator" else describe_reader(cls())
         if (actual["id"] != descriptor["id"] or actual["version"] != descriptor["version"]
@@ -186,6 +231,7 @@ class PluginManager:
                 value["descriptors"] = [d for d in value["descriptors"] if d["distribution"] not in replacing] + [deepcopy(d) for d in bundled_state()["descriptors"] if d["distribution"] in replacing]
                 value["bundled_seen"] = sorted(seen | set(value.get("bundled_seen", [])) | set(current))
                 self._publish(value)
+        value["_runtime_root"] = str(self.directory.resolve())
         return value
 
     def _hydrate(self, value):
@@ -196,6 +242,7 @@ class PluginManager:
             value["descriptors"] = bundled["descriptors"] + value["descriptors"]
             value["package_protocol_version"] = 1
             value["bundled_seen"] = sorted(p["name"] for p in bundled["packages"])
+        value["_runtime_root"] = str(self.directory.resolve())
         return value
 
     def _publish(self, state):
@@ -306,7 +353,7 @@ class PluginManager:
         with self.lock:
             return self._install_many(wheels, self.state())
 
-    def _install_many(self, wheels, current, *, receipts=None, source_library=None):
+    def _install_many(self, wheels, current, *, receipts=None, source_library=None, dependencies=(), publish=True):
         # Caller owns the cross-process lock, including source snapshotting.
         packages = deepcopy(current["packages"])
         replacements = set()
@@ -338,74 +385,24 @@ class PluginManager:
                              "name": name, "version": info["Version"], "sha256": digest,
                              "wheel": str(cached.relative_to(self.directory))})
         generation = uuid.uuid4().hex
+        from biopipe.install_targets import install
+        state = install(self, current, packages, generation, dependencies=dependencies)
         environment = self.directory / "environments" / generation
-        environment.mkdir(parents=True)
-        # Parent dependencies are inherited read-only and constrained to the
-        # active runtime versions. New plugin dependencies live in this venv.
-        run_process([sys.executable, "-m", "venv", "--system-site-packages", environment])
-        python = environment / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
-        site_path = Path(run_process([python, "-c", "import sysconfig; print(sysconfig.get_path('purelib'))"]).strip())
-        import sysconfig
-        # Process the parent's .pth files too: merely adding its directory
-        # loses editable installs and dependencies inherited by that runtime.
-        runtime_site = str(Path(sysconfig.get_path("purelib")))
-        (site_path / "biopipe-runtime.pth").write_text(
-            f"import site; site.addsitedir({runtime_site!r})\n{ROOT}\n", encoding="utf-8")
-        protected = {}
-        managed = {p["name"] for p in packages}
-        for distribution in metadata.distributions():
-            name = distribution.metadata["Name"]
-            if name and canonicalize_name(name) not in managed:
-                # Match importlib.metadata.version/sys.path precedence when
-                # a parent environment also contains an older distribution.
-                protected.setdefault(canonicalize_name(name), distribution.version)
-        constraints = environment / "constraints.txt"
-        constraints.write_text("\n".join(f"{name}=={version}" for name, version in sorted(protected.items())), encoding="utf-8")
-        wheel_packages = [p for p in packages if p.get("origin") != "bundled"]
-        if wheel_packages:
-            run_process([python, "-m", "pip", "install", "--disable-pip-version-check", "--constraint", constraints,
-                         *[self.directory / p["wheel"] for p in wheel_packages]], timeout=600)
-        result_file = environment / "probe.json"
-        run_process([python, "-m", "biopipe.plugins", "probe", result_file],
-                    env=dict(os.environ, BIOPIPE_REGISTRY_MAINTENANCE="1"))
-        descriptors = json.loads(result_file.read_text(encoding="utf-8"))
-        base_ids = {d["id"] for d in bundled_state()["descriptors"]}
-        for descriptor in descriptors:
-            if descriptor["id"] in base_ids and not owns_legacy_id(descriptor["distribution"], descriptor["id"]):
-                raise ValueError(f"Plugin shadows a built-in: {descriptor['id']}")
-            package = next((p for p in packages if p["name"] == descriptor["distribution"]), None)
-            if package is None:
-                raise ValueError("Unexpected plugin entry point inherited from the base environment")
-            descriptor["implementation"] = {"package": package["name"], "version": package["version"], "sha256": package["sha256"]}
-            descriptor["origin"] = "wheel"
-        if wheel_packages and not descriptors:
-            raise ValueError("Package does not expose BioPipe operator or reader entry points")
-        for package in wheel_packages:
-            if not any(d["distribution"] == package["name"] for d in descriptors):
-                raise ValueError(f"No BioPipe entry points in {package['name']}")
-            owned = {d["id"] for d in bundled_state()["descriptors"] if d["distribution"] == package["name"]}
-            actual = {d["id"] for d in descriptors if d["distribution"] == package["name"]}
-            if owned and not owned <= actual:
-                raise ValueError(f"Replacement package must preserve its legacy IDs: {sorted(owned - actual)}")
-        bundled_names = {p["name"] for p in packages if p.get("origin") == "bundled"}
-        descriptors = [d for d in bundled_state()["descriptors"] if d["distribution"] in bundled_names] + descriptors
-        ids = [d["id"] for d in descriptors]
-        if len(ids) != len(set(ids)):
-            raise ValueError("Two packages declare the same operator or reader ID")
         source_receipt = deepcopy(source_library if source_library is not None else current.get("source_library", {}))
         if source_library is None:
             # An explicitly installed provider takes precedence over local sources.
             source_receipt["packages"] = [name for name in source_receipt.get("packages", []) if name not in replacements]
-        state = {"protocol_version": 1, "package_protocol_version": 1, "generation": generation, "packages": packages, "descriptors": descriptors,
-                 "python": str(python.relative_to(self.directory)), "base_dependencies": protected,
-                 "bundled_seen": current.get("bundled_seen", []),
-                 "dropin_receipts": receipts if receipts is not None else current.get("dropin_receipts", {}),
-                 "source_library": source_receipt}
+        state.update(protocol_version=1, package_protocol_version=1,
+                     dropin_receipts=receipts if receipts is not None else current.get("dropin_receipts", {}),
+                     source_library=source_receipt)
         atomic_json(environment / "lock.json", state)
-        atomic_json(self.registry, state)
+        if publish:
+            atomic_json(self.registry, state)
         return state
 
     def python_for(self, state):
+        if state.get("runtime_protocol") == 1:
+            return sys.executable
         return str(self.directory / state["python"]) if state.get("python") else sys.executable
 
 

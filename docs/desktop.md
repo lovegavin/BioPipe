@@ -1,8 +1,8 @@
 # BioPipe Studio desktop client
 
 The Windows x64 host uses WinForms and WebView2. It bundles compiled frontend
-resources and startup management, while the Python backend and analysis environment
-remain independent. Double-click `dist/BioPipe Studio/BioPipe Studio.exe` to launch;
+resources and startup management. Full release archives also contain a relocatable
+Python runtime and the built-in CPU dependencies. Double-click `BioPipe Studio.exe` to launch;
 the host starts a local backend, waits for health checks and opens the workspace.
 Launching it again activates the existing window for that profile.
 
@@ -18,6 +18,13 @@ The adjacent `biopipe-desktop.json` uses relative defaults:
 to the backend root. Auto-discovery checks the remembered interpreter, project
 `.venv`/`venv`, active venv/Conda, PATH Python commands, the Windows Python Launcher,
 Conda's `~/.conda/environments.txt` and Windows Python registrations (PEP 514).
+Full packages set `bundledRuntime: true` and exclusively use their adjacent
+`runtime/python/python.exe`; a remembered interpreter or `BIOPIPE_PYTHON` cannot
+silently replace it. `--select-runtime` is an explicit maintenance override for
+one launch. See
+[bundled runtime](installation.md#bundled-windows-runtime) for the full build recipe
+and automatic WebView2 setup. Lite/source builds and 0.3.4 packages use environment discovery.
+
 Each candidate is checked for Python 3.11+ and core dependencies. Invalid
 environments and Windows Store aliases are skipped; no whole-disk scan is used.
 
@@ -33,15 +40,17 @@ environment's `python.exe`. Validation runs before it is remembered. Use
 `BioPipe Studio.exe --select-runtime` to choose again. Explicit config/environment
 overrides still take priority over remembered hints on subsequent launches.
 
-`python` can also be a path relative to the backend, an absolute path or a PATH
+For lite/source builds, `python` can also be a path relative to the backend, an absolute path or a PATH
 command. `BIOPIPE_PYTHON` and `BIOPIPE_BACKEND_ROOT` override config fields; environment
 variables in paths are expanded. An explicitly selected invalid runtime fails with
 a diagnostic instead of silently choosing another interpreter.
 
-The target needs a configured backend environment and WebView2 Runtime. The host
-includes .NET runtime support; users do not need the .NET SDK. Missing WebView2
-produces an actionable message. This local distribution has no installer, signing,
-automatic update service or automatic analysis-environment installation.
+The full package includes Python and .NET runtime support; users need neither SDK.
+Missing WebView2 is prepared with the included signature-verified Microsoft
+bootstrapper, using internet access. The host starts Python in isolated mode and
+removes inherited `PYTHONHOME`/`PYTHONPATH` from the backend environment. New operator
+dependencies are maintained in the Studio profile; the bundled runtime is not
+modified. This distribution has no automatic application-update service.
 
 ## Shared profile
 
@@ -63,7 +72,7 @@ Python to resolve it. The default does not use AppData or depend on cwd.
       registry.json            explicitly registered route snapshots
       library_state.json       disabled/hidden library items
       builtins_installed.json  bundled-route installation receipt
-    plugins/                   wheel registry and versioned environments
+    plugins/                   registry, frozen provider code and dependency targets
     agent/                     local discovery and canvas sessions
     assets/                    imported inputs
     jobs/                      graphs, configurations, logs and results
@@ -89,8 +98,11 @@ workspace-relative legacy override. Explicit profiles/workspaces disable default
 legacy import. `BIOPIPE_STUDIO_DATA` is supported only with explicit workspace mode.
 
 Cross-process locks and atomic files protect registries. Libraries refresh on focus
-and periodically; hot-installed wheels require no backend restart. Built-in Python
-source changes still require restart. Sessions expose shared revision-checked UI/
+and periodically; hot-installed wheels require no backend restart. Use **Refresh
+operator library** after editing Step or Reader sources in the directories shown
+by Library Management. The scanner freezes a new generation for subsequent jobs;
+already running jobs keep their existing generation. See [hot refresh](plugins.md#drop-refresh-use).
+Sessions expose shared revision-checked UI/
 agent edits and undo; separate windows have separate canvas sessions, not a general
 multi-user collaboration system. The most recently persisted workspace is restored
 on the next fresh launch. Job ownership prevents one window from marking a live
