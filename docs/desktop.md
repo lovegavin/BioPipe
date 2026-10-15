@@ -158,7 +158,8 @@ The build machine needs .NET 8 SDK, Node and the Python environment:
 ```powershell
 ./scripts/build_desktop.ps1
 ./scripts/build_desktop.ps1 -SkipFrontend
-python scripts/package_release.py
+python scripts/package_release.py --runtime .local/runtime/python
+python scripts/package_release.py --lite
 ```
 
 The build restores the WebView2 SDK, copies compiled resources and preserves an
@@ -168,6 +169,8 @@ after frontend changes; an old executable directory otherwise shows an old UI.
 `package_release.py` creates a clean Windows ZIP under `dist/releases`, including
 the Python source, SDK, compiled UI, licenses and a file-checksum manifest. It
 excludes user profiles, input datasets, virtual environments and development tools.
+The default archive includes the environment prepared by `build_runtime.py`;
+the `-Lite.zip` archive instead discovers an existing Python environment.
 Run it from a committed checkout after the frontend and desktop builds so that its
 source commit identifies the released code. The output directory must be new.
 
