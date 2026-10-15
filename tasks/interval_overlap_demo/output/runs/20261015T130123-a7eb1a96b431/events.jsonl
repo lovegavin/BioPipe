@@ -1,0 +1,4 @@
+{"message": "Loading the analysis engine", "time": "2026-10-15T13:01:23.192249+00:00", "event": "worker_started"}
+{"run_id": "20261015T130123-a7eb1a96b431", "memory_enabled": false, "time": "2026-10-15T13:01:24.119283+00:00", "event": "run_started"}
+{"name": "ccre", "shape": [1063878, 6], "dims": ["region", "field"], "time": "2026-10-15T13:01:27.909331+00:00", "event": "source_loaded"}
+{"status": "failed", "error": "BED file has no data lines: /home/lovagavin/biopipe/tasks/interval_overlap_demo/input/ensembl_regulatory.bed", "time": "2026-10-15T13:01:27.910449+00:00", "event": "run_finished"}

@@ -222,8 +222,8 @@ def _read_tsv_column(path: Path, col: int) -> list[str]:
     with _open_maybe_gz(path) as fh:
         values = []
         for line in fh:
-            line = line.rstrip("\n")
-            if not line:
+            line = line.rstrip("\r\n")
+            if not line.strip():
                 continue
             parts = line.split("\t")
             if col < len(parts):

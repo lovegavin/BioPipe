@@ -64,7 +64,12 @@ _PROTEIN_CHARS = set("ACDEFGHIKLMNPQRSTVWY")
 class FastaReader(Reader):
     """Reader for .fasta / .fa / .fna / .faa files."""
 
-    output_contract = reader_contract(extra={"alphabet": {"type": "string"}})
+    output_contract = reader_contract(extra={
+        "alphabet": {"type": "string"},
+        "representation": {"type": "string", "const": "sequence_codes"},
+        "alphabet_map": {"type": "object"},
+        "unknown_code": {"type": "integer"},
+    })
 
     file_input = {'dims': ['sequence', 'position'], 'labels': {'sequence': 'builtin', 'position': 'auto'}}
 
@@ -127,6 +132,9 @@ class FastaReader(Reader):
         info: dict = {
             "missing_code": np.nan,
             "alphabet": alphabet,
+            "representation": "sequence_codes",
+            "alphabet_map": dict(_CHAR_MAP),
+            "unknown_code": _UNKNOWN,
         }
 
         return Form(
@@ -144,8 +152,8 @@ def _parse_fasta(path: Path) -> tuple[list[str], list[str]]:
 
     with open(path, encoding="utf-8") as fh:
         for line in fh:
-            line = line.rstrip("\n")
-            if not line:
+            line = line.rstrip("\r\n")
+            if not line.strip():
                 continue
             if line.startswith(">"):
                 if current:
@@ -156,7 +164,7 @@ def _parse_fasta(path: Path) -> tuple[list[str], list[str]]:
                 sid = parts[0] if parts else f"seq{len(ids)}"
                 ids.append(sid)
             else:
-                current.append(line)
+                current.append(line.rstrip())
 
     if current:
         seqs.append("".join(current))

@@ -1,0 +1,39 @@
+# tasks/sequence_stats_demo/task.yaml
+name: sequence_stats_demo
+
+sources:
+  seqs:
+    path: input/sequences.fasta
+    dims: [sequence, position]
+    labels:
+      sequence: builtin
+      position: auto
+
+steps:
+  - name: sequence_stats
+    inputs: [seqs]
+    params: {output: stats}
+
+  - name: describe
+    inputs: [stats]
+
+  - name: histogram
+    inputs: [stats]
+    params:
+      dim: statistic
+      value_label: gc
+      bins: 10
+      filename: gc_hist.png
+      title: "GC content per sequence"
+      xlabel: "GC fraction"
+
+  - name: scatter
+    inputs: [stats]
+    params:
+      dim: statistic
+      x_label: length
+      y_label: gc
+      filename: length_vs_gc.png
+      title: "Sequence length vs GC content"
+      xlabel: "Length (bp)"
+      ylabel: "GC fraction"

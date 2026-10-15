@@ -226,12 +226,13 @@ def _load(path: Path) -> pd.DataFrame:
     rows: list[list[str]] = []
     with open(path, encoding="utf-8") as fh:
         for line in fh:
-            line = line.rstrip("\n")
-            if not line:
+            line = line.rstrip("\r\n")
+            if not line.strip():
                 continue
-            if line.startswith("track") or line.startswith("browser"):
+            parts = line.split()
+            if parts and parts[0] in ("track", "browser"):
                 continue
-            rows.append(line.split())
+            rows.append(parts)
     if not rows:
         raise ReaderError(f"BED file has no data lines: {path}")
     ncols = len(rows[0])

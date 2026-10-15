@@ -1,0 +1,14 @@
+{"message": "Loading the analysis engine", "time": "2026-10-15T13:48:24.283274+00:00", "event": "worker_started"}
+{"run_id": "20261015T134824-f0247b1ce997", "memory_enabled": false, "time": "2026-10-15T13:48:26.626761+00:00", "event": "run_started"}
+{"name": "peaks", "shape": [21578, 6], "dims": ["region", "field"], "time": "2026-10-15T13:48:26.905511+00:00", "event": "source_loaded"}
+{"name": "genes", "shape": [505, 9], "dims": ["record", "field"], "time": "2026-10-15T13:48:26.911786+00:00", "event": "source_loaded"}
+{"name": "peak_nearest_gene", "index": 1, "time": "2026-10-15T13:48:26.911929+00:00", "event": "step_started"}
+{"name": "peak_nearest_gene", "inputs": 2, "outputs": ["ann"], "contract_version": 1, "time": "2026-10-15T13:48:27.045671+00:00", "event": "contract_checked"}
+{"name": "peak_nearest_gene", "index": 1, "seconds": 0.10820681900000295, "time": "2026-10-15T13:48:27.045883+00:00", "event": "step_finished"}
+{"name": "describe", "index": 2, "time": "2026-10-15T13:48:27.045972+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-15T13:48:27.135568+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 2, "seconds": 0.027434704999990345, "time": "2026-10-15T13:48:27.135936+00:00", "event": "step_finished"}
+{"name": "histogram", "index": 3, "time": "2026-10-15T13:48:27.136045+00:00", "event": "step_started"}
+{"name": "histogram", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-15T13:48:27.387396+00:00", "event": "contract_checked"}
+{"name": "histogram", "index": 3, "seconds": 0.2339462420000018, "time": "2026-10-15T13:48:27.388302+00:00", "event": "step_finished"}
+{"status": "complete", "error": null, "time": "2026-10-15T13:48:27.388365+00:00", "event": "run_finished"}

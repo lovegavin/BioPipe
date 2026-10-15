@@ -1,0 +1,35 @@
+name: peak_nearest_gene_demo
+
+sources:
+  peaks:
+    path: input/peaks.bed
+    dims: [region, field]
+    labels:
+      region: auto
+      field: builtin
+  genes:
+    path: input/genes.gff3
+    dims: [record, field]
+    labels:
+      record: auto
+      field: builtin
+
+steps:
+  - name: peak_nearest_gene
+    inputs: [peaks, genes]
+    params:
+      feature_type: gene
+      output: ann
+
+  - name: describe
+    inputs: [ann]
+
+  - name: histogram
+    inputs: [ann]
+    params:
+      dim: statistic
+      value_label: distance
+      bins: 50
+      filename: distance_hist.png
+      title: "Distance from cCRE to nearest gene (chr22)"
+      xlabel: "Distance (bp)"

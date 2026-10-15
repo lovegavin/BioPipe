@@ -1,0 +1,7 @@
+{"message": "Loading the analysis engine", "time": "2026-10-15T13:38:24.103547+00:00", "event": "worker_started"}
+{"run_id": "20261015T133824-000cff0bfcb3", "memory_enabled": false, "time": "2026-10-15T13:38:25.004504+00:00", "event": "run_started"}
+{"name": "peaks", "shape": [10, 5], "dims": ["interval", "field"], "time": "2026-10-15T13:38:25.084721+00:00", "event": "source_loaded"}
+{"name": "describe", "index": 1, "time": "2026-10-15T13:38:25.084788+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-15T13:38:25.085245+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 1, "seconds": 0.00014039999999226893, "time": "2026-10-15T13:38:25.085268+00:00", "event": "step_finished"}
+{"status": "complete", "error": null, "time": "2026-10-15T13:38:25.085283+00:00", "event": "run_finished"}

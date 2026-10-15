@@ -1,0 +1,26 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/annotation_qc_demo
+generated : 2026-10-15T12:41:00.070666+00:00
+steps     : 10
+elapsed   : 0.412s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   gff_feature_stats       0.021s   steps/01_gff_feature_stats.json
+2   describe                0.000s   steps/02_describe.json
+3   scatter                 0.080s   steps/03_scatter.json
+4   gene_structure          0.027s   steps/04_gene_structure.json
+5   describe                0.001s   steps/05_describe.json
+6   histogram               0.069s   steps/06_histogram.json
+7   histogram               0.075s   steps/07_histogram.json
+8   annotation_gaps         0.039s   steps/08_annotation_gaps.json
+9   describe                0.005s   steps/09_describe.json
+10  histogram               0.095s   steps/10_histogram.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

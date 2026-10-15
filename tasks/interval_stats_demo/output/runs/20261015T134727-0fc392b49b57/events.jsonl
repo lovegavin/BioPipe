@@ -1,0 +1,16 @@
+{"message": "Loading the analysis engine", "time": "2026-10-15T13:47:27.743497+00:00", "event": "worker_started"}
+{"run_id": "20261015T134727-0fc392b49b57", "memory_enabled": false, "time": "2026-10-15T13:47:29.812956+00:00", "event": "run_started"}
+{"name": "ccre", "shape": [1063878, 6], "dims": ["region", "field"], "time": "2026-10-15T13:47:36.996578+00:00", "event": "source_loaded"}
+{"name": "interval_stats", "index": 1, "time": "2026-10-15T13:47:36.996800+00:00", "event": "step_started"}
+{"name": "interval_stats", "inputs": 1, "outputs": ["stats"], "contract_version": 1, "time": "2026-10-15T13:47:38.040003+00:00", "event": "contract_checked"}
+{"name": "interval_stats", "index": 1, "seconds": 0.7900589189999891, "time": "2026-10-15T13:47:38.047552+00:00", "event": "step_finished"}
+{"name": "describe", "index": 2, "time": "2026-10-15T13:47:38.047695+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-15T13:47:38.048604+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 2, "seconds": 0.00033199999998601015, "time": "2026-10-15T13:47:38.048672+00:00", "event": "step_finished"}
+{"name": "histogram", "index": 3, "time": "2026-10-15T13:47:38.048728+00:00", "event": "step_started"}
+{"name": "histogram", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-15T13:47:38.284070+00:00", "event": "contract_checked"}
+{"name": "histogram", "index": 3, "seconds": 0.23485597600000574, "time": "2026-10-15T13:47:38.284154+00:00", "event": "step_finished"}
+{"name": "histogram", "index": 4, "time": "2026-10-15T13:47:38.284219+00:00", "event": "step_started"}
+{"name": "histogram", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-15T13:47:38.489811+00:00", "event": "contract_checked"}
+{"name": "histogram", "index": 4, "seconds": 0.20510137899998426, "time": "2026-10-15T13:47:38.489897+00:00", "event": "step_finished"}
+{"status": "complete", "error": null, "time": "2026-10-15T13:47:38.489931+00:00", "event": "run_finished"}

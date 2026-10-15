@@ -1,0 +1,19 @@
+{"message": "Loading the analysis engine", "time": "2026-10-15T13:33:11.433787+00:00", "event": "worker_started"}
+{"run_id": "20261015T133311-0cb4ab1fc887", "memory_enabled": false, "time": "2026-10-15T13:33:12.465723+00:00", "event": "run_started"}
+{"name": "gaf", "shape": [881380, 16], "dims": ["annotation", "field"], "time": "2026-10-15T13:33:17.092769+00:00", "event": "source_loaded"}
+{"name": "pivot", "index": 1, "time": "2026-10-15T13:33:17.092930+00:00", "event": "step_started"}
+{"name": "pivot", "inputs": 1, "outputs": ["universe"], "contract_version": 1, "time": "2026-10-15T13:33:19.318373+00:00", "event": "contract_checked"}
+{"name": "pivot", "index": 1, "seconds": 2.0588157460006187, "time": "2026-10-15T13:33:19.321333+00:00", "event": "step_finished"}
+{"name": "select", "index": 2, "time": "2026-10-15T13:33:19.321414+00:00", "event": "step_started"}
+{"name": "select", "inputs": 1, "outputs": ["hits"], "contract_version": 1, "time": "2026-10-15T13:33:21.071011+00:00", "event": "contract_checked"}
+{"name": "select", "index": 2, "seconds": 1.7315971320003882, "time": "2026-10-15T13:33:21.071528+00:00", "event": "step_finished"}
+{"name": "enrich_go", "index": 3, "time": "2026-10-15T13:33:21.071588+00:00", "event": "step_started"}
+{"name": "enrich_go", "inputs": 2, "outputs": ["enriched"], "contract_version": 1, "time": "2026-10-15T13:33:22.089389+00:00", "event": "contract_checked"}
+{"name": "enrich_go", "index": 3, "seconds": 0.9822713180001301, "time": "2026-10-15T13:33:22.089993+00:00", "event": "step_finished"}
+{"name": "enrichment_plot", "index": 4, "time": "2026-10-15T13:33:22.090059+00:00", "event": "step_started"}
+{"name": "enrichment_plot", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-15T13:33:22.357392+00:00", "event": "contract_checked"}
+{"name": "enrichment_plot", "index": 4, "seconds": 0.2638074049991701, "time": "2026-10-15T13:33:22.358339+00:00", "event": "step_finished"}
+{"name": "describe", "index": 5, "time": "2026-10-15T13:33:22.358387+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-15T13:33:22.364534+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 5, "seconds": 0.001360299998850678, "time": "2026-10-15T13:33:22.364648+00:00", "event": "step_finished"}
+{"status": "complete", "error": null, "time": "2026-10-15T13:33:22.364701+00:00", "event": "run_finished"}

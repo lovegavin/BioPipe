@@ -1,0 +1,39 @@
+name: interval_merge_demo
+
+sources:
+  ccre:
+    path: input/cCREs.bed
+    dims: [region, field]
+    labels:
+      region: auto
+      field: builtin
+
+steps:
+  - name: interval_merge
+    inputs: [ccre]
+    params:
+      min_overlap: 0
+      output: merged
+
+  - name: describe
+    inputs: [merged]
+
+  - name: histogram
+    inputs: [merged]
+    params:
+      dim: statistic
+      value_label: length
+      bins: 50
+      filename: merged_length_hist.png
+      title: "Merged cCRE region lengths"
+      xlabel: "Length (bp)"
+
+  - name: histogram
+    inputs: [merged]
+    params:
+      dim: statistic
+      value_label: n_intervals
+      bins: 30
+      filename: n_intervals_hist.png
+      title: "Intervals merged per region"
+      xlabel: "n intervals"

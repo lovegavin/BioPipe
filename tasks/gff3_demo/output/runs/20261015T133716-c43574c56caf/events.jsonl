@@ -1,0 +1,3 @@
+{"message": "Loading the analysis engine", "time": "2026-10-15T13:37:16.241412+00:00", "event": "worker_started"}
+{"run_id": "20261015T133716-c43574c56caf", "memory_enabled": false, "time": "2026-10-15T13:37:17.215471+00:00", "event": "run_started"}
+{"status": "failed", "error": "", "time": "2026-10-15T13:37:28.906711+00:00", "event": "run_finished"}

@@ -1,0 +1,11 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/motif_scan_demo",
+  "generated_at": "2026-10-15T13:45:31.062151+00:00",
+  "n_steps": 0,
+  "total_elapsed": 0,
+  "steps": [],
+  "status": "failed",
+  "error": "ModuleNotFoundError: No module named 'numpy'",
+  "run_id": "20261015T134531-0cdd6a83008d",
+  "event_log": "/home/lovagavin/biopipe/tasks/motif_scan_demo/output/runs/20261015T134531-0cdd6a83008d/events.jsonl"
+}

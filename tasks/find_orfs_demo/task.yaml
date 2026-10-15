@@ -1,0 +1,30 @@
+# tasks/find_orfs_demo/task.yaml
+name: find_orfs_demo
+
+sources:
+  seqs:
+    path: input/sequences.fasta
+    dims: [sequence, position]
+    labels:
+      sequence: builtin
+      position: auto
+
+steps:
+  - name: find_orfs
+    inputs: [seqs]
+    params:
+      min_aa: 100
+      output: orfs
+
+  - name: describe
+    inputs: [orfs]
+
+  - name: histogram
+    inputs: [orfs]
+    params:
+      dim: statistic
+      value_label: length_aa
+      bins: 20
+      filename: orf_lengths.png
+      title: "ORF length distribution (min_aa=100)"
+      xlabel: "Amino acids"

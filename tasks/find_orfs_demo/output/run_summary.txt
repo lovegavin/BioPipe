@@ -1,0 +1,19 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/find_orfs_demo
+generated : 2026-10-15T13:48:36.332682+00:00
+steps     : 3
+elapsed   : 0.199s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   find_orfs               0.049s   steps/01_find_orfs.json
+2   describe                0.000s   steps/02_describe.json
+3   histogram               0.149s   steps/03_histogram.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

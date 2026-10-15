@@ -1,0 +1,184 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/interval_analysis_demo",
+  "generated_at": "2026-10-15T13:13:10.055234+00:00",
+  "n_steps": 12,
+  "total_elapsed": 13.8367,
+  "steps": [
+    {
+      "index": 1,
+      "name": "interval_stats",
+      "elapsed": 0.3939,
+      "inputs": [
+        "ccre"
+      ],
+      "params": {
+        "output": "stats"
+      },
+      "export_path": "steps/01_interval_stats.json"
+    },
+    {
+      "index": 2,
+      "name": "describe",
+      "elapsed": 0.0002,
+      "inputs": [
+        "stats"
+      ],
+      "params": {},
+      "export_path": "steps/02_describe.json"
+    },
+    {
+      "index": 3,
+      "name": "histogram",
+      "elapsed": 0.0902,
+      "inputs": [
+        "stats"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "n_intervals",
+        "bins": 30,
+        "filename": "n_intervals_per_chrom.png",
+        "title": "cCRE count per chromosome",
+        "xlabel": "Interval count"
+      },
+      "export_path": "steps/03_histogram.json"
+    },
+    {
+      "index": 4,
+      "name": "histogram",
+      "elapsed": 0.1057,
+      "inputs": [
+        "stats"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "mean_length",
+        "bins": 40,
+        "filename": "mean_length_per_chrom.png",
+        "title": "Mean cCRE length per chromosome",
+        "xlabel": "Mean length (bp)"
+      },
+      "export_path": "steps/04_histogram.json"
+    },
+    {
+      "index": 5,
+      "name": "interval_merge",
+      "elapsed": 2.5936,
+      "inputs": [
+        "ccre"
+      ],
+      "params": {
+        "min_overlap": 0,
+        "output": "merged"
+      },
+      "export_path": "steps/05_interval_merge.json"
+    },
+    {
+      "index": 6,
+      "name": "describe",
+      "elapsed": 1.6686,
+      "inputs": [
+        "merged"
+      ],
+      "params": {},
+      "export_path": "steps/06_describe.json"
+    },
+    {
+      "index": 7,
+      "name": "histogram",
+      "elapsed": 0.1451,
+      "inputs": [
+        "merged"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "length",
+        "bins": 50,
+        "filename": "merged_length_hist.png",
+        "title": "Merged cCRE region lengths",
+        "xlabel": "Length (bp)"
+      },
+      "export_path": "steps/07_histogram.json"
+    },
+    {
+      "index": 8,
+      "name": "histogram",
+      "elapsed": 0.1202,
+      "inputs": [
+        "merged"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "n_intervals",
+        "bins": 30,
+        "filename": "n_intervals_hist.png",
+        "title": "Intervals merged per region",
+        "xlabel": "n intervals"
+      },
+      "export_path": "steps/08_histogram.json"
+    },
+    {
+      "index": 9,
+      "name": "interval_overlap",
+      "elapsed": 4.2812,
+      "inputs": [
+        "ccre",
+        "reg"
+      ],
+      "params": {
+        "min_overlap": 1,
+        "max_output": 5000000,
+        "output": "pairs"
+      },
+      "export_path": "steps/09_interval_overlap.json"
+    },
+    {
+      "index": 10,
+      "name": "describe",
+      "elapsed": 4.1689,
+      "inputs": [
+        "pairs"
+      ],
+      "params": {},
+      "export_path": "steps/10_describe.json"
+    },
+    {
+      "index": 11,
+      "name": "histogram",
+      "elapsed": 0.1713,
+      "inputs": [
+        "pairs"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "overlap_length",
+        "bins": 50,
+        "filename": "overlap_length_hist.png",
+        "title": "Overlap length (cCRE vs regulatory)",
+        "xlabel": "Overlap (bp)"
+      },
+      "export_path": "steps/11_histogram.json"
+    },
+    {
+      "index": 12,
+      "name": "histogram",
+      "elapsed": 0.0978,
+      "inputs": [
+        "pairs"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "overlap_fraction_a",
+        "bins": 30,
+        "filename": "overlap_fraction_a_hist.png",
+        "title": "cCRE fraction covered by regulatory element",
+        "xlabel": "overlap_fraction_a"
+      },
+      "export_path": "steps/12_histogram.json"
+    }
+  ],
+  "status": "complete",
+  "error": null,
+  "run_id": "20261015T131245-39f089f23db3",
+  "event_log": "/home/lovagavin/biopipe/tasks/interval_analysis_demo/output/runs/20261015T131245-39f089f23db3/events.jsonl"
+}

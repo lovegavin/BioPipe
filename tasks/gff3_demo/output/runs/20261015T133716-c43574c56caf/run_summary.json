@@ -1,0 +1,11 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/gff3_demo",
+  "generated_at": "2026-10-15T13:37:28.906767+00:00",
+  "n_steps": 0,
+  "total_elapsed": 0,
+  "steps": [],
+  "status": "failed",
+  "error": "",
+  "run_id": "20261015T133716-c43574c56caf",
+  "event_log": "/home/lovagavin/biopipe/tasks/gff3_demo/output/runs/20261015T133716-c43574c56caf/events.jsonl"
+}
