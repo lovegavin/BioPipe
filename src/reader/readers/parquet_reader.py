@@ -4,8 +4,8 @@
 A two-dimensional columnar table. Column names come from the Parquet
 metadata; there is no header-line concept and no ``header`` arg.
 
-Compression is handled by pyarrow internally; this reader receives
-the original path.
+Parquet internal compression is handled by pyarrow. External compression
+wrappers are decompressed to disk by the framework before parsing.
 
 Label rules accepted:
 
@@ -55,7 +55,7 @@ class ParquetReader(Reader):
     file_input = {'dims': ['sample', 'feature'], 'labels': {'sample': 'auto', 'feature': 'builtin'}}
 
     extensions = [".parquet"]
-    handles_compression = True
+    handles_compression = False
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:

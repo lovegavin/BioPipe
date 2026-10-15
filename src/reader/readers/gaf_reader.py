@@ -96,6 +96,7 @@ class GafReader(Reader):
     file_input = {
         "dims": ["annotation", "field"],
         "labels": {"annotation": "auto", "field": "builtin"},
+        "compression": [".gz"],
     }
 
     extensions = [".gaf"]
@@ -246,7 +247,7 @@ class GafReader(Reader):
 
 
 def _load_rows(path: Path) -> list[list[str]]:
-    opener = gzip.open if path.suffix == ".gz" else open
+    opener = gzip.open if path.suffix.lower() == ".gz" else open
     rows: list[list[str]] = []
     with opener(path, "rt", encoding="utf-8") as fh:
         for line in fh:

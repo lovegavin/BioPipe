@@ -164,9 +164,9 @@ class JobService:
         }
 
     def launch(self, graph: Graph):
-        graph = self.plugins.pin(graph)
-        catalog = self.plugins.catalog_for(graph, self.base_catalog)
         plugin_snapshot = self.plugins.snapshot(graph)
+        graph = self.plugins.pin(graph, snapshot=plugin_snapshot)
+        catalog = self.plugins._catalog(plugin_snapshot, self.base_catalog)
         manifest, order = compile_graph(graph, catalog, self.root, require_files=True)
         with self.lock:
             self._refresh_jobs()
@@ -181,6 +181,8 @@ class JobService:
                    "finished_at": None, "error": None, "exit_code": None, "logs_complete": False,
                    "order": order, "graph": graph.model_dump(mode="json"), "owner": self.owner}
             job["plugins"] = {"generation": plugin_snapshot["generation"], "packages": plugin_snapshot["packages"]}
+            if plugin_snapshot.get('bundled_updates'):
+                job['plugins']['bundled_updates'] = plugin_snapshot['bundled_updates']
             if any(node.kind == "route" for node in graph.nodes):
                 _, job["node_owners"] = expand_routes(graph, self.catalog)
             self.jobs[key] = job

@@ -11,9 +11,25 @@ import json
 from pathlib import Path
 
 
+def _stamp(path):
+    stat = path.stat()
+    return str(path), stat.st_mtime_ns, stat.st_ctime_ns, stat.st_size
+
+
 @lru_cache(maxsize=1)
+def _manifest(stamp):
+    return json.loads(Path(stamp[0]).read_text(encoding="utf-8"))
+
+
 def bundled_manifest():
-    return json.loads(Path(__file__).with_name("builtin_packages.json").read_text(encoding="utf-8"))
+    return _manifest(_stamp(Path(__file__).with_name("builtin_packages.json")))
+
+
+def _provider_paths(root, package):
+    paths = {root / (d["entry_point"].split(":")[0].replace(".", "/") + ".py") for d in package["descriptors"]}
+    paths.update((root / "src/task/step/steps").glob("_*.py"))
+    paths.update((root / "src/reader/readers").glob("_*.py"))
+    return sorted(paths)
 
 
 def bundled_entries(kind):
@@ -33,18 +49,24 @@ def load_entry(descriptor):
     return cls
 
 
-@lru_cache(maxsize=1)
 def bundled_state():
+    # Check file metadata, not operator imports/scans. A long-lived Studio must
+    # observe the same implementation bytes as its next fresh worker process.
+    root = Path(__file__).resolve().parents[1]
+    index = _stamp(root / "biopipe/builtin_packages.json")
+    paths = {p for package in _manifest(index)["packages"] for p in _provider_paths(root, package)}
+    return _bundled_state(index, tuple(_stamp(p) for p in sorted(paths)))
+
+
+@lru_cache(maxsize=1)
+def _bundled_state(index, sources):
+    root = Path(index[0]).parents[1]
     packages, descriptors = [], []
-    for original in bundled_manifest()["packages"]:
+    for original in _manifest(index)["packages"]:
         package = {k: deepcopy(v) for k, v in original.items() if k != "descriptors"}
         # Include implementation bytes: editing a builtin never silently reuses a lock.
         digest = hashlib.sha256(json.dumps(original, sort_keys=True).encode())
-        root = Path(__file__).resolve().parents[1]
-        paths = {root / (d["entry_point"].split(":")[0].replace(".", "/") + ".py") for d in original["descriptors"]}
-        paths.update((root / "src/task/step/steps").glob("_*.py"))
-        paths.update((root / "src/reader/readers").glob("_*.py"))
-        for path in sorted(paths):
+        for path in _provider_paths(root, original):
             digest.update(path.relative_to(root).as_posix().encode())
             # Normalize universal newlines so Git's CRLF/LF checkout policy
             # does not make identical providers look different across machines.

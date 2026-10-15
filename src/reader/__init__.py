@@ -70,6 +70,14 @@ def pick_reader(path: Path) -> Reader:
 
     if not candidates:
         ext = primary_ext(path)
+        from biopipe.file_formats import COMPRESSION_SUFFIXES, compression_extensions
+        matching = [r for r in READERS if ext in r.extensions]
+        if path.suffix.lower() in COMPRESSION_SUFFIXES and matching and all(
+                path.suffix.lower() not in compression_extensions({
+                    'file_input': r.file_input, 'handles_compression': r.handles_compression})
+                for r in matching):
+            raise ReaderError(f"Unsupported compression '{path.suffix}' for {ext} at {path}. "
+                              "Use a compression suffix declared by the Reader or decompress the input first.")
         known = sorted({e for r in READERS for e in r.extensions})
         raise ReaderError(
             f"No reader for extension '{ext}' at {path}. "
@@ -94,18 +102,16 @@ def _decompressed(path: Path):
         yield path
         return
 
-    real_suffix = path.with_suffix("").suffix
-    fd, tmp_name = tempfile.mkstemp(suffix=real_suffix)
-    os.close(fd)
-    tmp_path = Path(tmp_name)
-
-    try:
-        opener = _COMPRESSION[suffix]
-        with opener(path, "rb") as src, open(tmp_path, "wb") as dst:
-            shutil.copyfileobj(src, dst)
+    # Keep parser-generated indexes in the same disposable directory. Some
+    # binary readers generate sidecars, which a single mkstemp file leaked.
+    with tempfile.TemporaryDirectory(prefix="biopipe-reader-") as directory:
+        tmp_path = Path(directory) / path.with_suffix("").name
+        try:
+            with _COMPRESSION[suffix](path, "rb") as src, open(tmp_path, "wb") as dst:
+                shutil.copyfileobj(src, dst, length=1024 * 1024)
+        except (OSError, EOFError, lzma.LZMAError) as exc:
+            raise ReaderError(f"Could not decompress {path}: {exc}") from exc
         yield tmp_path
-    finally:
-        tmp_path.unlink(missing_ok=True)
 
 
 def read_source(

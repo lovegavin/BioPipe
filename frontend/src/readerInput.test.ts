@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { inputAccept, renameSourceDimensions } from './readerInput';
+import { inputAccept, readerForPath, renameSourceDimensions } from './readerInput';
 import type { Catalog } from './types';
 
 describe('registry-based input file filters', () => {
@@ -17,6 +17,18 @@ describe('registry-based input file filters', () => {
   });
   it('accepts newly registered formats without a frontend extension table', () => {
     expect(inputAccept({schema_version:1, operators:[], readers:[{name:'LabReader',extensions:['.lab'],handles_compression:true,output_contract:null}]})).toBe('.lab');
+  });
+  it('uses the same declared compression rules for selection and the inspector', () => {
+    const catalog: Catalog = {schema_version:1, operators:[], readers:[
+      {name:'GafReader', extensions:['.gaf'], handles_compression:true, output_contract:null,
+        file_input:{compression:['.gz']}},
+      {name:'H5adReader', extensions:['.h5ad'], handles_compression:false, output_contract:null},
+    ]};
+    expect(inputAccept(catalog)).toContain('.gaf.gz');
+    expect(readerForPath(catalog, 'INPUT.GAF.GZ')?.name).toBe('GafReader');
+    expect(readerForPath(catalog, 'input.gaf.xz')).toBeUndefined();
+    expect(readerForPath(catalog, 'input.h5ad.xz')?.name).toBe('H5adReader');
+    expect(readerForPath(catalog, 'input.h5ad.zst')).toBeUndefined();
   });
 });
 

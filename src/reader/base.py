@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from src.core import Form
+from biopipe.file_formats import COMPRESSION_SUFFIXES, compression_extensions, uncompressed_path
 
 
 class Reader(ABC):
@@ -67,6 +68,11 @@ class Reader(ABC):
         ext = primary_ext(path)
         if ext not in self.extensions:
             return False
+        suffix = path.suffix.lower()
+        if suffix in COMPRESSION_SUFFIXES and suffix not in compression_extensions({
+                'file_input': self.file_input, 'handles_compression': self.handles_compression}):
+            return False
+        path = uncompressed_path(path)
         for sib_ext in self.requires_siblings:
             if not path.with_suffix(sib_ext).exists():
                 return False
@@ -86,14 +92,8 @@ class Reader(ABC):
         ...
 
 
-_COMPRESSION = {".gz", ".bz2", ".xz", ".zst"}
-
-
 def primary_ext(path: Path) -> str:
-    p = Path(path)
-    if p.suffix.lower() in _COMPRESSION:
-        p = p.with_suffix("")
-    return p.suffix.lower()
+    return uncompressed_path(path).suffix.lower()
 
 
 __all__ = ["Reader", "primary_ext"]

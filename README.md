@@ -64,6 +64,12 @@ uploading and saving do not require optional reader libraries. See
 dependencies are listed in `requirements-readers.txt`; DESeq2 and survival analyses
 use `requirements-analysis.txt`. Dependencies can also be installed with uv.
 
+Compressed inputs follow the Reader registry: gzip GAF/VCF/MTX are supported,
+and ordinary tables, annotations, FASTA, H5AD, Parquet and BGEN support external
+gzip/bzip2/xz wrappers. Internal container compression is distinct from an outer
+wrapper. H5AD keeps its bounded disk preparation when wrapped in gzip. PLINK file
+sets still require uncompressed files; ZIP archives are not datasets.
+
 On Windows, a built desktop distribution starts by double-clicking
 `dist/BioPipe Studio/BioPipe Studio.exe`. The host bundles the frontend and backend
 startup logic. Python, the backend source and analysis dependencies remain separate.
@@ -431,6 +437,9 @@ class Reader(ABC):
 - `handles_compression`:
   - `False`: the framework decompresses to a temp file first; the Reader only sees a plain file.
   - `True`: the Reader handles compression itself, or needs the original path and same-directory siblings.
+  - For a native parser, list supported outer suffixes in `file_input.compression`
+    (for example `[".gz"]`). Internal HDF5/Parquet/BGEN compression does not justify
+    setting this flag. Import filtering and runtime routing use the same declaration.
 
 ### Routing and auto-discovery
 
@@ -445,6 +454,10 @@ not a runtime registration mechanism.
 1. Calls `pick_reader(path)` to select the unique matching Reader.
 2. If the Reader does not handle compression, decompresses to a temp file via `_decompressed`.
 3. Calls `reader.read(...)`.
+
+Custom metadata probes and `read_to_disk` receive the same prepared path. The base
+metadata probe only stats the original file; it does not need decompression.
+Temporary files and parser-generated indexes are cleaned up after use.
 
 ### Label rules
 
