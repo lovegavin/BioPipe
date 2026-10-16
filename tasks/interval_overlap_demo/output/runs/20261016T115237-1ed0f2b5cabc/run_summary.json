@@ -1,0 +1,71 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/interval_overlap_demo",
+  "generated_at": "2026-10-16T11:52:51.088739+00:00",
+  "n_steps": 4,
+  "total_elapsed": 5.1072,
+  "steps": [
+    {
+      "index": 1,
+      "name": "interval_overlap",
+      "elapsed": 4.2233,
+      "inputs": [
+        "ccre",
+        "reg"
+      ],
+      "params": {
+        "min_overlap": 1,
+        "max_output": 5000000,
+        "output": "pairs"
+      },
+      "export_path": "steps/01_interval_overlap.json"
+    },
+    {
+      "index": 2,
+      "name": "describe",
+      "elapsed": 0.6234,
+      "inputs": [
+        "pairs"
+      ],
+      "params": {},
+      "export_path": "steps/02_describe.json"
+    },
+    {
+      "index": 3,
+      "name": "histogram",
+      "elapsed": 0.1582,
+      "inputs": [
+        "pairs"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "overlap_length",
+        "bins": 50,
+        "filename": "overlap_length_hist.png",
+        "title": "Overlap length (cCRE vs Ensembl regulatory)",
+        "xlabel": "Overlap (bp)"
+      },
+      "export_path": "steps/03_histogram.json"
+    },
+    {
+      "index": 4,
+      "name": "histogram",
+      "elapsed": 0.1023,
+      "inputs": [
+        "pairs"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "overlap_fraction_a",
+        "bins": 30,
+        "filename": "overlap_fraction_a_hist.png",
+        "title": "cCRE fraction covered by regulatory element",
+        "xlabel": "overlap_fraction_a"
+      },
+      "export_path": "steps/04_histogram.json"
+    }
+  ],
+  "status": "complete",
+  "error": null,
+  "run_id": "20261016T115237-1ed0f2b5cabc",
+  "event_log": "/home/lovagavin/biopipe/tasks/interval_overlap_demo/output/runs/20261016T115237-1ed0f2b5cabc/events.jsonl"
+}

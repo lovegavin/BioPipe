@@ -3,19 +3,25 @@
 Input: Form from Gff3Reader or GtfReader.
     data   2D float32, shape (n_records, n_fields)
     dims   [record, field]
-    labels field = column names including type / start / end / strand
-    info   missing_code=NaN, encoders={field: {label: encoder}}
+    labels field includes seqid / type / start / end / strand, plus
+           optionally attributes (GFF3: 'attributes', GTF: 'attribute')
+    info   missing_code=NaN, encoders={field: {column: encoder}}
 
-Every record whose type is "gene" becomes one output row. Exon and
-CDS counts, together with the CDS length, are computed by span
-containment: a record is attributed to a gene when its seqid matches
-and its interval lies inside the gene's [start, end] range.
+Every record whose feature type is exactly "gene" becomes one output
+row. Exon and CDS records are attributed to their parent gene using
+the annotation's own parent chain:
 
-GFF3 and GTF both express gene -> mRNA -> exon hierarchies. The
-hierarchy varies by file and is not always complete, so this operator
-uses span containment instead of parent-id lookups. Nested genes
-(gene fully contained inside another gene) would be mis-attributed,
-which is rare enough to be acceptable for annotation QC.
+  * GTF: each exon / CDS record carries ``gene_id "X"`` directly.
+  * GFF3: each exon / CDS record carries ``Parent=transcript:Y``; the
+    transcript record Y carries ``Parent=gene:X``.
+
+Records whose parent chain resolves to a gene that is not in the
+"gene" feature set (for example an exon of an ``ncRNA_gene``) are
+skipped. When a record carries no attribute information at all
+(minimal fixtures), the operator falls back to span containment: the
+record is attributed to the first gene whose span on the same
+sequence contains it. Span containment mis-attributes nested genes,
+so it is used only when the parent chain is unavailable.
 
 Output:
     data   2D float32, shape (n_genes, 5)
@@ -37,12 +43,21 @@ from src.core.forms.metadata import project_metadata
 from src.task.context import Context
 from src.task.step.base import Step
 
+from ._annotation_columns import (
+    parse_direct_gene_id,
+    parse_gene_id,
+    parse_parent,
+    parse_record_id,
+    require_role,
+    try_role,
+)
+
 
 _STAT_LABELS = ("n_exons", "n_introns", "gene_length", "cds_total", "strand")
 
 
 class GeneStructureStep(Step):
-    """Per-gene exon/intron/CDS summary by span containment."""
+    """Per-gene exon/intron/CDS summary for GFF3/GTF annotations."""
 
     name = "gene_structure"
     category = "analysis"
@@ -91,43 +106,49 @@ class GeneStructureStep(Step):
             )
 
         fld_labels = form.labels.get(fld_dim, {})
-        for required in ("seqid", "type", "start", "end", "strand"):
-            if required not in fld_labels:
-                raise StepError(
-                    f"gene_structure: field dim '{fld_dim}' has no "
-                    f"'{required}' label. Available: {sorted(fld_labels)}"
-                )
-
         encoders = form.info.get("encoders", {}).get(fld_dim, {})
-        type_enc = encoders.get("type")
-        seqid_enc = encoders.get("seqid")
-        strand_enc = encoders.get("strand")
-        for name, enc in (("type", type_enc), ("seqid", seqid_enc),
-                          ("strand", strand_enc)):
-            if enc is None:
-                raise StepError(
-                    f"gene_structure: '{name}' column is not encoded"
-                )
 
-        type_codes = form.data[:, fld_labels["type"]]
-        seqid_codes = form.data[:, fld_labels["seqid"]]
-        starts = form.data[:, fld_labels["start"]].astype(np.float64)
-        ends = form.data[:, fld_labels["end"]].astype(np.float64)
-        strand_codes = form.data[:, fld_labels["strand"]]
+        _, seqid_idx, seqid_enc = require_role(
+            fld_labels, encoders, "seqid", "gene_structure",
+        )
+        _, type_idx, type_enc = require_role(
+            fld_labels, encoders, "type", "gene_structure",
+        )
+        _, start_idx, _ = require_role(
+            fld_labels, encoders, "start", "gene_structure",
+            require_encoder=False,
+        )
+        _, end_idx, _ = require_role(
+            fld_labels, encoders, "end", "gene_structure",
+            require_encoder=False,
+        )
+        _, strand_idx, strand_enc = require_role(
+            fld_labels, encoders, "strand", "gene_structure",
+        )
+        attr_name, attr_idx, attr_enc = try_role(
+            fld_labels, encoders, "attributes",
+        )
 
+        starts = form.data[:, start_idx].astype(np.float64)
+        ends = form.data[:, end_idx].astype(np.float64)
         if np.any(~np.isfinite(starts)) or np.any(~np.isfinite(ends)):
             raise StepError("gene_structure: start/end columns contain NaN")
 
-        type_per_record = [
-            type_enc.inverse.get(int(round(float(c))), "") for c in type_codes
-        ]
-        seqid_per_record = [
-            seqid_enc.inverse.get(int(round(float(c))), "") for c in seqid_codes
-        ]
-        strand_per_record = [
-            strand_enc.inverse.get(int(round(float(c))), "+")
-            for c in strand_codes
-        ]
+        n_records = form.data.shape[0]
+
+        def decode(enc, idx, default=""):
+            return [
+                enc.inverse.get(int(round(float(form.data[i, idx]))), default)
+                for i in range(n_records)
+            ]
+
+        type_per_record = decode(type_enc, type_idx)
+        seqid_per_record = decode(seqid_enc, seqid_idx)
+        strand_per_record = decode(strand_enc, strand_idx, default="+")
+        if attr_name is not None and attr_enc is not None:
+            attr_per_record = decode(attr_enc, attr_idx)
+        else:
+            attr_per_record = [None] * n_records
 
         gene_indices = [i for i, t in enumerate(type_per_record) if t == "gene"]
         if not gene_indices:
@@ -135,66 +156,109 @@ class GeneStructureStep(Step):
                 "gene_structure: no 'gene' records found in input"
             )
 
-        exon_indices = [i for i, t in enumerate(type_per_record) if t == "exon"]
-        cds_indices = [i for i, t in enumerate(type_per_record) if t == "CDS"]
+        gene_id_by_index: dict[int, str] = {}
+        gene_names: list[str] = []
+        for gi in gene_indices:
+            raw = attr_per_record[gi]
+            gid = parse_gene_id(raw) if raw else None
+            if not gid:
+                gid = f"gene_{gi}"
+            gene_id_by_index[gi] = gid
+            gene_names.append(gid)
+        gene_set = set(gene_names)
 
-        # Group exons and CDS by seqid so containment checks only look
-        # at records on the same chromosome.
-        exons_by_chrom: dict[str, list[tuple[float, float]]] = {}
-        for i in exon_indices:
-            exons_by_chrom.setdefault(seqid_per_record[i], []).append(
-                (starts[i], ends[i])
+        # transcript -> gene map (GFF3 parent chain).
+        transcript_to_gene: dict[str, str] = {}
+        for i, t in enumerate(type_per_record):
+            if t in ("gene", "exon", "CDS"):
+                continue
+            raw = attr_per_record[i]
+            if not raw:
+                continue
+            tid = parse_record_id(raw)
+            kind, pid = parse_parent(raw)
+            if tid and kind == "gene" and pid:
+                transcript_to_gene[tid] = pid
+
+        def resolve_parent_gene(raw):
+            if not raw:
+                return None
+            gid = parse_direct_gene_id(raw)
+            if gid is not None:
+                return gid
+            kind, pid = parse_parent(raw)
+            if pid is None:
+                return None
+            if kind == "gene":
+                return pid
+            return transcript_to_gene.get(pid)
+
+        exons_by_gene: dict[str, list[tuple[float, float]]] = {
+            gid: [] for gid in gene_set
+        }
+        cds_by_gene: dict[str, list[tuple[float, float]]] = {
+            gid: [] for gid in gene_set
+        }
+        fallback_exons: list[int] = []
+        fallback_cds: list[int] = []
+
+        for i, t in enumerate(type_per_record):
+            if t not in ("exon", "CDS"):
+                continue
+            gid = resolve_parent_gene(attr_per_record[i])
+            if gid is not None:
+                if gid in gene_set:
+                    target = exons_by_gene if t == "exon" else cds_by_gene
+                    target[gid].append((float(starts[i]), float(ends[i])))
+            else:
+                if t == "exon":
+                    fallback_exons.append(i)
+                else:
+                    fallback_cds.append(i)
+
+        gene_spans = {
+            gene_id_by_index[gi]: (
+                seqid_per_record[gi],
+                float(starts[gi]),
+                float(ends[gi]),
             )
-        cds_by_chrom: dict[str, list[tuple[float, float]]] = {}
-        for i in cds_indices:
-            cds_by_chrom.setdefault(seqid_per_record[i], []).append(
-                (starts[i], ends[i])
-            )
+            for gi in gene_indices
+        }
 
-        # Attributes column, if present, provides stable gene names.
-        attr_col = fld_labels.get("attributes")
-        attr_enc = encoders.get("attributes") if attr_col is not None else None
+        def attribute_by_span(i):
+            sid = seqid_per_record[i]
+            s = float(starts[i])
+            e = float(ends[i])
+            for gid, (gsid, gs, ge) in gene_spans.items():
+                if gsid == sid and s >= gs and e <= ge:
+                    return gid
+            return None
 
-        def gene_name(i):
-            if attr_col is not None and attr_enc is not None:
-                code = int(round(float(form.data[i, attr_col])))
-                raw = attr_enc.inverse.get(code, "")
-                for part in str(raw).split(";"):
-                    for prefix in ("gene_id=", "ID="):
-                        if part.startswith(prefix):
-                            value = part.split("=", 1)[1].split(",")[0]
-                            # Strip GFF3 type prefix like "gene:YAL069W".
-                            if ":" in value:
-                                value = value.split(":", 1)[1]
-                            return value
-            return f"gene_{i}"
+        for i in fallback_exons:
+            gid = attribute_by_span(i)
+            if gid is not None:
+                exons_by_gene[gid].append((float(starts[i]), float(ends[i])))
+        for i in fallback_cds:
+            gid = attribute_by_span(i)
+            if gid is not None:
+                cds_by_gene[gid].append((float(starts[i]), float(ends[i])))
 
         rows: list[list[float]] = []
-        gene_names: list[str] = []
-
         for gi in gene_indices:
-            gs = float(starts[gi])
-            ge = float(ends[gi])
-            gseq = seqid_per_record[gi]
+            gid = gene_id_by_index[gi]
+            s = float(starts[gi])
+            e = float(ends[gi])
             strand_name = strand_per_record[gi]
             strand_val = 1.0 if strand_name == "+" else -1.0
 
-            n_exons = 0
-            for (es, ee) in exons_by_chrom.get(gseq, []):
-                if es >= gs and ee <= ge:
-                    n_exons += 1
-            cds_total = 0.0
-            for (cs, ce) in cds_by_chrom.get(gseq, []):
-                if cs >= gs and ce <= ge:
-                    cds_total += float(ce - cs + 1.0)
-
+            n_exons = len(exons_by_gene[gid])
             n_introns = max(0, n_exons - 1)
-            gene_len = ge - gs + 1.0
+            gene_len = e - s + 1.0
+            cds_total = sum(ee - es + 1.0 for es, ee in cds_by_gene[gid])
             rows.append([
                 float(n_exons), float(n_introns), gene_len,
                 cds_total, strand_val,
             ])
-            gene_names.append(gene_name(gi))
 
         out_data = np.asarray(rows, dtype=np.float32)
 
@@ -222,12 +286,15 @@ class GeneStructureStep(Step):
             "n_multi_exon_genes": multi_exon,
             "mean_exons": float(out_data[:, 0].mean()),
             "mean_gene_length": float(out_data[:, 2].mean()),
+            "fallback_exons": len(fallback_exons),
+            "fallback_cds": len(fallback_cds),
         }
 
         print(
             f"[gene_structure] {len(gene_indices)} genes, "
             f"{multi_exon} multi-exon, "
-            f"mean_exons={out_data[:, 0].mean():.2f}"
+            f"mean_exons={out_data[:, 0].mean():.2f}, "
+            f"fallback exon/CDS={len(fallback_exons)}/{len(fallback_cds)}"
         )
 
     def export(self, ctx: Context) -> dict:

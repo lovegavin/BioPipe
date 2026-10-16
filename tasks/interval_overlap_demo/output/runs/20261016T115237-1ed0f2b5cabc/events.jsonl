@@ -1,0 +1,17 @@
+{"message": "Loading the analysis engine", "time": "2026-10-16T11:52:37.148373+00:00", "event": "worker_started"}
+{"run_id": "20261016T115237-1ed0f2b5cabc", "memory_enabled": false, "time": "2026-10-16T11:52:38.181702+00:00", "event": "run_started"}
+{"name": "ccre", "shape": [1063878, 6], "dims": ["region", "field"], "time": "2026-10-16T11:52:42.493721+00:00", "event": "source_loaded"}
+{"name": "reg", "shape": [580745, 5], "dims": ["region", "field"], "time": "2026-10-16T11:52:43.953425+00:00", "event": "source_loaded"}
+{"name": "interval_overlap", "index": 1, "time": "2026-10-16T11:52:43.953573+00:00", "event": "step_started"}
+{"name": "interval_overlap", "inputs": 2, "outputs": ["pairs"], "contract_version": 1, "time": "2026-10-16T11:52:48.466559+00:00", "event": "contract_checked"}
+{"name": "interval_overlap", "index": 1, "seconds": 4.22325803800004, "time": "2026-10-16T11:52:48.476200+00:00", "event": "step_finished"}
+{"name": "describe", "index": 2, "time": "2026-10-16T11:52:48.476314+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T11:52:50.124041+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 2, "seconds": 0.6234349910000674, "time": "2026-10-16T11:52:50.129748+00:00", "event": "step_finished"}
+{"name": "histogram", "index": 3, "time": "2026-10-16T11:52:50.129843+00:00", "event": "step_started"}
+{"name": "histogram", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T11:52:50.626921+00:00", "event": "contract_checked"}
+{"name": "histogram", "index": 3, "seconds": 0.15818179699999746, "time": "2026-10-16T11:52:50.649282+00:00", "event": "step_finished"}
+{"name": "histogram", "index": 4, "time": "2026-10-16T11:52:50.649388+00:00", "event": "step_started"}
+{"name": "histogram", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T11:52:51.083044+00:00", "event": "contract_checked"}
+{"name": "histogram", "index": 4, "seconds": 0.10230369900000369, "time": "2026-10-16T11:52:51.088671+00:00", "event": "step_finished"}
+{"status": "complete", "error": null, "time": "2026-10-16T11:52:51.088728+00:00", "event": "run_finished"}

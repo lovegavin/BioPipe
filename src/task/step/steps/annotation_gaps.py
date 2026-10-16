@@ -1,27 +1,4 @@
-"""Inter-gene gap statistics for any GFF3/GTF Form.
-
-Groups gene records by seqid, sorts them by start position, and
-reports the gap between every pair of consecutive genes.
-
-gap_length = next.start - current.end - 1
-
-Genes overlapping or touching each other (gap_length < 0 or 0)
-are skipped. Gaps are reported per chromosome in start order.
-
-Output:
-    data   2D float32, shape (n_gaps, 5)
-    dims   [gap, statistic]
-    statistic = [gap_length, left_start, left_end, right_start, right_end]
-    info["seqid"]      axis-parallel, name of the source chromosome
-    info["left_gene"]  axis-parallel, "seqid:start-end" of the left gene
-    info["right_gene"] axis-parallel, "seqid:start-end" of the right gene
-
-Params:
-    record_dim : name of the record axis (default "record")
-    field_dim  : name of the field axis (default "field")
-    min_gap    : report only gaps >= this many bp (default 0)
-    output     : context key for the result (default: step name)
-"""
+"""Inter-gene gap statistics for any GFF3/GTF Form."""
 from __future__ import annotations
 
 import numpy as np
@@ -31,6 +8,8 @@ from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
 from src.task.context import Context
 from src.task.step.base import Step
+
+from ._annotation_columns import require_role
 
 
 _STAT_LABELS = ("gap_length", "left_start", "left_end",
@@ -89,26 +68,27 @@ class AnnotationGapsStep(Step):
             )
 
         fld_labels = form.labels.get(fld_dim, {})
-        for required in ("seqid", "type", "start", "end"):
-            if required not in fld_labels:
-                raise StepError(
-                    f"annotation_gaps: field dim '{fld_dim}' has no "
-                    f"'{required}' label. Available: {sorted(fld_labels)}"
-                )
-
         encoders = form.info.get("encoders", {}).get(fld_dim, {})
-        type_enc = encoders.get("type")
-        seqid_enc = encoders.get("seqid")
-        for name, enc in (("type", type_enc), ("seqid", seqid_enc)):
-            if enc is None:
-                raise StepError(
-                    f"annotation_gaps: '{name}' column is not encoded"
-                )
 
-        type_codes = form.data[:, fld_labels["type"]]
-        seqid_codes = form.data[:, fld_labels["seqid"]]
-        starts = form.data[:, fld_labels["start"]]
-        ends = form.data[:, fld_labels["end"]]
+        _, seqid_idx, seqid_enc = require_role(
+            fld_labels, encoders, "seqid", "annotation_gaps",
+        )
+        _, type_idx, type_enc = require_role(
+            fld_labels, encoders, "type", "annotation_gaps",
+        )
+        _, start_idx, _ = require_role(
+            fld_labels, encoders, "start", "annotation_gaps",
+            require_encoder=False,
+        )
+        _, end_idx, _ = require_role(
+            fld_labels, encoders, "end", "annotation_gaps",
+            require_encoder=False,
+        )
+
+        type_codes = form.data[:, type_idx]
+        seqid_codes = form.data[:, seqid_idx]
+        starts = form.data[:, start_idx]
+        ends = form.data[:, end_idx]
 
         genes_by_seq: dict[str, list[tuple[float, float]]] = {}
         for i in range(form.data.shape[0]):
@@ -140,7 +120,6 @@ class AnnotationGapsStep(Step):
                 if gap < min_gap:
                     continue
                 if gap < 0:
-                    # Overlapping genes: no gap to report.
                     continue
                 rows.append([gap, ls, le, rs, re])
                 seqid_col.append(sid)

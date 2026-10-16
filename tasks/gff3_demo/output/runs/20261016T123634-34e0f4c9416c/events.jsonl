@@ -1,0 +1,4 @@
+{"message": "Loading the analysis engine", "time": "2026-10-16T12:36:34.122004+00:00", "event": "worker_started"}
+{"run_id": "20261016T123634-34e0f4c9416c", "memory_enabled": false, "time": "2026-10-16T12:36:35.246290+00:00", "event": "run_started"}
+{"name": "annotation", "shape": [3456533, 9], "dims": ["feature", "field"], "time": "2026-10-16T12:36:47.303536+00:00", "event": "source_loaded"}
+{"name": "describe", "index": 1, "time": "2026-10-16T12:36:47.303705+00:00", "event": "step_started"}

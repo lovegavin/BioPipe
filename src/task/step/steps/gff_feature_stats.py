@@ -1,27 +1,4 @@
-"""Per-feature-type statistics for any GFF3/GTF Form.
-
-Input: Form from Gff3Reader or GtfReader.
-    data   2D float32, shape (n_records, n_fields)
-    dims   [record, field]
-    labels field = GFF3 column names (seqid, source, type, start,
-                   end, score, strand, phase, attributes)
-    info   missing_code=NaN, encoders={field: {label: encoder}}
-
-Output:
-    data   2D float32, shape (n_types, 6)
-    dims   [feature_type, statistic]
-    statistic = [count, total_length, mean_length, min_length,
-                 max_length, mean_exons_per_gene]
-
-mean_exons_per_gene is the ratio of "exon" records to "gene"
-records in the whole file; it is only meaningful for the "gene"
-row, and is 0 for every other feature type.
-
-Params:
-    record_dim : name of the record axis (default "record")
-    field_dim  : name of the field axis (default "field")
-    output     : context key for the result (default: step name)
-"""
+"""Per-feature-type statistics for any GFF3/GTF Form."""
 from __future__ import annotations
 
 import numpy as np
@@ -31,6 +8,8 @@ from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
 from src.task.context import Context
 from src.task.step.base import Step
+
+from ._annotation_columns import require_role
 
 
 _STAT_LABELS = (
@@ -89,24 +68,23 @@ class GffFeatureStatsStep(Step):
             )
 
         fld_labels = form.labels.get(fld_dim, {})
-        for required in ("type", "start", "end"):
-            if required not in fld_labels:
-                raise StepError(
-                    f"gff_feature_stats: field dim '{fld_dim}' has no "
-                    f"'{required}' label. Available: {sorted(fld_labels)}"
-                )
-
         encoders = form.info.get("encoders", {}).get(fld_dim, {})
-        type_enc = encoders.get("type")
-        if type_enc is None:
-            raise StepError(
-                "gff_feature_stats: 'type' column is not encoded; "
-                "Gff3Reader should have encoded it"
-            )
 
-        type_codes = form.data[:, fld_labels["type"]]
-        starts = form.data[:, fld_labels["start"]]
-        ends = form.data[:, fld_labels["end"]]
+        _, type_idx, type_enc = require_role(
+            fld_labels, encoders, "type", "gff_feature_stats",
+        )
+        _, start_idx, _ = require_role(
+            fld_labels, encoders, "start", "gff_feature_stats",
+            require_encoder=False,
+        )
+        _, end_idx, _ = require_role(
+            fld_labels, encoders, "end", "gff_feature_stats",
+            require_encoder=False,
+        )
+
+        type_codes = form.data[:, type_idx]
+        starts = form.data[:, start_idx]
+        ends = form.data[:, end_idx]
 
         lengths = ends - starts + 1.0
 
@@ -118,10 +96,6 @@ class GffFeatureStatsStep(Step):
         n_types = len(type_names)
         out_data = np.zeros((n_types, len(_STAT_LABELS)), dtype=np.float32)
 
-        type_position = {
-            type_enc.inverse[int(round(float(c)))]: i
-            for i, c in enumerate(type_codes)
-        }
         name_per_record = [
             type_enc.inverse[int(round(float(c)))] for c in type_codes
         ]

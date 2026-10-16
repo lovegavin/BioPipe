@@ -1,0 +1,13 @@
+{"message": "Loading the analysis engine", "time": "2026-10-16T11:52:57.688159+00:00", "event": "worker_started"}
+{"run_id": "20261016T115257-a411f71f3486", "memory_enabled": false, "time": "2026-10-16T11:52:59.162037+00:00", "event": "run_started"}
+{"name": "seqs", "shape": [3, 29903], "dims": ["sequence", "position"], "time": "2026-10-16T11:52:59.316421+00:00", "event": "source_loaded"}
+{"name": "motif_scan", "index": 1, "time": "2026-10-16T11:52:59.316700+00:00", "event": "step_started"}
+{"name": "motif_scan", "inputs": 1, "outputs": ["hits"], "contract_version": 1, "time": "2026-10-16T11:52:59.358626+00:00", "event": "contract_checked"}
+{"name": "motif_scan", "index": 1, "seconds": 0.033290500000020984, "time": "2026-10-16T11:52:59.358754+00:00", "event": "step_finished"}
+{"name": "describe", "index": 2, "time": "2026-10-16T11:52:59.358797+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T11:52:59.359173+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 2, "seconds": 0.00015819999998711864, "time": "2026-10-16T11:52:59.359199+00:00", "event": "step_finished"}
+{"name": "heatmap", "index": 3, "time": "2026-10-16T11:52:59.359226+00:00", "event": "step_started"}
+{"name": "heatmap", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T11:52:59.440157+00:00", "event": "contract_checked"}
+{"name": "heatmap", "index": 3, "seconds": 0.08068869899989295, "time": "2026-10-16T11:52:59.440203+00:00", "event": "step_finished"}
+{"status": "complete", "error": null, "time": "2026-10-16T11:52:59.440230+00:00", "event": "run_finished"}

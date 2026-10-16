@@ -1,0 +1,53 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/peak_nearest_gene_demo",
+  "generated_at": "2026-10-16T11:52:52.708329+00:00",
+  "n_steps": 3,
+  "total_elapsed": 0.1798,
+  "steps": [
+    {
+      "index": 1,
+      "name": "peak_nearest_gene",
+      "elapsed": 0.0509,
+      "inputs": [
+        "peaks",
+        "genes"
+      ],
+      "params": {
+        "feature_type": "gene",
+        "output": "ann"
+      },
+      "export_path": "steps/01_peak_nearest_gene.json"
+    },
+    {
+      "index": 2,
+      "name": "describe",
+      "elapsed": 0.0139,
+      "inputs": [
+        "ann"
+      ],
+      "params": {},
+      "export_path": "steps/02_describe.json"
+    },
+    {
+      "index": 3,
+      "name": "histogram",
+      "elapsed": 0.115,
+      "inputs": [
+        "ann"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "distance",
+        "bins": 50,
+        "filename": "distance_hist.png",
+        "title": "Distance from cCRE to nearest gene (chr22)",
+        "xlabel": "Distance (bp)"
+      },
+      "export_path": "steps/03_histogram.json"
+    }
+  ],
+  "status": "complete",
+  "error": null,
+  "run_id": "20261016T115251-0a9dc4c54010",
+  "event_log": "/home/lovagavin/biopipe/tasks/peak_nearest_gene_demo/output/runs/20261016T115251-0a9dc4c54010/events.jsonl"
+}

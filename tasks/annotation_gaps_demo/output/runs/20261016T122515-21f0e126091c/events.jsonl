@@ -1,0 +1,13 @@
+{"message": "Loading the analysis engine", "time": "2026-10-16T12:25:15.862339+00:00", "event": "worker_started"}
+{"run_id": "20261016T122515-21f0e126091c", "memory_enabled": false, "time": "2026-10-16T12:25:16.813704+00:00", "event": "run_started"}
+{"name": "annot", "shape": [28695, 9], "dims": ["record", "field"], "time": "2026-10-16T12:25:16.996275+00:00", "event": "source_loaded"}
+{"name": "annotation_gaps", "index": 1, "time": "2026-10-16T12:25:16.996395+00:00", "event": "step_started"}
+{"name": "annotation_gaps", "inputs": 1, "outputs": ["gaps"], "contract_version": 1, "time": "2026-10-16T12:25:17.014348+00:00", "event": "contract_checked"}
+{"name": "annotation_gaps", "index": 1, "seconds": 0.008956999999099935, "time": "2026-10-16T12:25:17.014420+00:00", "event": "step_finished"}
+{"name": "describe", "index": 2, "time": "2026-10-16T12:25:17.014459+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T12:25:17.019735+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 2, "seconds": 0.0028511999998954707, "time": "2026-10-16T12:25:17.019767+00:00", "event": "step_finished"}
+{"name": "histogram", "index": 3, "time": "2026-10-16T12:25:17.019791+00:00", "event": "step_started"}
+{"name": "histogram", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T12:25:17.106934+00:00", "event": "contract_checked"}
+{"name": "histogram", "index": 3, "seconds": 0.08625720000054571, "time": "2026-10-16T12:25:17.106992+00:00", "event": "step_finished"}
+{"status": "complete", "error": null, "time": "2026-10-16T12:25:17.107015+00:00", "event": "run_finished"}

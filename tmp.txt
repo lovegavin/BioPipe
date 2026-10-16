@@ -1,0 +1,83 @@
+########## 1. demo standalone test ##########
+gtf_annotation verification
+  gtf reader LF/CRLF consistent          ok
+[gff_feature_stats] 4 feature types, 2 genes, 3 exons, mean_exons_per_gene=1.50
+[1/1] gff_feature_stats done in 0.001s
+  gff_feature_stats on GTF hand-counted  ok
+[gene_structure] 2 genes, 1 multi-exon, mean_exons=1.50
+[1/1] gene_structure done in 0.000s
+  gene_structure on GTF hand-counted     ok
+[annotation_gaps] 1 gaps across 1 sequences, largest=499 bp
+[1/1] annotation_gaps done in 0.000s
+  annotation_gaps on GTF hand-counted    ok
+[gff_feature_stats] 4 feature types, 2 genes, 3 exons, mean_exons_per_gene=1.50
+[1/1] gff_feature_stats done in 0.000s
+[gff_feature_stats] 4 feature types, 2 genes, 3 exons, mean_exons_per_gene=1.50
+[1/1] gff_feature_stats done in 0.000s
+[gene_structure] 2 genes, 1 multi-exon, mean_exons=1.50
+[1/1] gene_structure done in 0.000s
+[gene_structure] 2 genes, 1 multi-exon, mean_exons=1.50
+[1/1] gene_structure done in 0.000s
+[annotation_gaps] 1 gaps across 1 sequences, largest=499 bp
+[1/1] annotation_gaps done in 0.000s
+[annotation_gaps] 1 gaps across 1 sequences, largest=499 bp
+[1/1] annotation_gaps done in 0.000s
+  GTF / GFF3 outputs identical           ok
+  missing feature-type column rejected   ok
+  missing feature encoder rejected       ok
+
+all checks passed
+
+########## 2. external-reference verification ##########
+
+==============================================================================
+1. GTF reader - chromosome set matches SGD R64-1-1
+==============================================================================
+
+==============================================================================
+2. gene_structure - chromosome coordinates within SGD lengths
+==============================================================================
+[gene_structure] 7127 genes, 516 multi-exon, mean_exons=1.10
+[1/1] gene_structure done in 0.234s
+
+==============================================================================
+3. gff_feature_stats - Ensembl release 110 known counts
+==============================================================================
+[gff_feature_stats] 7 feature types, 7127 genes, 7507 exons, mean_exons_per_gene=1.05
+[1/1] gff_feature_stats done in 0.030s
+
+==============================================================================
+4. Cross-format consistency GTF vs GFF3 (same Ensembl annotation)
+==============================================================================
+[gff_feature_stats] 16 feature types, 6600 genes, 7507 exons, mean_exons_per_gene=1.14
+[1/1] gff_feature_stats done in 0.018s
+[gene_structure] 6600 genes, 396 multi-exon, mean_exons=1.09
+[1/1] gene_structure done in 0.240s
+[annotation_gaps] 2029 gaps across 17 sequences, largest=9139 bp
+[1/1] annotation_gaps done in 0.010s
+[annotation_gaps] 1997 gaps across 17 sequences, largest=13924 bp
+[1/1] annotation_gaps done in 0.010s
+Traceback (most recent call last):
+  File "/home/lovagavin/biopipe/tasks/verify_gtf_annotation.py", line 185, in <module>
+    main()
+  File "/home/lovagavin/biopipe/tasks/verify_gtf_annotation.py", line 147, in main
+    np.allclose(ag_gtf.data[:, 0], ag_gff3.data[:, 0], equal_nan=True),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lovagavin/miniconda3/envs/biopipe/lib/python3.11/site-packages/numpy/_core/numeric.py", line 2376, in allclose
+    res = all(isclose(a, b, rtol=rtol, atol=atol, equal_nan=equal_nan))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/lovagavin/miniconda3/envs/biopipe/lib/python3.11/site-packages/numpy/_core/numeric.py", line 2507, in isclose
+    result = (less_equal(abs(x - y), atol + rtol * abs(y))
+                             ~~^~~
+ValueError: operands could not be broadcast together with shapes (2029,) (1997,) 
+
+########## 3. regression: existing demos ##########
+--- tasks/gff_feature_stats_demo ---
+ok
+--- tasks/gene_structure_demo ---
+ok
+--- tasks/annotation_gaps_demo ---
+ok
+--- tasks/gff3_demo ---
+ok
+--- tasks/gtf_demo ---

@@ -1,0 +1,69 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/interval_merge_demo",
+  "generated_at": "2026-10-16T11:52:36.838520+00:00",
+  "n_steps": 4,
+  "total_elapsed": 3.0378,
+  "steps": [
+    {
+      "index": 1,
+      "name": "interval_merge",
+      "elapsed": 2.3949,
+      "inputs": [
+        "ccre"
+      ],
+      "params": {
+        "min_overlap": 0,
+        "output": "merged"
+      },
+      "export_path": "steps/01_interval_merge.json"
+    },
+    {
+      "index": 2,
+      "name": "describe",
+      "elapsed": 0.4038,
+      "inputs": [
+        "merged"
+      ],
+      "params": {},
+      "export_path": "steps/02_describe.json"
+    },
+    {
+      "index": 3,
+      "name": "histogram",
+      "elapsed": 0.1231,
+      "inputs": [
+        "merged"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "length",
+        "bins": 50,
+        "filename": "merged_length_hist.png",
+        "title": "Merged cCRE region lengths",
+        "xlabel": "Length (bp)"
+      },
+      "export_path": "steps/03_histogram.json"
+    },
+    {
+      "index": 4,
+      "name": "histogram",
+      "elapsed": 0.116,
+      "inputs": [
+        "merged"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "n_intervals",
+        "bins": 30,
+        "filename": "n_intervals_hist.png",
+        "title": "Intervals merged per region",
+        "xlabel": "n intervals"
+      },
+      "export_path": "steps/04_histogram.json"
+    }
+  ],
+  "status": "complete",
+  "error": null,
+  "run_id": "20261016T115227-91242185894b",
+  "event_log": "/home/lovagavin/biopipe/tasks/interval_merge_demo/output/runs/20261016T115227-91242185894b/events.jsonl"
+}

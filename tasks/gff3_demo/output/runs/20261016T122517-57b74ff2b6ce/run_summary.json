@@ -1,0 +1,22 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/gff3_demo",
+  "generated_at": "2026-10-16T12:25:36.627708+00:00",
+  "n_steps": 1,
+  "total_elapsed": 1.4609,
+  "steps": [
+    {
+      "index": 1,
+      "name": "describe",
+      "elapsed": 1.4609,
+      "inputs": [
+        "annotation"
+      ],
+      "params": {},
+      "export_path": "steps/01_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null,
+  "run_id": "20261016T122517-57b74ff2b6ce",
+  "event_log": "/home/lovagavin/biopipe/tasks/gff3_demo/output/runs/20261016T122517-57b74ff2b6ce/events.jsonl"
+}

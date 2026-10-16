@@ -137,6 +137,12 @@ Each batch is visible immediately and creates one undo entry. Execution is a
 separate action; MCP requires `--allow-run` for it. The Agent panel also provides
 copyable selection context and client revocation. See [CLI/MCP setup](docs/agent_api.md).
 
+## Changelog
+
+| Version | Date | Highlights |
+| --- | --- | --- |
+| v5 | 2026-10-16 | GFF3/GTF annotation operators now work on both readers; new `gtf_annotation` route with real Ensembl 110 data |
+
 ## Documentation
 
 | Guide | Contents |

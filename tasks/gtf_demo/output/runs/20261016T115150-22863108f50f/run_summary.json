@@ -1,0 +1,22 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/gtf_demo",
+  "generated_at": "2026-10-16T11:52:18.274653+00:00",
+  "n_steps": 1,
+  "total_elapsed": 2.4934,
+  "steps": [
+    {
+      "index": 1,
+      "name": "describe",
+      "elapsed": 2.4934,
+      "inputs": [
+        "annotation"
+      ],
+      "params": {},
+      "export_path": "steps/01_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null,
+  "run_id": "20261016T115150-22863108f50f",
+  "event_log": "/home/lovagavin/biopipe/tasks/gtf_demo/output/runs/20261016T115150-22863108f50f/events.jsonl"
+}

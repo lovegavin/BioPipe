@@ -1,0 +1,28 @@
+{"message": "Loading the analysis engine", "time": "2026-10-16T12:13:34.012580+00:00", "event": "worker_started"}
+{"run_id": "20261016T121334-a2554672d395", "memory_enabled": false, "time": "2026-10-16T12:13:35.078963+00:00", "event": "run_started"}
+{"name": "annot", "shape": [41879, 9], "dims": ["record", "field"], "time": "2026-10-16T12:13:35.300838+00:00", "event": "source_loaded"}
+{"name": "gff_feature_stats", "index": 1, "time": "2026-10-16T12:13:35.300966+00:00", "event": "step_started"}
+{"name": "gff_feature_stats", "inputs": 1, "outputs": ["stats"], "contract_version": 1, "time": "2026-10-16T12:13:35.323524+00:00", "event": "contract_checked"}
+{"name": "gff_feature_stats", "index": 1, "seconds": 0.016895600000225386, "time": "2026-10-16T12:13:35.323653+00:00", "event": "step_finished"}
+{"name": "describe", "index": 2, "time": "2026-10-16T12:13:35.323701+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T12:13:35.323988+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 2, "seconds": 0.00011240000003454043, "time": "2026-10-16T12:13:35.324012+00:00", "event": "step_finished"}
+{"name": "gene_structure", "index": 3, "time": "2026-10-16T12:13:35.324033+00:00", "event": "step_started"}
+{"name": "gene_structure", "inputs": 1, "outputs": ["structures"], "contract_version": 1, "time": "2026-10-16T12:13:35.600819+00:00", "event": "contract_checked"}
+{"name": "gene_structure", "index": 3, "seconds": 0.27258650099975057, "time": "2026-10-16T12:13:35.601006+00:00", "event": "step_finished"}
+{"name": "describe", "index": 4, "time": "2026-10-16T12:13:35.601075+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T12:13:35.605957+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 4, "seconds": 0.0006065000002308807, "time": "2026-10-16T12:13:35.606013+00:00", "event": "step_finished"}
+{"name": "annotation_gaps", "index": 5, "time": "2026-10-16T12:13:35.606048+00:00", "event": "step_started"}
+{"name": "annotation_gaps", "inputs": 1, "outputs": ["gaps"], "contract_version": 1, "time": "2026-10-16T12:13:35.621212+00:00", "event": "contract_checked"}
+{"name": "annotation_gaps", "index": 5, "seconds": 0.010190899999997782, "time": "2026-10-16T12:13:35.621364+00:00", "event": "step_finished"}
+{"name": "describe", "index": 6, "time": "2026-10-16T12:13:35.621403+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T12:13:35.625407+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 6, "seconds": 0.0015413999999509542, "time": "2026-10-16T12:13:35.625444+00:00", "event": "step_finished"}
+{"name": "histogram", "index": 7, "time": "2026-10-16T12:13:35.625470+00:00", "event": "step_started"}
+{"name": "histogram", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T12:13:35.756512+00:00", "event": "contract_checked"}
+{"name": "histogram", "index": 7, "seconds": 0.12675149999995483, "time": "2026-10-16T12:13:35.756632+00:00", "event": "step_finished"}
+{"name": "histogram", "index": 8, "time": "2026-10-16T12:13:35.756665+00:00", "event": "step_started"}
+{"name": "histogram", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T12:13:35.829869+00:00", "event": "contract_checked"}
+{"name": "histogram", "index": 8, "seconds": 0.0721478999998908, "time": "2026-10-16T12:13:35.829920+00:00", "event": "step_finished"}
+{"status": "complete", "error": null, "time": "2026-10-16T12:13:35.829937+00:00", "event": "run_finished"}
