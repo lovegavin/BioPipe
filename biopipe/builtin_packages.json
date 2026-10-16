@@ -3807,7 +3807,7 @@
           "supports_cuda": false,
           "input_type": "Form",
           "output_type": "Form",
-          "description": "Per-gene exon/intron/CDS summary by span containment.",
+          "description": "Per-gene exon/intron/CDS summary for GFF3/GTF annotations.",
           "parameters": [
             {
               "key": "record_dim",
@@ -4992,7 +4992,15 @@
               },
               "b_chrom_field": {
                 "type": "string",
-                "default": "seqid"
+                "default": "auto"
+              },
+              "b_type_field": {
+                "type": "string",
+                "default": "auto"
+              },
+              "b_attr_field": {
+                "type": "string",
+                "default": "auto"
               },
               "b_start_field": {
                 "type": "string",
@@ -5170,7 +5178,21 @@
               "label": "b_chrom_field",
               "type": "string",
               "required": false,
-              "default": "seqid"
+              "default": "auto"
+            },
+            {
+              "key": "b_type_field",
+              "label": "b_type_field",
+              "type": "string",
+              "required": false,
+              "default": "auto"
+            },
+            {
+              "key": "b_attr_field",
+              "label": "b_attr_field",
+              "type": "string",
+              "required": false,
+              "default": "auto"
             },
             {
               "key": "b_start_field",
@@ -5223,7 +5245,9 @@
             "a_end_field": "chromEnd",
             "b_record_dim": "record",
             "b_field_dim": "field",
-            "b_chrom_field": "seqid",
+            "b_chrom_field": "auto",
+            "b_type_field": "auto",
+            "b_attr_field": "auto",
             "b_start_field": "start",
             "b_end_field": "end",
             "b_strand_field": "strand",

@@ -1,8 +1,12 @@
 """Associate every BED interval with its nearest annotated gene.
 
 Inputs:
-    A  BED   [region, field]  with chrom / chromStart / chromEnd
-    B  GFF3  [record, field]  with seqid / type / start / end / strand
+    A  BED     [region, field]  with chrom / chromStart / chromEnd
+    B  GFF3/GTF [record, field]  with a seqid column (``seqid`` for
+                GFF3, ``seqname`` for GTF), a feature-type column
+                (``type`` or ``feature``), start / end / strand, and
+                optionally an attributes column (``attributes`` or
+                ``attribute``).
 
 For every A interval, find the gene record on the same chromosome
 whose span is closest. Overlapping intervals get distance 0.
@@ -12,11 +16,11 @@ Distance:
     A ends before B  -> B.start - A.end
     A starts after B -> A.start - B.end
 
-Chromosome names are normalised before matching: if one side uses
-"chr1" and the other "1", the "chr" prefix is added to the shorter
-form. A column may or may not be encoded: if the reader encoded it,
-the encoder's inverse is used; otherwise the numeric value is
-stringified without a trailing ".0".
+Chromosome names are normalised before matching: ``chr`` is added
+if missing, and the common mitochondrial aliases ``Mito``, ``MT``
+and ``chrM`` are unified. A column may or may not be encoded: if the
+reader encoded it, the encoder's inverse is used; otherwise the
+numeric value is stringified without a trailing ``.0``.
 
 Output:
     data   2D float32, shape (n_peaks, 5)
@@ -34,7 +38,13 @@ Params:
     a_end_field    : A end column   (default "chromEnd")
     b_record_dim   : B record axis  (default "record")
     b_field_dim    : B field axis   (default "field")
-    b_chrom_field  : B seqid column (default "seqid")
+    b_chrom_field  : B seqid column. Default "auto" resolves via the
+                     role aliases ("seqid", "seqname").
+    b_type_field   : B feature-type column. Default "auto" resolves
+                     via ("type", "feature").
+    b_attr_field   : B attributes column. Default "auto" resolves
+                     via ("attributes", "attribute"), or None if
+                     neither is present.
     b_start_field  : B start column (default "start")
     b_end_field    : B end column   (default "end")
     b_strand_field : B strand column (default "strand")
@@ -57,14 +67,26 @@ from src.reader.readers._labels import unique_labels
 from src.task.context import Context
 from src.task.step.base import Step
 
+from ._annotation_columns import ROLE_ALIASES, parse_gene_id
+
 
 _STAT_LABELS = ("distance", "gene_start", "gene_end",
                 "gene_length", "strand")
 
+_CHROM_ALIASES = {
+    "mito": "M",
+    "mt": "M",
+    "m": "M",
+}
+
 
 def _normalise_chrom(name: str) -> str:
     name = str(name)
-    return name if name.startswith("chr") else "chr" + name
+    stripped = name[3:] if name.startswith("chr") else name
+    alias = _CHROM_ALIASES.get(stripped.lower())
+    if alias is not None:
+        return "chr" + alias
+    return "chr" + stripped
 
 
 def _num_to_chrom(value: float) -> str:
@@ -77,6 +99,25 @@ def _decode_column(values, encoder):
     if encoder is not None:
         return [encoder.inverse[int(round(float(v)))] for v in values]
     return [_num_to_chrom(float(v)) for v in values]
+
+
+def _resolve_role(labels, requested, role):
+    """Return the column that plays ``role`` or None.
+
+    ``requested`` is either the literal column name (use it) or
+    ``"auto"`` / None (pick the first present alias).
+    """
+    if requested and requested != "auto":
+        if requested not in labels:
+            raise StepError(
+                f"peak_nearest_gene: field dim has no '{requested}' "
+                f"label. Available: {sorted(labels)}"
+            )
+        return requested
+    for alias in ROLE_ALIASES[role]:
+        if alias in labels:
+            return alias
+    return None
 
 
 def _read_intervals(form, region_dim, field_dim, chrom_field,
@@ -130,7 +171,9 @@ class PeakNearestGeneStep(Step):
             "a_end_field": {"type": "string", "default": "chromEnd"},
             "b_record_dim": {"type": "string", "default": "record"},
             "b_field_dim": {"type": "string", "default": "field"},
-            "b_chrom_field": {"type": "string", "default": "seqid"},
+            "b_chrom_field": {"type": "string", "default": "auto"},
+            "b_type_field": {"type": "string", "default": "auto"},
+            "b_attr_field": {"type": "string", "default": "auto"},
             "b_start_field": {"type": "string", "default": "start"},
             "b_end_field": {"type": "string", "default": "end"},
             "b_strand_field": {"type": "string", "default": "strand"},
@@ -174,13 +217,28 @@ class PeakNearestGeneStep(Step):
         a_end = ctx.step_params.get("a_end_field", "chromEnd")
         b_record_dim = ctx.step_params.get("b_record_dim", "record")
         b_field_dim = ctx.step_params.get("b_field_dim", "field")
-        b_chrom = ctx.step_params.get("b_chrom_field", "seqid")
+        b_chrom_req = ctx.step_params.get("b_chrom_field", "auto")
+        b_type_req = ctx.step_params.get("b_type_field", "auto")
+        b_attr_req = ctx.step_params.get("b_attr_field", "auto")
         b_start = ctx.step_params.get("b_start_field", "start")
         b_end = ctx.step_params.get("b_end_field", "end")
         b_strand = ctx.step_params.get("b_strand_field", "strand")
         feature_type = ctx.step_params.get("feature_type", "gene")
         max_distance = ctx.step_params.get("max_distance")
         out_name = ctx.step_params.get("output", self.name)
+
+        b_fld_labels = b_form.labels.get(b_field_dim, {})
+        b_encoders = b_form.info.get("encoders", {}).get(b_field_dim, {})
+
+        b_chrom = _resolve_role(b_fld_labels, b_chrom_req, "seqid")
+        if b_chrom is None:
+            raise StepError(
+                f"peak_nearest_gene: B field dim has no seqid column. "
+                f"Tried aliases {list(ROLE_ALIASES['seqid'])}. "
+                f"Available: {sorted(b_fld_labels)}"
+            )
+        b_type = _resolve_role(b_fld_labels, b_type_req, "type")
+        b_attr = _resolve_role(b_fld_labels, b_attr_req, "attributes")
 
         a_starts, a_ends, a_chroms = _read_intervals(
             a_form, a_region_dim, a_field_dim, a_chrom, a_start, a_end, "A"
@@ -189,24 +247,22 @@ class PeakNearestGeneStep(Step):
             b_form, b_record_dim, b_field_dim, b_chrom, b_start, b_end, "B"
         )
 
-        b_fld_labels = b_form.labels.get(b_field_dim, {})
-        b_encoders = b_form.info.get("encoders", {}).get(b_field_dim, {})
-
         # Optional feature type filter on B.
         b_type_codes = None
         b_type_enc = None
         if feature_type:
-            if "type" not in b_fld_labels:
+            if b_type is None:
                 raise StepError(
-                    f"peak_nearest_gene: B field dim has no 'type' label; "
-                    f"cannot apply feature_type='{feature_type}'"
+                    f"peak_nearest_gene: B field dim has no 'type' label. "
+                    f"Tried aliases {list(ROLE_ALIASES['type'])}; cannot "
+                    f"apply feature_type='{feature_type}'"
                 )
-            b_type_enc = b_encoders.get("type")
+            b_type_enc = b_encoders.get(b_type)
             if b_type_enc is None:
                 raise StepError(
-                    "peak_nearest_gene: B 'type' column is not encoded"
+                    f"peak_nearest_gene: B '{b_type}' column is not encoded"
                 )
-            b_type_codes = b_form.data[:, b_fld_labels["type"]]
+            b_type_codes = b_form.data[:, b_fld_labels[b_type]]
 
         # Strand: encoded or not.
         if b_strand not in b_fld_labels:
@@ -222,24 +278,15 @@ class PeakNearestGeneStep(Step):
             return "+" if float(value) >= 0 else "-"
 
         # Gene id from attributes if present, else positional.
-        b_attr_col = b_fld_labels.get("attributes")
-        b_attr_enc = b_encoders.get("attributes") if b_attr_col is not None else None
+        b_attr_enc = b_encoders.get(b_attr) if b_attr is not None else None
         gene_names_raw: list[str] = []
         for i in range(b_form.data.shape[0]):
-            if b_attr_col is not None and b_attr_enc is not None:
-                code = int(round(float(b_form.data[i, b_attr_col])))
+            gid = None
+            if b_attr is not None and b_attr_enc is not None:
+                code = int(round(float(b_form.data[i, b_fld_labels[b_attr]])))
                 raw = b_attr_enc.inverse.get(code, "")
-                gid = None
-                for part in str(raw).split(";"):
-                    for prefix in ("gene_id=", "ID=", "Parent="):
-                        if part.startswith(prefix):
-                            gid = part.split("=", 1)[1].split(",")[0]
-                            break
-                    if gid:
-                        break
-                gene_names_raw.append(gid or f"g{i}")
-            else:
-                gene_names_raw.append(f"g{i}")
+                gid = parse_gene_id(str(raw))
+            gene_names_raw.append(gid or f"g{i}")
 
         # Group B by normalised chromosome.
         by_chrom: dict[str, list[tuple[float, float, str, float]]] = {}
@@ -357,6 +404,9 @@ class PeakNearestGeneStep(Step):
             "n_skipped_distance": n_skipped_distance,
             "feature_type": feature_type,
             "max_distance": max_distance,
+            "b_chrom_field": b_chrom,
+            "b_type_field": b_type,
+            "b_attr_field": b_attr,
             "n_overlapping_genes": int((out_data[:, 0] == 0).sum()) if rows else 0,
             "mean_distance": float(out_data[:, 0].mean()) if rows else 0.0,
         }
@@ -364,7 +414,8 @@ class PeakNearestGeneStep(Step):
         print(
             f"[peak_nearest_gene] {n_a} peaks -> {n_kept} annotated, "
             f"skipped (chrom)={n_skipped_chrom}, "
-            f"skipped (distance)={n_skipped_distance}"
+            f"skipped (distance)={n_skipped_distance} "
+            f"[b_chrom={b_chrom} b_type={b_type} b_attr={b_attr}]"
         )
 
     def export(self, ctx: Context) -> dict:
