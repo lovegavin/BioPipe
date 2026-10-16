@@ -26,7 +26,7 @@ def main():
     if not args.lite and (not args.runtime or not (args.runtime / 'biopipe-runtime.json').is_file()):
         parser.error('Full releases require --runtime from build_runtime.py; use --lite only for an environment-free package')
     version = tomllib.loads((root / 'pyproject.toml').read_text(encoding='utf-8'))['project']['version']
-    name = f'BioPipe-Studio-v{version}-Windows-x64'
+    name = f'BioPipe-Studio-v{version}-Windows-x64' + ('-Lite' if args.lite else '')
     destination = args.output.resolve() / name
     if destination.exists():
         parser.error(f'Output already exists: {destination}')
@@ -71,7 +71,7 @@ def main():
         copy(source, source.name)
     for name_ in ('README.md', 'pyproject.toml'):
         copy(root / name_, name_)
-    for name_ in ('desktop_server.py', 'run.py'):
+    for name_ in ('desktop_server.py', 'run.py', 'diagnose_pins.py', 'repin_all.py'):
         copy(root / 'scripts' / name_, Path('scripts') / name_)
     shutil.copytree(root / 'docs', destination / 'docs')
     # Ship the small source example referenced by the hot-refresh guide.

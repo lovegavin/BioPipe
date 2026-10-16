@@ -5,12 +5,13 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Studio 0.4.0 preserves upstream Python Steps, Readers and YAML
-tasks, with **53 built-in operators, 15 readers, six provider packages and five
+Studio 0.4.1 preserves upstream Python Steps, Readers and YAML
+tasks, with **64 built-in operators, 15 readers, six provider packages and five
 reusable route templates**: GWAS, RNA-seq DE, Proteomics DE, survival analysis and
 [16S microbiome](docs/microbiome.md). The desktop package includes this catalog and
 the latest editor. The catalog includes upstream axis/single-cell building blocks,
-multi-group comparisons and GO enrichment; example YAML remains under `tasks/`.
+multi-group comparisons, GO enrichment, sequence analysis, annotation QC and
+genomic interval analysis; example YAML remains under `tasks/`.
 
 Download the ready-built Windows desktop package from
 [GitHub Releases](https://github.com/lovegavin/BioPipe/releases/latest).
@@ -39,7 +40,10 @@ For Python 3.12, use `constraints-py312-windows.txt`. See
 [installation and dependency versions](docs/installation.md) for development
 dependencies, optional analyses and troubleshooting resolver backtracking.
 
-See [release notes](docs/releases/v0.4.0.md) for this version and
+Choose the archive without `Lite` for the bundled environment. The smaller
+`Windows-x64-Lite.zip` uses an existing Python environment instead.
+
+See [release notes](docs/releases/v0.4.1.md) for this version and
 [legacy/](legacy/README.md) for the archived previous source.
 
 ## Start Studio
@@ -63,6 +67,12 @@ uploading and saving do not require optional reader libraries. See
 [input formats and file groups](docs/input_formats.md). Format-specific
 dependencies are listed in `requirements-readers.txt`; DESeq2 and survival analyses
 use `requirements-analysis.txt`. Dependencies can also be installed with uv.
+
+Compressed inputs follow the Reader registry: gzip GAF/VCF/MTX are supported,
+and ordinary tables, annotations, FASTA, H5AD, Parquet and BGEN support external
+gzip/bzip2/xz wrappers. Internal container compression is distinct from an outer
+wrapper. H5AD keeps its bounded disk preparation when wrapped in gzip. PLINK file
+sets still require uncompressed files; ZIP archives are not datasets.
 
 On Windows, a built desktop distribution starts by double-clicking
 `dist/BioPipe Studio/BioPipe Studio.exe`. The host bundles the frontend and backend
@@ -431,6 +441,9 @@ class Reader(ABC):
 - `handles_compression`:
   - `False`: the framework decompresses to a temp file first; the Reader only sees a plain file.
   - `True`: the Reader handles compression itself, or needs the original path and same-directory siblings.
+  - For a native parser, list supported outer suffixes in `file_input.compression`
+    (for example `[".gz"]`). Internal HDF5/Parquet/BGEN compression does not justify
+    setting this flag. Import filtering and runtime routing use the same declaration.
 
 ### Routing and auto-discovery
 
@@ -445,6 +458,10 @@ not a runtime registration mechanism.
 1. Calls `pick_reader(path)` to select the unique matching Reader.
 2. If the Reader does not handle compression, decompresses to a temp file via `_decompressed`.
 3. Calls `reader.read(...)`.
+
+Custom metadata probes and `read_to_disk` receive the same prepared path. The base
+metadata probe only stats the original file; it does not need decompression.
+Temporary files and parser-generated indexes are cleaned up after use.
 
 ### Label rules
 

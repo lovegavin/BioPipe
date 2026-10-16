@@ -1,6 +1,7 @@
-"""Report every stored pin and whether it matches the current bundled state."""
+"""Read-only pin diagnostics using the same profile selection as Studio."""
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -8,45 +9,43 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from biopipe.packages import bundled_state  # noqa: E402
+def main():
+    from biopipe.packages import bundled_state
+    from src.web.profile import resolve_profile
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--profile-dir', type=Path)
+    parser.add_argument('--workspace', type=Path)
+    args = parser.parse_args()
+    profile = resolve_profile(ROOT, profile_dir=args.profile_dir, workspace=args.workspace)
+    current = {d['id']: d['implementation'] for d in bundled_state()['descriptors']}
+    print(f'read-only profile diagnostics: {profile.data_dir}')
+    print('Historical OLD locks are provenance, not files to overwrite. New Studio runs resolve known bundled source updates.')
 
-root = Path.home() / ".biopipe" / "studio"
-s = bundled_state()
-fresh_core = next(p["sha256"] for p in s["packages"] if p["name"] == "biopipe-core")
-print(f"current biopipe-core sha256: {fresh_core}")
-print()
+    def visit(value):
+        if isinstance(value, dict):
+            for name, item in value.items():
+                if name == 'plugin_lock' and isinstance(item, dict):
+                    yield from item.items()
+                else:
+                    yield from visit(item)
+        elif isinstance(value, list):
+            for item in value:
+                yield from visit(item)
 
-print("--- jobs ---")
-for path in sorted(root.rglob("plugins.lock.json")):
-    try:
-        doc = json.loads(path.read_text(encoding="utf-8"))
-    except Exception as exc:
-        print(f"  [bad json] {path}: {exc}")
-        continue
-    core = next((p.get("sha256") for p in doc.get("packages", []) if p.get("name") == "biopipe-core"), None)
-    mark = "OK " if core == fresh_core else "OLD"
-    print(f"  [{mark}] {path}")
-    print(f"          job core = {core}")
-
-print()
-print("--- sessions ---")
-for path in sorted(root.rglob("*.json")):
-    if path.name == "plugins.lock.json":
-        continue
-    try:
-        doc = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        continue
-    if not isinstance(doc, dict):
-        continue
-    for entry in (doc.get("workspace") or {}).get("documents") or []:
-        if not isinstance(entry, dict):
+    for path in sorted(profile.data_dir.rglob('*.json')):
+        try:
+            value = json.loads(path.read_text(encoding='utf-8-sig'))
+            pins = list(visit(value))
+            if path.name == 'plugins.lock.json' and isinstance(value, dict):
+                pins.extend((d['id'], d['implementation']) for d in value.get('descriptors', [])
+                            if d.get('origin') == 'bundled')
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            print(f'[unreadable] {path}: {exc}')
             continue
-        graph = entry.get("graph") or {}
-        lock = graph.get("plugin_lock") or {}
-        if not lock:
-            continue
-        core = (lock.get("annotate") or {}).get("sha256")
-        mark = "OK " if core == fresh_core else "OLD"
-        print(f"  [{mark}] {path}")
-        print(f"          annotate pinned to = {core}")
+        old = sorted({key for key, pin in pins if key in current and pin != current[key]})
+        if old:
+            print(f'[OLD] {path.relative_to(profile.data_dir)}: {", ".join(old)}')
+
+
+if __name__ == '__main__':
+    main()

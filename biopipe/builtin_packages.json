@@ -181,7 +181,7 @@
           ],
           "requires_siblings": [],
           "excludes_siblings": [],
-          "handles_compression": true,
+          "handles_compression": false,
           "file_input": {
             "dims": [
               "variant",
@@ -554,7 +554,10 @@
             "labels": {
               "annotation": "auto",
               "field": "builtin"
-            }
+            },
+            "compression": [
+              ".gz"
+            ]
           },
           "output_contract": {
             "version": 1,
@@ -862,7 +865,7 @@
           ],
           "requires_siblings": [],
           "excludes_siblings": [],
-          "handles_compression": true,
+          "handles_compression": false,
           "file_input": {
             "dims": [
               "sample",
@@ -1072,7 +1075,7 @@
           ],
           "requires_siblings": [],
           "excludes_siblings": [],
-          "handles_compression": true,
+          "handles_compression": false,
           "file_input": {
             "dims": [
               "sample",

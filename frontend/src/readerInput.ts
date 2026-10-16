@@ -16,20 +16,22 @@ export function renameSourceDimensions(source: DataSource, dims: string[]): Data
 }
 
 export function readerForPath(catalog: Catalog, path: string): ReaderSpec | undefined {
-  const plain = path.toLowerCase().replace(/\.(gz|bz2|xz)$/, '');
-  const candidates = (catalog.readers ?? []).filter(reader => reader.extensions.some(ext => plain.endsWith(ext)));
+  const candidates = (catalog.readers ?? []).filter(reader =>
+    readerExtensions(reader).some(ext => path.toLowerCase().endsWith(ext.toLowerCase())));
   // A .bed path alone cannot distinguish BED text from PLINK binary.
   return candidates.length === 1 ? candidates[0] : undefined;
+}
+
+function readerExtensions(reader: ReaderSpec): string[] {
+  const compression = reader.file_input?.compression ?? (reader.handles_compression ? [] : ['.gz', '.bz2', '.xz']);
+  return reader.extensions.flatMap(extension => ['', ...compression].map(suffix => extension + suffix));
 }
 
 // File filters follow the current catalog, including hot-installed readers.
 export function inputAccept(catalog: Catalog): string {
   const extensions = new Set<string>();
   for (const reader of catalog.readers ?? []) {
-    const compression = reader.file_input?.compression ?? (reader.handles_compression ? [] : ['.gz', '.bz2', '.xz']);
-    for (const extension of reader.extensions) {
-      for (const suffix of ['', ...compression]) extensions.add(extension + suffix);
-    }
+    for (const extension of readerExtensions(reader)) extensions.add(extension);
     for (const sibling of reader.requires_siblings ?? []) extensions.add(sibling);
     for (const group of reader.file_input?.companions ?? []) {
       for (const name of group) extensions.add(name.slice(name.indexOf('.')));

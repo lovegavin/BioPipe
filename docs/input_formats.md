@@ -14,6 +14,7 @@ Choose **Select data files** in the input inspector. Select one dataset at a tim
 | Text | `.txt`, `.tsv`, `.tab` | None; tab-separated by default |
 | BED intervals | `.bed` | None; this is distinct from binary PLINK BED |
 | GFF3 / GTF | `.gff`, `.gff3`, `.gtf` | None |
+| GO annotations | `.gaf`, `.gaf.gz` | None |
 | FASTA | `.fasta`, `.fa`, `.fna`, `.faa` | None |
 | AnnData | `.h5ad` | None |
 | Parquet | `.parquet` | None |
@@ -23,9 +24,18 @@ Choose **Select data files** in the input inspector. Select one dataset at a tim
 | PLINK 2 | `cohort.pgen` | `cohort.pvar` and `cohort.psam` |
 | 10x MTX | `.mtx` or `.mtx.gz` | `barcodes.tsv` and `features.tsv` (or `genes.tsv`); either companion may have `.gz` appended |
 
-CSV, text, BED intervals, GFF3, GTF and FASTA also accept `.gz`, `.bz2` and `.xz`
-wrappers. Compression is advertised only when the current reader can handle it;
-an arbitrary `.gz` or `.zst` file is not automatically a supported input. PLINK
+CSV, text, BED intervals, GFF3, GTF, FASTA, H5AD, Parquet and BGEN accept `.gz`,
+`.bz2` and `.xz` wrappers. H5AD/Parquet/BGEN internal compression is separate from
+these outer wrappers: the framework decompresses an outer wrapper into a temporary
+disk directory, using bounded buffers, before calling the parser. H5AD still uses
+disk-based block preparation under memory management. Temporary parser indexes
+and unpacked files are cleaned up together after use, including on failure.
+
+GAF and VCF accept gzip (including uppercase `.GZ`); MTX accepts gzip for its
+matrix and the documented companion filenames. Other wrappers for these native
+readers are rejected before parsing. Compression is advertised only when the
+current reader can handle it; an arbitrary `.gz`, `.zst` or `.zip` archive is not
+automatically a supported input. PLINK
 triplets use uncompressed files with matching, case-sensitive basenames and
 lowercase companion extensions, matching the runtime's sibling lookup.
 
@@ -74,6 +84,11 @@ outer suffixes, not a request to install codecs. If absent, framework-decompress
 readers get gzip/bzip2/xz, while readers handling their own compression get no
 outer suffixes. Without `file_input`, dimensions default to `sample, feature` and
 labels default to `auto`. Old plugin descriptors remain supported.
+The same declaration controls runtime routing and the file picker. For a native
+gzip parser, explicitly declare `handles_compression = True` and
+`file_input = {"compression": [".gz"]}` along with any dimension/label hints.
+Do not set `handles_compression=True` merely because the file format supports
+internal compression, or omit supported external suffixes from the declaration.
 
 ## Upload API
 

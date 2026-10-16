@@ -10,7 +10,7 @@ Layout:
     axis 0 = variant, axis 1 = sample.
 
 Backed by bgen-reader, which supports BGEN 1.2 and 1.3 and handles
-compression internally.
+compression internally. External wrappers are handled by the framework.
 
 Label rules accepted:
 
@@ -55,7 +55,7 @@ class BgenReader(Reader):
     file_input = {'dims': ['variant', 'sample'], 'labels': {'variant': 'builtin', 'sample': 'builtin'}}
 
     extensions = [".bgen"]
-    handles_compression = True
+    handles_compression = False
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:
@@ -72,18 +72,18 @@ class BgenReader(Reader):
                 "Install it with: pip install bgen-reader"
             ) from exc
 
-        bgen = open_bgen(str(path), verbose=False)
-
-        probs = bgen.read()
+        # Release metadata mmap handles before framework temporary-file cleanup
+        # (especially on Windows).
+        with open_bgen(str(path), verbose=False) as bgen:
+            probs = bgen.read()
+            variant_ids = [str(v) for v in bgen.ids]
+            sample_ids = [str(s) for s in bgen.samples]
         n_samples, n_variants, _ = probs.shape
 
         data = (probs[:, :, 1] + 2.0 * probs[:, :, 2]).T.astype(np.float32)
 
         all_zero = (probs.sum(axis=2) == 0).T
         data[all_zero] = np.nan
-
-        variant_ids = [str(v) for v in bgen.ids]
-        sample_ids = [str(s) for s in bgen.samples]
 
         if len(variant_ids) != n_variants:
             raise ReaderError(

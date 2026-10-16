@@ -65,13 +65,15 @@ class Context:
                 from biopipe_sdk.protocol import validate_parameters
                 args = validate_parameters(reader.parameters_schema, args)
             from contextlib import nullcontext
-            from src.reader import _decompressed
+            from src.reader import _decompressed, Reader
             def reader_path():
                 return nullcontext(path) if reader.handles_compression else _decompressed(path)
-            if reader.supports_disk_read:
+            if reader.supports_disk_read or type(reader).probe is not Reader.probe:
                 with reader_path() as actual_path:
                     probe = reader.probe(actual_path, **args)
             else:
+                # The inherited probe only stats the original file; it does not
+                # need to decompress anything. Custom header probes do.
                 probe = reader.probe(path, **args)
             probe["file_bytes"] = path.stat().st_size
             disk_loader = None

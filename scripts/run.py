@@ -40,7 +40,12 @@ def main() -> None:
         if plugin_lock.is_file():
             import json
             from biopipe.plugins import load_runtime
-            load_runtime(json.loads(plugin_lock.read_text(encoding="utf-8")))
+            lock = json.loads(plugin_lock.read_text(encoding="utf-8"))
+            if lock.get('bundled_updates'):
+                message = 'Updated bundled source pins for this new run; historical job locks were preserved.'
+                print('[BioPipe] ' + message, flush=True)
+                run_log.event('bundled_pins_updated', message=message, updates=lock['bundled_updates'])
+            load_runtime(lock)
         manifest = load_manifest(task_dir / "task.yaml")
         overrides = {key: value for key, value in (("budget_mb", args.memory_mb),
                       ("process_limit_mb", args.process_memory_mb), ("disk_limit_mb", args.disk_mb),

@@ -61,6 +61,26 @@ Declare `handles_compression=True` only when the parser consumes compressed file
 itself. Otherwise the framework handles its supported compression wrappers.
 Never claim a format if a required sidecar cannot be validated.
 
+External compression and compression inside a container are different. A Reader
+for internally compressed HDF5, Parquet or BGEN should keep
+`handles_compression=False`: the framework unwraps `.gz`, `.bz2` or `.xz` to disk,
+then the format library decodes its internal compression. Both ordinary reads and
+managed disk reads use this wrapper. Temporary files retain the original basename
+and are removed together with any indexes the parser generates. Release all file
+and mmap handles before returning, especially on Windows.
+
+A parser that directly reads gzip files must declare the supported suffix too:
+
+```python
+handles_compression = True
+file_input = {"compression": [".gz"]}
+```
+
+Include your dimension/label hints in the same dictionary. The file picker,
+upload planner and runtime honor this declaration; recognizing a suffix alone
+does not mean a codec is available. Test the complete import-to-execution path
+with a valid compressed fixture and compare it with the uncompressed input.
+
 `info` describes the whole dataset, for example missing values or representation.
 `axis_info[dimension][field]` holds annotations aligned with that dimension. Every
 annotation vector must have the correct axis length. Do not hide axis-aligned

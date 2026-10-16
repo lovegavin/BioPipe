@@ -8,6 +8,7 @@ import uuid
 from .graph import GraphError, project_path
 from .storage import atomic_json
 from .service import read_json
+from biopipe.file_formats import reader_extensions, uncompressed_path
 
 
 def safe_filename(name):
@@ -17,12 +18,6 @@ def safe_filename(name):
             or PureWindowsPath(name).is_reserved()):
         raise GraphError('文件名无效；请选择没有路径或特殊字符的数据文件。')
     return name
-
-
-def reader_extensions(reader):
-    hints = reader.get('file_input') or {}
-    compression = hints.get('compression', [] if reader.get('handles_compression') else ['.gz', '.bz2', '.xz'])
-    return [ext + suffix for ext in reader['extensions'] for suffix in ['', *compression]]
 
 
 def accepted_extensions(catalog):
@@ -48,7 +43,7 @@ def plan_input(names, catalog):
         for reader in catalog['readers']:
             if not any(name.lower().endswith(ext.lower()) for ext in reader_extensions(reader)):
                 continue
-            path = Path(name)
+            path = uncompressed_path(Path(name))
             if any(path.with_suffix(ext).name in present for ext in reader.get('excludes_siblings', [])):
                 continue
             required = [path.with_suffix(ext).name for ext in reader.get('requires_siblings', [])]

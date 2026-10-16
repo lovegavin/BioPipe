@@ -67,7 +67,7 @@ def _iter_vcf(path: Path):
     """
     import gzip
 
-    opener = gzip.open if str(path).endswith(".gz") else open
+    opener = gzip.open if Path(path).suffix.lower() == ".gz" else open
     with opener(path, "rt", encoding="utf-8") as f:
         samples: list[str] = []
         for line in f:

@@ -14,8 +14,8 @@ matrices are densified.
 Cell and gene identifiers come from ``adata.obs.index`` and
 ``adata.var.index``.
 
-H5AD is an HDF5 container; compression is handled internally by
-h5py and is not the framework's concern.
+H5AD internal compression is handled by h5py. External .gz/.bz2/.xz
+wrappers are decompressed to a temporary disk file by the framework.
 
 Label rules accepted:
 
@@ -58,7 +58,7 @@ class H5adReader(Reader):
     file_input = {'dims': ['sample', 'feature'], 'labels': {'sample': 'builtin', 'feature': 'builtin'}}
 
     extensions = [".h5ad"]
-    handles_compression = True
+    handles_compression = False
     supports_disk_read = True
     disk_protocol = "dense-writer-v1"
 

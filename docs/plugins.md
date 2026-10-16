@@ -174,6 +174,32 @@ content fingerprint). Nested route snapshots retain
 their pins. New unpinned insertions use the current generation. Running jobs record
 and keep their original dependency paths even if another installation finishes.
 
+Built-in source checkouts need one distinction: older bundled registry snapshots
+stored fingerprints, not copies of the Python source. After a source update,
+Studio recognizes those historical **bundled** pins and resolves new runs against
+the current bundled implementation. It validates the graph against the selected
+contracts and records `bundled_updates` (old/new identities) in the new job lock,
+job metadata and run events. The same resolution applies to nested route graphs.
+Historical jobs, saved JSON files and their logs are not rewritten. Save the
+prepared graph as a new version to persist the updated pins.
+
+This fallback requires a matching bundled entry in the profile's registry history.
+Unknown pins and installed wheel pins remain strict; real plugin generations keep
+their original code and dependency targets. For exact historical built-in replay,
+retain the original BioPipe source/release or distribute the provider as an
+immutable wheel. A metadata-only snapshot cannot reconstruct deleted source.
+
+The manifest and known source-file metadata invalidate the lightweight fingerprint
+cache when files change; unchanged files do not trigger imports or registry scans.
+If source is edited after a job has already been created, the worker still checks
+the frozen fingerprint and refuses to execute different bytes under that lock.
+Create a new run once the source update is complete.
+
+`python scripts/diagnose_pins.py --profile-dir <profile>` reports old pins without
+changing them. `repin_all.py` now delegates to this read-only check: it no longer
+overwrites historical `plugins.lock.json`, removes plugin targets, or rewrites
+saved routes. The normal profile environment override is supported as well.
+
 `biopipe plugin remove <distribution-name>` publishes a generation without that
 package. It does not delete its wheels or historical environments. Saved pinned
 graphs can still run against a matching generation. Route saving and registration

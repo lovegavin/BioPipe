@@ -286,34 +286,30 @@ class PluginManager:
 
     def snapshot(self, graph):
         state = self.state()
-        required = {}
-        def visit(current):
-            for node in current.nodes:
-                if node.kind == "route":
-                    visit(node.route.graph)
-                for key, item in current.plugin_lock.items():
-                    if key in required and required[key] != item:
-                        raise ValueError(f"Conflicting plugin versions in one graph: {key}")
-                    required[key] = item
-        visit(graph)
-        if required:
-            # Archived generations remain available for saved/pinned graphs.
-            candidates = [state]
-            candidates.extend(self._hydrate(json.loads(p.read_text(encoding="utf-8"))) for pattern in ("snapshots/*.json", "environments/*/lock.json") for p in sorted(self.directory.glob(pattern)))
-            for candidate in candidates:
-                descriptors = {item["id"]: item for item in active_descriptors(candidate)}
-                if all(key in descriptors and descriptors[key].get("implementation") == item for key, item in required.items()):
-                    return candidate
-            raise ValueError("Required plugin versions are unavailable; install the original packages")
-        return state
+        from biopipe.pins import graphs, matches, requirements, resolve
+        # Avoid opening the archive for an unpinned/current graph. Nested graphs
+        # can contain different old builtin pins, so normalize before conflict checks.
+        pins = [part.plugin_lock for part in graphs(graph)]
+        if not any(pins):
+            return state
+        try:
+            if matches(state, requirements(graph)):
+                return state
+        except ValueError:
+            pass
+        candidates = [state]
+        candidates.extend(self._hydrate(json.loads(p.read_text(encoding="utf-8"))) for pattern in ("snapshots/*.json", "environments/*/lock.json") for p in sorted(self.directory.glob(pattern)))
+        return resolve(graph, candidates, bundled_state())
 
-    def pin(self, graph):
-        state = self.snapshot(graph)
+    def pin(self, graph, *, snapshot=None):
+        state = self.snapshot(graph) if snapshot is None else snapshot
         descriptors = active_descriptors(state)
         graph = graph.model_copy(deep=True)
+        selected = {d['id']: d['implementation'] for d in descriptors}
+        graph.plugin_lock = {key: deepcopy(selected.get(key, pin)) for key, pin in graph.plugin_lock.items()}
         for node in graph.nodes:
             if node.kind == "route":
-                node.route.graph = self.pin(node.route.graph)
+                node.route.graph = self.pin(node.route.graph, snapshot=state)
             elif node.kind == "operator":
                 for descriptor in descriptors:
                     if descriptor["id"] == node.operator:
