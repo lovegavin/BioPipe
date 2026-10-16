@@ -1,0 +1,42 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/annotate_demo",
+  "generated_at": "2026-10-16T12:45:18.599415+00:00",
+  "n_steps": 2,
+  "total_elapsed": 3.5349,
+  "steps": [
+    {
+      "index": 1,
+      "name": "annotate",
+      "elapsed": 1.2287,
+      "inputs": [
+        "variants",
+        "reference"
+      ],
+      "params": {
+        "target_dim": "variant",
+        "source_dim": "variant_id",
+        "fields": [
+          "MAPPED_GENE",
+          "CONTEXT",
+          "risk_allele_frequency"
+        ],
+        "output": "annotated"
+      },
+      "export_path": "steps/01_annotate.json"
+    },
+    {
+      "index": 2,
+      "name": "describe",
+      "elapsed": 2.3062,
+      "inputs": [
+        "annotated"
+      ],
+      "params": {},
+      "export_path": "steps/02_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null,
+  "run_id": "20261016T124459-d44219c9bbdc",
+  "event_log": "/home/lovagavin/biopipe/tasks/annotate_demo/output/runs/20261016T124459-d44219c9bbdc/events.jsonl"
+}

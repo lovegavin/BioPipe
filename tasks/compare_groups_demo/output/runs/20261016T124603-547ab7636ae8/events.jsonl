@@ -1,0 +1,8 @@
+{"message": "Loading the analysis engine", "time": "2026-10-16T12:46:03.270580+00:00", "event": "worker_started"}
+{"run_id": "20261016T124603-547ab7636ae8", "memory_enabled": false, "time": "2026-10-16T12:46:04.296353+00:00", "event": "run_started"}
+{"name": "counts", "shape": [33469, 8], "dims": ["gene", "sample"], "time": "2026-10-16T12:46:04.436231+00:00", "event": "source_loaded"}
+{"name": "meta", "shape": [8, 9], "dims": ["sample", "feature"], "time": "2026-10-16T12:46:04.445309+00:00", "event": "source_loaded"}
+{"name": "filter_min", "index": 1, "time": "2026-10-16T12:46:04.445410+00:00", "event": "step_started"}
+{"name": "filter_min", "inputs": 1, "outputs": ["counts_filtered"], "contract_version": 1, "time": "2026-10-16T12:46:04.482174+00:00", "event": "contract_checked"}
+{"name": "filter_min", "index": 1, "seconds": 0.011814399999821035, "time": "2026-10-16T12:46:04.482307+00:00", "event": "step_finished"}
+{"name": "compare_groups", "index": 2, "time": "2026-10-16T12:46:04.482385+00:00", "event": "step_started"}

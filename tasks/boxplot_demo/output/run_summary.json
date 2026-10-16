@@ -1,0 +1,91 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/boxplot_demo",
+  "generated_at": "2026-10-16T12:45:33.441052+00:00",
+  "n_steps": 5,
+  "total_elapsed": 2.1506,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.0095,
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "dim": "gene",
+        "min_value": 10,
+        "min_samples": 3,
+        "output": "counts_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "normalize",
+      "elapsed": 0.6881,
+      "inputs": [
+        "counts_filtered"
+      ],
+      "params": {
+        "method": "cpm",
+        "dim": "sample",
+        "target_sum": "1e6",
+        "output": "counts_cpm"
+      },
+      "export_path": "steps/02_normalize.json"
+    },
+    {
+      "index": 3,
+      "name": "log_transform",
+      "elapsed": 0.6996,
+      "inputs": [
+        "counts_cpm"
+      ],
+      "params": {
+        "base": 2,
+        "pseudocount": 1,
+        "output": "counts_log"
+      },
+      "export_path": "steps/03_log_transform.json"
+    },
+    {
+      "index": 4,
+      "name": "transpose",
+      "elapsed": 0.6857,
+      "inputs": [
+        "counts_log"
+      ],
+      "params": {
+        "order": [
+          "sample",
+          "gene"
+        ],
+        "output": "samples_by_gene"
+      },
+      "export_path": "steps/04_transpose.json"
+    },
+    {
+      "index": 5,
+      "name": "boxplot",
+      "elapsed": 0.0677,
+      "inputs": [
+        "samples_by_gene",
+        "meta"
+      ],
+      "params": {
+        "dim": "gene",
+        "value_label": "ENSG00000109906",
+        "group_dim": "sample",
+        "group_label": "dex",
+        "filename": "ZBTB16_by_dex.png",
+        "title": "ZBTB16 expression by dex treatment",
+        "ylabel": "log2(CPM + 1)"
+      },
+      "export_path": "steps/05_boxplot.json"
+    }
+  ],
+  "status": "complete",
+  "error": null,
+  "run_id": "20261016T124530-e63324563873",
+  "event_log": "/home/lovagavin/biopipe/tasks/boxplot_demo/output/runs/20261016T124530-e63324563873/events.jsonl"
+}

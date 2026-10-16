@@ -1,0 +1,88 @@
+{
+  "task_dir": "/home/lovagavin/biopipe/tasks/barplot_demo",
+  "generated_at": "2026-10-16T12:45:25.193590+00:00",
+  "n_steps": 5,
+  "total_elapsed": 1.3733,
+  "steps": [
+    {
+      "index": 1,
+      "name": "filter_min",
+      "elapsed": 0.0095,
+      "inputs": [
+        "otu"
+      ],
+      "params": {
+        "dim": "species",
+        "min_value": 10,
+        "min_samples": 5,
+        "output": "otu_filtered"
+      },
+      "export_path": "steps/01_filter_min.json"
+    },
+    {
+      "index": 2,
+      "name": "transpose",
+      "elapsed": 0.0139,
+      "inputs": [
+        "otu_filtered"
+      ],
+      "params": {
+        "order": [
+          "sample",
+          "species"
+        ],
+        "output": "samples_by_species"
+      },
+      "export_path": "steps/02_transpose.json"
+    },
+    {
+      "index": 3,
+      "name": "normalize",
+      "elapsed": 0.0193,
+      "inputs": [
+        "samples_by_species"
+      ],
+      "params": {
+        "method": "total",
+        "dim": "sample",
+        "output": "otu_rel"
+      },
+      "export_path": "steps/03_normalize.json"
+    },
+    {
+      "index": 4,
+      "name": "barplot",
+      "elapsed": 1.3295,
+      "inputs": [
+        "otu_rel"
+      ],
+      "params": {
+        "dim": "species",
+        "sample_dim": "sample",
+        "top_n": 15,
+        "other_label": "Other",
+        "normalize": false,
+        "filename": "composition.png",
+        "title": "COMPASS-DOE: top 15 species per sample",
+        "cmap": "tab20",
+        "legend_ncol": 3,
+        "rotate_labels": true
+      },
+      "export_path": "steps/04_barplot.json"
+    },
+    {
+      "index": 5,
+      "name": "describe",
+      "elapsed": 0.0011,
+      "inputs": [
+        "otu_rel"
+      ],
+      "params": {},
+      "export_path": "steps/05_describe.json"
+    }
+  ],
+  "status": "complete",
+  "error": null,
+  "run_id": "20261016T124522-343fc2d0fda9",
+  "event_log": "/home/lovagavin/biopipe/tasks/barplot_demo/output/runs/20261016T124522-343fc2d0fda9/events.jsonl"
+}

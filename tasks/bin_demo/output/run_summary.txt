@@ -1,0 +1,24 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/bin_demo
+generated : 2026-10-16T12:45:29.907210+00:00
+steps     : 8
+elapsed   : 0.032s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   filter_min              0.009s   steps/01_filter_min.json
+2   transpose               0.017s   steps/02_transpose.json
+3   reduce_axis             0.001s   steps/03_reduce_axis.json
+4   bin                     0.000s   steps/04_bin.json
+5   diversity               0.004s   steps/05_diversity.json
+6   aggregate               0.000s   steps/06_aggregate.json
+7   describe                0.000s   steps/07_describe.json
+8   describe                0.000s   steps/08_describe.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================
