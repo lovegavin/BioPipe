@@ -68,10 +68,6 @@ def _extract(form, region_dim, field_dim, chrom_field, start_field, end_field,
             )
     encoders = form.info.get("encoders", {}).get(field_dim, {})
     chrom_enc = encoders.get(chrom_field)
-    if chrom_enc is None:
-        raise StepError(
-            f"interval_overlap: {label} '{chrom_field}' column is not encoded"
-        )
     chrom_codes = form.data[:, fld_labels[chrom_field]]
     starts = form.data[:, fld_labels[start_field]].astype(np.float64)
     ends = form.data[:, fld_labels[end_field]].astype(np.float64)
@@ -82,11 +78,21 @@ def _extract(form, region_dim, field_dim, chrom_field, start_field, end_field,
             f"interval_overlap: {label} end must be > start for every record"
         )
 
+    if chrom_enc is not None:
+        names = [chrom_enc.inverse[int(round(float(c)))] for c in chrom_codes]
+    else:
+        names = [_num_to_chrom(float(c)) for c in chrom_codes]
+
     by_chrom: dict[str, list[tuple[float, float, int]]] = {}
     for i in range(form.data.shape[0]):
-        name = chrom_enc.inverse[int(round(float(chrom_codes[i])))]
-        by_chrom.setdefault(name, []).append((starts[i], ends[i], i))
+        by_chrom.setdefault(names[i], []).append((starts[i], ends[i], i))
     return by_chrom
+
+
+def _num_to_chrom(value: float) -> str:
+    if float(value).is_integer():
+        return str(int(value))
+    return str(value)
 
 
 class IntervalOverlapStep(Step):

@@ -1,0 +1,53 @@
+{"message": "Loading the analysis engine", "time": "2026-10-16T03:47:12.939592+00:00", "event": "worker_started"}
+{"run_id": "20261016T034712-3da4801aee93", "memory_enabled": false, "time": "2026-10-16T03:47:13.959291+00:00", "event": "run_started"}
+{"name": "counts", "shape": [33538, 1222], "dims": ["gene", "cell"], "time": "2026-10-16T03:47:14.399984+00:00", "event": "source_loaded"}
+{"name": "qc_metrics", "index": 1, "time": "2026-10-16T03:47:14.400436+00:00", "event": "step_started"}
+{"name": "qc_metrics", "inputs": 1, "outputs": ["qc"], "contract_version": 1, "time": "2026-10-16T03:47:14.778174+00:00", "event": "contract_checked"}
+{"name": "qc_metrics", "index": 1, "seconds": 0.37161629000001994, "time": "2026-10-16T03:47:14.778355+00:00", "event": "step_finished"}
+{"name": "describe", "index": 2, "time": "2026-10-16T03:47:14.778420+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T03:47:14.779652+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 2, "seconds": 0.0002505000002201996, "time": "2026-10-16T03:47:14.779713+00:00", "event": "step_finished"}
+{"name": "histogram", "index": 3, "time": "2026-10-16T03:47:14.779743+00:00", "event": "step_started"}
+{"name": "histogram", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T03:47:14.869500+00:00", "event": "contract_checked"}
+{"name": "histogram", "index": 3, "seconds": 0.0892227979998097, "time": "2026-10-16T03:47:14.869571+00:00", "event": "step_finished"}
+{"name": "histogram", "index": 4, "time": "2026-10-16T03:47:14.869613+00:00", "event": "step_started"}
+{"name": "histogram", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T03:47:14.965523+00:00", "event": "contract_checked"}
+{"name": "histogram", "index": 4, "seconds": 0.09542249800006175, "time": "2026-10-16T03:47:14.965588+00:00", "event": "step_finished"}
+{"name": "filter_by", "index": 5, "time": "2026-10-16T03:47:14.965618+00:00", "event": "step_started"}
+{"name": "filter_by", "inputs": 2, "outputs": ["cells_filtered"], "contract_version": 1, "time": "2026-10-16T03:47:17.765559+00:00", "event": "contract_checked"}
+{"name": "filter_by", "index": 5, "seconds": 2.789562127999943, "time": "2026-10-16T03:47:17.765746+00:00", "event": "step_finished"}
+{"name": "describe", "index": 6, "time": "2026-10-16T03:47:17.765798+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T03:47:18.039339+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 6, "seconds": 0.25332889300034367, "time": "2026-10-16T03:47:18.039621+00:00", "event": "step_finished"}
+{"name": "filter_min", "index": 7, "time": "2026-10-16T03:47:18.039683+00:00", "event": "step_started"}
+{"name": "filter_min", "inputs": 1, "outputs": ["genes_filtered"], "contract_version": 1, "time": "2026-10-16T03:47:18.125698+00:00", "event": "contract_checked"}
+{"name": "filter_min", "index": 7, "seconds": 0.07401859799983868, "time": "2026-10-16T03:47:18.125982+00:00", "event": "step_finished"}
+{"name": "describe", "index": 8, "time": "2026-10-16T03:47:18.126048+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T03:47:18.228487+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 8, "seconds": 0.09245009700043738, "time": "2026-10-16T03:47:18.228833+00:00", "event": "step_finished"}
+{"name": "normalize", "index": 9, "time": "2026-10-16T03:47:18.228937+00:00", "event": "step_started"}
+{"name": "normalize", "inputs": 1, "outputs": ["cpm"], "contract_version": 1, "time": "2026-10-16T03:47:19.877092+00:00", "event": "contract_checked"}
+{"name": "normalize", "index": 9, "seconds": 1.6352280159999282, "time": "2026-10-16T03:47:19.877476+00:00", "event": "step_finished"}
+{"name": "log_transform", "index": 10, "time": "2026-10-16T03:47:19.877544+00:00", "event": "step_started"}
+{"name": "log_transform", "inputs": 1, "outputs": ["logged"], "contract_version": 1, "time": "2026-10-16T03:47:21.476410+00:00", "event": "contract_checked"}
+{"name": "log_transform", "index": 10, "seconds": 1.5954308710001897, "time": "2026-10-16T03:47:21.476706+00:00", "event": "step_finished"}
+{"name": "rank_axis", "index": 11, "time": "2026-10-16T03:47:21.476766+00:00", "event": "step_started"}
+{"name": "rank_axis", "inputs": 1, "outputs": ["hvg"], "contract_version": 1, "time": "2026-10-16T03:47:21.655134+00:00", "event": "contract_checked"}
+{"name": "rank_axis", "index": 11, "seconds": 0.15942778699991322, "time": "2026-10-16T03:47:21.655375+00:00", "event": "step_finished"}
+{"name": "scale_features", "index": 12, "time": "2026-10-16T03:47:21.655453+00:00", "event": "step_started"}
+{"name": "scale_features", "inputs": 1, "outputs": ["scaled"], "contract_version": 1, "time": "2026-10-16T03:47:21.706612+00:00", "event": "contract_checked"}
+{"name": "scale_features", "index": 12, "seconds": 0.04916140399973301, "time": "2026-10-16T03:47:21.706916+00:00", "event": "step_finished"}
+{"name": "reduce", "index": 13, "time": "2026-10-16T03:47:21.706976+00:00", "event": "step_started"}
+{"name": "reduce", "inputs": 1, "outputs": ["pcs"], "contract_version": 1, "time": "2026-10-16T03:47:22.987933+00:00", "event": "contract_checked"}
+{"name": "reduce", "index": 13, "seconds": 1.2776284130000022, "time": "2026-10-16T03:47:22.999354+00:00", "event": "step_finished"}
+{"name": "describe", "index": 14, "time": "2026-10-16T03:47:22.999446+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T03:47:23.001634+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 14, "seconds": 0.0006274000002122193, "time": "2026-10-16T03:47:23.001730+00:00", "event": "step_finished"}
+{"name": "reduce", "index": 15, "time": "2026-10-16T03:47:23.001769+00:00", "event": "step_started"}
+{"name": "reduce", "inputs": 1, "outputs": ["umap"], "contract_version": 1, "time": "2026-10-16T03:47:33.446233+00:00", "event": "contract_checked"}
+{"name": "reduce", "index": 15, "seconds": 10.440054400000008, "time": "2026-10-16T03:47:33.446333+00:00", "event": "step_finished"}
+{"name": "describe", "index": 16, "time": "2026-10-16T03:47:33.446373+00:00", "event": "step_started"}
+{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-16T03:47:33.447640+00:00", "event": "contract_checked"}
+{"name": "describe", "index": 16, "seconds": 0.0002860999998119951, "time": "2026-10-16T03:47:33.447687+00:00", "event": "step_finished"}
+{"name": "scatter", "index": 17, "time": "2026-10-16T03:47:33.447711+00:00", "event": "step_started"}
+{"status": "failed", "error": "scatter input 1 (umap) contract: labels.component 需要 component_0; labels.component 需要 component_1", "time": "2026-10-16T03:47:33.447883+00:00", "event": "run_finished"}

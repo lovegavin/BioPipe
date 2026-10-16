@@ -1,27 +1,31 @@
-"""Per-gene structure summary for any GFF3/GTF Form.
+"""Per-gene structure summary for any GFF3 / GTF Form.
 
 Input: Form from Gff3Reader or GtfReader.
     data   2D float32, shape (n_records, n_fields)
     dims   [record, field]
-    labels field = GFF3 column names, including attributes
+    labels field = column names including type / start / end / strand
     info   missing_code=NaN, encoders={field: {label: encoder}}
 
-Gene membership comes from the attributes column: exon and CDS
-records whose ``gene_id=`` (or ``Parent=``) matches a gene record
-belong to that gene. When no gene_id linkage is present at all,
-a positional fallback counts exon records contained in the gene
-span.
+Every record whose type is "gene" becomes one output row. Exon and
+CDS counts, together with the CDS length, are computed by span
+containment: a record is attributed to a gene when its seqid matches
+and its interval lies inside the gene's [start, end] range.
+
+GFF3 and GTF both express gene -> mRNA -> exon hierarchies. The
+hierarchy varies by file and is not always complete, so this operator
+uses span containment instead of parent-id lookups. Nested genes
+(gene fully contained inside another gene) would be mis-attributed,
+which is rare enough to be acceptable for annotation QC.
 
 Output:
     data   2D float32, shape (n_genes, 5)
     dims   [gene, statistic]
-    statistic = [n_exons, n_introns, gene_length, cds_total, strand]
-    strand = +1 or -1
+    statistic = (n_exons, n_introns, gene_length, cds_total, strand)
 
 Params:
-    record_dim : name of the record axis (default "record")
-    field_dim  : name of the field axis (default "field")
-    output     : context key for the result (default: step name)
+    record_dim : record axis (default "record")
+    field_dim  : field axis  (default "field")
+    output     : context key (default: step name)
 """
 from __future__ import annotations
 
@@ -38,7 +42,7 @@ _STAT_LABELS = ("n_exons", "n_introns", "gene_length", "cds_total", "strand")
 
 
 class GeneStructureStep(Step):
-    """Per-gene exon/intron/CDS summary for GFF3/GTF."""
+    """Per-gene exon/intron/CDS summary by span containment."""
 
     name = "gene_structure"
     category = "analysis"
@@ -107,109 +111,90 @@ class GeneStructureStep(Step):
 
         type_codes = form.data[:, fld_labels["type"]]
         seqid_codes = form.data[:, fld_labels["seqid"]]
-        starts = form.data[:, fld_labels["start"]]
-        ends = form.data[:, fld_labels["end"]]
+        starts = form.data[:, fld_labels["start"]].astype(np.float64)
+        ends = form.data[:, fld_labels["end"]].astype(np.float64)
         strand_codes = form.data[:, fld_labels["strand"]]
 
-        # Parse attributes if present, to get gene_id linkage.
-        attr_col = fld_labels.get("attributes")
-        gene_id_by_record: list[str] | None = None
-        if attr_col is not None:
-            attr_enc = encoders.get("attributes")
-            if attr_enc is not None:
-                attr_codes = form.data[:, attr_col]
-                raw_attrs = [
-                    attr_enc.inverse.get(int(round(float(c))), "")
-                    for c in attr_codes
-                ]
-                gene_id_by_record = []
-                for a in raw_attrs:
-                    gid = None
-                    for part in str(a).split(";"):
-                        if part.startswith("gene_id="):
-                            gid = part.split("=", 1)[1]
-                            break
-                        if part.startswith("Parent="):
-                            gid = part.split("=", 1)[1].split(",")[0]
-                            break
-                    gene_id_by_record.append(gid if gid else "")
+        if np.any(~np.isfinite(starts)) or np.any(~np.isfinite(ends)):
+            raise StepError("gene_structure: start/end columns contain NaN")
 
-        # Collect gene records.
-        gene_records: list[dict] = []
-        for i in range(form.data.shape[0]):
-            tname = type_enc.inverse.get(int(round(float(type_codes[i]))), "")
-            if tname != "gene":
-                continue
-            gene_records.append({
-                "idx": i,
-                "seqid": seqid_enc.inverse.get(
-                    int(round(float(seqid_codes[i]))), ""
-                ),
-                "start": float(starts[i]),
-                "end": float(ends[i]),
-                "strand": strand_enc.inverse.get(
-                    int(round(float(strand_codes[i]))), "+"
-                ),
-                "gene_id": (gene_id_by_record[i]
-                            if gene_id_by_record is not None else ""),
-            })
+        type_per_record = [
+            type_enc.inverse.get(int(round(float(c))), "") for c in type_codes
+        ]
+        seqid_per_record = [
+            seqid_enc.inverse.get(int(round(float(c))), "") for c in seqid_codes
+        ]
+        strand_per_record = [
+            strand_enc.inverse.get(int(round(float(c))), "+")
+            for c in strand_codes
+        ]
 
-        if not gene_records:
+        gene_indices = [i for i, t in enumerate(type_per_record) if t == "gene"]
+        if not gene_indices:
             raise StepError(
                 "gene_structure: no 'gene' records found in input"
             )
 
-        # Bucket every record by its declared gene_id (if any).
-        children_by_gene: dict[str, list[int]] = {}
-        if gene_id_by_record is not None:
-            for i in range(form.data.shape[0]):
-                gid = gene_id_by_record[i]
-                if gid:
-                    children_by_gene.setdefault(gid, []).append(i)
+        exon_indices = [i for i, t in enumerate(type_per_record) if t == "exon"]
+        cds_indices = [i for i, t in enumerate(type_per_record) if t == "CDS"]
+
+        # Group exons and CDS by seqid so containment checks only look
+        # at records on the same chromosome.
+        exons_by_chrom: dict[str, list[tuple[float, float]]] = {}
+        for i in exon_indices:
+            exons_by_chrom.setdefault(seqid_per_record[i], []).append(
+                (starts[i], ends[i])
+            )
+        cds_by_chrom: dict[str, list[tuple[float, float]]] = {}
+        for i in cds_indices:
+            cds_by_chrom.setdefault(seqid_per_record[i], []).append(
+                (starts[i], ends[i])
+            )
+
+        # Attributes column, if present, provides stable gene names.
+        attr_col = fld_labels.get("attributes")
+        attr_enc = encoders.get("attributes") if attr_col is not None else None
+
+        def gene_name(i):
+            if attr_col is not None and attr_enc is not None:
+                code = int(round(float(form.data[i, attr_col])))
+                raw = attr_enc.inverse.get(code, "")
+                for part in str(raw).split(";"):
+                    for prefix in ("gene_id=", "ID="):
+                        if part.startswith(prefix):
+                            value = part.split("=", 1)[1].split(",")[0]
+                            # Strip GFF3 type prefix like "gene:YAL069W".
+                            if ":" in value:
+                                value = value.split(":", 1)[1]
+                            return value
+            return f"gene_{i}"
 
         rows: list[list[float]] = []
         gene_names: list[str] = []
 
-        for g in gene_records:
-            gid = g["gene_id"]
-            child_idxs = children_by_gene.get(gid, [])
+        for gi in gene_indices:
+            gs = float(starts[gi])
+            ge = float(ends[gi])
+            gseq = seqid_per_record[gi]
+            strand_name = strand_per_record[gi]
+            strand_val = 1.0 if strand_name == "+" else -1.0
+
             n_exons = 0
+            for (es, ee) in exons_by_chrom.get(gseq, []):
+                if es >= gs and ee <= ge:
+                    n_exons += 1
             cds_total = 0.0
-            if child_idxs:
-                for ci in child_idxs:
-                    tname = type_enc.inverse.get(
-                        int(round(float(type_codes[ci]))), ""
-                    )
-                    length = float(ends[ci] - starts[ci] + 1)
-                    if tname == "exon":
-                        n_exons += 1
-                    elif tname == "CDS":
-                        cds_total += length
-            else:
-                # Fallback: count exon records inside the gene span.
-                gs, ge = g["start"], g["end"]
-                gseq = g["seqid"]
-                for i in range(form.data.shape[0]):
-                    tname = type_enc.inverse.get(
-                        int(round(float(type_codes[i]))), ""
-                    )
-                    if tname != "exon":
-                        continue
-                    if seqid_enc.inverse.get(
-                        int(round(float(seqid_codes[i]))), ""
-                    ) != gseq:
-                        continue
-                    if starts[i] >= gs and ends[i] <= ge:
-                        n_exons += 1
+            for (cs, ce) in cds_by_chrom.get(gseq, []):
+                if cs >= gs and ce <= ge:
+                    cds_total += float(ce - cs + 1.0)
 
             n_introns = max(0, n_exons - 1)
-            strand_val = 1.0 if g["strand"] == "+" else -1.0
-            gene_len = g["end"] - g["start"] + 1.0
+            gene_len = ge - gs + 1.0
             rows.append([
                 float(n_exons), float(n_introns), gene_len,
                 cds_total, strand_val,
             ])
-            gene_names.append(gid if gid else f"gene_{len(gene_names)}")
+            gene_names.append(gene_name(gi))
 
         out_data = np.asarray(rows, dtype=np.float32)
 
@@ -233,14 +218,14 @@ class GeneStructureStep(Step):
         self._export_data = {
             "record_dim": rec_dim,
             "field_dim": fld_dim,
-            "n_genes": len(gene_records),
+            "n_genes": len(gene_indices),
             "n_multi_exon_genes": multi_exon,
             "mean_exons": float(out_data[:, 0].mean()),
             "mean_gene_length": float(out_data[:, 2].mean()),
         }
 
         print(
-            f"[gene_structure] {len(gene_records)} genes, "
+            f"[gene_structure] {len(gene_indices)} genes, "
             f"{multi_exon} multi-exon, "
             f"mean_exons={out_data[:, 0].mean():.2f}"
         )

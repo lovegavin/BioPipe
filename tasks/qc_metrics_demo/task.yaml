@@ -1,0 +1,46 @@
+name: qc_metrics_demo
+
+sources:
+  counts:
+    path: ../mtx_demo/input/matrix.mtx.gz
+    dims: [gene, cell]
+    labels:
+      gene: builtin
+      cell: builtin
+
+steps:
+  - name: qc_metrics
+    inputs: [counts]
+    params:
+      feature_dim: gene
+      sample_dim: cell
+      metrics:
+        - {name: total,      op: sum}
+        - {name: n_detected, op: nonzero}
+        - {name: mean_expr,  op: mean}
+        - {name: std_expr,   op: std}
+        - {name: n_called,   op: count}
+      output: qc
+
+  - name: describe
+    inputs: [qc]
+
+  - name: histogram
+    inputs: [qc]
+    params:
+      dim: statistic
+      value_label: total
+      bins: 40
+      filename: total_per_cell.png
+      title: "Total counts per cell"
+      xlabel: "Total"
+
+  - name: histogram
+    inputs: [qc]
+    params:
+      dim: statistic
+      value_label: n_detected
+      bins: 40
+      filename: n_detected_per_cell.png
+      title: "Detected genes per cell"
+      xlabel: "n_detected"

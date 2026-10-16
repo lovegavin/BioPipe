@@ -1,0 +1,21 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/gc_skew_demo
+generated : 2026-10-16T08:23:42.252806+00:00
+steps     : 5
+elapsed   : 0.756s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   gc_skew_profile         0.181s   steps/01_gc_skew_profile.json
+2   describe                0.001s   steps/02_describe.json
+3   line                    0.208s   steps/03_line.json
+4   line                    0.174s   steps/04_line.json
+5   line                    0.192s   steps/05_line.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

@@ -3559,6 +3559,166 @@
         },
         {
           "protocol_version": 1,
+          "id": "gc_skew_profile",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.gc_skew_profile:GcSkewProfileStep",
+          "title": "gc_skew_profile",
+          "category": "analysis",
+          "icon": "ChartLine",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sequence_dim": {
+                "type": "string",
+                "default": "sequence"
+              },
+              "position_dim": {
+                "type": "string",
+                "default": "position"
+              },
+              "window_size": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 10000
+              },
+              "step_size": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1,
+                "default": null
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "alphabet": {
+                    "type": "string",
+                    "enum": [
+                      "dna",
+                      "rna"
+                    ]
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "sequence_dim",
+                    "default": "sequence"
+                  },
+                  {
+                    "param": "position_dim",
+                    "default": "position"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "gc_skew_profile",
+          "module": "src.task.step.steps.gc_skew_profile",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "GC / AT composition and cumulative GC skew over sliding windows.",
+          "parameters": [
+            {
+              "key": "sequence_dim",
+              "label": "sequence_dim",
+              "type": "string",
+              "required": false,
+              "default": "sequence"
+            },
+            {
+              "key": "position_dim",
+              "label": "position_dim",
+              "type": "string",
+              "required": false,
+              "default": "position"
+            },
+            {
+              "key": "window_size",
+              "label": "window_size",
+              "type": "integer",
+              "required": false,
+              "default": 10000,
+              "min": 1
+            },
+            {
+              "key": "step_size",
+              "label": "step_size",
+              "type": "integer",
+              "required": false,
+              "default": null,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sequence_dim": "sequence",
+            "position_dim": "position",
+            "window_size": 10000,
+            "step_size": null
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "gene_structure",
           "version": "1.0.0",
           "kind": "operator",
@@ -3644,7 +3804,7 @@
           "supports_cuda": false,
           "input_type": "Form",
           "output_type": "Form",
-          "description": "Per-gene exon/intron/CDS summary for GFF3/GTF.",
+          "description": "Per-gene exon/intron/CDS summary by span containment.",
           "parameters": [
             {
               "key": "record_dim",
@@ -5367,6 +5527,166 @@
         },
         {
           "protocol_version": 1,
+          "id": "qc_metrics",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.qc_metrics:QcMetricsStep",
+          "title": "qc_metrics",
+          "category": "quality_control",
+          "icon": "CheckSquare",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "feature_dim": {
+                "type": "string",
+                "default": "feature"
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample"
+              },
+              "metrics": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "op": {
+                      "type": "string",
+                      "enum": [
+                        "sum",
+                        "mean",
+                        "std",
+                        "var",
+                        "min",
+                        "max",
+                        "count",
+                        "nonzero"
+                      ]
+                    },
+                    "feature_pattern": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "divide_by": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "op"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "metrics"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "qc_metrics",
+          "module": "src.task.step.steps.qc_metrics",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Per-sample summary metrics along a feature axis.",
+          "parameters": [
+            {
+              "key": "feature_dim",
+              "label": "feature_dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "sample_dim",
+              "label": "sample_dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "metrics",
+              "label": "metrics",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "feature_dim": "feature",
+            "sample_dim": "sample"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "rank_axis",
           "version": "1.0.0",
           "kind": "operator",
@@ -5752,6 +6072,113 @@
           ],
           "runtime_defaults": {},
           "legacy_parameters": true
+        },
+        {
+          "protocol_version": 1,
+          "id": "scale_features",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.scale_features:ScaleFeaturesStep",
+          "title": "scale_features",
+          "category": "data",
+          "icon": "SlidersHorizontal",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "dim": {
+                "type": "string",
+                "default": "sample",
+                "minLength": 1
+              },
+              "max_value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "default": null
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "dim",
+                    "default": null
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "transform",
+              "representation": "scaled"
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "scale_features",
+          "module": "src.task.step.steps.scale_features",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Z-score standardise a 2D Form along one axis.",
+          "parameters": [
+            {
+              "key": "dim",
+              "label": "dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "max_value",
+              "label": "max_value",
+              "type": "number",
+              "required": false,
+              "default": null
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "dim": "sample",
+            "max_value": null
+          },
+          "legacy_parameters": false
         },
         {
           "protocol_version": 1,

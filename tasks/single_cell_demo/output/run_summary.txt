@@ -1,0 +1,33 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/single_cell_demo
+generated : 2026-10-16T03:48:53.343832+00:00
+steps     : 17
+elapsed   : 19.051s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   qc_metrics              0.369s   steps/01_qc_metrics.json
+2   describe                0.000s   steps/02_describe.json
+3   histogram               0.094s   steps/03_histogram.json
+4   histogram               0.093s   steps/04_histogram.json
+5   filter_by               2.970s   steps/05_filter_by.json
+6   describe                0.260s   steps/06_describe.json
+7   filter_min              0.080s   steps/07_filter_min.json
+8   describe                0.089s   steps/08_describe.json
+9   normalize               1.615s   steps/09_normalize.json
+10  log_transform           1.550s   steps/10_log_transform.json
+11  rank_axis               0.160s   steps/11_rank_axis.json
+12  scale_features          0.052s   steps/12_scale_features.json
+13  reduce                  1.681s   steps/13_reduce.json
+14  describe                0.001s   steps/14_describe.json
+15  reduce                  9.948s   steps/15_reduce.json
+16  describe                0.000s   steps/16_describe.json
+17  scatter                 0.088s   steps/17_scatter.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

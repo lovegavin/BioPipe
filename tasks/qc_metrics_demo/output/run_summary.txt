@@ -1,0 +1,20 @@
+============================================================
+Run summary
+============================================================
+task      : /home/lovagavin/biopipe/tasks/qc_metrics_demo
+generated : 2026-10-16T03:42:35.227498+00:00
+steps     : 4
+elapsed   : 1.003s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   qc_metrics              0.807s   steps/01_qc_metrics.json
+2   describe                0.000s   steps/02_describe.json
+3   histogram               0.112s   steps/03_histogram.json
+4   histogram               0.083s   steps/04_histogram.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

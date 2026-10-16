@@ -1,0 +1,53 @@
+name: gc_skew_demo
+
+sources:
+  genome:
+    path: input/ecoli.fasta
+    dims: [sequence, position]
+    labels:
+      sequence: builtin
+      position: auto
+
+steps:
+  - name: gc_skew_profile
+    inputs: [genome]
+    params:
+      window_size: 10000
+      step_size: 10000
+      output: profile
+
+  - name: describe
+    inputs: [profile]
+
+  - name: line
+    inputs: [profile]
+    params:
+      dim: statistic
+      x_label: start
+      y_label: gc
+      filename: gc_vs_position.png
+      title: "E. coli K-12 MG1655 GC content (10 kb windows)"
+      xlabel: "Position (bp)"
+      ylabel: "GC fraction"
+
+  - name: line
+    inputs: [profile]
+    params:
+      dim: statistic
+      x_label: start
+      y_label: gc_skew
+      filename: gc_skew_vs_position.png
+      title: "E. coli K-12 MG1655 GC skew (10 kb windows)"
+      xlabel: "Position (bp)"
+      ylabel: "(G-C)/(G+C)"
+
+  - name: line
+    inputs: [profile]
+    params:
+      dim: statistic
+      x_label: start
+      y_label: cumulative_gc
+      filename: cumulative_gc.png
+      title: "E. coli K-12 MG1655 cumulative GC skew (unnormalised)"
+      xlabel: "Position (bp)"
+      ylabel: "Cumulative (G-C)"
