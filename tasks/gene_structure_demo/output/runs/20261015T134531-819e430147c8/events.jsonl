@@ -1,2 +1,0 @@
-{"message": "Loading the analysis engine", "time": "2026-10-15T13:45:31.199348+00:00", "event": "worker_started"}
-{"status": "failed", "error": "ModuleNotFoundError: No module named 'numpy'", "phase": "initialization", "time": "2026-10-15T13:45:31.200851+00:00", "event": "run_finished"}

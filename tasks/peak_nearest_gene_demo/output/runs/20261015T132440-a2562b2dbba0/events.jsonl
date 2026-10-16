@@ -1,6 +1,0 @@
-{"message": "Loading the analysis engine", "time": "2026-10-15T13:24:40.927618+00:00", "event": "worker_started"}
-{"run_id": "20261015T132440-a2562b2dbba0", "memory_enabled": false, "time": "2026-10-15T13:24:41.934972+00:00", "event": "run_started"}
-{"name": "peaks", "shape": [21578, 6], "dims": ["region", "field"], "time": "2026-10-15T13:24:42.063401+00:00", "event": "source_loaded"}
-{"name": "genes", "shape": [505, 9], "dims": ["record", "field"], "time": "2026-10-15T13:24:42.067121+00:00", "event": "source_loaded"}
-{"name": "peak_nearest_gene", "index": 1, "time": "2026-10-15T13:24:42.067213+00:00", "event": "step_started"}
-{"status": "failed", "error": "peak_nearest_gene: B 'seqid' column is not encoded", "time": "2026-10-15T13:24:42.076985+00:00", "event": "run_finished"}

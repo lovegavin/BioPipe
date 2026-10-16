@@ -1,7 +1,0 @@
-{"message": "Loading the analysis engine", "time": "2026-10-15T13:47:23.253186+00:00", "event": "worker_started"}
-{"run_id": "20261015T134723-8240f52a850e", "memory_enabled": false, "time": "2026-10-15T13:47:25.763337+00:00", "event": "run_started"}
-{"name": "pbmc_gz", "shape": [33538, 1222], "dims": ["gene", "cell"], "time": "2026-10-15T13:47:26.552302+00:00", "event": "source_loaded"}
-{"name": "describe", "index": 1, "time": "2026-10-15T13:47:26.552535+00:00", "event": "step_started"}
-{"name": "describe", "inputs": 1, "outputs": [], "contract_version": 1, "time": "2026-10-15T13:47:26.994792+00:00", "event": "contract_checked"}
-{"name": "describe", "index": 1, "seconds": 0.4038939020000072, "time": "2026-10-15T13:47:26.995207+00:00", "event": "step_finished"}
-{"status": "complete", "error": null, "time": "2026-10-15T13:47:26.995504+00:00", "event": "run_finished"}

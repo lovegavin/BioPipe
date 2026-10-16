@@ -1,4 +1,0 @@
-{"message": "Loading the analysis engine", "time": "2026-10-16T12:45:33.662887+00:00", "event": "worker_started"}
-{"run_id": "20261016T124533-711724aaea14", "memory_enabled": false, "time": "2026-10-16T12:45:34.688957+00:00", "event": "run_started"}
-{"name": "counts", "shape": [32738, 2700], "dims": ["gene", "cell"], "time": "2026-10-16T12:45:35.286211+00:00", "event": "source_loaded"}
-{"name": "reduce_axis", "index": 1, "time": "2026-10-16T12:45:35.286365+00:00", "event": "step_started"}

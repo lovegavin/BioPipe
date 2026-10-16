@@ -1,4 +1,0 @@
-{"message": "Loading the analysis engine", "time": "2026-10-14T11:38:36.797323+00:00", "event": "worker_started"}
-{"run_id": "20261014T113836-44a160e6bd7b", "memory_enabled": false, "time": "2026-10-14T11:38:39.846846+00:00", "event": "run_started"}
-{"name": "geno", "shape": [1110240, 2504], "dims": ["variant", "sample"], "time": "2026-10-14T11:43:24.185459+00:00", "event": "source_loaded"}
-{"name": "describe", "index": 1, "time": "2026-10-14T11:43:24.212527+00:00", "event": "step_started"}

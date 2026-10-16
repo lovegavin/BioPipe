@@ -1,4 +1,0 @@
-{"message": "Loading the analysis engine", "time": "2026-10-15T13:23:36.112156+00:00", "event": "worker_started"}
-{"run_id": "20261015T132336-edf1c7a01879", "memory_enabled": false, "time": "2026-10-15T13:23:37.111619+00:00", "event": "run_started"}
-{"name": "peaks", "shape": [3000, 5], "dims": ["region", "field"], "time": "2026-10-15T13:23:37.223835+00:00", "event": "source_loaded"}
-{"status": "failed", "error": "BED file has inconsistent column counts: /home/lovagavin/biopipe/tasks/peak_nearest_gene_demo/input/genes.bed", "time": "2026-10-15T13:23:37.237354+00:00", "event": "run_finished"}

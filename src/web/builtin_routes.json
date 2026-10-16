@@ -1,6 +1,10 @@
 {
   "schema_version": 1,
   "sources": {
+    "route_ce61ce2c7fb5": {
+      "path": "routes/gtf_annotation/task.yaml",
+      "sha256": "386be77fc879e6831d62d6cacc9728e581de5e4d2011e6e396d64891372f9d25"
+    },
     "route_f6f466bace35": {
       "path": "routes/gwas/task.yaml",
       "sha256": "506bfa195cf9523de8fe6cc15ced7ce46bd2b94a07ec39f8c1fcc6950cd47407",
@@ -2652,6 +2656,344 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_ce61ce2c7fb5",
+      "version": 1,
+      "name": "GTF Annotation Analysis",
+      "graph": {
+        "schema_version": 2,
+        "name": "GTF Annotation Analysis",
+        "base_dir": ".studio/builtin-inputs/gtf_annotation",
+        "nodes": [
+          {
+            "id": "annot",
+            "kind": "source",
+            "operator": null,
+            "title": "annot",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/saccharomyces_cerevisiae.gtf.gz",
+              "dims": [
+                "record",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin",
+                "record": "auto"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "gff_feature_stats_1",
+            "kind": "operator",
+            "operator": "gff_feature_stats",
+            "title": "gff_feature_stats",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "record_dim": "record",
+              "field_dim": "field",
+              "output": "stats"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_2",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "gene_structure_3",
+            "kind": "operator",
+            "operator": "gene_structure",
+            "title": "gene_structure",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "record_dim": "record",
+              "field_dim": "field",
+              "output": "structures"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_4",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "annotation_gaps_5",
+            "kind": "operator",
+            "operator": "annotation_gaps",
+            "title": "annotation_gaps",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "record_dim": "record",
+              "field_dim": "field",
+              "min_gap": 500,
+              "output": "gaps"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_6",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "histogram_7",
+            "kind": "operator",
+            "operator": "histogram",
+            "title": "直方图",
+            "position": {
+              "x": 650.0,
+              "y": 730.0
+            },
+            "params": {
+              "dim": "statistic",
+              "ylabel": "Count",
+              "bins": 30,
+              "log_y": false,
+              "filename": "exon_count_hist.png",
+              "title": "Exons per gene (S. cerevisiae GTF)",
+              "value_label": "n_exons",
+              "xlabel": "Exon count"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "histogram_8",
+            "kind": "operator",
+            "operator": "histogram",
+            "title": "直方图",
+            "position": {
+              "x": 650.0,
+              "y": 940.0
+            },
+            "params": {
+              "dim": "statistic",
+              "ylabel": "Count",
+              "bins": 40,
+              "log_y": false,
+              "filename": "gap_length_hist.png",
+              "title": "Inter-gene gap lengths (>= 500 bp)",
+              "value_label": "gap_length",
+              "xlabel": "Gap length (bp)"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "annot-gff_feature_stats_1-0",
+            "source": "annot",
+            "target": "gff_feature_stats_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "gff_feature_stats_1-describe_2-0",
+            "source": "gff_feature_stats_1",
+            "target": "describe_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "annot-gene_structure_3-0",
+            "source": "annot",
+            "target": "gene_structure_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "gene_structure_3-describe_4-0",
+            "source": "gene_structure_3",
+            "target": "describe_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "annot-annotation_gaps_5-0",
+            "source": "annot",
+            "target": "annotation_gaps_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "annotation_gaps_5-describe_6-0",
+            "source": "annotation_gaps_5",
+            "target": "describe_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "gene_structure_3-histogram_7-0",
+            "source": "gene_structure_3",
+            "target": "histogram_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "annotation_gaps_5-histogram_8-0",
+            "source": "annotation_gaps_5",
+            "target": "histogram_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "annot",
+              "label": "annot",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "record",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "gff_feature_stats_1",
+              "handle": "out",
+              "label": "gff_feature_stats",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "gene_structure_3",
+              "handle": "out",
+              "label": "gene_structure",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "annotation_gaps_5",
+              "handle": "out",
+              "label": "annotation_gaps",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
               }
             }
           ]

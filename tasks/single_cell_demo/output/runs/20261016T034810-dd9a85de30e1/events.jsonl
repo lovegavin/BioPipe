@@ -1,5 +1,0 @@
-{"run_id": "20261016T034810-dd9a85de30e1", "memory_enabled": false, "time": "2026-10-16T03:48:10.798791+00:00", "event": "run_started"}
-{"name": "reduce", "index": 1, "time": "2026-10-16T03:48:10.798938+00:00", "event": "step_started"}
-{"name": "reduce", "inputs": 1, "outputs": ["umap"], "contract_version": 1, "time": "2026-10-16T03:48:19.696788+00:00", "event": "contract_checked"}
-{"name": "reduce", "index": 1, "seconds": 8.791471713000192, "time": "2026-10-16T03:48:19.696857+00:00", "event": "step_finished"}
-{"status": "complete", "error": null, "time": "2026-10-16T03:48:19.696914+00:00", "event": "run_finished"}
