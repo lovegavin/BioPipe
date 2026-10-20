@@ -608,6 +608,9 @@ Responsibilities:
 
 ## Built-in Readers
 
+These are the supported starting files. FASTQ, BAM, mzML, CZI and other measurement-raw formats are out of scope; see [input boundary](docs/input_boundary.md) for the full list and the admission criteria for a new Reader.
+
+
 | Reader | Extensions | Main layout | Notes |
 |---|---|---|---|
 | FastaReader | `.fasta` `.fa` `.fna` `.faa` | sequence × position | Nucleotide/protein sequences, NaN-padded |
