@@ -1,0 +1,47 @@
+name: bgen_qc
+
+sources:
+  geno:
+    path: input/example.bgen
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample:  builtin
+
+steps:
+  - name: missing
+    inputs: [geno]
+    params: {dim: sample, threshold: 0.10, output: geno_sm}
+
+  - name: missing
+    inputs: [geno_sm]
+    params: {dim: variant, threshold: 0.05, output: geno_vm}
+
+  - name: maf
+    inputs: [geno_vm]
+    params: {dim: variant, threshold: 0.01, output: geno_maf}
+
+  - name: ld_prune
+    inputs: [geno_maf]
+    params: {dim: variant, window: 50, r2: 0.2, output: geno_pruned}
+
+  - name: pca
+    inputs: [geno_pruned]
+    params: {dim: variant, n_components: 10, output: pcs}
+
+  - name: scatter
+    inputs: [pcs]
+    params:
+      dim: component
+      x_label: PC1
+      y_label: PC2
+      filename: pca_scatter.png
+      title: "BGEN dosage QC: PC1 vs PC2"
+      xlabel: PC1
+      ylabel: PC2
+
+  - name: describe
+    inputs: [geno_pruned]
+
+  - name: describe
+    inputs: [pcs]

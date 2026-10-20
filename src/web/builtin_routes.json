@@ -1,6 +1,10 @@
 {
   "schema_version": 1,
   "sources": {
+    "route_134972672309": {
+      "path": "routes/bgen_qc/task.yaml",
+      "sha256": "27fd31a9b19acfdc75bc0564e04814ccc97c7b5968cd7e4b6a146b002a78e5c6"
+    },
     "route_ce61ce2c7fb5": {
       "path": "routes/gtf_annotation/task.yaml",
       "sha256": "386be77fc879e6831d62d6cacc9728e581de5e4d2011e6e396d64891372f9d25"
@@ -32,6 +36,338 @@
     }
   },
   "routes": [
+    {
+      "id": "route_134972672309",
+      "version": 1,
+      "name": "BGEN Dosage QC",
+      "graph": {
+        "schema_version": 2,
+        "name": "BGEN Dosage QC",
+        "base_dir": ".studio/builtin-inputs/bgen_qc",
+        "nodes": [
+          {
+            "id": "geno",
+            "kind": "source",
+            "operator": null,
+            "title": "geno",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/example.bgen",
+              "dims": [
+                "variant",
+                "sample"
+              ],
+              "labels": {
+                "sample": "builtin",
+                "variant": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "missing_1",
+            "kind": "operator",
+            "operator": "missing",
+            "title": "缺失值过滤",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "threshold": 0.1,
+              "dim": "sample",
+              "output": "geno_sm"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "missing_2",
+            "kind": "operator",
+            "operator": "missing",
+            "title": "缺失值过滤",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "threshold": 0.05,
+              "dim": "variant",
+              "output": "geno_vm"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "maf_3",
+            "kind": "operator",
+            "operator": "maf",
+            "title": "MAF",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "threshold": 0.01,
+              "dim": "variant",
+              "output": "geno_maf"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ld_prune_4",
+            "kind": "operator",
+            "operator": "ld_prune",
+            "title": "LD pruning",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "window": 50,
+              "r2": 0.2,
+              "dim": "variant",
+              "output": "geno_pruned"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pca_5",
+            "kind": "operator",
+            "operator": "pca",
+            "title": "PCA",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {
+              "n_components": 10,
+              "dim": "variant",
+              "output": "pcs"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "scatter_6",
+            "kind": "operator",
+            "operator": "scatter",
+            "title": "散点图",
+            "position": {
+              "x": 1810.0,
+              "y": 100.0
+            },
+            "params": {
+              "dim": "component",
+              "point_size": 8,
+              "alpha": 0.7,
+              "filename": "pca_scatter.png",
+              "title": "BGEN dosage QC: PC1 vs PC2",
+              "x_label": "PC1",
+              "xlabel": "PC1",
+              "y_label": "PC2",
+              "ylabel": "PC2"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_7",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1520.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_8",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1810.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "geno-missing_1-0",
+            "source": "geno",
+            "target": "missing_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "missing_1-missing_2-0",
+            "source": "missing_1",
+            "target": "missing_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "missing_2-maf_3-0",
+            "source": "missing_2",
+            "target": "maf_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "maf_3-ld_prune_4-0",
+            "source": "maf_3",
+            "target": "ld_prune_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ld_prune_4-pca_5-0",
+            "source": "ld_prune_4",
+            "target": "pca_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pca_5-scatter_6-0",
+            "source": "pca_5",
+            "target": "scatter_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ld_prune_4-describe_7-0",
+            "source": "ld_prune_4",
+            "target": "describe_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pca_5-describe_8-0",
+            "source": "pca_5",
+            "target": "describe_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "geno",
+              "label": "geno",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "variant",
+                  "sample"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "dosage"
+                  },
+                  "ploidy": {
+                    "type": "integer",
+                    "min": 1,
+                    "const": 2
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "pca_5",
+              "handle": "out",
+              "label": "PCA",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "component"
+                ],
+                "labels": {
+                  "sample": null,
+                  "component": null
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "scores"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
     {
       "id": "route_274abd24ce8d",
       "version": 3,

@@ -1,7 +1,7 @@
 # src/reader/readers/bgen_reader.py
-"""BGEN reader.
+"""BGEN reader for biallelic diploid files.
 
-BGEN stores genotype probabilities (P(AA), P(AB), P(BB)) per variant
+BGEN stores genotype probabilities P(AA), P(AB), P(BB) per variant
 per sample. This reader computes the expected ALT allele dosage:
 
     dosage = P(AB) + 2 * P(BB)
@@ -9,8 +9,19 @@ per sample. This reader computes the expected ALT allele dosage:
 Layout:
     axis 0 = variant, axis 1 = sample.
 
-Backed by bgen-reader, which supports BGEN 1.2 and 1.3 and handles
-compression internally. External wrappers are handled by the framework.
+Scope
+-----
+This reader handles biallelic diploid BGEN files only.
+
+Two common non-compliant cases raise an explicit ``ReaderError``
+instead of silently producing wrong data:
+
+* Non-diploid data (haplotypes, haploids) — the sum of the three
+  genotype probabilities is not 2 for at least one variant.
+* Complex data (per-variant allele count or ploidy variation) —
+  ``bgen_reader`` cannot unify the genotypes into a single tensor,
+  or the tensor does not have exactly 3 genotype columns per
+  variant.
 
 Label rules accepted:
 
@@ -22,15 +33,15 @@ Label rules accepted:
 A missing dim entry defaults to ``builtin``. Duplicate labels are
 disambiguated by appending ``#<position>``.
 
-Reference
----------
-BGEN specification:
-https://www.well.ox.ac.uk/~gav/bgen_format/
-
 Info fields set:
 
     missing_code      np.nan
     ploidy            2
+    representation    "dosage"
+
+Reference
+---------
+BGEN specification: https://www.well.ox.ac.uk/~gav/bgen_format/
 """
 
 from __future__ import annotations
@@ -46,7 +57,7 @@ from src.reader.readers._labels import unique_labels
 
 
 class BgenReader(Reader):
-    """Reader for .bgen files."""
+    """Reader for biallelic diploid .bgen files."""
     dependencies = ['bgen-reader>=4.0']
     dependency_imports = ['bgen_reader']
 
@@ -72,17 +83,55 @@ class BgenReader(Reader):
                 "Install it with: pip install bgen-reader"
             ) from exc
 
-        # Release metadata mmap handles before framework temporary-file cleanup
-        # (especially on Windows).
-        with open_bgen(str(path), verbose=False) as bgen:
-            probs = bgen.read()
-            variant_ids = [str(v) for v in bgen.ids]
-            sample_ids = [str(s) for s in bgen.samples]
-        n_samples, n_variants, _ = probs.shape
+        try:
+            with open_bgen(str(path), verbose=False, allow_complex=False) as bgen:
+                probs = bgen.read()
+                variant_ids = [str(v) for v in bgen.ids]
+                sample_ids = [str(s) for s in bgen.samples]
+        except ValueError as exc:
+            if "allow_complex is False" in str(exc):
+                raise ReaderError(
+                    "BGEN reader: complex BGEN files (per-variant "
+                    "ploidy or allele-count variation) are not "
+                    "supported. This reader handles biallelic diploid "
+                    "data only."
+                ) from exc
+            raise
+
+        n_samples, n_variants, n_allele_cols = probs.shape
+
+        if n_allele_cols != 3:
+            raise ReaderError(
+                f"BGEN reader: expected 3 genotype columns for a "
+                f"biallelic diploid variant, got {n_allele_cols}. "
+                f"This reader handles biallelic diploid data only; "
+                f"multi-allelic or non-diploid BGEN files must be "
+                f"converted to VCF and read via the VCF reader."
+            )
+
+        # For a diploid genotype P(AA), P(AB), P(BB) form a
+        # probability distribution: row_sums == 1.0 for every
+        # well-formed variant, including monomorphic ones where
+        # P(AA) = 1 and the other two are 0. Anything else means
+        # the file is not biallelic diploid.
+        row_sums = probs.sum(axis=2)
+        nonzero = row_sums > 0
+        if nonzero.any():
+            with np.errstate(invalid="ignore"):
+                bad = nonzero & (np.abs(row_sums - 1.0) > 0.01)
+            if bad.any():
+                worst = float(np.nanmax(row_sums[bad]))
+                raise ReaderError(
+                    f"BGEN reader: expected a diploid genotype "
+                    f"probability distribution (sum over the 3 "
+                    f"genotype columns equals 1) but found rows with "
+                    f"sum up to {worst:.2f}. This reader handles "
+                    f"biallelic diploid BGEN files only."
+                )
 
         data = (probs[:, :, 1] + 2.0 * probs[:, :, 2]).T.astype(np.float32)
 
-        all_zero = (probs.sum(axis=2) == 0).T
+        all_zero = row_sums.T == 0
         data[all_zero] = np.nan
 
         if len(variant_ids) != n_variants:
@@ -104,7 +153,11 @@ class BgenReader(Reader):
             data=data,
             dims=list(dims),
             labels=final,
-            info={"missing_code": np.nan, "ploidy": 2, "representation": "dosage"},
+            info={
+                "missing_code": np.nan,
+                "ploidy": 2,
+                "representation": "dosage",
+            },
         )
 
 
