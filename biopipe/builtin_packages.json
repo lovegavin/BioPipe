@@ -3722,6 +3722,127 @@
         },
         {
           "protocol_version": 1,
+          "id": "gene_list_to_hits",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.gene_list_to_hits:GeneListToHitsStep",
+          "title": "gene_list_to_hits",
+          "category": "analysis",
+          "icon": "Intersect",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "genes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1
+              },
+              "gene_dim": {
+                "type": "string",
+                "default": "gene"
+              },
+              "term_dim": {
+                "type": "string",
+                "default": "go_term"
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "genes"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  },
+                  {
+                    "param": "term_dim",
+                    "default": "go_term"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "gene_list_to_hits",
+          "module": "src.task.step.steps.gene_list_to_hits",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Turn a gene list into a subset hits matrix over a universe.",
+          "parameters": [
+            {
+              "key": "genes",
+              "label": "genes",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "gene_dim",
+              "label": "gene_dim",
+              "type": "string",
+              "required": false,
+              "default": "gene"
+            },
+            {
+              "key": "term_dim",
+              "label": "term_dim",
+              "type": "string",
+              "required": false,
+              "default": "go_term"
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "gene_dim": "gene",
+            "term_dim": "go_term"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "gene_structure",
           "version": "1.0.0",
           "kind": "operator",

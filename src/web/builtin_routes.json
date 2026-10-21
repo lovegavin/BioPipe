@@ -5,6 +5,10 @@
       "path": "routes/bgen_qc/task.yaml",
       "sha256": "27fd31a9b19acfdc75bc0564e04814ccc97c7b5968cd7e4b6a146b002a78e5c6"
     },
+    "route_60b00ddcef5b": {
+      "path": "routes/go_enrichment/task.yaml",
+      "sha256": "8a484ab136c55c9ea236b58013edd3ebca934d6e13a8d881aa3d7dc5282ce388"
+    },
     "route_ce61ce2c7fb5": {
       "path": "routes/gtf_annotation/task.yaml",
       "sha256": "386be77fc879e6831d62d6cacc9728e581de5e4d2011e6e396d64891372f9d25"
@@ -2541,6 +2545,258 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_60b00ddcef5b",
+      "version": 1,
+      "name": "GO enrichment",
+      "graph": {
+        "schema_version": 2,
+        "name": "GO enrichment",
+        "base_dir": ".studio/builtin-inputs/go_enrichment",
+        "nodes": [
+          {
+            "id": "gaf",
+            "kind": "source",
+            "operator": null,
+            "title": "gaf",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/goa_human.gaf.gz",
+              "dims": [
+                "annotation",
+                "field"
+              ],
+              "labels": {
+                "annotation": "auto",
+                "field": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pivot_1",
+            "kind": "operator",
+            "operator": "pivot",
+            "title": "pivot",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "agg": "first",
+              "columns_label": "go_id",
+              "columns_name": "go_term",
+              "index_label": "db_object_symbol",
+              "index_name": "gene",
+              "output": "universe"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "gene_list_to_hits_2",
+            "kind": "operator",
+            "operator": "gene_list_to_hits",
+            "title": "gene_list_to_hits",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "gene_dim": "gene",
+              "term_dim": "go_term",
+              "genes": [
+                "ATM",
+                "ATR",
+                "CHEK1",
+                "CHEK2",
+                "TP53",
+                "MDM2",
+                "MDM4",
+                "CDKN1A",
+                "CDKN2A",
+                "GADD45A"
+              ],
+              "output": "hits"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "enrich_go_3",
+            "kind": "operator",
+            "operator": "enrich_go",
+            "title": "enrich_go",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "gene_dim": "gene",
+              "term_dim": "go_term",
+              "correction": "fdr",
+              "min_term_size": 5,
+              "output": "enriched"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "enrichment_plot_4",
+            "kind": "operator",
+            "operator": "enrichment_plot",
+            "title": "enrichment_plot",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "statistic_dim": "statistic",
+              "q_column": "Q_VALUE",
+              "size_column": "n_hit",
+              "top_n": 20,
+              "filename": "go_enrichment_p53.png",
+              "title": "GO enrichment: KEGG p53 signaling pathway members"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_5",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1230.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "gaf-pivot_1-0",
+            "source": "gaf",
+            "target": "pivot_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pivot_1-gene_list_to_hits_2-0",
+            "source": "pivot_1",
+            "target": "gene_list_to_hits_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "gene_list_to_hits_2-enrich_go_3-0",
+            "source": "gene_list_to_hits_2",
+            "target": "enrich_go_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pivot_1-enrich_go_3-1",
+            "source": "pivot_1",
+            "target": "enrich_go_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "enrich_go_3-enrichment_plot_4-0",
+            "source": "enrich_go_3",
+            "target": "enrichment_plot_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "enrich_go_3-describe_5-0",
+            "source": "enrich_go_3",
+            "target": "describe_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "gaf",
+              "label": "gaf",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "annotation",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "enrich_go_3",
+              "handle": "out",
+              "label": "enrich_go",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
               }
             }
           ]
