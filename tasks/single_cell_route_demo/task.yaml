@@ -1,0 +1,120 @@
+name: single_cell_route_demo
+
+sources:
+  counts:
+    path: input/filtered_gene_bc_matrices/hg19/matrix.mtx
+    dims: [gene, cell]
+    labels:
+      gene: builtin
+      cell: builtin
+
+steps:
+  - name: qc_metrics
+    inputs: [counts]
+    params:
+      feature_dim: gene
+      sample_dim: cell
+      metrics:
+        - {name: total, op: sum}
+        - {name: n_detected, op: nonzero}
+      output: qc
+
+  - name: describe
+    inputs: [qc]
+
+  - name: filter_by
+    inputs: [counts, qc]
+    params:
+      dim: cell
+      rules:
+        - {field: total, min: 500}
+        - {field: n_detected, min: 200}
+      output: cells_filtered
+
+  - name: filter_min
+    inputs: [cells_filtered]
+    params:
+      dim: gene
+      min_value: 1
+      min_samples: 3
+      output: genes_filtered
+
+  - name: normalize
+    inputs: [genes_filtered]
+    params:
+      method: total
+      dim: cell
+      output: cpm
+
+  - name: log_transform
+    inputs: [cpm]
+    params:
+      base: "e"
+      pseudocount: 1
+      output: logged
+
+  - name: rank_axis
+    inputs: [logged]
+    params:
+      dim: gene
+      by: variance
+      top_n: 2000
+      output: hvg
+
+
+  - name: reduce
+    inputs: [hvg]
+    params:
+      dim: gene
+      method: pca
+      n_components: 50
+      output: pcs
+
+  - name: reduce
+    inputs: [pcs]
+    params:
+      dim: component
+      method: umap
+      n_components: 2
+      n_neighbors: 10
+      min_dist: 0.3
+      random_state: 0
+      output: umap
+
+  - name: cluster_axis
+    inputs: [pcs]
+    params:
+      dim: cell
+      method: louvain
+      n_neighbors: 10
+      resolution: 2.0
+      random_state: 0
+      output: clusters
+
+  - name: compare_groups
+    inputs: [logged, clusters]
+    params:
+      dim: gene
+      group_dim: cell
+      group_label: cluster
+      mode: one_vs_rest
+      method: wilcoxon
+      min_per_group: 3
+      output: markers
+
+  - name: scatter
+    inputs: [umap]
+    params:
+      dim: component
+      x_label: UMAP1
+      y_label: UMAP2
+      filename: umap.png
+      title: "PBMC 3k: UMAP of cells"
+      xlabel: UMAP1
+      ylabel: UMAP2
+
+  - name: describe
+    inputs: [clusters]
+
+  - name: describe
+    inputs: [markers]

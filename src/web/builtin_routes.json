@@ -29,6 +29,10 @@
       "sha256": "e90f253eba3a0f37e1f5d32c971f3d3f67b25667f286e435762a2558be2fc7c2",
       "commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95"
     },
+    "route_d6c3db6fe153": {
+      "path": "routes/single_cell/task.yaml",
+      "sha256": "8ac17bee4e16660a07a6e68434199e0ab66f1d6ae484e55710648734494db1be"
+    },
     "route_bf78f7a6e12f": {
       "path": "routes/survival/task.yaml",
       "sha256": "9155552512ad5b6f4c0f51086cd1cf3628c092ea7fbc4e81c0d2237baaa2e7f3",
@@ -3330,6 +3334,575 @@
                 "axis_info_open": true,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_d6c3db6fe153",
+      "version": 2,
+      "name": "Single-cell QC and clustering",
+      "graph": {
+        "schema_version": 2,
+        "name": "Single-cell QC and clustering",
+        "base_dir": ".studio/builtin-inputs/single_cell",
+        "nodes": [
+          {
+            "id": "counts",
+            "kind": "source",
+            "operator": null,
+            "title": "counts",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/filtered_gene_bc_matrices/hg19/matrix.mtx",
+              "dims": [
+                "gene",
+                "cell"
+              ],
+              "labels": {
+                "cell": "builtin",
+                "gene": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "qc_metrics_1",
+            "kind": "operator",
+            "operator": "qc_metrics",
+            "title": "qc_metrics",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "feature_dim": "gene",
+              "sample_dim": "cell",
+              "metrics": [
+                {
+                  "name": "total",
+                  "op": "sum"
+                },
+                {
+                  "name": "n_detected",
+                  "op": "nonzero"
+                }
+              ],
+              "output": "qc"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_2",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "filter_by_3",
+            "kind": "operator",
+            "operator": "filter_by",
+            "title": "Filter by metrics",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "dim": "cell",
+              "output": "cells_filtered",
+              "rules": [
+                {
+                  "field": "total",
+                  "min": 500
+                },
+                {
+                  "field": "n_detected",
+                  "min": 200
+                }
+              ]
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "filter_min_4",
+            "kind": "operator",
+            "operator": "filter_min",
+            "title": "低表达过滤",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_value": 1,
+              "min_samples": 3,
+              "dim": "gene",
+              "output": "genes_filtered"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "normalize_5",
+            "kind": "operator",
+            "operator": "normalize",
+            "title": "归一化",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "target_sum": 1000000.0,
+              "dim": "cell",
+              "method": "total",
+              "output": "cpm"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "log_transform_6",
+            "kind": "operator",
+            "operator": "log_transform",
+            "title": "Log",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {
+              "base": "e",
+              "pseudocount": 1,
+              "output": "logged"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "rank_axis_7",
+            "kind": "operator",
+            "operator": "rank_axis",
+            "title": "Rank features",
+            "position": {
+              "x": 1810.0,
+              "y": 100.0
+            },
+            "params": {
+              "keep_ties": false,
+              "descending": true,
+              "by": "variance",
+              "dim": "gene",
+              "output": "hvg",
+              "top_n": 2000
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "reduce_8",
+            "kind": "operator",
+            "operator": "reduce",
+            "title": "PCA / PCoA / UMAP / t-SNE",
+            "position": {
+              "x": 2100.0,
+              "y": 100.0
+            },
+            "params": {
+              "method": "pca",
+              "standardize": true,
+              "random_state": 0,
+              "dim": "gene",
+              "n_components": 50,
+              "output": "pcs"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "reduce_9",
+            "kind": "operator",
+            "operator": "reduce",
+            "title": "PCA / PCoA / UMAP / t-SNE",
+            "position": {
+              "x": 2390.0,
+              "y": 100.0
+            },
+            "params": {
+              "method": "umap",
+              "standardize": true,
+              "random_state": 0,
+              "dim": "component",
+              "min_dist": 0.3,
+              "n_components": 2,
+              "n_neighbors": 10,
+              "output": "umap"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "cluster_axis_10",
+            "kind": "operator",
+            "operator": "cluster_axis",
+            "title": "Clustering",
+            "position": {
+              "x": 2390.0,
+              "y": 310.0
+            },
+            "params": {
+              "n_neighbors": 10,
+              "resolution": 2.0,
+              "random_state": 0,
+              "dim": "cell",
+              "method": "louvain",
+              "output": "clusters"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "compare_groups_11",
+            "kind": "operator",
+            "operator": "compare_groups",
+            "title": "Group comparison",
+            "position": {
+              "x": 2680.0,
+              "y": 100.0
+            },
+            "params": {
+              "mode": "one_vs_rest",
+              "min_per_group": 3,
+              "method": "wilcoxon",
+              "dim": "gene",
+              "group_dim": "cell",
+              "group_label": "cluster",
+              "output": "markers"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "scatter_12",
+            "kind": "operator",
+            "operator": "scatter",
+            "title": "散点图",
+            "position": {
+              "x": 2680.0,
+              "y": 310.0
+            },
+            "params": {
+              "dim": "component",
+              "point_size": 8,
+              "alpha": 0.7,
+              "filename": "umap.png",
+              "title": "PBMC 3k: UMAP of cells",
+              "x_label": "UMAP1",
+              "xlabel": "UMAP1",
+              "y_label": "UMAP2",
+              "ylabel": "UMAP2"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_13",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 2680.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_14",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 2970.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "counts-qc_metrics_1-0",
+            "source": "counts",
+            "target": "qc_metrics_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "qc_metrics_1-describe_2-0",
+            "source": "qc_metrics_1",
+            "target": "describe_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "counts-filter_by_3-0",
+            "source": "counts",
+            "target": "filter_by_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "qc_metrics_1-filter_by_3-1",
+            "source": "qc_metrics_1",
+            "target": "filter_by_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "filter_by_3-filter_min_4-0",
+            "source": "filter_by_3",
+            "target": "filter_min_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "filter_min_4-normalize_5-0",
+            "source": "filter_min_4",
+            "target": "normalize_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_5-log_transform_6-0",
+            "source": "normalize_5",
+            "target": "log_transform_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_6-rank_axis_7-0",
+            "source": "log_transform_6",
+            "target": "rank_axis_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "rank_axis_7-reduce_8-0",
+            "source": "rank_axis_7",
+            "target": "reduce_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reduce_8-reduce_9-0",
+            "source": "reduce_8",
+            "target": "reduce_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reduce_8-cluster_axis_10-0",
+            "source": "reduce_8",
+            "target": "cluster_axis_10",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_6-compare_groups_11-0",
+            "source": "log_transform_6",
+            "target": "compare_groups_11",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "cluster_axis_10-compare_groups_11-1",
+            "source": "cluster_axis_10",
+            "target": "compare_groups_11",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "reduce_9-scatter_12-0",
+            "source": "reduce_9",
+            "target": "scatter_12",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "cluster_axis_10-describe_13-0",
+            "source": "cluster_axis_10",
+            "target": "describe_13",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "compare_groups_11-describe_14-0",
+            "source": "compare_groups_11",
+            "target": "describe_14",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "counts",
+              "label": "counts",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "gene",
+                  "cell"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "reduce_9",
+              "handle": "out",
+              "label": "PCA / PCoA / UMAP / t-SNE",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "cell",
+                  "component"
+                ],
+                "labels": {
+                  "cell": null,
+                  "component": null
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "scores"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
+              }
+            },
+            {
+              "node_id": "compare_groups_11",
+              "handle": "out",
+              "label": "Group comparison",
+              "contract": {
+                "version": 1,
+                "ndim": 3,
+                "numeric": true,
+                "dims": [
+                  "gene",
+                  "comparison",
+                  "statistic"
+                ],
+                "labels": {
+                  "gene": null,
+                  "statistic": [
+                    "log2FC",
+                    "mean_a",
+                    "mean_b",
+                    "stat",
+                    "P",
+                    "N"
+                  ],
+                  "comparison": null
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "comparison"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
               }
             }
           ]
