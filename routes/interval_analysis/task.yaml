@@ -1,0 +1,62 @@
+name: interval_analysis
+
+sources:
+  ccre:
+    path: input/cCREs.bed
+    dims: [region, field]
+    labels:
+      region: auto
+      field: builtin
+  reg:
+    path: input/ensembl_regulatory.bed
+    dims: [region, field]
+    labels:
+      region: auto
+      field: builtin
+
+steps:
+  - name: interval_stats
+    inputs: [ccre]
+    params: {output: stats}
+  - name: describe
+    inputs: [stats]
+  - name: interval_merge
+    inputs: [ccre]
+    params: {min_overlap: 0, output: merged}
+  - name: describe
+    inputs: [merged]
+  - name: interval_overlap
+    inputs: [ccre, reg]
+    params:
+      min_overlap: 1
+      max_output: 5000000
+      output: pairs
+  - name: describe
+    inputs: [pairs]
+  - name: histogram
+    inputs: [stats]
+    params:
+      dim: statistic
+      value_label: n_intervals
+      bins: 30
+      filename: n_intervals_per_chrom.png
+      title: "cCRE count per chromosome"
+      xlabel: "Interval count"
+  - name: histogram
+    inputs: [merged]
+    params:
+      dim: statistic
+      value_label: length
+      bins: 50
+      filename: merged_length_hist.png
+      title: "Merged cCRE region lengths"
+      xlabel: "Length (bp)"
+  - name: histogram
+    inputs: [pairs]
+    params:
+      dim: statistic
+      value_label: overlap_length
+      bins: 50
+      filename: overlap_length_hist.png
+      title: "Overlap length (cCRE vs regulatory)"
+      xlabel: "Overlap (bp)"

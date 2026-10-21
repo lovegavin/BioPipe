@@ -14,6 +14,10 @@
       "sha256": "506bfa195cf9523de8fe6cc15ced7ce46bd2b94a07ec39f8c1fcc6950cd47407",
       "commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95"
     },
+    "route_34254db160bf": {
+      "path": "routes/interval_analysis/task.yaml",
+      "sha256": "791780f17a2c8769aa9ecf3f1017c416c9b60051c75ea09fc7ed17420cbcd356"
+    },
     "route_5d8f861d9506": {
       "path": "routes/microbiome/task.yaml",
       "sha256": "7679048c80c791c3b3de810b9f76ebb07877a257e44ff24a576627642c00a25c",
@@ -986,6 +990,429 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_34254db160bf",
+      "version": 1,
+      "name": "Genomic interval analysis",
+      "graph": {
+        "schema_version": 2,
+        "name": "Genomic interval analysis",
+        "base_dir": ".studio/builtin-inputs/interval_analysis",
+        "nodes": [
+          {
+            "id": "ccre",
+            "kind": "source",
+            "operator": null,
+            "title": "ccre",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/cCREs.bed",
+              "dims": [
+                "region",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin",
+                "region": "auto"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "reg",
+            "kind": "source",
+            "operator": null,
+            "title": "reg",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/ensembl_regulatory.bed",
+              "dims": [
+                "region",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin",
+                "region": "auto"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "interval_stats_1",
+            "kind": "operator",
+            "operator": "interval_stats",
+            "title": "interval_stats",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "region_dim": "region",
+              "field_dim": "field",
+              "chrom_field": "chrom",
+              "start_field": "chromStart",
+              "end_field": "chromEnd",
+              "output": "stats"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_2",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "interval_merge_3",
+            "kind": "operator",
+            "operator": "interval_merge",
+            "title": "interval_merge",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "region_dim": "region",
+              "field_dim": "field",
+              "chrom_field": "chrom",
+              "start_field": "chromStart",
+              "end_field": "chromEnd",
+              "min_overlap": 0,
+              "output": "merged"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_4",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "interval_overlap_5",
+            "kind": "operator",
+            "operator": "interval_overlap",
+            "title": "interval_overlap",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "a_region_dim": "region",
+              "a_field_dim": "field",
+              "a_chrom_field": "chrom",
+              "a_start_field": "chromStart",
+              "a_end_field": "chromEnd",
+              "b_region_dim": "region",
+              "b_field_dim": "field",
+              "b_chrom_field": "chrom",
+              "b_start_field": "chromStart",
+              "b_end_field": "chromEnd",
+              "min_overlap": 1,
+              "max_output": 5000000,
+              "output": "pairs"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "describe_6",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "histogram_7",
+            "kind": "operator",
+            "operator": "histogram",
+            "title": "直方图",
+            "position": {
+              "x": 650.0,
+              "y": 730.0
+            },
+            "params": {
+              "dim": "statistic",
+              "ylabel": "Count",
+              "bins": 30,
+              "log_y": false,
+              "filename": "n_intervals_per_chrom.png",
+              "title": "cCRE count per chromosome",
+              "value_label": "n_intervals",
+              "xlabel": "Interval count"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "histogram_8",
+            "kind": "operator",
+            "operator": "histogram",
+            "title": "直方图",
+            "position": {
+              "x": 650.0,
+              "y": 940.0
+            },
+            "params": {
+              "dim": "statistic",
+              "ylabel": "Count",
+              "bins": 50,
+              "log_y": false,
+              "filename": "merged_length_hist.png",
+              "title": "Merged cCRE region lengths",
+              "value_label": "length",
+              "xlabel": "Length (bp)"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "histogram_9",
+            "kind": "operator",
+            "operator": "histogram",
+            "title": "直方图",
+            "position": {
+              "x": 650.0,
+              "y": 1150.0
+            },
+            "params": {
+              "dim": "statistic",
+              "ylabel": "Count",
+              "bins": 50,
+              "log_y": false,
+              "filename": "overlap_length_hist.png",
+              "title": "Overlap length (cCRE vs regulatory)",
+              "value_label": "overlap_length",
+              "xlabel": "Overlap (bp)"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "ccre-interval_stats_1-0",
+            "source": "ccre",
+            "target": "interval_stats_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "interval_stats_1-describe_2-0",
+            "source": "interval_stats_1",
+            "target": "describe_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ccre-interval_merge_3-0",
+            "source": "ccre",
+            "target": "interval_merge_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "interval_merge_3-describe_4-0",
+            "source": "interval_merge_3",
+            "target": "describe_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ccre-interval_overlap_5-0",
+            "source": "ccre",
+            "target": "interval_overlap_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reg-interval_overlap_5-1",
+            "source": "reg",
+            "target": "interval_overlap_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "interval_overlap_5-describe_6-0",
+            "source": "interval_overlap_5",
+            "target": "describe_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "interval_stats_1-histogram_7-0",
+            "source": "interval_stats_1",
+            "target": "histogram_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "interval_merge_3-histogram_8-0",
+            "source": "interval_merge_3",
+            "target": "histogram_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "interval_overlap_5-histogram_9-0",
+            "source": "interval_overlap_5",
+            "target": "histogram_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "ccre",
+              "label": "ccre",
+              "contract": {
+                "version": 1,
+                "dims": [
+                  "region",
+                  "field"
+                ],
+                "labels": [],
+                "info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "reg",
+              "label": "reg",
+              "contract": {
+                "version": 1,
+                "dims": [
+                  "region",
+                  "field"
+                ],
+                "labels": [],
+                "info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "interval_stats_1",
+              "handle": "out",
+              "label": "interval_stats",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "interval_merge_3",
+              "handle": "out",
+              "label": "interval_merge",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "interval_overlap_5",
+              "handle": "out",
+              "label": "interval_overlap",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
               }
             }
           ]

@@ -1,0 +1,35 @@
+name: interval_route_demo
+
+sources:
+  ccre:
+    path: input/cCREs.bed
+    dims: [region, field]
+    labels:
+      region: auto
+      field: builtin
+  reg:
+    path: input/ensembl_regulatory.bed
+    dims: [region, field]
+    labels:
+      region: auto
+      field: builtin
+
+steps:
+  - name: interval_stats
+    inputs: [ccre]
+    params: {output: stats}
+  - name: describe
+    inputs: [stats]
+  - name: interval_merge
+    inputs: [ccre]
+    params: {min_overlap: 0, output: merged}
+  - name: describe
+    inputs: [merged]
+  - name: interval_overlap
+    inputs: [ccre, reg]
+    params:
+      min_overlap: 1
+      max_output: 5000000
+      output: pairs
+  - name: describe
+    inputs: [pairs]
