@@ -37,6 +37,10 @@
       "sha256": "e90f253eba3a0f37e1f5d32c971f3d3f67b25667f286e435762a2558be2fc7c2",
       "commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95"
     },
+    "route_27299bdee8dc": {
+      "path": "routes/sequence_features/task.yaml",
+      "sha256": "20f19f5e0857812781ed02258b33316be6b4193ff24001c114a476b38ae18d8c"
+    },
     "route_d6c3db6fe153": {
       "path": "routes/single_cell/task.yaml",
       "sha256": "8ac17bee4e16660a07a6e68434199e0ab66f1d6ae484e55710648734494db1be"
@@ -373,6 +377,392 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_27299bdee8dc",
+      "version": 1,
+      "name": "Sequence feature analysis",
+      "graph": {
+        "schema_version": 2,
+        "name": "Sequence feature analysis",
+        "base_dir": ".studio/builtin-inputs/sequence_features",
+        "nodes": [
+          {
+            "id": "seqs",
+            "kind": "source",
+            "operator": null,
+            "title": "seqs",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/sequences.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {
+                "position": "auto",
+                "sequence": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "sequence_stats_1",
+            "kind": "operator",
+            "operator": "sequence_stats",
+            "title": "sequence_stats",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "stats"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_2",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "find_orfs_3",
+            "kind": "operator",
+            "operator": "find_orfs",
+            "title": "find_orfs",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "min_aa": 1,
+              "output": "orfs"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_4",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "motif_scan_5",
+            "kind": "operator",
+            "operator": "motif_scan",
+            "title": "motif_scan",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "motifs": {
+                "SP1": "GGGCGG",
+                "TATA": "TATAAA"
+              },
+              "output": "motif_hits"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_6",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "histogram_7",
+            "kind": "operator",
+            "operator": "histogram",
+            "title": "直方图",
+            "position": {
+              "x": 650.0,
+              "y": 730.0
+            },
+            "params": {
+              "dim": "statistic",
+              "ylabel": "Count",
+              "bins": 30,
+              "log_y": false,
+              "filename": "seq_length_hist.png",
+              "title": "Sequence lengths",
+              "value_label": "length",
+              "xlabel": "Length (nt)"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "histogram_8",
+            "kind": "operator",
+            "operator": "histogram",
+            "title": "直方图",
+            "position": {
+              "x": 650.0,
+              "y": 940.0
+            },
+            "params": {
+              "dim": "statistic",
+              "ylabel": "Count",
+              "bins": 30,
+              "log_y": false,
+              "filename": "gc_hist.png",
+              "title": "GC content per sequence",
+              "value_label": "gc",
+              "xlabel": "GC fraction"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "histogram_9",
+            "kind": "operator",
+            "operator": "histogram",
+            "title": "直方图",
+            "position": {
+              "x": 650.0,
+              "y": 1150.0
+            },
+            "params": {
+              "dim": "statistic",
+              "ylabel": "Count",
+              "bins": 40,
+              "log_y": false,
+              "filename": "orf_length_hist.png",
+              "title": "ORF lengths",
+              "value_label": "length_aa",
+              "xlabel": "Length (aa)"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "seqs-sequence_stats_1-0",
+            "source": "seqs",
+            "target": "sequence_stats_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "sequence_stats_1-describe_2-0",
+            "source": "sequence_stats_1",
+            "target": "describe_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "seqs-find_orfs_3-0",
+            "source": "seqs",
+            "target": "find_orfs_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "find_orfs_3-describe_4-0",
+            "source": "find_orfs_3",
+            "target": "describe_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "seqs-motif_scan_5-0",
+            "source": "seqs",
+            "target": "motif_scan_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "motif_scan_5-describe_6-0",
+            "source": "motif_scan_5",
+            "target": "describe_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "sequence_stats_1-histogram_7-0",
+            "source": "sequence_stats_1",
+            "target": "histogram_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "sequence_stats_1-histogram_8-0",
+            "source": "sequence_stats_1",
+            "target": "histogram_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "find_orfs_3-histogram_9-0",
+            "source": "find_orfs_3",
+            "target": "histogram_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "seqs",
+              "label": "seqs",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "sequence_stats_1",
+              "handle": "out",
+              "label": "sequence_stats",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "find_orfs_3",
+              "handle": "out",
+              "label": "find_orfs",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "motif_scan_5",
+              "handle": "out",
+              "label": "motif_scan",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
               }
             }
           ]
