@@ -1,0 +1,58 @@
+name: ml_classification
+
+sources:
+  proteins:
+    path: input/proteomics_raw.txt
+    dims: [protein, sample]
+    labels:
+      protein: {sample: 0}
+      sample: builtin
+    args: {reader: csv, sep: "\t"}
+  clinical:
+    path: input/clinical_raw.txt
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args: {reader: csv, sep: "\t"}
+
+steps:
+  - name: missing
+    inputs: [proteins]
+    params: {dim: protein, threshold: 0.5, output: prot_filtered}
+  - name: impute
+    inputs: [prot_filtered]
+    params: {method: min, dim: protein, output: prot_imputed}
+  - name: normalize
+    inputs: [prot_imputed]
+    params: {method: quantile, dim: sample, output: prot_qn}
+  - name: log_transform
+    inputs: [prot_qn]
+    params: {base: 2, pseudocount: 1, output: prot_log}
+  - name: transpose
+    inputs: [prot_log]
+    params: {order: [sample, protein], output: samples_by_protein}
+  - name: train_classifier
+    inputs: [samples_by_protein, clinical]
+    params:
+      sample_dim: sample
+      feature_dim: protein
+      label_dim: feature
+      target_label: Stage
+      method: logistic
+      test_size: 0.25
+      cv_folds: 5
+      random_state: 42
+      class_weight: balanced
+      output: model
+  - name: describe
+    inputs: [model]
+  - name: histogram
+    inputs: [model]
+    params:
+      dim: statistic
+      value_label: importance
+      bins: 40
+      filename: feature_importance.png
+      title: "Feature importance (logistic regression)"
+      xlabel: "|coef|"
