@@ -1405,6 +1405,156 @@
         },
         {
           "protocol_version": 1,
+          "id": "TenxH5Reader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.tenx_h5_reader:TenxH5Reader",
+          "title": "TenxH5Reader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "feature_type": {
+                "type": "string"
+              },
+              "feature_id_field": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "id"
+                ],
+                "default": "name"
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                },
+                "representation": {
+                  "type": "string",
+                  "const": "counts"
+                },
+                "feature_types": {
+                  "type": "array",
+                  "items": "string"
+                },
+                "genome": {
+                  "type": "array",
+                  "items": "string"
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "dependencies": [
+            "h5py>=3.0",
+            "scipy>=1.10"
+          ],
+          "dependency_imports": [
+            "h5py",
+            "scipy"
+          ],
+          "parameters": [
+            {
+              "key": "feature_type",
+              "label": "feature_type",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "feature_id_field",
+              "label": "feature_id_field",
+              "type": "choice",
+              "required": false,
+              "default": "name",
+              "options": [
+                "name",
+                "id"
+              ]
+            }
+          ],
+          "name": "TenxH5Reader",
+          "module": "src.reader.readers.tenx_h5_reader",
+          "extensions": [
+            ".h5"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "feature",
+              "cell"
+            ],
+            "labels": {
+              "feature": "builtin",
+              "cell": "builtin"
+            },
+            "compression": [],
+            "companions": []
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              },
+              "representation": {
+                "type": "string",
+                "const": "counts"
+              },
+              "feature_types": {
+                "type": "array",
+                "items": "string"
+              },
+              "genome": {
+                "type": "array",
+                "items": "string"
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "TsvReader",
           "version": "1.0.0",
           "kind": "reader",

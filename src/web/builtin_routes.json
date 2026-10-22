@@ -27,6 +27,10 @@
       "sha256": "7679048c80c791c3b3de810b9f76ebb07877a257e44ff24a576627642c00a25c",
       "commit": "fa267bc46a30ee9c9483b7442ff119b9aefcf62c"
     },
+    "route_3dedbe0d6655": {
+      "path": "routes/multi_omics/task.yaml",
+      "sha256": "774b016644dcf607a091a49f2137d49f6e9483526c5cdb6f086cca8455bb8c2f"
+    },
     "route_88fb083f4238": {
       "path": "routes/proteomics_de/task.yaml",
       "sha256": "92020573ced5e395004973b35656b8374fb3cd5a905105454971b36cf3b38963",
@@ -1807,6 +1811,612 @@
                 "axis_info_open": true,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_3dedbe0d6655",
+      "version": 1,
+      "name": "Multi-omics integration",
+      "graph": {
+        "schema_version": 2,
+        "name": "Multi-omics integration",
+        "base_dir": ".studio/builtin-inputs/multi_omics",
+        "nodes": [
+          {
+            "id": "protein",
+            "kind": "source",
+            "operator": null,
+            "title": "protein",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/cite_seq_pbmc.h5",
+              "dims": [
+                "protein",
+                "cell"
+              ],
+              "labels": {
+                "cell": "builtin",
+                "protein": "builtin"
+              },
+              "args": {
+                "feature_type": "Antibody Capture"
+              }
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "rna",
+            "kind": "source",
+            "operator": null,
+            "title": "rna",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/cite_seq_pbmc.h5",
+              "dims": [
+                "gene",
+                "cell"
+              ],
+              "labels": {
+                "cell": "builtin",
+                "gene": "builtin"
+              },
+              "args": {
+                "feature_type": "Gene Expression"
+              }
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "normalize_1",
+            "kind": "operator",
+            "operator": "normalize",
+            "title": "归一化",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "target_sum": 1000000.0,
+              "dim": "cell",
+              "method": "cpm",
+              "output": "rna_cpm"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "log_transform_2",
+            "kind": "operator",
+            "operator": "log_transform",
+            "title": "Log",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "base": 2,
+              "pseudocount": 1,
+              "output": "rna_log"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "rank_axis_3",
+            "kind": "operator",
+            "operator": "rank_axis",
+            "title": "Rank features",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "keep_ties": false,
+              "descending": true,
+              "by": "variance",
+              "dim": "gene",
+              "output": "rna_hvg",
+              "top_n": 2000
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "reduce_4",
+            "kind": "operator",
+            "operator": "reduce",
+            "title": "PCA / PCoA / UMAP / t-SNE",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "method": "pca",
+              "standardize": true,
+              "random_state": 0,
+              "dim": "gene",
+              "n_components": 20,
+              "output": "rna_pcs"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_5",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "normalize_6",
+            "kind": "operator",
+            "operator": "normalize",
+            "title": "归一化",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "target_sum": 1000000.0,
+              "dim": "cell",
+              "method": "total",
+              "output": "protein_norm"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "log_transform_7",
+            "kind": "operator",
+            "operator": "log_transform",
+            "title": "Log",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "base": 2,
+              "pseudocount": 1,
+              "output": "protein_log"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "reduce_8",
+            "kind": "operator",
+            "operator": "reduce",
+            "title": "PCA / PCoA / UMAP / t-SNE",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "method": "pca",
+              "standardize": true,
+              "random_state": 0,
+              "dim": "protein",
+              "n_components": 20,
+              "output": "protein_pcs"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_9",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1230.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "join_10",
+            "kind": "operator",
+            "operator": "join",
+            "title": "Join",
+            "position": {
+              "x": 1520.0,
+              "y": 310.0
+            },
+            "params": {
+              "columns": "all",
+              "how": "inner",
+              "prefix": "prot_",
+              "dim": "cell",
+              "output": "joint_pcs"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "describe_11",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1810.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "correlation_12",
+            "kind": "operator",
+            "operator": "correlation",
+            "title": "Correlation",
+            "position": {
+              "x": 940.0,
+              "y": 520.0
+            },
+            "params": {
+              "metric": "pearson",
+              "min_valid": 3,
+              "max_positions": null,
+              "dim": "cell",
+              "output": "protein_corr"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "heatmap_13",
+            "kind": "operator",
+            "operator": "heatmap",
+            "title": "Heatmap",
+            "position": {
+              "x": 1230.0,
+              "y": 520.0
+            },
+            "params": {
+              "dim": "cell",
+              "other_dim": "cell_b",
+              "select": "all",
+              "standardize": "none",
+              "cmap": "RdBu_r",
+              "nan_color": "#DDDDDD",
+              "top_n": 50,
+              "cluster_rows": false,
+              "cluster_cols": false,
+              "show_row_labels": false,
+              "show_col_labels": true,
+              "filename": "protein_cell_correlation.png",
+              "title": "Cell-cell correlation across 32 surface proteins"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "rna-normalize_1-0",
+            "source": "rna",
+            "target": "normalize_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_1-log_transform_2-0",
+            "source": "normalize_1",
+            "target": "log_transform_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_2-rank_axis_3-0",
+            "source": "log_transform_2",
+            "target": "rank_axis_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "rank_axis_3-reduce_4-0",
+            "source": "rank_axis_3",
+            "target": "reduce_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reduce_4-describe_5-0",
+            "source": "reduce_4",
+            "target": "describe_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "protein-normalize_6-0",
+            "source": "protein",
+            "target": "normalize_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_6-log_transform_7-0",
+            "source": "normalize_6",
+            "target": "log_transform_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_7-reduce_8-0",
+            "source": "log_transform_7",
+            "target": "reduce_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reduce_8-describe_9-0",
+            "source": "reduce_8",
+            "target": "describe_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reduce_4-join_10-0",
+            "source": "reduce_4",
+            "target": "join_10",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reduce_8-join_10-1",
+            "source": "reduce_8",
+            "target": "join_10",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "join_10-describe_11-0",
+            "source": "join_10",
+            "target": "describe_11",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_7-correlation_12-0",
+            "source": "log_transform_7",
+            "target": "correlation_12",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "correlation_12-heatmap_13-0",
+            "source": "correlation_12",
+            "target": "heatmap_13",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "protein",
+              "label": "protein",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "protein",
+                  "cell"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "counts"
+                  },
+                  "feature_types": {
+                    "type": "array",
+                    "items": "string"
+                  },
+                  "genome": {
+                    "type": "array",
+                    "items": "string"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "rna",
+              "label": "rna",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "gene",
+                  "cell"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "counts"
+                  },
+                  "feature_types": {
+                    "type": "array",
+                    "items": "string"
+                  },
+                  "genome": {
+                    "type": "array",
+                    "items": "string"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "join_10",
+              "handle": "out",
+              "label": "Join",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "cell",
+                  "component"
+                ],
+                "labels": {
+                  "cell": null,
+                  "component": null
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "feature_types": {
+                    "type": "array",
+                    "items": "string"
+                  },
+                  "genome": {
+                    "type": "array",
+                    "items": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "joined"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": true,
+                "axis_info": {}
+              }
+            },
+            {
+              "node_id": "correlation_12",
+              "handle": "out",
+              "label": "Correlation",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "cell",
+                  "cell_b"
+                ],
+                "labels": {
+                  "cell": null,
+                  "cell_b": null
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "feature_types": {
+                    "type": "array",
+                    "items": "string"
+                  },
+                  "genome": {
+                    "type": "array",
+                    "items": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "correlation"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
               }
             }
           ]
