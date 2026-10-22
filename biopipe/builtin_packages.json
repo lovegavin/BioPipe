@@ -4225,6 +4225,514 @@
         },
         {
           "protocol_version": 1,
+          "id": "gradient_boosting_classifier",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.gradient_boosting_classifier:GradientBoostingClassifierStep",
+          "title": "Gradient Boosting classifier",
+          "category": "analysis",
+          "icon": "Brain",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample"
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature"
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label"
+              },
+              "target_label": {
+                "type": "string"
+              },
+              "test_size": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.5,
+                "default": 0.25
+              },
+              "cv_folds": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 5
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0
+              },
+              "scale": {
+                "type": "boolean",
+                "default": true
+              },
+              "output": {
+                "type": "string"
+              },
+              "valid_labels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "n_estimators": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 100
+              },
+              "learning_rate": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "default": 0.1
+              },
+              "max_depth": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 3
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "gradient_boosting_classifier",
+          "module": "src.task.step.steps.gradient_boosting_classifier",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "sample_dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "feature_dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "label_dim",
+              "label": "label_dim",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "target_label",
+              "label": "target_label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "test_size",
+              "label": "test_size",
+              "type": "number",
+              "required": false,
+              "default": 0.25,
+              "min": 0.05,
+              "max": 0.5
+            },
+            {
+              "key": "cv_folds",
+              "label": "cv_folds",
+              "type": "integer",
+              "required": false,
+              "default": 5,
+              "min": 2
+            },
+            {
+              "key": "random_state",
+              "label": "random_state",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "scale",
+              "label": "scale",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "valid_labels",
+              "label": "valid_labels",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "n_estimators",
+              "label": "n_estimators",
+              "type": "integer",
+              "required": false,
+              "default": 100,
+              "min": 1
+            },
+            {
+              "key": "learning_rate",
+              "label": "learning_rate",
+              "type": "number",
+              "required": false,
+              "default": 0.1
+            },
+            {
+              "key": "max_depth",
+              "label": "max_depth",
+              "type": "integer",
+              "required": false,
+              "default": 3,
+              "min": 1
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "label_dim": "label",
+            "test_size": 0.25,
+            "cv_folds": 5,
+            "random_state": 0,
+            "scale": true,
+            "n_estimators": 100,
+            "learning_rate": 0.1,
+            "max_depth": 3
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "gradient_boosting_regressor",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.gradient_boosting_regressor:GradientBoostingRegressorStep",
+          "title": "Gradient Boosting regressor",
+          "category": "analysis",
+          "icon": "Brain",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample"
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature"
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label"
+              },
+              "target_label": {
+                "type": "string"
+              },
+              "test_size": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.5,
+                "default": 0.25
+              },
+              "cv_folds": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 5
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0
+              },
+              "scale": {
+                "type": "boolean",
+                "default": true
+              },
+              "output": {
+                "type": "string"
+              },
+              "n_estimators": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 100
+              },
+              "learning_rate": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "default": 0.1
+              },
+              "max_depth": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 3
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "gradient_boosting_regressor",
+          "module": "src.task.step.steps.gradient_boosting_regressor",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "sample_dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "feature_dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "label_dim",
+              "label": "label_dim",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "target_label",
+              "label": "target_label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "test_size",
+              "label": "test_size",
+              "type": "number",
+              "required": false,
+              "default": 0.25,
+              "min": 0.05,
+              "max": 0.5
+            },
+            {
+              "key": "cv_folds",
+              "label": "cv_folds",
+              "type": "integer",
+              "required": false,
+              "default": 5,
+              "min": 2
+            },
+            {
+              "key": "random_state",
+              "label": "random_state",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "scale",
+              "label": "scale",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "n_estimators",
+              "label": "n_estimators",
+              "type": "integer",
+              "required": false,
+              "default": 100,
+              "min": 1
+            },
+            {
+              "key": "learning_rate",
+              "label": "learning_rate",
+              "type": "number",
+              "required": false,
+              "default": 0.1
+            },
+            {
+              "key": "max_depth",
+              "label": "max_depth",
+              "type": "integer",
+              "required": false,
+              "default": 3,
+              "min": 1
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "label_dim": "label",
+            "test_size": 0.25,
+            "cv_folds": 5,
+            "random_state": 0,
+            "scale": true,
+            "n_estimators": 100,
+            "learning_rate": 0.1,
+            "max_depth": 3
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "interval_merge",
           "version": "1.0.0",
           "kind": "operator",
@@ -4952,6 +5460,708 @@
             "sequence_dim": "sequence",
             "position_dim": "position",
             "k": 3
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "lasso_regression",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.lasso_regression:LassoRegressionStep",
+          "title": "Lasso regression",
+          "category": "analysis",
+          "icon": "Brain",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample"
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature"
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label"
+              },
+              "target_label": {
+                "type": "string"
+              },
+              "test_size": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.5,
+                "default": 0.25
+              },
+              "cv_folds": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 5
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0
+              },
+              "scale": {
+                "type": "boolean",
+                "default": true
+              },
+              "output": {
+                "type": "string"
+              },
+              "alpha": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "default": 0.001
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "lasso_regression",
+          "module": "src.task.step.steps.lasso_regression",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "sample_dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "feature_dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "label_dim",
+              "label": "label_dim",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "target_label",
+              "label": "target_label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "test_size",
+              "label": "test_size",
+              "type": "number",
+              "required": false,
+              "default": 0.25,
+              "min": 0.05,
+              "max": 0.5
+            },
+            {
+              "key": "cv_folds",
+              "label": "cv_folds",
+              "type": "integer",
+              "required": false,
+              "default": 5,
+              "min": 2
+            },
+            {
+              "key": "random_state",
+              "label": "random_state",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "scale",
+              "label": "scale",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "alpha",
+              "label": "alpha",
+              "type": "number",
+              "required": false,
+              "default": 0.001
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "label_dim": "label",
+            "test_size": 0.25,
+            "cv_folds": 5,
+            "random_state": 0,
+            "scale": true,
+            "alpha": 0.001
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "linear_regression",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.linear_regression:LinearRegressionStep",
+          "title": "Linear regression",
+          "category": "analysis",
+          "icon": "Brain",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample"
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature"
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label"
+              },
+              "target_label": {
+                "type": "string"
+              },
+              "test_size": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.5,
+                "default": 0.25
+              },
+              "cv_folds": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 5
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0
+              },
+              "scale": {
+                "type": "boolean",
+                "default": true
+              },
+              "output": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "linear_regression",
+          "module": "src.task.step.steps.linear_regression",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "sample_dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "feature_dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "label_dim",
+              "label": "label_dim",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "target_label",
+              "label": "target_label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "test_size",
+              "label": "test_size",
+              "type": "number",
+              "required": false,
+              "default": 0.25,
+              "min": 0.05,
+              "max": 0.5
+            },
+            {
+              "key": "cv_folds",
+              "label": "cv_folds",
+              "type": "integer",
+              "required": false,
+              "default": 5,
+              "min": 2
+            },
+            {
+              "key": "random_state",
+              "label": "random_state",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "scale",
+              "label": "scale",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "label_dim": "label",
+            "test_size": 0.25,
+            "cv_folds": 5,
+            "random_state": 0,
+            "scale": true
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "logistic_regression",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.logistic_regression:LogisticRegressionStep",
+          "title": "Logistic regression",
+          "category": "analysis",
+          "icon": "Brain",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample"
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature"
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label"
+              },
+              "target_label": {
+                "type": "string"
+              },
+              "test_size": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.5,
+                "default": 0.25
+              },
+              "cv_folds": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 5
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0
+              },
+              "scale": {
+                "type": "boolean",
+                "default": true
+              },
+              "output": {
+                "type": "string"
+              },
+              "valid_labels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "C": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "default": 1.0
+              },
+              "penalty": {
+                "type": "string",
+                "enum": [
+                  "l2",
+                  "l1"
+                ],
+                "default": "l2"
+              },
+              "class_weight": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "balanced",
+                  null
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "logistic_regression",
+          "module": "src.task.step.steps.logistic_regression",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "sample_dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "feature_dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "label_dim",
+              "label": "label_dim",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "target_label",
+              "label": "target_label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "test_size",
+              "label": "test_size",
+              "type": "number",
+              "required": false,
+              "default": 0.25,
+              "min": 0.05,
+              "max": 0.5
+            },
+            {
+              "key": "cv_folds",
+              "label": "cv_folds",
+              "type": "integer",
+              "required": false,
+              "default": 5,
+              "min": 2
+            },
+            {
+              "key": "random_state",
+              "label": "random_state",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "scale",
+              "label": "scale",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "valid_labels",
+              "label": "valid_labels",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "C",
+              "label": "C",
+              "type": "number",
+              "required": false,
+              "default": 1.0
+            },
+            {
+              "key": "penalty",
+              "label": "penalty",
+              "type": "choice",
+              "required": false,
+              "default": "l2",
+              "options": [
+                "l2",
+                "l1"
+              ]
+            },
+            {
+              "key": "class_weight",
+              "label": "class_weight",
+              "type": "choice",
+              "required": false,
+              "default": null,
+              "options": [
+                "balanced",
+                null
+              ]
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "label_dim": "label",
+            "test_size": 0.25,
+            "cv_folds": 5,
+            "random_state": 0,
+            "scale": true,
+            "C": 1.0,
+            "penalty": "l2",
+            "class_weight": null
           },
           "legacy_parameters": false
         },
@@ -5985,6 +7195,517 @@
         },
         {
           "protocol_version": 1,
+          "id": "random_forest_classifier",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.random_forest_classifier:RandomForestClassifierStep",
+          "title": "Random Forest classifier",
+          "category": "analysis",
+          "icon": "Brain",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample"
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature"
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label"
+              },
+              "target_label": {
+                "type": "string"
+              },
+              "test_size": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.5,
+                "default": 0.25
+              },
+              "cv_folds": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 5
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0
+              },
+              "scale": {
+                "type": "boolean",
+                "default": true
+              },
+              "output": {
+                "type": "string"
+              },
+              "valid_labels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "n_estimators": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 100
+              },
+              "max_depth": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1,
+                "default": null
+              },
+              "class_weight": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "balanced",
+                  null
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "random_forest_classifier",
+          "module": "src.task.step.steps.random_forest_classifier",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "sample_dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "feature_dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "label_dim",
+              "label": "label_dim",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "target_label",
+              "label": "target_label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "test_size",
+              "label": "test_size",
+              "type": "number",
+              "required": false,
+              "default": 0.25,
+              "min": 0.05,
+              "max": 0.5
+            },
+            {
+              "key": "cv_folds",
+              "label": "cv_folds",
+              "type": "integer",
+              "required": false,
+              "default": 5,
+              "min": 2
+            },
+            {
+              "key": "random_state",
+              "label": "random_state",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "scale",
+              "label": "scale",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "valid_labels",
+              "label": "valid_labels",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "n_estimators",
+              "label": "n_estimators",
+              "type": "integer",
+              "required": false,
+              "default": 100,
+              "min": 1
+            },
+            {
+              "key": "max_depth",
+              "label": "max_depth",
+              "type": "integer",
+              "required": false,
+              "default": null,
+              "min": 1
+            },
+            {
+              "key": "class_weight",
+              "label": "class_weight",
+              "type": "choice",
+              "required": false,
+              "default": null,
+              "options": [
+                "balanced",
+                null
+              ]
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "label_dim": "label",
+            "test_size": 0.25,
+            "cv_folds": 5,
+            "random_state": 0,
+            "scale": true,
+            "n_estimators": 100,
+            "max_depth": null,
+            "class_weight": null
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "random_forest_regressor",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.random_forest_regressor:RandomForestRegressorStep",
+          "title": "Random Forest regressor",
+          "category": "analysis",
+          "icon": "Brain",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample"
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature"
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label"
+              },
+              "target_label": {
+                "type": "string"
+              },
+              "test_size": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.5,
+                "default": 0.25
+              },
+              "cv_folds": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 5
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0
+              },
+              "scale": {
+                "type": "boolean",
+                "default": true
+              },
+              "output": {
+                "type": "string"
+              },
+              "n_estimators": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 100
+              },
+              "max_depth": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1,
+                "default": null
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "random_forest_regressor",
+          "module": "src.task.step.steps.random_forest_regressor",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "sample_dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "feature_dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "label_dim",
+              "label": "label_dim",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "target_label",
+              "label": "target_label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "test_size",
+              "label": "test_size",
+              "type": "number",
+              "required": false,
+              "default": 0.25,
+              "min": 0.05,
+              "max": 0.5
+            },
+            {
+              "key": "cv_folds",
+              "label": "cv_folds",
+              "type": "integer",
+              "required": false,
+              "default": 5,
+              "min": 2
+            },
+            {
+              "key": "random_state",
+              "label": "random_state",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "scale",
+              "label": "scale",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "n_estimators",
+              "label": "n_estimators",
+              "type": "integer",
+              "required": false,
+              "default": 100,
+              "min": 1
+            },
+            {
+              "key": "max_depth",
+              "label": "max_depth",
+              "type": "integer",
+              "required": false,
+              "default": null,
+              "min": 1
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "label_dim": "label",
+            "test_size": 0.25,
+            "cv_folds": 5,
+            "random_state": 0,
+            "scale": true,
+            "n_estimators": 100,
+            "max_depth": null
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "rank_axis",
           "version": "1.0.0",
           "kind": "operator",
@@ -6373,6 +8094,226 @@
         },
         {
           "protocol_version": 1,
+          "id": "ridge_regression",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.ridge_regression:RidgeRegressionStep",
+          "title": "Ridge regression",
+          "category": "analysis",
+          "icon": "Brain",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample"
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature"
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label"
+              },
+              "target_label": {
+                "type": "string"
+              },
+              "test_size": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.5,
+                "default": 0.25
+              },
+              "cv_folds": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 5
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0
+              },
+              "scale": {
+                "type": "boolean",
+                "default": true
+              },
+              "output": {
+                "type": "string"
+              },
+              "alpha": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "default": 1.0
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "ridge_regression",
+          "module": "src.task.step.steps.ridge_regression",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "sample_dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "feature_dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "label_dim",
+              "label": "label_dim",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "target_label",
+              "label": "target_label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "test_size",
+              "label": "test_size",
+              "type": "number",
+              "required": false,
+              "default": 0.25,
+              "min": 0.05,
+              "max": 0.5
+            },
+            {
+              "key": "cv_folds",
+              "label": "cv_folds",
+              "type": "integer",
+              "required": false,
+              "default": 5,
+              "min": 2
+            },
+            {
+              "key": "random_state",
+              "label": "random_state",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "scale",
+              "label": "scale",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "alpha",
+              "label": "alpha",
+              "type": "number",
+              "required": false,
+              "default": 1.0
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "label_dim": "label",
+            "test_size": 0.25,
+            "cv_folds": 5,
+            "random_state": 0,
+            "scale": true,
+            "alpha": 1.0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "scale_features",
           "version": "1.0.0",
           "kind": "operator",
@@ -6705,6 +8646,494 @@
           "runtime_defaults": {
             "sequence_dim": "sequence",
             "position_dim": "position"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "svm_classifier",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.svm_classifier:SvmClassifierStep",
+          "title": "Linear SVM classifier",
+          "category": "analysis",
+          "icon": "Brain",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample"
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature"
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label"
+              },
+              "target_label": {
+                "type": "string"
+              },
+              "test_size": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.5,
+                "default": 0.25
+              },
+              "cv_folds": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 5
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0
+              },
+              "scale": {
+                "type": "boolean",
+                "default": true
+              },
+              "output": {
+                "type": "string"
+              },
+              "valid_labels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "C": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "default": 1.0
+              },
+              "class_weight": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "balanced",
+                  null
+                ],
+                "default": null
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "svm_classifier",
+          "module": "src.task.step.steps.svm_classifier",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "sample_dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "feature_dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "label_dim",
+              "label": "label_dim",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "target_label",
+              "label": "target_label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "test_size",
+              "label": "test_size",
+              "type": "number",
+              "required": false,
+              "default": 0.25,
+              "min": 0.05,
+              "max": 0.5
+            },
+            {
+              "key": "cv_folds",
+              "label": "cv_folds",
+              "type": "integer",
+              "required": false,
+              "default": 5,
+              "min": 2
+            },
+            {
+              "key": "random_state",
+              "label": "random_state",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "scale",
+              "label": "scale",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "valid_labels",
+              "label": "valid_labels",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "C",
+              "label": "C",
+              "type": "number",
+              "required": false,
+              "default": 1.0
+            },
+            {
+              "key": "class_weight",
+              "label": "class_weight",
+              "type": "choice",
+              "required": false,
+              "default": null,
+              "options": [
+                "balanced",
+                null
+              ]
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "label_dim": "label",
+            "test_size": 0.25,
+            "cv_folds": 5,
+            "random_state": 0,
+            "scale": true,
+            "C": 1.0,
+            "class_weight": null
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "svm_regressor",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.svm_regressor:SvmRegressorStep",
+          "title": "Linear SVM regressor",
+          "category": "analysis",
+          "icon": "Brain",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample"
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature"
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label"
+              },
+              "target_label": {
+                "type": "string"
+              },
+              "test_size": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.5,
+                "default": 0.25
+              },
+              "cv_folds": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 5
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0
+              },
+              "scale": {
+                "type": "boolean",
+                "default": true
+              },
+              "output": {
+                "type": "string"
+              },
+              "C": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "default": 1.0
+              },
+              "epsilon": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "default": 0.1
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "svm_regressor",
+          "module": "src.task.step.steps.svm_regressor",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "sample_dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "feature_dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "label_dim",
+              "label": "label_dim",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "target_label",
+              "label": "target_label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "test_size",
+              "label": "test_size",
+              "type": "number",
+              "required": false,
+              "default": 0.25,
+              "min": 0.05,
+              "max": 0.5
+            },
+            {
+              "key": "cv_folds",
+              "label": "cv_folds",
+              "type": "integer",
+              "required": false,
+              "default": 5,
+              "min": 2
+            },
+            {
+              "key": "random_state",
+              "label": "random_state",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "scale",
+              "label": "scale",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "output",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "C",
+              "label": "C",
+              "type": "number",
+              "required": false,
+              "default": 1.0
+            },
+            {
+              "key": "epsilon",
+              "label": "epsilon",
+              "type": "number",
+              "required": false,
+              "default": 0.1
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "label_dim": "label",
+            "test_size": 0.25,
+            "cv_folds": 5,
+            "random_state": 0,
+            "scale": true,
+            "C": 1.0,
+            "epsilon": 0.1
           },
           "legacy_parameters": false
         },

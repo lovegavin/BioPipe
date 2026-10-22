@@ -27,6 +27,14 @@
       "sha256": "7679048c80c791c3b3de810b9f76ebb07877a257e44ff24a576627642c00a25c",
       "commit": "fa267bc46a30ee9c9483b7442ff119b9aefcf62c"
     },
+    "route_876d0954bbc6": {
+      "path": "routes/ml_classification/task.yaml",
+      "sha256": "ffb602e5616a4e0cb1c3a6e85512cbfcfe0f9da42e5f96effceba4e4db6e5f4e"
+    },
+    "route_5cb65e26c7e0": {
+      "path": "routes/ml_regression/task.yaml",
+      "sha256": "88994d064eb2c41f088f26b2a262b9d23909ee66e41986fd69dd818772395c11"
+    },
     "route_3dedbe0d6655": {
       "path": "routes/multi_omics/task.yaml",
       "sha256": "774b016644dcf607a091a49f2137d49f6e9483526c5cdb6f086cca8455bb8c2f"
@@ -2425,6 +2433,525 @@
       }
     },
     {
+      "id": "route_5cb65e26c7e0",
+      "version": 1,
+      "name": "ML regression (multi-model)",
+      "graph": {
+        "schema_version": 2,
+        "name": "ML regression (multi-model)",
+        "base_dir": ".studio/builtin-inputs/ml_regression",
+        "nodes": [
+          {
+            "id": "clinical",
+            "kind": "source",
+            "operator": null,
+            "title": "clinical",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/clinical_raw.txt",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {
+                "reader": "csv",
+                "sep": "\t"
+              }
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "proteins",
+            "kind": "source",
+            "operator": null,
+            "title": "proteins",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/proteomics_raw.txt",
+              "dims": [
+                "protein",
+                "sample"
+              ],
+              "labels": {
+                "protein": {
+                  "sample": 0
+                },
+                "sample": "builtin"
+              },
+              "args": {
+                "reader": "csv",
+                "sep": "\t"
+              }
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "missing_1",
+            "kind": "operator",
+            "operator": "missing",
+            "title": "缺失值过滤",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "threshold": 0.5,
+              "dim": "protein",
+              "output": "prot_filtered"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "impute_2",
+            "kind": "operator",
+            "operator": "impute",
+            "title": "缺失值填补",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_scale": 1.0,
+              "dim": "protein",
+              "method": "min",
+              "output": "prot_imputed"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "normalize_3",
+            "kind": "operator",
+            "operator": "normalize",
+            "title": "归一化",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "target_sum": 1000000.0,
+              "dim": "sample",
+              "method": "quantile",
+              "output": "prot_qn"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "log_transform_4",
+            "kind": "operator",
+            "operator": "log_transform",
+            "title": "Log",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "base": 2,
+              "pseudocount": 1,
+              "output": "prot_log"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "transpose_5",
+            "kind": "operator",
+            "operator": "transpose",
+            "title": "维度转置",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {
+              "order": [
+                "sample",
+                "protein"
+              ],
+              "output": "samples_by_protein"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ridge_regression_6",
+            "kind": "operator",
+            "operator": "ridge_regression",
+            "title": "Ridge regression",
+            "position": {
+              "x": 1810.0,
+              "y": 100.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "feature_dim": "protein",
+              "label_dim": "feature",
+              "test_size": 0.25,
+              "cv_folds": 3,
+              "random_state": 42,
+              "scale": true,
+              "alpha": 10.0,
+              "output": "ridge",
+              "target_label": "Age"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "random_forest_regressor_7",
+            "kind": "operator",
+            "operator": "random_forest_regressor",
+            "title": "Random Forest regressor",
+            "position": {
+              "x": 1810.0,
+              "y": 310.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "feature_dim": "protein",
+              "label_dim": "feature",
+              "test_size": 0.25,
+              "cv_folds": 3,
+              "random_state": 42,
+              "scale": true,
+              "n_estimators": 200,
+              "max_depth": null,
+              "output": "rf",
+              "target_label": "Age"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "gradient_boosting_regressor_8",
+            "kind": "operator",
+            "operator": "gradient_boosting_regressor",
+            "title": "Gradient Boosting regressor",
+            "position": {
+              "x": 1810.0,
+              "y": 520.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "feature_dim": "protein",
+              "label_dim": "feature",
+              "test_size": 0.25,
+              "cv_folds": 3,
+              "random_state": 42,
+              "scale": true,
+              "n_estimators": 100,
+              "learning_rate": 0.1,
+              "max_depth": 3,
+              "output": "gb",
+              "target_label": "Age"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "describe_9",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 2100.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_10",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 2100.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_11",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 2100.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "proteins-missing_1-0",
+            "source": "proteins",
+            "target": "missing_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "missing_1-impute_2-0",
+            "source": "missing_1",
+            "target": "impute_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "impute_2-normalize_3-0",
+            "source": "impute_2",
+            "target": "normalize_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_3-log_transform_4-0",
+            "source": "normalize_3",
+            "target": "log_transform_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_4-transpose_5-0",
+            "source": "log_transform_4",
+            "target": "transpose_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "transpose_5-ridge_regression_6-0",
+            "source": "transpose_5",
+            "target": "ridge_regression_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clinical-ridge_regression_6-1",
+            "source": "clinical",
+            "target": "ridge_regression_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "transpose_5-random_forest_regressor_7-0",
+            "source": "transpose_5",
+            "target": "random_forest_regressor_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clinical-random_forest_regressor_7-1",
+            "source": "clinical",
+            "target": "random_forest_regressor_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "transpose_5-gradient_boosting_regressor_8-0",
+            "source": "transpose_5",
+            "target": "gradient_boosting_regressor_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clinical-gradient_boosting_regressor_8-1",
+            "source": "clinical",
+            "target": "gradient_boosting_regressor_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "ridge_regression_6-describe_9-0",
+            "source": "ridge_regression_6",
+            "target": "describe_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "random_forest_regressor_7-describe_10-0",
+            "source": "random_forest_regressor_7",
+            "target": "describe_10",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "gradient_boosting_regressor_8-describe_11-0",
+            "source": "gradient_boosting_regressor_8",
+            "target": "describe_11",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "clinical",
+              "label": "clinical",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "proteins",
+              "label": "proteins",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "protein",
+                  "sample"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "ridge_regression_6",
+              "handle": "out",
+              "label": "Ridge regression",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "random_forest_regressor_7",
+              "handle": "out",
+              "label": "Random Forest regressor",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "gradient_boosting_regressor_8",
+              "handle": "out",
+              "label": "Gradient Boosting regressor",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
       "id": "route_5d8f861d9506",
       "version": 2,
       "name": "16S Microbiome",
@@ -3787,6 +4314,543 @@
               "node_id": "enrich_go_3",
               "handle": "out",
               "label": "enrich_go",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_876d0954bbc6",
+      "version": 4,
+      "name": "ML classification (multi-model)",
+      "graph": {
+        "schema_version": 2,
+        "name": "ML classification (multi-model)",
+        "base_dir": ".studio/builtin-inputs/ml_classification",
+        "nodes": [
+          {
+            "id": "clinical",
+            "kind": "source",
+            "operator": null,
+            "title": "clinical",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/clinical_raw.txt",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {
+                "reader": "csv",
+                "sep": "\t"
+              }
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "proteins",
+            "kind": "source",
+            "operator": null,
+            "title": "proteins",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/proteomics_raw.txt",
+              "dims": [
+                "protein",
+                "sample"
+              ],
+              "labels": {
+                "protein": {
+                  "sample": 0
+                },
+                "sample": "builtin"
+              },
+              "args": {
+                "reader": "csv",
+                "sep": "\t"
+              }
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "missing_1",
+            "kind": "operator",
+            "operator": "missing",
+            "title": "缺失值过滤",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "threshold": 0.5,
+              "dim": "protein",
+              "output": "prot_filtered"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "impute_2",
+            "kind": "operator",
+            "operator": "impute",
+            "title": "缺失值填补",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_scale": 1.0,
+              "dim": "protein",
+              "method": "min",
+              "output": "prot_imputed"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "normalize_3",
+            "kind": "operator",
+            "operator": "normalize",
+            "title": "归一化",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "target_sum": 1000000.0,
+              "dim": "sample",
+              "method": "quantile",
+              "output": "prot_qn"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "log_transform_4",
+            "kind": "operator",
+            "operator": "log_transform",
+            "title": "Log",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "base": 2,
+              "pseudocount": 1,
+              "output": "prot_log"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "transpose_5",
+            "kind": "operator",
+            "operator": "transpose",
+            "title": "维度转置",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {
+              "order": [
+                "sample",
+                "protein"
+              ],
+              "output": "samples_by_protein"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "logistic_regression_6",
+            "kind": "operator",
+            "operator": "logistic_regression",
+            "title": "Logistic regression",
+            "position": {
+              "x": 1810.0,
+              "y": 100.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "feature_dim": "protein",
+              "label_dim": "feature",
+              "test_size": 0.25,
+              "cv_folds": 3,
+              "random_state": 42,
+              "scale": true,
+              "C": 100.0,
+              "penalty": "l2",
+              "class_weight": "balanced",
+              "output": "logistic",
+              "target_label": "Stage",
+              "valid_labels": [
+                "Stage I",
+                "Stage II",
+                "Stage III"
+              ]
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "random_forest_classifier_7",
+            "kind": "operator",
+            "operator": "random_forest_classifier",
+            "title": "Random Forest classifier",
+            "position": {
+              "x": 1810.0,
+              "y": 310.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "feature_dim": "protein",
+              "label_dim": "feature",
+              "test_size": 0.25,
+              "cv_folds": 3,
+              "random_state": 42,
+              "scale": true,
+              "n_estimators": 200,
+              "max_depth": null,
+              "class_weight": "balanced",
+              "output": "rf",
+              "target_label": "Stage",
+              "valid_labels": [
+                "Stage I",
+                "Stage II",
+                "Stage III"
+              ]
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "gradient_boosting_classifier_8",
+            "kind": "operator",
+            "operator": "gradient_boosting_classifier",
+            "title": "Gradient Boosting classifier",
+            "position": {
+              "x": 1810.0,
+              "y": 520.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "feature_dim": "protein",
+              "label_dim": "feature",
+              "test_size": 0.25,
+              "cv_folds": 3,
+              "random_state": 42,
+              "scale": true,
+              "n_estimators": 100,
+              "learning_rate": 0.1,
+              "max_depth": 3,
+              "output": "gb",
+              "target_label": "Stage",
+              "valid_labels": [
+                "Stage I",
+                "Stage II",
+                "Stage III"
+              ]
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "describe_9",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 2100.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_10",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 2100.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_11",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 2100.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "proteins-missing_1-0",
+            "source": "proteins",
+            "target": "missing_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "missing_1-impute_2-0",
+            "source": "missing_1",
+            "target": "impute_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "impute_2-normalize_3-0",
+            "source": "impute_2",
+            "target": "normalize_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_3-log_transform_4-0",
+            "source": "normalize_3",
+            "target": "log_transform_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_4-transpose_5-0",
+            "source": "log_transform_4",
+            "target": "transpose_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "transpose_5-logistic_regression_6-0",
+            "source": "transpose_5",
+            "target": "logistic_regression_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clinical-logistic_regression_6-1",
+            "source": "clinical",
+            "target": "logistic_regression_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "transpose_5-random_forest_classifier_7-0",
+            "source": "transpose_5",
+            "target": "random_forest_classifier_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clinical-random_forest_classifier_7-1",
+            "source": "clinical",
+            "target": "random_forest_classifier_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "transpose_5-gradient_boosting_classifier_8-0",
+            "source": "transpose_5",
+            "target": "gradient_boosting_classifier_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clinical-gradient_boosting_classifier_8-1",
+            "source": "clinical",
+            "target": "gradient_boosting_classifier_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "logistic_regression_6-describe_9-0",
+            "source": "logistic_regression_6",
+            "target": "describe_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "random_forest_classifier_7-describe_10-0",
+            "source": "random_forest_classifier_7",
+            "target": "describe_10",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "gradient_boosting_classifier_8-describe_11-0",
+            "source": "gradient_boosting_classifier_8",
+            "target": "describe_11",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "clinical",
+              "label": "clinical",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "proteins",
+              "label": "proteins",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "protein",
+                  "sample"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "logistic_regression_6",
+              "handle": "out",
+              "label": "Logistic regression",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "random_forest_classifier_7",
+              "handle": "out",
+              "label": "Random Forest classifier",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "gradient_boosting_classifier_8",
+              "handle": "out",
+              "label": "Gradient Boosting classifier",
               "contract": {
                 "version": 1,
                 "dims": null,
