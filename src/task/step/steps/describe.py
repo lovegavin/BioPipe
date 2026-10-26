@@ -7,7 +7,6 @@ import numpy as np
 
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
 
 
 class DescribeStep(Step):
@@ -15,24 +14,36 @@ class DescribeStep(Step):
 
     Params: none.
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {},
-     'additionalProperties': True,
-     'required': []}
-    title = '数据概览'
-    category = '数据整理'
-    icon = 'ListBullets'
-    description = '查看形状、标签、缺失情况与全局统计。支持分块读取。'
+    provider = 'biopipe-core'
+    parameters_file = 'describe.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'describe',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '数据概览',
+     'description': '查看形状、标签、缺失情况与全局统计。支持分块读取。',
+     'category': '数据整理',
+     'icon': 'ListBullets',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'report'}},
+     'resources': {'memory_modes': ['full', 'stream'],
+                   'supports_cuda': False,
+                   'estimate': 'estimate_memory',
+                   'stream_protocol': 'flat-reduction-v1',
+                   'stream_buffer_multiplier': 4,
+                   'stream_fixed_bytes': 0},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': None}
 
-    name = "describe"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port()]
-    output_contract = {"mode": "report"}
 
-    supports_streaming = True
-    stream_protocol = "flat-reduction-v1"
+
 
     def run_stream(self, ctx: Context, stream: dict) -> None:
         """Bounded finite-cell statistics; float64 moments may differ by rounding."""

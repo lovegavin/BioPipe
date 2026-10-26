@@ -28,7 +28,6 @@ from __future__ import annotations
 import numpy as np
 
 from src.core import Form, StepError
-from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
 from src.task.context import Context
 from src.task.step.base import Step
@@ -39,42 +38,37 @@ _STAT_LABELS = ("n_exons", "n_introns", "gene_length", "cds_total", "strand")
 
 class GeneStructureStep(Step):
     """Per-gene exon/intron/CDS summary for GFF3/GTF."""
-    title = 'gene_structure'
-    description = 'Per-gene exon/intron/CDS summary for GFF3/GTF.'
+    provider = 'biopipe-core'
+    parameters_file = 'gene_structure.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'gene_structure',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'gene_structure',
+     'description': 'Per-gene exon/intron/CDS summary for GFF3/GTF.',
+     'category': 'analysis',
+     'icon': 'TreeStructure',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'encoders': {'type': 'object', 'optional': True}},
+                               'dims': [{'param': 'record_dim', 'default': 'record'},
+                                        {'param': 'field_dim', 'default': 'field'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': True,
+                                         'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "gene_structure"
-    category = "analysis"
-    icon = "TreeStructure"
-    inputs_arity = 1
-    outputs = []
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "record_dim": {"type": "string", "default": "record"},
-            "field_dim": {"type": "string", "default": "field"},
-            "output": {"type": "string"},
-        },
-        "additionalProperties": False,
-    }
-    input_contracts = [port(
-        ndim=2,
-        dims=[param("record_dim", "record"),
-              param("field_dim", "field")],
-        info={
-            "missing_code": MISSING,
-            "encoders": {"type": "object", "optional": True},
-        },
-    )]
-    output_contract = {
-        "mode": "declare",
-        "schema": {
-            "ndim": 2,
-            "numeric": True,
-            "info_open": True,
-            "axis_info_open": True,
-        },
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

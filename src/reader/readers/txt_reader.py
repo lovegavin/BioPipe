@@ -21,39 +21,40 @@ from pathlib import Path
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
-from src.core.contracts import reader_contract, validate_form, validate_output, source_schema
+from src.core.contracts import validate_form, validate_output, source_schema
 
 
 class TxtReader(Reader):
     """Read generic text files by delegating to another reader."""
-    parameters_schema = {'type': 'object',
-     'properties': {'header': {'type': 'boolean', 'title': 'Header row', 'default': True},
-                    'sep': {'type': 'string', 'title': 'Separator', 'minLength': 1},
-                    'encoders': {'type': 'object',
-                                 'title': 'Encoders',
-                                 'description': 'Per-field encoder configuration.',
-                                 'additionalProperties': True},
-                    'columns': {'type': 'array',
-                                'items': {'type': 'string'},
-                                'title': 'Columns',
-                                'description': 'Restrict the reader to these header names, in order. Label '
-                                               'indices still refer to the original file.'},
-                    'info_columns': {'type': 'object',
-                                     'title': 'Info columns',
-                                     'description': 'Map a header name to an info field. The column is '
-                                                    'read as strings into info[field] and declared '
-                                                    'parallel to the row dimension.',
-                                     'additionalProperties': {'type': 'string'}},
-                    'reader': {'type': 'string', 'title': 'Delegate reader', 'default': 'csv'}},
-     'additionalProperties': True}
+    provider = 'biopipe-readers'
+    parameters_file = 'txt_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'TxtReader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'TxtReader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'axis_fields': [],
+                              'info_open': True}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False},
+     'extensions': ['.txt', '.tab'],
+     'requires_siblings': [],
+     'excludes_siblings': [],
+     'handles_compression': False,
+     'file_input': {'dims': ['sample', 'feature'], 'labels': {'sample': 'auto', 'feature': 'builtin'}}}
+
 
     # The delegate owns dimensionality and format-specific metadata guarantees.
-    output_contract = {**reader_contract(ndim=None), "info_open": True}
 
-    file_input = {'dims': ['sample', 'feature'], 'labels': {'sample': 'auto', 'feature': 'builtin'}}
 
-    extensions = [".txt", ".tab"]
-    handles_compression = False
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         reader_name = args.pop("reader", "csv")
@@ -83,7 +84,7 @@ def _find_reader(name: str, exclude: Reader | None = None) -> Reader:
     key = name.lower().strip()
     matches: list[Reader] = []
     for r in READERS:
-        if r is exclude:
+        if r is exclude or (exclude is not None and type(r).__name__ == type(exclude).__name__):
             continue
         cls_name = type(r).__name__
         stem = cls_name[:-len("Reader")] if cls_name.endswith("Reader") \
@@ -97,7 +98,7 @@ def _find_reader(name: str, exclude: Reader | None = None) -> Reader:
                 type(r).__name__
             ).lower()
             for r in READERS
-            if r is not exclude
+            if r is not exclude and (exclude is None or type(r).__name__ != type(exclude).__name__)
         })
         raise ReaderError(
             f"TxtReader: no reader named '{name}'. "

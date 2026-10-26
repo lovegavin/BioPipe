@@ -53,55 +53,43 @@ import pandas as pd
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
-from src.core.contracts import reader_contract
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
 
 
 class CsvReader(Reader):
     """Reader for .csv files."""
+    provider = 'biopipe-readers'
+    parameters_file = 'csv_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'CsvReader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'CsvReader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'ndim': 2,
+                              'axis_fields': [],
+                              'info_open': False}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False},
+     'extensions': ['.csv'],
+     'requires_siblings': [],
+     'excludes_siblings': [],
+     'handles_compression': True,
+     'file_input': {'dims': ['sample', 'feature'],
+                    'labels': {'sample': 'auto', 'feature': 'builtin'},
+                    'compression': ['.gz', '.bz2', '.xz']}}
 
-    output_contract = reader_contract()
 
-    file_input = {
-        "dims": ["sample", "feature"],
-        "labels": {"sample": "auto", "feature": "builtin"},
-        "compression": [".gz", ".bz2", ".xz"],
-    }
 
-    extensions = [".csv"]
-    handles_compression = True
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "header": {
-                "type": "boolean",
-                "title": "Header row",
-                "default": True,
-            },
-            "sep": {
-                "type": "string",
-                "title": "Separator",
-                "minLength": 1,
-            },
-            "encoders": {
-                "type": "object",
-                "title": "Encoders",
-                "additionalProperties": True,
-            },
-            "columns": {
-                "type": "array",
-                "items": {"type": "string"},
-                "title": "Columns",
-            },
-            "info_columns": {
-                "type": "object",
-                "title": "Info columns",
-                "additionalProperties": {"type": "string"},
-            },
-        },
-        "additionalProperties": True,
-    }
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:

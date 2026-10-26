@@ -7,7 +7,6 @@ from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.forms.metadata import project_metadata
-from src.core.contracts import MISSING, param, port
 
 
 class RenameDimStep(Step):
@@ -18,23 +17,30 @@ class RenameDimStep(Step):
         to     : new dim name
         output : context key for the result
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'from': {'title': '原维度', 'type': 'string', 'x-ui-default': 'feature'},
-                    'to': {'title': '新维度', 'type': 'string', 'x-ui-default': 'variant'}},
-     'additionalProperties': True,
-     'required': ['from', 'to']}
-    title = '重命名维度'
-    category = '数据整理'
-    icon = 'TextT'
-    description = '为一个维度更换名称。'
+    provider = 'biopipe-core'
+    parameters_file = 'rename_dim.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'rename_dim',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '重命名维度',
+     'description': '为一个维度更换名称。',
+     'category': '数据整理',
+     'icon': 'TextT',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'from', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'rename'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "rename_dim"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(dims=[param("from")])]
-    output_contract = {"mode": "rename"}
-    output_parameter = "output"
+
 
 
     def run(self, ctx: Context, inputs) -> None:

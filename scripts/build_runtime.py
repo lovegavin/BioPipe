@@ -97,7 +97,7 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
         for path in Path(bundle_wheels).glob('*.whl'):
             shutil.copy2(path, target / path.name)
     subprocess.run([python, '-I', '-m', 'compileall', '-q', '-f',
-                    '--invalidation-mode', 'unchecked-hash', str(destination / 'Lib')], check=True)
+                    '--invalidation-mode', 'unchecked-hash', '-s', str(destination), str(destination / 'Lib')], check=True)
     info = {'schema_version': 1, 'python_version': '.'.join(map(str, probe[0])),
             'platform': 'windows-x86_64', 'provider': 'astral-sh/python-build-standalone',
             'bootstrap_archives': bootstrap_archives,

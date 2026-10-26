@@ -62,7 +62,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
+from src.task.step.steps._microbiome import estimate, metadata
 
 
 _METHODS = ("pca", "umap", "tsne", "pcoa")
@@ -77,19 +77,49 @@ _COMPONENT_PREFIX = {
 
 class ReduceStep(Step):
     """Reduce one axis of a 2D form to a small number of components."""
-    description = 'Reduce one axis of a 2D form to a small number of components.'
-    dependencies = ['scikit-learn>=1.5', 'umap-learn>=0.5']
-    dependency_imports = ['sklearn', 'umap']
+    provider = 'biopipe-microbiome'
+    parameters_file = 'reduce.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'reduce',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'PCA / PCoA / UMAP / t-SNE',
+     'description': 'Reduce one axis of a 2D form to a small number of components.',
+     'category': '统计分析',
+     'icon': 'ArrowsIn',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'choose',
+                              'param': 'method',
+                              'default': 'pca',
+                              'cases': {'pcoa': {'mode': 'project',
+                                                 'derived': True,
+                                                 'info': {'missing_code': {'type': ['number', 'null']},
+                                                          'representation': {'type': 'string',
+                                                                             'const': 'scores'}},
+                                                 'keep_dims': [{'param': 'dim', 'default': None}],
+                                                 'append_dims': [{'name': 'component'}]}},
+                              'otherwise': {'mode': 'project',
+                                            'derived': True,
+                                            'info': {'missing_code': {'type': ['number', 'null']},
+                                                     'representation': {'type': 'string',
+                                                                        'const': 'scores'}},
+                                            'drop_dims': [{'param': 'dim', 'default': None}],
+                                            'append_dims': [{'name': 'component'}]}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'dependencies': ['scikit-learn>=1.5', 'umap-learn>=0.5'],
+     'dependency_imports': ['sklearn', 'umap'],
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "reduce"
-    inputs_arity = 1
-    outputs = []
-    title = 'PCA / PCoA / UMAP / t-SNE'
-    category = '统计分析'
-    builtin_package = "biopipe-microbiome"
-    parameters_schema = SCHEMAS['reduce']
-    input_contracts, output_contract = CONTRACTS['reduce']
-    output_parameter = "output"
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -328,7 +358,6 @@ class ReduceStep(Step):
             np.zeros(k)
 
         return coords, explained
-    icon = 'ArrowsIn'
 
 
 # ---------------------------------------------------------------------- #

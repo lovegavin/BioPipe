@@ -1,3 +1,4 @@
+from extension_fixtures import write_extension
 """Maintenance discovers filesystem additions and publishes only valid indexes."""
 from copy import deepcopy
 import json
@@ -46,7 +47,7 @@ class Probe(Step):
 
 def add_extension(root, source=NEW_OPERATOR):
     path = root / "src/task/step/steps/example_probe.py"
-    path.write_text(source, encoding="utf-8")
+    write_extension(path, source)
     return path
 
 
@@ -111,7 +112,6 @@ def test_sdk_operator_is_discovered_and_missing_startup_index_can_be_rebuilt(che
     (NEW_OPERATOR.replace('parameters_schema = {"type": "object", "properties": {}, "additionalProperties": False}', 'parameters_schema = None'), "parameters_schema"),
     (NEW_OPERATOR.replace('name = "example.probe"', 'name = "diversity"'), "Duplicate"),
     (NEW_OPERATOR.replace('output_contract = {"mode": "report"}', 'output_contract = {"mode": "invented"}'), "contract mode"),
-    (NEW_OPERATOR + '\nraise RuntimeError("import failure")\n', "import failure"),
 ])
 def test_invalid_extension_does_not_publish_partial_indexes(checkout, source, expected):
     add_extension(checkout, source)
@@ -142,7 +142,7 @@ def test_new_bundled_package_migrates_without_restoring_removals(tmp_path):
     state = deepcopy(bundled_state())
     state["packages"] = [p for p in state["packages"] if p["name"] != "biopipe-microbiome"]
     state["descriptors"] = [d for d in state["descriptors"] if d["distribution"] != "biopipe-microbiome"]
-    state.update(protocol_version=2, package_protocol_version=2, generation="before16s", bundled_seen=[p["name"] for p in state["packages"]])
+    state.update(protocol_version=3, package_protocol_version=3, generation="before16s", bundled_seen=[p["name"] for p in state["packages"]])
     history = manager.directory / "snapshots"
     history.mkdir()
     (history / "old.json").write_text(json.dumps(state), encoding="utf-8")
@@ -160,3 +160,10 @@ def test_new_bundled_package_migrates_without_restoring_removals(tmp_path):
     assert "biopipe-microbiome" not in {p["name"] for p in manager.state()["packages"]}
     manager.manage("biopipe-microbiome", "restore")
     assert "diversity" in {d["id"] for d in active_descriptors(manager.state())}
+
+
+def test_maintenance_never_executes_module_top_level(checkout):
+    add_extension(checkout, NEW_OPERATOR + '\nraise RuntimeError("must not execute")\n')
+    code, report = cli(checkout, "build")
+    assert code == 0 and report["errors"] == []
+    assert report["operators"] == 65

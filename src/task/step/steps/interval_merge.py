@@ -37,7 +37,6 @@ from __future__ import annotations
 import numpy as np
 
 from src.core import Form, StepError
-from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
 from src.reader.readers._labels import unique_labels
 from src.task.context import Context
@@ -49,46 +48,37 @@ _STAT_LABELS = ("start", "end", "length", "n_intervals")
 
 class IntervalMergeStep(Step):
     """Merge overlapping BED intervals per chromosome."""
-    title = 'interval_merge'
-    description = 'Merge overlapping BED intervals per chromosome.'
+    provider = 'biopipe-core'
+    parameters_file = 'interval_merge.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'interval_merge',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'interval_merge',
+     'description': 'Merge overlapping BED intervals per chromosome.',
+     'category': 'analysis',
+     'icon': 'Unite',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'encoders': {'type': 'object', 'optional': True}},
+                               'dims': [{'param': 'region_dim', 'default': 'region'},
+                                        {'param': 'field_dim', 'default': 'field'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': True,
+                                         'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "interval_merge"
-    category = "analysis"
-    icon = "Unite"
-    inputs_arity = 1
-    outputs = []
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "region_dim": {"type": "string", "default": "region"},
-            "field_dim": {"type": "string", "default": "field"},
-            "chrom_field": {"type": "string", "default": "chrom"},
-            "start_field": {"type": "string", "default": "chromStart"},
-            "end_field": {"type": "string", "default": "chromEnd"},
-            "min_overlap": {"type": "integer", "minimum": 0, "default": 0},
-            "output": {"type": "string"},
-        },
-        "additionalProperties": False,
-    }
-    input_contracts = [port(
-        ndim=2,
-        dims=[param("region_dim", "region"),
-              param("field_dim", "field")],
-        info={
-            "missing_code": MISSING,
-            "encoders": {"type": "object", "optional": True},
-        },
-    )]
-    output_contract = {
-        "mode": "declare",
-        "schema": {
-            "ndim": 2,
-            "numeric": True,
-            "info_open": True,
-            "axis_info_open": True,
-        },
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

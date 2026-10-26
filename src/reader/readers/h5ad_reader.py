@@ -44,29 +44,45 @@ import numpy as np
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
-from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
 class H5adReader(Reader):
     """Reader for .h5ad files."""
-    parameters_schema = {'type': 'object',
-     'properties': {'layer': {'type': ['string', 'null'],
-                              'x-ui-type': 'string',
-                              'title': 'Layer',
-                              'description': 'Leave unset to read X.'}},
-     'additionalProperties': True}
-    dependencies = ['anndata>=0.10', 'h5py>=3.9']
-    dependency_imports = ['anndata', 'h5py']
+    provider = 'biopipe-readers'
+    parameters_file = 'h5ad_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'H5adReader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'H5adReader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'ndim': 2,
+                              'axis_fields': [],
+                              'info_open': False}},
+     'resources': {'memory_modes': ['full', 'disk'],
+                   'supports_cuda': False,
+                   'disk_protocol': 'dense-writer-v1'},
+     'dependencies': ['anndata>=0.10', 'h5py>=3.9'],
+     'dependency_imports': ['anndata', 'h5py'],
+     'extensions': ['.h5ad'],
+     'requires_siblings': [],
+     'excludes_siblings': [],
+     'handles_compression': False,
+     'file_input': {'dims': ['sample', 'feature'],
+                    'labels': {'sample': 'builtin', 'feature': 'builtin'}}}
 
-    output_contract = reader_contract()
 
-    file_input = {'dims': ['sample', 'feature'], 'labels': {'sample': 'builtin', 'feature': 'builtin'}}
 
-    extensions = [".h5ad"]
-    handles_compression = False
-    supports_disk_read = True
-    disk_protocol = "dense-writer-v1"
+
 
     @staticmethod
     def _matrix(handle, args):

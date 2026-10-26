@@ -42,7 +42,6 @@ import pandas as pd
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import port, param
 from src.core.forms.metadata import project_metadata
 
 
@@ -59,31 +58,38 @@ _STAT_LABELS = {
 
 class CoxRegressionStep(Step):
     """Fit a Cox proportional hazards model."""
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'time_label': {'title': '随访时间字段', 'type': 'string'},
-                    'event_label': {'title': '事件字段', 'type': 'string'},
-                    'covariates': {'title': '协变量', 'type': 'array', 'items': {'type': 'string'}},
-                    'weights_label': {'title': '权重字段', 'type': 'string'},
-                    'categorical': {'title': '分类协变量',
-                                    'type': 'array',
-                                    'default': [],
-                                    'items': {'type': 'string'}}},
-     'additionalProperties': True,
-     'required': ['time_label', 'event_label', 'covariates']}
-    title = 'Cox'
-    category = '统计分析'
-    icon = 'TrendUp'
-    description = '多变量比例风险回归'
-    dependencies = ['lifelines>=0.30,<0.31']
-    dependency_imports = ['lifelines']
+    provider = 'biopipe-expression'
+    parameters_file = 'cox_regression.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'cox_regression',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Cox',
+     'description': '多变量比例风险回归',
+     'category': '统计分析',
+     'icon': 'TrendUp',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2,
+                               'labels_axis': [{'axis': 1,
+                                                'values': [{'param': 'time_label', 'default': None},
+                                                           {'param': 'event_label', 'default': None}]},
+                                               {'axis': 1,
+                                                'values': {'param': 'covariates', 'default': []}}]}],
+                   'output': {'mode': 'cox_regression'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'dependencies': ['lifelines<0.31,>=0.30'],
+     'dependency_imports': ['lifelines'],
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "cox_regression"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [{**port(ndim=2), "labels_axis": [{"axis": 1, "values": [param("time_label"), param("event_label")]}, {"axis": 1, "values": param("covariates", [])}]}]
-    output_contract = {"mode": "cox_regression"}
-    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         try:

@@ -1,108 +1,70 @@
-# Write a BioPipe plugin in 30 minutes
+# Write an operator in 30 minutes
 
-This guide targets SDK 2.0 / protocol v2. The class declaration is authoritative;
-no separate UI JSON or schema adapter is required. For old extensions and saved
-workflows, use the [one-time migration guide](migration_v2.md).
+SDK 3.0 / protocol 3 uses **one implementation plus its own parameter JSON**.
+The Python class owns a literal `definition`; its JSON owns parameter types,
+defaults, constraints and form hints. The registry is a generated index.
 
-This walkthrough assumes a working BioPipe Python environment and an existing
-small algorithm. It scaffolds a real wheel, tests contracts, hot-installs it and
-makes it available in the desktop. BioPipe does not need an AI provider.
+## 0–5 minutes: scaffold
 
-For a self-contained operator, the shortest path is to copy
-[scale.py](../examples/dropins/scale.py) into **算子库管理 → 算子目录**, edit it,
-and click **刷新算子库**. Studio discovers the normal source module, validates its
-contracts and hot-loads the library; no plugin project is needed. Install required
-algorithm dependencies through literal class `dependencies` declarations; Studio
-prepares them during refresh. For optional independent extensions,
-**附加目录** accepts single files with `BIOPIPE_PLUGIN` dependency metadata, complete
-SDK projects and wheels; see
-[drop-folder installation](plugins.md#drop-refresh-use). The wheel workflow below
-remains useful for multi-file plugins, tests and distribution.
-
-Detailed extension guides: [Readers](reader_extensions.md) and
-[Steps/Operators](step_extensions.md). Both include complete examples and explain
-how to retain the existing streaming and disk-backed execution capabilities.
-
-## 0–5 minutes: prepare the development environment
-
-From the BioPipe repository, using the same Python environment as Studio:
+Use the same Python environment as BioPipe:
 
 ```text
 python -m pip install -e ".[agent,dev]"
-python -m biopipe --help
+python -m biopipe plugin init ./lab_scale
 ```
 
-If pip is unavailable, use `uv pip install --python <interpreter> -e ".[agent,dev]"`.
-The package is supplied by this repository; these instructions do not assume a
-published PyPI release. `biopipe` is a console entry point; `python -m biopipe`
-performs the same operation when the executable is not on PATH.
-
-Start Studio by double-clicking its desktop executable or running
-`python scripts/studio.py`. Keep the usual profile to share its registry.
-
-## 5–15 minutes: scaffold and implement
+The project contains:
 
 ```text
-biopipe plugin init ./lab_scale
+lab_scale/
+  pyproject.toml
+  lab_scale/
+    __init__.py         # definition + compute()
+    parameters.json    # this operator's JSON Schema
+  tests/test_plugin.py
+  README.md
 ```
 
-The generated project contains `pyproject.toml`, `lab_scale/__init__.py`, a README,
-and `tests/test_plugin.py`. It exposes `example.lab_scale` through the
-`biopipe.operators` entry-point group. Replace `example` with your stable namespace
-before sharing the plugin.
+`biopipe` and `python -m biopipe` are equivalent. No fixed machine path is needed.
+For a Reader use `plugin init ./lab_array --template reader`.
 
-The generated implementation includes:
+## 5–15 minutes: implement and declare
 
-```python
-import numpy as np
-from biopipe_sdk import Operator, Form, port, project_metadata
+Edit `definition` in `lab_scale/__init__.py`: stable namespaced ID, version, title,
+category, input/output contracts, resource capabilities and dependencies. Keep
+it literal: the maintenance tool reads the AST without importing your module.
+Keep the ID stable when changing the display title.
 
-class Scale(Operator):
-    name = "my_lab.scale"
-    version = "0.1.0"
-    title = "Scale matrix"
-    category = "data"
-    icon = "SlidersHorizontal"  # Optional; omit for the default icon.
-    input_contracts = [port(ndim=2)]
-    output_contract = {"mode": "transform", "representation": "scaled"}
-    parameters_schema = {
-        "type": "object", "additionalProperties": False,
-        "properties": {"factor": {"type": "number", "default": 2.0}},
-    }
+Edit `parameters.json` for calculation parameters. For example:
 
-    def compute(self, inputs, params, context):
-        form = inputs[0]
-        info, axes = project_metadata(form, derived=True)
-        info.update(representation="scaled", missing_code=float("nan"))
-        context.log("Scaling matrix", factor=params["factor"])
-        data = form.data.astype(float, copy=True)
-        missing = form.info.get("missing_code")
-        if missing is not None:
-            data[data == missing] = np.nan
-        data *= params["factor"]
-        return Form(data=data, dims=list(form.dims),
-                    labels={d: dict(v) for d, v in form.labels.items()},
-                    info=info, axis_info=axes)
+```json
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "factor": {"type": "number", "default": 2.0, "title": "Scale factor"}
+  }
+}
 ```
 
-Use input dimensions rather than assuming the sample axis is always axis 0.
-The example converts a finite missing sentinel such as `-9` to NaN before scaling,
-and preserves existing NaNs.
-Declare any additional pip dependencies in the plugin's `pyproject.toml`.
-The generated memory estimate should be adjusted for your algorithm.
+Use `params["factor"]` in `compute(inputs, params, context)`; the framework supplies
+validated defaults. Do not read JSON in each calculation or duplicate defaults in
+Python. `x-ui-default` is an optional new-node preset, separate from a runtime
+`default`. Existing saved node values are retained.
 
-Choose `quality_control`, `analysis`, `data` or `visualization` for the library
-category, or use your own label. `kind` is inferred from the base class; do not
-set it to a category name. An omitted category uses the Uncategorized group.
-An omitted or unknown icon name uses the category's default icon. To supply your
-own image, set `icon = "icons/scale.svg"` (PNG, JPEG, WebP and GIF also work), place
-it relative to the operator's Python file, and include it in the wheel's
-`[tool.setuptools.package-data]`. Source-directory refresh carries these resources
-automatically; SDK wheel builds report missing packaged images. See the
-[display metadata reference](operator_protocol.md#operator-categories-and-icons)
-for image packaging details and available icon names. A working image example is
-[scale.py](../examples/dropins/scale.py), with its adjacent `icons/` directory.
-The generated template includes these optional fields.
+The generated computation scales a copy and preserves/project metadata. Adapt it
+and its memory estimate to the actual algorithm. See the complete examples for
+[Steps/Operators](step_extensions.md) and [Readers](reader_extensions.md), and the
+[protocol](operator_protocol.md) for field meanings.
+
+Use `definition.category` for grouping. Omit `icon` for a category default, or set
+it to a module-relative image such as `icons/scale.svg`. Include JSON and images
+in setuptools package data (already configured in the scaffold).
+
+Declare per-operator dependencies in `definition.dependencies`. Common project
+requirements apply to every entry. Compatible entries share the environment;
+conflicting entries use private dependency directories and subprocesses with the
+same Python. See [dependency isolation](dependency_isolation.md).
 
 ## 15–20 minutes: check and test
 
@@ -111,74 +73,40 @@ biopipe plugin check ./lab_scale
 biopipe plugin test ./lab_scale
 ```
 
-`check` returns the public JSON descriptor and rejects missing contracts, invalid
-schemas or unnamespaced IDs. `test` runs the project's pytest tests. The template
-uses `biopipe_sdk.testing.run_operator` to exercise the actual runner, parameter
-validation and output contracts, and checks that the original input was unchanged.
-Add a missing-data fixture and an invalid-input case for your real algorithm.
+Checking reads source and JSON without executing imports. It rejects invalid
+contracts, schema errors, missing parameters and duplicate/invalid identities.
+Tests execute the real runner through `biopipe_sdk.testing.run_operator`.
+Add fixtures for missing data, invalid inputs and metadata propagation.
+Streaming/disk capability claims must be backed by real implementations; see
+[resource protocols](resource_runtime.md).
 
-## 20–25 minutes: build and hot-install
+## 20–25 minutes: build and install
 
 ```text
 biopipe plugin build ./lab_scale
 biopipe plugin install ./lab_scale/dist/lab_scale-0.1.0-py3-none-any.whl
-biopipe plugin list
 biopipe operators describe example.lab_scale
 ```
 
-Use `my_lab.scale` in the last command if you changed the namespace. The build
-returns the exact wheel path and generated manifest. Installation resolves a new
-environment generation and publishes the registry only after validation succeeds.
-An open Studio refreshes its library within approximately five seconds. Search for
-“Scale matrix”, insert it, wire a numeric input, set the factor and run explicitly.
+Build returns the exact wheel path. It embeds a generated descriptor, checks
+that parameter JSON and icons are present, and validates their contents.
+Installation validates dependencies/hooks and precompiles immutable code before
+publishing the registry. The open desktop observes the new library. Insert the
+operator, wire an input, set parameters, and run explicitly.
 
-With an isolated workspace, use the same selector for Studio and installation:
+Alternatively put the project, built wheel, or a `.py`/parameter-JSON pair into
+the folder shown by Library Management and refresh. Copy the entire adjacent
+`icons/` directory when the example uses an image. See [hot refresh](plugins.md).
 
-```text
-python scripts/studio.py --workspace ./my-workspace
-biopipe --workspace ./my-workspace plugin install ./lab_scale/dist/lab_scale-0.1.0-py3-none-any.whl
-```
+Use the same `--profile-dir` or `--workspace` selector for installation and Studio
+when testing in an isolated profile. Normal desktop, CLI and development launches
+share the standard data-directory resolver.
 
-`--profile-dir` selects a complete profile instead. Default desktop, development
-server, CLI and MCP all use the same resolver; no machine path is embedded.
+## 25–30 minutes: update and share
 
-## 25–30 minutes: share and version
-
-Share the wheel, README and source tests. Increment package/operator versions when
-you change behavior. Rebuild and install to publish a new version; existing saved
-graphs keep their previous implementation pins. Removing a plugin hides it from
-new insertions while retaining historical environments for pinned routes:
-
-```text
-biopipe plugin remove lab-scale
-```
-
-Native libraries must be built for the target platform. Plugin code runs with the
-user's permissions; installation isolation protects dependencies, not the OS.
-
-## Reader template
-
-```text
-biopipe plugin init ./lab_array --template reader
-biopipe plugin check ./lab_array
-biopipe plugin test ./lab_array
-biopipe plugin build ./lab_array
-biopipe plugin install ./lab_array/dist/lab_array-0.1.0-py3-none-any.whl
-```
-
-This template loads numeric `.npy` files with `allow_pickle=False`, accepts exactly
-two supplied dimension names and supports automatic labels or explicit name-to-
-position maps. Unsupported label modes fail explicitly. It declares
-`reader_contract()` and an empty parameter schema. Add a data source with the new
-extension; normal reader selection, output validation and worker execution apply.
-Readers must return complete labels and truthful metadata before registration.
-
-For the full API and resource limitations, see [SDK reference](sdk_reference.md)
-and [protocol](operator_protocol.md).
-
-## Dependency conflicts
-
-Compatible entries share the runtime. Only conflicting entries use a private
-dependency directory and subprocess with the same Python executable. See
-[selective dependency isolation](dependency_isolation.md) for declarations, streaming,
-memory accounting and supported metadata.
+A parameter-only edit followed by refresh updates descriptors while reusing code,
+bytecode and dependency targets. Saved runs retain frozen defaults. Code changes
+require installation; increment the package/operator version for behavior changes.
+Share the wheel with its README and tests. No central author-maintained JSON is
+required. For old extensions, use the explicit [migration](migration_v2.md) before
+installing into protocol 3.

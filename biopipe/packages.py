@@ -40,9 +40,8 @@ def bundled_entries(kind):
 
 
 def load_entry(descriptor):
-    module, name = descriptor["entry_point"].split(":", 1)
-    cls = getattr(importlib.import_module(module), name)
-    return cls
+    from biopipe_sdk.declarations import load_class
+    return load_class(descriptor)
 
 
 def bundled_state():
@@ -67,13 +66,13 @@ def _bundled_state(index, sources):
             # Normalize universal newlines so Git's CRLF/LF checkout policy
             # does not make identical providers look different across machines.
             digest.update(path.read_text(encoding="utf-8").encode("utf-8"))
-        package.update(sha256=digest.hexdigest(), enabled=True)
+        package.update(sha256=digest.hexdigest(), enabled=True, code_sha=original["descriptors"][0]["code_sha"])
         packages.append(package)
         for original_descriptor in original["descriptors"]:
             descriptor = deepcopy(original_descriptor)
             descriptor.update(distribution=package["name"], package_version=package["version"], origin="bundled",
                               implementation={k: package[k] for k in ("version", "sha256")})
-            descriptor["implementation"]["package"] = package["name"]
+            descriptor["implementation"].update(package=package["name"], code_sha=descriptor["code_sha"], declaration_sha=descriptor["declaration_sha"])
             descriptors.append(descriptor)
     return {"packages": packages, "descriptors": descriptors}
 

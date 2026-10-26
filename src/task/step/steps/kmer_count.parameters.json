@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence"
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position"
+    },
+    "k": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 6,
+      "default": 3
+    },
+    "output": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

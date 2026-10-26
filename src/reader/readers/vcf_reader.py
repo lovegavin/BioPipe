@@ -38,7 +38,6 @@ import numpy as np
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
-from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
@@ -220,18 +219,42 @@ def _read_cyvcf2(path: Path):
 
 class VcfReader(Reader):
     """Reader for .vcf and .vcf.gz files."""
-    parameters_schema = {'type': 'object', 'properties': {}, 'additionalProperties': True}
+    provider = 'biopipe-readers'
+    parameters_file = 'vcf_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'VcfReader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'VcfReader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True},
+                                       'representation': {'type': 'string', 'const': 'hard_call'},
+                                       'ploidy': {'type': 'integer', 'min': 1},
+                                       'chrom': {'type': 'array', 'items': 'string'},
+                                       'pos': {'type': 'array', 'items': 'integer'}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'ndim': 2,
+                              'values': 'allele_count',
+                              'axis_fields': [{'axis': 0, 'fields': ['chrom', 'pos']}],
+                              'info_open': False}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False},
+     'extensions': ['.vcf'],
+     'requires_siblings': [],
+     'excludes_siblings': [],
+     'handles_compression': True,
+     'file_input': {'dims': ['variant', 'sample'],
+                    'labels': {'variant': 'builtin', 'sample': 'builtin'},
+                    'compression': ['.gz']}}
 
-    output_contract = reader_contract(representation="hard_call", coordinates=True)
 
-    file_input = {
-        "dims": ["variant", "sample"],
-        "labels": {"variant": "builtin", "sample": "builtin"},
-        "compression": [".gz"],
-    }
 
-    extensions = [".vcf"]
-    handles_compression = True
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:

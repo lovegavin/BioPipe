@@ -34,7 +34,6 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import port, param
 from src.core.forms.metadata import project_metadata
 
 
@@ -43,29 +42,38 @@ _STAT_LABELS = {"chi2": 0, "df": 1, "P": 2}
 
 class LogrankTestStep(Step):
     """Log-rank test for survival differences across groups."""
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'time_label': {'title': '随访时间字段', 'type': 'string'},
-                    'event_label': {'title': '事件字段', 'type': 'string'},
-                    'group_label': {'title': '分组字段', 'type': 'string'},
-                    'group_map': {'title': '分组映射', 'type': ['object', 'array']},
-                    'groups': {'title': '显示分组顺序', 'type': 'array', 'items': {'type': 'string'}},
-                    'pairwise': {'title': '两两比较', 'type': 'boolean', 'default': False}},
-     'additionalProperties': True,
-     'required': ['time_label', 'event_label', 'group_label']}
-    title = 'Log-rank'
-    category = '统计分析'
-    icon = 'Sigma'
-    description = '整体与两两生存差异检验'
-    dependencies = ['lifelines>=0.30,<0.31']
-    dependency_imports = ['lifelines']
+    provider = 'biopipe-expression'
+    parameters_file = 'logrank_test.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'logrank_test',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Log-rank',
+     'description': '整体与两两生存差异检验',
+     'category': '统计分析',
+     'icon': 'Sigma',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2,
+                               'labels_axis': [{'axis': 1,
+                                                'values': [{'param': 'time_label', 'default': None},
+                                                           {'param': 'event_label', 'default': None},
+                                                           {'param': 'group_label',
+                                                            'default': None}]}]}],
+                   'output': {'mode': 'logrank_test'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'dependencies': ['lifelines<0.31,>=0.30'],
+     'dependency_imports': ['lifelines'],
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "logrank_test"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [{**port(ndim=2), "labels_axis": [{"axis": 1, "values": [param("time_label"), param("event_label"), param("group_label")]}]}]
-    output_contract = {"mode": "logrank_test"}
-    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         try:

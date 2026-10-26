@@ -42,7 +42,6 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import port, param
 from src.core.forms.metadata import project_metadata
 
 
@@ -51,24 +50,30 @@ _METHODS = ("min", "median", "mean")
 
 class ImputeStep(Step):
     """Fill missing values in a form."""
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'method': {'title': '方法', 'enum': ['min', 'median', 'mean'], 'x-ui-default': 'median'},
-                    'dim': {'title': '分析维度', 'type': 'string', 'x-ui-default': 'feature'},
-                    'min_scale': {'title': '最小值倍率', 'type': 'number', 'minimum': 0, 'default': 1.0}},
-     'additionalProperties': True,
-     'required': ['method', 'dim']}
-    title = '缺失值填补'
-    category = '数据整理'
-    icon = 'PuzzlePiece'
-    description = '以 Min、Median 或 Mean 填补缺失'
+    provider = 'biopipe-expression'
+    parameters_file = 'impute.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'impute',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '缺失值填补',
+     'description': '以 Min、Median 或 Mean 填补缺失',
+     'category': '数据整理',
+     'icon': 'PuzzlePiece',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'transform', 'representation': 'impute'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "impute"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(dims=[param("dim")])]
-    output_contract = {"mode": "transform", "representation": "impute"}
-    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "properties": {
+    "dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "metric": {
+      "type": "string",
+      "enum": [
+        "pearson",
+        "spearman",
+        "kendall",
+        "cosine",
+        "jaccard",
+        "overlap"
+      ],
+      "default": "pearson"
+    },
+    "min_valid": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 3
+    },
+    "max_positions": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "default": null
+    }
+  },
+  "required": [
+    "dim"
+  ],
+  "additionalProperties": false
+}

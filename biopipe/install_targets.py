@@ -15,20 +15,11 @@ from biopipe.targets import TargetBuilder, invoke
 
 
 def wheel_entries(wheel):
-    from biopipe_sdk.dependencies import source_requirements, source_entries
     with zipfile.ZipFile(wheel) as archive:
         info = next(n for n in archive.namelist() if n.endswith('.dist-info/METADATA'))
         prefix = info.rsplit('/', 1)[0]
         metadata = BytesParser().parsebytes(archive.read(info))
         dependencies = metadata.get_all('Requires-Dist', [])
-        if prefix + '/biopipe.entries.json' in archive.namelist():
-            from biopipe_sdk.dependencies import requirements
-            records = json.loads(archive.read(prefix + '/biopipe.entries.json'))
-            for record in records:
-                if record['kind'] not in ('operator', 'reader'):
-                    raise ValueError('Unknown extension kind')
-                record['dependencies'] = requirements(dependencies + record['dependencies'])
-            return records
         manifest_path = prefix + '/biopipe.json'
         if manifest_path in archive.namelist():
             from biopipe_sdk.protocol import PackageDescriptor
@@ -36,34 +27,16 @@ def wheel_entries(wheel):
             PackageDescriptor.model_validate(manifest)
             if manifest['name'] != canonicalize_name(metadata['Name']) or manifest['version'] != metadata['Version']:
                 raise ValueError('Package manifest identity differs from wheel metadata')
+            from biopipe_sdk.declarations import verify_archive
+            verify_archive({n: archive.read(n) for n in archive.namelist()}, manifest['descriptors'])
             return [{'entry': d['entry_point'], 'kind': d['kind'], 'expected': d,
                      'dependencies': sorted(set(dependencies + d.get('dependencies', [])))} for d in manifest['descriptors']]
-        config = configparser.ConfigParser()
-        if prefix + '/entry_points.txt' not in archive.namelist():
-            raise ValueError(f'{wheel.name}: no BioPipe entry points')
-        config.read_string(archive.read(prefix + '/entry_points.txt').decode())
-        result = []
-        for group, kind in [('biopipe.operators', 'operator'), ('biopipe.readers', 'reader'), ('biopipe.modules', 'module')]:
-            for entry in config[group].values() if group in config else []:
-                module = entry.split(':')[0].replace('.', '/')
-                filename = module + '.py' if module + '.py' in archive.namelist() else module + '/__init__.py'
-                content = archive.read(filename) if filename in archive.namelist() else None
-                per_class = source_entries(content, entry.split(':')[0]) if content is not None else []
-                if kind == 'module' and per_class:
-                    result.extend({**record, 'dependencies': sorted(set(dependencies + record['dependencies']))} for record in per_class)
-                    continue
-                selected = next((record for record in per_class if record['entry'] == entry), None)
-                declared = selected['dependencies'] if selected else source_requirements(content) if content is not None else []
-                result.append({'entry': entry, 'kind': kind, 'dependencies': sorted(set(dependencies + declared))})
-        if not result:
-            raise ValueError(f'{wheel.name}: no BioPipe entry points')
-        return result
+        raise ValueError(f'{wheel.name}: protocol v3 wheel requires biopipe.json; build with `biopipe plugin build`')
 
 
 def load_class(descriptor):
-    module, name = descriptor['entry_point'].split(':', 1)
-    cls = getattr(importlib.import_module(module), name)
-    return cls
+    from biopipe_sdk.declarations import load_class as load
+    return load(descriptor)
 
 
 def probe_entry(request):
@@ -71,16 +44,7 @@ def probe_entry(request):
     from src.task.step.base import Step
     from src.reader.base import Reader
     entry = request['entry']
-    if 'expected' in request:
-        classes = [(request['kind'], load_class(request['expected']))]
-    elif request['kind'] == 'module':
-        module = importlib.import_module(entry)
-        classes = [('operator' if issubclass(cls, Step) else 'reader', cls) for cls in vars(module).values()
-                   if inspect.isclass(cls) and cls.__module__ == module.__name__ and not inspect.isabstract(cls)
-                   and issubclass(cls, (Step, Reader))]
-    else:
-        module, name = entry.split(':', 1)
-        classes = [(request['kind'], getattr(importlib.import_module(module), name))]
+    classes = [(request['kind'], load_class(request['expected']))]
     result = []
     for kind, cls in classes:
         validate_extension(cls, kind)
@@ -92,7 +56,10 @@ def probe_entry(request):
         expected = request.get('expected')
         if expected is not None and descriptor != expected:
             raise ValueError(f'Wheel descriptor differs from implementation: {descriptor["id"]}')
-        descriptor['dependencies'] = sorted(set(request['dependencies'] + descriptor.get('dependencies', [])))
+        from biopipe_sdk.dependencies import requirements
+        descriptor['dependencies'] = requirements(request['dependencies'] + descriptor.get('dependencies', []))
+        from biopipe_sdk.declarations import declaration_hash
+        descriptor['declaration_sha'] = declaration_hash(descriptor)
         result.append(descriptor)
     return result
 
@@ -116,8 +83,10 @@ def install(manager, current, packages, generation, *, dependencies=()):
     # handles bundled declarations individually, not an incompatible union.
     for descriptor in descriptors:
         previous = old.get(descriptor['id'], {})
-        if previous.get('implementation') == descriptor['implementation'] and previous.get('execution'):
-            descriptor['execution'] = deepcopy(previous['execution'])
+        if (previous.get('origin') == 'bundled' and previous.get('distribution') == descriptor['distribution']
+                and previous.get('code_sha') == descriptor['code_sha']):
+            descriptor.clear()
+            descriptor.update(deepcopy(previous))
     for package in wheels:
         previous_package = next((p for p in current['packages'] if p['name'] == package['name']), {})
         if (current.get('runtime_protocol') == 1 and previous_package.get('sha256') == package['sha256']):
@@ -155,7 +124,7 @@ def install(manager, current, packages, generation, *, dependencies=()):
                         raise ValueError('Plugin IDs must be namespaced')
                     descriptor.update(distribution=package['name'], package_version=package['version'], origin='wheel', execution=execution,
                                       implementation={k: package[k] for k in ('version', 'sha256')})
-                    descriptor['implementation']['package'] = package['name']
+                    descriptor['implementation'].update(package=package['name'], code_sha=descriptor['code_sha'], declaration_sha=descriptor['declaration_sha'])
                     records.append(descriptor)
         owned = {d['id'] for d in bundled_state()['descriptors'] if d['distribution'] == package['name']}
         if not owned <= {d['id'] for d in records}:

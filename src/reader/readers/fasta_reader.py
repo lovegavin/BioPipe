@@ -49,7 +49,6 @@ import numpy as np
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
-from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
@@ -63,19 +62,40 @@ _PROTEIN_CHARS = set("ACDEFGHIKLMNPQRSTVWY")
 
 class FastaReader(Reader):
     """Reader for .fasta / .fa / .fna / .faa files."""
-    parameters_schema = {'type': 'object', 'properties': {}, 'additionalProperties': True}
+    provider = 'biopipe-readers'
+    parameters_file = 'fasta_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'FastaReader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'FastaReader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True},
+                                       'alphabet': {'type': 'string'},
+                                       'representation': {'type': 'string', 'const': 'sequence_codes'},
+                                       'alphabet_map': {'type': 'object'},
+                                       'unknown_code': {'type': 'integer'}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'ndim': 2,
+                              'axis_fields': [],
+                              'info_open': False}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False},
+     'extensions': ['.fasta', '.fa', '.fna', '.faa'],
+     'requires_siblings': [],
+     'excludes_siblings': [],
+     'handles_compression': False,
+     'file_input': {'dims': ['sequence', 'position'],
+                    'labels': {'sequence': 'builtin', 'position': 'auto'}}}
 
-    output_contract = reader_contract(extra={
-        "alphabet": {"type": "string"},
-        "representation": {"type": "string", "const": "sequence_codes"},
-        "alphabet_map": {"type": "object"},
-        "unknown_code": {"type": "integer"},
-    })
 
-    file_input = {'dims': ['sequence', 'position'], 'labels': {'sequence': 'builtin', 'position': 'auto'}}
 
-    extensions = [".fasta", ".fa", ".fna", ".faa"]
-    handles_compression = False
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:

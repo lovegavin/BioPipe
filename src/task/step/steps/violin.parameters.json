@@ -1,0 +1,78 @@
+{
+  "type": "object",
+  "properties": {
+    "dim": {
+      "type": "string",
+      "default": "feature"
+    },
+    "value_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "group_dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "group_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "filename": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string"
+    },
+    "xlabel": {
+      "type": "string"
+    },
+    "ylabel": {
+      "type": "string"
+    },
+    "inner": {
+      "type": "string",
+      "enum": [
+        "box",
+        "quartile",
+        "point",
+        "none"
+      ],
+      "default": "box"
+    },
+    "show_points": {
+      "type": "boolean",
+      "default": false
+    },
+    "point_size": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 4
+    },
+    "point_alpha": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.5
+    },
+    "rotate_labels": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "value_label",
+    "group_dim",
+    "group_label",
+    "filename"
+  ],
+  "additionalProperties": false
+}

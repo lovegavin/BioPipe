@@ -5,10 +5,9 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
 
 
 class LdPruneStep(Step):
@@ -20,30 +19,31 @@ class LdPruneStep(Step):
         r2     : r^2 threshold
         output : context key for the result
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '变异维度', 'type': 'string', 'x-ui-default': 'variant'},
-                    'window': {'title': '窗口大小', 'type': 'integer', 'minimum': 1, 'default': 50},
-                    'r2': {'title': 'R² 阈值',
-                           'type': 'number',
-                           'minimum': 0,
-                           'maximum': 1,
-                           'default': 0.2,
-                           'x-ui-step': 0.05}},
-     'additionalProperties': True,
-     'required': ['dim']}
-    title = 'LD pruning'
-    category = '质量控制'
-    icon = 'Intersect'
-    description = '在滑动窗口内移除高度相关的变异。'
-    title_aliases = ['连锁不平衡剪枝']
+    provider = 'biopipe-genetics'
+    parameters_file = 'ld_prune.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'ld_prune',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'LD pruning',
+     'description': '在滑动窗口内移除高度相关的变异。',
+     'category': '质量控制',
+     'icon': 'Intersect',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']}},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'subset'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output',
+     'title_aliases': ['连锁不平衡剪枝']}
 
-    name = "ld_prune"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(info={"missing_code": MISSING}, dims=[param("dim")])]
-    output_contract = {"mode": "subset"}
-    output_parameter = "output"
+
 
 
     def run(self, ctx: Context, inputs) -> None:

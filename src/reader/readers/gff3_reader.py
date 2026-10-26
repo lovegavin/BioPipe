@@ -52,7 +52,6 @@ import numpy as np
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
-from src.core.contracts import reader_contract
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
 
@@ -65,19 +64,35 @@ _GFF3_COLUMNS = [
 
 class Gff3Reader(Reader):
     """Reader for .gff / .gff3 files."""
-    parameters_schema = {'type': 'object',
-     'properties': {'encoders': {'type': 'object',
-                                 'title': 'Encoders',
-                                 'description': 'Per-field encoder configuration.',
-                                 'additionalProperties': True}},
-     'additionalProperties': True}
+    provider = 'biopipe-readers'
+    parameters_file = 'gff3_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'Gff3Reader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'Gff3Reader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'ndim': 2,
+                              'axis_fields': [],
+                              'info_open': False}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False},
+     'extensions': ['.gff', '.gff3'],
+     'requires_siblings': [],
+     'excludes_siblings': [],
+     'handles_compression': False,
+     'file_input': {'dims': ['record', 'field'], 'labels': {'record': 'auto', 'field': 'builtin'}}}
 
-    output_contract = reader_contract()
 
-    file_input = {'dims': ['record', 'field'], 'labels': {'record': 'auto', 'field': 'builtin'}}
 
-    extensions = [".gff", ".gff3"]
-    handles_compression = False
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:

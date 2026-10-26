@@ -28,7 +28,7 @@ another profile, then explicitly register it there.
 
 ## Graph protocol
 
-Old `schema_version: 1` graphs still import. Saved/exported v2 graphs retain `name`,
+Convert old `schema_version: 1` graphs with the explicit migration command. Saved/exported v2 graphs retain `name`,
 `base_dir`, `nodes`, `edges`, `memory` and add an `interface`:
 
 ```json

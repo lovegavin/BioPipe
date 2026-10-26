@@ -3,7 +3,8 @@
 Dependency installation publishes immutable directories, never changes the
 running interpreter, and keeps shared versions constrained. Conflicts use a
 private target and subprocess with the same Python executable.
-Only declarations or implementation changes invalidate a successful check.
+Only dependency requirements, implementation code or execution paths invalidate
+a successful check. Parameter and presentation edits do not.
 """
 from copy import deepcopy
 from hashlib import sha256
@@ -81,6 +82,7 @@ class DependencySession:
             current = {}
             for descriptor in active_descriptors(state):
                 identity = {k: descriptor.get(k) for k in ('id', 'kind', 'version', 'entry_point', 'implementation', 'dependencies', 'dependency_imports', 'execution')}
+                identity['implementation'] = {k: v for k, v in (descriptor.get('implementation') or {}).items() if k not in {'declaration_sha', 'sha256'}}
                 fingerprint = sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
                 old = self.entries.get(descriptor['id'], {})
                 current[descriptor['id']] = old if old.get('fingerprint') == fingerprint else {

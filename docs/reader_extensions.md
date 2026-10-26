@@ -1,35 +1,21 @@
 # Add a Reader
 
-This guide targets SDK 2.0 / protocol v2. The class declaration is authoritative;
-no separate UI JSON or schema adapter is required. For old extensions and saved
-workflows, use the [one-time migration guide](migration_v2.md).
-
-A Reader converts files into a `Form`: numeric data, named dimensions, labels,
-global `info` and dimension-aligned `axis_info`. Reader discovery, dependencies,
-contracts and installation use the same protocol as Steps.
-
-## Minimal source extension
-
-Open **Library Management → Reader directory**, add a uniquely named `.py` file,
-then click **Refresh library**. Use the path shown by Studio; do not hard-code
-the release folder or a developer's home directory. A complete project can also
-be generated with `python -m biopipe plugin init lab_reader --template reader`.
-
-This example reads NumPy arrays without allowing pickled objects:
+Readers use the same code + per-Reader parameter JSON protocol as operators.
+Save this implementation as `npy_reader.py`:
 
 ```python
-from biopipe_sdk import Reader, Form, reader_contract
-
+from biopipe_sdk import Reader, Form
 
 class NpyReader(Reader):
-    name = "lab.npy"
-    title = "NumPy matrix"
-    version = "0.1.0"
-    extensions = [".npy"]
-    dependencies = ["numpy>=1.26"]
-    dependency_imports = ["numpy"]
-    parameters_schema = {"type": "object", "additionalProperties": False}
-    output_contract = reader_contract()
+    parameters_file = "npy_reader.parameters.json"
+    definition = {
+        "protocol_version": 3, "id": "lab.npy", "version": "0.1.0",
+        "kind": "reader", "title": "NumPy matrix", "extensions": [".npy"],
+        "contracts": {"version": 1, "inputs": [],
+                      "output": {"numeric": True, "ndim": 2}},
+        "resources": {"memory_modes": ["full"], "supports_cuda": False},
+        "dependencies": ["numpy>=1.26"], "dependency_imports": ["numpy"]
+    }
 
     def read(self, path, dims, labels, **args):
         import numpy as np
@@ -45,107 +31,34 @@ class NpyReader(Reader):
                 mapping[dim] = dict(spec)
             else:
                 raise ValueError("Use auto labels or an explicit name-to-position map")
-        return Form(data=data, dims=list(dims), labels=mapping,
-                    info={"missing_code": float("nan")})
+        return Form(data, list(dims), mapping, {"missing_code": float("nan")})
 ```
 
-Keep third-party imports inside methods when possible: discovery should not need
-to execute the actual parser. Literal class `dependencies` are read before source
-imports, installed in a candidate environment, then validated before publication.
-Names such as `scikit-learn` are distribution names; `dependency_imports` uses
-import names such as `sklearn`. Use PEP 508 version ranges and platform markers.
-For wheel projects, also list dependencies in `[project].dependencies` so pip
-can install them before loading your entry point.
+Save `npy_reader.parameters.json` beside it (even a Reader with no options has an
+explicit empty schema):
 
-## File selection and metadata
-
-Declare `requires_siblings` and `excludes_siblings` for file groups, and
-`file_input` for Studio's named file slots; see [input formats](input_formats.md).
-Declare `handles_compression=True` only when the parser consumes compressed files
-itself. Otherwise the framework handles its supported compression wrappers.
-Never claim a format if a required sidecar cannot be validated.
-
-External compression and compression inside a container are different. A Reader
-for internally compressed HDF5, Parquet or BGEN should keep
-`handles_compression=False`: the framework unwraps `.gz`, `.bz2` or `.xz` to disk,
-then the format library decodes its internal compression. Both ordinary reads and
-managed disk reads use this wrapper. Temporary files retain the original basename
-and are removed together with any indexes the parser generates. Release all file
-and mmap handles before returning, especially on Windows.
-
-A parser that directly reads gzip files must declare the supported suffix too:
-
-```python
-handles_compression = True
-file_input = {"compression": [".gz"]}
+```json
+{"type": "object", "properties": {}, "additionalProperties": false}
 ```
 
-Include your dimension/label hints in the same dictionary. The file picker,
-upload planner and runtime honor this declaration; recognizing a suffix alone
-does not mean a codec is available. Test the complete import-to-execution path
-with a valid compressed fixture and compare it with the uncompressed input.
+Add both files through the Reader directory and refresh. Alternatively,
+`biopipe plugin init lab_reader --template reader` generates a complete project.
+The file picker, contracts and worker all use the same generated descriptor.
 
-`info` describes the whole dataset, for example missing values or representation.
-`axis_info[dimension][field]` holds annotations aligned with that dimension. Every
-annotation vector must have the correct axis length. Do not hide axis-aligned
-vectors in arbitrary global metadata and expect downstream filtering to update them.
-Use contracts to advertise semantic guarantees; extensions alone are insufficient.
+Put suffixes, `requires_siblings`, `excludes_siblings`, `handles_compression` and
+optional `file_input` hints in `definition`. The framework selects a Reader without
+importing its implementation. Compression handling remains centralized: Readers
+without native compression receive a temporary decompressed file. Use the existing
+format helpers; do not remove compression suffixes independently in the frontend.
 
-## Disk reads and bounded preparation
+A large-file Reader can provide `probe()` and `read_to_disk()` and declare
+`resources.memory_modes = ["full", "disk"]` and `disk_protocol = "dense-writer-v1"`.
+`probe` reads metadata, never eagerly densifies payloads. `read_to_disk` writes bounded
+blocks via the engine writer, preserving disk admission and emergency spilling.
+See the [resource protocol](resource_runtime.md) and
+[NPY disk Reader example](../examples/resource_plugin/resource_example/__init__.py).
 
-For large data, implement all three pieces together:
-
-```python
-supports_disk_read = True
-disk_protocol = "dense-writer-v1"
-
-def probe(self, path, **args):
-    # Read only the format's header/index to obtain shape and dtype.
-    # Return file_bytes, shape (2D), dtype, dense_bytes and preparation_bytes.
-    ...
-
-def read_to_disk(self, path, dims, labels, writer, chunk_bytes, **args):
-    # Decode bounded chunks; writer.write(row, column, values) writes a row slice.
-    # Return {"dims": ..., "labels": ..., "info": ..., "axis_info": ...}.
-    ...
-```
-
-`dense_bytes = product(shape) * dtype.itemsize`; `preparation_bytes` must also
-include temporary disk storage. File size alone is not the decoded memory size.
-Use `Path(path).stat().st_size` to obtain file size without reading the file.
-Use the supplied writer so preparation participates in emergency spilling. Do not
-collect all chunks and concatenate them at the end. Existing examples include
-[`mtx_reader.py`](../src/reader/readers/mtx_reader.py) and
-[`h5ad_reader.py`](../src/reader/readers/h5ad_reader.py).
-See [resource protocol](resource_runtime.md) for its exact supported boundaries.
-
-## Test and register
-
-Test a tiny valid file, missing sidecars, invalid shape, labels, missing values,
-and contract metadata. Compare normal and disk reads numerically and verify
-chunk memory stays bounded. For the NPY example:
-
-```python
-import numpy as np
-from lab_reader import NpyReader
-
-def test_read(tmp_path):
-    path = tmp_path / "matrix.npy"
-    np.save(path, np.array([[1., 2.], [3., 4.]]))
-    result = NpyReader().read(path, ["sample", "feature"], {})
-    assert result.data.shape == (2, 2)
-    assert result.labels["sample"] == {"0": 0, "1": 1}
-```
-
-Refresh the library and inspect the Reader's dependency status. A failed refresh
-preserves the previous catalog. Source maintainers can run
-`python -m biopipe registry check` and `python -m biopipe registry build` to publish
-the checked-in manifest. A user's desktop refresh updates its profile registry,
-not the source repository. See [SDK quickstart](sdk_quickstart.md) for wheels.
-
-## Dependency conflicts
-
-Compatible entries share the runtime. Only conflicting entries use a private
-dependency directory and subprocess with the same Python executable. See
-[selective dependency isolation](dependency_isolation.md) for declarations, streaming,
-memory accounting and supported metadata.
+Set `info` and `axis_info` consistently with dimensions and labels. Report optional
+parser dependencies using distribution names in `dependencies` and import names in
+`dependency_imports`. Compatible dependencies share the runtime; conflicts run with
+private dependency directories and an independent process using the same Python.

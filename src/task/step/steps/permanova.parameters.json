@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "dist_dim": {
+      "type": "string",
+      "default": "sample"
+    },
+    "group_dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "group_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 2,
+      "uniqueItems": true
+    },
+    "pairwise": {
+      "type": "boolean",
+      "default": false
+    },
+    "n_permutations": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 999
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0
+    }
+  },
+  "required": [
+    "group_label"
+  ],
+  "additionalProperties": false
+}

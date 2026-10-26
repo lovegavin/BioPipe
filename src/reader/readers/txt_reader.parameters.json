@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "properties": {
+    "header": {
+      "type": "boolean",
+      "title": "Header row",
+      "default": true
+    },
+    "sep": {
+      "type": "string",
+      "title": "Separator",
+      "minLength": 1
+    },
+    "encoders": {
+      "type": "object",
+      "title": "Encoders",
+      "description": "Per-field encoder configuration.",
+      "additionalProperties": true
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Columns",
+      "description": "Restrict the reader to these header names, in order. Label indices still refer to the original file."
+    },
+    "info_columns": {
+      "type": "object",
+      "title": "Info columns",
+      "description": "Map a header name to an info field. The column is read as strings into info[field] and declared parallel to the row dimension.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "reader": {
+      "type": "string",
+      "title": "Delegate reader",
+      "default": "csv"
+    }
+  },
+  "additionalProperties": true
+}

@@ -2,30 +2,35 @@
 import numpy as np
 
 from src.core import Form, StepError
-from src.core.contracts import param, port
 from src.core.forms.metadata import concat_metadata, equal_metadata
 from src.task.step.base import Step
 
 
 class ConcatStep(Step):
     """Concatenate inputs on axis; align other axes by label or a unique key."""
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'axis': {'title': '合并维度', 'type': 'string', 'x-ui-default': 'feature'},
-                    'align': {'title': 'Alignment', 'type': ['object', 'array']},
-                    'label': {'title': 'Merged key label', 'type': 'string'}},
-     'additionalProperties': True,
-     'required': ['axis']}
-    title = '合并数据'
-    category = '数据整理'
-    icon = 'Unite'
-    description = '按指定维度连接多个输入，输入端口顺序决定合并顺序。'
-    name = "concat"
-    inputs_arity = "*"
-    outputs = []
-    input_contracts = [port(dims=[param("axis")])]
-    output_contract = {"mode": "concat"}
-    output_parameter = "output"
+    provider = 'biopipe-core'
+    parameters_file = 'concat.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'concat',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '合并数据',
+     'description': '按指定维度连接多个输入，输入端口顺序决定合并顺序。',
+     'category': '数据整理',
+     'icon': 'Unite',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'axis', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'concat'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': '*',
+     'outputs': [],
+     'output_parameter': 'output'}
+
 
     def run(self, ctx, inputs):
         if len(inputs) < 2:

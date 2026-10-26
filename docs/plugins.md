@@ -38,12 +38,12 @@ operators and Readers. Open **算子库管理** (operator library management), t
 
 Add or edit a normal, protocol-compliant `Step`/`Operator` or `Reader` file, then
 click **刷新算子库** in the dialog or the refresh icon beside the library heading.
-The class declarations provide the ID, parameters, contracts, category, icon and
+The class definition provides the ID, contracts, category, icon and
 memory capabilities. No extra plugin project, hand-written registry or manual
 packaging step is required. Existing built-in authoring style and IDs are supported;
-`builtin_package` selects a provider when needed. Existing ownership is preserved.
+`provider` selects a provider when needed. Existing ownership is preserved.
 
-Authors may set `icon = "icons/my-operator.png"` (also JPEG, WebP, GIF or static SVG)
+Authors may set `definition["icon"] = "icons/my-operator.png"` (also JPEG, WebP, GIF or static SVG)
 and place that image relative to the operator's Python file. Refresh freezes the
 image with the descriptor; editing only the image is enough to trigger an update.
 No absolute paths or external image server are needed. Omit `icon` for an automatic
@@ -142,10 +142,10 @@ its package: use the package manager. Refresh preserves disabled packages and do
 not reinstall an unchanged file after an explicit package removal. To reinstall it,
 use **Install / Update** with its wheel, or change/rebuild its source.
 
-All inputs still become ordinary cached wheels and immutable environment snapshots.
-Single-file wrappers use the `biopipe.modules` entry-point group for isolated
-module discovery; their generated wheels require a BioPipe version supporting this
-group. They do not introduce a second execution or memory-management protocol.
+Code installations use ordinary cached wheels and immutable environment snapshots.
+Single-file wrappers emit `biopipe.operators` / `biopipe.readers` entries and a
+protocol-3 manifest using static inspection. Parameter-only refresh publishes
+metadata without a new environment. There is one execution/resource protocol.
 
 Refresh never edits the scanned source files or fetches code from GitHub.
 
@@ -262,3 +262,7 @@ returns an operation ID. The completed operation's `result` contains `updated`,
 only the corresponding resolved folder in the local file manager. These POST endpoints require
 the Studio session token. A concurrent UI plugin operation receives HTTP 409;
 CLI and UI installations also share the cross-process installation lock.
+
+Each implementation references its own parameter JSON through `parameters_file`.
+Copy both files when adding an operator. Parameter-only refresh reuses installed
+code and dependency targets; the generated registry is not an authoring document.

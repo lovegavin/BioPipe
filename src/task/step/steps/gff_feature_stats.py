@@ -27,7 +27,6 @@ from __future__ import annotations
 import numpy as np
 
 from src.core import Form, StepError
-from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
 from src.task.context import Context
 from src.task.step.base import Step
@@ -41,42 +40,37 @@ _STAT_LABELS = (
 
 class GffFeatureStatsStep(Step):
     """Per-feature-type length and count statistics for GFF3/GTF."""
-    title = 'gff_feature_stats'
-    description = 'Per-feature-type length and count statistics for GFF3/GTF.'
+    provider = 'biopipe-core'
+    parameters_file = 'gff_feature_stats.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'gff_feature_stats',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'gff_feature_stats',
+     'description': 'Per-feature-type length and count statistics for GFF3/GTF.',
+     'category': 'analysis',
+     'icon': 'Columns',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'encoders': {'type': 'object', 'optional': True}},
+                               'dims': [{'param': 'record_dim', 'default': 'record'},
+                                        {'param': 'field_dim', 'default': 'field'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': True,
+                                         'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "gff_feature_stats"
-    category = "analysis"
-    icon = "Columns"
-    inputs_arity = 1
-    outputs = []
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "record_dim": {"type": "string", "default": "record"},
-            "field_dim": {"type": "string", "default": "field"},
-            "output": {"type": "string"},
-        },
-        "additionalProperties": False,
-    }
-    input_contracts = [port(
-        ndim=2,
-        dims=[param("record_dim", "record"),
-              param("field_dim", "field")],
-        info={
-            "missing_code": MISSING,
-            "encoders": {"type": "object", "optional": True},
-        },
-    )]
-    output_contract = {
-        "mode": "declare",
-        "schema": {
-            "ndim": 2,
-            "numeric": True,
-            "info_open": True,
-            "axis_info_open": True,
-        },
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

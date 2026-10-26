@@ -33,66 +33,38 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
-from src.core.contracts import param, port
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 
 
 class PrioritizeStep(Step):
     """Keep the top positions along a dimension, ranked by an info field."""
-    title = 'prioritize'
-    description = 'Keep the top positions along a dimension, ranked by an info field.'
+    provider = 'biopipe-core'
+    parameters_file = 'prioritize.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'prioritize',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'prioritize',
+     'description': 'Keep the top positions along a dimension, ranked by an info field.',
+     'category': 'data',
+     'icon': 'Funnel',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [{'fields': {'param': 'by', 'default': None},
+                                             'dim': {'param': 'dim', 'default': None}}]}],
+                   'output': {'mode': 'subset'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "prioritize"
-    category = "data"
-    icon = "Funnel"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [
-        port(
-            dims=[param("dim")],
-            parallel=[{"fields": param("by"), "dim": param("dim")}],
-        ),
-    ]
-    output_contract = {"mode": "subset"}
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "dim": {
-                "type": "string",
-                "title": "Dimension to sort",
-                "description": "Axis along which positions are ranked.",
-            },
-            "by": {
-                "type": "string",
-                "title": "Ranking field",
-                "description": (
-                    "Numeric info field declared parallel to 'dim'. "
-                    "Cannot be an encoded field."
-                ),
-            },
-            "top_n": {
-                "type": "integer",
-                "title": "Top N",
-                "minimum": 1,
-            },
-            "ascending": {
-                "type": "boolean",
-                "title": "Ascending",
-                "default": False,
-                "description": (
-                    "False ranks largest first; True ranks smallest first."
-                ),
-            },
-            "output": {
-                "type": "string",
-                "title": "Output key",
-            },
-        },
-        "required": ["dim", "by", "top_n"],
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

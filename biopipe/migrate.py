@@ -1,4 +1,4 @@
-"""Explicit v1-to-v2 conversion. Never imported by startup or execution.
+"""Explicit v1/v2-to-v3 conversion. Never imported by startup or execution.
 
 Preflight is read-only. --apply backs up every changed file before publishing;
 failed publication restores original bytes. Completed jobs and pinned snapshots
@@ -79,18 +79,23 @@ def convert_documents(value, catalog, *, implementations=None, changes=None):
     for node in result["nodes"]:
         if node.get("kind") != "operator":
             continue
+        pin = result.get('plugin_lock', {}).get(node.get('operator'), {})
+        if all(isinstance(pin.get(k), str) and len(pin[k]) == 64 for k in ('code_sha', 'declaration_sha')):
+            # Its defaults belong to a frozen v3 snapshot, not today's catalog.
+            continue
         spec = specs.get(node.get("operator"))
         if spec is None:
-            raise ValueError(f"Missing v2 operator {node.get('operator')}; rebuild/install its provider before migration")
+            raise ValueError(f"Missing v3 operator {node.get('operator')}; rebuild/install its provider before migration")
         before = node.get("params", {})
         node["params"] = _parameters(spec["parameters_schema"], before, spec.get("output_parameter"))
         if node["params"] != before:
             changes.append({"node": node["id"], "reason": "Execution defaults and numeric values made explicit"})
     for key, before in result.get("plugin_lock", {}).items():
         current = (implementations or {}).get(key)
-        if current and before.get("package") == current.get("package") and before != current:
+        is_v3 = all(isinstance(before.get(k), str) and len(before[k]) == 64 for k in ('code_sha', 'declaration_sha'))
+        if not is_v3 and current and before.get("package") == current.get("package") and before != current:
             result["plugin_lock"][key] = deepcopy(current)
-            changes.append({"operator": key, "before": before, "after": current, "reason": "Explicit protocol v2 migration"})
+            changes.append({"operator": key, "before": before, "after": current, "reason": "Explicit protocol v3 migration"})
     from src.web.models import Graph
     return Graph.model_validate(result).model_dump(mode="json")
 
@@ -103,65 +108,57 @@ def convert_task(value, catalog):
     for step in result["steps"]:
         spec = specs.get(step.get("name"))
         if spec is None:
-            raise ValueError(f"Missing v2 operator: {step.get('name')}")
+            raise ValueError(f"Missing v3 operator: {step.get('name')}")
         step["params"] = _parameters(spec["parameters_schema"], step.get("params", {}), spec.get("output_parameter"))
     return result
 
 
-def convert_source(text, manifest):
-    """Materialize a known v1 declaration; never import arbitrary author code."""
+def convert_source_parts(text, manifest, *, source_name=None):
+    """Split known v1/v2 metadata into literal protocol + per-class parameter JSON.
+
+    The supplied old manifest is the evidence; migration never executes code.
+    """
+    from biopipe_sdk.declarations import DECLARATION_ATTRIBUTES
+    from biopipe_sdk.protocol import Descriptor
     definitions = descriptors(manifest)
-    tree = ast.parse(text)
     lines = text.splitlines(keepends=True)
-    edits = []
-    matched = 0
-    for cls in [node for node in tree.body if isinstance(node, ast.ClassDef)]:
-        declared = {}
-        for node in cls.body:
-            targets = node.targets if isinstance(node, ast.Assign) else [node.target] if isinstance(node, ast.AnnAssign) else []
-            for target in targets:
-                if isinstance(target, ast.Name):
-                    declared[target.id] = node
-        candidates = [d for d in definitions if d.get("entry_point", "").split(":")[-1] == cls.name]
-        if "name" in declared:
-            try:
-                name = ast.literal_eval(declared["name"].value)
-                candidates = [d for d in candidates if d["id"] == name]
-            except (ValueError, TypeError):
-                pass
+    edits, parameters = [], {}
+    for cls in [n for n in ast.parse(text).body if isinstance(n, ast.ClassDef)]:
+        candidates = [d for d in definitions if d.get('entry_point', '').split(':')[-1] == cls.name]
         if not candidates:
             continue
         if len(candidates) != 1:
-            raise ValueError(f"Ambiguous descriptor for {cls.name}; supply one provider manifest")
-        descriptor = candidates[0]
-        matched += 1
-        additions = {}
-        if "parameters_schema" not in declared:
-            schema = deepcopy(descriptor["parameters_schema"])
-            for field in descriptor.get("parameters", []):
-                prop = schema.get("properties", {}).get(field["key"])
-                if prop is not None and "default" in field and field["default"] != prop.get("default"):
-                    prop["x-ui-default"] = deepcopy(field["default"])
-                if prop is not None and field.get("type") == "list":
-                    prop.setdefault("items", {"type": "string"})
-            additions["parameters_schema"] = schema
-        for key in ("title", "category", "icon", "description", "preview", "title_aliases", "title_parameter", "output_parameter", "dependencies", "dependency_imports"):
-            if key not in declared and descriptor.get(key) is not None:
-                additions[key] = descriptor[key]
-        if "legacy_parameters" in declared:
-            node = declared["legacy_parameters"]
-            edits.append((node.lineno - 1, node.end_lineno, ""))
+            raise ValueError(f'Ambiguous descriptor for {cls.name}; supply one provider manifest')
+        descriptor = deepcopy(candidates[0])
+        filename = (source_name + '.' if source_name else '') + cls.name + '.parameters.json'
+        schema = descriptor['parameters_schema']
+        for field in descriptor.get('parameters', []):
+            prop = schema.get('properties', {}).get(field['key'])
+            if prop is not None and 'default' in field and field['default'] != prop.get('default'):
+                prop['x-ui-default'] = deepcopy(field['default'])
+        parameters[filename] = schema
+        definition = {k: v for k, v in descriptor.items() if k in Descriptor.model_fields
+                      and k not in {'parameters_schema', 'entry_point', 'code_sha', 'declaration_sha', 'icon_image'}}
+        definition['protocol_version'] = PROTOCOL_VERSION
+        for node in cls.body:
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target] if isinstance(node, ast.AnnAssign) else []
+            names = {n.id for t in targets for n in ast.walk(t) if isinstance(n, ast.Name)}
+            if names and names <= DECLARATION_ATTRIBUTES | {'definition', 'parameters_file'}:
+                edits.append((node.lineno-1, node.end_lineno, ''))
         offset = cls.body[0].end_lineno if isinstance(cls.body[0], ast.Expr) and isinstance(cls.body[0].value, ast.Constant) and isinstance(cls.body[0].value.value, str) else cls.lineno
-        block = "".join("    " + key + " = " + pprint.pformat(val, width=100, sort_dicts=False).replace("\n", "\n    ") + "\n" for key, val in additions.items())
-        if block:
-            edits.append((offset, offset, block))
-    if not matched:
-        raise ValueError("No implementation classes match the supplied v1 manifest")
+        block = '    parameters_file = ' + repr(filename) + '\n    definition = ' + pprint.pformat(definition, width=100, sort_dicts=False).replace('\n', '\n    ') + '\n'
+        edits.append((offset, offset, block))
+    if not parameters:
+        raise ValueError('No implementation classes match the supplied old manifest')
     for start, end, replacement in sorted(edits, reverse=True):
         lines[start:end] = [replacement]
-    result = "".join(lines)
+    result = ''.join(lines)
     ast.parse(result)
-    return result
+    return result, parameters
+
+
+def convert_source(text, manifest):
+    return convert_source_parts(text, manifest)[0]
 
 
 def _current():
@@ -178,11 +175,11 @@ def _profile_plan(directory, current):
     old = json.loads(registry_bytes.decode("utf-8-sig")) if registry_bytes is not None else None
     active = deepcopy(current)
     if old:
-        if old.get("package_protocol_version") not in (None, 1, PROTOCOL_VERSION):
+        if old.get("package_protocol_version") not in (None, 1, 2, PROTOCOL_VERSION):
             raise ValueError("Cannot migrate an unknown library protocol version")
         external = [p["name"] for p in old.get("packages", []) if p.get("origin") != "bundled"]
         if external and old.get("package_protocol_version") != PROTOCOL_VERSION:
-            raise ValueError("Rebuild v1 external providers for v2 before profile conversion: " + ", ".join(external) + ". Keep the old profile for v0.4.1; install rebuilt providers into a separate v2 profile and migrate exported workflows there.")
+            raise ValueError("Rebuild old external providers for v3 before profile conversion: " + ", ".join(external) + ". Keep the old profile for v0.4.1; install rebuilt providers into a separate v3 profile and migrate exported workflows there.")
         if old.get("package_protocol_version") == PROTOCOL_VERSION:
             active = deepcopy(old)
         else:
@@ -240,7 +237,7 @@ def _publish(updates, backup_root, *, expected=None):
         records.append({"path": str(path), "backup": name if content is not None else None,
                         "before_sha256": hashlib.sha256(content).hexdigest() if content is not None else None,
                         "after_sha256": hashlib.sha256(updates[path]).hexdigest()})
-    atomic_json(backup / "manifest.json", {"protocol_version": 2, "files": records, "status": "prepared"})
+    atomic_json(backup / "manifest.json", {"protocol_version": PROTOCOL_VERSION, "files": records, "status": "prepared"})
     written = []
     try:
         for path, content in updates.items():
@@ -261,9 +258,9 @@ def _publish(updates, backup_root, *, expected=None):
                 path.unlink(missing_ok=True)
             else:
                 path.write_bytes(originals[path])
-        atomic_json(backup / "manifest.json", {"protocol_version": 2, "files": records, "status": "rolled_back"})
+        atomic_json(backup / "manifest.json", {"protocol_version": PROTOCOL_VERSION, "files": records, "status": "rolled_back"})
         raise
-    atomic_json(backup / "manifest.json", {"protocol_version": 2, "files": records, "status": "complete"})
+    atomic_json(backup / "manifest.json", {"protocol_version": PROTOCOL_VERSION, "files": records, "status": "complete"})
     return str(backup)
 
 
@@ -286,7 +283,8 @@ def migrate(*, path=None, profile_dir=None, workspace=None, data_dir=None, manif
         if path.suffix == ".py":
             if manifest is None:
                 raise ValueError("Source migration requires --manifest pointing to its old descriptor/registry JSON")
-            result = convert_source(source, _read(manifest)).encode("utf-8")
+            code, parameter_files = convert_source_parts(source, _read(manifest), source_name=path.stem)
+            result = code.encode("utf-8")
         elif path.suffix.lower() in (".yaml", ".yml"):
             value = convert_task(yaml.safe_load(source), current["descriptors"])
             result = yaml.safe_dump(value, sort_keys=False, allow_unicode=True).encode("utf-8")
@@ -297,6 +295,14 @@ def migrate(*, path=None, profile_dir=None, workspace=None, data_dir=None, manif
         else:
             raise ValueError("Unsupported migration file type")
         updates = {path: result} if original != result else {}
+        if path.suffix == '.py':
+            for name, schema in parameter_files.items():
+                target = path.parent / name
+                content = _json(schema)
+                if target.exists() and target.read_bytes() != content:
+                    raise ValueError(f'Parameter file already exists with different content: {target}; review it before migration')
+                if not target.is_file() or target.read_bytes() != content:
+                    updates[target] = content
         backup_root = path.parent / ".biopipe-migration-backups"
     else:
         from biopipe.client import data_directory
@@ -307,7 +313,7 @@ def migrate(*, path=None, profile_dir=None, workspace=None, data_dir=None, manif
         # A dedicated lock protects migration invocations; Studio must be closed.
         with FileLock(directory / ".migration.lock") if apply else nullcontext():
             updates, changes, originals = _profile_plan(directory, current)
-            backup = _publish(updates, directory / "migrations/v2", expected=originals) if apply and updates else None
-        return {"protocol_version": 2, "apply": apply, "changed": [str(p) for p in updates], "backup": backup, "details": changes}
-    backup = _publish(updates, backup_root, expected={path: original}) if apply and updates else None
-    return {"protocol_version": 2, "apply": apply, "changed": [str(p) for p in updates], "backup": backup, "details": changes}
+            backup = _publish(updates, directory / "migrations/v3", expected=originals) if apply and updates else None
+        return {"protocol_version": PROTOCOL_VERSION, "apply": apply, "changed": [str(p) for p in updates], "backup": backup, "details": changes}
+    backup = _publish(updates, backup_root, expected={p: original if p == path else p.read_bytes() if p.exists() else None for p in updates}) if apply and updates else None
+    return {"protocol_version": PROTOCOL_VERSION, "apply": apply, "changed": [str(p) for p in updates], "backup": backup, "details": changes}

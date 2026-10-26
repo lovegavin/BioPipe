@@ -11,9 +11,13 @@ Declare distribution requirements on the Step or Reader, for example:
 
 ```python
 class OlderAnalysis(Step):
-    dependencies = ["some-library>=1,<2"]
-    dependency_imports = ["some_library"]
-    # Normal name, schema, contracts, run and export definitions follow.
+    parameters_file = "older.parameters.json"
+    definition = {
+        # Include identity, kind, contracts and resources as in the Step guide.
+        "dependencies": ["some-library>=1,<2"],
+        "dependency_imports": ["some_library"]
+    }
+    # run() and export() implement the calculation.
 ```
 
 Another operator can declare `some-library>=2,<3`. If version 2 is already shared,
@@ -28,8 +32,8 @@ requirements; generated provider modules load entries lazily.
 Ordinary Python imports keep their normal meaning inside each process. Modules
 that eagerly import sibling implementations also require those siblings' imports.
 Use separate modules or lazy imports when siblings need conflicting dependencies.
-Dynamic declarations cannot always be discovered before import; prefer literal
-class declarations and an SDK-generated wheel manifest.
+Definitions must be literal dictionaries; dynamic declarations are rejected.
+Build the generated wheel manifest with `biopipe plugin build`.
 
 ## Installation and readiness
 
@@ -52,7 +56,8 @@ their readiness/repair is independent of unrelated library entries.
 
 Startup and library changes check enabled entries. A successful check remains
 passed for the session. Retries visit only non-passed entries. Changing an
-implementation, declaration or execution target invalidates its own status.
+implementation, dependency declaration or execution target invalidates its own status.
+Parameter/default/presentation edits preserve successful session checks.
 Repairs publish only after the selected target passes; one failed repair does not
 discard other successful repairs. The library manager shows **Independent
 dependency process** for isolated entries (localized in the UI).
@@ -60,8 +65,7 @@ dependency process** for isolated entries (localized in the UI).
 Targets are under the resolved data directory's `plugins/targets/`. Provider code
 is under `plugins/environments/<generation>/code/`; despite the historical folder
 name, these new generations contain no Python executable or virtual environment.
-Registry paths to these folders are relative. Old virtual-environment generations
-remain readable for existing saved routes. Reinstall wheels when changing OS,
+Registry paths to these folders are relative. Old protocol profiles must be explicitly migrated before use. Reinstall wheels when changing OS,
 architecture or Python ABI; private native dependencies are not portable across
 those boundaries.
 

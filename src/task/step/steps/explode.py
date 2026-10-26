@@ -27,69 +27,38 @@ from __future__ import annotations
 import numpy as np
 
 from src.core import Form, StepError
-from src.core.contracts import param, port
 from src.task.context import Context
 from src.task.step.base import Step
 
 
 class ExplodeStep(Step):
     """Expand a multi-valued info field into separate positions."""
-    title = 'explode'
-    description = 'Expand a multi-valued info field into separate positions.'
+    provider = 'biopipe-core'
+    parameters_file = 'explode.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'explode',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'explode',
+     'description': 'Expand a multi-valued info field into separate positions.',
+     'category': 'data',
+     'icon': 'ArrowsDownUp',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [{'fields': {'param': 'field', 'default': None},
+                                             'dim': {'param': 'dim', 'default': None}}]}],
+                   'output': {'mode': 'declare',
+                              'schema': {'numeric': True, 'info_open': True, 'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "explode"
-    category = "data"
-    icon = "ArrowsDownUp"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [
-        port(
-            dims=[param("dim")],
-            parallel=[{"fields": param("field"), "dim": param("dim")}],
-        ),
-    ]
-    output_contract = {
-        "mode": "declare",
-        "schema": {
-            "numeric": True,
-            "info_open": True,
-            "axis_info_open": True,
-        },
-    }
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "dim": {
-                "type": "string",
-                "title": "Dimension to expand",
-            },
-            "field": {
-                "type": "string",
-                "title": "Multi-valued field",
-                "description": (
-                    "Info field declared parallel to 'dim'. Each "
-                    "cell is split by 'sep'."
-                ),
-            },
-            "sep": {
-                "type": "string",
-                "title": "Separator",
-                "default": ";",
-                "minLength": 1,
-            },
-            "keep_empty": {
-                "type": "boolean",
-                "title": "Keep empty",
-                "default": False,
-            },
-            "output": {
-                "type": "string",
-                "title": "Output key",
-            },
-        },
-        "required": ["dim", "field"],
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

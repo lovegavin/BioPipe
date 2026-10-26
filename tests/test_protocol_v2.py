@@ -28,7 +28,7 @@ def test_every_implementation_declares_schema_without_registry_injection():
         validate_extension(cls, kind)
     canonical = bundled_state()["descriptors"]
     removed = {"name", "module", "parameters", "runtime_defaults", "input_type", "output_type", "memory_modes", "supports_cuda", "output_contract", "legacy_parameters"}
-    assert all(not (removed & d.keys()) and d["protocol_version"] == 2 for d in canonical)
+    assert all(not (removed & d.keys()) and d["protocol_version"] == 3 for d in canonical)
 
 
 def test_execution_defaults_are_separate_from_new_node_presets():
@@ -109,7 +109,7 @@ def test_profile_migration_preserves_disabled_removed_and_historical_jobs(tmp_pa
     result = migrate(profile_dir=root, apply=True)
     assert result["backup"] and job.read_bytes() == originals[job]
     new = manager.state()
-    assert new["package_protocol_version"] == 2
+    assert new["package_protocol_version"] == 3
     assert removed not in {p["name"] for p in new["packages"]}
     assert not next(p for p in new["packages"] if p["name"] == "biopipe-genetics")["enabled"]
     assert json.loads(workspace.read_text())["documents"][0]["graph"]["schema_version"] == 2
@@ -147,7 +147,8 @@ def test_source_conversion_is_static_and_keeps_author_code():
     result = convert_source(text, manifest)
     assert 'legacy_parameters' not in result
     assert 'return 42' in result and 'must never execute' in result
-    assert "'x-ui-default': 2" in result
+    from biopipe.migrate import convert_source_parts
+    assert convert_source_parts(text, manifest)[1]["Example.parameters.json"]["properties"]["x"]["x-ui-default"] == 2
     assert convert_source(result, manifest) == result
 
 
@@ -160,7 +161,7 @@ def test_preflight_failure_never_rewrites_valid_files(tmp_path):
     state["packages"].append({"name": "external-v1", "origin": "wheel"})
     manager.registry.write_text(json.dumps(state))
     before = manager.registry.read_bytes()
-    with pytest.raises(ValueError, match="Rebuild v1 external"):
+    with pytest.raises(ValueError, match="Rebuild old external"):
         migrate(profile_dir=root, apply=True)
     assert manager.registry.read_bytes() == before
     assert not (directory / "migrations").exists()
@@ -168,7 +169,7 @@ def test_preflight_failure_never_rewrites_valid_files(tmp_path):
     missing = graph(); missing["nodes"][0]["operator"] = "lab.unavailable"
     path.write_text(json.dumps(missing))
     original = path.read_bytes()
-    with pytest.raises(ValueError, match="Missing v2 operator"):
+    with pytest.raises(ValueError, match="Missing v3 operator"):
         migrate(path=path, apply=True)
     assert path.read_bytes() == original
     assert not (tmp_path / ".biopipe-migration-backups").exists()

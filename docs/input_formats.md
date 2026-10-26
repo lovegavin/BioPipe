@@ -62,18 +62,22 @@ commas and spaces while the saved source contains a trimmed list of nonempty nam
 
 ## Reader extension metadata
 
-Readers can optionally declare `file_input`; `describe_reader()` copies it into
-the registry without importing optional parsing dependencies:
+Readers can optionally include `file_input` in their literal `definition`. Static
+maintenance copies it into the registry without importing the module:
 
 ```python
 class CountsReader(Reader):
-    extensions = [".counts"]
-    handles_compression = False
-    file_input = {
-        "dims": ["gene", "sample"],
-        "labels": {"gene": "builtin", "sample": "builtin"},
-        "compression": [".gz", ".bz2", ".xz"],
-        "companions": [["samples.tsv", "samples.tsv.gz"]],
+    parameters_file = "counts.parameters.json"
+    definition = {
+        # Add identity, kind, contracts and resources from the Reader guide.
+        "extensions": [".counts"],
+        "handles_compression": False,
+        "file_input": {
+            "dims": ["gene", "sample"],
+            "labels": {"gene": "builtin", "sample": "builtin"},
+            "compression": [".gz", ".bz2", ".xz"],
+            "companions": [["samples.tsv", "samples.tsv.gz"]]
+        }
     }
 ```
 
@@ -83,10 +87,10 @@ continue to control same-basename matching. `compression` contains supported
 outer suffixes, not a request to install codecs. If absent, framework-decompressed
 readers get gzip/bzip2/xz, while readers handling their own compression get no
 outer suffixes. Without `file_input`, dimensions default to `sample, feature` and
-labels default to `auto`. Old plugin descriptors remain supported.
+labels default to `auto`. These hints are optional in protocol 3.
 The same declaration controls runtime routing and the file picker. For a native
-gzip parser, explicitly declare `handles_compression = True` and
-`file_input = {"compression": [".gz"]}` along with any dimension/label hints.
+gzip parser, explicitly declare `"handles_compression": True` and
+`"file_input": {"compression": [".gz"]}` along with any dimension/label hints.
 Do not set `handles_compression=True` merely because the file format supports
 internal compression, or omit supported external suffixes from the declaration.
 

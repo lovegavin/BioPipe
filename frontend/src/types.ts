@@ -103,7 +103,7 @@ export type Graph = {
   edges: GraphEdge[];
   memory: Memory;
   interface?: RouteInterface | null;
-  plugin_lock?: Record<string, {package: string; version: string; sha256: string}>;
+  plugin_lock?: Record<string, {package: string; version: string; sha256: string; code_sha?: string; declaration_sha?: string}>;
 };
 export type RouteInput = { node_id: string; label: string; contract: PortContract };
 export type RouteOutput = RouteInput & { handle: string };

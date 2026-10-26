@@ -7,8 +7,6 @@ from __future__ import annotations
 
 from copy import deepcopy
 import hashlib
-import importlib.metadata as metadata
-import inspect
 import json
 import os
 from pathlib import Path
@@ -22,16 +20,16 @@ import threading
 import time
 
 from packaging.utils import canonicalize_name
-from biopipe_sdk.protocol import describe_operator, describe_reader, validate_extension, PROTOCOL_VERSION, catalog_entry
+from biopipe_sdk.protocol import PROTOCOL_VERSION, catalog_entry
 from src.web.storage import FileLock, atomic_json
 from biopipe.packages import bundled_manifest, bundled_state, owns_builtin_id
 
 
 def require_current_state(value):
     if value.get("package_protocol_version") != PROTOCOL_VERSION:
-        raise ValueError("This library uses protocol v1. Close Studio and run `biopipe migrate --profile-dir <profile> --apply`; old wheels must be rebuilt for v2.")
+        raise ValueError("This library uses an older protocol. Close Studio and run `biopipe migrate --profile-dir <profile> --apply`; old wheels must be rebuilt for v3.")
     if "bundled_seen" not in value:
-        raise ValueError("Incomplete protocol v2 library: missing bundled_seen receipt")
+        raise ValueError("Incomplete protocol v3 library: missing bundled_seen receipt")
     if any(d.get("protocol_version") != PROTOCOL_VERSION for d in value.get("descriptors", [])):
         raise ValueError("Library contains old descriptors; migrate it before loading")
 
@@ -91,87 +89,12 @@ def run_process(args, *, timeout=180, env=None):
     return result.stdout
 
 
-def entry_descriptors():
-    """Run only in an isolated probe/worker, never in a GUI HTTP process."""
-    from src.task.step.base import Step
-    from src.reader.base import Reader
-    records = []
-    entries = []
-    for group, kind in GROUPS.items():
-        for entry in metadata.entry_points(group=group):
-            entries.append((entry, kind, entry.load()))
-    # Single-file drop-ins are wrapped in ordinary wheels. Discover only classes
-    # defined by their module, in this isolated probe (never the HTTP process).
-    for entry in metadata.entry_points(group="biopipe.modules"):
-        try:
-            module = entry.load()
-            for cls in vars(module).values():
-                if not inspect.isclass(cls) or cls.__module__ != module.__name__ or inspect.isabstract(cls):
-                    continue
-                if issubclass(cls, Step):
-                    entries.append((entry, "operator", cls))
-                elif issubclass(cls, Reader):
-                    entries.append((entry, "reader", cls))
-        except Exception as exc:
-            raise ValueError(f"{entry.dist.metadata['Name']}: {exc}") from exc
-    for entry, kind, cls in entries:
-        try:
-            validate_extension(cls, kind)
-            base = Step if kind == "operator" else Reader
-            if not isinstance(cls, type) or not issubclass(cls, base):
-                raise ValueError(f"{entry.value} must subclass {base.__name__}")
-            if not cls.output_contract or (kind == "operator" and cls.input_contracts is None):
-                raise ValueError(f"{entry.value} must declare its input/output contracts")
-            descriptor = describe_operator(cls) if kind == "operator" else describe_reader(cls())
-            dist = entry.dist
-            package_name = canonicalize_name(dist.metadata["Name"])
-            bundled_names = {p["name"] for p in bundled_manifest()["packages"]}
-            if "." not in descriptor["id"] and package_name not in bundled_names:
-                raise ValueError("Plugin IDs must be namespaced, for example lab.scale")
-            manifest = dist.read_text("biopipe.json")
-            if manifest is not None:
-                from biopipe_sdk.protocol import PackageDescriptor
-                manifest = json.loads(manifest)
-                PackageDescriptor.model_validate(manifest)
-                if manifest['name'] != package_name or manifest['version'] != dist.version:
-                    raise ValueError("Package manifest identity differs from wheel metadata")
-                declared = {item["id"]: item for item in manifest["descriptors"]}
-                if declared.get(descriptor["id"]) != descriptor:
-                    raise ValueError(f"Wheel descriptor differs from implementation: {descriptor['id']}")
-            descriptor["distribution"] = canonicalize_name(dist.metadata["Name"])
-            descriptor["package_version"] = dist.version
-            from biopipe_sdk.dependencies import requirements
-            descriptor['dependencies'] = requirements(list(set(descriptor.get('dependencies', [])) | set(dist.requires or [])))
-            records.append(descriptor)
-        except Exception as exc:
-            raise ValueError(f"{entry.dist.metadata['Name']} / {getattr(cls, '__name__', entry.value)}: {exc}") from exc
-    ids = [item["id"] for item in records]
-    if len(ids) != len(set(ids)):
-        raise ValueError("Two plugin entry points declare the same ID")
-    return records
-
-
 def _runtime_class(descriptor, lock):
     if descriptor.get('execution', {}).get('mode') == 'isolated':
         from biopipe.isolation import proxy_step, proxy_reader
         return (proxy_step if descriptor['kind'] == 'operator' else proxy_reader)(descriptor, lock)
-    module, name = descriptor["entry_point"].split(":", 1)
-    if descriptor.get("origin") == "bundled":
-        from biopipe.packages import load_entry
-        cls = load_entry(descriptor)
-    else:
-        from biopipe.install_targets import load_class
-        cls = load_class(descriptor)
-    validate_extension(cls, descriptor["kind"])
-    actual = describe_operator(cls) if descriptor["kind"] == "operator" else describe_reader(cls())
-    if (actual["id"] != descriptor["id"] or actual["version"] != descriptor["version"]
-            or actual["resources"] != descriptor["resources"]):
-        raise ValueError(f"Installed implementation differs from lock: {descriptor['id']}")
-    if descriptor.get("origin") == "bundled":
-        current = next(d for d in bundled_state()["descriptors"] if d["id"] == descriptor["id"])
-        if current["implementation"] != descriptor["implementation"]:
-            raise ValueError(f"Bundled implementation changed since this graph was pinned: {descriptor['id']}")
-    return cls
+    from biopipe_sdk.declarations import load_class
+    return load_class(descriptor)
 
 
 def load_runtime(lock, manifest=None):
@@ -187,7 +110,7 @@ def load_runtime(lock, manifest=None):
         factory = lambda d=descriptor: _runtime_class(d, lock)
         if descriptor['kind'] == 'operator':
             if selected is None or descriptor['id'] in selected:
-                STEPS.register(descriptor['id'], factory)
+                STEPS.register(descriptor['id'], factory, descriptor)
         else:
             READERS.append(reader_proxy(descriptor, factory))
 
@@ -237,6 +160,17 @@ class PluginManager:
         atomic_json(self.directory / "snapshots" / (state["generation"] + ".json"), state)
         atomic_json(self.registry, state)
         return state
+
+    def update_declarations(self, document):
+        from biopipe_sdk.declarations import definitions
+        from biopipe.metadata_updates import replace_declarations
+        self.state()
+        with self.lock:
+            current = self.state()
+            state = replace_declarations(current, definitions(document))
+            if state == current:
+                return current
+            return self._publish(state)
 
     def manage(self, name, action):
         self.state()  # Initialize/migrate before the lifecycle transaction.
@@ -389,11 +323,5 @@ class PluginManager:
         return state
 
     def python_for(self, state):
-        # All v2 generations use the host interpreter with dependency targets.
+        # All v3 generations use the host interpreter with dependency targets.
         return sys.executable
-
-
-if __name__ == "__main__":
-    if len(sys.argv) != 3 or sys.argv[1] != "probe":
-        raise SystemExit("Use: python -m biopipe.plugins probe <output.json>")
-    Path(sys.argv[2]).write_text(json.dumps(entry_descriptors(), ensure_ascii=False, allow_nan=False), encoding="utf-8")

@@ -39,7 +39,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._axis_contracts import estimate_axis
 from ._microbiome import metadata
 
 
@@ -48,19 +48,37 @@ _METHODS = ("kmeans", "hierarchical", "louvain")
 
 class ClusterAxisStep(Step):
     """Cluster positions along one axis."""
-    description = 'Cluster positions along one axis.'
-    dependencies = ['scikit-learn>=1.5', 'networkx>=3.2']
-    dependency_imports = ['sklearn', 'networkx']
+    provider = 'biopipe-core'
+    parameters_file = 'cluster_axis.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'cluster_axis',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Clustering',
+     'description': 'Cluster positions along one axis.',
+     'category': '统计分析',
+     'icon': 'TreeStructure',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'project',
+                              'derived': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'representation': {'type': 'string', 'const': 'clusters'}},
+                              'keep_dims': [{'param': 'dim', 'default': None}],
+                              'append_dims': [{'name': 'cluster', 'labels': ['cluster']}]}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'dependencies': ['networkx>=3.2', 'scikit-learn>=1.5'],
+     'dependency_imports': ['networkx', 'sklearn'],
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "cluster_axis"
-    inputs_arity = 1
-    outputs = []
-    title = 'Clustering'
-    category = '统计分析'
-    builtin_package = 'biopipe-core'
-    parameters_schema = SCHEMAS['cluster_axis']
-    input_contracts, output_contract = CONTRACTS['cluster_axis']
-    output_parameter = 'output'
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -185,7 +203,6 @@ class ClusterAxisStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
-    icon = 'TreeStructure'
 
 
 def _kmeans(X: np.ndarray, k: int, random_state: int) -> np.ndarray:

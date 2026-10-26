@@ -30,49 +30,45 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import port, param
-from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
 class MaPlotStep(Step):
     """Draw an MA plot."""
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '分析维度', 'type': 'string', 'default': 'gene'},
-                    'stat_dim': {'title': '统计量维度', 'type': 'string', 'default': 'statistic'},
-                    'lfc_label': {'title': 'log2FC 字段', 'type': 'string', 'default': 'log2FC'},
-                    'mean_a_label': {'title': '对照组均值字段', 'type': 'string', 'default': 'mean_a'},
-                    'mean_b_label': {'title': '实验组均值字段', 'type': 'string', 'default': 'mean_b'},
-                    'p_label': {'title': 'P / Q 字段', 'type': 'string', 'default': 'P'},
-                    'filename': {'title': '图片文件名', 'type': 'string', 'x-ui-default': 'ma_plot.png'},
-                    'title': {'title': '图标题', 'type': 'string'},
-                    'xlabel': {'title': 'X 轴标题', 'type': 'string', 'default': 'log2 mean'},
-                    'ylabel': {'title': 'Y 轴标题', 'type': 'string'},
-                    'p_threshold': {'title': '显著性阈值',
-                                    'type': 'number',
-                                    'minimum': 0,
-                                    'maximum': 1,
-                                    'default': 0.05},
-                    'point_size': {'title': '点大小', 'type': 'number', 'minimum': 1, 'default': 8},
-                    'alpha': {'title': '透明度', 'type': 'number', 'minimum': 0, 'maximum': 1, 'default': 0.7},
-                    'label_top': {'title': '标记前 N 个特征', 'type': 'integer', 'minimum': 0, 'default': 0}},
-     'additionalProperties': True,
-     'required': ['filename']}
-    title = 'MA plot'
-    category = '可视化'
-    icon = 'ChartLine'
-    description = '平均表达量与效应大小'
-    preview = {'kind': 'ma', 'caption': '平均表达与倍数变化'}
+    provider = 'biopipe-plots'
+    parameters_file = 'ma_plot.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'ma_plot',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'MA plot',
+     'description': '平均表达量与效应大小',
+     'category': '可视化',
+     'icon': 'ChartLine',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': 'gene'},
+                                        {'param': 'stat_dim', 'default': 'statistic'}],
+                               'labels': [{'dim': {'param': 'stat_dim', 'default': 'statistic'},
+                                           'values': [{'param': 'lfc_label', 'default': 'log2FC'},
+                                                      {'param': 'p_label', 'default': 'P'},
+                                                      {'param': 'mean_a_label', 'default': 'mean_a'},
+                                                      {'param': 'mean_b_label', 'default': 'mean_b'}]}],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'none'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': None,
+     'preview': {'kind': 'ma', 'caption': '平均表达与倍数变化'}}
 
-    name = "ma_plot"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(ndim=2, dims=[param("dim", "gene"), param("stat_dim", "statistic")], labels=[{"dim": param("stat_dim", "statistic"), "values": [param("lfc_label", "log2FC"), param("p_label", "P"), param("mean_a_label", "mean_a"), param("mean_b_label", "mean_b")]}])]
-    output_contract = {"mode": "none"}
+
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

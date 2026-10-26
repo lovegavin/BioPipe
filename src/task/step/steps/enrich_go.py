@@ -39,7 +39,6 @@ from __future__ import annotations
 import numpy as np
 
 from src.core import Form, StepError
-from src.core.contracts import param, port
 from src.task.context import Context
 from src.task.step.base import Step
 
@@ -50,59 +49,44 @@ _STATISTIC_COLUMNS = ["term_size", "n_hit", "expected", "P_VALUE", "Q_VALUE"]
 
 class EnrichGoStep(Step):
     """Hypergeometric enrichment of one term axis over two inputs."""
-    title = 'enrich_go'
-    description = 'Hypergeometric enrichment of one term axis over two inputs.'
+    provider = 'biopipe-core'
+    parameters_file = 'enrich_go.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'enrich_go',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'enrich_go',
+     'description': 'Hypergeometric enrichment of one term axis over two inputs.',
+     'category': 'analysis',
+     'icon': 'Intersect',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'gene_dim', 'default': 'gene'},
+                                        {'param': 'term_dim', 'default': 'go_term'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2},
+                              {'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'gene_dim', 'default': 'gene'},
+                                        {'param': 'term_dim', 'default': 'go_term'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': True,
+                                         'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 2,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "enrich_go"
-    category = "analysis"
-    icon = "Intersect"
-    inputs_arity = 2
-    outputs = []
-    input_contracts = [
-        port(ndim=2, dims=[param("gene_dim", "gene"), param("term_dim", "go_term")]),
-        port(ndim=2, dims=[param("gene_dim", "gene"), param("term_dim", "go_term")]),
-    ]
-    output_contract = {
-        "mode": "declare",
-        "schema": {
-            "ndim": 2,
-            "numeric": True,
-            "info_open": True,
-            "axis_info_open": True,
-        },
-    }
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "gene_dim": {
-                "type": "string",
-                "title": "Gene dimension",
-                "default": "gene",
-            },
-            "term_dim": {
-                "type": "string",
-                "title": "Term dimension",
-                "default": "go_term",
-            },
-            "correction": {
-                "type": "string",
-                "title": "Multiple-testing correction",
-                "enum": list(_CORRECTIONS),
-                "default": "fdr",
-            },
-            "min_term_size": {
-                "type": "integer",
-                "title": "Minimum term size",
-                "minimum": 1,
-                "default": 1,
-            },
-            "output": {
-                "type": "string",
-                "title": "Output key",
-            },
-        },
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         hits, universe = inputs

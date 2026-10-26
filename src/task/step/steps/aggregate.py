@@ -57,7 +57,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
+from src.task.step.steps._microbiome import estimate, metadata
 
 
 _METHODS = ("sum", "mean", "median", "min", "max", "count")
@@ -65,17 +65,45 @@ _METHODS = ("sum", "mean", "median", "min", "max", "count")
 
 class AggregateStep(Step):
     """Aggregate positions along one axis by group."""
-    description = 'Aggregate positions along one axis by group.'
+    provider = 'biopipe-microbiome'
+    parameters_file = 'aggregate.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'aggregate',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Aggregate',
+     'description': 'Aggregate positions along one axis by group.',
+     'category': '数据整理',
+     'icon': 'Stack',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2},
+                              {'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2,
+                               'labels_axis': [{'axis': 1,
+                                                'values': [{'param': 'group_col', 'default': None}]}]}],
+                   'output': {'mode': 'project',
+                              'derived': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'representation': {'type': 'string', 'const': 'aggregate'}},
+                              'drop_dims': [{'param': 'dim', 'default': None}],
+                              'prepend_dims': [{'input_axis': [1, 1]}]}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 2,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "aggregate"
-    inputs_arity = 2
-    outputs = []
-    title = 'Aggregate'
-    category = '数据整理'
-    builtin_package = "biopipe-microbiome"
-    parameters_schema = SCHEMAS['aggregate']
-    input_contracts, output_contract = CONTRACTS['aggregate']
-    output_parameter = "output"
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -258,7 +286,6 @@ class AggregateStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
-    icon = 'Stack'
 
 
 def _decode(code, encoder):

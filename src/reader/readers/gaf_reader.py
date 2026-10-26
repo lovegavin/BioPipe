@@ -58,7 +58,6 @@ from pathlib import Path
 import numpy as np
 
 from src.core import Form, ReaderError
-from src.core.contracts import reader_contract
 from src.reader.base import Reader
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
@@ -90,22 +89,37 @@ _N_COLUMNS = len(_GAF_COLUMNS)
 
 class GafReader(Reader):
     """Reader for GO Annotation Files (.gaf)."""
+    provider = 'biopipe-readers'
+    parameters_file = 'gaf_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'GafReader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'GafReader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'ndim': 2,
+                              'axis_fields': [],
+                              'info_open': False}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False},
+     'extensions': ['.gaf'],
+     'requires_siblings': [],
+     'excludes_siblings': [],
+     'handles_compression': True,
+     'file_input': {'dims': ['annotation', 'field'],
+                    'labels': {'annotation': 'auto', 'field': 'builtin'},
+                    'compression': ['.gz']}}
 
-    output_contract = reader_contract()
 
-    file_input = {
-        "dims": ["annotation", "field"],
-        "labels": {"annotation": "auto", "field": "builtin"},
-        "compression": [".gz"],
-    }
 
-    extensions = [".gaf"]
-    handles_compression = True
-    parameters_schema = {
-        "type": "object",
-        "properties": {},
-        "additionalProperties": False,
-    }
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:

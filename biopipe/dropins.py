@@ -54,71 +54,77 @@ def snapshot(source, target):
     return digest.hexdigest()
 
 
-def icon_assets(content):
-    """Literal image declarations in a single-file drop-in, without importing it."""
-    paths = set()
-    for node in ast.walk(ast.parse(content)):
-        targets = node.targets if isinstance(node, ast.Assign) else [node.target] if isinstance(node, ast.AnnAssign) else []
-        if any(isinstance(t, ast.Name) and t.id == "icon" for t in targets):
-            try:
-                value = ast.literal_eval(node.value)
-            except (ValueError, TypeError):
-                continue
-            if is_image_icon(value):
-                paths.add(value)
-    return sorted(paths)
+def module_assets(source):
+    """Resolve each operator's parameter JSON and optional icon without imports."""
+    from biopipe_sdk.declarations import source_declarations
+    records = source_declarations(source, source.stem)
+    assets = set()
+    tree = ast.parse(source.read_text(encoding='utf-8'))
+    for cls in (n for n in tree.body if isinstance(n, ast.ClassDef)):
+        for node in cls.body:
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target] if isinstance(node, ast.AnnAssign) else []
+            if any(isinstance(t, ast.Name) and t.id == 'parameters_file' for t in targets):
+                assets.add(ast.literal_eval(node.value))
+        if any(d['entry_point'].endswith(':' + cls.name) for d in records) and not any(
+                isinstance(n, (ast.Assign, ast.AnnAssign)) and any(isinstance(t, ast.Name) and t.id == 'parameters_file'
+                for t in (n.targets if isinstance(n, ast.Assign) else [n.target])) for n in cls.body):
+            assets.add('parameters.json' if source.stem == '__init__' else source.stem + '.parameters.json')
+    for d in records:
+        if is_image_icon(d.get('icon')):
+            assets.add(d['icon'])
+    return sorted(assets)
 
 
 def snapshot_module(source, target):
     digest = hashlib.sha256(snapshot(source, target).encode())
-    for relative in icon_assets((target / source.name).read_bytes()):
-        path = icon_path(source.parent, relative)
+    for relative in module_assets(source):
+        path = (source.parent / relative).resolve()
+        if not path.is_relative_to(source.parent.resolve()):
+            raise ValueError('Operator assets must remain inside the source directory')
         destination = target / relative.replace("\\", "/")
         digest.update(relative.encode() + snapshot(path, destination.parent).encode())
     return digest.hexdigest()
 
 
 def single_file_wheel(source, output):
-    """No build tool needed for a single module; metadata is read without imports."""
-    content = source.read_bytes()
-    declarations = []
-    for node in ast.parse(content, filename=source.name).body:
-        targets = node.targets if isinstance(node, ast.Assign) else [node.target] if isinstance(node, ast.AnnAssign) else []
-        if any(isinstance(target, ast.Name) and target.id == "BIOPIPE_PLUGIN" for target in targets):
-            declarations.append(ast.literal_eval(node.value))
-    if len(declarations) > 1:
-        raise ValueError("Declare BIOPIPE_PLUGIN only once")
-    settings = declarations[0] if declarations else {}
-    if not isinstance(settings, dict) or set(settings) - {"name", "version", "dependencies"}:
-        raise ValueError("BIOPIPE_PLUGIN accepts name, version and dependencies")
-    # Stable across machines, independent of the user's home or absolute path.
-    suffix = hashlib.sha256(source.name.encode("utf-8")).hexdigest()[:12]
-    slug = re.sub(r"[^a-z0-9]+", "-", source.stem.lower()).strip("-") or "operator"
-    name = settings.get("name", f"biopipe-dropin-{slug}-{suffix}")
-    if not isinstance(name, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", name):
-        raise ValueError("BIOPIPE_PLUGIN.name must be a Python distribution name")
-    name = canonicalize_name(name)
-    version = str(Version(str(settings.get("version", "0.1.0"))))
-    dependencies = settings.get("dependencies", [])
-    if not isinstance(dependencies, list) or any(not isinstance(item, str) or "\n" in item or "\r" in item for item in dependencies):
-        raise ValueError("BIOPIPE_PLUGIN.dependencies must be a list of requirement strings")
-    from biopipe_sdk.dependencies import source_requirements, source_entries
-    module = "biopipe_dropin_" + hashlib.sha256(name.encode()).hexdigest()[:16]
-    distribution = name.replace("-", "_").replace(".", "_")
-    info = f"{distribution}-{version}.dist-info"
-    files = {
-        f"{module}/__init__.py": content,
-        f"{info}/entry_points.txt": f"[biopipe.modules]\ndropin = {module}\n".encode(),
-    }
-    per_class = source_entries(content, module)
-    if per_class:
-        import json
-        files[f'{info}/biopipe.entries.json'] = json.dumps(per_class).encode()
-    else:
-        dependencies = sorted(set(dependencies) | set(source_requirements(content)))
-    for relative in icon_assets(content):
-        path = icon_path(source.parent, relative)
-        files[f"{module}/{relative.replace(chr(92), '/')}"] = path.read_bytes()
+    """Wrap one code module and its parameter JSON files, without build tools."""
+    import json
+    from biopipe_sdk.declarations import source_declarations, compile_declaration, declaration_hash
+    from biopipe_sdk.drift import check_source
+    settings = {}
+    for node in ast.parse(source.read_bytes()).body:
+        if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == 'BIOPIPE_PLUGIN' for t in node.targets):
+            settings = ast.literal_eval(node.value)
+    suffix = hashlib.sha256(source.name.encode()).hexdigest()[:12]
+    slug = re.sub(r'[^a-z0-9]+', '-', source.stem.lower()).strip('-') or 'operator'
+    name = canonicalize_name(settings.get('name', f'biopipe-dropin-{slug}-{suffix}'))
+    version = str(Version(settings.get('version', '0.1.0')))
+    from biopipe_sdk.dependencies import requirements
+    dependencies = requirements(settings.get('dependencies', []))
+    module = 'biopipe_dropin_' + hashlib.sha256(name.encode()).hexdigest()[:16]
+    info = f"{name.replace('-', '_').replace('.', '_')}-{version}.dist-info"
+    content = source.read_text(encoding='utf-8').encode('utf-8')
+    files = {f'{module}/__init__.py': content}
+    for relative in module_assets(source):
+        files[f'{module}/{relative.replace(chr(92), "/")}'] = (source.parent / relative).read_bytes()
+    code_sha = hashlib.sha256(f'{module}/__init__.py'.encode() + b'\0' + content).hexdigest()
+    records = []
+    for declaration in source_declarations(source, source.stem):
+        d = compile_declaration(declaration, source.parent)
+        errors, warnings = check_source(content.decode('utf-8'), d)
+        if errors:
+            raise ValueError('; '.join(errors))
+        d['entry_point'] = module + ':' + d['entry_point'].split(':')[1]
+        d['code_sha'] = code_sha
+        d['declaration_sha'] = declaration_hash(d)
+        records.append(d)
+    if not records:
+        raise ValueError('No v3 operator or Reader definitions')
+    entries = []
+    for kind, group in [('operator', 'operators'), ('reader', 'readers')]:
+        entries += [f'[biopipe.{group}]', *[f"{d['id']} = {d['entry_point']}" for d in records if d['kind'] == kind], '']
+    files[f'{info}/entry_points.txt'] = '\n'.join(entries).encode()
+    files[f'{info}/biopipe.json'] = json.dumps({'protocol_version': 3, 'name': name, 'version': version, 'descriptors': records}).encode()
     return write_wheel(files, name, version, dependencies, output)
 
 
@@ -168,10 +174,12 @@ def refresh(manager, current):
     staging = manager.directory / "staging"
     staging.mkdir(parents=True, exist_ok=True)
     changed, skipped, wheels, owners, extra_packages = [], [], [], {}, set()
+    metadata_changed = False
     with tempfile.TemporaryDirectory(prefix="scan-", dir=staging) as temporary:
         temporary = Path(temporary)
         from biopipe.source_library import prepare
         library = prepare(manager, current, temporary / "library")
+        current = library.get("state", current)
         wheels.extend(library["wheels"])
         changed.extend(library["updated"])
         skipped.extend(library["unchanged"])
@@ -192,12 +200,21 @@ def refresh(manager, current):
                 if source.is_dir():
                     if not (target / "pyproject.toml").is_file():
                         raise ValueError("A plugin folder must contain pyproject.toml with BioPipe entry points")
-                    run_process([sys.executable, "-m", "pip", "wheel", "--disable-pip-version-check", "--no-deps",
-                                 "--wheel-dir", output, target], timeout=600)
-                    built = list(output.glob("*.whl"))
-                    if len(built) != 1:
-                        raise ValueError("Expected exactly one wheel from the plugin project")
-                    wheel = built[0]
+                    from biopipe.developer import build, check_source
+                    manifest = check_source(target)
+                    package = manifest['name']
+                    # Parameter-only edits do not even invoke the wheel builder.
+                    candidates = [{**d, 'dependencies': sorted(set(d.get('dependencies', []) + manifest.get('dependencies', [])))} for d in manifest['descriptors']]
+                    updated = metadata_candidate(current, package, candidates, version=manifest['version'])
+                    if updated is not None:
+                        if package in owners:
+                            raise ValueError(f'Duplicate package {package}')
+                        owners[package] = source.name
+                        current, metadata_changed = updated, True
+                        receipts[source.name] = {'sha256': digest, 'package': package}
+                        changed.append(source.name)
+                        continue
+                    wheel = Path(build(target)['wheels'][0])
                 elif source.suffix.lower() == ".py":
                     wheel = single_file_wheel(target / source.name, output)
                 else:
@@ -208,7 +225,16 @@ def refresh(manager, current):
                 owners[package] = source.name
                 extra_packages.add(package)
                 receipts[source.name] = {"sha256": digest, "package": package}
-                wheels.append(wheel)
+                from biopipe.install_targets import wheel_entries
+                candidates = [{**e['expected'], 'dependencies': e['dependencies']} for e in wheel_entries(wheel)]
+                with zipfile.ZipFile(wheel) as archive:
+                    from email.parser import BytesParser
+                    wheel_version = BytesParser().parsebytes(archive.read(next(n for n in archive.namelist() if n.endswith('.dist-info/METADATA'))))['Version']
+                updated = metadata_candidate(current, package, candidates, version=wheel_version)
+                if updated is not None:
+                    current, metadata_changed = updated, True
+                else:
+                    wheels.append(wheel)
                 changed.append(source.name)
             except Exception as exc:
                 raise ValueError(f"{source.name}: {exc}") from exc
@@ -222,6 +248,27 @@ def refresh(manager, current):
                 raise ValueError(f"Refresh failed ({', '.join(changed)}); previous registry retained. {exc}") from exc
         else:
             state = current
+            if metadata_changed or library.get("receipt") != current.get("source_library") or library.get("state") is not None:
+                state["source_library"] = library["receipt"]
+                state['dropin_receipts'] = receipts
+                state = manager._publish(state)
     return {"generation": state["generation"], "updated": changed, "unchanged": skipped,
             "directory": str(inbox), "operators": sum(d["kind"] == "operator" for d in state["descriptors"]),
             "readers": sum(d["kind"] == "reader" for d in state["descriptors"])}
+
+
+def metadata_candidate(state, package, records, *, version=None):
+    from biopipe.metadata_updates import EXECUTION_KEYS, replace_declarations
+    old = {d['id']: d for d in state['descriptors'] if d['distribution'] == package}
+    if version is not None and version != next((p['version'] for p in state['packages'] if p['name'] == package), None):
+        return None
+    if not old or set(old) != {d['id'] for d in records}:
+        return None
+    records = deepcopy(records)
+    for d in records:
+        before = old[d['id']]
+        from biopipe_sdk.dependencies import requirements
+        d['dependencies'] = requirements(d.get('dependencies', []))
+        if any(d.get(k, []) != before.get(k, []) for k in EXECUTION_KEYS):
+            return None
+    return replace_declarations(state, records)

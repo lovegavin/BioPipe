@@ -7,7 +7,7 @@ import threading
 import pytest
 
 from biopipe.dependencies import DependencySession, probe
-from biopipe_sdk.dependencies import requirements, source_requirements
+from biopipe_sdk.dependencies import requirements
 
 
 def descriptor(name, dependencies=None):
@@ -64,7 +64,7 @@ def test_changed_implementation_invalidates_only_its_own_status(tmp_path):
         return {e['id']: {'status': 'passed', 'error': ''} for e in entries}
     session = DependencySession(manager, inspector=inspector)
     session.check()
-    manager.value['descriptors'][1]['implementation']['sha256'] = 'changed'
+    manager.value['descriptors'][1]['implementation']['code_sha'] = 'changed'
     session.check()
     assert calls == [['a', 'b'], ['b']]
 
@@ -99,8 +99,7 @@ def test_repair_publishes_only_after_reprobe_passes(tmp_path, monkeypatch):
     assert json.loads(manager.registry.read_text())['python'] == 'candidate'
 
 
-def test_requirements_validate_and_scan_without_importing():
-    assert source_requirements('raise RuntimeError()\nclass A:\n dependencies = ["numpy>=1.26"]') == ['numpy>=1.26']
+def test_requirements_reject_nonportable_or_invalid_specifications():
     for value in [['x @ file:///tmp/x'], ['numpy\n--bad'], ['numpy>=??'], 'numpy']:
         with pytest.raises(ValueError): requirements(value)
 

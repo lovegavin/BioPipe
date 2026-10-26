@@ -34,47 +34,50 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import port, param
-from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
 class BoxplotStep(Step):
     """Boxplot of one value column split by groups."""
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '分析维度', 'type': 'string', 'default': 'feature'},
-                    'value_label': {'title': '数值字段', 'type': 'string'},
-                    'group_dim': {'title': '样本维度', 'type': 'string', 'x-ui-default': 'sample'},
-                    'group_label': {'title': '分组字段', 'type': 'string'},
-                    'groups': {'title': '显示分组顺序', 'type': 'array', 'items': {'type': 'string'}},
-                    'filename': {'title': '图片文件名', 'type': 'string', 'x-ui-default': 'boxplot.png'},
-                    'title': {'title': '图标题', 'type': 'string'},
-                    'xlabel': {'title': 'X 轴标题', 'type': 'string'},
-                    'ylabel': {'title': 'Y 轴标题', 'type': 'string'},
-                    'show_points': {'title': '显示散点', 'type': 'boolean', 'default': True},
-                    'point_size': {'title': '点大小', 'type': 'number', 'minimum': 1, 'default': 4},
-                    'point_alpha': {'title': '点透明度',
-                                    'type': 'number',
-                                    'minimum': 0,
-                                    'maximum': 1,
-                                    'default': 0.5}},
-     'additionalProperties': True,
-     'required': ['value_label', 'group_dim', 'group_label', 'filename']}
-    title = 'Boxplot'
-    category = '可视化'
-    icon = 'ChartLine'
-    description = '分组分布与散点'
-    preview = {'kind': 'boxplot', 'caption': '分组分布与离群值'}
+    provider = 'biopipe-plots'
+    parameters_file = 'boxplot.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'boxplot',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Boxplot',
+     'description': '分组分布与散点',
+     'category': '可视化',
+     'icon': 'ChartLine',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': 'feature'},
+                                        {'param': 'group_dim', 'default': None}],
+                               'labels': [{'dim': {'param': 'dim', 'default': 'feature'},
+                                           'values': {'param': 'value_label', 'default': None}}],
+                               'parallel': [],
+                               'ndim': 2},
+                              {'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'group_dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2,
+                               'labels_any': [{'param': 'group_label', 'default': None}]}],
+                   'output': {'mode': 'none'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 2,
+     'outputs': [],
+     'output_parameter': None,
+     'preview': {'kind': 'boxplot', 'caption': '分组分布与离群值'}}
 
-    name = "boxplot"
-    inputs_arity = 2
-    outputs = []
-    input_contracts = [port(ndim=2, dims=[param("dim", "feature"), param("group_dim")], labels=[{"dim": param("dim", "feature"), "values": param("value_label")}]), {**port(ndim=2, dims=[param("group_dim")]), "labels_any": [param("group_label")]}]
-    output_contract = {"mode": "none"}
+
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

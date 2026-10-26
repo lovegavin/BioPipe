@@ -34,7 +34,6 @@ from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.forms.metadata import project_metadata
-from src.core.contracts import MISSING, param, port
 
 
 class RegressStep(Step):
@@ -47,28 +46,34 @@ class RegressStep(Step):
         method     : "ols" | "logit" | "auto" (default)
         output     : context key for the result
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '特征维度', 'type': 'string', 'x-ui-default': 'feature'},
-                    'response': {'title': '响应变量标签', 'type': 'string', 'x-ui-default': 'trait'},
-                    'covariates': {'title': '协变量标签',
-                                   'type': 'array',
-                                   'default': [],
-                                   'items': {'type': 'string'}},
-                    'method': {'title': '模型', 'enum': ['auto', 'ols', 'logit'], 'default': 'auto'}},
-     'additionalProperties': True,
-     'required': ['dim', 'response']}
-    title = '回归分析'
-    category = '统计分析'
-    icon = 'TrendUp'
-    description = '逐个特征拟合回归模型，可加入协变量。'
+    provider = 'biopipe-genetics'
+    parameters_file = 'regress.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'regress',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '回归分析',
+     'description': '逐个特征拟合回归模型，可加入协变量。',
+     'category': '统计分析',
+     'icon': 'TrendUp',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [{'dim': {'param': 'dim', 'default': None},
+                                           'values': {'param': 'response', 'default': None}},
+                                          {'dim': {'param': 'dim', 'default': None},
+                                           'values': {'param': 'covariates', 'default': []}}],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'regress'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "regress"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(ndim=2, dims=[param("dim")], labels=[{"dim": param("dim"), "values": param("response")}, {"dim": param("dim"), "values": param("covariates", [])}])]
-    output_contract = {"mode": "regress"}
-    output_parameter = "output"
+
 
 
     def run(self, ctx: Context, inputs) -> None:

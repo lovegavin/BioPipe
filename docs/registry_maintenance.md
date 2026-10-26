@@ -60,18 +60,18 @@ the user's active plugin registry.
 
 ## Adding an operator or Reader
 
-1. Add a module under `src/task/step/steps/` or `src/reader/readers/`.
-2. Declare the SDK parameter schema, input/output contracts, stable ID, output
+1. Add a Python module and its own parameter JSON under `src/task/step/steps/` or `src/reader/readers/`.
+2. Put parameter schema in the adjacent JSON and a literal `definition` with contracts, stable ID, output
    ports and actual resource capabilities. A Step producing a Form must declare
-   `output_parameter = "output"` or fixed `outputs`.
+   `definition["output_parameter"] = "output"` or fixed `outputs`.
    Set `category` to its purpose (`quality_control`, `analysis`, `data`,
    `visualization`, or a custom label). Optionally declare an `icon` name, for
-   example `icon = "Funnel"`; otherwise Studio uses the category default icon. See
+   example `"icon": "Funnel"`; otherwise Studio uses the category default icon. See
    [display metadata](operator_protocol.md#operator-categories-and-icons).
 3. Run `discover`, then `check` to see missing declarations and duplicate IDs.
 4. Add numerical/metadata tests, run `build`, and review the JSON diff.
 
-Every built-in and external module must declare `parameters_schema` and contracts.
+Every built-in and external class must declare `definition` and reference its parameter JSON.
 No schema or calculation defaults are inferred from UI JSON or method source.
 An undeclared module fails validation. Scanning cannot infer
 the biological meaning of data, implement a streaming kernel, or make an
@@ -79,15 +79,16 @@ unbounded calculation fit a memory budget.
 
 Existing package ownership is retained. Unassigned new Steps enter
 `biopipe-core`; new Readers enter `biopipe-readers`. An extension can declare
-`builtin_package = "biopipe-microbiome"` to create/use a separate installation
+`provider = "biopipe-microbiome"` to create/use a separate installation
 unit. New provider metadata starts at version `1.0.0`; review its title/version
 in the package manifest before distribution. Moving an already-owned ID into a
 different provider is rejected to protect version locks.
 
 `check` validates display field types, parameter schemas, port declarations, output modes, arity,
-resource hooks and duplicate identities. It does not prove numerical correctness
+resource declarations and duplicate identities. Unknown literal parameter reads are errors;
+unused/dynamic keys appear in the JSON `warnings` list. It does not prove numerical correctness
 or that an optional dependency is installed. `run_stream` and disk-reader hooks
-must have real implementations; merely setting capability flags fails validation.
+must have real implementations; installation probes validate callable hooks in the worker environment.
 
 ## Adding a route without editing Python
 

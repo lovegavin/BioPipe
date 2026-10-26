@@ -1,3 +1,4 @@
+from extension_fixtures import bound_fixture
 """Public protocol, transactional agent edits and real plugin/worker integration."""
 from copy import deepcopy
 import json
@@ -40,7 +41,7 @@ def test_all_descriptors_are_public_and_preserve_ids():
     assert {d["id"] for d in catalog["operators"]} == set(STEPS)
     for descriptor in catalog["operators"] + catalog["readers"]:
         canonical = {k: v for k, v in descriptor.items() if k not in {"parameters", "runtime_defaults"}}
-        assert Descriptor.model_validate(canonical).protocol_version == 2
+        assert Descriptor.model_validate(canonical).protocol_version == 3
         assert descriptor["contracts"]["output"] is not None
         assert descriptor["entry_point"].count(":") == 1
     assert next(d for d in catalog["operators"] if d["id"] == "pca")["output_parameter"] == "output"
@@ -64,18 +65,18 @@ def test_sdk_executes_real_contracts_and_defaults():
     form = Form(data=np.array([[1., 2.]]), dims=["sample", "feature"],
                 labels={"sample": {"a": 0}, "feature": {"x": 0, "y": 1}},
                 info={"missing_code": np.nan, "group": np.array(["A"])}, axis_info={"sample": ["group"]})
-    output = run_operator(Shift, [form])
+    output = run_operator(bound_fixture(Shift), [form])
     np.testing.assert_array_equal(output.data, [[2., 3.]])
     assert output.axis_info == {"sample": ["group"]}
     np.testing.assert_array_equal(form.data, [[1., 2.]])
     with pytest.raises(ValueError, match="minimum"):
-        run_operator(Shift, [form], {"offset": -2})
+        run_operator(bound_fixture(Shift), [form], {"offset": -2})
     with pytest.raises(ValueError, match="Additional properties"):
-        run_operator(Shift, [form], {"typo": 1})
+        run_operator(bound_fixture(Shift), [form], {"typo": 1})
     class Lying(Shift):
         output_contract = {"mode": "declare", "schema": {"ndim": 3}}
     with pytest.raises(Exception, match="contract"):
-        run_operator(Lying, [form])
+        run_operator(bound_fixture(Lying), [form])
 
 
 def test_parameter_schema_never_fetches_remote_references():
@@ -192,7 +193,7 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeyp
         descriptor = json.loads(archive.read(descriptor_file))["descriptors"][0]
         assert descriptor["id"] == "example.scale_plugin"
         assert descriptor["category"] == "data"
-        assert descriptor["icon"] == "SlidersHorizontal"
+        assert descriptor.get("icon") is None
     # Runtimes can inherit dependencies through .pth files (including editable
     # installations). A plugin worker must resolve the same transitive paths.
     indirect = tmp_path / "indirect_dependency"
@@ -215,7 +216,7 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeyp
     assert len(catalog["operators"]) == len(STEPS) + 1
     installed_descriptor = next(d for d in catalog["operators"] if d["id"] == "example.scale_plugin")
     assert installed_descriptor["category"] == "data"
-    assert installed_descriptor["icon"] == "SlidersHorizontal"
+    assert installed_descriptor.get("icon") is None  # Studio supplies the category default.
     graph = deepcopy(data["demo"])
     graph["nodes"] = [graph["nodes"][0], {"id": "scale", "kind": "operator", "operator": "example.scale_plugin",
                                         "position": {"x": 400, "y": 80}, "params": {"factor": 3, "output": "scaled"}}]
@@ -235,7 +236,7 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeyp
     project_file = source / "pyproject.toml"
     project_file.write_text(project_file.read_text(encoding="utf-8").replace('version = "0.1.0"', 'version = "0.2.0"'), encoding="utf-8")
     implementation = source / "scale_plugin/__init__.py"
-    implementation.write_text(implementation.read_text(encoding="utf-8").replace('version = "0.1.0"', 'version = "0.2.0"'), encoding="utf-8")
+    implementation.write_text(implementation.read_text(encoding="utf-8").replace("'version': '0.1.0'", "'version': '0.2.0'"), encoding="utf-8")
     newer = manager.install(build(source)["wheels"][0])
     assert newer["generation"] != installed["generation"]
     from src.web.models import Graph

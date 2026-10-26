@@ -38,9 +38,7 @@ from __future__ import annotations
 import numpy as np
 
 from src.core import Form, StepError
-from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
-from src.reader.readers._labels import unique_labels
 from src.task.context import Context
 from src.task.step.base import Step
 
@@ -91,61 +89,46 @@ def _extract(form, region_dim, field_dim, chrom_field, start_field, end_field,
 
 class IntervalOverlapStep(Step):
     """Pairwise overlap of intervals between two BED forms."""
-    title = 'interval_overlap'
-    description = 'Pairwise overlap of intervals between two BED forms.'
+    provider = 'biopipe-core'
+    parameters_file = 'interval_overlap.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'interval_overlap',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'interval_overlap',
+     'description': 'Pairwise overlap of intervals between two BED forms.',
+     'category': 'analysis',
+     'icon': 'Intersect',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'encoders': {'type': 'object', 'optional': True}},
+                               'dims': [{'param': 'a_region_dim', 'default': 'region'},
+                                        {'param': 'a_field_dim', 'default': 'field'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2},
+                              {'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'encoders': {'type': 'object', 'optional': True}},
+                               'dims': [{'param': 'b_region_dim', 'default': 'region'},
+                                        {'param': 'b_field_dim', 'default': 'field'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': True,
+                                         'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 2,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "interval_overlap"
-    category = "analysis"
-    icon = "Intersect"
-    inputs_arity = 2
-    outputs = []
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "a_region_dim": {"type": "string", "default": "region"},
-            "a_field_dim": {"type": "string", "default": "field"},
-            "a_chrom_field": {"type": "string", "default": "chrom"},
-            "a_start_field": {"type": "string", "default": "chromStart"},
-            "a_end_field": {"type": "string", "default": "chromEnd"},
-            "b_region_dim": {"type": "string", "default": "region"},
-            "b_field_dim": {"type": "string", "default": "field"},
-            "b_chrom_field": {"type": "string", "default": "chrom"},
-            "b_start_field": {"type": "string", "default": "chromStart"},
-            "b_end_field": {"type": "string", "default": "chromEnd"},
-            "min_overlap": {"type": "integer", "minimum": 1, "default": 1},
-            "max_output": {"type": "integer", "minimum": 1, "default": 1000000},
-            "output": {"type": "string"},
-        },
-        "additionalProperties": False,
-    }
-    input_contracts = [
-        port(
-            ndim=2,
-            dims=[param("a_region_dim", "region"), param("a_field_dim", "field")],
-            info={
-                "missing_code": MISSING,
-                "encoders": {"type": "object", "optional": True},
-            },
-        ),
-        port(
-            ndim=2,
-            dims=[param("b_region_dim", "region"), param("b_field_dim", "field")],
-            info={
-                "missing_code": MISSING,
-                "encoders": {"type": "object", "optional": True},
-            },
-        ),
-    ]
-    output_contract = {
-        "mode": "declare",
-        "schema": {
-            "ndim": 2,
-            "numeric": True,
-            "info_open": True,
-            "axis_info_open": True,
-        },
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         a_form, b_form = inputs

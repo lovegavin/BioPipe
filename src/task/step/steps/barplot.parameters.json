@@ -1,0 +1,74 @@
+{
+  "type": "object",
+  "properties": {
+    "dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sample_dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "filename": {
+      "type": "string",
+      "minLength": 1
+    },
+    "top_n": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "default": 20
+    },
+    "other_label": {
+      "type": "string",
+      "default": "Other"
+    },
+    "normalize": {
+      "type": "boolean",
+      "default": true
+    },
+    "title": {
+      "type": "string"
+    },
+    "xlabel": {
+      "type": "string"
+    },
+    "ylabel": {
+      "type": "string"
+    },
+    "cmap": {
+      "type": "string",
+      "default": "tab20"
+    },
+    "figsize": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "legend": {
+      "type": "boolean",
+      "default": true
+    },
+    "legend_ncol": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 3
+    },
+    "rotate_labels": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "dim",
+    "sample_dim",
+    "filename"
+  ],
+  "additionalProperties": false
+}

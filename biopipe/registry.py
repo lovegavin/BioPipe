@@ -25,44 +25,32 @@ def read_json(path, default):
     return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else deepcopy(default)
 
 
-def scan_sources(root=ROOT, sources=None):
-    """Import fresh declarations, collect every error, and reject duplicate IDs."""
-    from biopipe_sdk.protocol import validate_extension, describe_reader, describe_operator, PROTOCOL_VERSION, catalog_entry
-    from src.task.step.base import Step
-    from src.reader.base import Reader
-    classes, errors, seen = [], [], set()
-    for folder, base, kind in (("src/task/step/steps", Step, "operator"), ("src/reader/readers", Reader, "reader")):
-        for path in sorted((root / folder).glob("*.py")):
-            if path.name.startswith("_"):
+def scan_sources(root=ROOT, sources=None, warnings_out=None):
+    """Read per-class definitions and parameter files without importing code."""
+    from biopipe_sdk.declarations import compile_declaration, source_declarations
+    from biopipe_sdk.drift import check_source
+    root = Path(root)
+    descriptors, errors, seen = [], [], set()
+    for folder in ('src/task/step/steps', 'src/reader/readers'):
+        for path in sorted((root / folder).glob('[!_]*.py')):
+            source = path.relative_to(root).as_posix()
+            if sources is not None and source not in sources:
                 continue
-            if sources is not None and path.relative_to(root).as_posix() not in sources:
-                continue
-            module_name = path.relative_to(root).with_suffix("").as_posix().replace("/", ".")
             try:
-                module = importlib.reload(sys.modules[module_name]) if module_name in sys.modules else importlib.import_module(module_name)
-                for cls in vars(module).values():
-                    if not isinstance(cls, type) or not issubclass(cls, base) or cls is base or cls.__module__ != module_name:
-                        continue
-                    identifier = cls.name if kind == "operator" else getattr(cls, "name", None) or cls.__name__
-                    if identifier in seen:
-                        raise ValueError(f"Duplicate extension ID: {identifier}")
-                    seen.add(identifier)
-                    classes.append((kind, cls, path.relative_to(root).as_posix()))
+                module = source[:-3].replace('/', '.')
+                for declaration in source_declarations(path, module):
+                    if declaration['id'] in seen:
+                        raise ValueError('Duplicate extension ID: ' + declaration['id'])
+                    seen.add(declaration['id'])
+                    descriptor = compile_declaration(declaration, root)
+                    issues, warnings = check_source(path.read_text(encoding='utf-8'), descriptor)
+                    if warnings_out is not None:
+                        warnings_out.extend({'source': source, 'id': descriptor['id'], 'warning': w} for w in warnings)
+                    if issues:
+                        raise ValueError('; '.join(issues))
+                    descriptors.append((descriptor, declaration.get('provider'), source))
             except Exception as exc:
-                errors.append({"source": path.relative_to(root).as_posix(), "error": str(exc)})
-    operators = {cls.name: cls for kind, cls, _ in classes if kind == "operator"}
-    descriptors = []
-    for kind, cls, source in classes:
-        try:
-            if kind == "operator":
-                validate_extension(cls, kind)
-                descriptor = describe_operator(cls)
-            else:
-                validate_extension(cls, kind)
-                descriptor = describe_reader(cls())
-            descriptors.append((descriptor, getattr(cls, "builtin_package", None), source))
-        except Exception as exc:
-            errors.append({"source": source, "error": str(exc)})
+                errors.append({'source': source, 'error': str(exc)})
     return descriptors, errors
 
 
@@ -219,7 +207,7 @@ def inventory(root=ROOT, source_ref=None, route_roots=None):
                                     attributes[target.id] = ast.literal_eval(assignment.value)
                                 except (ValueError, TypeError):
                                     pass
-                identifier = attributes.get("name", cls.name)
+                identifier = attributes.get('definition', {}).get('id', attributes.get("name", cls.name))
                 result["extensions"].append({"id": identifier, "source": path, "kind": "reader" if "Reader" in bases else "operator",
                                              "indexed": identifier in ids, "local_source": (root / path).is_file(),
                                              "source_differs": source_ref is not None and (root / path).is_file()
@@ -233,7 +221,8 @@ def maintain(action="check", *, root=ROOT, route_roots=None, output_dir=None, sc
     from biopipe_sdk.protocol import PROTOCOL_VERSION, catalog_entry
     root = Path(root).resolve()
     previous = read_json(root / PACKAGE_INDEX, {"protocol_version": PROTOCOL_VERSION, "packages": []})
-    descriptors, errors = scan_sources(root)
+    warnings = []
+    descriptors, errors = scan_sources(root, warnings_out=warnings)
     candidate = package_manifest(descriptors, previous)
     catalog = {"schema_version": 1, "protocol_version": PROTOCOL_VERSION, "contract_version": 1,
                "operators": [catalog_entry(d) for d, _, _ in descriptors if d["kind"] == "operator"],
@@ -249,7 +238,7 @@ def maintain(action="check", *, root=ROOT, route_roots=None, output_dir=None, sc
     changed = [path.as_posix() for path, data in outputs.items() if read_json(destination / path, None) != data]
     report = {"action": action, "operators": len(catalog["operators"]), "readers": len(catalog["readers"]),
               "packages": len(candidate["packages"]), "routes": len(outputs.get(ROUTE_INDEX, {}).get("routes", [])),
-              "changed": changed, "errors": errors, "written": []}
+              "changed": changed, "errors": errors, "warnings": warnings, "written": []}
     if errors:
         return report
     if action == "build":

@@ -39,26 +39,45 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
-from ._microbiome import metadata
+from ._axis_contracts import estimate_axis
 
 
 class FilterByStep(Step):
     """Keep positions along a dim that satisfy thresholds from another form."""
-    description = 'Keep positions along a dim that satisfy thresholds from another form.'
+    provider = 'biopipe-core'
+    parameters_file = 'filter_by.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'filter_by',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Filter by metrics',
+     'description': 'Keep positions along a dim that satisfy thresholds from another form.',
+     'category': '数据整理',
+     'icon': 'Funnel',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []},
+                              {'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}, 'statistic'],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'subset'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 2,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "filter_by"
-    inputs_arity = 2
-    outputs = []
-    title = 'Filter by metrics'
-    category = '数据整理'
-    builtin_package = 'biopipe-core'
-    parameters_schema = SCHEMAS['filter_by']
-    input_contracts, output_contract = CONTRACTS['filter_by']
-    output_parameter = 'output'
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -224,4 +243,3 @@ class FilterByStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
-    icon = 'Funnel'

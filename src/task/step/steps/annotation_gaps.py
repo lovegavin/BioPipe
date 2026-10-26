@@ -27,7 +27,6 @@ from __future__ import annotations
 import numpy as np
 
 from src.core import Form, StepError
-from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
 from src.task.context import Context
 from src.task.step.base import Step
@@ -39,43 +38,37 @@ _STAT_LABELS = ("gap_length", "left_start", "left_end",
 
 class AnnotationGapsStep(Step):
     """Inter-gene gap lengths for GFF3/GTF annotation QC."""
-    title = 'annotation_gaps'
-    description = 'Inter-gene gap lengths for GFF3/GTF annotation QC.'
+    provider = 'biopipe-core'
+    parameters_file = 'annotation_gaps.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'annotation_gaps',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'annotation_gaps',
+     'description': 'Inter-gene gap lengths for GFF3/GTF annotation QC.',
+     'category': 'analysis',
+     'icon': 'Ruler',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'encoders': {'type': 'object', 'optional': True}},
+                               'dims': [{'param': 'record_dim', 'default': 'record'},
+                                        {'param': 'field_dim', 'default': 'field'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': True,
+                                         'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "annotation_gaps"
-    category = "analysis"
-    icon = "Ruler"
-    inputs_arity = 1
-    outputs = []
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "record_dim": {"type": "string", "default": "record"},
-            "field_dim": {"type": "string", "default": "field"},
-            "min_gap": {"type": "integer", "minimum": 0, "default": 0},
-            "output": {"type": "string"},
-        },
-        "additionalProperties": False,
-    }
-    input_contracts = [port(
-        ndim=2,
-        dims=[param("record_dim", "record"),
-              param("field_dim", "field")],
-        info={
-            "missing_code": MISSING,
-            "encoders": {"type": "object", "optional": True},
-        },
-    )]
-    output_contract = {
-        "mode": "declare",
-        "schema": {
-            "ndim": 2,
-            "numeric": True,
-            "info_open": True,
-            "axis_info_open": True,
-        },
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

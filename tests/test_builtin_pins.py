@@ -20,9 +20,11 @@ def test_old_builtin_graph_runs_after_source_upgrade_without_repin(tmp_path, mon
     for package in previous['packages']:
         if package['name'] == 'biopipe-core':
             package['sha256'] = '0' * 64
+            package['code_sha'] = '0' * 64
     for descriptor in previous['descriptors']:
         if descriptor['distribution'] == 'biopipe-core':
             descriptor['implementation']['sha256'] = '0' * 64
+            descriptor['code_sha'] = descriptor['implementation']['code_sha'] = '0' * 64
     manager = PluginManager(tmp_path / 'profile')
     graph = Graph.model_validate({'nodes': [{'id': 'summary', 'kind': 'operator',
         'operator': 'describe', 'position': {'x': 0, 'y': 0}, 'params': {}}], 'edges': []})
@@ -51,9 +53,11 @@ def test_launch_records_rebinding_and_preserves_history(tmp_path, monkeypatch):
     for package in previous['packages']:
         if package['name'] == 'biopipe-core':
             package['sha256'] = '0' * 64
+            package['code_sha'] = '0' * 64
     for d in previous['descriptors']:
         if d['distribution'] == 'biopipe-core':
             d['implementation']['sha256'] = '0' * 64
+            d['code_sha'] = d['implementation']['code_sha'] = '0' * 64
     with monkeypatch.context() as old:
         old.setattr('biopipe.plugins.bundled_state', lambda: previous)
         service = JobService(Settings(tmp_path, tmp_path / '.studio', tmp_path, testing=True, code_root=ROOT), build_catalog(STEPS))
@@ -68,7 +72,7 @@ def test_launch_records_rebinding_and_preserves_history(tmp_path, monkeypatch):
         service.threads[job['id']].join(timeout=45)
         final = service.details(job['id'])
         assert final['status'] == 'complete', final
-        selected = json.loads((service.jobs_dir / job['id'] / 'plugins.lock.json').read_text())
+        selected = json.loads((service.jobs_dir / job['id'] / 'plugins.lock.json').read_text(encoding='utf-8'))
         assert any(u['operator'] == 'describe' for u in selected['bundled_updates'])
         assert final['plugins']['bundled_updates'] == selected['bundled_updates']
         console = (service.jobs_dir / job['id'] / 'console.log').read_text(encoding='utf-8')
@@ -90,7 +94,7 @@ def test_builtin_cache_tracks_edits_and_manifest_without_restart(tmp_path, monke
     source.write_bytes(b'value = 1\n')
     index = root / 'biopipe/builtin_packages.json'
     manifest = {'packages': [{'name': 'example', 'version': '1.0', 'origin': 'bundled',
-        'descriptors': [{'id': 'example', 'entry_point': 'src.task.step.steps.example:Example'}]}]}
+        'descriptors': [{'id': 'example', 'entry_point': 'src.task.step.steps.example:Example', 'code_sha': '0' * 64, 'declaration_sha': '1' * 64}]}]}
     index.write_text(json.dumps(manifest), encoding='utf-8')
     monkeypatch.setattr(packages, '__file__', str(root / 'biopipe/packages.py'))
     first = packages.bundled_state()
@@ -112,6 +116,7 @@ def test_nested_builtin_pins_normalize_but_wheel_pins_stay_strict(tmp_path):
     old = deepcopy(state)
     descriptor = next(d for d in old['descriptors'] if d['id'] == 'describe')
     descriptor['implementation']['sha256'] = '0' * 64
+    descriptor['code_sha'] = descriptor['implementation']['code_sha'] = '0' * 64
     graph = Graph.model_validate({'nodes': [{'id': 'route', 'kind': 'route', 'position': {'x': 0, 'y': 0},
         'route': {'id': 'route_000000000001', 'version': 1, 'name': 'nested', 'graph': {
             'nodes': [], 'edges': [], 'plugin_lock': {'describe': descriptor['implementation']}}}}],
@@ -138,16 +143,17 @@ def test_worker_still_rejects_a_stale_frozen_job_lock(tmp_path):
     for descriptor in state['descriptors']:
         if descriptor['distribution'] == 'biopipe-core':
             descriptor['implementation']['sha256'] = '0' * 64
-    state.update(package_protocol_version=2, bundled_seen=[p['name'] for p in state['packages']])
+            descriptor['code_sha'] = descriptor['implementation']['code_sha'] = '0' * 64
+    state.update(package_protocol_version=3, bundled_seen=[p['name'] for p in state['packages']])
     (tmp_path / 'plugins.lock.json').write_text(json.dumps(state), encoding='utf-8')
-    (tmp_path / 'task.yaml').write_text('sources: {}\nsteps: []\n', encoding='utf-8')
+    (tmp_path / 'task.yaml').write_text('sources: {}\nsteps:\n  - name: describe\n    inputs: [missing]\n', encoding='utf-8')
     result = subprocess.run([sys.executable, str(ROOT / 'scripts/run.py'), str(tmp_path)],
         capture_output=True, text=True, encoding='utf-8', timeout=45)
     assert result.returncode != 0
-    assert 'Bundled implementation changed since this graph was pinned' in result.stderr
+    assert 'Implementation code hash mismatch' in result.stderr
     events = [json.loads(line) for path in (tmp_path / 'output/runs').glob('*/events.jsonl')
               for line in path.read_text(encoding='utf-8').splitlines()]
-    assert any('Bundled implementation changed' in json.dumps(event) for event in events)
+    assert any('Implementation code hash mismatch' in json.dumps(event) for event in events)
 
 
 def test_retained_wheel_generation_refreshes_only_bundled_metadata(tmp_path):
@@ -165,9 +171,9 @@ def test_retained_wheel_generation_refreshes_only_bundled_metadata(tmp_path):
     old['packages'][-1].update(version='1', sha256='old')
     old['descriptors'][-1]['implementation'].update(version='1', sha256='old')
     for p in old['packages']:
-        if p['name'] == 'biopipe-core': p['sha256'] = '0' * 64
+        if p['name'] == 'biopipe-core': p['sha256'] = p['code_sha'] = '0' * 64
     for d in old['descriptors']:
-        if d['distribution'] == 'biopipe-core': d['implementation']['sha256'] = '0' * 64
+        if d['distribution'] == 'biopipe-core': d['implementation']['sha256'] = d['implementation']['code_sha'] = d['code_sha'] = '0' * 64
     graph = Graph.model_validate({'nodes': [], 'edges': [], 'plugin_lock': {'lab.tool': old['descriptors'][-1]['implementation']}})
     saved = deepcopy(old)
     chosen = resolve(graph, [state, old], bundled_state())

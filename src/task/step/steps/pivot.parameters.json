@@ -1,0 +1,48 @@
+{
+  "type": "object",
+  "properties": {
+    "index_label": {
+      "type": "string",
+      "title": "Index column",
+      "description": "Column label that becomes the row axis."
+    },
+    "columns_label": {
+      "type": "string",
+      "title": "Columns column",
+      "description": "Column label that becomes the column axis."
+    },
+    "values_label": {
+      "type": "string",
+      "title": "Values column",
+      "description": "Optional column supplying cell values. Without it every observed pair contributes 1."
+    },
+    "index_name": {
+      "type": "string",
+      "title": "Row axis name"
+    },
+    "columns_name": {
+      "type": "string",
+      "title": "Column axis name"
+    },
+    "agg": {
+      "type": "string",
+      "title": "Aggregation",
+      "enum": [
+        "sum",
+        "first",
+        "max",
+        "min",
+        "count"
+      ],
+      "default": "sum"
+    },
+    "output": {
+      "type": "string",
+      "title": "Output key"
+    }
+  },
+  "required": [
+    "index_label",
+    "columns_label"
+  ]
+}

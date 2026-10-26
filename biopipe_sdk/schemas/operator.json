@@ -3,8 +3,8 @@
   "description": "Canonical, versioned extension declaration; UI projections are separate.",
   "properties": {
     "protocol_version": {
-      "const": 2,
-      "default": 2,
+      "const": 3,
+      "default": 3,
       "title": "Protocol Version",
       "type": "integer"
     },
@@ -28,6 +28,16 @@
     },
     "entry_point": {
       "title": "Entry Point",
+      "type": "string"
+    },
+    "code_sha": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Code Sha",
+      "type": "string"
+    },
+    "declaration_sha": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Declaration Sha",
       "type": "string"
     },
     "title": {
@@ -221,6 +231,8 @@
     "version",
     "kind",
     "entry_point",
+    "code_sha",
+    "declaration_sha",
     "title",
     "parameters_schema",
     "contracts",

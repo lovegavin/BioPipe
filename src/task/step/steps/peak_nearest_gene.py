@@ -51,7 +51,6 @@ import bisect
 import numpy as np
 
 from src.core import Form, StepError
-from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
 from src.reader.readers._labels import unique_labels
 from src.task.context import Context
@@ -113,59 +112,46 @@ def _read_intervals(form, region_dim, field_dim, chrom_field,
 
 class PeakNearestGeneStep(Step):
     """Assign every BED interval to its nearest annotated gene."""
-    title = 'peak_nearest_gene'
-    description = 'Assign every BED interval to its nearest annotated gene.'
+    provider = 'biopipe-core'
+    parameters_file = 'peak_nearest_gene.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'peak_nearest_gene',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'peak_nearest_gene',
+     'description': 'Assign every BED interval to its nearest annotated gene.',
+     'category': 'analysis',
+     'icon': 'Dna',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'encoders': {'type': 'object', 'optional': True}},
+                               'dims': [{'param': 'a_region_dim', 'default': 'region'},
+                                        {'param': 'a_field_dim', 'default': 'field'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2},
+                              {'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'encoders': {'type': 'object', 'optional': True}},
+                               'dims': [{'param': 'b_record_dim', 'default': 'record'},
+                                        {'param': 'b_field_dim', 'default': 'field'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': True,
+                                         'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 2,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "peak_nearest_gene"
-    category = "analysis"
-    icon = "Dna"
-    inputs_arity = 2
-    outputs = []
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "a_region_dim": {"type": "string", "default": "region"},
-            "a_field_dim": {"type": "string", "default": "field"},
-            "a_chrom_field": {"type": "string", "default": "chrom"},
-            "a_start_field": {"type": "string", "default": "chromStart"},
-            "a_end_field": {"type": "string", "default": "chromEnd"},
-            "b_record_dim": {"type": "string", "default": "record"},
-            "b_field_dim": {"type": "string", "default": "field"},
-            "b_chrom_field": {"type": "string", "default": "seqid"},
-            "b_start_field": {"type": "string", "default": "start"},
-            "b_end_field": {"type": "string", "default": "end"},
-            "b_strand_field": {"type": "string", "default": "strand"},
-            "feature_type": {"type": "string", "default": "gene"},
-            "max_distance": {"type": ["integer", "null"], "minimum": 0,
-                             "default": None},
-            "output": {"type": "string"},
-        },
-        "additionalProperties": False,
-    }
-    input_contracts = [
-        port(
-            ndim=2,
-            dims=[param("a_region_dim", "region"), param("a_field_dim", "field")],
-            info={"missing_code": MISSING,
-                  "encoders": {"type": "object", "optional": True}},
-        ),
-        port(
-            ndim=2,
-            dims=[param("b_record_dim", "record"), param("b_field_dim", "field")],
-            info={"missing_code": MISSING,
-                  "encoders": {"type": "object", "optional": True}},
-        ),
-    ]
-    output_contract = {
-        "mode": "declare",
-        "schema": {
-            "ndim": 2,
-            "numeric": True,
-            "info_open": True,
-            "axis_info_open": True,
-        },
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         a_form, b_form = inputs

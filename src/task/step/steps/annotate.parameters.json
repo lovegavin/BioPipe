@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "properties": {
+    "target_dim": {
+      "type": "string",
+      "title": "Target key dimension",
+      "description": "Dimension on the target form to align on."
+    },
+    "source_dim": {
+      "type": "string",
+      "title": "Reference key dimension",
+      "description": "Dimension on the reference form to align on."
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Fields to attach",
+      "minItems": 1,
+      "description": "Names of reference data columns or reference info fields. Data columns are looked up by their label on the field dimension; info fields must be declared parallel to the source key dimension."
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "Reference field dimension"
+    },
+    "output": {
+      "type": "string",
+      "title": "Output key"
+    }
+  },
+  "required": [
+    "target_dim",
+    "source_dim",
+    "fields"
+  ]
+}

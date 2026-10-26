@@ -13,7 +13,6 @@ from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.forms.metadata import project_metadata
-from src.core.contracts import MISSING, param, port
 
 
 class TransposeStep(Step):
@@ -23,25 +22,30 @@ class TransposeStep(Step):
         order  : list of dimension names, the desired new axis order
         output : context key for the result
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'order': {'title': '维度顺序',
-                              'type': 'array',
-                              'x-ui-default': ['feature', 'sample'],
-                              'items': {'type': 'string'}}},
-     'additionalProperties': True,
-     'required': ['order']}
-    title = '维度转置'
-    category = '数据整理'
-    icon = 'ArrowsDownUp'
-    description = '调整命名维度的排列顺序。'
+    provider = 'biopipe-core'
+    parameters_file = 'transpose.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'transpose',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '维度转置',
+     'description': '调整命名维度的排列顺序。',
+     'category': '数据整理',
+     'icon': 'ArrowsDownUp',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': {'param': 'order', 'default': []},
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'transpose'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "transpose"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(dims=param("order", []))]
-    output_contract = {"mode": "transpose"}
-    output_parameter = "output"
+
 
 
     def run(self, ctx: Context, inputs) -> None:

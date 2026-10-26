@@ -19,7 +19,7 @@ def parser():
     root.add_argument("--session")
     root.add_argument("--json", action="store_true", help="JSON is the default output format")
     commands = root.add_subparsers(dest="command", required=True)
-    migrate = commands.add_parser("migrate", help="Preview explicit protocol v2 conversion; --apply backs up and writes")
+    migrate = commands.add_parser("migrate", help="Preview explicit protocol v3 conversion; --apply backs up and writes")
     migrate.add_argument("path", nargs="?", type=Path, help="Graph/workspace JSON, task YAML, or extension Python; omit to migrate the selected profile")
     migrate.add_argument("--manifest", type=Path, help="Old descriptor JSON for Python source conversion")
     migrate.add_argument("--apply", action="store_true")
@@ -53,7 +53,7 @@ def parser():
     jobs.add_argument("action", choices=["get", "cancel"])
     jobs.add_argument("id")
     plugin = commands.add_parser("plugin")
-    plugin.add_argument("action", choices=["init", "check", "test", "build", "install", "list", "refresh", "remove", "enable", "disable", "restore"])
+    plugin.add_argument("action", choices=["init", "check", "test", "build", "install", "list", "refresh", "declarations", "remove", "enable", "disable", "restore"])
     plugin.add_argument("path", nargs="?")
     plugin.add_argument("--template", choices=["operator", "reader"], default="operator")
     schema = commands.add_parser("schema")
@@ -100,6 +100,8 @@ def execute(args):
             from .source_library import directories
             return {**manager.state(), "inbox": str(manager.inbox),
                     "source_directories": {kind: str(path) for kind, path in directories(manager.source_root).items()}}
+        if args.action == "declarations":
+            return manager.update_declarations(json.loads(Path(args.path).read_text(encoding="utf-8")))
         if args.action == "refresh":
             return manager.refresh()
         if args.action in {"enable", "disable", "restore"}:

@@ -1,0 +1,84 @@
+{
+  "type": "object",
+  "properties": {
+    "feature_dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "group_dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "group_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "statistic": {
+      "type": "string",
+      "enum": [
+        "mean",
+        "median",
+        "sum"
+      ],
+      "default": "mean"
+    },
+    "proportion_mode": {
+      "type": "string",
+      "enum": [
+        "nonzero",
+        "threshold"
+      ],
+      "default": "nonzero"
+    },
+    "threshold": {
+      "type": "number",
+      "default": 0
+    },
+    "filename": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string"
+    },
+    "xlabel": {
+      "type": "string"
+    },
+    "ylabel": {
+      "type": "string"
+    },
+    "cmap": {
+      "type": "string",
+      "default": "viridis"
+    },
+    "dot_scale": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 200
+    }
+  },
+  "required": [
+    "feature_dim",
+    "group_dim",
+    "features",
+    "group_label",
+    "filename"
+  ],
+  "additionalProperties": false
+}

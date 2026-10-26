@@ -59,7 +59,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
+from src.task.step.steps._microbiome import estimate
 
 
 _STAT_LABELS = {"F": 0, "R2": 1, "P": 2, "n_perm": 3}
@@ -67,17 +67,52 @@ _STAT_LABELS = {"F": 0, "R2": 1, "P": 2, "n_perm": 3}
 
 class PermanovaStep(Step):
     """PERMANOVA on a distance matrix with a grouping column."""
-    description = 'PERMANOVA on a distance matrix with a grouping column.'
+    provider = 'biopipe-microbiome'
+    parameters_file = 'permanova.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'permanova',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'PERMANOVA',
+     'description': 'PERMANOVA on a distance matrix with a grouping column.',
+     'category': '统计分析',
+     'icon': 'Shuffle',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dist_dim', 'default': 'sample'},
+                                        {'param': 'dist_dim', 'default': 'sample', 'suffix': '_b'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2},
+                              {'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'group_dim',
+                                         'default': {'param': 'dist_dim', 'default': 'sample'}}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2,
+                               'labels_axis': [{'axis': 1,
+                                                'values': [{'param': 'group_label',
+                                                            'default': None}]}]}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'dims': ['comparison', 'statistic'],
+                                         'labels': {'comparison': None,
+                                                    'statistic': ['F', 'R2', 'P', 'n_perm']},
+                                         'axis_info': {},
+                                         'info': {'missing_code': {'type': ['number', 'null']},
+                                                  'representation': {'type': 'string',
+                                                                     'const': 'permanova'}}}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 2,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "permanova"
-    inputs_arity = 2
-    outputs = []
-    title = 'PERMANOVA'
-    category = '统计分析'
-    builtin_package = "biopipe-microbiome"
-    parameters_schema = SCHEMAS['permanova']
-    input_contracts, output_contract = CONTRACTS['permanova']
-    output_parameter = "output"
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -306,7 +341,6 @@ class PermanovaStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
-    icon = 'Shuffle'
 
 
 def _permanova_core(D, codes, n_groups, n_perm, rng):

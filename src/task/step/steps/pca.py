@@ -21,7 +21,6 @@ from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.forms.metadata import project_metadata
-from src.core.contracts import MISSING, param, port
 
 
 class PcaStep(Step):
@@ -32,28 +31,32 @@ class PcaStep(Step):
         n_components : number of components to keep (default 10)
         output       : context key for the result (default: step name)
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '压缩维度', 'type': 'string', 'x-ui-default': 'feature'},
-                    'n_components': {'title': '主成分数量',
-                                     'type': 'integer',
-                                     'minimum': 1,
-                                     'default': 10,
-                                     'x-ui-default': 2}},
-     'additionalProperties': True,
-     'required': ['dim']}
-    title = 'PCA'
-    category = '统计分析'
-    icon = 'ChartScatter'
-    description = '标准化数据，提取主成分；缺失值以特征均值填充。'
-    title_aliases = ['主成分分析']
+    provider = 'biopipe-genetics'
+    parameters_file = 'pca.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'pca',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'PCA',
+     'description': '标准化数据，提取主成分；缺失值以特征均值填充。',
+     'category': '统计分析',
+     'icon': 'ChartScatter',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']}},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'pca'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output',
+     'title_aliases': ['主成分分析']}
 
-    name = "pca"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(info={"missing_code": MISSING}, dims=[param("dim")], ndim=2)]
-    output_contract = {"mode": "pca"}
-    output_parameter = "output"
+
 
 
     def run(self, ctx: Context, inputs) -> None:

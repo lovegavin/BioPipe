@@ -1,3 +1,4 @@
+from extension_fixtures import bound_fixture
 """Display declarations survive SDK, catalog and generated-index boundaries."""
 from copy import deepcopy
 import json
@@ -32,14 +33,14 @@ def test_class_metadata_reaches_sdk_and_catalog():
         category = "analysis"
         icon = "Intersect"
 
-    for descriptor in (describe_operator(Declared), build_catalog({Declared.name: Declared})["operators"][0]):
+    for descriptor in (describe_operator(bound_fixture(Declared)), build_catalog({Declared.name: bound_fixture(Declared)})["operators"][0]):
         assert descriptor["kind"] == "operator"
         assert descriptor["category"] == "analysis"
         assert descriptor["icon"] == "Intersect"
 
 
 def test_omitted_icon_uses_only_declared_metadata():
-    descriptor = describe_operator(MinimalOperator)
+    descriptor = describe_operator(bound_fixture(MinimalOperator))
     assert descriptor["category"] == "Plugins"
     assert "icon" not in descriptor
     # Optional presentation fields are omitted from the canonical descriptor.
@@ -49,7 +50,7 @@ def test_omitted_icon_uses_only_declared_metadata():
 
 
 def test_explicit_metadata_overrides_packaged_defaults_without_mutating_them():
-    packaged = describe_operator(MinimalOperator)
+    packaged = describe_operator(bound_fixture(MinimalOperator))
     packaged.update(category="Plugins", icon="Tag")
     before = deepcopy(packaged)
 
@@ -58,7 +59,7 @@ def test_explicit_metadata_overrides_packaged_defaults_without_mutating_them():
         category = "data"
         icon = "Columns"
 
-    described = describe_operator(Declared)
+    described = describe_operator(bound_fixture(Declared))
     assert described["category"] == "data"
     assert described["icon"] == "Columns"
     assert packaged == before
@@ -68,7 +69,7 @@ def test_explicit_metadata_overrides_packaged_defaults_without_mutating_them():
 def test_invalid_display_types_are_rejected(field, value):
     cls = type("InvalidMetadata", (MinimalOperator,), {field: value})
     with pytest.raises(ValueError, match=field):
-        describe_operator(cls)
+        describe_operator(bound_fixture(cls))
 
 
 def test_new_bundled_operators_have_declared_categories_and_icons():

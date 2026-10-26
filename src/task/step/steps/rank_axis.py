@@ -53,11 +53,10 @@ import warnings
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
-from ._microbiome import metadata
+from ._axis_contracts import estimate_axis
 
 
 _STATS = (
@@ -68,17 +67,30 @@ _STATS = (
 
 class RankAxisStep(Step):
     """Rank positions along one axis by a statistic."""
-    description = 'Rank positions along one axis by a statistic.'
+    provider = 'biopipe-core'
+    parameters_file = 'rank_axis.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'rank_axis',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Rank features',
+     'description': 'Rank positions along one axis by a statistic.',
+     'category': '数据整理',
+     'icon': 'SortAscending',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'subset'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "rank_axis"
-    inputs_arity = 1
-    outputs = []
-    title = 'Rank features'
-    category = '数据整理'
-    builtin_package = 'biopipe-core'
-    parameters_schema = SCHEMAS['rank_axis']
-    input_contracts, output_contract = CONTRACTS['rank_axis']
-    output_parameter = 'output'
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -233,7 +245,6 @@ class RankAxisStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
-    icon = 'SortAscending'
 
 
 def _compute_stat(name: str, flat: np.ndarray, valid: np.ndarray):

@@ -1,3 +1,4 @@
+from extension_fixtures import write_extension
 """Drop-ins are validated transactions, with real workers and version retention."""
 import json
 import os
@@ -49,17 +50,19 @@ def test_probe_transport_preserves_unicode_and_failure_details(monkeypatch):
 def test_single_file_wrapper_is_deterministic_and_does_not_execute(tmp_path):
     source = tmp_path / 'a' / 'hello.py'
     source.parent.mkdir()
-    source.write_text('raise AssertionError("must not import here")\n' + REPORT, encoding='utf-8')
+    write_extension(source, 'raise AssertionError("must not import here")\n' + REPORT)
     other = tmp_path / 'b' / 'hello.py'
     other.parent.mkdir()
     shutil.copy2(source, other)
+    for parameter in source.parent.glob("*.parameters.json"):
+        shutil.copy2(parameter, other.parent / parameter.name)
     first = single_file_wheel(source, tmp_path / 'w1')
     second = single_file_wheel(other, tmp_path / 'w2')
     assert first.read_bytes() == second.read_bytes()
     with zipfile.ZipFile(first) as archive:
         assert any(n.endswith('/entry_points.txt') for n in archive.namelist())
         assert all(str(tmp_path).encode() not in archive.read(n) for n in archive.namelist())
-    source.write_text('BIOPIPE_PLUGIN = {"dependencies": ["numpy\\nInvalid: value"]}\n' + REPORT)
+    write_extension(source, 'BIOPIPE_PLUGIN = {"dependencies": ["numpy\\nInvalid: value"]}\n' + REPORT)
     with pytest.raises(ValueError, match='requirement strings'):
         single_file_wheel(source, tmp_path / 'bad')
 
@@ -68,12 +71,12 @@ def test_snapshot_ignores_build_products_and_detects_real_changes(tmp_path):
     source = tmp_path / 'project'
     source.mkdir()
     (source / 'pyproject.toml').write_text('[project]\nname="hello"')
-    (source / 'hello.py').write_text(REPORT)
+    write_extension(source / 'hello.py', REPORT)
     first = snapshot(source, tmp_path / 'one')
     (source / 'dist').mkdir()
     (source / 'dist/hello.whl').write_bytes(b'build artifact')
     assert snapshot(source, tmp_path / 'two') == first
-    (source / 'hello.py').write_text(REPORT + '\n# changed\n')
+    write_extension(source / 'hello.py', REPORT + '\n# changed\n')
     assert snapshot(source, tmp_path / 'three') != first
 
 
@@ -82,7 +85,7 @@ def test_empty_and_syntax_failure_leave_registry_unchanged(tmp_path, monkeypatch
     initial = manager.state()
     monkeypatch.setattr(manager, '_install_many', lambda *a, **kw: pytest.fail('must not install'))
     assert manager.refresh()['updated'] == []
-    (manager.inbox / 'good.py').write_text(REPORT)
+    write_extension(manager.inbox / 'good.py', REPORT)
     (manager.inbox / 'bad.py').write_text('class Broken(')
     with pytest.raises(ValueError, match='bad.py'):
         manager.refresh()
@@ -93,9 +96,11 @@ def test_empty_and_syntax_failure_leave_registry_unchanged(tmp_path, monkeypatch
 def test_dropins_hot_run_update_rollback_and_retained_pins(tmp_path, monkeypatch):
     manager = PluginManager(tmp_path / 's', source_root=None)
     hello = manager.inbox / 'hello.py'
-    hello.write_text('BIOPIPE_PLUGIN = {"name": "lab-hello", "dependencies": ["numpy>=1.26"]}\n' + REPORT)
+    write_extension(hello, 'BIOPIPE_PLUGIN = {"name": "lab-hello", "dependencies": ["numpy>=1.26"]}\n' + REPORT)
     resource = manager.inbox / 'resources.py'
     shutil.copy2(ROOT / 'examples/resource_plugin/resource_example/__init__.py', resource)
+    for parameter in (ROOT / 'examples/resource_plugin/resource_example').glob('*.parameters.json'):
+        shutil.copy2(parameter, resource.parent / parameter.name)
     before_modules = set(sys.modules)
     result = manager.refresh()
     assert result['updated'] == ['hello.py', 'resources.py']
@@ -133,7 +138,7 @@ def test_dropins_hot_run_update_rollback_and_retained_pins(tmp_path, monkeypatch
     # A valid edit plus a duplicate ID must fail as one batch; neither is published.
     hello.write_text(hello.read_text().replace('"value": 2', '"value": 3'))
     duplicate = manager.inbox / 'duplicate.py'
-    duplicate.write_text(REPORT)
+    write_extension(duplicate, REPORT)
     with pytest.raises(ValueError, match='same ID'):
         manager.refresh()
     assert manager.state() == disabled
@@ -177,19 +182,27 @@ def test_refresh_api_is_async_token_protected_and_reports_errors(tmp_path, monke
 
 
 def test_source_library_discovers_plain_author_modules_without_manifest_edits(tmp_path, monkeypatch):
-    import re
+    import ast
     from biopipe.source_library import SOURCE_DIRS
     source_root = tmp_path / 'code'
     for relative in [*SOURCE_DIRS.values(), 'biopipe/builtin_packages.json']:
         source, target = ROOT / relative, source_root / relative
         if source.is_dir():
             target.mkdir(parents=True)
+            for parameter in source.glob('*.parameters.json'):
+                shutil.copy2(parameter, target / parameter.name)
             for file in source.glob('*.py'):
                 # This lifecycle fixture exercises source registration and disk
                 # hooks without downloading every optional native reader. Real
                 # dependency declarations/repairs have their own tests.
                 code = file.read_text(encoding='utf-8')
-                code = re.sub(r'(?m)^    (dependencies|dependency_imports) = .+$', r'    \1 = []', code)
+                tree = ast.parse(code)
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == 'definition' for t in node.targets):
+                        definition = ast.literal_eval(node.value)
+                        definition['dependencies'], definition['dependency_imports'] = [], []
+                        node.value = ast.parse(repr(definition), mode='eval').body
+                code = ast.unparse(tree) + '\n'
                 (target / file.name).write_text(code, encoding='utf-8')
         else:
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -197,7 +210,7 @@ def test_source_library_discovers_plain_author_modules_without_manifest_edits(tm
     manifest_before = (source_root / 'biopipe/builtin_packages.json').read_bytes()
     new_operator = source_root / SOURCE_DIRS['operator'] / 'hello.py'
     # Existing author style: original, unqualified IDs are accepted in their provider.
-    new_operator.write_text(REPORT.replace('lab.hello', 'hello_hot').replace('CheckCircle', 'assets/hello.svg'))
+    write_extension(new_operator, REPORT.replace('lab.hello', 'hello_hot').replace('CheckCircle', 'assets/hello.svg'))
     (new_operator.parent / 'assets').mkdir()
     (new_operator.parent / 'assets/hello.txt').write_text('retained resource')
     icon = new_operator.parent / 'assets/hello.svg'
@@ -205,6 +218,8 @@ def test_source_library_discovers_plain_author_modules_without_manifest_edits(tm
     new_reader = source_root / SOURCE_DIRS['reader'] / 'hot_reader.py'
     new_reader.write_text((ROOT / 'examples/resource_plugin/resource_example/__init__.py').read_text().replace(
         'NpyReader', 'HotArrayReader').replace('example.disk_npy', 'HotArrayReader'))
+    for parameter in (ROOT / 'examples/resource_plugin/resource_example').glob('*.parameters.json'):
+        shutil.copy2(parameter, new_reader.parent / parameter.name.replace('NpyReader', 'HotArrayReader'))
     manager = PluginManager(tmp_path / 's', source_root=source_root)
     initial = manager.refresh()
     state = manager.state()

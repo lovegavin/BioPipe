@@ -24,7 +24,6 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -43,36 +42,39 @@ class ManhattanStep(Step):
         point_size  : marker size (default 6)
         alpha       : marker transparency (default 0.85)
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '变异维度', 'type': 'string', 'default': 'feature'},
-                    'chrom_label': {'title': '染色体字段', 'type': 'string', 'x-ui-default': 'chrom'},
-                    'pos_label': {'title': '位置字段', 'type': 'string', 'x-ui-default': 'pos'},
-                    'p_dim': {'title': '统计量维度', 'type': 'string', 'x-ui-default': 'statistic'},
-                    'p_label': {'title': 'P 值标签', 'type': 'string', 'x-ui-default': 'P'},
-                    'filename': {'title': '文件名', 'type': 'string', 'x-ui-default': 'manhattan.png'},
-                    'alpha': {'title': 'Opacity',
-                              'type': 'number',
-                              'minimum': 0,
-                              'maximum': 1,
-                              'default': 0.85,
-                              'x-ui-step': 0.05},
-                    'point_size': {'title': 'Point size', 'type': 'number', 'minimum': 0, 'default': 6},
-                    'threshold': {'title': 'Significance threshold', 'type': 'number'},
-                    'title': {'title': 'Title', 'type': 'string'}},
-     'additionalProperties': True,
-     'required': ['chrom_label', 'pos_label', 'p_label', 'filename']}
-    title = '曼哈顿图'
-    category = '可视化'
-    icon = 'ChartBar'
-    description = '用染色体、位置和 P 值绘制关联结果。'
-    preview = {'kind': 'manhattan', 'caption': '基因组位置与显著性'}
+    provider = 'biopipe-plots'
+    parameters_file = 'manhattan.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'manhattan',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '曼哈顿图',
+     'description': '用染色体、位置和 P 值绘制关联结果。',
+     'category': '可视化',
+     'icon': 'ChartBar',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': 'feature'}],
+                               'labels': [],
+                               'parallel': [{'dim': {'param': 'dim', 'default': 'feature'},
+                                             'fields': [{'param': 'chrom_label', 'default': None},
+                                                        {'param': 'pos_label', 'default': None}],
+                                             'allow_label': True},
+                                            {'dim': {'param': 'p_dim',
+                                                     'default': {'param': 'dim', 'default': 'feature'}},
+                                             'fields': [{'param': 'p_label', 'default': None}],
+                                             'allow_label': True}],
+                               'ndim': 2}],
+                   'output': {'mode': 'report'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': None,
+     'preview': {'kind': 'manhattan', 'caption': '基因组位置与显著性'}}
 
-    name = "manhattan"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(ndim=2, dims=[param("dim", "feature")], parallel=[{"dim": param("dim", "feature"), "fields": [param("chrom_label"), param("pos_label")], "allow_label": True}, {"dim": param("p_dim", param("dim", "feature")), "fields": [param("p_label")], "allow_label": True}])]
-    output_contract = {"mode": "report"}
+
 
 
     def run(self, ctx: Context, inputs) -> None:

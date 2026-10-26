@@ -1,3 +1,4 @@
+from extension_fixtures import write_extension
 """Real conflicting wheels, real processes, real memory/streaming protocols."""
 import json
 import os
@@ -19,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def provider(tmp_path, name, version, body):
     from biopipe.dropins import single_file_wheel
     path = tmp_path / (name + '.py')
-    path.write_text('BIOPIPE_PLUGIN = ' + repr({'name': name, 'dependencies': [f'biopipe-test-dependency=={version}']}) + '\n' + body, encoding='utf-8')
+    write_extension(path, 'BIOPIPE_PLUGIN = ' + repr({'name': name, 'dependencies': [f'biopipe-test-dependency=={version}']}) + '\n' + body)
     return single_file_wheel(path, tmp_path / 'providers')
 
 
@@ -220,7 +221,7 @@ def test_one_source_file_can_keep_compatible_class_shared(installed, tmp_path):
         'class Shared(Step):\n    dependencies = ["biopipe-test-dependency==1"]')
     isolated = ISOLATED.replace('test.scale', 'test.mixed_scale').replace('class Scale(Step):',
         'class Scale(Step):\n    dependencies = ["biopipe-test-dependency==2"]')
-    source.write_text('BIOPIPE_PLUGIN = {"name": "test-mixed"}\n' + shared + '\n' + isolated, encoding='utf-8')
+    write_extension(source, 'BIOPIPE_PLUGIN = {"name": "test-mixed"}\n' + shared + '\n' + isolated)
     installed.install(single_file_wheel(source, tmp_path / 'mixed-wheel'))
     descriptors = {d['id']: d for d in installed.state()['descriptors']}
     assert descriptors['test.mixed_shared']['execution']['mode'] == 'shared'
@@ -291,8 +292,8 @@ def test_transitive_conflict_isolated_and_unavailable_package_rolls_back(install
     write_wheel({'biopipe_test_transitive.py': b'VALUE = 2\n'}, 'biopipe-test-transitive', '1',
                 ['biopipe-test-dependency==2'], tmp_path / 'wheels')
     source = tmp_path / 'transitive.py'
-    source.write_text('BIOPIPE_PLUGIN = {"name": "test-transitive", "dependencies": ["biopipe-test-transitive==1"]}\n'
-                      + REPORT.replace('test.shared', 'test.transitive'), encoding='utf-8')
+    write_extension(source, 'BIOPIPE_PLUGIN = {"name": "test-transitive", "dependencies": ["biopipe-test-transitive==1"]}\n'
+                      + REPORT.replace('test.shared', 'test.transitive'))
     installed.install(single_file_wheel(source, tmp_path / 'transitive-wheel'))
     state = installed.state()
     assert next(d for d in state['descriptors'] if d['id'] == 'test.transitive')['execution']['mode'] == 'isolated'
@@ -345,11 +346,11 @@ def test_wire_preserves_axis_metadata_encoders_and_rejects_unknown_objects(tmp_p
 
 
 @pytest.mark.parametrize('group, entry', [('biopipe.operators', 'mixed:Shared\nisolated = mixed:Isolated'), ('biopipe.modules', 'mixed')])
-def test_ordinary_wheel_keeps_dependencies_per_class(tmp_path, group, entry):
+def test_ordinary_wheel_requires_explicit_v3_manifest(tmp_path, group, entry):
     from biopipe.install_targets import wheel_entries
     wheel = write_wheel({
         'mixed.py': b'from biopipe_sdk import Step\nclass Shared(Step):\n dependencies = ["example==1"]\nclass Isolated(Step):\n dependencies = ["example==2"]\n',
         'ordinary-1.dist-info/entry_points.txt': f'[{group}]\nshared = {entry}\n'.encode(),
     }, 'ordinary', '1', ['common>=1'], tmp_path)
-    entries = {value['entry']: value['dependencies'] for value in wheel_entries(wheel)}
-    assert entries == {'mixed:Shared': ['common>=1', 'example==1'], 'mixed:Isolated': ['common>=1', 'example==2']}
+    with pytest.raises(ValueError, match='protocol v3 wheel requires biopipe.json'):
+        wheel_entries(wheel)

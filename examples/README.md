@@ -1,4 +1,4 @@
-# Protocol v2 examples
+# Protocol v3 examples
 
 All examples target the public `biopipe_sdk` 2.0 import surface. The implementation
 class is the single declaration source. There is no hand-maintained UI registry.
@@ -22,7 +22,7 @@ python -m biopipe plugin build lab_scale
 For a Reader use `--template reader`. To hot-load a single module, open Studio's
 **Library Management**, use the displayed Operator/Reader directory, copy the
 module and any declared icon resources there, and click **Refresh library**.
-Keep dependencies in literal class declarations; compatible operators share the
+Keep dependencies in the literal class `definition`; compatible operators share the
 host Python and conflicting ones use private dependency targets and subprocesses.
 
 Use `parameters_schema.default` for an execution default. Only use `x-ui-default`

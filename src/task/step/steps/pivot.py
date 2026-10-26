@@ -40,7 +40,6 @@ import numpy as np
 import pandas as pd
 
 from src.core import Form, StepError
-from src.core.contracts import param, port
 from src.task.context import Context
 from src.task.step.base import Step
 
@@ -52,67 +51,35 @@ _MAX_CELLS = 200_000_000_0
 
 class PivotStep(Step):
     """Pivot a long 2D table into a wide matrix by two categorical columns."""
-    title = 'pivot'
-    description = 'Pivot a long 2D table into a wide matrix by two categorical columns.'
+    provider = 'biopipe-core'
+    parameters_file = 'pivot.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'pivot',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'pivot',
+     'description': 'Pivot a long 2D table into a wide matrix by two categorical columns.',
+     'category': 'data',
+     'icon': 'Columns',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': True,
+                                         'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "pivot"
-    category = "data"
-    icon = "Columns"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(ndim=2)]
-    output_contract = {
-        "mode": "declare",
-        "schema": {
-            "ndim": 2,
-            "numeric": True,
-            "info_open": True,
-            "axis_info_open": True,
-        },
-    }
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "index_label": {
-                "type": "string",
-                "title": "Index column",
-                "description": "Column label that becomes the row axis.",
-            },
-            "columns_label": {
-                "type": "string",
-                "title": "Columns column",
-                "description": "Column label that becomes the column axis.",
-            },
-            "values_label": {
-                "type": "string",
-                "title": "Values column",
-                "description": (
-                    "Optional column supplying cell values. Without it "
-                    "every observed pair contributes 1."
-                ),
-            },
-            "index_name": {
-                "type": "string",
-                "title": "Row axis name",
-            },
-            "columns_name": {
-                "type": "string",
-                "title": "Column axis name",
-            },
-            "agg": {
-                "type": "string",
-                "title": "Aggregation",
-                "enum": list(_AGGS),
-                "default": "sum",
-            },
-            "output": {
-                "type": "string",
-                "title": "Output key",
-            },
-        },
-        "required": ["index_label", "columns_label"],
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

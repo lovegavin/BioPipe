@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "header": {
+      "type": "boolean",
+      "title": "Header row",
+      "default": true
+    },
+    "encoders": {
+      "type": "object",
+      "title": "Encoders",
+      "additionalProperties": true
+    },
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Columns"
+    },
+    "info_columns": {
+      "type": "object",
+      "title": "Info columns",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

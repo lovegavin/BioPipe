@@ -5,10 +5,9 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
 
 
 class SelectStep(Step):
@@ -19,26 +18,31 @@ class SelectStep(Step):
         labels : list of label names to keep, in output order
         output : context key for the result
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '选择维度', 'type': 'string', 'x-ui-default': 'feature'},
-                    'labels': {'title': '保留的标签',
-                               'type': 'array',
-                               'x-ui-default': ['f0', 'f1'],
-                               'items': {'type': 'string'}}},
-     'additionalProperties': True,
-     'required': ['dim', 'labels']}
-    title = '选择特征'
-    category = '数据整理'
-    icon = 'Selection'
-    description = '按标签选择样本或特征。'
+    provider = 'biopipe-core'
+    parameters_file = 'select.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'select',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '选择特征',
+     'description': '按标签选择样本或特征。',
+     'category': '数据整理',
+     'icon': 'Selection',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [{'dim': {'param': 'dim', 'default': None},
+                                           'values': {'param': 'labels', 'default': None}}],
+                               'parallel': []}],
+                   'output': {'mode': 'select'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "select"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(dims=[param("dim")], labels=[{"dim": param("dim"), "values": param("labels")}])]
-    output_contract = {"mode": "select"}
-    output_parameter = "output"
+
 
 
     def run(self, ctx: Context, inputs) -> None:

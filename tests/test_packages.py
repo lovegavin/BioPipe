@@ -1,3 +1,4 @@
+from extension_fixtures import bound_fixture
 """Unified provider lifecycle and real wheel execution, including resource modes."""
 from copy import deepcopy
 import json
@@ -85,7 +86,7 @@ def test_resource_claims_require_real_hooks():
         stream_protocol = 'flat-reduction-v1'
         def run(self, ctx, inputs): pass
     with pytest.raises(ValueError, match='run_stream'):
-        validate_extension(BrokenStream, 'operator')
+        bound_fixture(BrokenStream, 'operator')
     class BrokenReader(Reader):
         extensions = ['.test']
         parameters_schema = {'type': 'object'}
@@ -94,7 +95,7 @@ def test_resource_claims_require_real_hooks():
         disk_protocol = 'dense-writer-v1'
         def read(self, *args, **kwargs): pass
     with pytest.raises(ValueError, match='probe'):
-        validate_extension(BrokenReader, 'reader')
+        bound_fixture(BrokenReader, 'reader')
     from biopipe_sdk.resources import validate_probe
     with pytest.raises(ValueError, match='dense_bytes'):
         validate_probe({'shape': [2, 3], 'dtype': 'float32', 'dense_bytes': 4})
@@ -105,6 +106,8 @@ def test_disk_reader_checks_actual_values_before_publishing(tmp_path, monkeypatc
     from examples.resource_plugin.resource_example import NpyReader
     from biopipe_sdk import reader_contract
     from src.task import Context
+    from biopipe_sdk.declarations import bind_class, for_class
+    NpyReader = bind_class(NpyReader, for_class(NpyReader))
     class Genotypes(NpyReader):
         output_contract = reader_contract(representation='hard_call', ploidy=2)
         def metadata(self, *args):
@@ -148,7 +151,7 @@ def test_every_builtin_package_builds(builtin_wheels):
             manifest = json.loads(archive.read(path))
         original = next(p for p in bundled_manifest()['packages'] if p['name'] == name)
         assert {d['id'] for d in manifest['descriptors']} == {d['id'] for d in original['descriptors']}
-        assert all(d['entry_point'].startswith(name.replace('-', '_') + '_provider.') for d in manifest['descriptors'])
+        assert all(d['entry_point'].startswith('biopipe_library_' + name.replace('-', '_') + '.') for d in manifest['descriptors'])
 
 
 def run_worker(manager, state, directory, sources, steps):

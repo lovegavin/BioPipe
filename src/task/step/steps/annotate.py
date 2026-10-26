@@ -46,63 +46,43 @@ import numpy as np
 import pandas as pd
 
 from src.core import Form, StepError
-from src.core.contracts import param, port
 from src.task.context import Context
 from src.task.step.base import Step
 
 
 class AnnotateStep(Step):
     """Attach reference fields onto a target by key label."""
-    title = 'annotate'
-    description = 'Attach reference fields onto a target by key label.'
+    provider = 'biopipe-core'
+    parameters_file = 'annotate.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'annotate',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'annotate',
+     'description': 'Attach reference fields onto a target by key label.',
+     'category': 'data',
+     'icon': 'Tag',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'target_dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []},
+                              {'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'source_dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'unknown'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 2,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "annotate"
-    category = "data"
-    icon = "Tag"
-    inputs_arity = 2
-    outputs = []
-    input_contracts = [
-        port(dims=[param("target_dim")]),
-        port(ndim=2, dims=[param("source_dim")]),
-    ]
-    output_contract = {"mode": "unknown"}
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "target_dim": {
-                "type": "string",
-                "title": "Target key dimension",
-                "description": "Dimension on the target form to align on.",
-            },
-            "source_dim": {
-                "type": "string",
-                "title": "Reference key dimension",
-                "description": "Dimension on the reference form to align on.",
-            },
-            "fields": {
-                "type": "array",
-                "items": {"type": "string"},
-                "title": "Fields to attach",
-                "minItems": 1,
-                "description": (
-                    "Names of reference data columns or reference info "
-                    "fields. Data columns are looked up by their label "
-                    "on the field dimension; info fields must be "
-                    "declared parallel to the source key dimension."
-                ),
-            },
-            "field_dim": {
-                "type": "string",
-                "title": "Reference field dimension",
-            },
-            "output": {
-                "type": "string",
-                "title": "Output key",
-            },
-        },
-        "required": ["target_dim", "source_dim", "fields"],
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         target, reference = inputs

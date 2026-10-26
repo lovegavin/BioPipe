@@ -69,7 +69,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._axis_contracts import estimate_axis
 from ._microbiome import metadata
 
 
@@ -79,17 +79,35 @@ _STATS = ("mean", "median", "min", "max", "first")
 
 class BinStep(Step):
     """Discretize a continuous axis into bins."""
-    description = 'Discretize a continuous axis into bins.'
+    provider = 'biopipe-core'
+    parameters_file = 'bin.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'bin',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Bin',
+     'description': 'Discretize a continuous axis into bins.',
+     'category': '数据整理',
+     'icon': 'Columns',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'project',
+                              'derived': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'representation': {'type': 'string', 'const': 'bins'}},
+                              'keep_dims': [{'param': 'dim', 'default': None}],
+                              'append_dims': [{'name': 'bin', 'labels': ['bin']}]}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "bin"
-    inputs_arity = 1
-    outputs = []
-    title = 'Bin'
-    category = '数据整理'
-    builtin_package = 'biopipe-core'
-    parameters_schema = SCHEMAS['bin']
-    input_contracts, output_contract = CONTRACTS['bin']
-    output_parameter = 'output'
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -248,7 +266,6 @@ class BinStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
-    icon = 'Columns'
 
 
 def _values_from_column(form: Form, dim: str, value_label: str):

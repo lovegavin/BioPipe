@@ -51,7 +51,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
+from src.task.step.steps._microbiome import estimate, metadata
 
 
 _METRICS = (
@@ -62,17 +62,36 @@ _METRICS = (
 
 class DistanceMatrixStep(Step):
     """Pairwise distance matrix along one axis."""
-    description = 'Pairwise distance matrix along one axis.'
+    provider = 'biopipe-microbiome'
+    parameters_file = 'distance_matrix.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'distance_matrix',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Distance matrix',
+     'description': 'Pairwise distance matrix along one axis.',
+     'category': '统计分析',
+     'icon': 'Ruler',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'project',
+                              'derived': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'representation': {'type': 'string', 'const': 'distance'}},
+                              'keep_dims': [{'param': 'dim', 'default': None}],
+                              'append_dims': [{'name': {'param': 'dim', 'suffix': '_b'},
+                                               'labels_from': {'param': 'dim', 'default': None}}]}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "distance_matrix"
-    inputs_arity = 1
-    outputs = []
-    title = 'Distance matrix'
-    category = '统计分析'
-    builtin_package = "biopipe-microbiome"
-    parameters_schema = SCHEMAS['distance_matrix']
-    input_contracts, output_contract = CONTRACTS['distance_matrix']
-    output_parameter = "output"
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -176,7 +195,6 @@ class DistanceMatrixStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
-    icon = 'Ruler'
 
 
 def _compute_distance(metric: str, X: np.ndarray) -> np.ndarray:

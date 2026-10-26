@@ -30,7 +30,6 @@ from itertools import product
 import numpy as np
 
 from src.core import Form, StepError
-from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
 from src.task.context import Context
 from src.task.step.base import Step
@@ -41,46 +40,40 @@ _BASES = ("A", "C", "G", "T")
 
 class KmerCountStep(Step):
     """Count k-mers per sequence for any sequence-codes Form."""
-    title = 'kmer_count'
-    description = 'Count k-mers per sequence for any sequence-codes Form.'
+    provider = 'biopipe-core'
+    parameters_file = 'kmer_count.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'kmer_count',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'kmer_count',
+     'description': 'Count k-mers per sequence for any sequence-codes Form.',
+     'category': 'analysis',
+     'icon': 'Function',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'representation': {'type': 'string', 'const': 'sequence_codes'},
+                                        'alphabet_map': {'type': 'object'},
+                                        'unknown_code': {'type': 'integer'},
+                                        'alphabet': {'type': 'string', 'enum': ['dna', 'rna']}},
+                               'dims': [{'param': 'sequence_dim', 'default': 'sequence'},
+                                        {'param': 'position_dim', 'default': 'position'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': True,
+                                         'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "kmer_count"
-    category = "analysis"
-    icon = "Function"
-    inputs_arity = 1
-    outputs = []
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "sequence_dim": {"type": "string", "default": "sequence"},
-            "position_dim": {"type": "string", "default": "position"},
-            "k": {"type": "integer", "minimum": 1, "maximum": 6, "default": 3},
-            "output": {"type": "string"},
-        },
-        "additionalProperties": False,
-    }
-    input_contracts = [port(
-        ndim=2,
-        dims=[param("sequence_dim", "sequence"),
-              param("position_dim", "position")],
-        info={
-            "missing_code": MISSING,
-            "representation": {"type": "string", "const": "sequence_codes"},
-            "alphabet_map": {"type": "object"},
-            "unknown_code": {"type": "integer"},
-            "alphabet": {"type": "string", "enum": ["dna", "rna"]},
-        },
-    )]
-    output_contract = {
-        "mode": "declare",
-        "schema": {
-            "ndim": 2,
-            "numeric": True,
-            "info_open": True,
-            "axis_info_open": True,
-        },
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

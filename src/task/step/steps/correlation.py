@@ -57,7 +57,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
+from src.task.step.steps._microbiome import estimate, metadata
 
 
 _METRICS = (
@@ -68,17 +68,36 @@ _METRICS = (
 
 class CorrelationStep(Step):
     """Pairwise correlation matrix along one axis."""
-    description = 'Pairwise correlation matrix along one axis.'
+    provider = 'biopipe-microbiome'
+    parameters_file = 'correlation.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'correlation',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Correlation',
+     'description': 'Pairwise correlation matrix along one axis.',
+     'category': '统计分析',
+     'icon': 'Intersect',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'project',
+                              'derived': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'representation': {'type': 'string', 'const': 'correlation'}},
+                              'keep_dims': [{'param': 'dim', 'default': None}],
+                              'append_dims': [{'name': {'param': 'dim', 'suffix': '_b'},
+                                               'labels_from': {'param': 'dim', 'default': None}}]}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "correlation"
-    inputs_arity = 1
-    outputs = []
-    title = 'Correlation'
-    category = '统计分析'
-    builtin_package = "biopipe-microbiome"
-    parameters_schema = SCHEMAS['correlation']
-    input_contracts, output_contract = CONTRACTS['correlation']
-    output_parameter = "output"
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -194,7 +213,6 @@ class CorrelationStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
-    icon = 'Intersect'
 
 
 def _compute_correlation(metric, X, valid, min_valid):

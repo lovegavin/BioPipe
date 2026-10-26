@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "time_label": {
+      "title": "随访时间字段",
+      "type": "string"
+    },
+    "event_label": {
+      "title": "事件字段",
+      "type": "string"
+    },
+    "group_label": {
+      "title": "分组字段",
+      "type": "string"
+    },
+    "group_map": {
+      "title": "分组映射",
+      "type": [
+        "object",
+        "array"
+      ]
+    },
+    "groups": {
+      "title": "显示分组顺序",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "filename": {
+      "title": "图片文件名",
+      "type": "string",
+      "x-ui-default": "kaplan_meier.png"
+    },
+    "title": {
+      "title": "图标题",
+      "type": "string"
+    },
+    "xlabel": {
+      "title": "X 轴标题",
+      "type": "string",
+      "default": "Time"
+    },
+    "ylabel": {
+      "title": "Y 轴标题",
+      "type": "string",
+      "default": "Survival probability"
+    },
+    "xlim": {
+      "title": "X 轴范围",
+      "type": [
+        "object",
+        "array"
+      ]
+    },
+    "show_censors": {
+      "title": "显示删失标记",
+      "type": "boolean",
+      "default": true
+    },
+    "show_ci": {
+      "title": "显示置信区间",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "time_label",
+    "event_label",
+    "group_label",
+    "filename"
+  ]
+}

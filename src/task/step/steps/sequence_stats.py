@@ -25,7 +25,6 @@ from __future__ import annotations
 import numpy as np
 
 from src.core import Form, StepError
-from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
 from src.task.context import Context
 from src.task.step.base import Step
@@ -36,45 +35,40 @@ _STAT_LABELS = ("length", "gc", "n_ratio", "valid_ratio")
 
 class SequenceStatsStep(Step):
     """Per-sequence length, GC and N content for any sequence-codes Form."""
-    title = 'sequence_stats'
-    description = 'Per-sequence length, GC and N content for any sequence-codes Form.'
+    provider = 'biopipe-core'
+    parameters_file = 'sequence_stats.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'sequence_stats',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'sequence_stats',
+     'description': 'Per-sequence length, GC and N content for any sequence-codes Form.',
+     'category': 'analysis',
+     'icon': 'Ruler',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'representation': {'type': 'string', 'const': 'sequence_codes'},
+                                        'alphabet_map': {'type': 'object'},
+                                        'unknown_code': {'type': 'integer'},
+                                        'alphabet': {'type': 'string', 'enum': ['dna', 'rna']}},
+                               'dims': [{'param': 'sequence_dim', 'default': 'sequence'},
+                                        {'param': 'position_dim', 'default': 'position'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': True,
+                                         'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "sequence_stats"
-    category = "analysis"
-    icon = "Ruler"
-    inputs_arity = 1
-    outputs = []
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "sequence_dim": {"type": "string", "default": "sequence"},
-            "position_dim": {"type": "string", "default": "position"},
-            "output": {"type": "string"},
-        },
-        "additionalProperties": False,
-    }
-    input_contracts = [port(
-        ndim=2,
-        dims=[param("sequence_dim", "sequence"),
-              param("position_dim", "position")],
-        info={
-            "missing_code": MISSING,
-            "representation": {"type": "string", "const": "sequence_codes"},
-            "alphabet_map": {"type": "object"},
-            "unknown_code": {"type": "integer"},
-            "alphabet": {"type": "string", "enum": ["dna", "rna"]},
-        },
-    )]
-    output_contract = {
-        "mode": "declare",
-        "schema": {
-            "ndim": 2,
-            "numeric": True,
-            "info_open": True,
-            "axis_info_open": True,
-        },
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

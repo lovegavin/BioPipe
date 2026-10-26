@@ -1,17 +1,14 @@
-"""Refresh the existing operator/Reader source library in an isolated process.
+"""Statically refresh the existing operator/Reader source library.
 
 Source files are the authoring interface. Immutable provider wheels are an
 internal implementation detail, sharing the existing package/runtime protocol.
 """
 from copy import deepcopy
 import hashlib
-import importlib
 import json
-import os
 from pathlib import Path
-import sys
 
-from biopipe.plugins import ROOT, run_process
+from biopipe.plugins import ROOT
 from biopipe_sdk.protocol import PROTOCOL_VERSION
 
 SOURCE_DIRS = {"operator": "src/task/step/steps", "reader": "src/reader/readers"}
@@ -21,23 +18,6 @@ def directories(root=ROOT):
     if root is None:
         return {}
     return {kind: root / relative for kind, relative in SOURCE_DIRS.items()}
-
-
-def describe(root, output, sources=None):
-    """Child process only: replace source-module search paths before discovery."""
-    os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
-    for relative in SOURCE_DIRS.values():
-        package = importlib.import_module(relative.replace("/", "."))
-        package.__path__ = [str(root / relative)]
-    from biopipe.registry import scan_sources, package_manifest, PACKAGE_INDEX, read_json
-    descriptors, errors = scan_sources(root, sources)
-    if sources is not None:
-        output.write_text(json.dumps({'descriptors': descriptors, 'errors': errors}, ensure_ascii=False), encoding='utf-8')
-        return
-    if errors:
-        raise ValueError("\n".join(f"{e['source']}: {e['error']}" for e in errors))
-    manifest = package_manifest(descriptors, read_json(root / PACKAGE_INDEX, {"packages": []}))
-    output.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
 
 
 def provider_wheel(package, root, output):
@@ -57,36 +37,33 @@ def provider_wheel(package, root, output):
     for kind, relative in SOURCE_DIRS.items():
         folder = "steps" if kind == "operator" else "readers"
         for source in sorted((root / relative).rglob("*")):
-            if source.is_file():
+            if source.is_file() and '__pycache__' not in source.parts and source.suffix != '.pyc':
                 path = source.relative_to(root / relative).as_posix()
                 files[f"{module}/{folder}/{path}"] = (rewrite(source.read_text(encoding="utf-8")).encode("utf-8")
                     if source.suffix == ".py" else source.read_bytes())
     definitions = deepcopy(package["descriptors"])
-    init = ["import json", "from pathlib import Path", "from importlib import import_module",
-            "_definitions = json.loads(Path(__file__).with_name('definitions.json').read_text(encoding='utf-8'))"]
-    groups = {"operator": [], "reader": []}
-    for index, descriptor in enumerate(definitions):
-        descriptor["entry_point"] = rewrite(descriptor["entry_point"])
-        source_module, clsname = descriptor["entry_point"].split(":")
-        alias = f"Entry{index}"
-        # __getattr__ resolves only the selected entry.
-        groups[descriptor["kind"]].append(f"{alias} = {module}:{alias}")
-    init.extend(["def __getattr__(name):", "    index = int(name[5:]) if name.startswith('Entry') and name[5:].isdigit() else -1",
-                 "    if index < 0 or index >= len(_definitions): raise AttributeError(name)",
-                 "    d = _definitions[index]", "    module, clsname = d['entry_point'].split(':')",
-                 "    cls = getattr(import_module(module), clsname)",
-                 "    return cls"])
-    files[f"{module}/__init__.py"] = ("\n".join(init) + "\n").encode()
-    files[f"{module}/definitions.json"] = json.dumps(definitions, ensure_ascii=False, sort_keys=True).encode()
+    files[f"{module}/__init__.py"] = b'"""Immutable provider code; parameters live in per-operator JSON."""\n'
+    # Hash the exact rewritten bytes that the wheel will install.
+    digest = hashlib.sha256()
+    for relative, data in sorted(files.items()):
+        if relative.endswith('.py'):
+            digest.update(relative.encode() + b'\0')
+            digest.update(data.decode('utf-8').replace('\r\n', '\n').encode('utf-8'))
+    from biopipe_sdk.declarations import declaration_hash
+    groups = {'operator': [], 'reader': []}
+    for descriptor in definitions:
+        descriptor['entry_point'] = rewrite(descriptor['entry_point'])
+        descriptor['code_sha'] = digest.hexdigest()
+        descriptor['declaration_sha'] = declaration_hash(descriptor)
+        groups[descriptor['kind']].append(f"{descriptor['id']} = {descriptor['entry_point']}")
+    document = {"protocol_version": PROTOCOL_VERSION, "name": name, "version": version, "descriptors": definitions}
     info = f"{name.replace('-', '_').replace('.', '_')}-{version}.dist-info"
     entries = []
     for kind, group in (("operator", "operators"), ("reader", "readers")):
         if groups[kind]:
             entries.extend([f"[biopipe.{group}]", *groups[kind], ""])
     files[f"{info}/entry_points.txt"] = "\n".join(entries).encode()
-    # Requirements belong to each descriptor; a package may contain conflicts.
-    files[f"{info}/biopipe.json"] = json.dumps({"protocol_version": PROTOCOL_VERSION, "name": name, "version": version,
-        "descriptors": definitions}).encode()
+    files[f"{info}/biopipe.json"] = json.dumps(document).encode()
     return write_wheel(files, name, version, [], output)
 
 
@@ -106,43 +83,11 @@ def prepare(manager, current, temporary):
     previous = current.get("source_library", {})
     if previous.get("sha256") == fingerprint:
         return {"wheels": [], "updated": [], "unchanged": ["operator / Reader source directories"], "receipt": previous}
-    output = temporary / "manifest.json"
-    environment = dict(os.environ, BIOPIPE_REGISTRY_MAINTENANCE="1")
-    # Scan in the shared runtime first. Only modules that actually need an
-    # unavailable/conflicting import are retried in a prepared dependency target.
-    # Optional lazy imports do not prevent unrelated operators from registering.
-    from biopipe_sdk.dependencies import source_requirements
-    from biopipe.targets import TargetBuilder, invoke, paths_for
-    from biopipe.registry import package_manifest, read_json, PACKAGE_INDEX
-    builder = TargetBuilder(manager, current)
-    source_paths = [p.relative_to(staged).as_posix() for relative in SOURCE_DIRS.values()
-                    for p in sorted((staged / relative).glob('*.py')) if not p.name.startswith('_')]
-    selected = temporary / 'sources.json'
-    selected.write_text(json.dumps(source_paths), encoding='utf-8')
-    invoke(paths_for({**current, '_runtime_root': str(manager.directory.resolve())}),
-           'biopipe.source_library', [staged, output, selected], temporary)
-    scan = json.loads(output.read_text(encoding='utf-8'))
-    records = scan['descriptors']
-    for failure in scan['errors']:
-        source = failure['source']
-        try:
-            declared = source_requirements((staged / source).read_bytes())
-            if not declared:
-                raise ValueError(failure['error'])
-            execution = builder.prepare(declared)
-            paths = execution.get('paths', []) if execution['mode'] == 'isolated' else builder.shared
-            selected.write_text(json.dumps([source]), encoding='utf-8')
-            invoke([manager.directory / p for p in paths], 'biopipe.source_library', [staged, output, selected], temporary)
-            retry = json.loads(output.read_text(encoding='utf-8'))
-            if retry['errors']:
-                raise ValueError(retry['errors'][0]['error'])
-            records.extend(retry['descriptors'])
-        except Exception as exc:
-            raise ValueError(f'{source}: {exc}') from exc
-    ids = [r[0]['id'] for r in records]
-    if len(ids) != len(set(ids)):
-        raise ValueError('Duplicate extension ID in source library')
-    manifest = package_manifest(records, read_json(staged / PACKAGE_INDEX, {'packages': []}))
+    from biopipe.registry import scan_sources, package_manifest, read_json
+    records, errors = scan_sources(staged)
+    if errors:
+        raise ValueError('; '.join(f"{e['source']}: {e['error']}" for e in errors))
+    manifest = package_manifest(records, read_json(staged / 'biopipe/builtin_packages.json', {'packages': []}))
     installed = {p["name"]: p for p in current["packages"]}
     source_managed = set(previous.get("packages", []))
     seen = set(current.get("bundled_seen", []))
@@ -150,12 +95,30 @@ def prepare(manager, current, temporary):
                 (installed.get(p["name"], {}).get("origin") == "bundled" or
                  (p["name"] in source_managed and p["name"] in installed) or
                  p["name"] not in installed and p["name"] not in seen)]
+    from biopipe_sdk.declarations import declaration_hash, code_hash
+    from biopipe.metadata_updates import replace_declarations
+    code_sha = code_hash(records[0][0]['entry_point'], staged) if records else hashlib.sha256(b'').hexdigest()
+    old_code = previous.get('code_sha') or next((d['code_sha'] for d in current['descriptors'] if d.get('origin') == 'bundled'), None)
+    candidate = []
+    old = {d['id']: d for d in current['descriptors']}
+    for package in packages:
+        for descriptor in package['descriptors']:
+            if descriptor['id'] not in old:
+                continue
+            d = deepcopy(descriptor)
+            d['entry_point'] = old[d['id']]['entry_point']
+            d['code_sha'] = old[d['id']]['code_sha']
+            # Installation may add a host SDK requirement from wheel metadata.
+            d['dependencies'] = sorted(set(d.get('dependencies', [])) | {v for v in old[d['id']].get('dependencies', []) if v.lower().startswith('biopipe-studio')})
+            d['declaration_sha'] = declaration_hash(d)
+            candidate.append(d)
+    receipt = {'sha256': fingerprint, 'code_sha': code_sha, 'packages': [p['name'] for p in packages]}
+    same_ids = {d['id'] for d in candidate} == {d['id'] for p in packages for d in p['descriptors']}
+    if code_sha == old_code and same_ids:
+        # Validate the entire transaction before publishing any change.
+        state = replace_declarations(current, candidate)
+        return {'wheels': [], 'updated': [p['name'] for p in packages], 'unchanged': [],
+                'receipt': receipt, 'state': state}
     wheels = [provider_wheel(p, staged, temporary / "wheels") for p in packages]
     return {"wheels": wheels, "updated": [p["name"] for p in packages], "unchanged": [],
-            "receipt": {"sha256": fingerprint, "packages": [p["name"] for p in packages]}}
-
-
-if __name__ == "__main__":
-    if len(sys.argv) not in (3, 4):
-        raise SystemExit("Use: python -m biopipe.source_library <snapshot-root> <output.json>")
-    describe(Path(sys.argv[1]), Path(sys.argv[2]), json.loads(Path(sys.argv[3]).read_text()) if len(sys.argv) == 4 else None)
+            "receipt": receipt}

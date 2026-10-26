@@ -52,22 +52,46 @@ from scipy.io import mmread
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
-from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
 class MtxReader(Reader):
     """Reader for MatrixMarket .mtx files."""
-    parameters_schema = {'type': 'object', 'properties': {}, 'additionalProperties': True}
+    provider = 'biopipe-readers'
+    parameters_file = 'mtx_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'MtxReader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'MtxReader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'ndim': 2,
+                              'axis_fields': [],
+                              'info_open': False}},
+     'resources': {'memory_modes': ['full', 'disk'],
+                   'supports_cuda': False,
+                   'disk_protocol': 'dense-writer-v1'},
+     'extensions': ['.mtx'],
+     'requires_siblings': [],
+     'excludes_siblings': [],
+     'handles_compression': True,
+     'file_input': {'dims': ['gene', 'cell'],
+                    'labels': {'gene': 'builtin', 'cell': 'builtin'},
+                    'compression': ['.gz'],
+                    'companions': [['barcodes.tsv', 'barcodes.tsv.gz'],
+                                   ['features.tsv', 'features.tsv.gz', 'genes.tsv', 'genes.tsv.gz']]}}
 
-    output_contract = reader_contract()
 
-    file_input = {'dims': ['gene', 'cell'], 'labels': {'gene': 'builtin', 'cell': 'builtin'}, 'compression': ['.gz'], 'companions': [['barcodes.tsv', 'barcodes.tsv.gz'], ['features.tsv', 'features.tsv.gz', 'genes.tsv', 'genes.tsv.gz']]}
 
-    extensions = [".mtx"]
-    handles_compression = True
-    supports_disk_read = True
-    disk_protocol = "dense-writer-v1"
+
 
     def probe(self, path, **args):
         with _open_maybe_gz(Path(path)) as handle:

@@ -5,10 +5,9 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
 
 
 class MissingStep(Step):
@@ -19,29 +18,30 @@ class MissingStep(Step):
         threshold : maximum allowed missing rate
         output    : context key for the result (default: step name)
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '过滤维度', 'type': 'string', 'x-ui-default': 'feature'},
-                    'threshold': {'title': '最大缺失比例',
-                                  'type': 'number',
-                                  'minimum': 0,
-                                  'maximum': 1,
-                                  'default': 0.1,
-                                  'x-ui-default': 0.05,
-                                  'x-ui-step': 0.01}},
-     'additionalProperties': True,
-     'required': ['dim']}
-    title = '缺失值过滤'
-    category = '质量控制'
-    icon = 'Funnel'
-    description = '按指定维度过滤缺失比例过高的样本或特征。'
+    provider = 'biopipe-genetics'
+    parameters_file = 'missing.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'missing',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '缺失值过滤',
+     'description': '按指定维度过滤缺失比例过高的样本或特征。',
+     'category': '质量控制',
+     'icon': 'Funnel',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']}},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'subset'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "missing"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(info={"missing_code": MISSING}, dims=[param("dim")])]
-    output_contract = {"mode": "subset"}
-    output_parameter = "output"
+
 
 
     def run(self, ctx: Context, inputs) -> None:

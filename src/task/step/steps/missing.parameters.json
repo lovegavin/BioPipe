@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "dim": {
+      "title": "过滤维度",
+      "type": "string",
+      "x-ui-default": "feature"
+    },
+    "threshold": {
+      "title": "最大缺失比例",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.1,
+      "x-ui-default": 0.05,
+      "x-ui-step": 0.01
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "dim"
+  ]
+}

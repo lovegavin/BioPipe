@@ -5,7 +5,7 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-The **0.5.0.dev0 development candidate** adopts **SDK 2.0 / protocol v2**, retaining the calculation
+The **0.5.0.dev0 development candidate** adopts **SDK 3.0 / protocol v3**, retaining the calculation
 implementations and stable IDs, with **64 built-in operators, 15 readers, six provider packages and five
 reusable route templates**: GWAS, RNA-seq DE, Proteomics DE, survival analysis and
 [16S microbiome](docs/microbiome.md). The desktop package includes this catalog and
@@ -45,12 +45,12 @@ Choose the archive without `Lite` for the bundled environment. The smaller
 
 The published v0.4.1 release remains unchanged. This branch requires a one-time
 [migration](docs/migration_v2.md) for old routes/registries/extensions. The runtime
-accepts only protocol v2. Historical source and generated outputs remain available
+accepts only protocol v3. Historical source and generated outputs remain available
 at Git tag `v0.4.1`; they are no longer duplicated in the active source tree.
 
 ## Start Studio
 
-Use Python 3.11+ (tested with 3.12). Build the frontend with Node 22.12+:
+Use Python 3.11+ (this candidate is tested with 3.11 on Windows). Build the frontend with Node 22.12+:
 
 ```text
 python -m venv .venv
@@ -85,8 +85,22 @@ Both desktop and development entry points use `~/.biopipe/studio` by default.
 `BIOPIPE_STUDIO_HOME` or `--profile-dir` selects another shared profile;
 `--workspace` explicitly isolates a workspace. CLI and MCP use the same resolver.
 No developer username, installation drive or fixed backend port is embedded.
-While evaluating this development version, start with `--profile-dir biopipe-v2-test`
+While evaluating this development version, start with `--profile-dir biopipe-v3-test`
 to keep a published v0.4.1 desktop profile intact. Startup does not migrate files.
+
+## Operator authoring and startup
+
+Each operator owns its implementation and a separate parameter schema, such as
+`pca.py` + `pca.parameters.json`. Its literal class `definition` describes identity,
+ports, resources and presentation. Parameter defaults, constraints and UI fields
+are authored only in that operator's JSON; `builtin_packages.json` is a generated
+index, not the authoring document.
+
+Studio reads descriptors without importing analysis implementations. Workers load
+only the used operators/Readers. Installation precompiles immutable code/dependency
+directories; parameter-only refresh reuses them and preserves frozen job defaults.
+See [protocol v3](docs/operator_protocol.md), [Step examples](docs/step_extensions.md)
+and [Reader examples](docs/reader_extensions.md).
 
 ## Maintain built-in registries
 
@@ -796,45 +810,21 @@ the application's source still require a restart. See [unified packages and reso
 protocols](docs/package_protocol.md) for disable/remove/restore, version locking,
 streaming operators, disk readers and an executable SDK-only example.
 
-### Add a Reader
+### Add a Reader or Step
 
-1. Create a new module in `src/reader/readers/`.
-2. Subclass `Reader`.
-3. Declare:
-   - `extensions`
-   - `requires_siblings`
-   - `excludes_siblings`
-   - `handles_compression`
-4. Implement:
-   ```python
-   def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
-       ...
-   ```
-5. Use `unique_labels` to handle labels.
-6. Use `get_encoder` for encoding when necessary.
-7. Fill `info` and `axis_info`.
-8. Declare `parameters_schema` and `output_contract`; run `biopipe registry build` and review the generated index.
+1. Create the Python module and a neighboring parameter JSON, or use
+   `biopipe plugin init <project>` (`--template reader` for a Reader).
+2. Keep identity, input/output contracts, resource modes and optional UI metadata
+   in the class's literal `definition`. Reference the JSON with `parameters_file`.
+3. Put parameter types, defaults and constraints only in that JSON.
+4. Implement `Reader.read`, `Operator.compute` or `Step.run`/`export`. Preserve
+   `info` and `axis_info` with the data. Declare only resource modes actually implemented.
+5. Run protocol checks and calculation tests, then `biopipe registry build` for
+   bundled source or `biopipe plugin build <project>` for a distributable wheel.
+   Include the parameter JSON and optional icons in wheel package data.
 
-### Add a Step
-
-1. Create a new module in `src/task/step/steps/`.
-2. Subclass `Step`.
-3. Declare:
-   - `name`
-   - `inputs_arity`
-   - `outputs`
-4. Implement:
-   ```python
-   def run(self, ctx: Context, inputs: list[Form]) -> None:
-       ...
-   ```
-5. Optionally implement:
-   ```python
-   def export(self, ctx: Context) -> dict:
-       ...
-   ```
-6. Output via `ctx[out_name] = Form(...)`.
-7. Declare `parameters_schema`, `input_contracts`, `output_contract` and any dynamic `output_parameter`; run `biopipe registry build`.
+Complete examples: [Readers](docs/reader_extensions.md),
+[Steps/Operators](docs/step_extensions.md), [SDK quickstart](docs/sdk_quickstart.md).
 
 ---
 

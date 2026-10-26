@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "properties": {
+    "term_dim": {
+      "type": "string",
+      "title": "Term dimension"
+    },
+    "statistic_dim": {
+      "type": "string",
+      "title": "Statistic dimension",
+      "default": "statistic"
+    },
+    "q_column": {
+      "type": "string",
+      "title": "Q-value column",
+      "default": "Q_VALUE"
+    },
+    "size_column": {
+      "type": "string",
+      "title": "Color column",
+      "default": "n_hit"
+    },
+    "top_n": {
+      "type": "integer",
+      "title": "Top N terms",
+      "minimum": 1,
+      "default": 20
+    },
+    "filename": {
+      "type": "string",
+      "title": "Output filename",
+      "default": "enrichment.png"
+    },
+    "title": {
+      "type": "string",
+      "title": "Plot title"
+    }
+  },
+  "additionalProperties": false
+}

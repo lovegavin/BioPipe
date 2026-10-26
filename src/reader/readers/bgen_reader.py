@@ -41,22 +41,46 @@ import numpy as np
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
-from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
 class BgenReader(Reader):
     """Reader for .bgen files."""
-    parameters_schema = {'type': 'object', 'properties': {}, 'additionalProperties': True}
-    dependencies = ['bgen-reader>=4.0']
-    dependency_imports = ['bgen_reader']
+    provider = 'biopipe-readers'
+    parameters_file = 'bgen_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'BgenReader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'BgenReader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True},
+                                       'representation': {'type': 'string', 'const': 'dosage'},
+                                       'ploidy': {'type': 'integer', 'min': 1, 'const': 2}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'ndim': 2,
+                              'values': 'allele_count',
+                              'axis_fields': [],
+                              'info_open': False}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False},
+     'dependencies': ['bgen-reader>=4.0'],
+     'dependency_imports': ['bgen_reader'],
+     'extensions': ['.bgen'],
+     'requires_siblings': [],
+     'excludes_siblings': [],
+     'handles_compression': False,
+     'file_input': {'dims': ['variant', 'sample'],
+                    'labels': {'variant': 'builtin', 'sample': 'builtin'}}}
 
-    output_contract = reader_contract(representation="dosage", ploidy=2)
 
-    file_input = {'dims': ['variant', 'sample'], 'labels': {'variant': 'builtin', 'sample': 'builtin'}}
 
-    extensions = [".bgen"]
-    handles_compression = False
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:

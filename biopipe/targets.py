@@ -21,17 +21,19 @@ def base_paths():
 
 
 def paths_for(state, descriptor=None):
+    from biopipe.bytecode import filesystem_path
     root = Path(state['_runtime_root'])
     execution = (descriptor or {}).get('execution', {})
     selected = execution.get('paths', []) if execution.get('mode') == 'isolated' else state.get('shared_paths', [])
-    return [str(root / p) for p in [*state.get('code_paths', []), *selected]]
+    return [filesystem_path(root / p) for p in [*state.get('code_paths', []), *selected]]
 
 
 def command(paths, module, args, directory):
+    from biopipe.bytecode import filesystem_path
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     config = directory / ('paths-' + uuid.uuid4().hex[:10] + '.json')
-    config.write_text(json.dumps({'paths': list(dict.fromkeys([str(ROOT), *map(str, paths), *base_paths()]))}), encoding='utf-8')
+    config.write_text(json.dumps({'paths': list(dict.fromkeys([str(ROOT), *map(filesystem_path, paths), *base_paths()]))}), encoding='utf-8')
     return [sys.executable, '-I', '-S', str(ROOT / 'biopipe/runtime_bootstrap.py'), str(config), module, *map(str, args)]
 
 

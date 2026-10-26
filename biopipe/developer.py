@@ -26,56 +26,41 @@ def scaffold(path, template="operator"):
     if not module or module[0].isdigit():
         module = "plugin_" + module
     package = module.replace("_", "-")
-    path.mkdir(parents=True, exist_ok=True)
-    (path / module).mkdir(exist_ok=True)
-    reader = template == "reader"
-    cls, group = ("ArrayReader", "readers") if reader else ("Scale", "operators")
-    (path / "pyproject.toml").write_text(f'''[build-system]
+    folder = path / module
+    folder.mkdir(parents=True, exist_ok=True)
+    reader = template == 'reader'
+    cls, group = ('ArrayReader', 'readers') if reader else ('Scale', 'operators')
+    (path / 'pyproject.toml').write_text(f'''[build-system]
 requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
-
 [project]
 name = "{package}"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["biopipe-studio>={__version__},<{int(__version__.split('.')[0]) + 1}"]
-
+dependencies = ["biopipe-studio>={__version__},<1"]
 [project.entry-points."biopipe.{group}"]
 {module} = "{module}:{cls}"
-
 [tool.setuptools.packages.find]
 include = ["{module}*"]
-''', encoding="utf-8")
-    source = f'''"""Example plugin: change the calculation, parameters and contracts."""
+[tool.setuptools.package-data]
+"{module}" = ["*.json", "*.svg", "*.png"]
+''', encoding='utf-8')
+    source = '''"""Numerical implementation. Edit parameter defaults in parameters.json."""
 import numpy as np
-from biopipe_sdk import Operator, Form, port, project_metadata
-
+from biopipe_sdk import Operator, Form, project_metadata
 
 class Scale(Operator):
-    """Multiply a numeric matrix by a constant."""
-    name = "example.{module}"
-    version = "0.1.0"
-    title = "Scale matrix"
-    category = "data"
-    icon = "SlidersHorizontal"  # Optional; omit for Studio's default icon.
-    input_contracts = [port(ndim=2)]
-    output_contract = {{"mode": "transform", "representation": "scaled"}}
-    parameters_schema = {{
-        "type": "object", "additionalProperties": False,
-        "properties": {{"factor": {{"type": "number", "default": 2.0, "title": "Scale factor"}}}}
-    }}
-
     def compute(self, inputs, params, context):
         form = inputs[0]
         info, axes = project_metadata(form, derived=True)
-        info.update(representation="scaled", missing_code=float("nan"))
+        info.update(representation='scaled', missing_code=float('nan'))
         data = form.data.astype(float, copy=True)
-        missing = form.info.get("missing_code")
+        missing = form.info.get('missing_code')
         if missing is not None:
             data[data == missing] = np.nan
-        data *= params["factor"]
+        data *= params['factor']
         return Form(data=data, dims=list(form.dims),
-                    labels={{d: dict(v) for d, v in form.labels.items()}}, info=info, axis_info=axes)
+                    labels={d: dict(v) for d, v in form.labels.items()}, info=info, axis_info=axes)
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -83,95 +68,97 @@ class Scale(Operator):
         return cells, cells * 8 + sum(len(v) for v in inputs[0].labels.values()) * 96
 '''
     if reader:
-        source = f'''"""Example reader for NumPy .npy arrays, with explicit dimensions."""
-import numpy as np
-from biopipe_sdk import Reader, Form, reader_contract
-
+        source = '''import numpy as np
+from biopipe_sdk import Reader, Form
 
 class ArrayReader(Reader):
-    name = "example.{module}"
-    version = "0.1.0"
-    extensions = [".npy"]
-    output_contract = reader_contract()
-    parameters_schema = {{"type": "object", "properties": {{}}, "additionalProperties": False}}
-
     def read(self, path, dims, labels, **args):
         data = np.load(path, allow_pickle=False)
-        if data.ndim != 2 or len(dims) != 2:
-            raise ValueError("Expected a two-dimensional array and two dimension names")
-        mapping = {{}}
-        for d, size in zip(dims, data.shape):
-            spec = labels.get(d, "auto")
-            if spec == "auto":
-                mapping[d] = {{str(i): i for i in range(size)}}
-            elif isinstance(spec, dict) and all(isinstance(k, str) and type(v) is int for k, v in spec.items()):
-                mapping[d] = dict(spec)
-            else:
-                raise ValueError("This reader supports auto labels or explicit name-to-position mappings")
-        return Form(data=data, dims=dims, labels=mapping, info={{"missing_code": float("nan")}})
+        mapping = {dim: {str(i): i for i in range(data.shape[axis])} for axis, dim in enumerate(dims)}
+        return Form(data=data, dims=dims, labels=mapping, info={'missing_code': float('nan')})
 '''
-    (path / module / "__init__.py").write_text(source, encoding="utf-8")
-    (path / "README.md").write_text(f"# {package}\n\nGenerated BioPipe SDK v2 {template} plugin.\n\n"
-        "1. Edit the implementation and contracts.\n2. Run `biopipe plugin check .`.\n"
-        "3. Run `biopipe plugin test .`.\n4. Run `biopipe plugin build .`.\n"
-        "5. Install the resulting wheel with `biopipe plugin install dist/<file>.whl`.\n", encoding="utf-8")
-    (path / "tests").mkdir(exist_ok=True)
-    if reader:
-        test = f'''import numpy as np
-from {module} import ArrayReader
+    from src.core.contracts import port, reader_contract
+    declaration = dict(protocol_version=3, id=f'example.{module}', version='0.1.0',
+                       kind='reader' if reader else 'operator', entry_point=f'{module}:{cls}',
+                       title='Array reader' if reader else 'Scale matrix', category='data',
+                       parameters_schema={'type': 'object', 'additionalProperties': False,
+                                          'properties': {} if reader else {'factor': {'type': 'number', 'default': 2.0, 'title': 'Scale factor'}}},
+                       contracts={'version': 1, 'inputs': [] if reader else [port(ndim=2)],
+                                  'output': reader_contract() if reader else {'mode': 'transform', 'representation': 'scaled'}},
+                       resources={'memory_modes': ['full'], 'supports_cuda': False},
+                       **({'extensions': ['.npy']} if reader else {'inputs_arity': 1, 'output_parameter': 'output'}))
+    import pprint
+    parameters = declaration.pop('parameters_schema')
+    declaration.pop('entry_point')
+    definition = '    parameters_file = "parameters.json"\n    definition = ' + pprint.pformat(declaration, width=100, sort_dicts=False).replace('\n', '\n    ') + '\n'
+    source = source.replace(f'class {cls}(' + ('Reader' if reader else 'Operator') + '):\n',
+                            f'class {cls}(' + ('Reader' if reader else 'Operator') + '):\n' + definition)
+    (folder / '__init__.py').write_text(source, encoding='utf-8')
+    (folder / 'parameters.json').write_text(json.dumps(parameters, indent=2)+'\n', encoding='utf-8')
+    (path / 'README.md').write_text(f'''# {package}
 
-def test_array_reader(tmp_path):
-    path = tmp_path / "matrix.npy"
-    np.save(path, np.arange(6).reshape(2, 3))
-    form = ArrayReader().read(path, ["sample", "feature"], {{}})
-    form.validate()
-    assert form.data.shape == (2, 3)
+BioPipe SDK v3. Edit `{module}/parameters.json` for parameters; keep the operator definition with its implementation.
+
+Run `biopipe plugin check .`, `biopipe plugin test .`, then `biopipe plugin build .`.
+Install the wheel or put the project in the operator inbox and refresh.
+''', encoding='utf-8')
+    (path / 'tests').mkdir(exist_ok=True)
+    test = f'''import numpy as np
+from {module} import {cls}
+from biopipe_sdk.declarations import bind_class, for_class
+
+def test_declaration():
+    bound = bind_class({cls}, for_class({cls}))
+    assert bound.parameters_schema['type'] == 'object'
 '''
-    else:
-        test = f'''import numpy as np
-from biopipe_sdk import Form
-from biopipe_sdk.testing import run_operator
-from {module} import Scale
-
+    if not reader:
+        test += '''
 def test_scale():
+    from biopipe_sdk import Form
+    from biopipe_sdk.testing import run_operator
     data = np.arange(6, dtype=float).reshape(2, 3)
-    form = Form(data=data, dims=["sample", "feature"],
-                labels={{"sample": {{"a": 0, "b": 1}}, "feature": {{"x": 0, "y": 1, "z": 2}}}},
-                info={{"missing_code": float("nan")}})
-    output = run_operator(Scale, [form], {{"factor": 3}})
+    form = Form(data, ['sample', 'feature'], {'sample': {'a': 0, 'b': 1}, 'feature': {'x': 0, 'y': 1, 'z': 2}}, {'missing_code': float('nan')})
+    output = run_operator(Scale, [form], {'factor': 3})
     np.testing.assert_allclose(output.data, data * 3)
-    assert output.info["representation"] == "scaled"
     np.testing.assert_allclose(form.data, data)
 '''
-    (path / "tests/test_plugin.py").write_text(test, encoding="utf-8")
-    return {"path": str(path), "module": module, "template": template}
+    (path / 'tests/test_plugin.py').write_text(test, encoding='utf-8')
+    return {'path': str(path), 'module': module, 'template': template}
 
 
 def check_source(path):
-    path = Path(path).resolve()
-    # Validation imports trusted developer code in this short-lived process.
-    sys.path.insert(0, str(path / "src" if (path / "src").is_dir() else path))
-    project = tomllib.loads((path / "pyproject.toml").read_text(encoding="utf-8"))["project"]
-    descriptors = []
-    for group, kind in (("biopipe.operators", "operator"), ("biopipe.readers", "reader")):
-        for entry in project.get("entry-points", {}).get(group, {}).values():
-            module, attribute = entry.split(":", 1)
-            cls = getattr(importlib.import_module(module), attribute)
-            validate_extension(cls, kind)
-            if not cls.output_contract or (kind == "operator" and cls.input_contracts is None):
-                raise ValueError(f"Missing contracts: {entry}")
-            descriptor = describe_operator(cls) if kind == "operator" else describe_reader(cls())
-            from biopipe.packages import owns_builtin_id
-            from packaging.utils import canonicalize_name
-            if "." not in descriptor["id"] and not owns_builtin_id(canonicalize_name(project["name"]), descriptor["id"]):
-                raise ValueError("Use a namespaced ID such as lab.scale")
-            descriptors.append(descriptor)
-    if not descriptors:
-        raise ValueError("No BioPipe entry points declared")
+    """Compile external declarations and inspect code without importing it."""
+    from biopipe_sdk.declarations import compile_declaration, source_declarations
+    from biopipe_sdk.drift import check_source as check_drift
+    from packaging.utils import canonicalize_name
     from biopipe_sdk.protocol import PackageDescriptor
-    value = {"protocol_version": PROTOCOL_VERSION, "name": canonicalize_name(project["name"]),
-             "version": project["version"], "origin": "wheel",
-             "dependencies": project.get("dependencies", []), "descriptors": descriptors}
+    path = Path(path).resolve()
+    root = path / 'src' if (path / 'src').is_dir() else path
+    project = tomllib.loads((path / 'pyproject.toml').read_text(encoding='utf-8'))['project']
+    descriptors = []
+    for group, kind in (('biopipe.operators', 'operator'), ('biopipe.readers', 'reader')):
+        for entry in project.get('entry-points', {}).get(group, {}).values():
+            module = entry.split(':')[0].replace('.', '/')
+            source = root / (module + '.py')
+            if not source.is_file():
+                source = root / module / '__init__.py'
+            declared = {d['entry_point']: d for d in source_declarations(source, entry.split(':')[0])}
+            if entry not in declared:
+                raise ValueError(f'{entry}: define the protocol and a separate parameter JSON (v3)')
+            d = compile_declaration(declared[entry], root)
+            if d['kind'] != kind:
+                raise ValueError('Entry point kind differs from declaration')
+            errors, warnings = check_drift(source.read_text(encoding='utf-8'), d)
+            if errors:
+                raise ValueError(f'{entry}: ' + '; '.join(errors))
+            from biopipe.packages import owns_builtin_id
+            if '.' not in d['id'] and not owns_builtin_id(canonicalize_name(project['name']), d['id']):
+                raise ValueError('Use a namespaced ID such as lab.scale')
+            descriptors.append(d)
+    if not descriptors:
+        raise ValueError('No BioPipe entry points declared')
+    value = {'protocol_version': PROTOCOL_VERSION, 'name': canonicalize_name(project['name']),
+             'version': project['version'], 'origin': 'wheel', 'dependencies': project.get('dependencies', []), 'descriptors': descriptors}
     PackageDescriptor.model_validate(value)
     return value
 
@@ -192,21 +179,8 @@ def embed_manifest(wheel, manifest):
     """Publish metadata inside the wheel, updating its standard RECORD hashes."""
     with zipfile.ZipFile(wheel) as archive:
         entries = {item.filename: (item, archive.read(item)) for item in archive.infolist()}
-    # Catch forgotten package-data before sharing a wheel that only works from
-    # the author's checkout. Discovery has already validated relative paths.
-    from pathlib import PurePosixPath
-    from biopipe_sdk.icons import IMAGE_TYPES
-    for descriptor in manifest["descriptors"]:
-        if not descriptor.get("icon_image"):
-            continue
-        module = descriptor["entry_point"].split(":")[0].replace(".", "/")
-        entry = module + ".py" if module + ".py" in entries else module + "/__init__.py"
-        asset = str(PurePosixPath(entry).parent / descriptor["icon"].replace("\\", "/"))
-        if asset not in entries:
-            raise ValueError(f"Missing icon in wheel: {asset}. Include it in setuptools package-data.")
-        uri = f"data:{IMAGE_TYPES[PurePosixPath(asset).suffix.lower()]};base64," + base64.b64encode(entries[asset][1]).decode("ascii")
-        if uri != descriptor["icon_image"]:
-            raise ValueError(f"Icon changed while building wheel: {asset}; rebuild the package")
+    from biopipe_sdk.declarations import verify_archive
+    verify_archive({name: content for name, (_, content) in entries.items()}, manifest['descriptors'])
     record = next(name for name in entries if name.endswith(".dist-info/RECORD"))
     target = record.rsplit("/", 1)[0] + "/biopipe.json"
     data = json.dumps(manifest, ensure_ascii=False, indent=2, allow_nan=False).encode("utf-8")

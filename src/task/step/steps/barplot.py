@@ -49,25 +49,42 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
+from src.task.step.steps._microbiome import estimate
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
 class BarplotStep(Step):
     """Stacked bar plot of a matrix along one axis."""
-    description = 'Stacked bar plot of a matrix along one axis.'
+    provider = 'biopipe-microbiome'
+    parameters_file = 'barplot.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'barplot',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Composition barplot',
+     'description': 'Stacked bar plot of a matrix along one axis.',
+     'category': '可视化',
+     'icon': 'ChartBar',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None},
+                                        {'param': 'sample_dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'report'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': None,
+     'preview': {'kind': 'composition', 'caption': '各组组成比例'}}
 
-    name = "barplot"
-    inputs_arity = 1
-    outputs = []
-    title = 'Composition barplot'
-    category = '可视化'
-    builtin_package = "biopipe-microbiome"
-    parameters_schema = SCHEMAS['barplot']
-    input_contracts, output_contract = CONTRACTS['barplot']
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -291,5 +308,3 @@ class BarplotStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
-    icon = 'ChartBar'
-    preview = {'kind': 'composition', 'caption': '各组组成比例'}

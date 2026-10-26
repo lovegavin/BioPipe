@@ -25,7 +25,6 @@ from __future__ import annotations
 import numpy as np
 
 from src.core import Form, StepError
-from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
 from src.task.context import Context
 from src.task.step.base import Step
@@ -39,45 +38,37 @@ _STAT_LABELS = (
 
 class IntervalStatsStep(Step):
     """Per-chromosome interval count and length statistics."""
-    title = 'interval_stats'
-    description = 'Per-chromosome interval count and length statistics.'
+    provider = 'biopipe-core'
+    parameters_file = 'interval_stats.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'interval_stats',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'interval_stats',
+     'description': 'Per-chromosome interval count and length statistics.',
+     'category': 'analysis',
+     'icon': 'Ruler',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'encoders': {'type': 'object', 'optional': True}},
+                               'dims': [{'param': 'region_dim', 'default': 'region'},
+                                        {'param': 'field_dim', 'default': 'field'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': True,
+                                         'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "interval_stats"
-    category = "analysis"
-    icon = "Ruler"
-    inputs_arity = 1
-    outputs = []
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "region_dim": {"type": "string", "default": "region"},
-            "field_dim": {"type": "string", "default": "field"},
-            "chrom_field": {"type": "string", "default": "chrom"},
-            "start_field": {"type": "string", "default": "chromStart"},
-            "end_field": {"type": "string", "default": "chromEnd"},
-            "output": {"type": "string"},
-        },
-        "additionalProperties": False,
-    }
-    input_contracts = [port(
-        ndim=2,
-        dims=[param("region_dim", "region"),
-              param("field_dim", "field")],
-        info={
-            "missing_code": MISSING,
-            "encoders": {"type": "object", "optional": True},
-        },
-    )]
-    output_contract = {
-        "mode": "declare",
-        "schema": {
-            "ndim": 2,
-            "numeric": True,
-            "info_open": True,
-            "axis_info_open": True,
-        },
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

@@ -1,3 +1,4 @@
+from extension_fixtures import write_extension
 """Image declarations survive relocation, packaging and registry snapshots."""
 import base64
 import importlib.util
@@ -29,7 +30,8 @@ class Picture(Step):
 
 
 def load_picture(path, monkeypatch):
-    spec = importlib.util.spec_from_file_location("picture_example", path)
+    monkeypatch.syspath_prepend(str(path.parent))
+    spec = importlib.util.spec_from_file_location(path.stem, path)
     module = importlib.util.module_from_spec(spec)
     monkeypatch.setitem(sys.modules, spec.name, module)
     spec.loader.exec_module(module)
@@ -41,7 +43,7 @@ def test_image_descriptor_survives_relocation_and_source_removal(tmp_path, monke
     icon = tmp_path / "icons/picture.svg"
     icon.write_bytes(SVG)
     source = tmp_path / "picture.py"
-    source.write_text(SOURCE)
+    write_extension(source, SOURCE)
     cls = load_picture(source, monkeypatch)
     before = describe_operator(cls)
     assert before["icon_image"] == "data:image/svg+xml;base64," + base64.b64encode(SVG).decode()
@@ -55,7 +57,7 @@ def test_image_descriptor_survives_relocation_and_source_removal(tmp_path, monke
 
 def test_only_icon_changes_invalidate_dropin_snapshot_and_wheel(tmp_path):
     source = tmp_path / "picture.py"
-    source.write_text(SOURCE)
+    write_extension(source, SOURCE)
     (tmp_path / "icons").mkdir()
     icon = tmp_path / "icons/picture.svg"
     icon.write_bytes(SVG)
@@ -100,12 +102,18 @@ def test_svg_rejects_active_or_external_content(tmp_path, content):
 
 
 def test_sdk_build_rejects_a_missing_packaged_icon(tmp_path):
+    from biopipe_sdk.declarations import compile_declaration, source_declarations
+    source = tmp_path / 'lab/__init__.py'
+    source.parent.mkdir()
+    write_extension(source, SOURCE)
+    (source.parent / 'icons').mkdir()
+    (source.parent / 'icons/picture.svg').write_bytes(SVG)
+    descriptor = compile_declaration(source_declarations(source, 'lab')[0], tmp_path)
     wheel = tmp_path / "incomplete.whl"
     with zipfile.ZipFile(wheel, "w") as archive:
-        archive.writestr("lab/__init__.py", SOURCE)
+        archive.writestr("lab/__init__.py", source.read_bytes())
+        archive.writestr("lab/Picture.parameters.json", (source.parent / 'Picture.parameters.json').read_bytes())
         archive.writestr("lab-1.0.0.dist-info/RECORD", "")
-    descriptor = {"entry_point": "lab:Picture", "icon": "icons/picture.svg",
-                  "icon_image": "data:image/svg+xml;base64," + base64.b64encode(SVG).decode()}
     with pytest.raises(ValueError, match="Missing icon in wheel"):
         embed_manifest(wheel, {"descriptors": [descriptor]})
     with zipfile.ZipFile(wheel, "a") as archive:

@@ -77,7 +77,7 @@ def main():
         python = destination / 'runtime/python/python.exe'
         # Use the shipped interpreter, never the packaging host's Python tag.
         subprocess.run([python, '-I', '-m', 'compileall', '-q', '-f',
-                        '--invalidation-mode', 'unchecked-hash',
+                        '--invalidation-mode', 'unchecked-hash', '-s', str(destination),
                         *[str(destination / p) for p in ('src', 'biopipe', 'biopipe_sdk', 'scripts')]], check=True)
     shutil.copytree(root / 'docs', destination / 'docs')
     # Ship the small SDK examples referenced by the extension guides.

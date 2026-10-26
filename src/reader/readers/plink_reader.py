@@ -66,7 +66,6 @@ import pandas as pd
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
-from src.core.contracts import reader_contract
 from src.reader.readers._labels import unique_labels
 
 
@@ -80,17 +79,43 @@ _FAM_COLUMNS = ["FID", "IID", "PID", "MID", "SEX", "PHENO"]
 
 class Plink1Reader(Reader):
     """Reader for PLINK 1.x .bed / .bim / .fam triplets."""
-    parameters_schema = {'type': 'object', 'properties': {}, 'additionalProperties': True}
-    dependencies = ['bed-reader>=1.0']
-    dependency_imports = ['bed_reader']
+    provider = 'biopipe-readers'
+    parameters_file = 'plink1_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'Plink1Reader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'Plink1Reader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True},
+                                       'representation': {'type': 'string', 'const': 'hard_call'},
+                                       'ploidy': {'type': 'integer', 'min': 1, 'const': 2},
+                                       'chrom': {'type': 'array', 'items': 'string'},
+                                       'pos': {'type': 'array', 'items': 'integer'}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'ndim': 2,
+                              'values': 'allele_count',
+                              'axis_fields': [{'axis': 0, 'fields': ['chrom', 'pos']}],
+                              'info_open': False}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False},
+     'dependencies': ['bed-reader>=1.0'],
+     'dependency_imports': ['bed_reader'],
+     'extensions': ['.bed'],
+     'requires_siblings': ['.bim', '.fam'],
+     'excludes_siblings': [],
+     'handles_compression': True,
+     'file_input': {'dims': ['variant', 'sample'],
+                    'labels': {'variant': 'builtin', 'sample': 'builtin'}}}
 
-    output_contract = reader_contract(representation="hard_call", ploidy=2, coordinates=True)
 
-    file_input = {'dims': ['variant', 'sample'], 'labels': {'variant': 'builtin', 'sample': 'builtin'}}
 
-    extensions = [".bed"]
-    requires_siblings = [".bim", ".fam"]
-    handles_compression = True
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         try:
@@ -160,17 +185,43 @@ class Plink1Reader(Reader):
 
 class Plink2Reader(Reader):
     """Reader for PLINK 2.x .pgen / .pvar / .psam triplets."""
-    parameters_schema = {'type': 'object', 'properties': {}, 'additionalProperties': True}
-    dependencies = ['pgenlib>=0.90']
-    dependency_imports = ['pgenlib']
+    provider = 'biopipe-readers'
+    parameters_file = 'plink2_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'Plink2Reader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'Plink2Reader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True},
+                                       'representation': {'type': 'string', 'const': 'hard_call'},
+                                       'ploidy': {'type': 'integer', 'min': 1, 'const': 2},
+                                       'chrom': {'type': 'array', 'items': 'string'},
+                                       'pos': {'type': 'array', 'items': 'integer'}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'ndim': 2,
+                              'values': 'allele_count',
+                              'axis_fields': [{'axis': 0, 'fields': ['chrom', 'pos']}],
+                              'info_open': False}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False},
+     'dependencies': ['pgenlib>=0.90'],
+     'dependency_imports': ['pgenlib'],
+     'extensions': ['.pgen'],
+     'requires_siblings': ['.pvar', '.psam'],
+     'excludes_siblings': [],
+     'handles_compression': True,
+     'file_input': {'dims': ['variant', 'sample'],
+                    'labels': {'variant': 'builtin', 'sample': 'builtin'}}}
 
-    output_contract = reader_contract(representation="hard_call", ploidy=2, coordinates=True)
 
-    file_input = {'dims': ['variant', 'sample'], 'labels': {'variant': 'builtin', 'sample': 'builtin'}}
 
-    extensions = [".pgen"]
-    requires_siblings = [".pvar", ".psam"]
-    handles_compression = True
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:

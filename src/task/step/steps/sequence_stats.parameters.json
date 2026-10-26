@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence"
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position"
+    },
+    "output": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

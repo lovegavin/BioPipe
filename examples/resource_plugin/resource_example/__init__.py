@@ -4,15 +4,32 @@ from biopipe_sdk import Form, Reader, Step, port, reader_contract
 
 
 class Sum(Step):
-    name = "example.stream_sum"
-    inputs_arity = 1
-    input_contracts = [port(ndim=2)]
-    output_contract = {"mode": "report"}
-    parameters_schema = {"type": "object", "properties": {}, "additionalProperties": False}
-    supports_streaming = True
-    stream_protocol = "flat-reduction-v1"
-    stream_buffer_multiplier = 2
-    stream_fixed_bytes = 1024
+    parameters_file = 'Sum.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'example.stream_sum',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'example.stream_sum',
+     'description': '',
+     'category': 'Plugins',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'report'}},
+     'resources': {'memory_modes': ['full', 'stream'],
+                   'supports_cuda': False,
+                   'estimate': 'estimate_memory',
+                   'stream_protocol': 'flat-reduction-v1',
+                   'stream_buffer_multiplier': 2,
+                   'stream_fixed_bytes': 1024},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': None}
 
     def run(self, ctx, inputs):
         self.total = float(np.nansum(inputs[0].data, dtype=np.float64))
@@ -27,12 +44,31 @@ class Sum(Step):
 
 
 class NpyReader(Reader):
-    name = "example.disk_npy"
-    extensions = ['.npy']
-    output_contract = reader_contract()
-    parameters_schema = {"type": "object", "properties": {}, "additionalProperties": False}
-    supports_disk_read = True
-    disk_protocol = "dense-writer-v1"
+    parameters_file = 'NpyReader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'example.disk_npy',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'NpyReader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'ndim': 2,
+                              'axis_fields': [],
+                              'info_open': False}},
+     'resources': {'memory_modes': ['full', 'disk'],
+                   'supports_cuda': False,
+                   'disk_protocol': 'dense-writer-v1'},
+     'extensions': ['.npy'],
+     'requires_siblings': [],
+     'excludes_siblings': [],
+     'handles_compression': False}
 
     def probe(self, path, **args):
         array = np.load(path, mmap_mode='r', allow_pickle=False)

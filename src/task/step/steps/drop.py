@@ -5,10 +5,9 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
 
 
 class DropStep(Step):
@@ -19,26 +18,31 @@ class DropStep(Step):
         labels : list of label names to remove
         output : context key for the result
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '移除维度', 'type': 'string', 'x-ui-default': 'feature'},
-                    'labels': {'title': '移除的标签',
-                               'type': 'array',
-                               'x-ui-default': ['f0'],
-                               'items': {'type': 'string'}}},
-     'additionalProperties': True,
-     'required': ['dim', 'labels']}
-    title = '移除特征'
-    category = '数据整理'
-    icon = 'MinusSquare'
-    description = '移除指定维度上的标签。'
+    provider = 'biopipe-core'
+    parameters_file = 'drop.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'drop',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '移除特征',
+     'description': '移除指定维度上的标签。',
+     'category': '数据整理',
+     'icon': 'MinusSquare',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [{'dim': {'param': 'dim', 'default': None},
+                                           'values': {'param': 'labels', 'default': None}}],
+                               'parallel': []}],
+                   'output': {'mode': 'drop'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "drop"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(dims=[param("dim")], labels=[{"dim": param("dim"), "values": param("labels")}])]
-    output_contract = {"mode": "drop"}
-    output_parameter = "output"
+
 
 
     def run(self, ctx: Context, inputs) -> None:

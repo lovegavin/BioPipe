@@ -6,5 +6,5 @@ STEPS = LazyRegistry()
 if os.getenv("BIOPIPE_REGISTRY_MAINTENANCE") != "1":
     from biopipe.packages import bundled_entries, load_entry
     for _, descriptor in bundled_entries("operator"):
-        STEPS.register(descriptor["id"], lambda d=descriptor: load_entry(d))
+        STEPS.register(descriptor["id"], lambda d=descriptor: load_entry(d), descriptor)
 __all__ = ["STEPS", "Step"]

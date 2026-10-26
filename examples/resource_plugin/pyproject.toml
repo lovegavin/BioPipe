@@ -13,3 +13,6 @@ sum = "resource_example:Sum"
 
 [project.entry-points."biopipe.readers"]
 npy = "resource_example:NpyReader"
+
+[tool.setuptools.package-data]
+resource_example = ["*.parameters.json"]

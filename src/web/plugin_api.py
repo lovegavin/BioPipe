@@ -78,6 +78,16 @@ def mount_plugins(app, service):
     def plugins():
         return public_state()
 
+    @app.post('/api/plugins/declarations')
+    async def declarations(request: Request):
+        check_idle()
+        try:
+            state = await asyncio.to_thread(service.plugins.update_declarations, await request.json())
+            service.refresh_catalog()
+            return {'generation': state['generation']}
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+
     @app.get("/api/plugins/operations/{key}")
     def operation(key: str):
         if key not in operations:

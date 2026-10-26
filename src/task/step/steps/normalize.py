@@ -40,7 +40,6 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import port, param
 from src.core.forms.metadata import project_metadata
 
 
@@ -52,26 +51,30 @@ _SIZE_FACTOR_METHODS = ("cpm", "total", "median_of_ratios")
 
 class NormalizeStep(Step):
     """Normalize a Form along one dimension."""
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'method': {'title': '方法',
-                               'enum': ['cpm', 'total', 'median_of_ratios', 'quantile', 'zscore'],
-                               'x-ui-default': 'cpm'},
-                    'dim': {'title': '分析维度', 'type': 'string', 'x-ui-default': 'sample'},
-                    'target_sum': {'title': '目标总量', 'type': 'number', 'minimum': 0, 'default': 1000000.0}},
-     'additionalProperties': True,
-     'required': ['method', 'dim']}
-    title = '归一化'
-    category = '数据整理'
-    icon = 'SlidersHorizontal'
-    description = 'CPM、DESeq2 size factors、Quantile 或 Z-score'
+    provider = 'biopipe-expression'
+    parameters_file = 'normalize.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'normalize',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '归一化',
+     'description': 'CPM、DESeq2 size factors、Quantile 或 Z-score',
+     'category': '数据整理',
+     'icon': 'SlidersHorizontal',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'transform', 'representation': 'normalize'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "normalize"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(dims=[param("dim")])]
-    output_contract = {"mode": "transform", "representation": "normalize"}
-    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

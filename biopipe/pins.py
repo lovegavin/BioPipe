@@ -41,7 +41,7 @@ def refresh_bundled(candidate, bundled):
     """Replace metadata-only bundled entries, leaving wheel code/targets intact."""
     current = {p['name']: p for p in bundled['packages']}
     changed = {p['name'] for p in candidate['packages'] if p.get('origin') == 'bundled'
-               and p['name'] in current and p['sha256'] != current[p['name']]['sha256']}
+               and p['name'] in current and p.get('code_sha') != current[p['name']].get('code_sha')}
     if not changed:
         return candidate
     value = deepcopy(candidate)
@@ -61,7 +61,8 @@ def resolve(graph, candidates, bundled):
     for state in candidates:
         for old in state['descriptors']:
             new = current.get(old['id'])
-            if old.get('origin') == 'bundled' and new and old['distribution'] == new['distribution']:
+            if (old.get('origin') == 'bundled' and new and old['distribution'] == new['distribution']
+                    and old.get('code_sha') != new.get('code_sha')):
                 replacements[old['id'], identity(old['implementation'])] = new['implementation']
     required = requirements(graph, replacements)
     updates = {}

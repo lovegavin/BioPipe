@@ -58,9 +58,9 @@ from scipy import stats
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._axis_contracts import estimate_axis
 from ._microbiome import metadata
-from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._axis_contracts import estimate_axis
 from ._microbiome import metadata
 
 
@@ -79,22 +79,43 @@ _STAT_LABELS = {
 
 class CompareGroupsStep(Step):
     """Compare groups along one dimension."""
-    icon = 'Intersect'
-    description = 'T-test、Welch、Mann–Whitney 或 DESeq2'
-    dependencies = ['pydeseq2==0.5.4']
-    dependency_imports = ['pydeseq2']
+    provider = 'biopipe-expression'
+    parameters_file = 'compare_groups.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'compare_groups',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Group comparison',
+     'description': 'T-test、Welch、Mann–Whitney 或 DESeq2',
+     'category': 'Analysis',
+     'icon': 'Intersect',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None},
+                                        {'param': 'group_dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2},
+                              {'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'group_dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2,
+                               'labels_any': [{'param': 'group_label', 'default': None}]}],
+                   'output': {'mode': 'compare_groups'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'dependencies': ['pydeseq2==0.5.4'],
+     'dependency_imports': ['pydeseq2'],
+     'inputs_arity': 2,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "compare_groups"
-    inputs_arity = 2
-    outputs = []
-    input_contracts, output_contract = CONTRACTS['compare_groups']
 
-    title = 'Group comparison'
-    category = 'Analysis'
-    builtin_package = 'biopipe-expression'
-    parameters_schema = SCHEMAS['compare_groups']
-    input_contracts, output_contract = CONTRACTS['compare_groups']
-    output_parameter = 'output'
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):

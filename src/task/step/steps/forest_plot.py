@@ -30,45 +30,45 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import port, param
-from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
 class ForestPlotStep(Step):
     """Draw a forest plot of hazard ratios."""
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '分析维度', 'type': 'string', 'default': 'covariate'},
-                    'stat_dim': {'title': '统计量维度', 'type': 'string', 'default': 'statistic'},
-                    'hr_label': {'title': 'HR 字段', 'type': 'string', 'default': 'HR'},
-                    'low_label': {'title': 'CI 下界字段', 'type': 'string', 'default': 'CI_low'},
-                    'high_label': {'title': 'CI 上界字段', 'type': 'string', 'default': 'CI_high'},
-                    'p_label': {'title': 'P / Q 字段', 'type': 'string', 'default': 'P'},
-                    'filename': {'title': '图片文件名', 'type': 'string', 'x-ui-default': 'forest_plot.png'},
-                    'title': {'title': '图标题', 'type': 'string'},
-                    'xlabel': {'title': 'X 轴标题', 'type': 'string', 'default': 'Hazard ratio (95% CI)'},
-                    'xlim': {'title': 'X 轴范围', 'type': ['object', 'array']},
-                    'color_sig': {'title': 'color_sig', 'type': 'string', 'default': '#D62728'},
-                    'color_ns': {'title': 'color_ns', 'type': 'string', 'default': '#4C72B0'},
-                    'sort_by': {'title': '排序', 'enum': ['input', 'hr', 'p'], 'default': 'input'},
-                    'log_scale': {'title': 'Log 坐标', 'type': 'boolean', 'default': True}},
-     'additionalProperties': True,
-     'required': ['filename']}
-    title = 'Forest plot'
-    category = '可视化'
-    icon = 'ChartLine'
-    description = 'HR 与置信区间'
-    preview = {'kind': 'forest', 'caption': '效应估计与置信区间'}
+    provider = 'biopipe-plots'
+    parameters_file = 'forest_plot.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'forest_plot',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Forest plot',
+     'description': 'HR 与置信区间',
+     'category': '可视化',
+     'icon': 'ChartLine',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': 'covariate'},
+                                        {'param': 'stat_dim', 'default': 'statistic'}],
+                               'labels': [{'dim': {'param': 'stat_dim', 'default': 'statistic'},
+                                           'values': [{'param': 'hr_label', 'default': 'HR'},
+                                                      {'param': 'low_label', 'default': 'CI_low'},
+                                                      {'param': 'high_label', 'default': 'CI_high'},
+                                                      {'param': 'p_label', 'default': 'P'}]}],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'none'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': None,
+     'preview': {'kind': 'forest', 'caption': '效应估计与置信区间'}}
 
-    name = "forest_plot"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(ndim=2, dims=[param("dim", "covariate"), param("stat_dim", "statistic")], labels=[{"dim": param("stat_dim", "statistic"), "values": [param("hr_label", "HR"), param("low_label", "CI_low"), param("high_label", "CI_high"), param("p_label", "P")]}])]
-    output_contract = {"mode": "none"}
+
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

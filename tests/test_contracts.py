@@ -1,3 +1,4 @@
+from extension_fixtures import bound_fixture
 """Contracts, real transformations and cache round-trips, including false promises."""
 from copy import deepcopy
 from pathlib import Path
@@ -150,13 +151,13 @@ def test_runtime_checks_output_before_cache_and_requires_new_write(tmp_path, mon
         parameters_schema = {"type": "object", "properties": {}}
         inputs_arity = 1
         input_contracts = [port()]
-        output_contract = {"mode": "preserve"}
+        output_contract = {"mode": "passthrough"}
         output_parameter = "output"
         def run(self, ctx, inputs):
             value = deepcopy(inputs[0])
             value.info.pop("ploidy")
             ctx["out"] = value
-    monkeypatch.setitem(STEPS, "broken", Broken)
+    monkeypatch.setitem(STEPS, "broken", bound_fixture(Broken))
     with pytest.raises(StepError, match="output out contract"):
         execute(tmp_path / "bad", {"x": annotated()}, [step("broken")], True)
     Broken.run = lambda self, ctx, inputs: None
@@ -196,11 +197,11 @@ def test_partial_canvas_and_backend_reject_dosage_to_hwe(tmp_path):
 
 
 def test_stream_contract_checks_cached_values_without_loading_whole_tensor(tmp_path, monkeypatch):
-    from src.task.step.steps.describe import DescribeStep
+    DescribeStep = STEPS['describe']
     class StrictStream(DescribeStep):
         name = "strict_stream"
         input_contracts = STEPS["hwe"].input_contracts
-    monkeypatch.setitem(STEPS, "strict_stream", StrictStream)
+    monkeypatch.setitem(STEPS, "strict_stream", bound_fixture(StrictStream))
     ctx = Context(tmp_path, {"runtime": {"memory": {"budget_mb": 8}}})
     value = annotated()
     value.data[-1, -1] = .5

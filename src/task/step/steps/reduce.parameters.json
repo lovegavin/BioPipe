@@ -1,0 +1,66 @@
+{
+  "type": "object",
+  "properties": {
+    "dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "pca",
+        "pcoa",
+        "umap",
+        "tsne"
+      ],
+      "default": "pca"
+    },
+    "n_components": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Omit for method default: PCA/PCoA 10, UMAP/t-SNE 2."
+    },
+    "standardize": {
+      "type": "boolean",
+      "default": true
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0
+    },
+    "n_neighbors": {
+      "type": "integer",
+      "minimum": 2
+    },
+    "min_dist": {
+      "type": "number",
+      "minimum": 0
+    },
+    "metric": {
+      "type": "string"
+    },
+    "perplexity": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "learning_rate": {
+      "anyOf": [
+        {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        {
+          "const": "auto"
+        }
+      ]
+    },
+    "n_iter": {
+      "type": "integer",
+      "minimum": 250
+    }
+  },
+  "required": [
+    "dim"
+  ],
+  "additionalProperties": false
+}

@@ -28,56 +28,38 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
-from src.core.contracts import param, port
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 
 
 class OrderAxisStep(Step):
     """Reorder an axis by a numeric info field, keeping all positions."""
-    title = 'order_axis'
-    description = 'Reorder an axis by a numeric info field, keeping all positions.'
+    provider = 'biopipe-core'
+    parameters_file = 'order_axis.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'order_axis',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'order_axis',
+     'description': 'Reorder an axis by a numeric info field, keeping all positions.',
+     'category': 'data',
+     'icon': 'SortAscending',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [{'fields': {'param': 'by', 'default': None},
+                                             'dim': {'param': 'dim', 'default': None}}]}],
+                   'output': {'mode': 'unknown'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "order_axis"
-    category = "data"
-    icon = "SortAscending"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [
-        port(
-            dims=[param("dim")],
-            parallel=[{"fields": param("by"), "dim": param("dim")}],
-        ),
-    ]
-    output_contract = {"mode": "unknown"}
-    output_parameter = "output"
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "dim": {
-                "type": "string",
-                "title": "Dimension to reorder",
-            },
-            "by": {
-                "type": "string",
-                "title": "Ordering field",
-                "description": (
-                    "Numeric info field declared parallel to 'dim'."
-                ),
-            },
-            "descending": {
-                "type": "boolean",
-                "title": "Descending",
-                "default": False,
-            },
-            "output": {
-                "type": "string",
-                "title": "Output key",
-            },
-        },
-        "required": ["dim", "by"],
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

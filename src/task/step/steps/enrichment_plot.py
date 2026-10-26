@@ -29,7 +29,6 @@ from __future__ import annotations
 import numpy as np
 
 from src.core import StepError
-from src.core.contracts import port
 from src.task.context import Context
 from src.task.step.base import Step
 from src.task.step.steps._plot_helpers import setup_style, save_figure
@@ -37,56 +36,31 @@ from src.task.step.steps._plot_helpers import setup_style, save_figure
 
 class EnrichmentPlotStep(Step):
     """Horizontal bar plot of enrichment results."""
-    title = 'enrichment_plot'
-    description = 'Horizontal bar plot of enrichment results.'
+    provider = 'biopipe-core'
+    parameters_file = 'enrichment_plot.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'enrichment_plot',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'enrichment_plot',
+     'description': 'Horizontal bar plot of enrichment results.',
+     'category': 'visualization',
+     'icon': 'ChartBar',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'report'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': None}
 
-    name = "enrichment_plot"
-    category = "visualization"
-    icon = "ChartBar"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(ndim=2)]
-    output_contract = {"mode": "report"}
-    parameters_schema = {
-        "type": "object",
-        "properties": {
-            "term_dim": {
-                "type": "string",
-                "title": "Term dimension",
-            },
-            "statistic_dim": {
-                "type": "string",
-                "title": "Statistic dimension",
-                "default": "statistic",
-            },
-            "q_column": {
-                "type": "string",
-                "title": "Q-value column",
-                "default": "Q_VALUE",
-            },
-            "size_column": {
-                "type": "string",
-                "title": "Color column",
-                "default": "n_hit",
-            },
-            "top_n": {
-                "type": "integer",
-                "title": "Top N terms",
-                "minimum": 1,
-                "default": 20,
-            },
-            "filename": {
-                "type": "string",
-                "title": "Output filename",
-                "default": "enrichment.png",
-            },
-            "title": {
-                "type": "string",
-                "title": "Plot title",
-            },
-        },
-        "additionalProperties": False,
-    }
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

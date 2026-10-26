@@ -6,19 +6,30 @@ BIOPIPE_PLUGIN = {"name": "example-dropin-scale", "version": "0.1.0", "dependenc
 
 
 class Scale(Operator):
-    name = "example.dropin_scale"
-    version = "0.1.0"
-    title = "Scale matrix"
-    category = "data"
-    dependencies = ["numpy>=1.26"]
-    dependency_imports = ["numpy"]
-    icon = "icons/scale.svg"  # Relative to this file; omit for the category default.
-    input_contracts = [port(ndim=2)]
-    output_contract = {"mode": "transform", "representation": "scaled"}
-    parameters_schema = {
-        "type": "object", "additionalProperties": False,
-        "properties": {"factor": {"type": "number", "default": 2.0}},
-    }
+    parameters_file = 'Scale.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'example.dropin_scale',
+     'version': '0.1.0',
+     'kind': 'operator',
+     'title': 'Scale matrix',
+     'description': '',
+     'category': 'data',
+     'icon': 'icons/scale.svg',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'transform', 'representation': 'scaled'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'dependencies': ['numpy>=1.26'],
+     'dependency_imports': ['numpy'],
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
     def compute(self, inputs, params, context):
         form = inputs[0]

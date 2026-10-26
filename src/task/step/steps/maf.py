@@ -5,10 +5,9 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
 
 
 class MafStep(Step):
@@ -19,30 +18,35 @@ class MafStep(Step):
         threshold : minimum allowed MAF
         output    : context key for the result
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '变异维度', 'type': 'string', 'x-ui-default': 'variant'},
-                    'threshold': {'title': '最低 MAF',
-                                  'type': 'number',
-                                  'minimum': 0,
-                                  'maximum': 0.5,
-                                  'default': 0.01,
-                                  'x-ui-default': 0.05,
-                                  'x-ui-step': 0.01}},
-     'additionalProperties': True,
-     'required': ['dim']}
-    title = 'MAF'
-    category = '质量控制'
-    icon = 'Dna'
-    description = '过滤低频变异。输入需要基因型及 ploidy 元数据。'
-    title_aliases = ['等位基因频率']
+    provider = 'biopipe-genetics'
+    parameters_file = 'maf.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'maf',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'MAF',
+     'description': '过滤低频变异。输入需要基因型及 ploidy 元数据。',
+     'category': '质量控制',
+     'icon': 'Dna',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'ploidy': {'type': 'integer', 'min': 1},
+                                        'representation': {'type': 'string',
+                                                           'enum': ['hard_call', 'dosage']}},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'values': 'allele_count'}],
+                   'output': {'mode': 'subset'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output',
+     'title_aliases': ['等位基因频率']}
 
-    name = "maf"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(info={"missing_code": MISSING, "ploidy": {"type": "integer", "min": 1}, "representation": {"type": "string", "enum": ["hard_call", "dosage"]}}, dims=[param("dim")], values="allele_count")]
-    output_contract = {"mode": "subset"}
-    output_parameter = "output"
+
 
 
     def run(self, ctx: Context, inputs) -> None:

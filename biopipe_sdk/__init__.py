@@ -1,13 +1,15 @@
-"""BioPipe SDK v2: stable imports for operators and readers.
+"""BioPipe SDK v3: stable imports for operators and readers.
 
 Implementations remain in the engine for compatibility with existing projects.
 Lazy exports keep plugin discovery independent of engine import order.
 """
 from importlib import import_module
 
-__version__ = "2.0.0"
+__version__ = "3.0.0"
 from .protocol import PROTOCOL_VERSION
 _EXPORTS = {
+    "load_class": ("biopipe_sdk.declarations", "load_class"),
+    "bind_class": ("biopipe_sdk.declarations", "bind_class"),
     "Form": ("src.core", "Form"),
     "Step": ("src.task.step.base", "Step"),
     "Reader": ("src.reader.base", "Reader"),

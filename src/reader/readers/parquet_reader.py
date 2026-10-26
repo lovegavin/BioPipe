@@ -40,28 +40,43 @@ import pandas as pd
 
 from src.core import Form, ReaderError
 from src.reader.base import Reader
-from src.core.contracts import reader_contract
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
 
 
 class ParquetReader(Reader):
     """Reader for .parquet files."""
-    parameters_schema = {'type': 'object',
-     'properties': {'encoders': {'type': 'object',
-                                 'title': 'Encoders',
-                                 'description': 'Per-field encoder configuration.',
-                                 'additionalProperties': True}},
-     'additionalProperties': True}
-    dependencies = ['pyarrow>=14']
-    dependency_imports = ['pyarrow']
+    provider = 'biopipe-readers'
+    parameters_file = 'parquet_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'ParquetReader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'ParquetReader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'ndim': 2,
+                              'axis_fields': [],
+                              'info_open': False}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False},
+     'dependencies': ['pyarrow>=14'],
+     'dependency_imports': ['pyarrow'],
+     'extensions': ['.parquet'],
+     'requires_siblings': [],
+     'excludes_siblings': [],
+     'handles_compression': False,
+     'file_input': {'dims': ['sample', 'feature'], 'labels': {'sample': 'auto', 'feature': 'builtin'}}}
 
-    output_contract = reader_contract()
 
-    file_input = {'dims': ['sample', 'feature'], 'labels': {'sample': 'auto', 'feature': 'builtin'}}
 
-    extensions = [".parquet"]
-    handles_compression = False
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:

@@ -4,17 +4,19 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-PROTOCOL_VERSION = 2
+PROTOCOL_VERSION = 3
 
 
 class Descriptor(BaseModel):
     """Canonical, versioned extension declaration; UI projections are separate."""
     model_config = ConfigDict(extra="forbid")
-    protocol_version: Literal[2] = 2
+    protocol_version: Literal[3] = 3
     id: str = Field(pattern=r"^[A-Za-z_][A-Za-z0-9_.-]{0,79}$")
     version: str = Field(pattern=r"^\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?$")
     kind: Literal["operator", "reader"]
     entry_point: str
+    code_sha: str = Field(pattern=r"^[a-f0-9]{64}$")
+    declaration_sha: str = Field(pattern=r"^[a-f0-9]{64}$")
     title: str
     description: str = ""
     category: str | None = Field(default=None, description="Operator library category, independent of package origin. Custom labels are allowed.")
@@ -53,7 +55,7 @@ class Descriptor(BaseModel):
 class PackageDescriptor(BaseModel):
     """One installation unit; operator identities remain independent of origin."""
     model_config = ConfigDict(extra="forbid")
-    protocol_version: Literal[2] = 2
+    protocol_version: Literal[3] = 3
     name: str = Field(pattern=r"^[a-z0-9][a-z0-9.-]*$")
     version: str
     title: str | None = None
@@ -64,6 +66,8 @@ class PackageDescriptor(BaseModel):
 
 def validate_schema(schema):
     from jsonschema import Draft202012Validator
+    if not isinstance(schema, dict):
+        raise ValueError('parameters_schema must be a JSON object')
     Draft202012Validator.check_schema(schema)
     if schema.get("type") != "object":
         raise ValueError("Parameter schema must describe an object")
@@ -121,62 +125,14 @@ def schema_to_fields(schema):
     return result
 
 
-def _schema(cls):
-    schema = deepcopy(cls.parameters_schema)
-    if schema is None:
-        raise ValueError(f"{cls.__name__}: protocol v2 requires parameters_schema; run the migration tool for v1 sources")
-    for key, value in getattr(cls, "ui_defaults", {}).items():
-        if key not in schema.get("properties", {}):
-            raise ValueError(f"Unknown UI preset parameter: {key}")
-        schema["properties"][key]["x-ui-default"] = deepcopy(value)
-    validate_schema(schema)
-    return schema
-
-
 def describe_operator(cls):
-    """Generate the sole executable declaration from the implementation class."""
-    value = dict(protocol_version=PROTOCOL_VERSION, id=cls.name,
-                 version=cls.version, kind="operator",
-                 entry_point=f"{cls.__module__}:{cls.__name__}",
-                 title=getattr(cls, "title", None) or cls.name,
-                 description=getattr(cls, "description", None) or (cls.__doc__ or "").strip(),
-                 parameters_schema=_schema(cls), inputs_arity=cls.inputs_arity,
-                 outputs=list(cls.outputs), output_parameter=cls.output_parameter,
-                 contracts={"version": 1, "inputs": cls.input_contracts, "output": cls.output_contract},
-                 resources={"memory_modes": ["full", "stream"] if cls.supports_streaming else ["full"],
-                            "supports_cuda": bool(getattr(cls, "supports_cuda", False)),
-                            "estimate": "estimate_memory",
-                            **({"stream_protocol": cls.stream_protocol,
-                                "stream_buffer_multiplier": cls.stream_buffer_multiplier,
-                                "stream_fixed_bytes": cls.stream_fixed_bytes} if cls.supports_streaming else {})})
-    for key in ("category", "icon", "preview", "title_aliases", "title_parameter"):
-        declared = getattr(cls, key, None)
-        if declared is not None:
-            value[key] = deepcopy(declared)
-    value.setdefault("category", "Plugins")
-    from biopipe_sdk.icons import resolve_icon
-    from biopipe_sdk.dependencies import declarations
-    resolve_icon(cls, value)
-    value.update(declarations(cls))
-    return Descriptor.model_validate(value).model_dump(exclude_unset=True)
+    from .declarations import for_class
+    return for_class(cls)
 
 
 def describe_reader(reader):
-    if hasattr(reader, '_declaration'):
-        return deepcopy(reader._declaration)
-    cls = type(reader)
-    from biopipe_sdk.dependencies import declarations
-    value = dict(protocol_version=PROTOCOL_VERSION, id=getattr(cls, "name", None) or cls.__name__,
-                 version=cls.version, kind="reader", entry_point=f"{cls.__module__}:{cls.__name__}",
-                 title=getattr(cls, "title", None) or cls.__name__,
-                 parameters_schema=_schema(cls), contracts={"version": 1, "inputs": [], "output": reader.output_contract},
-                 resources={"memory_modes": ["full", "disk"] if reader.supports_disk_read else ["full"], "supports_cuda": False,
-                            **({"disk_protocol": reader.disk_protocol} if reader.supports_disk_read else {})},
-                 extensions=list(reader.extensions), requires_siblings=list(reader.requires_siblings),
-                 excludes_siblings=list(reader.excludes_siblings), handles_compression=reader.handles_compression,
-                 **({"file_input": deepcopy(reader.file_input)} if reader.file_input is not None else {}),
-                 **declarations(cls))
-    return Descriptor.model_validate(value).model_dump(exclude_unset=True)
+    from .declarations import for_class
+    return deepcopy(reader._declaration) if hasattr(reader, '_declaration') else for_class(type(reader))
 
 
 def catalog_entry(descriptor):
@@ -231,6 +187,9 @@ def validate_extension(cls, kind):
     base = Step if kind == "operator" else Reader
     if not isinstance(cls, type) or not issubclass(cls, base):
         raise ValueError(f"Plugin entry must subclass {base.__name__}")
+    if "_declaration" not in cls.__dict__:
+        from .declarations import bind_class, for_class
+        cls = bind_class(cls, for_class(cls))
     if cls.parameters_schema is None:
         raise ValueError("Plugins must declare parameters_schema, including readers with no options")
     validate_schema(cls.parameters_schema)
@@ -240,7 +199,7 @@ def validate_extension(cls, kind):
         raise ValueError("Plugins must declare output_contract")
     if kind == "operator":
         if cls.output_parameter not in (None, "output"):
-            raise ValueError("Protocol v2 supports only the dynamic output parameter 'output'")
+            raise ValueError("Protocol v3 supports only the dynamic output parameter 'output'")
         arity = cls.inputs_arity
         if arity != "*" and (type(arity) is not int or arity < 0 or arity > 20):
             raise ValueError("inputs_arity must be an integer from 0 to 20 or '*'")
@@ -267,3 +226,39 @@ def validate_extension(cls, kind):
                 raise ValueError("Disk readers require dense-writer-v1, probe and read_to_disk")
         if not cls.extensions or any(not isinstance(ext, str) or not ext.startswith(".") for ext in cls.extensions):
             raise ValueError("Readers must declare file extensions such as '.npy'")
+
+
+def validate_declaration(value):
+    """Complete pure-data validation shared by build and metadata hot updates."""
+    Descriptor.model_validate(value)
+    validate_schema(value['parameters_schema'])
+    resources, contracts = value['resources'], value['contracts']
+    modes = resources.get('memory_modes', [])
+    allowed = {'full', 'stream'} if value['kind'] == 'operator' else {'full', 'disk'}
+    if not modes or 'full' not in modes or set(modes) - allowed:
+        raise ValueError('Invalid memory_modes for this extension kind')
+    if contracts.get('version') != 1:
+        raise ValueError('Unsupported contract version')
+    if value['kind'] == 'operator':
+        arity = value.get('inputs_arity', 0)
+        if arity != '*' and (type(arity) is not int or not 0 <= arity <= 20):
+            raise ValueError('inputs_arity must be an integer from 0 to 20 or *')
+        if len(contracts['inputs']) != (1 if arity == '*' else arity):
+            raise ValueError('Declare one input contract per port')
+        for port in contracts['inputs']:
+            validate_port_rule(port)
+        validate_output_rule(contracts['output'])
+        outputs = value.get('outputs') or value.get('output_parameter')
+        if contracts['output']['mode'] not in {'report', 'none', 'unknown'} and not outputs:
+            raise ValueError('Form-producing operators must declare outputs or output_parameter')
+        if 'stream' in modes:
+            if resources.get('stream_protocol') != 'flat-reduction-v1' or arity != 1 or outputs or contracts['output']['mode'] not in {'report', 'none'}:
+                raise ValueError('Streaming requires flat-reduction-v1, one input and report-only output')
+            if type(resources.get('stream_buffer_multiplier', 4)) is not int or resources.get('stream_buffer_multiplier', 4) < 1 or type(resources.get('stream_fixed_bytes', 0)) is not int or resources.get('stream_fixed_bytes', 0) < 0:
+                raise ValueError('Invalid streaming workspace estimates')
+    else:
+        validate_port_rule(contracts['output'])
+        if not value.get('extensions') or any(not isinstance(e, str) or not e.startswith('.') for e in value['extensions']):
+            raise ValueError('Readers must declare extensions')
+        if 'disk' in modes and resources.get('disk_protocol') != 'dense-writer-v1':
+            raise ValueError('Disk readers require dense-writer-v1')

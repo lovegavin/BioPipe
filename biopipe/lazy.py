@@ -4,11 +4,14 @@ from collections.abc import MutableMapping
 
 class LazyRegistry(MutableMapping):
     def __init__(self):
-        self.factories, self.loaded = {}, {}
+        self.factories, self.loaded, self.declarations = {}, {}, {}
 
-    def register(self, key, factory):
+    def register(self, key, factory, descriptor=None):
         self.loaded.pop(key, None)
+        self.declarations.pop(key, None)
         self.factories[key] = factory
+        if descriptor is not None:
+            self.declarations[key] = descriptor
 
     def __getitem__(self, key):
         if key not in self.loaded:
@@ -17,6 +20,7 @@ class LazyRegistry(MutableMapping):
 
     def __setitem__(self, key, value):
         self.factories.pop(key, None)
+        self.declarations.pop(key, None)
         self.loaded[key] = value
 
     def __delitem__(self, key):
@@ -24,6 +28,7 @@ class LazyRegistry(MutableMapping):
             raise KeyError(key)
         self.loaded.pop(key, None)
         self.factories.pop(key, None)
+        self.declarations.pop(key, None)
 
     def __iter__(self):
         return iter(dict.fromkeys([*self.factories, *self.loaded]))
@@ -37,6 +42,7 @@ class LazyRegistry(MutableMapping):
     def clear(self):
         self.factories.clear()
         self.loaded.clear()
+        self.declarations.clear()
 
 
 def reader_proxy(descriptor, factory):
@@ -44,10 +50,13 @@ def reader_proxy(descriptor, factory):
     from src.reader.base import Reader
     class DeferredReader(Reader):
         _instance = None
+        _context = None
 
         def implementation(self):
             if self._instance is None:
                 self._instance = factory()()
+            if hasattr(self._instance, '_context'):
+                self._instance._context = self._context
             return self._instance
 
         def read(self, *args, **kwargs):
@@ -65,5 +74,7 @@ def reader_proxy(descriptor, factory):
     DeferredReader.output_contract = descriptor['contracts']['output']
     DeferredReader.supports_disk_read = 'disk' in descriptor['resources']['memory_modes']
     DeferredReader.disk_protocol = descriptor['resources'].get('disk_protocol')
+    if not descriptor['resources'].get('probe', DeferredReader.supports_disk_read):
+        DeferredReader.probe = Reader.probe
     DeferredReader._declaration = descriptor
     return DeferredReader()

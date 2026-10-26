@@ -1,7 +1,7 @@
 # BioPipe SDK reference
 
-The supported import surface is `biopipe_sdk`. SDK version is `2.0.0`; descriptor/package protocol
-version is `2`. The SDK currently ships with the `biopipe-studio` distribution.
+The supported import surface is `biopipe_sdk`. SDK version is `3.0.0`; descriptor/package protocol
+version is `3`. The SDK currently ships with the `biopipe-studio` distribution.
 
 | Export | Use |
 | --- | --- |
@@ -37,20 +37,20 @@ or fill missing biological semantics. Failures appear in job logs and summaries.
 
 ## Operator display metadata
 
-`Step` and `Operator` accept optional class attributes `category: str | None`
-and `icon: str | None`. Source scans, plugin checks and wheel builds export these
-attributes into the same descriptor read by Studio. For example,
-`category = "analysis"` groups a wheel-installed operator with statistical
-operators, and `icon = "Sigma"` selects its icon. Neither field changes execution,
-data contracts, resource capabilities or package ownership.
+Put optional `category` and `icon` fields inside the class's literal `definition`.
+Use `quality_control`, `analysis`, `data`, `visualization`, or a custom label.
+Omit the icon for category artwork; a relative image path embeds a portable asset
+in the generated descriptor. These fields do not change execution or ownership.
+See [operator protocol](operator_protocol.md).
 
-Use `quality_control`, `analysis`, `data`, `visualization`, or a custom category.
-Missing categories use Uncategorized; missing or unknown icon names use the category default (or `SquaresFour` for an unknown category). See [categories and icons](operator_protocol.md#operator-categories-and-icons)
-for aliases, the supported icon set and registry refresh commands.
+The class also points to its own parameter JSON with `parameters_file`. It holds
+JSON Schema, including defaults and UI hints. The loader binds the parsed schema
+and definition to a snapshot-specific class. Authors never maintain generated
+registry projections or duplicate `parameters_schema` on the class.
 
 ## Reader dispatch
 
-Set `extensions` to suffixes such as `[".npy"]`. Optional `requires_siblings` and
+Set `definition.extensions` to suffixes such as `[".npy"]`. Optional `requires_siblings` and
 `excludes_siblings` describe companion files. Implementing arbitrary custom
 `matches()` logic is outside the static desktop contract: make routing describable
 with these fields. Exactly one reader must match; ambiguity is an error. For
@@ -59,7 +59,7 @@ A complete replacement for `biopipe-readers` replaces that provider's entries,
 rather than appending a second set of readers for the same formats.
 
 When `handles_compression` is false, the framework decompresses supported compressed
-files before calling `read`; when true, it passes the original path. `parameters_schema`
+files before calling `read`; when true, it passes the original path. The separate parameter JSON
 validates reader `args`, independently of engine-supplied `path`, `dims` and `labels`.
 Callers may supply format-specific label modes; support them or reject them clearly.
 
@@ -106,7 +106,7 @@ dependencies and historical plugin versions.
 
 Memory estimates and descriptor fields are defined in the
 [operator protocol](operator_protocol.md). There is no general public chunk or GPU
-allocator API in v2; native full-memory operators cannot be preempted mid-allocation.
+allocator API in v3; native full-memory operators cannot be preempted mid-allocation.
 
 ## Studio file import metadata
 
@@ -123,8 +123,8 @@ defaults. Existing readers and plugin descriptors without these hints remain val
 and derive dimension names from parameters or another input. `choose` selects a
 rule by a method parameter. These are serialized declarations consumed equally
 by Studio and the runtime, not callable Python hooks. See the examples in
-[operator protocol](operator_protocol.md). Protocol v2 uses these rules without inference adapters. Rebuild extension
-packages with SDK 2.0 before installing them into this development version.
+[operator protocol](operator_protocol.md). Protocol v3 uses these rules without inference adapters. Rebuild extension
+packages with SDK 3.0 before installing them into this development version.
 
 Use `biopipe registry check` to validate local extension declarations and generated
 indexes without starting Studio. New source files with missing schemas/contracts

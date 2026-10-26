@@ -50,7 +50,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
+from ._axis_contracts import estimate_axis
 from ._microbiome import metadata
 
 
@@ -62,17 +62,36 @@ _KNOWN_STATS = (
 
 class ReduceAxisStep(Step):
     """Reduce one axis of a form to summary statistics."""
-    description = 'Reduce one axis of a form to summary statistics.'
+    provider = 'biopipe-core'
+    parameters_file = 'reduce_axis.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'reduce_axis',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Axis statistics',
+     'description': 'Reduce one axis of a form to summary statistics.',
+     'category': '统计分析',
+     'icon': 'Sigma',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'project',
+                              'derived': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'representation': {'type': 'string', 'const': 'summary'}},
+                              'drop_dims': [{'param': 'dim', 'default': None}],
+                              'append_dims': [{'name': 'statistic',
+                                               'labels': {'param': 'stats', 'default': None}}]}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "reduce_axis"
-    inputs_arity = 1
-    outputs = []
-    title = 'Axis statistics'
-    category = '统计分析'
-    builtin_package = 'biopipe-core'
-    parameters_schema = SCHEMAS['reduce_axis']
-    input_contracts, output_contract = CONTRACTS['reduce_axis']
-    output_parameter = 'output'
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -178,7 +197,6 @@ class ReduceAxisStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
-    icon = 'Sigma'
 
 
 def _compute_stat(name: str, flat: np.ndarray, valid: np.ndarray):

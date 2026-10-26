@@ -12,10 +12,9 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
 
 
 class HweStep(Step):
@@ -26,30 +25,34 @@ class HweStep(Step):
         threshold : minimum allowed p-value
         output    : context key for the result
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '变异维度', 'type': 'string', 'x-ui-default': 'variant'},
-                    'threshold': {'title': '最低 P 值',
-                                  'type': 'number',
-                                  'minimum': 0,
-                                  'maximum': 1,
-                                  'default': 1e-06,
-                                  'x-ui-default': 0.0001,
-                                  'x-ui-step': 0.0001}},
-     'additionalProperties': True,
-     'required': ['dim']}
-    title = 'HWE'
-    category = '质量控制'
-    icon = 'Scales'
-    description = 'Hardy–Weinberg 平衡过滤。输入需要二倍体基因型。'
-    title_aliases = ['平衡检验']
+    provider = 'biopipe-genetics'
+    parameters_file = 'hwe.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'hwe',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'HWE',
+     'description': 'Hardy–Weinberg 平衡过滤。输入需要二倍体基因型。',
+     'category': '质量控制',
+     'icon': 'Scales',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {'missing_code': {'type': ['number', 'null']},
+                                        'ploidy': {'type': 'integer', 'const': 2},
+                                        'representation': {'type': 'string', 'const': 'hard_call'}},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'values': 'hard_call'}],
+                   'output': {'mode': 'subset'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output',
+     'title_aliases': ['平衡检验']}
 
-    name = "hwe"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(info={"missing_code": MISSING, "ploidy": {"type": "integer", "const": 2}, "representation": {"type": "string", "const": "hard_call"}}, dims=[param("dim")], values="hard_call")]
-    output_contract = {"mode": "subset"}
-    output_parameter = "output"
+
 
 
     def run(self, ctx: Context, inputs) -> None:

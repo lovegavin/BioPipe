@@ -11,10 +11,9 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -31,36 +30,33 @@ class HistogramStep(Step):
         ylabel      : optional y-axis label (default: "Count")
         log_y       : use log scale on the y axis (default False)
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '数值维度',
-                            'type': 'string',
-                            'default': 'feature',
-                            'x-ui-default': 'statistic'},
-                    'value_label': {'title': '数值标签', 'type': 'string', 'x-ui-default': 'P'},
-                    'bins': {'title': '分箱数量',
-                             'type': 'integer',
-                             'minimum': 1,
-                             'default': 40,
-                             'x-ui-default': 20},
-                    'filename': {'title': '文件名', 'type': 'string', 'x-ui-default': 'histogram.png'},
-                    'log_y': {'title': 'Log Y axis', 'type': 'boolean', 'default': False},
-                    'title': {'title': 'Title', 'type': 'string'},
-                    'xlabel': {'title': 'X axis label', 'type': 'string'},
-                    'ylabel': {'title': 'Y axis label', 'type': 'string', 'default': 'Count'}},
-     'additionalProperties': True,
-     'required': ['value_label', 'filename']}
-    title = '直方图'
-    category = '可视化'
-    icon = 'ChartBar'
-    description = '查看指定数值标签的分布。'
-    preview = {'kind': 'histogram', 'caption': '数值分布与频数'}
+    provider = 'biopipe-plots'
+    parameters_file = 'histogram.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'histogram',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '直方图',
+     'description': '查看指定数值标签的分布。',
+     'category': '可视化',
+     'icon': 'ChartBar',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': 'feature'}],
+                               'labels': [{'dim': {'param': 'dim', 'default': 'feature'},
+                                           'values': {'param': 'value_label', 'default': None}}],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'report'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': None,
+     'preview': {'kind': 'histogram', 'caption': '数值分布与频数'}}
 
-    name = "histogram"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(ndim=2, dims=[param("dim", "feature")], labels=[{"dim": param("dim", "feature"), "values": param("value_label")}])]
-    output_contract = {"mode": "report"}
+
 
 
     def run(self, ctx: Context, inputs) -> None:

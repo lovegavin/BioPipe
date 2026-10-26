@@ -39,11 +39,10 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
-from ._microbiome import metadata
+from ._axis_contracts import estimate_axis
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -53,17 +52,41 @@ _PROP_MODES = ("nonzero", "threshold")
 
 class DotplotStep(Step):
     """Dot plot of features grouped by a label column."""
-    description = 'Dot plot of features grouped by a label column.'
+    provider = 'biopipe-plots'
+    parameters_file = 'dotplot.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'dotplot',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Dot plot',
+     'description': 'Dot plot of features grouped by a label column.',
+     'category': '可视化',
+     'icon': 'ChartScatter',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'feature_dim', 'default': None},
+                                        {'param': 'group_dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2},
+                              {'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'group_dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2,
+                               'labels_any': [{'param': 'group_label', 'default': None}]}],
+                   'output': {'mode': 'report'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 2,
+     'outputs': [],
+     'output_parameter': None,
+     'preview': {'kind': 'dotplot', 'caption': '点大小与强度'}}
 
-    name = "dotplot"
-    inputs_arity = 2
-    outputs = []
-    title = 'Dot plot'
-    category = '可视化'
-    builtin_package = 'biopipe-plots'
-    parameters_schema = SCHEMAS['dotplot']
-    input_contracts, output_contract = CONTRACTS['dotplot']
-    output_parameter = None
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -377,8 +400,6 @@ class DotplotStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
-    icon = 'ChartScatter'
-    preview = {'kind': 'dotplot', 'caption': '点大小与强度'}
 
 
 def _decode(code, encoder):

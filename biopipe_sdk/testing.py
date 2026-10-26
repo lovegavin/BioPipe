@@ -10,6 +10,8 @@ def run_operator(cls, inputs, params=None):
     performance or scientific correctness testing on representative data.
     """
     from src.task import Context, STEPS, run
+    from .declarations import bind_class, for_class
+    cls = bind_class(cls, for_class(cls))
     with TemporaryDirectory(prefix="biopipe-sdk-") as temporary:
         names = [f"input_{i}" for i in range(len(inputs))]
         spec = {"name": cls.name, "inputs": names, "params": dict(params or {})}

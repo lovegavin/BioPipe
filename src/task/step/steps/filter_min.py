@@ -21,33 +21,37 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import port, param
-from src.core.forms.metadata import project_metadata
 
 
 class FilterMinStep(Step):
     """Drop positions that do not reach a minimum value."""
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '分析维度', 'type': 'string', 'x-ui-default': 'feature'},
-                    'min_value': {'title': '最低信号', 'type': 'number', 'minimum': 0, 'default': 1},
-                    'min_samples': {'title': '最少样本数', 'type': 'integer', 'minimum': 1, 'default': 1}},
-     'additionalProperties': True,
-     'required': ['dim']}
-    title = '低表达过滤'
-    category = '数据整理'
-    icon = 'Funnel'
-    description = '按最低信号和有效样本数过滤'
+    provider = 'biopipe-expression'
+    parameters_file = 'filter_min.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'filter_min',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '低表达过滤',
+     'description': '按最低信号和有效样本数过滤',
+     'category': '数据整理',
+     'icon': 'Funnel',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': None}],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'subset'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "filter_min"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(dims=[param("dim")])]
-    output_contract = {"mode": "subset"}
-    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

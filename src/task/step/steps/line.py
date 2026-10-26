@@ -10,10 +10,9 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -30,29 +29,34 @@ class LineStep(Step):
         ylabel   : optional y-axis label (default: y_label)
         sort     : sort points by x before drawing (default True)
     """
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'dim': {'title': '维度', 'type': 'string', 'default': 'feature'},
-                    'x_label': {'title': '横坐标标签', 'type': 'string', 'x-ui-default': 'f0'},
-                    'y_label': {'title': '纵坐标标签', 'type': 'string', 'x-ui-default': 'f1'},
-                    'filename': {'title': '文件名', 'type': 'string', 'x-ui-default': 'line.png'},
-                    'sort': {'title': 'Sort by X', 'type': 'boolean', 'default': True},
-                    'title': {'title': 'Title', 'type': 'string'},
-                    'xlabel': {'title': 'X axis label', 'type': 'string'},
-                    'ylabel': {'title': 'Y axis label', 'type': 'string'}},
-     'additionalProperties': True,
-     'required': ['x_label', 'y_label', 'filename']}
-    title = '折线图'
-    category = '可视化'
-    icon = 'ChartLine'
-    description = '选择两个数值标签，按横坐标排序后绘制曲线。'
-    preview = {'kind': 'line', 'caption': '随序列变化的趋势'}
+    provider = 'biopipe-plots'
+    parameters_file = 'line.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'line',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': '折线图',
+     'description': '选择两个数值标签，按横坐标排序后绘制曲线。',
+     'category': '可视化',
+     'icon': 'ChartLine',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': 'feature'}],
+                               'labels': [{'dim': {'param': 'dim', 'default': 'feature'},
+                                           'values': [{'param': 'x_label', 'default': None},
+                                                      {'param': 'y_label', 'default': None}]}],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'report'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': None,
+     'preview': {'kind': 'line', 'caption': '随序列变化的趋势'}}
 
-    name = "line"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port(ndim=2, dims=[param("dim", "feature")], labels=[{"dim": param("dim", "feature"), "values": [param("x_label"), param("y_label")]}])]
-    output_contract = {"mode": "report"}
+
 
 
     def run(self, ctx: Context, inputs) -> None:

@@ -31,43 +31,45 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import port, param
-from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
 class KaplanMeierStep(Step):
     """Draw Kaplan-Meier survival curves."""
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'time_label': {'title': '随访时间字段', 'type': 'string'},
-                    'event_label': {'title': '事件字段', 'type': 'string'},
-                    'group_label': {'title': '分组字段', 'type': 'string'},
-                    'group_map': {'title': '分组映射', 'type': ['object', 'array']},
-                    'groups': {'title': '显示分组顺序', 'type': 'array', 'items': {'type': 'string'}},
-                    'filename': {'title': '图片文件名', 'type': 'string', 'x-ui-default': 'kaplan_meier.png'},
-                    'title': {'title': '图标题', 'type': 'string'},
-                    'xlabel': {'title': 'X 轴标题', 'type': 'string', 'default': 'Time'},
-                    'ylabel': {'title': 'Y 轴标题', 'type': 'string', 'default': 'Survival probability'},
-                    'xlim': {'title': 'X 轴范围', 'type': ['object', 'array']},
-                    'show_censors': {'title': '显示删失标记', 'type': 'boolean', 'default': True},
-                    'show_ci': {'title': '显示置信区间', 'type': 'boolean', 'default': False}},
-     'additionalProperties': True,
-     'required': ['time_label', 'event_label', 'group_label', 'filename']}
-    title = 'KM'
-    category = '可视化'
-    icon = 'ChartLine'
-    description = '分组生存曲线与置信区间'
-    preview = {'kind': 'survival', 'caption': '时间与生存概率'}
+    provider = 'biopipe-plots'
+    parameters_file = 'kaplan_meier.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'kaplan_meier',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'KM',
+     'description': '分组生存曲线与置信区间',
+     'category': '可视化',
+     'icon': 'ChartLine',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2,
+                               'labels_axis': [{'axis': 1,
+                                                'values': [{'param': 'time_label', 'default': None},
+                                                           {'param': 'event_label', 'default': None},
+                                                           {'param': 'group_label',
+                                                            'default': None}]}]}],
+                   'output': {'mode': 'none'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': None,
+     'preview': {'kind': 'survival', 'caption': '时间与生存概率'}}
 
-    name = "kaplan_meier"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [{**port(ndim=2), "labels_axis": [{"axis": 1, "values": [param("time_label"), param("event_label"), param("group_label")]}]}]
-    output_contract = {"mode": "none"}
+
 
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt

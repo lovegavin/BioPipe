@@ -22,29 +22,35 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import port, param
 from src.core.forms.metadata import project_metadata
 
 
 class LogTransformStep(Step):
     """Apply log_base(x + pseudocount) elementwise."""
-    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
-     'type': 'object',
-     'properties': {'base': {'title': '底数', 'enum': [2, 10, 'e'], 'default': 2},
-                    'pseudocount': {'title': '伪计数', 'type': 'number', 'minimum': 0, 'default': 1}},
-     'additionalProperties': True,
-     'required': []}
-    title = 'Log'
-    category = '数据整理'
-    icon = 'Function'
-    description = '按指定底数与伪计数变换'
+    provider = 'biopipe-expression'
+    parameters_file = 'log_transform.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'log_transform',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Log',
+     'description': '按指定底数与伪计数变换',
+     'category': '数据整理',
+     'icon': 'Function',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [],
+                               'labels': [],
+                               'parallel': []}],
+                   'output': {'mode': 'transform', 'representation': 'log_transform'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output'}
 
-    name = "log_transform"
-    inputs_arity = 1
-    outputs = []
-    input_contracts = [port()]
-    output_contract = {"mode": "transform", "representation": "log_transform"}
-    output_parameter = "output"
+
 
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]

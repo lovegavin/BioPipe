@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "layer": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "x-ui-type": "string",
+      "title": "Layer",
+      "description": "Leave unset to read X."
+    }
+  },
+  "additionalProperties": true
+}

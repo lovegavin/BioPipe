@@ -22,12 +22,12 @@ The startup index is `biopipe/builtin_packages.json`. It enumerates each package
 name, version, title and descriptors. Paths are Python import entry points, never
 machine-specific filesystem locations. Use `biopipe registry discover/check/build`
 to maintain it together with the route index. `build_builtin_packages.py` builds distributable provider wheels after index maintenance. New modules must declare the complete protocol;
-`builtin_package` selects their provider, and existing ownership is preserved.
+`provider` selects their provider, and existing ownership is preserved.
 See [registry maintenance](registry_maintenance.md). Existing operator IDs remain unchanged.
 
 The public package schema is `biopipe_sdk/schemas/package.json`, also available via
 `biopipe schema package`. A wheel's embedded `biopipe.json` contains `name`,
-`version`, `protocol_version`, `origin`, `dependencies` and `descriptors`. Protocol version is exactly 2; no `package` alias is accepted. Standard wheel metadata remains the
+`version`, `protocol_version`, `origin`, `dependencies` and `descriptors`. Protocol version is exactly 3; no `package` alias is accepted. Standard wheel metadata remains the
 authority for pip dependencies, and manifest identity must match wheel metadata.
 
 ## Management and hot replacement
@@ -36,7 +36,7 @@ Studio's **算子库管理** lists both bundled and wheel providers, their entri
 resource modes. Installation/update accepts a local wheel. Enable, disable, remove
 and restore publish a new registry generation without restarting the application.
 The primary **Refresh library** action also discovers changes directly in the normal
-operator/Reader directories. Authors need only save their Python modules; scanning,
+operator/Reader directories. Authors save each implementation together with its parameter JSON; scanning,
 protocol validation and immutable provider packaging happen internally. See
 [whole-library refresh](plugins.md#drop-refresh-use).
 
@@ -72,7 +72,7 @@ retain all those IDs; unrelated packages cannot shadow them. This is ownership
 validation, not a signature or publisher authentication scheme: install trusted wheels.
 Third-party IDs remain namespaced, such as `lab.scale`.
 
-Bundled pins include a content fingerprint. New runs reconcile known bundled source updates within protocol v2 and record
+Bundled pins include a content fingerprint. New runs reconcile known bundled source updates within protocol v3 and record
 the effective fingerprints. A worker refuses code changed after its job was prepared. To keep historical implementations executable across application upgrades,
 use versioned wheels and retain their generations. Native/optional reader libraries
 still require the appropriate runtime environment (`requirements-readers.txt`);
@@ -80,7 +80,8 @@ bundled wheels do not bundle those libraries or an interpreter.
 
 ## `flat-reduction-v1`: stream operators
 
-Declare `supports_streaming = True` and `stream_protocol = 'flat-reduction-v1'`.
+Set `definition.resources` to include `"memory_modes": ["full", "stream"]` and
+`"stream_protocol": "flat-reduction-v1"`.
 This contract supports one numeric input and report-only output (`report` or `none`),
 with no Form outputs. Implement `run_stream(ctx, stream)` as well as equivalent
 `run(ctx, inputs)` for memory-management-disabled execution.
@@ -108,7 +109,8 @@ preserves builtin `describe` and is available to third-party wheels identically.
 
 ## `dense-writer-v1`: disk readers
 
-Declare `supports_disk_read = True` and `disk_protocol = 'dense-writer-v1'`.
+Set `definition.resources` to include `"memory_modes": ["full", "disk"]` and
+`"disk_protocol": "dense-writer-v1"`.
 Implement all three methods:
 
 * `read(path, dims, labels, **args) -> Form`: equivalent eager fallback.

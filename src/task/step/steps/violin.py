@@ -33,11 +33,10 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
-from ._microbiome import metadata
+from ._axis_contracts import estimate_axis
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -46,17 +45,42 @@ _INNER_MODES = ("box", "quartile", "point", "none")
 
 class ViolinStep(Step):
     """Draw violin plots of a value column grouped by a label."""
-    description = 'Draw violin plots of a value column grouped by a label.'
+    provider = 'biopipe-plots'
+    parameters_file = 'violin.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'violin',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Violin plot',
+     'description': 'Draw violin plots of a value column grouped by a label.',
+     'category': '可视化',
+     'icon': 'ChartLine',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'dim', 'default': 'feature'},
+                                        {'param': 'group_dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2,
+                               'labels_any': [{'param': 'value_label', 'default': None}]},
+                              {'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'group_dim', 'default': None}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2,
+                               'labels_any': [{'param': 'group_label', 'default': None}]}],
+                   'output': {'mode': 'report'}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 2,
+     'outputs': [],
+     'output_parameter': None,
+     'preview': {'kind': 'violin', 'caption': '分组密度与分布'}}
 
-    name = "violin"
-    inputs_arity = 2
-    outputs = []
-    title = 'Violin plot'
-    category = '可视化'
-    builtin_package = 'biopipe-plots'
-    parameters_schema = SCHEMAS['violin']
-    input_contracts, output_contract = CONTRACTS['violin']
-    output_parameter = None
+
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
@@ -288,8 +312,6 @@ class ViolinStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
-    icon = 'ChartLine'
-    preview = {'kind': 'violin', 'caption': '分组密度与分布'}
 
 
 def _draw_inner_box(ax, data_per_group, positions):
