@@ -2,7 +2,6 @@
 from copy import deepcopy
 from typing import Any, Literal
 
-from jsonschema import Draft202012Validator
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 PROTOCOL_VERSION = 2
@@ -64,6 +63,7 @@ class PackageDescriptor(BaseModel):
 
 
 def validate_schema(schema):
+    from jsonschema import Draft202012Validator
     Draft202012Validator.check_schema(schema)
     if schema.get("type") != "object":
         raise ValueError("Parameter schema must describe an object")
@@ -82,6 +82,7 @@ def validate_schema(schema):
 
 
 def validate_parameters(schema, params):
+    from jsonschema import Draft202012Validator
     validate_schema(schema)
     result = deepcopy(params)
     for name, field in schema.get("properties", {}).items():
@@ -161,6 +162,8 @@ def describe_operator(cls):
 
 
 def describe_reader(reader):
+    if hasattr(reader, '_declaration'):
+        return deepcopy(reader._declaration)
     cls = type(reader)
     from biopipe_sdk.dependencies import declarations
     value = dict(protocol_version=PROTOCOL_VERSION, id=getattr(cls, "name", None) or cls.__name__,

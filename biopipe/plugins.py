@@ -151,44 +151,45 @@ def entry_descriptors():
     return records
 
 
-def load_runtime(lock):
-    """Register plugins in a fresh worker against a frozen installation lock."""
+def _runtime_class(descriptor, lock):
+    if descriptor.get('execution', {}).get('mode') == 'isolated':
+        from biopipe.isolation import proxy_step, proxy_reader
+        return (proxy_step if descriptor['kind'] == 'operator' else proxy_reader)(descriptor, lock)
+    module, name = descriptor["entry_point"].split(":", 1)
+    if descriptor.get("origin") == "bundled":
+        from biopipe.packages import load_entry
+        cls = load_entry(descriptor)
+    else:
+        from biopipe.install_targets import load_class
+        cls = load_class(descriptor)
+    validate_extension(cls, descriptor["kind"])
+    actual = describe_operator(cls) if descriptor["kind"] == "operator" else describe_reader(cls())
+    if (actual["id"] != descriptor["id"] or actual["version"] != descriptor["version"]
+            or actual["resources"] != descriptor["resources"]):
+        raise ValueError(f"Installed implementation differs from lock: {descriptor['id']}")
+    if descriptor.get("origin") == "bundled":
+        current = next(d for d in bundled_state()["descriptors"] if d["id"] == descriptor["id"])
+        if current["implementation"] != descriptor["implementation"]:
+            raise ValueError(f"Bundled implementation changed since this graph was pinned: {descriptor['id']}")
+    return cls
+
+
+def load_runtime(lock, manifest=None):
+    """Register task descriptors without importing their implementations."""
     from src.task.step import STEPS
     from src.reader import READERS
-    import importlib
+    from biopipe.lazy import reader_proxy
     require_current_state(lock)
     STEPS.clear()
     READERS.clear()
+    selected = {s['name'] for s in manifest['steps']} if manifest is not None else None
     for descriptor in active_descriptors(lock):
-        if descriptor.get('execution', {}).get('mode') == 'isolated':
-            from biopipe.isolation import proxy_step, proxy_reader
-            if descriptor['kind'] == 'operator':
-                STEPS[descriptor['id']] = proxy_step(descriptor, lock)
-            else:
-                READERS.append(proxy_reader(descriptor, lock)())
-            continue
-        module, name = descriptor["entry_point"].split(":", 1)
-        if descriptor.get("origin") == "bundled":
-            from biopipe.packages import load_entry
-            cls = load_entry(descriptor)
+        factory = lambda d=descriptor: _runtime_class(d, lock)
+        if descriptor['kind'] == 'operator':
+            if selected is None or descriptor['id'] in selected:
+                STEPS.register(descriptor['id'], factory)
         else:
-            from biopipe.install_targets import load_class
-            cls = load_class(descriptor)
-        validate_extension(cls, descriptor["kind"])
-        actual = describe_operator(cls) if descriptor["kind"] == "operator" else describe_reader(cls())
-        if (actual["id"] != descriptor["id"] or actual["version"] != descriptor["version"]
-                or actual["resources"] != descriptor["resources"]):
-            raise ValueError(f"Installed implementation differs from lock: {descriptor['id']}")
-        if descriptor.get("origin") == "bundled":
-            current = next(d for d in bundled_state()["descriptors"] if d["id"] == descriptor["id"])
-            if current["implementation"] != descriptor["implementation"]:
-                raise ValueError(f"Bundled implementation changed since this graph was pinned: {descriptor['id']}")
-        if descriptor["kind"] == "operator":
-            if cls.name in STEPS:
-                raise ValueError(f"Duplicate operator ID: {cls.name}")
-            STEPS[cls.name] = cls
-        else:
-            READERS.append(cls())
+            READERS.append(reader_proxy(descriptor, factory))
 
 
 class PluginManager:

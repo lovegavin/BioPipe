@@ -9,7 +9,12 @@ from src.core.errors import (
     StepError,
     ValidationError,
 )
-from src.core.forms import Form
+def __getattr__(name):
+    if name != "Form":
+        raise AttributeError(name)
+    from src.core.forms import Form
+    globals()[name] = Form
+    return Form
 
 __all__ = [
     "BioPipeError",

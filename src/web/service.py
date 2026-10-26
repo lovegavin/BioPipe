@@ -11,7 +11,6 @@ import threading
 import traceback
 import uuid
 
-import numpy as np
 import yaml
 from biopipe.run_log import append_event
 
@@ -28,7 +27,7 @@ def safe_json(value):
         return {str(k): safe_json(v) for k, v in value.items()}
     if isinstance(value, (list, tuple)):
         return [safe_json(v) for v in value]
-    if isinstance(value, np.generic):
+    if "numpy" in sys.modules and isinstance(value, sys.modules["numpy"].generic):
         return safe_json(value.item())
     return value
 
@@ -124,11 +123,13 @@ class JobService:
     def _demo(self):
         path = self.assets_dir / "expression-demo.csv"
         if not path.exists():
-            rng = np.random.default_rng(42)
-            values = rng.normal(size=(128, 24)).astype(np.float32)
-            values[:64, :6] += 2
-            values[rng.random(values.shape) < .015] = np.nan
-            np.savetxt(path, values, delimiter=",", header=",".join(f"gene_{i+1:02d}" for i in range(24)), comments="", fmt="%.5f")
+            import csv, random
+            rng = random.Random(42)
+            with path.open('w', newline='', encoding='utf-8') as handle:
+                writer = csv.writer(handle)
+                writer.writerow(f"gene_{i+1:02d}" for i in range(24))
+                for row in range(128):
+                    writer.writerow('nan' if rng.random() < .015 else f"{rng.gauss(0, 1) + (2 if row < 64 and col < 6 else 0):.5f}" for col in range(24))
         return {
             "schema_version": 2, "name": "表达矩阵 · 质量控制与降维", "base_dir": ".",
             "memory": {"enabled": True, "auto_spill": True},
@@ -387,6 +388,7 @@ class JobService:
 
     def preview(self, key, artifact_id):
         path, descriptor = self.artifact(key, artifact_id)
+        import numpy as np
         data = np.load(path, mmap_mode="r", allow_pickle=False)
         if data.ndim != 2 or data.dtype.kind not in "biuf":
             return {"descriptor": descriptor, "rows": [], "points": []}

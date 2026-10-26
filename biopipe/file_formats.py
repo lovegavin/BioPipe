@@ -20,3 +20,7 @@ def uncompressed_path(path):
 def reader_extensions(reader):
     return [ext + suffix for ext in reader['extensions']
             for suffix in ['', *compression_extensions(reader)]]
+
+
+def primary_ext(path):
+    return uncompressed_path(Path(path)).suffix.lower()

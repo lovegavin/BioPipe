@@ -41,7 +41,7 @@ def main():
 
     copy(args.desktop / 'BioPipe Studio.exe', 'BioPipe Studio.exe')
     if not args.lite:
-        shutil.copytree(args.runtime, destination / 'runtime/python', ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
+        shutil.copytree(args.runtime, destination / 'runtime/python')
         bootstrapper = destination / 'runtime/MicrosoftEdgeWebview2Setup.exe'
         url = 'https://go.microsoft.com/fwlink/p/?LinkId=2124703'
         if args.webview_bootstrapper:
@@ -73,6 +73,12 @@ def main():
         copy(root / name_, name_)
     for name_ in ('desktop_server.py', 'run.py', 'diagnose_pins.py'):
         copy(root / 'scripts' / name_, Path('scripts') / name_)
+    if not args.lite:
+        python = destination / 'runtime/python/python.exe'
+        # Use the shipped interpreter, never the packaging host's Python tag.
+        subprocess.run([python, '-I', '-m', 'compileall', '-q', '-f',
+                        '--invalidation-mode', 'unchecked-hash',
+                        *[str(destination / p) for p in ('src', 'biopipe', 'biopipe_sdk', 'scripts')]], check=True)
     shutil.copytree(root / 'docs', destination / 'docs')
     # Ship the small SDK examples referenced by the extension guides.
     shutil.copytree(root / 'examples', destination / 'examples',

@@ -7,7 +7,6 @@ from copy import deepcopy
 import math
 import numbers
 
-import numpy as np
 
 from src.core.errors import StepError
 
@@ -58,6 +57,7 @@ def unknown():
 
 
 def _type(value):
+    import numpy as np
     if value is None:
         return "null"
     if isinstance(value, (bool, np.bool_)):
@@ -74,6 +74,7 @@ def _type(value):
 
 
 def describe_metadata(metadata, shape, numeric=True):
+    import numpy as np
     info = {}
     for key, value in metadata.get("info", {}).items():
         rule = {"type": _type(value)}
@@ -206,6 +207,7 @@ def validate_form(form, requirement, where):
 
 
 def validate_values(data, info, requirement, where, *, form=None):
+    import numpy as np
     """Data checks use bounded buffers, including non-contiguous tensors."""
     check = (requirement or {}).get("values")
     if check == "pvalue" and form is not None:

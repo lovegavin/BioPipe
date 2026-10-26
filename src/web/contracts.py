@@ -2,7 +2,7 @@
 from collections import deque
 
 from src.core.contracts import VERSION, compatible, infer_output, resolve, source_schema, unknown
-from src.reader import READERS, primary_ext
+from biopipe.file_formats import primary_ext
 
 
 def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=()):

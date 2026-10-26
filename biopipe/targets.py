@@ -45,6 +45,7 @@ def invoke(paths, module, args, directory, *, timeout=180):
 
 
 def activate(state):
+    sys.dont_write_bytecode = True
     # Called before importing numpy/SDK in a fresh pipeline worker.
     if state.get('runtime_protocol') == 1:
         os.environ['BIOPIPE_BASE_PATHS'] = json.dumps(base_paths())
@@ -158,6 +159,8 @@ class TargetBuilder:
                     url += '#sha256=' + digest
                 artifacts.append(url)
             invoke([], 'pip', ['install', '--disable-pip-version-check', '--no-deps', '--no-compile', '--target', destination, *artifacts], tmp, timeout=600)
+            from biopipe.bytecode import precompile
+            precompile(destination)
             receipt = [{'name': item['metadata']['name'], 'version': item['metadata']['version'],
                         'sha256': item['download_info'].get('archive_info', {}).get('hashes', {}).get('sha256')}
                        for item in resolved]

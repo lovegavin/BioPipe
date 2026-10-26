@@ -20,7 +20,6 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from src.core import ReaderError
-from src.reader import readers as _readers_pkg
 from src.reader.base import Reader, primary_ext
 
 
@@ -31,29 +30,10 @@ _COMPRESSION = {
 }
 
 
-def _discover() -> list[Reader]:
-    instances: list[Reader] = []
-    for _, mod_name, is_pkg in pkgutil.iter_modules(_readers_pkg.__path__):
-        if is_pkg:
-            continue
-        mod = importlib.import_module(f"src.reader.readers.{mod_name}")
-        for attr in vars(mod).values():
-            if (
-                isinstance(attr, type)
-                and issubclass(attr, Reader)
-                and attr is not Reader
-                and getattr(attr, "extensions", None)
-            ):
-                from .schemas import builtin_schema
-                if attr.parameters_schema is None:
-                    attr.parameters_schema = builtin_schema(attr.__name__)
-                instances.append(attr())
-    return instances
-
-
 def _from_packages():
     from biopipe.packages import bundled_entries, load_entry
-    return [load_entry(descriptor)() for _, descriptor in bundled_entries("reader")]
+    from biopipe.lazy import reader_proxy
+    return [reader_proxy(d, lambda d=d: load_entry(d)) for _, d in bundled_entries("reader")]
 
 
 READERS: list[Reader] = [] if os.getenv("BIOPIPE_REGISTRY_MAINTENANCE") == "1" else _from_packages()

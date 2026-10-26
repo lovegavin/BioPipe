@@ -16,8 +16,7 @@ import yaml
 
 from src.core import ManifestError
 from biopipe import __version__
-from src.task import STEPS
-from src.task.operator_catalog import build_catalog
+from .operator_catalog import catalog_from_descriptors
 from src.task.memory.config import AUTO_BUDGET_FRACTION, MemoryConfig
 from .graph import GraphError, compile_graph, import_manifest, project_path, relative_manifest
 from .models import Graph, ManifestImport, SaveWorkflow, RegisterRoutes, Workspace, LibraryAction
@@ -32,7 +31,7 @@ def create_app(settings=None):
     if settings is None:
         from .profile import make_settings
         settings = make_settings(root, root / "frontend/dist")
-    catalog = build_catalog(STEPS)
+    catalog = catalog_from_descriptors()
     service = JobService(settings, catalog)
     catalog = service.catalog
     imports = AssetImports(service)

@@ -5,9 +5,10 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import ClassVar
+from typing import ClassVar, TYPE_CHECKING
 
-from src.core import Form
+if TYPE_CHECKING:
+    from src.core import Form
 from biopipe.file_formats import COMPRESSION_SUFFIXES, compression_extensions, uncompressed_path
 
 

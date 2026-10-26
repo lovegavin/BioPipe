@@ -107,6 +107,9 @@ def install(manager, current, packages, generation, *, dependencies=()):
     if wheels:
         invoke([], 'pip', ['install', '--disable-pip-version-check', '--no-deps', '--no-compile', '--target', code,
                            *[manager.directory / p['wheel'] for p in wheels]], environment, timeout=600)
+    if wheels:
+        from biopipe.bytecode import precompile
+        precompile(code)
     descriptors = [deepcopy(d) for d in bundled_state()['descriptors'] if any(p['name'] == d['distribution'] and p.get('origin') == 'bundled' for p in packages)]
     old = {d['id']: d for d in current['descriptors']}
     # Existing successful isolation choices remain pinned. Dependency repair

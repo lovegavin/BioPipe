@@ -12,6 +12,7 @@ import sys
 
 
 def main():
+    sys.dont_write_bytecode = True
     for stream in (sys.stdin, sys.stdout, sys.stderr):
         stream.reconfigure(encoding='utf-8', errors='replace')
     config, module, *arguments = sys.argv[1:]
