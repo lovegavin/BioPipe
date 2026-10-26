@@ -115,5 +115,11 @@ single-file alternative. To replay a job with `python scripts/run.py <job-dir>`,
 keep its `parameters.json`, plugin lock and required datasets together.
 
 Value snapshots protect parameter choices. Implementation pins separately protect
-code and descriptor identity. They do not promise identical results if inputs,
+execution identity; `declaration_sha` is an audit field, not a graph matching key.
+A compatible default-only update therefore permits importing an old route into a
+fresh profile without old registry snapshots. Bundled index fingerprints are also
+excluded from graph matching when a v3 `code_sha` is available; exact wheel artifact
+digests remain required. Already-created jobs retain and verify their full original
+descriptors. See [identity rules](operator_protocol.md#identities-and-updates).
+These snapshots do not promise identical results if inputs,
 random seeds, external tools or numerical environments change.

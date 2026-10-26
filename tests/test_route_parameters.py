@@ -253,3 +253,87 @@ def test_legacy_inline_route_converts_on_explicit_save(studio):
     converted = library.save(SaveWorkflow(graph=Graph.model_validate(loaded['graph']), id=saved['id'], expected_version=1))
     assert (directory / converted['parameters_file']).is_file()
     assert converted['graph']['nodes'][2]['params']['n_components'] == 2
+
+
+def test_bundle_prepares_and_runs_after_default_rebuild_in_a_fresh_profile(tmp_path, monkeypatch):
+    """A real index rebuild, not just a metadata update in an existing profile."""
+    import shutil
+    import biopipe.packages as packages
+    from biopipe.registry import maintain
+    checkout = tmp_path / 'checkout'
+    for relative in ('src/task/step/steps', 'src/reader/readers'):
+        shutil.copytree(ROOT / relative, checkout / relative, ignore=shutil.ignore_patterns('__pycache__'))
+    (checkout / 'biopipe').mkdir()
+    shutil.copy2(ROOT / 'biopipe/builtin_packages.json', checkout / 'biopipe/builtin_packages.json')
+    monkeypatch.setattr(packages, '__file__', str(checkout / 'biopipe/packages.py'))
+
+    def app_for(name):
+        directory = tmp_path / name
+        return create_app(Settings(directory, directory / 's', ROOT / 'frontend/dist', testing=True, code_root=ROOT))
+
+    old_app = app_for('old')
+    with TestClient(old_app) as client:
+        data = client.get('/api/bootstrap').json()
+        client.headers['X-Studio-Token'] = data['token']
+        graph = data['demo']
+        next(n for n in graph['nodes'] if n['id'] == 'pca')['params'].pop('n_components')
+        exported = client.post('/api/workflows/export', json=graph)
+        assert exported.status_code == 200, exported.text
+        bundle = exported.content
+        prepared = import_bundle(bundle)
+        old_service = old_app.state.service
+        old_job = old_service.launch(prepared)
+        old_service.threads[old_job['id']].join(timeout=40)
+        assert old_service.details(old_job['id'])['status'] == 'complete'
+        old_job_lock = old_service.jobs_dir / old_job['id'] / 'plugins.lock.json'
+        old_lock_bytes = old_job_lock.read_bytes()
+    old = import_bundle(bundle)
+    old_pin = deepcopy(old.plugin_lock['pca'])
+    assert node(old, 'pca').params['n_components'] == 10
+
+    parameter = checkout / 'src/task/step/steps/pca.parameters.json'
+    definition = json.loads(parameter.read_text(encoding='utf-8'))
+    definition['properties']['n_components']['default'] = 20
+    parameter.write_text(json.dumps(definition), encoding='utf-8')
+    report = maintain('build', root=checkout, scope='packages')
+    assert report['errors'] == [] and report['written']
+
+    fresh_app = app_for('fresh')
+    with TestClient(fresh_app) as client:
+        data = client.get('/api/bootstrap').json()
+        client.headers['X-Studio-Token'] = data['token']
+        service = fresh_app.state.service
+        descriptor = next(d for d in service.plugins.state()['descriptors'] if d['id'] == 'pca')
+        assert descriptor['parameters_schema']['properties']['n_components']['default'] == 20
+        assert descriptor['implementation']['code_sha'] == old_pin['code_sha']
+        assert descriptor['implementation']['declaration_sha'] != old_pin['declaration_sha']
+        assert descriptor['implementation']['sha256'] != old_pin['sha256']
+        # The new profile contains only its new generation, not D1's snapshot.
+        archives = list((service.plugins.directory / 'snapshots').glob('*.json'))
+        assert len(archives) == 1
+        assert old_pin['declaration_sha'] not in archives[0].read_text(encoding='utf-8')
+        imported = client.post('/api/workflows/import', content=bundle)
+        assert imported.status_code == 200, imported.text
+        prepared = client.post('/api/workflows/prepare', json=imported.json())
+        assert prepared.status_code == 200, prepared.text
+        prepared_graph = Graph.model_validate(prepared.json())
+        assert node(prepared_graph, 'pca').params['n_components'] == 10
+        running = client.post('/api/jobs', json=prepared.json())
+        assert running.status_code == 202, running.text
+        key = running.json()['id']
+        deadline = time.monotonic() + 40
+        while time.monotonic() < deadline:
+            job = client.get(f'/api/jobs/{key}').json()
+            if job['status'] != 'running':
+                break
+            time.sleep(.1)
+        assert job['status'] == 'complete', job.get('error')
+        assert next(s for s in job['summary']['steps'] if s['name'] == 'pca')['params']['n_components'] == 10
+        lock = json.loads((service.jobs_dir / key / 'plugins.lock.json').read_text(encoding='utf-8'))
+        selected = next(d for d in lock['descriptors'] if d['id'] == 'pca')
+        assert selected['parameters_schema']['properties']['n_components']['default'] == 20
+    assert old.plugin_lock['pca'] == old_pin
+    assert old_job_lock.read_bytes() == old_lock_bytes
+    archived = next(d for d in json.loads(old_lock_bytes)['descriptors'] if d['id'] == 'pca')
+    from biopipe_sdk.declarations import load_class
+    assert load_class(archived).parameters_schema['properties']['n_components']['default'] == 10

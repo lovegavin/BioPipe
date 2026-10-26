@@ -79,6 +79,11 @@ def test_metadata_transaction_keeps_code_and_readiness(tmp_path):
     with pytest.raises(ValueError, match='resources'):
         manager.update_declarations({'protocol_version': 3, 'descriptors': [changed]})
     assert manager.state()['generation'] == state['generation']
+    changed = deepcopy(new)
+    changed['version'] = '2.0.0'
+    with pytest.raises(ValueError, match='version changed'):
+        manager.update_declarations({'protocol_version': 3, 'descriptors': [changed]})
+    assert manager.state()['generation'] == state['generation']
 
 
 def test_static_parameter_drift_and_independent_hashes():

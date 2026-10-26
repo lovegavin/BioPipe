@@ -72,7 +72,11 @@ retain all those IDs; unrelated packages cannot shadow them. This is ownership
 validation, not a signature or publisher authentication scheme: install trusted wheels.
 Third-party IDs remain namespaced, such as `lab.scale`.
 
-Bundled pins include a content fingerprint. New runs reconcile known bundled source updates within protocol v3 and record
+Bundled pins include code and declaration hashes plus an index/source fingerprint.
+Graph matching uses package/version and `code_sha`; declaration-only rebuilds do
+not require the old profile's snapshots. Installed wheel pins still require their
+artifact digest. See [identity rules](operator_protocol.md#identities-and-updates).
+New runs reconcile known bundled source updates within the same operator/package versions and record
 the effective fingerprints. A worker refuses code changed after its job was prepared. To keep historical implementations executable across application upgrades,
 use versioned wheels and retain their generations. Native/optional reader libraries
 still require the appropriate runtime environment (`requirements-readers.txt`);

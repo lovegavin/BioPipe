@@ -2,7 +2,7 @@
 from copy import deepcopy
 
 # Changing these requires the installation/hook-validation transaction.
-EXECUTION_KEYS = ('id', 'kind', 'entry_point', 'code_sha', 'dependencies', 'dependency_imports', 'resources')
+EXECUTION_KEYS = ('id', 'version', 'kind', 'entry_point', 'code_sha', 'dependencies', 'dependency_imports', 'resources')
 
 
 def replace_declarations(state, declarations):

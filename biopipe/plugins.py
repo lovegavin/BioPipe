@@ -214,7 +214,7 @@ class PluginManager:
         if not any(pins):
             return state
         try:
-            if matches(state, requirements(graph)):
+            if matches(state, requirements(graph, state=state)):
                 return state
         except ValueError:
             pass

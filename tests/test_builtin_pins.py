@@ -199,3 +199,58 @@ def test_pin_diagnostic_is_read_only_and_respects_profile(tmp_path):
     assert 'repin' not in result.stdout.lower()
     assert all(p.read_bytes() == content for p, content in before.items())
     assert not list(profile.rglob('*.bak'))
+
+
+def test_nested_declaration_pins_share_code_identity_without_old_snapshots(tmp_path):
+    from biopipe.pins import identity, matches, requirements
+    manager = PluginManager(tmp_path)
+    current = next(d for d in manager.state()['descriptors'] if d['id'] == 'pca')['implementation']
+    old = {**current, 'declaration_sha': '0' * 64, 'sha256': '0' * 64}
+    graph = Graph.model_validate({'nodes': [{'id': 'route', 'kind': 'route', 'position': {'x': 0, 'y': 0},
+        'route': {'id': 'route_000000000001', 'version': 1, 'name': 'nested', 'graph': {
+            'nodes': [], 'edges': [], 'plugin_lock': {'pca': old}}}}],
+        'edges': [], 'plugin_lock': {'pca': current}})
+    selected = manager.snapshot(graph)
+    assert matches(selected, requirements(graph, state=selected))
+    assert not selected.get('bundled_updates')  # Metadata changes are not code migrations.
+    assert identity(current) == identity({**current, 'declaration_sha': '1' * 64})
+    assert graph.nodes[0].route.graph.plugin_lock['pca'] == old
+
+
+@pytest.mark.parametrize('field', ['version', 'package', 'sha256', 'code_sha'])
+def test_wheel_pin_keeps_each_execution_identity_field_strict(field):
+    from biopipe.pins import matches, resolve
+    state = deepcopy(bundled_state())
+    state['generation'] = 'wheel'
+    descriptor = next(d for d in state['descriptors'] if d['id'] == 'pca')
+    descriptor['origin'] = 'wheel'
+    next(p for p in state['packages'] if p['name'] == descriptor['distribution'])['origin'] = 'wheel'
+    pin = {**descriptor['implementation'], 'declaration_sha': '0' * 64}
+    assert matches(state, {'pca': pin})
+    pin[field] = 'different'
+    assert not matches(state, {'pca': pin})
+    graph = Graph.model_validate({'nodes': [], 'edges': [], 'plugin_lock': {'pca': pin}})
+    with pytest.raises(ValueError, match='Required plugin versions'):
+        resolve(graph, [state], bundled_state())
+
+
+@pytest.mark.parametrize('version_field', ['operator', 'package'])
+def test_bundled_code_migration_cannot_cross_a_version_change(version_field):
+    from biopipe.pins import resolve
+    current = deepcopy(bundled_state())
+    current['generation'] = 'current'
+    previous = deepcopy(current)
+    previous['generation'] = 'previous'
+    old = next(d for d in previous['descriptors'] if d['id'] == 'pca')
+    old['code_sha'] = old['implementation']['code_sha'] = '0' * 64
+    old['implementation']['sha256'] = '0' * 64
+    next(p for p in previous['packages'] if p['name'] == old['distribution'])['code_sha'] = '0' * 64
+    new = next(d for d in current['descriptors'] if d['id'] == 'pca')
+    if version_field == 'operator':
+        new['version'] = '2.0.0'
+    else:
+        new['implementation']['version'] = '2.0.0'
+        next(p for p in current['packages'] if p['name'] == new['distribution'])['version'] = '2.0.0'
+    graph = Graph.model_validate({'nodes': [], 'edges': [], 'plugin_lock': {'pca': old['implementation']}})
+    with pytest.raises(ValueError, match='Required plugin versions'):
+        resolve(graph, [current, previous], current)

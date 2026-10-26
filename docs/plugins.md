@@ -169,21 +169,26 @@ collection because old jobs/routes can still reference them.
 ## Upgrade, removal and saved routes
 
 An inserted/saved graph is pinned when prepared, saved or launched. A pin contains
-the package name, package version and implementation digest (wheel or bundled
-content fingerprint). Nested route snapshots retain
-their pins. New unpinned insertions use the current generation. Running jobs record
-and keep their original dependency paths even if another installation finishes.
+package name/version, `sha256`, `code_sha` and `declaration_sha`. Graph matching
+excludes `declaration_sha`; concrete route values are frozen independently. For
+bundled v3 providers, matching also excludes the index/source `sha256` because it
+changes on metadata-only rebuilds; package/version and `code_sha` must match.
+Installed wheels still require their exact artifact `sha256`. Nested route
+requirements follow the same rules. A fresh profile can import a route after a
+compatible declaration update without possessing its old declaration snapshot.
+Running jobs keep their complete original descriptors and dependency paths.
 
 Built-in source checkouts need one distinction: older bundled registry snapshots
 stored fingerprints, not copies of the Python source. After a source update,
 Studio recognizes those historical **bundled** pins and resolves new runs against
-the current bundled implementation. It validates the graph against the selected
+the current bundled implementation within the same operator and package versions.
+It validates the graph against the selected
 contracts and records `bundled_updates` (old/new identities) in the new job lock,
 job metadata and run events. The same resolution applies to nested route graphs.
 Historical jobs, saved JSON files and their logs are not rewritten. Save the
 prepared graph as a new version to persist the updated pins.
 
-This fallback requires a matching bundled entry in the profile's registry history.
+Code-change fallback requires a matching bundled entry in the profile's registry history.
 Unknown pins and installed wheel pins remain strict; real plugin generations keep
 their original code and dependency targets. For exact historical built-in replay,
 retain the original BioPipe source/release or distribute the provider as an

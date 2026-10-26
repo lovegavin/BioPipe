@@ -95,12 +95,34 @@ unchanged. It does not restore the removed v1/v2 class-field fallback.
   installed-state fields. It includes the parsed parameter JSON and frozen icon.
 - The wheel's package `sha256` is artifact provenance, separate from these identities.
 
-Workers verify both identities before importing implementation code. Old jobs use
-frozen parameter snapshots, including defaults; editing a parameter JSON cannot
-silently change an already pinned run.
+Graph pins match execution identity, not `declaration_sha`. The declaration hash
+remains an audit/integrity field in descriptors and locks:
+
+| Provider | Graph matching fields |
+| --- | --- |
+| Installed wheel | Package, package version, wheel `sha256`, `code_sha` |
+| Bundled v3 source | Package, package version, `code_sha` |
+
+The bundled `sha256` fingerprints both the generated index and source bytes, so
+rebuilding after a default change alters it too. It remains a cache/provenance
+fingerprint but is not a graph compatibility key when `code_sha` is present.
+Nested graphs use the same matching rule. A declaration-only rebuild needs no old
+profile snapshots: portable routes keep their concrete values with the current
+compatible schema. Wheel artifacts remain strict even when Python code is equal.
+
+This is a compatibility contract, not automatic proof that arbitrary schema edits
+are safe. Incompatible schema/port changes require a major operator version and a
+package version bump before publication. A version change must go through the
+refresh/installation transaction, not the metadata-only update API. Known bundled
+code rebinding also refuses to cross operator or package versions. Parameter and
+data-contract validation still runs before and during execution.
+
+Frozen job locks are different from portable graph pins: workers verify both code
+and declaration integrity and execute the complete descriptor stored for that job.
+New graph resolution never rewrites old job locks, defaults or dependency paths.
 
 Parameter-only refresh publishes a new metadata snapshot and reuses code paths,
-dependency targets and bytecode. Changes to code, entry points, dependencies or
+dependency targets and bytecode. Changes to version, code, entry points, dependencies or
 resource hooks use the installation transaction. Successful dependency checks
 remain valid across parameter/presentation-only changes during the same session.
 
