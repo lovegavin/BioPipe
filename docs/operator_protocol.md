@@ -50,9 +50,22 @@ can retain its existing IDs. `provider = "biopipe-core"` chooses ownership for a
 source-library implementation; updates cannot steal another provider's IDs.
 Entry points and hashes are generated, not written by authors.
 
+## Operator categories and icons
+
+Use `quality_control`, `analysis`, `data`, `visualization`, or a custom category in
+`definition.category`. Package ownership does not determine the UI category.
+Set `definition.icon` to a Studio icon name or a module-relative image path.
 Relative PNG/JPEG/WebP/GIF/SVG icons remain supported. Include images and parameter
 JSON files in wheel package data. Omitted or unknown named icons use category
 artwork; a declared image path must exist and be included in the wheel.
+
+## Dependency declarations
+
+Use literal PEP 508 requirements in `definition.dependencies` and optional import
+names in `definition.dependency_imports`. Package-wide requirements apply to every
+entry. Keep conflicting requirements on their respective operators. The loader
+uses one Python executable: compatible entries share dependencies; conflicts use
+private directories and subprocesses. See [dependency isolation](dependency_isolation.md).
 
 ## One generated index, several consumers
 
