@@ -79,6 +79,12 @@ the returned `updated_at` makes stale state visible.
 
 ## CLI
 
+`graph open` and `graph validate` accept self-contained graph JSON or portable
+`.biopipe.zip` bundles (`graph.json` plus `parameters.json`). Context/graph responses
+always contain hydrated values. Agent-triggered jobs use the same independent
+parameter snapshot as desktop-triggered jobs. See
+[workflow parameter values](workflow_parameters.md).
+
 Commands return UTF-8 JSON on stdout; diagnostics/errors go to stderr. Global flags
 `--profile-dir`, `--workspace`, `--instance`, `--session` and `--json` can appear
 before or after subcommands. Replace placeholders below with IDs from the responses.

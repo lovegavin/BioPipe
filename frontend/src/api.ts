@@ -70,6 +70,24 @@ export const api = {
   workflows: () => request<WorkflowSummary[]>("/api/workflows"),
   workflow: (id: string) => request<SavedWorkflow>(`/api/workflows/${encodeURIComponent(id)}`),
   prepareWorkflow: (graph: Graph) => request<Graph>("/api/workflows/prepare", graph),
+  exportWorkflow: async (graph: Graph): Promise<Blob> => {
+    const response = await fetch(base + '/api/workflows/export', {
+      method: 'POST', headers: {'X-Studio-Token': token, 'Content-Type': 'application/json'}, body: JSON.stringify(graph),
+    });
+    if (!response.ok) {
+      const value = await response.json();
+      throw new ApiError(value.message || value.detail || '路线导出失败');
+    }
+    return response.blob();
+  },
+  importWorkflow: async (file: File): Promise<Graph> => {
+    const response = await fetch(base + '/api/workflows/import', {
+      method: 'POST', headers: {'X-Studio-Token': token, 'Content-Type': 'application/zip'}, body: file,
+    });
+    const value = await response.json();
+    if (!response.ok) throw new ApiError(value.message || value.detail || '路线导入失败');
+    return value;
+  },
   saveWorkflow: (graph: Graph, id?: string, expected_version?: number) => request<SavedWorkflow>("/api/workflows/save", {graph, id, expected_version}),
   routes: () => request<RouteDefinition[]>("/api/routes"),
   libraryState: () => request<LibraryState>("/api/library/state"),
@@ -135,7 +153,10 @@ export function downloadText(
   text: string,
   type = "application/json",
 ) {
-  const url = URL.createObjectURL(new Blob([text], { type }));
+  downloadBlob(name, new Blob([text], {type}));
+}
+export function downloadBlob(name: string, blob: Blob) {
+  const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
   link.download = name;

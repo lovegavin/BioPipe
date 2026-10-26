@@ -99,6 +99,12 @@ index, not the authoring document.
 Studio reads descriptors without importing analysis implementations. Workers load
 only the used operators/Readers. Installation precompiles immutable code/dependency
 directories; parameter-only refresh reuses them and preserves frozen job defaults.
+
+Each explicitly saved route also owns an independent JSON of concrete parameter
+values, including Reader arguments and nested-route values. Editing an operator's
+defaults cannot change saved route values. Each execution keeps its own
+`parameters.json`; portable `.biopipe.zip` bundles contain `graph.json` and
+`parameters.json`. See [workflow parameter values](docs/workflow_parameters.md).
 See [protocol v3](docs/operator_protocol.md), [Step examples](docs/step_extensions.md)
 and [Reader examples](docs/reader_extensions.md).
 

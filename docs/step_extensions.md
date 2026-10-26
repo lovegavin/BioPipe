@@ -49,6 +49,9 @@ Save the parameters beside it as `scale.parameters.json`:
 The same JSON supplies the frontend field, backend validation and execution default.
 Change `default` to change new unpinned execution defaults; `x-ui-default` changes
 only the new-node UI preset. Saved graph values and frozen job defaults are retained.
+Each saved route owns a separate JSON of concrete node values, and each job has
+its own `parameters.json`. Never load the authoring JSON inside `compute` or `run`
+to replace those supplied values. See [workflow values](workflow_parameters.md).
 
 Place both files in the operator directory shown by **Library Management**, then
 refresh. For an external package, run `biopipe plugin init my_lab`, adapt its generated

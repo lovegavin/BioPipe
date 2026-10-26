@@ -24,6 +24,13 @@ def load_manifest(path: Path) -> dict:
     if not isinstance(raw, dict):
         raise ManifestError("Manifest must be a YAML mapping")
 
+    if "parameters_file" in raw:
+        from biopipe.parameter_values import read_values, restore_task
+        try:
+            raw = restore_task(raw, read_values(path.parent, raw["parameters_file"]))
+        except (ValueError, TypeError, KeyError, AttributeError) as exc:
+            raise ManifestError(f"Cannot load task parameter values: {exc}") from exc
+
     for section in ("sources", "steps"):
         if section not in raw:
             raise ManifestError(f"Manifest missing '{section}' section")

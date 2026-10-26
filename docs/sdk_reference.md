@@ -48,6 +48,12 @@ JSON Schema, including defaults and UI hints. The loader binds the parsed schema
 and definition to a snapshot-specific class. Authors never maintain generated
 registry projections or duplicate `parameters_schema` on the class.
 
+The authoring schema is distinct from a saved route's parameter-value JSON. Read
+the supplied `params` / `ctx.step_params` / Reader arguments during execution; do
+not reopen the author's JSON to obtain current defaults. The engine freezes actual
+values on save and again in each job, preserving them after defaults change.
+See [workflow parameter values](workflow_parameters.md).
+
 ## Reader dispatch
 
 Set `definition.extensions` to suffixes such as `[".npy"]`. Optional `requires_siblings` and

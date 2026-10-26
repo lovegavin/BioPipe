@@ -40,6 +40,8 @@ def relative_manifest(manifest, directory):
 
 
 def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=False):
+    from .parameters import freeze_graph
+    graph = freeze_graph(graph, catalog, root)
     if any(node.kind == "route" for node in graph.nodes):
         from .contracts import analyze_graph
         from .routes import expand_routes
@@ -159,6 +161,9 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
         memory["cache_dir"] = str(project_path(root, memory["cache_dir"], graph.base_dir))
     manifest = {**graph.manifest_extra, "name": graph.name, "sources": sources, "steps": steps,
                 "params": graph.params, "runtime": {**graph.runtime, "memory": memory}}
+    # UI/agent graphs already contain concrete values; external sidecar paths
+    # cannot override them through arbitrary manifest metadata.
+    manifest.pop("parameters_file", None)
     _validate_sources(sources)
     _validate_steps(steps)
     MemoryConfig.parse(manifest, detect_available=False)
@@ -177,6 +182,8 @@ def import_manifest(text, base_dir, catalog, root):
     raw = yaml.safe_load(text)
     if not isinstance(raw, dict) or not isinstance(raw.get("sources"), dict) or not isinstance(raw.get("steps"), list):
         raise GraphError("任务 YAML 需要 sources 和 steps。")
+    if "parameters_file" in raw:
+        raise GraphError("此任务 YAML 引用了独立参数文件。请导入完整路线包，或使用 CLI 在原任务目录运行；不能单独导入而丢弃参数。")
     _validate_sources(raw["sources"])
     _validate_steps(raw["steps"])
     MemoryConfig.parse(raw, detect_available=False)

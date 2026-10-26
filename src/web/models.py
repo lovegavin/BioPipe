@@ -87,6 +87,7 @@ class SavedWorkflow(StrictModel):
     version: int = Field(ge=1)
     updated_at: str
     graph: Graph
+    parameters_file: str | None = Field(default=None, min_length=1, max_length=2048)
 
 
 class SaveWorkflow(StrictModel):

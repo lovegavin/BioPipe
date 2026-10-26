@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 import uuid
 
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import JSONResponse, FileResponse, StreamingResponse, PlainTextResponse
+from fastapi.responses import JSONResponse, FileResponse, StreamingResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 import yaml
 
@@ -21,6 +21,7 @@ from src.task.memory.config import AUTO_BUDGET_FRACTION, MemoryConfig
 from .graph import GraphError, compile_graph, import_manifest, project_path, relative_manifest
 from .models import Graph, ManifestImport, SaveWorkflow, RegisterRoutes, Workspace, LibraryAction
 from .routes import prepare_interface
+from .parameters import freeze_graph, export_bundle, import_bundle
 from .contracts import analyze_graph
 from .service import JobService, Settings, read_json, safe_json
 from .assets import AssetImports, accepted_extensions
@@ -138,7 +139,20 @@ def create_app(settings=None):
     @app.post("/api/workflows/prepare")
     def prepare_workflow(graph: Graph):
         graph = service.plugins.pin(graph)
-        return prepare_interface(graph, service.plugins.catalog_for(graph, service.base_catalog), settings.root).model_dump(mode="json")
+        resolved = service.plugins.catalog_for(graph, service.base_catalog)
+        return prepare_interface(freeze_graph(graph, resolved, settings.root), resolved, settings.root).model_dump(mode="json")
+
+    @app.post("/api/workflows/export")
+    def export_workflow(graph: Graph):
+        prepared = Graph.model_validate(prepare_workflow(graph))
+        return Response(export_bundle(prepared), media_type="application/zip")
+
+    @app.post("/api/workflows/import")
+    async def import_workflow(request: Request):
+        try:
+            return import_bundle(await request.body()).model_dump(mode="json")
+        except ValueError as exc:
+            raise GraphError(str(exc)) from exc
 
     @app.post("/api/workflows/save")
     def save_workflow(payload: SaveWorkflow):

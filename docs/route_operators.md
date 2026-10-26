@@ -23,8 +23,9 @@ External connections replace its source placeholders.
    last ten closed pages are autosaved. A new UI session starts a fresh undo history.
 
 Desktop and development startup share the same default profile. Explicit isolated
-workspaces remain independent. Export/import route JSON to transfer a route to
-another profile, then explicitly register it there.
+workspaces remain independent. Export/import a `.biopipe.zip` route bundle to
+transfer a route and its independent parameter values to another profile, then
+explicitly register it there. Self-contained graph JSON imports remain supported.
 
 ## Graph protocol
 
@@ -54,9 +55,13 @@ installed separately. See [plugin versions](plugins.md).
 
 ## Storage and execution
 
-- `workflows/route_<id>.json` stores the latest saved route; `registry.json` stores
+- `workflows/route_<id>.json` stores the latest saved route and references its own
+  `parameters/route_<id>/v<version>.json` of actual values; `registry.json` stores
   explicitly registered snapshots. Startup scans once; ordinary reads consult a
   small revision marker and reload only after changes.
+- Saving expands declared defaults into values. Changing operator/Reader defaults
+  later cannot change those saved choices. Each job also writes `parameters.json`.
+  See [workflow parameter values](workflow_parameters.md) for the two JSON formats.
 - Saving increments the version and checks `expected_version`. Re-register to update
   the library. Existing inserted instances keep their snapshots; new insertions use
   the latest registered version. Replace an old instance explicitly to upgrade it.

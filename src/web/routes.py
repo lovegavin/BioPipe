@@ -11,6 +11,8 @@ from pathlib import Path
 import uuid
 
 from .storage import FileLock, atomic_json
+from biopipe.parameter_values import read_values
+from .parameters import freeze_graph, split_graph, restore_graph
 
 from .models import (Graph, GraphEdge, RouteDefinition, RouteInterface, RouteInput,
                      RouteOutput, SavedWorkflow, Workspace, LibraryState)
@@ -269,6 +271,9 @@ class RouteLibrary:
         for path in self.directory.glob("route_*.json"):
             try:
                 item = SavedWorkflow.model_validate_json(path.read_text(encoding="utf-8"))
+                if item.parameters_file:
+                    item.graph = restore_graph(item.graph.model_dump(mode="json"),
+                                               read_values(self.directory, item.parameters_file))
                 saved[item.id] = item
             except (ValueError, OSError) as error:
                 raise ValueError(f"无法读取保存的路线，原文件已保留：{path}") from error
@@ -287,6 +292,16 @@ class RouteLibrary:
 
     def _write(self, path, value):
         atomic_json(path, value)
+
+    def _write_saved(self, item):
+        topology, values = split_graph(item.graph)
+        item.parameters_file = f"parameters/{item.id}/v{item.version}.json"
+        # Publish the values first. Replacing the route record is the commit
+        # point; an interrupted save leaves the previous version usable.
+        self._write(self.directory / item.parameters_file, values)
+        record = item.model_dump(mode="json")
+        record["graph"] = topology
+        self._write(self.directory / f"{item.id}.json", record)
 
     def list_saved(self):
         with self.lock:
@@ -309,7 +324,8 @@ class RouteLibrary:
             return self.saved[key].model_dump(mode="json")
 
     def save(self, payload):
-        graph = prepare_interface(payload.graph, self.catalog_for(payload.graph), self.root)
+        catalog = self.catalog_for(payload.graph)
+        graph = prepare_interface(freeze_graph(payload.graph, catalog, self.root), catalog, self.root)
         with self.lock:
             self._reload(force=True)
             key = payload.id or "route_" + uuid.uuid4().hex[:12]
@@ -320,7 +336,7 @@ class RouteLibrary:
                 fail("路线已在其他页面更新，请重新打开或另存为，避免覆盖。")
             item = SavedWorkflow(id=key, version=previous.version + 1 if previous else 1,
                                  updated_at=datetime.now(timezone.utc).isoformat(), graph=graph)
-            self._write(self.directory / f"{key}.json", item.model_dump(mode="json"))
+            self._write_saved(item)
             self.saved[key] = item
             self.changed()
             return item.model_dump(mode="json")
@@ -405,9 +421,10 @@ class RouteLibrary:
                     check_interface(item.graph, self.catalog)
                     from .graph import compile_graph
                     compile_graph(item.graph, self.catalog, self.root)
+                    item.graph = freeze_graph(item.graph, self.catalog_for(item.graph), self.root)
                     saved = SavedWorkflow(id=item.id, version=item.version, graph=item.graph,
                                           updated_at=datetime.now(timezone.utc).isoformat())
-                    self._write(self.directory / f"{item.id}.json", saved.model_dump(mode="json"))
+                    self._write_saved(saved)
                     self.saved[item.id], self.registered[item.id] = saved, item
                 installed.add(item.id)
             self._write(self.directory / "registry.json", [r.model_dump(mode="json") for r in self.registered.values()])

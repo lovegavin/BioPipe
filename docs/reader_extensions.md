@@ -51,6 +51,11 @@ importing its implementation. Compression handling remains centralized: Readers
 without native compression receive a temporary decompressed file. Use the existing
 format helpers; do not remove compression suffixes independently in the frontend.
 
+Reader schema defaults are materialized into the route's independent value JSON
+when a source can be resolved. Later default edits do not alter saved Reader
+arguments. Use the supplied arguments rather than rereading the author's JSON at
+execution time. See [workflow parameter values](workflow_parameters.md).
+
 A large-file Reader can provide `probe()` and `read_to_disk()` and declare
 `resources.memory_modes = ["full", "disk"]` and `disk_protocol = "dense-writer-v1"`.
 `probe` reads metadata, never eagerly densifies payloads. `read_to_disk` writes bounded

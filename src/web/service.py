@@ -153,6 +153,9 @@ class JobService:
         plugin_snapshot = self.plugins.snapshot(graph)
         graph = self.plugins.pin(graph, snapshot=plugin_snapshot)
         catalog = self.plugins._catalog(plugin_snapshot, self.base_catalog)
+        from .parameters import freeze_graph
+        from biopipe.parameter_values import split_task
+        graph = freeze_graph(graph, catalog, self.root)
         manifest, order = compile_graph(graph, catalog, self.root, require_files=True)
         with self.lock:
             self._refresh_jobs()
@@ -162,7 +165,9 @@ class JobService:
             directory = self.jobs_dir / key
             directory.mkdir()
             write_json(directory / "plugins.lock.json", plugin_snapshot)
-            (directory / "task.yaml").write_text(yaml.safe_dump(relative_manifest(manifest, directory), sort_keys=False, allow_unicode=True), encoding="utf-8")
+            task, parameter_values = split_task(relative_manifest(manifest, directory))
+            write_json(directory / "parameters.json", parameter_values)
+            (directory / "task.yaml").write_text(yaml.safe_dump(task, sort_keys=False, allow_unicode=True), encoding="utf-8")
             job = {"id": key, "name": graph.name, "status": "running", "created_at": datetime.now(timezone.utc).isoformat(),
                    "finished_at": None, "error": None, "exit_code": None, "logs_complete": False,
                    "order": order, "graph": graph.model_dump(mode="json"), "owner": self.owner}

@@ -52,7 +52,7 @@ import {
   PlayCircle,
   Trash,
 } from "@phosphor-icons/react";
-import { api, ApiError, downloadText } from "./api";
+import { api, ApiError, downloadText, downloadBlob } from "./api";
 import { CanvasBridge } from "./agentBridge";
 import type { AgentState } from "./agentBridge";
 import { AgentPanel } from "./AgentPanel";
@@ -455,7 +455,8 @@ function Studio() {
     try {
       const saved: SavedWorkflow[] = [];
       for (const file of Array.from(files)) {
-        const graph = normalizeGraph(JSON.parse(await file.text()));
+        const graph = normalizeGraph(file.name.toLowerCase().endsWith('.zip')
+          ? await api.importWorkflow(file) : JSON.parse(await file.text()));
         saved.push(await api.saveWorkflow(graph));
       }
       setPicker(null); openSaved(saved); notify(`已导入 ${saved.length} 条路线。请通过算子库 ＋ 选择注册。`, "success");
@@ -963,10 +964,11 @@ function Studio() {
     if (!file) return;
     setAction("import");
     try {
-      const text = await file.text();
-      const next = file.name.toLowerCase().endsWith(".json")
-        ? normalizeGraph(JSON.parse(text))
-        : autoLayout(normalizeGraph(await api.import(text, importBase)));
+      const next = file.name.toLowerCase().endsWith('.zip')
+        ? normalizeGraph(await api.importWorkflow(file))
+        : file.name.toLowerCase().endsWith(".json")
+          ? normalizeGraph(JSON.parse(await file.text()))
+          : autoLayout(normalizeGraph(await api.import(await file.text(), importBase)));
       openPages([{graph: next}]);
       setSelected(next.nodes[0]?.id || null);
       closeInspector();
@@ -1150,7 +1152,7 @@ function Studio() {
                     }}
                   >
                     <ArrowUp size={16} />
-                    导入 YAML / JSON
+                    导入路线 / YAML / JSON
                   </button>
                   <label className="menu-base">
                     <span>YAML 输入相对目录</span>
@@ -1162,12 +1164,13 @@ function Studio() {
                   </label>
                   <button
                     onClick={() => {
-                      void api.prepareWorkflow(graphRef.current).then(value => downloadText(`${value.name.replace(/[\\/:*?"<>|]/g, "_")}.biopipe.json`, JSON.stringify(value, null, 2))).catch(failure);
+                      const graph = graphRef.current;
+                      void api.exportWorkflow(graph).then(blob => downloadBlob(`${graph.name.replace(/[\\/:*?"<>|]/g, "_")}.biopipe.zip`, blob)).catch(failure);
                       setExportOpen(false);
                     }}
                   >
                     <ArrowDown size={16} />
-                    导出工作流 JSON
+                    导出路线包
                   </button>
                   <button onClick={() => void exportYaml()}>
                     <ArrowDown size={16} />
@@ -1240,12 +1243,12 @@ function Studio() {
         <input
           ref={importInput}
           type="file"
-          accept=".json,.yaml,.yml"
+          accept=".zip,.json,.yaml,.yml"
           className="sr-only"
           aria-label="导入工作流文件"
           onChange={(e) => void importFile(e.target.files?.[0])}
         />
-        <input ref={routeImport} type="file" multiple accept=".json" className="sr-only" aria-label="导入路线 JSON" onChange={e => void importRoutes(e.target.files)}/>
+        <input ref={routeImport} type="file" multiple accept=".zip,.json" className="sr-only" aria-label="导入路线包或 JSON" onChange={e => void importRoutes(e.target.files)}/>
       </header>
       <div className="workspace">
         {(libraryOpen || inspectorOpen) && (

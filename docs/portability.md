@@ -60,6 +60,13 @@ files and generated demo data use relative paths. YAML exports retain relative
 input references; place the export alongside the corresponding base directory and
 preserve the data layout. JSON/YAML files do not contain the input data itself.
 
+Portable route exports use `.biopipe.zip` with `graph.json` and `parameters.json`.
+Move both files together. Saved profile routes reference versioned parameter JSON
+under `workflows/parameters/`; jobs reference a local `parameters.json` beside
+`task.yaml`. These references are relative, and missing value files are errors,
+never an instruction to use current defaults. See
+[workflow parameter values](workflow_parameters.md).
+
 Carry the complete profile when retaining saved routes and run history, preserving
 relative `.studio/jobs`, `.studio/assets` and custom cache locations. Old absolute
 paths remain in audit records; history readers map the former workspace to its new

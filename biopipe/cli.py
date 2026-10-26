@@ -10,6 +10,13 @@ import time
 from .client import Client, ClientError, data_directory
 
 
+def read_graph_file(path):
+    if path.suffix.lower() == ".zip":
+        from src.web.parameters import import_bundle
+        return import_bundle(path.read_bytes()).model_dump(mode="json")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def parser():
     root = argparse.ArgumentParser(prog="biopipe", description=__doc__)
     root.add_argument("--profile-dir", type=Path)
@@ -130,7 +137,7 @@ def execute(args):
         if args.command == "jobs":
             return client.request(f"/jobs/{args.id}" + ("/cancel" if args.action == "cancel" else ""), {} if args.action == "cancel" else None)
         if args.command == "graph" and args.action == "validate":
-            return client.request("/validate", {"graph": json.loads(args.file.read_text(encoding="utf-8"))})
+            return client.request("/validate", {"graph": read_graph_file(args.file)})
         session = client.session(args.session)
         if args.command == "events":
             cursor = args.after
@@ -155,7 +162,7 @@ def execute(args):
         if args.command == "run":
             return client.request(f"/sessions/{session}/run", payload)
         if args.action == "open":
-            payload["graph"] = json.loads(args.file.read_text(encoding="utf-8"))
+            payload["graph"] = read_graph_file(args.file)
         elif args.action == "apply":
             value = json.loads(args.file.read_text(encoding="utf-8"))
             payload.update(commands=value if isinstance(value, list) else value["commands"], request_id=args.request_id)

@@ -19,6 +19,12 @@ When omitted, the filename is `<module>.parameters.json` (`parameters.json` for
 `__init__.py`). Multiple classes in one module must use distinct explicit filenames.
 There is no centrally edited parameter document for the whole library.
 
+This authoring JSON is a **schema**, not a workflow's mutable value file. Saving a
+route freezes effective values for each node into its own parameter JSON; each job
+also records its actual values separately. Defaults changed later apply to new or
+otherwise unspecified values, not to an already saved route. See
+[workflow parameter values](workflow_parameters.md) for storage and execution rules.
+
 The parameter JSON is the only authoring source for parameter types, defaults,
 validation limits and UI field hints. Do not duplicate `parameters_schema` or
 `ui_defaults` on the implementation class. Use `params` in `Operator.compute`,
