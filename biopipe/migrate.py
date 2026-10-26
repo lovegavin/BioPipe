@@ -72,6 +72,12 @@ def convert_documents(value, catalog, *, implementations=None, changes=None):
         result = Workspace.model_validate(result).model_dump(mode="json")
     if not (isinstance(result.get("nodes"), list) and isinstance(result.get("edges"), list)):
         return result
+    # Agent presence and selection events also have nodes/edges arrays, but
+    # contain selected IDs rather than a graph. Empty selections need this
+    # discriminator too; they must not acquire a graph schema during migration.
+    if not ("schema_version" in result or "name" in result or
+            any(isinstance(node, dict) and "kind" in node for node in result["nodes"])):
+        return result
     if result.get("schema_version", 1) not in (1, 2):
         raise ValueError("Cannot migrate an unknown graph schema version")
     result["schema_version"] = 2

@@ -116,6 +116,43 @@ def test_profile_migration_preserves_disabled_removed_and_historical_jobs(tmp_pa
     assert migrate(profile_dir=root)["changed"] == []
 
 
+@pytest.mark.parametrize("selected", [["pca"], []])
+def test_profile_migration_keeps_agent_presence_and_converts_undo_graphs(tmp_path, selected):
+    root = tmp_path / "profile"
+    directory = root / "workspace/.studio"
+    manager = PluginManager(directory)
+    state = manager.state()
+    state["protocol_version"] = state["package_protocol_version"] = 1
+    manager.registry.write_text(json.dumps(state), encoding="utf-8")
+    presence = {"document_id": "page", "nodes": selected, "edges": [],
+                "inspected_node": None, "focused_field": "",
+                "viewport": {"x": 0, "y": 0, "zoom": 1}}
+    session = directory / "agent/sessions" / ("a" * 32 + ".json")
+    session.parent.mkdir(parents=True)
+    value = {"id": "a" * 32, "presence": presence,
+             "workspace": {"schema_version": 1, "active_id": "page",
+                           "documents": [{"id": "page", "graph": graph()}]},
+             "history": {"page": {"past": [{"graph": graph()}], "future": [{"graph": graph()}]}},
+             "events": [{"selection": {"nodes": selected, "edges": []}}]}
+    original = json.dumps(value).encode()
+    session.write_bytes(original)
+    assert str(session) in migrate(profile_dir=root)["changed"]
+    assert session.read_bytes() == original
+    result = migrate(profile_dir=root, apply=True)
+    converted = json.loads(session.read_bytes())
+    assert converted["presence"] == presence and converted["events"] == value["events"]
+    for item in [converted["workspace"]["documents"][0]["graph"],
+                 converted["history"]["page"]["past"][0]["graph"],
+                 converted["history"]["page"]["future"][0]["graph"]]:
+        assert item["schema_version"] == 2
+        assert item["nodes"][0]["params"]["n_components"] == 10
+    backup = Path(result["backup"])
+    records = json.loads((backup / "manifest.json").read_text())["files"]
+    saved = next(r for r in records if r["path"] == str(session))
+    assert (backup / saved["backup"]).read_bytes() == original
+    assert migrate(profile_dir=root)["changed"] == []
+
+
 def test_failed_batch_rolls_back_and_keeps_original_backup(tmp_path, monkeypatch):
     a, b = tmp_path / "a.json", tmp_path / "b.json"
     a.write_bytes(b"original a"); b.write_bytes(b"original b")

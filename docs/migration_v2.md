@@ -59,6 +59,8 @@ selected for external providers.
 An old `draft.json` can seed a multi-document workspace once. The runtime then
 uses only the workspace. No startup search or implicit profile migration runs.
 Old jobs and their outputs/logs remain historical evidence.
+Agent selection and presence metadata remain unchanged; only their canvas and
+undo/redo graph records are converted.
 
 ## Restoring a migration
 
