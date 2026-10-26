@@ -8,9 +8,56 @@ from pathlib import Path
 import socket
 import sys
 import threading
+import time
 
 CODE_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(CODE_ROOT))
+
+
+def host_commands():
+    """Read host lines without leaving a blocking Windows pipe read pending.
+
+    A native extension's first import can inspect stdin while initializing.
+    A pending synchronous read on that handle can then stall DLL loading. Peek
+    before reading, so NumPy and other libraries can remain lazily imported.
+    The handshake and shutdown share this iterator to preserve buffered lines.
+    """
+    if os.name != "nt":
+        yield from sys.stdin
+        return
+    import ctypes
+    from ctypes import wintypes
+    import msvcrt
+    kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+    handle = msvcrt.get_osfhandle(sys.stdin.fileno())
+    kind = kernel.GetFileType
+    kind.argtypes, kind.restype = [wintypes.HANDLE], wintypes.DWORD
+    if kind(handle) != 3:  # FILE_TYPE_PIPE; retain console/file behavior.
+        yield from sys.stdin
+        return
+    peek = kernel.PeekNamedPipe
+    peek.argtypes = [wintypes.HANDLE, wintypes.LPVOID, wintypes.DWORD,
+                     wintypes.LPVOID, ctypes.POINTER(wintypes.DWORD), wintypes.LPVOID]
+    peek.restype = wintypes.BOOL
+    available = wintypes.DWORD()
+    pending = b""
+    while True:
+        if not peek(handle, None, 0, None, ctypes.byref(available), None):
+            if ctypes.get_last_error() == 109:  # ERROR_BROKEN_PIPE: host exited.
+                break
+            raise ctypes.WinError(ctypes.get_last_error())
+        if not available.value:
+            time.sleep(.05)
+            continue
+        chunk = os.read(sys.stdin.fileno(), min(available.value, 4096))
+        if not chunk:
+            break
+        pending += chunk
+        while b"\n" in pending:
+            line, _, pending = pending.partition(b"\n")
+            yield line.decode("utf-8", errors="replace")
+    if pending:
+        yield pending.decode("utf-8", errors="replace")
 
 
 def bind_loopback(preferred_port: int = 0) -> socket.socket:
@@ -49,7 +96,8 @@ def main():
         print(json.dumps(profile.as_dict(), ensure_ascii=False))
         return
     # The host first attaches us to its Windows Job Object, then releases startup.
-    if args.wait_for_host and sys.stdin.readline().strip() != "start":
+    commands = host_commands()
+    if args.wait_for_host and next(commands, "").strip() != "start":
         return
     if not 0 <= args.port <= 65535:
         parser.error("port must be between 0 and 65535")
@@ -78,10 +126,12 @@ def main():
 
         def watch_host():
             # EOF also shuts down if the parent exits before sending shutdown.
-            for line in sys.stdin:
-                if line.strip() == "shutdown":
-                    break
-            server.should_exit = True
+            try:
+                for line in commands:
+                    if line.strip() == "shutdown":
+                        break
+            finally:
+                server.should_exit = True
 
         threading.Thread(target=announce, daemon=True).start()
         threading.Thread(target=watch_host, daemon=True).start()

@@ -10,4 +10,4 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install -c constraints-py311-windows.txt -e ".[agent,dev]"
       - run: python -m biopipe registry check
-      - run: python -m pytest tests/test_manifest_v3.py tests/test_contracts.py tests/test_protocol_v2.py tests/test_sdk_agent.py tests/test_builtin_pins.py tests/test_route_parameters.py -q
+      - run: python -m pytest tests/test_manifest_v3.py tests/test_contracts.py tests/test_protocol_v2.py tests/test_sdk_agent.py tests/test_builtin_pins.py tests/test_route_parameters.py tests/test_desktop.py -q

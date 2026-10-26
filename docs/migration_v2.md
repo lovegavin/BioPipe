@@ -1,6 +1,6 @@
 # Migration to protocol v3
 
-BioPipe 0.5.0 requires protocol **3**. Graph schema **2** and workspace
+BioPipe 0.5.1 requires protocol **3**. Graph schema **2** and workspace
 schema **1** are separate versions and remain unchanged. Migrate a copy first.
 Published v0.4.1 and the local protocol-v2 baseline remain available for comparison.
 

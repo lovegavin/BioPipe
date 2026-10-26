@@ -115,7 +115,28 @@ def test_desktop_server_owns_port_and_exits_with_host(tmp_path, exit_mode):
             with httpx.Client(trust_env=False) as client:
                 assert client.get(url + "/ready").json()["status"] == "ok"
                 assert client.get(url).status_code == 200
-                assert client.get(url + "/api/bootstrap").json()["desktop"]
+                bootstrap = client.get(url + "/api/bootstrap").json()
+                assert bootstrap["desktop"]
+                if exit_mode == "shutdown":
+                    # Keep the actual host pipe open through the backend's first
+                    # NumPy import. In-process TestClient runs preload NumPy and
+                    # cannot expose a native import waiting on the stdin reader.
+                    client.headers["X-Studio-Token"] = bootstrap["token"]
+                    running = client.post(url + "/api/jobs", json=bootstrap["demo"])
+                    assert running.status_code == 202, running.text
+                    key = running.json()["id"]
+                    deadline = time.monotonic() + 30
+                    while time.monotonic() < deadline:
+                        job = client.get(url + "/api/jobs/" + key).json()
+                        if job["status"] != "running":
+                            break
+                        time.sleep(.1)
+                    assert job["status"] == "complete", job
+                    output = next(a for a in job["report"]["artifacts"] if a["name"] == "pcs")
+                    preview = client.get(url + f"/api/jobs/{key}/artifacts/{output['artifact_id']}/preview")
+                    assert preview.status_code == 200 and len(preview.json()["points"]) == 128
+                    exported = client.post(url + "/api/workflows/export", json=bootstrap["demo"])
+                    assert exported.status_code == 200 and exported.content.startswith(b"PK")
             if exit_mode == "shutdown":
                 process.stdin.write("shutdown\n")
                 process.stdin.flush()
@@ -128,3 +149,11 @@ def test_desktop_server_owns_port_and_exits_with_host(tmp_path, exit_mode):
                 process.kill()
                 process.wait(timeout=10)
             process.stdout.close()
+
+
+def test_safe_json_during_first_numpy_import(monkeypatch):
+    from types import ModuleType
+    from src.web.service import safe_json
+    # Import inserts a module before its native types have initialized.
+    monkeypatch.setitem(sys.modules, "numpy", ModuleType("numpy"))
+    assert safe_json({"status": "running", "finished": None}) == {"status": "running", "finished": None}

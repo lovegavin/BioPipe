@@ -27,7 +27,9 @@ def safe_json(value):
         return {str(k): safe_json(v) for k, v in value.items()}
     if isinstance(value, (list, tuple)):
         return [safe_json(v) for v in value]
-    if "numpy" in sys.modules and isinstance(value, sys.modules["numpy"].generic):
+    numpy = sys.modules.get("numpy")
+    scalar_type = vars(numpy).get("generic") if numpy is not None else None
+    if scalar_type is not None and isinstance(value, scalar_type):
         return safe_json(value.item())
     return value
 
