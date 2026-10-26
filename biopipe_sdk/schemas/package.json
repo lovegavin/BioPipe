@@ -1,11 +1,12 @@
 {
   "$defs": {
     "Descriptor": {
-      "additionalProperties": true,
+      "additionalProperties": false,
+      "description": "Canonical, versioned extension declaration; UI projections are separate.",
       "properties": {
         "protocol_version": {
-          "const": 1,
-          "default": 1,
+          "const": 2,
+          "default": 2,
           "title": "Protocol Version",
           "type": "integer"
         },
@@ -33,6 +34,11 @@
         },
         "title": {
           "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
           "type": "string"
         },
         "category": {
@@ -105,6 +111,111 @@
           },
           "title": "Dependency Imports",
           "type": "array"
+        },
+        "inputs_arity": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "const": "*",
+              "type": "string"
+            }
+          ],
+          "default": 0,
+          "title": "Inputs Arity"
+        },
+        "outputs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Outputs",
+          "type": "array"
+        },
+        "output_parameter": {
+          "anyOf": [
+            {
+              "const": "output",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Parameter"
+        },
+        "extensions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Extensions",
+          "type": "array"
+        },
+        "requires_siblings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Requires Siblings",
+          "type": "array"
+        },
+        "excludes_siblings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Excludes Siblings",
+          "type": "array"
+        },
+        "handles_compression": {
+          "default": false,
+          "title": "Handles Compression",
+          "type": "boolean"
+        },
+        "file_input": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Input"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preview"
+        },
+        "title_aliases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Title Aliases",
+          "type": "array"
+        },
+        "title_parameter": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title Parameter"
         }
       },
       "required": [
@@ -121,12 +232,12 @@
       "type": "object"
     }
   },
-  "additionalProperties": true,
+  "additionalProperties": false,
   "description": "One installation unit; operator identities remain independent of origin.",
   "properties": {
     "protocol_version": {
-      "const": 1,
-      "default": 1,
+      "const": 2,
+      "default": 2,
       "title": "Protocol Version",
       "type": "integer"
     },
@@ -165,6 +276,13 @@
         "$ref": "#/$defs/Descriptor"
       },
       "title": "Descriptors",
+      "type": "array"
+    },
+    "dependencies": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Dependencies",
       "type": "array"
     }
   },

@@ -1,12 +1,12 @@
 # BioPipe SDK reference
 
-The supported import surface is `biopipe_sdk`. SDK version is `1.2.0`; protocol
-version is `1`. The SDK currently ships with the `biopipe-studio` distribution.
+The supported import surface is `biopipe_sdk`. SDK version is `2.0.0`; descriptor/package protocol
+version is `2`. The SDK currently ships with the `biopipe-studio` distribution.
 
 | Export | Use |
 | --- | --- |
 | `Operator` | Implement `compute(inputs, params, context)` for one Form or a report |
-| `Step` | Compatible advanced API: `run(ctx, inputs)`, `export(ctx)` and fixed outputs |
+| `Step` | Advanced execution API: `run(ctx, inputs)`, `export(ctx)` and fixed outputs |
 | `Reader` | Implement `read(path, dims, labels, **args) -> Form` |
 | `Form` | Numeric tensor with named dimensions, labels, `info` and `axis_info` |
 | `Context` | Current step parameters, Form registry, outputs and logging |
@@ -28,7 +28,7 @@ version is `1`. The SDK currently ships with the `biopipe-studio` distribution.
 - `context.artifact_path(name)`: obtain a path under the run output's `artifacts`
   directory. Parent traversal and paths escaping this directory are rejected.
   Write a file there and return its path in the report.
-- `context.out_dir`: run output directory, for legacy code requiring the existing
+- `context.out_dir`: run output directory, for code using the established
   report/figure layout.
 
 The runner creates a new instance per execution, calls `run`, then calls `export`.
@@ -45,8 +45,7 @@ operators, and `icon = "Sigma"` selects its icon. Neither field changes executio
 data contracts, resource capabilities or package ownership.
 
 Use `quality_control`, `analysis`, `data`, `visualization`, or a custom category.
-Missing categories use Uncategorized; missing or unknown icon names use
-`SquaresFour`. See [categories and icons](operator_protocol.md#operator-categories-and-icons)
+Missing categories use Uncategorized; missing or unknown icon names use the category default (or `SquaresFour` for an unknown category). See [categories and icons](operator_protocol.md#operator-categories-and-icons)
 for aliases, the supported icon set and registry refresh commands.
 
 ## Reader dispatch
@@ -64,7 +63,7 @@ files before calling `read`; when true, it passes the original path. `parameters
 validates reader `args`, independently of engine-supplied `path`, `dims` and `labels`.
 Callers may supply format-specific label modes; support them or reject them clearly.
 
-SDK 1.1 exports `StreamInput`, `SourceProbe` and `DenseDiskWriter` for bounded
+The SDK exports `StreamInput`, `SourceProbe` and `DenseDiskWriter` for bounded
 execution. The supported hook signatures, admission estimates and ownership rules
 are in [package/resource protocol](package_protocol.md). The runnable
 `examples/resource_plugin` package uses only public SDK imports.
@@ -107,7 +106,7 @@ dependencies and historical plugin versions.
 
 Memory estimates and descriptor fields are defined in the
 [operator protocol](operator_protocol.md). There is no general public chunk or GPU
-allocator API in v1; native full-memory operators cannot be preempted mid-allocation.
+allocator API in v2; native full-memory operators cannot be preempted mid-allocation.
 
 ## Studio file import metadata
 
@@ -118,14 +117,14 @@ See [input formats](input_formats.md#reader-extension-metadata) for the schema a
 defaults. Existing readers and plugin descriptors without these hints remain valid.
 
 
-## SDK 1.2 output inference
+## Output inference
 
 `project` can remove `drop_dims`, add `prepend_dims`/`append_dims`, copy axis labels
 and derive dimension names from parameters or another input. `choose` selects a
 rule by a method parameter. These are serialized declarations consumed equally
 by Studio and the runtime, not callable Python hooks. See the examples in
-[operator protocol](operator_protocol.md). A backend with SDK 1.2 is required for
-these additional rules; an older packaged desktop backend must be updated first.
+[operator protocol](operator_protocol.md). Protocol v2 uses these rules without inference adapters. Rebuild extension
+packages with SDK 2.0 before installing them into this development version.
 
 Use `biopipe registry check` to validate local extension declarations and generated
 indexes without starting Studio. New source files with missing schemas/contracts

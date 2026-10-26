@@ -36,6 +36,8 @@ _STAT_LABELS = ("length", "gc", "n_ratio", "valid_ratio")
 
 class SequenceStatsStep(Step):
     """Per-sequence length, GC and N content for any sequence-codes Form."""
+    title = 'sequence_stats'
+    description = 'Per-sequence length, GC and N content for any sequence-codes Form.'
 
     name = "sequence_stats"
     category = "analysis"

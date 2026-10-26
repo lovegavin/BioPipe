@@ -32,6 +32,19 @@ class AttachInfoStep(Step):
         target_dim : dimension of the target to align against
         output     : context key for the result
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'fields': {'title': '注释字段',
+                               'type': 'array',
+                               'x-ui-default': ['chrom', 'pos'],
+                               'items': {'type': 'string'}},
+                    'target_dim': {'title': '目标维度', 'type': 'string', 'x-ui-default': 'feature'}},
+     'additionalProperties': True,
+     'required': ['fields', 'target_dim']}
+    title = '附加注释'
+    category = '数据整理'
+    icon = 'Tag'
+    description = '输入 1 为目标数据，输入 2 为注释来源。'
 
     name = "attach_info"
     inputs_arity = 2

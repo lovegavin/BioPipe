@@ -22,9 +22,18 @@ import threading
 import time
 
 from packaging.utils import canonicalize_name
-from biopipe_sdk.protocol import describe_operator, describe_reader, validate_extension
+from biopipe_sdk.protocol import describe_operator, describe_reader, validate_extension, PROTOCOL_VERSION, catalog_entry
 from src.web.storage import FileLock, atomic_json
-from biopipe.packages import bundled_manifest, bundled_state, owns_legacy_id
+from biopipe.packages import bundled_manifest, bundled_state, owns_builtin_id
+
+
+def require_current_state(value):
+    if value.get("package_protocol_version") != PROTOCOL_VERSION:
+        raise ValueError("This library uses protocol v1. Close Studio and run `biopipe migrate --profile-dir <profile> --apply`; old wheels must be rebuilt for v2.")
+    if "bundled_seen" not in value:
+        raise ValueError("Incomplete protocol v2 library: missing bundled_seen receipt")
+    if any(d.get("protocol_version") != PROTOCOL_VERSION for d in value.get("descriptors", [])):
+        raise ValueError("Library contains old descriptors; migrate it before loading")
 
 
 def active_descriptors(state):
@@ -123,7 +132,6 @@ def entry_descriptors():
             if manifest is not None:
                 from biopipe_sdk.protocol import PackageDescriptor
                 manifest = json.loads(manifest)
-                manifest.setdefault("name", canonicalize_name(manifest.get("package", package_name)))
                 PackageDescriptor.model_validate(manifest)
                 if manifest['name'] != package_name or manifest['version'] != dist.version:
                     raise ValueError("Package manifest identity differs from wheel metadata")
@@ -148,9 +156,9 @@ def load_runtime(lock):
     from src.task.step import STEPS
     from src.reader import READERS
     import importlib
-    if lock.get("package_protocol_version"):
-        STEPS.clear()
-        READERS.clear()
+    require_current_state(lock)
+    STEPS.clear()
+    READERS.clear()
     for descriptor in active_descriptors(lock):
         if descriptor.get('execution', {}).get('mode') == 'isolated':
             from biopipe.isolation import proxy_step, proxy_reader
@@ -196,28 +204,17 @@ class PluginManager:
         if not self.registry.exists():
             with self.lock:
                 if not self.registry.exists():
-                    self._publish({"protocol_version": 1, "package_protocol_version": 1,
+                    self._publish({"protocol_version": PROTOCOL_VERSION, "package_protocol_version": PROTOCOL_VERSION,
                                    **deepcopy(bundled_state()), "bundled_seen": sorted(p["name"] for p in bundled_state()["packages"])})
         value = json.loads(self.registry.read_text(encoding="utf-8"))
-        if not value.get("package_protocol_version"):
-            with self.lock:
-                value = json.loads(self.registry.read_text(encoding="utf-8"))
-                if not value.get("package_protocol_version"):
-                    self._publish(self._hydrate(value))
-                value = json.loads(self.registry.read_text(encoding="utf-8"))
+        require_current_state(value)
         current = {p["name"]: p for p in bundled_state()["packages"]}
         changed = {p["name"] for p in value["packages"] if p.get("origin") == "bundled"
                    and p["name"] in current and p.get("sha256") != current[p["name"]]["sha256"]}
-        # A receipt distinguishes new shipped providers from packages the user
-        # removed. Pre-receipt profiles recover that history from snapshots.
-        seen = set(value.get("bundled_seen", []))
-        if "bundled_seen" not in value:
-            seen.update(p["name"] for p in value["packages"])
-            for path in (self.directory / "snapshots").glob("*.json"):
-                previous = json.loads(path.read_text(encoding="utf-8"))
-                seen.update(p["name"] for p in previous.get("packages", []))
+        # Persisted receipt distinguishes new providers from deliberate removals.
+        seen = set(value["bundled_seen"])
         additions = set(current) - seen - {p["name"] for p in value["packages"]}
-        if changed or additions or "bundled_seen" not in value:
+        if changed or additions:
             with self.lock:
                 value = json.loads(self.registry.read_text(encoding="utf-8"))
                 additions -= set(value.get("bundled_seen", [])) | {p["name"] for p in value["packages"]}
@@ -231,17 +228,6 @@ class PluginManager:
                 value["descriptors"] = [d for d in value["descriptors"] if d["distribution"] not in replacing] + [deepcopy(d) for d in bundled_state()["descriptors"] if d["distribution"] in replacing]
                 value["bundled_seen"] = sorted(seen | set(value.get("bundled_seen", [])) | set(current))
                 self._publish(value)
-        value["_runtime_root"] = str(self.directory.resolve())
-        return value
-
-    def _hydrate(self, value):
-        value = deepcopy(value)
-        if not value.get("package_protocol_version"):
-            bundled = deepcopy(bundled_state())
-            value["packages"] = bundled["packages"] + value["packages"]
-            value["descriptors"] = bundled["descriptors"] + value["descriptors"]
-            value["package_protocol_version"] = 1
-            value["bundled_seen"] = sorted(p["name"] for p in bundled["packages"])
         value["_runtime_root"] = str(self.directory.resolve())
         return value
 
@@ -280,7 +266,7 @@ class PluginManager:
     def _catalog(self, state, catalog):
         value = {**deepcopy(catalog), "operators": [], "readers": []}
         for descriptor in active_descriptors(state):
-            value["operators" if descriptor["kind"] == "operator" else "readers"].append(descriptor)
+            value["operators" if descriptor["kind"] == "operator" else "readers"].append(catalog_entry(descriptor))
         value["plugin_generation"] = state["generation"]
         return value
 
@@ -298,7 +284,12 @@ class PluginManager:
         except ValueError:
             pass
         candidates = [state]
-        candidates.extend(self._hydrate(json.loads(p.read_text(encoding="utf-8"))) for pattern in ("snapshots/*.json", "environments/*/lock.json") for p in sorted(self.directory.glob(pattern)))
+        for pattern in ("snapshots/*.json", "environments/*/lock.json"):
+            for path in sorted(self.directory.glob(pattern)):
+                candidate = json.loads(path.read_text(encoding="utf-8"))
+                if candidate.get("package_protocol_version") == PROTOCOL_VERSION:
+                    candidate["_runtime_root"] = str(self.directory.resolve())
+                    candidates.append(candidate)
         return resolve(graph, candidates, bundled_state())
 
     def pin(self, graph, *, snapshot=None):
@@ -377,7 +368,7 @@ class PluginManager:
                 shutil.copy2(wheel, cached)
             previous = next((item for item in packages if item["name"] == name), {})
             packages = [item for item in packages if item["name"] != name]
-            packages.append({"protocol_version": 1, "origin": "wheel", "enabled": previous.get("enabled", True),
+            packages.append({"protocol_version": PROTOCOL_VERSION, "origin": "wheel", "enabled": previous.get("enabled", True),
                              "name": name, "version": info["Version"], "sha256": digest,
                              "wheel": str(cached.relative_to(self.directory))})
         generation = uuid.uuid4().hex
@@ -388,7 +379,7 @@ class PluginManager:
         if source_library is None:
             # An explicitly installed provider takes precedence over local sources.
             source_receipt["packages"] = [name for name in source_receipt.get("packages", []) if name not in replacements]
-        state.update(protocol_version=1, package_protocol_version=1,
+        state.update(protocol_version=PROTOCOL_VERSION, package_protocol_version=PROTOCOL_VERSION,
                      dropin_receipts=receipts if receipts is not None else current.get("dropin_receipts", {}),
                      source_library=source_receipt)
         atomic_json(environment / "lock.json", state)
@@ -397,9 +388,8 @@ class PluginManager:
         return state
 
     def python_for(self, state):
-        if state.get("runtime_protocol") == 1:
-            return sys.executable
-        return str(self.directory / state["python"]) if state.get("python") else sys.executable
+        # All v2 generations use the host interpreter with dependency targets.
+        return sys.executable
 
 
 if __name__ == "__main__":

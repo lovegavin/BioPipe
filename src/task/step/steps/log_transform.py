@@ -28,6 +28,16 @@ from src.core.forms.metadata import project_metadata
 
 class LogTransformStep(Step):
     """Apply log_base(x + pseudocount) elementwise."""
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'base': {'title': '底数', 'enum': [2, 10, 'e'], 'default': 2},
+                    'pseudocount': {'title': '伪计数', 'type': 'number', 'minimum': 0, 'default': 1}},
+     'additionalProperties': True,
+     'required': []}
+    title = 'Log'
+    category = '数据整理'
+    icon = 'Function'
+    description = '按指定底数与伪计数变换'
 
     name = "log_transform"
     inputs_arity = 1

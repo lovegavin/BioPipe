@@ -63,10 +63,6 @@ def wheel_entries(wheel):
 def load_class(descriptor):
     module, name = descriptor['entry_point'].split(':', 1)
     cls = getattr(importlib.import_module(module), name)
-    if descriptor.get('legacy_parameters') or '.' not in descriptor['id']:
-        cls.parameters_schema = deepcopy(descriptor['parameters_schema'])
-        cls.legacy_parameters = bool(descriptor.get('legacy_parameters', False))
-        cls._package_descriptor = deepcopy(descriptor)
     return cls
 
 
@@ -102,7 +98,7 @@ def probe_entry(request):
 
 
 def install(manager, current, packages, generation, *, dependencies=()):
-    from biopipe.packages import bundled_state, owns_legacy_id
+    from biopipe.packages import bundled_state, owns_builtin_id
     builder = TargetBuilder(manager, current)
     environment = manager.directory / 'environments' / generation
     environment.mkdir(parents=True)
@@ -150,7 +146,7 @@ def install(manager, current, packages, generation, *, dependencies=()):
                         execution = builder.prepare(descriptor['dependencies'])
                     bundled_names = {p['name'] for p in bundled_state()['packages']}
                     base_ids = {d['id'] for d in bundled_state()['descriptors']}
-                    if descriptor['id'] in base_ids and not owns_legacy_id(package['name'], descriptor['id']):
+                    if descriptor['id'] in base_ids and not owns_builtin_id(package['name'], descriptor['id']):
                         raise ValueError(f'Plugin shadows a built-in: {descriptor["id"]}')
                     if '.' not in descriptor['id'] and package['name'] not in bundled_names:
                         raise ValueError('Plugin IDs must be namespaced')
@@ -160,7 +156,7 @@ def install(manager, current, packages, generation, *, dependencies=()):
                     records.append(descriptor)
         owned = {d['id'] for d in bundled_state()['descriptors'] if d['distribution'] == package['name']}
         if not owned <= {d['id'] for d in records}:
-            raise ValueError('Replacement package must preserve its legacy IDs')
+            raise ValueError('Replacement package must preserve its bundled IDs')
         if not records:
             raise ValueError(f'No BioPipe entry points in {package["name"]}')
         descriptors.extend(records)

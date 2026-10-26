@@ -19,6 +19,19 @@ class SelectStep(Step):
         labels : list of label names to keep, in output order
         output : context key for the result
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '选择维度', 'type': 'string', 'x-ui-default': 'feature'},
+                    'labels': {'title': '保留的标签',
+                               'type': 'array',
+                               'x-ui-default': ['f0', 'f1'],
+                               'items': {'type': 'string'}}},
+     'additionalProperties': True,
+     'required': ['dim', 'labels']}
+    title = '选择特征'
+    category = '数据整理'
+    icon = 'Selection'
+    description = '按标签选择样本或特征。'
 
     name = "select"
     inputs_arity = 1

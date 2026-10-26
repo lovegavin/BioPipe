@@ -62,14 +62,14 @@ _METRICS = (
 
 class DistanceMatrixStep(Step):
     """Pairwise distance matrix along one axis."""
+    description = 'Pairwise distance matrix along one axis.'
 
     name = "distance_matrix"
     inputs_arity = 1
     outputs = []
     title = 'Distance matrix'
-    category = "Microbiome"
+    category = '统计分析'
     builtin_package = "biopipe-microbiome"
-    legacy_parameters = False
     parameters_schema = SCHEMAS['distance_matrix']
     input_contracts, output_contract = CONTRACTS['distance_matrix']
     output_parameter = "output"
@@ -176,6 +176,7 @@ class DistanceMatrixStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'Ruler'
 
 
 def _compute_distance(metric: str, X: np.ndarray) -> np.ndarray:

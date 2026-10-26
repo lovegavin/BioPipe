@@ -58,14 +58,14 @@ from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 class BarplotStep(Step):
     """Stacked bar plot of a matrix along one axis."""
+    description = 'Stacked bar plot of a matrix along one axis.'
 
     name = "barplot"
     inputs_arity = 1
     outputs = []
     title = 'Composition barplot'
-    category = "Microbiome"
+    category = '可视化'
     builtin_package = "biopipe-microbiome"
-    legacy_parameters = False
     parameters_schema = SCHEMAS['barplot']
     input_contracts, output_contract = CONTRACTS['barplot']
 
@@ -291,3 +291,5 @@ class BarplotStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'ChartBar'
+    preview = {'kind': 'composition', 'caption': '各组组成比例'}

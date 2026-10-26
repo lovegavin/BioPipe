@@ -24,6 +24,28 @@ class CorrectionStep(Step):
                  "statistic")
         output : context key for the result
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'method': {'title': '校正方法',
+                               'enum': ['fdr', 'bonferroni'],
+                               'default': 'bonferroni',
+                               'x-ui-default': 'fdr'},
+                    'alpha': {'title': '显著性水平',
+                              'type': 'number',
+                              'minimum': 0,
+                              'maximum': 1,
+                              'default': 0.05,
+                              'x-ui-step': 0.01},
+                    'pfield': {'title': 'P 值标签', 'type': 'string', 'default': 'P'},
+                    'dim': {'title': '统计量维度', 'type': 'string', 'default': 'statistic'}},
+     'additionalProperties': True,
+     'required': []}
+    title = 'FDR'
+    category = '统计分析'
+    icon = 'CheckSquare'
+    description = '进行 Bonferroni 或 FDR 校正。'
+    title_aliases = ['多重检验校正']
+    title_parameter = {'key': 'method', 'values': {'fdr': 'FDR', 'bonferroni': 'Bonferroni'}}
 
     name = "correction"
     inputs_arity = 1

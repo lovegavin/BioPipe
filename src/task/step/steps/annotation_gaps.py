@@ -39,6 +39,8 @@ _STAT_LABELS = ("gap_length", "left_start", "left_end",
 
 class AnnotationGapsStep(Step):
     """Inter-gene gap lengths for GFF3/GTF annotation QC."""
+    title = 'annotation_gaps'
+    description = 'Inter-gene gap lengths for GFF3/GTF annotation QC.'
 
     name = "annotation_gaps"
     category = "analysis"

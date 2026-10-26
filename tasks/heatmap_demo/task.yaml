@@ -28,7 +28,7 @@ steps:
     params:
       method: cpm
       dim: sample
-      target_sum: 1e6
+      target_sum: 1.0e+6
       output: counts_cpm
 
   - name: log_transform

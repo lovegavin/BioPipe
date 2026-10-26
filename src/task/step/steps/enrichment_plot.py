@@ -37,6 +37,8 @@ from src.task.step.steps._plot_helpers import setup_style, save_figure
 
 class EnrichmentPlotStep(Step):
     """Horizontal bar plot of enrichment results."""
+    title = 'enrichment_plot'
+    description = 'Horizontal bar plot of enrichment results.'
 
     name = "enrichment_plot"
     category = "visualization"

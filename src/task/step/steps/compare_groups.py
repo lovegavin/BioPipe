@@ -79,24 +79,19 @@ _STAT_LABELS = {
 
 class CompareGroupsStep(Step):
     """Compare groups along one dimension."""
+    icon = 'Intersect'
+    description = 'T-test、Welch、Mann–Whitney 或 DESeq2'
     dependencies = ['pydeseq2==0.5.4']
     dependency_imports = ['pydeseq2']
 
     name = "compare_groups"
     inputs_arity = 2
     outputs = []
-    parameters_schema = SCHEMAS['compare_groups']
     input_contracts, output_contract = CONTRACTS['compare_groups']
-    output_parameter = 'output'
-    legacy_parameters = False
 
-    @classmethod
-    def estimate_memory(cls, inputs, params, profiles):
-        return estimate_axis(cls.name, inputs, params, profiles)
     title = 'Group comparison'
     category = 'Analysis'
     builtin_package = 'biopipe-expression'
-    legacy_parameters = False
     parameters_schema = SCHEMAS['compare_groups']
     input_contracts, output_contract = CONTRACTS['compare_groups']
     output_parameter = 'output'

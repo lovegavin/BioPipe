@@ -26,6 +26,23 @@ class HweStep(Step):
         threshold : minimum allowed p-value
         output    : context key for the result
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '变异维度', 'type': 'string', 'x-ui-default': 'variant'},
+                    'threshold': {'title': '最低 P 值',
+                                  'type': 'number',
+                                  'minimum': 0,
+                                  'maximum': 1,
+                                  'default': 1e-06,
+                                  'x-ui-default': 0.0001,
+                                  'x-ui-step': 0.0001}},
+     'additionalProperties': True,
+     'required': ['dim']}
+    title = 'HWE'
+    category = '质量控制'
+    icon = 'Scales'
+    description = 'Hardy–Weinberg 平衡过滤。输入需要二倍体基因型。'
+    title_aliases = ['平衡检验']
 
     name = "hwe"
     inputs_arity = 1

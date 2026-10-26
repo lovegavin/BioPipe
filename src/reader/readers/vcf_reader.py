@@ -220,6 +220,7 @@ def _read_cyvcf2(path: Path):
 
 class VcfReader(Reader):
     """Reader for .vcf and .vcf.gz files."""
+    parameters_schema = {'type': 'object', 'properties': {}, 'additionalProperties': True}
 
     output_contract = reader_contract(representation="hard_call", coordinates=True)
 

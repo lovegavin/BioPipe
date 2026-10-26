@@ -30,6 +30,23 @@ class LineStep(Step):
         ylabel   : optional y-axis label (default: y_label)
         sort     : sort points by x before drawing (default True)
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '维度', 'type': 'string', 'default': 'feature'},
+                    'x_label': {'title': '横坐标标签', 'type': 'string', 'x-ui-default': 'f0'},
+                    'y_label': {'title': '纵坐标标签', 'type': 'string', 'x-ui-default': 'f1'},
+                    'filename': {'title': '文件名', 'type': 'string', 'x-ui-default': 'line.png'},
+                    'sort': {'title': 'Sort by X', 'type': 'boolean', 'default': True},
+                    'title': {'title': 'Title', 'type': 'string'},
+                    'xlabel': {'title': 'X axis label', 'type': 'string'},
+                    'ylabel': {'title': 'Y axis label', 'type': 'string'}},
+     'additionalProperties': True,
+     'required': ['x_label', 'y_label', 'filename']}
+    title = '折线图'
+    category = '可视化'
+    icon = 'ChartLine'
+    description = '选择两个数值标签，按横坐标排序后绘制曲线。'
+    preview = {'kind': 'line', 'caption': '随序列变化的趋势'}
 
     name = "line"
     inputs_arity = 1

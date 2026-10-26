@@ -30,18 +30,19 @@ def test_draft_survives_server_restart_and_does_not_require_runnable_graph(tmp_p
     settings = desktop_settings(tmp_path / "独立工作目录")
     with TestClient(create_app(settings)) as client:
         bootstrap = client.get("/api/bootstrap").json()
-        assert bootstrap["desktop"] and bootstrap["draft"] is None
+        assert bootstrap["desktop"] and "draft" not in bootstrap
         draft = deepcopy(bootstrap["demo"])
         draft["name"] = "草稿 with spaces"
         draft["edges"] = []
-        assert client.post("/api/draft", json=draft).status_code == 403
+        assert client.post("/api/workspace", json={"schema_version": 1, "active_id": "a", "documents": [{"id": "a", "graph": draft}]}).status_code == 403
         client.headers["X-Studio-Token"] = bootstrap["token"]
-        assert client.post("/api/draft", json=draft).status_code == 200
+        assert client.post("/api/workspace", json={"schema_version": 1, "active_id": "a", "documents": [{"id": "a", "graph": draft}]}).status_code == 200
     with TestClient(create_app(settings)) as client:
-        restored = client.get("/api/bootstrap").json()["draft"]
+        restored = client.get("/api/workspace").json()["documents"][0]["graph"]
         assert restored["name"] == draft["name"] and restored["edges"] == []
         assert restored["nodes"][0]["source"]["path"].startswith(".studio/assets/")
-    assert (settings.data_dir / "draft.json").is_file()
+    assert not (settings.data_dir / "draft.json").exists()
+    assert (settings.data_dir / "workflows/workspace.json").is_file()
     assert (settings.data_dir / "operators.json").is_file()
 
 
@@ -67,7 +68,8 @@ def test_worker_runs_from_separate_workspace_and_preserves_results(tmp_path):
         assert output["shape"] == [128, 2]
         assert Path(output["disk_uri"]).is_relative_to(settings.root)
         preview = client.get(f"/api/jobs/{key}/artifacts/{output['artifact_id']}/preview")
-        assert preview.status_code == 200 and len(preview.json()["points"]) == 128
+        assert preview.status_code == 200, preview.text
+        assert len(preview.json()["points"]) == 128
     with TestClient(create_app(settings)) as client:
         assert client.get("/api/jobs").json()[0]["status"] == "complete"
     assert not (settings.root / "scripts").exists()

@@ -10,6 +10,8 @@ class Scale(Operator):
     version = "0.1.0"
     title = "Scale matrix"
     category = "data"
+    dependencies = ["numpy>=1.26"]
+    dependency_imports = ["numpy"]
     icon = "icons/scale.svg"  # Relative to this file; omit for the category default.
     input_contracts = [port(ndim=2)]
     output_contract = {"mode": "transform", "representation": "scaled"}

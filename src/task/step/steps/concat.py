@@ -9,6 +9,17 @@ from src.task.step.base import Step
 
 class ConcatStep(Step):
     """Concatenate inputs on axis; align other axes by label or a unique key."""
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'axis': {'title': '合并维度', 'type': 'string', 'x-ui-default': 'feature'},
+                    'align': {'title': 'Alignment', 'type': ['object', 'array']},
+                    'label': {'title': 'Merged key label', 'type': 'string'}},
+     'additionalProperties': True,
+     'required': ['axis']}
+    title = '合并数据'
+    category = '数据整理'
+    icon = 'Unite'
+    description = '按指定维度连接多个输入，输入端口顺序决定合并顺序。'
     name = "concat"
     inputs_arity = "*"
     outputs = []

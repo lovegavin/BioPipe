@@ -42,14 +42,14 @@ _METRICS = ("shannon", "simpson", "richness", "evenness", "gini")
 
 class DiversityStep(Step):
     """Compute diversity metrics along one axis."""
+    description = 'Compute diversity metrics along one axis.'
 
     name = "diversity"
     inputs_arity = 1
     outputs = []
     title = 'Alpha diversity'
-    category = "Microbiome"
+    category = '统计分析'
     builtin_package = "biopipe-microbiome"
-    legacy_parameters = False
     parameters_schema = SCHEMAS['diversity']
     input_contracts, output_contract = CONTRACTS['diversity']
     output_parameter = "output"
@@ -163,6 +163,7 @@ class DiversityStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'CirclesThree'
 
 
 def _compute_metric(name, masked, totals, valid):

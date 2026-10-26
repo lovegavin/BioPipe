@@ -53,6 +53,8 @@ from src.task.step.base import Step
 
 class AnnotateStep(Step):
     """Attach reference fields onto a target by key label."""
+    title = 'annotate'
+    description = 'Attach reference fields onto a target by key label.'
 
     name = "annotate"
     category = "data"

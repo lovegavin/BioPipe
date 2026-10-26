@@ -65,14 +65,14 @@ _METHODS = ("sum", "mean", "median", "min", "max", "count")
 
 class AggregateStep(Step):
     """Aggregate positions along one axis by group."""
+    description = 'Aggregate positions along one axis by group.'
 
     name = "aggregate"
     inputs_arity = 2
     outputs = []
     title = 'Aggregate'
-    category = "Microbiome"
+    category = '数据整理'
     builtin_package = "biopipe-microbiome"
-    legacy_parameters = False
     parameters_schema = SCHEMAS['aggregate']
     input_contracts, output_contract = CONTRACTS['aggregate']
     output_parameter = "output"
@@ -258,6 +258,7 @@ class AggregateStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'Stack'
 
 
 def _decode(code, encoder):

@@ -68,14 +68,14 @@ _METRICS = (
 
 class CorrelationStep(Step):
     """Pairwise correlation matrix along one axis."""
+    description = 'Pairwise correlation matrix along one axis.'
 
     name = "correlation"
     inputs_arity = 1
     outputs = []
     title = 'Correlation'
-    category = "Microbiome"
+    category = '统计分析'
     builtin_package = "biopipe-microbiome"
-    legacy_parameters = False
     parameters_schema = SCHEMAS['correlation']
     input_contracts, output_contract = CONTRACTS['correlation']
     output_parameter = "output"
@@ -194,6 +194,7 @@ class CorrelationStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'Intersect'
 
 
 def _compute_correlation(metric, X, valid, min_valid):

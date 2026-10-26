@@ -53,14 +53,14 @@ _PROP_MODES = ("nonzero", "threshold")
 
 class DotplotStep(Step):
     """Dot plot of features grouped by a label column."""
+    description = 'Dot plot of features grouped by a label column.'
 
     name = "dotplot"
     inputs_arity = 2
     outputs = []
     title = 'Dot plot'
-    category = 'Visualization'
+    category = '可视化'
     builtin_package = 'biopipe-plots'
-    legacy_parameters = False
     parameters_schema = SCHEMAS['dotplot']
     input_contracts, output_contract = CONTRACTS['dotplot']
     output_parameter = None
@@ -377,6 +377,8 @@ class DotplotStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'ChartScatter'
+    preview = {'kind': 'dotplot', 'caption': '点大小与强度'}
 
 
 def _decode(code, encoder):

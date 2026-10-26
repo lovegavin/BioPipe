@@ -62,14 +62,14 @@ _KNOWN_STATS = (
 
 class ReduceAxisStep(Step):
     """Reduce one axis of a form to summary statistics."""
+    description = 'Reduce one axis of a form to summary statistics.'
 
     name = "reduce_axis"
     inputs_arity = 1
     outputs = []
     title = 'Axis statistics'
-    category = 'Analysis'
+    category = '统计分析'
     builtin_package = 'biopipe-core'
-    legacy_parameters = False
     parameters_schema = SCHEMAS['reduce_axis']
     input_contracts, output_contract = CONTRACTS['reduce_axis']
     output_parameter = 'output'
@@ -178,6 +178,7 @@ class ReduceAxisStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'Sigma'
 
 
 def _compute_stat(name: str, flat: np.ndarray, valid: np.ndarray):

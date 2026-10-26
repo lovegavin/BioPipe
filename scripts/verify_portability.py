@@ -92,12 +92,12 @@ def main():
     # interpreter case above is deterministic on every development machine.
 
     profile = directory / "用户 profile"
-    response = subprocess.run([str(executable), "--smoke-test", "--data-dir", str(profile)],
+    response = subprocess.run([str(executable), "--smoke-test", "--profile-dir", str(profile)],
                               cwd=unrelated, env=environment, startupinfo=startup, timeout=90)
     logs = "\n".join(path.read_text(encoding="utf-8-sig") for path in (profile / "logs").glob("*.log"))
     assert response.returncode == 0, logs
     assert all(message in logs for message in ("Frontend ready", "Draft flushed to workspace", "Backend stopped", "Host stopped")), logs
-    assert (profile / "workspace/.studio/draft.json").is_file()
+    assert (profile / "workspace/.studio/workflows/workspace.json").is_file()
     checks.append("Relocated real WebView2 host loads the catalog, saves its draft and shuts down")
     result = {"status": "passed", "relocated_root": str(relocated), "profile": str(profile),
               "python": sys.executable, "checks": checks}

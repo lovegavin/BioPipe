@@ -41,6 +41,8 @@ from src.task.step.base import Step
 
 class PrioritizeStep(Step):
     """Keep the top positions along a dimension, ranked by an info field."""
+    title = 'prioritize'
+    description = 'Keep the top positions along a dimension, ranked by an info field.'
 
     name = "prioritize"
     category = "data"

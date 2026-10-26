@@ -15,7 +15,7 @@ import zipfile
 
 from biopipe.plugins import run_process
 from biopipe import __version__
-from biopipe_sdk.protocol import describe_operator, describe_reader, validate_extension
+from biopipe_sdk.protocol import describe_operator, describe_reader, validate_extension, PROTOCOL_VERSION
 
 
 def scaffold(path, template="operator"):
@@ -111,7 +111,7 @@ class ArrayReader(Reader):
         return Form(data=data, dims=dims, labels=mapping, info={{"missing_code": float("nan")}})
 '''
     (path / module / "__init__.py").write_text(source, encoding="utf-8")
-    (path / "README.md").write_text(f"# {package}\n\nGenerated BioPipe SDK v1 {template} plugin.\n\n"
+    (path / "README.md").write_text(f"# {package}\n\nGenerated BioPipe SDK v2 {template} plugin.\n\n"
         "1. Edit the implementation and contracts.\n2. Run `biopipe plugin check .`.\n"
         "3. Run `biopipe plugin test .`.\n4. Run `biopipe plugin build .`.\n"
         "5. Install the resulting wheel with `biopipe plugin install dist/<file>.whl`.\n", encoding="utf-8")
@@ -161,16 +161,16 @@ def check_source(path):
             if not cls.output_contract or (kind == "operator" and cls.input_contracts is None):
                 raise ValueError(f"Missing contracts: {entry}")
             descriptor = describe_operator(cls) if kind == "operator" else describe_reader(cls())
-            from biopipe.packages import owns_legacy_id
+            from biopipe.packages import owns_builtin_id
             from packaging.utils import canonicalize_name
-            if "." not in descriptor["id"] and not owns_legacy_id(canonicalize_name(project["name"]), descriptor["id"]):
+            if "." not in descriptor["id"] and not owns_builtin_id(canonicalize_name(project["name"]), descriptor["id"]):
                 raise ValueError("Use a namespaced ID such as lab.scale")
             descriptors.append(descriptor)
     if not descriptors:
         raise ValueError("No BioPipe entry points declared")
     from biopipe_sdk.protocol import PackageDescriptor
-    value = {"protocol_version": 1, "name": canonicalize_name(project["name"]),
-             "package": project["name"], "version": project["version"], "origin": "wheel",
+    value = {"protocol_version": PROTOCOL_VERSION, "name": canonicalize_name(project["name"]),
+             "version": project["version"], "origin": "wheel",
              "dependencies": project.get("dependencies", []), "descriptors": descriptors}
     PackageDescriptor.model_validate(value)
     return value

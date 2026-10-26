@@ -52,6 +52,19 @@ _SIZE_FACTOR_METHODS = ("cpm", "total", "median_of_ratios")
 
 class NormalizeStep(Step):
     """Normalize a Form along one dimension."""
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'method': {'title': '方法',
+                               'enum': ['cpm', 'total', 'median_of_ratios', 'quantile', 'zscore'],
+                               'x-ui-default': 'cpm'},
+                    'dim': {'title': '分析维度', 'type': 'string', 'x-ui-default': 'sample'},
+                    'target_sum': {'title': '目标总量', 'type': 'number', 'minimum': 0, 'default': 1000000.0}},
+     'additionalProperties': True,
+     'required': ['method', 'dim']}
+    title = '归一化'
+    category = '数据整理'
+    icon = 'SlidersHorizontal'
+    description = 'CPM、DESeq2 size factors、Quantile 或 Z-score'
 
     name = "normalize"
     inputs_arity = 1

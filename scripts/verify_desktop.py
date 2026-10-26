@@ -38,7 +38,7 @@ def main():
     startup = subprocess.STARTUPINFO()
     startup.dwFlags = subprocess.STARTF_USESHOWWINDOW
     startup.wShowWindow = 0
-    command = [str(executable), "--data-dir", str(profile)]
+    command = [str(executable), "--profile-dir", str(profile)]
     owned = []
     with socket.socket() as occupied:
         occupied.bind(("127.0.0.1", 0))
@@ -79,7 +79,7 @@ def main():
             record = json.loads((profile / "workspace/.studio/jobs" / key / "job.json").read_text(encoding="utf-8"))
             assert record["status"] in ("interrupted", "complete")
             assert "Draft flushed to workspace" in log_text() and "Host stopped" in log_text()
-            assert (profile / "workspace/.studio/draft.json").is_file()
+            assert (profile / "workspace/.studio/workflows/workspace.json").is_file()
             result = {"status": "passed", "profile": str(profile), "checks": [
                 "real WebView2 frontend bootstrap", "desktop agent session and context", "occupied port fallback", "single desktop instance",
                 "active worker cleanup after host crash", "interrupted history recovery",

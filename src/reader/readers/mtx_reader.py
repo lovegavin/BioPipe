@@ -58,6 +58,7 @@ from src.reader.readers._labels import unique_labels
 
 class MtxReader(Reader):
     """Reader for MatrixMarket .mtx files."""
+    parameters_schema = {'type': 'object', 'properties': {}, 'additionalProperties': True}
 
     output_contract = reader_contract()
 

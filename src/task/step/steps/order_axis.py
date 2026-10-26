@@ -36,6 +36,8 @@ from src.task.step.base import Step
 
 class OrderAxisStep(Step):
     """Reorder an axis by a numeric info field, keeping all positions."""
+    title = 'order_axis'
+    description = 'Reorder an axis by a numeric info field, keeping all positions.'
 
     name = "order_axis"
     category = "data"

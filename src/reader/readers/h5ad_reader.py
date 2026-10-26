@@ -50,6 +50,12 @@ from src.reader.readers._labels import unique_labels
 
 class H5adReader(Reader):
     """Reader for .h5ad files."""
+    parameters_schema = {'type': 'object',
+     'properties': {'layer': {'type': ['string', 'null'],
+                              'x-ui-type': 'string',
+                              'title': 'Layer',
+                              'description': 'Leave unset to read X.'}},
+     'additionalProperties': True}
     dependencies = ['anndata>=0.10', 'h5py>=3.9']
     dependency_imports = ['anndata', 'h5py']
 

@@ -18,7 +18,7 @@ export type PluginState = {generation: string | null; packages: PluginPackage[];
   source_directories?: {operator: string; reader: string};
   descriptors: {id: string; kind: 'reader' | 'operator'; title: string; distribution: string; resources?: {memory_modes: string[]}}[]};
 export type Operator = {
-  name: string;
+  id: string;
   title: string;
   title_aliases?: string[];
   title_parameter?: { key: string; values: Record<string, string> };
@@ -31,14 +31,11 @@ export type Operator = {
   inputs_arity: number | "*";
   outputs: string[];
   output_parameter: string | null;
-  input_type: string;
-  output_type: string;
-  memory_modes: string[];
-  supports_cuda: boolean;
+  resources: {memory_modes: string[]; supports_cuda: boolean};
   parameters: Parameter[];
   contracts?: { version: number; inputs: PortContract[] | null; output: { mode: string } | null };
 };
-export type ReaderSpec = { name: string; extensions: string[]; output_contract: PortContract | null;
+export type ReaderSpec = { id: string; extensions: string[]; contracts: {output: PortContract | null};
   parameters?: Parameter[];
   requires_siblings?: string[]; handles_compression?: boolean;
   file_input?: { dims?: string[]; labels?: Record<string, unknown>; compression?: string[]; companions?: string[][] } };
@@ -99,7 +96,7 @@ export type Graph = {
   params?: Record<string, unknown>;
   runtime?: Record<string, unknown>;
   manifest_extra?: Record<string, unknown>;
-  schema_version: 1 | 2;
+  schema_version: 2;
   name: string;
   base_dir: string;
   nodes: GraphNode[];
@@ -177,7 +174,6 @@ export type Bootstrap = {
   automatic_memory_budget_bytes?: number | null;
   agent_config?: {command: string; args: string[]};
   desktop?: boolean;
-  draft?: Graph | null;
   token: string;
   catalog: Catalog;
   demo: Graph;

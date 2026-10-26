@@ -67,14 +67,14 @@ _STAT_LABELS = {"F": 0, "R2": 1, "P": 2, "n_perm": 3}
 
 class PermanovaStep(Step):
     """PERMANOVA on a distance matrix with a grouping column."""
+    description = 'PERMANOVA on a distance matrix with a grouping column.'
 
     name = "permanova"
     inputs_arity = 2
     outputs = []
     title = 'PERMANOVA'
-    category = "Microbiome"
+    category = '统计分析'
     builtin_package = "biopipe-microbiome"
-    legacy_parameters = False
     parameters_schema = SCHEMAS['permanova']
     input_contracts, output_contract = CONTRACTS['permanova']
     output_parameter = "output"
@@ -306,6 +306,7 @@ class PermanovaStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'Shuffle'
 
 
 def _permanova_core(D, codes, n_groups, n_perm, rng):

@@ -32,14 +32,15 @@ def gateway(tmp_path):
         yield client, app, data, state
 
 
-def test_all_legacy_descriptors_are_public_and_preserve_names():
+def test_all_descriptors_are_public_and_preserve_ids():
     from src.reader import READERS
     catalog = build_catalog(STEPS)
     assert len(catalog["operators"]) == len(STEPS)
     assert {d["id"] for d in catalog["readers"]} == {type(reader).__name__ for reader in READERS}
     assert {d["id"] for d in catalog["operators"]} == set(STEPS)
     for descriptor in catalog["operators"] + catalog["readers"]:
-        assert Descriptor.model_validate(descriptor).protocol_version == 1
+        canonical = {k: v for k, v in descriptor.items() if k not in {"parameters", "runtime_defaults"}}
+        assert Descriptor.model_validate(canonical).protocol_version == 2
         assert descriptor["contracts"]["output"] is not None
         assert descriptor["entry_point"].count(":") == 1
     assert next(d for d in catalog["operators"] if d["id"] == "pca")["output_parameter"] == "output"

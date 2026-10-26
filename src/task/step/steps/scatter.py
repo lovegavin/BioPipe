@@ -35,6 +35,33 @@ class ScatterStep(Step):
         point_size  : marker size (default 8)
         alpha       : marker transparency (default 0.7)
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '坐标维度',
+                            'type': 'string',
+                            'default': 'feature',
+                            'x-ui-default': 'component'},
+                    'x_label': {'title': '横坐标标签', 'type': 'string', 'x-ui-default': 'PC1'},
+                    'y_label': {'title': '纵坐标标签', 'type': 'string', 'x-ui-default': 'PC2'},
+                    'filename': {'title': '文件名', 'type': 'string', 'x-ui-default': 'scatter.png'},
+                    'alpha': {'title': 'Opacity',
+                              'type': 'number',
+                              'minimum': 0,
+                              'maximum': 1,
+                              'default': 0.7,
+                              'x-ui-step': 0.05},
+                    'color_label': {'title': 'Color field', 'type': 'string'},
+                    'point_size': {'title': 'Point size', 'type': 'number', 'minimum': 0, 'default': 8},
+                    'title': {'title': 'Title', 'type': 'string'},
+                    'xlabel': {'title': 'X axis label', 'type': 'string'},
+                    'ylabel': {'title': 'Y axis label', 'type': 'string'}},
+     'additionalProperties': True,
+     'required': ['x_label', 'y_label', 'filename']}
+    title = '散点图'
+    category = '可视化'
+    icon = 'ChartScatter'
+    description = '选择两个标签绘制散点图。'
+    preview = {'kind': 'scatter', 'caption': '两变量的分布与关系'}
 
     name = "scatter"
     inputs_arity = 1

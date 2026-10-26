@@ -50,6 +50,8 @@ _STATISTIC_COLUMNS = ["term_size", "n_hit", "expected", "P_VALUE", "Q_VALUE"]
 
 class EnrichGoStep(Step):
     """Hypergeometric enrichment of one term axis over two inputs."""
+    title = 'enrich_go'
+    description = 'Hypergeometric enrichment of one term axis over two inputs.'
 
     name = "enrich_go"
     category = "analysis"

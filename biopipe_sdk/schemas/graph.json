@@ -4,11 +4,8 @@
       "additionalProperties": false,
       "properties": {
         "schema_version": {
-          "default": 1,
-          "enum": [
-            1,
-            2
-          ],
+          "const": 2,
+          "default": 2,
           "title": "Schema Version",
           "type": "integer"
         },

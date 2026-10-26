@@ -15,6 +15,15 @@ class DescribeStep(Step):
 
     Params: none.
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {},
+     'additionalProperties': True,
+     'required': []}
+    title = '数据概览'
+    category = '数据整理'
+    icon = 'ListBullets'
+    description = '查看形状、标签、缺失情况与全局统计。支持分块读取。'
 
     name = "describe"
     inputs_arity = 1

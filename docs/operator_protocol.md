@@ -1,8 +1,10 @@
-# BioPipe Operator Protocol v1
+# BioPipe Operator Protocol v2
 
-Status: protocol v1, implemented for BioPipe Studio 0.3 and SDK 1.2. Python 3.11 or newer is required.
-This document is the public contract for new Python plugins. Existing `Step`, `Reader`,
-YAML tasks, graph v1/v2 files and route snapshots remain supported through adapters.
+Status: protocol v2, SDK 2.0.0, in the next development version. Python 3.11 or newer is required.
+This is the single public declaration contract for all 64 built-in Steps, 15 Readers
+and external extensions. Existing IDs and calculation semantics are retained.
+Protocol v1 declarations and graph v1 files require [explicit migration](migration_v2.md);
+the live runtime does not load their compatibility adapters.
 
 Reader descriptors may also provide optional `file_input` metadata for Studio's
 file picker, default dimensions/labels and companion-file checks. See the
@@ -50,7 +52,7 @@ Every reader and operator has these fields:
 
 | Field | Meaning |
 | --- | --- |
-| `protocol_version` | Exactly `1` |
+| `protocol_version` | Exactly `2` |
 | `id`, `version`, `kind` | Stable identity; kind is `operator` or `reader` |
 | `entry_point` | Python `module:Class` |
 | `title`, `description` | Display text |
@@ -60,12 +62,16 @@ Every reader and operator has these fields:
 | `resources` | Supported memory modes, CUDA declaration, estimation hook |
 | `dependencies` | Optional PEP 508 requirement strings, such as `numpy>=1.26` |
 | `dependency_imports` | Optional Python module names to verify in an isolated process |
-| `implementation` | Installed package name, version and wheel SHA-256 |
+| `implementation` (registry only) | Installed package name, version and content SHA-256; not part of an author descriptor |
 
 Operators additionally expose `inputs_arity`, `outputs`, and `output_parameter`.
 Readers expose `extensions`, `requires_siblings`, `excludes_siblings`, and
-`handles_compression`. The registry retains legacy UI fields (`name`, `parameters`,
-`runtime_defaults`, etc.) so the existing desktop can consume the same catalog.
+`handles_compression`, plus optional `file_input`. The canonical descriptor has
+one identity (`id`), one parameter schema, one `contracts` object and one `resources`
+object. The HTTP catalog adds derived `parameters` and `runtime_defaults` for
+forms; these projections must not be written into provider manifests. There are no
+`name`/`module` aliases, top-level `memory_modes`/`supports_cuda`, `input_type`/`output_type`
+or Reader `output_contract` duplicates. Class attributes remain the authoring API.
 Generated parameter forms support primitive fields, enums and JSON object/array
 fields. Complex schema constraints are always checked by Python even when a custom
 widget is unavailable.
@@ -78,8 +84,7 @@ biopipe schema graph
 biopipe schema workspace
 ```
 
-Checked-in copies are in `biopipe_sdk/schemas/`. The descriptor envelope is
-extensible; semantic validation also checks arity, parameter schemas and contracts.
+Checked-in copies are in `biopipe_sdk/schemas/`. The descriptor envelope rejects unknown fields; semantic validation also checks arity, parameter schemas and contracts.
 
 ## Dependency declarations
 
@@ -97,7 +102,7 @@ source declarations literal lists so Refresh can read them before importing
 the module. Declare package-wide requirements in wheel `project.dependencies`; these are
 merged into every installed entry. Keep conflicting per-operator requirements on
 the individual classes and in the SDK manifest, not in the common package list.
-An omitted declaration remains compatible with older extensions, but BioPipe
+If a declaration is omitted, BioPipe
 cannot infer undeclared dependencies from arbitrary Python code.
 
 Studio checks enabled entries at startup and after library changes. A passing
@@ -139,7 +144,7 @@ Custom category strings are also supported. Studio localizes common aliases so
 equivalent English and Chinese categories appear in one group. Omitted or empty
 categories appear under **Uncategorized**. Older `Plugins`/`Extensions` defaults
 also appear there; their operator kind and package ownership remain unchanged.
-Established bundled operators retain legacy presentation adapters.
+Bundled operators declare their presentation on the implementation class as well.
 
 `icon` optionally names an image relative to the Python module defining the class:
 
@@ -193,8 +198,8 @@ TreeStructure TrendUp Unite
 
 Category and icon are optional typed fields in the public operator/package JSON
 schemas. Both source registry maintenance and wheel builds copy declarations into
-their descriptors. Explicit class values take precedence over older descriptor
-defaults. Omitting an icon preserves any legacy bundled icon or chart preview.
+their descriptors. The implementation class is the sole source. Omitting an icon selects the category
+default; visualization previews are explicit optional declarations.
 
 For a source module or image edit, click **Refresh operator library** or run
 `biopipe plugin refresh`; no application restart is needed. Maintainers additionally
@@ -206,16 +211,21 @@ See [registry maintenance](registry_maintenance.md) and [plugin lifecycle](plugi
 
 ## Parameters
 
-New plugins must declare `parameters_schema`, including readers with no options.
+Every Step and Reader must declare `parameters_schema`, including readers with no options.
 The root must be an object. Use `additionalProperties: false` to catch misspellings.
 Top-level property defaults are copied before validation. Nested defaults are not
 materialized automatically. `$ref` and `$dynamicRef` may reference only local
 fragments; validation never downloads remote schemas. Optional UI hints include
-`title`, `default`, `enum`, `minimum`, and `maximum`.
+`title`, `enum`, `minimum`, `maximum`, `x-ui-step` and `x-ui-default`.
+`default` is the execution default; `x-ui-default` is only a new-card preset.
+For example, PCA retains execution default 10 and new-card preset 2. The registry
+never reads method source code to infer defaults. `ui_defaults` on a class is an
+optional map applied to these schema annotations when a shared schema is used.
 
 Engine fields `output` and `_input_names` are not plugin calculation parameters.
-The v1 dynamic output parameter is named `output`. Legacy built-in parameter
-schemas remain permissive to avoid changing existing manifest behavior.
+The dynamic output parameter is named `output`. All calculation parameters are
+validated on every execution. A built-in schema may explicitly allow additional
+properties for its existing algorithm options; this is not a validation bypass.
 
 ## Data and port contracts
 
@@ -274,7 +284,7 @@ Output inference supports the following common rules:
 The `info` map on an output rule can add guarantees, including a new representation. A custom algorithm must
 actually perform the declared transformation; a descriptor does not transform data.
 
-SDK 1.2 adds data-independent axis composition. For example, a pairwise matrix:
+The contract supports data-independent axis composition. For example, a pairwise matrix:
 
 ```python
 output_contract = {
@@ -297,7 +307,7 @@ no input matrix is read or synthetic fact asserted during inference.
 A method-dependent rule uses `{"mode": "choose", "param": "method", "default":
 "pca", "cases": {"pcoa": <rule>}, "otherwise": <rule>}`. Each branch is validated
 recursively. Parameter references may specify a string `suffix`, as above. These
-rules require the SDK 1.2 backend; protocol version remains 1.
+rules belong to data contract version 1, independent of descriptor version 2.
 
 The backend analyzer reports `compatible`, `incompatible`, or `unknown` without
 loading the full input. Known incompatibilities block wiring/compilation. Unknown
@@ -324,19 +334,18 @@ An active NumPy allocation cannot be interrupted or spilled; underestimating an
 algorithm's scratch space can still exhaust memory. A CUDA capability declaration
 does not allocate GPU memory or implement a CUDA kernel.
 
-SDK 1.1 adds explicit `flat-reduction-v1` and `dense-writer-v1` resource contracts
-without changing descriptor protocol version 1. Both bundled and wheel providers
+The explicit `flat-reduction-v1` and `dense-writer-v1` resource contracts remain
+unchanged under descriptor protocol v2. Both bundled and wheel providers
 use these contracts. Bare capability booleans without the corresponding protocol
 and hooks are rejected. See [package/resource protocol](package_protocol.md).
 
 ## Compatibility and persistence
 
-The 31 legacy Steps retain compatibility adapters; eight new microbiome Steps
-declare strict schemas. All 13 Readers publish the same descriptor protocol;
-their names and YAML entry points are unchanged. New plugins import from
+All 64 Steps and 15 Readers publish protocol v2 without schema injection or a
+`legacy_parameters` bypass. Their IDs and YAML entry points are unchanged. New plugins import from
 `biopipe_sdk`, avoiding dependencies on private engine modules.
 
-Graph v1/v2 files accept optional `plugin_lock` entries containing package/version/
+Graph v2 files accept optional `plugin_lock` entries containing package/version/
 SHA-256. Saved graphs, nested route snapshots and launched jobs retain their pins.
 Upgrading/removing a library plugin does not mutate an inserted route or a running
 job. A graph with incompatible plugin generations fails explicitly. JSON routes
@@ -347,9 +356,9 @@ See [SDK quickstart](sdk_quickstart.md), [SDK reference](sdk_reference.md),
 
 ## Workflow configuration preservation
 
-Graph v1/v2 accepts optional `params` (pipeline globals), `runtime` (non-memory
+Graph v2 accepts optional `params` (pipeline globals), `runtime` (non-memory
 runtime fields) and `manifest_extra` (additional top-level YAML fields). Missing
-fields default to empty objects, so older canvases remain valid. The existing graph
+fields default to empty objects in v2. Older canvases must be migrated explicitly. The existing graph
 `memory` field owns `runtime.memory` on export. An explicit disabled memory flag is
 preserved; importing YAML without memory configuration retains CLI eager semantics.
 
@@ -364,3 +373,18 @@ Configuration import and autosave no longer impose a fixed 2 MiB transport limit
 Graph structural limits (nodes, edges, nesting and tabs) remain validated. This is
 independent of the optional scientific-data upload cap. CLI/MCP `configure` commands
 can also edit `params`, `runtime` and `manifest_extra` atomically with undo.
+
+## Stability policy
+
+The authoring surface is `biopipe_sdk`. Operator IDs, parameter types, execution
+defaults, output names, data contracts and resource hook signatures are a versioned
+interface. Change an operator version when its behavior changes; change the major
+version for incompatible parameter/port/default changes, and document migration.
+Do not silently rename IDs or infer missing declarations. Keep metadata changes
+separate from calculation changes in review. Protocol changes require regenerated
+JSON schemas, updated examples and passing contract, packaging and execution tests.
+
+Descriptor/package protocol 2, graph schema 2, workspace schema 1, data contract 1,
+and the named resource protocols are separate version domains. Their numbers do
+not need to match. New optional fields still require an SDK/schema update; arbitrary
+unknown fields are rejected. Source scans and installs validate the same rules.

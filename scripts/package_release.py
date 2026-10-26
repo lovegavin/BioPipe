@@ -21,7 +21,7 @@ def main():
     parser.add_argument('--output', type=Path, default=root / 'dist/releases')
     parser.add_argument('--runtime', type=Path, help='Portable Python directory produced by build_runtime.py')
     parser.add_argument('--webview-bootstrapper', type=Path, help='Optional cached official Microsoft WebView2 bootstrapper; signature is verified')
-    parser.add_argument('--lite', action='store_true', help='Explicit legacy package requiring an existing Python environment')
+    parser.add_argument('--lite', action='store_true', help='Smaller package requiring an existing Python environment')
     args = parser.parse_args()
     if not args.lite and (not args.runtime or not (args.runtime / 'biopipe-runtime.json').is_file()):
         parser.error('Full releases require --runtime from build_runtime.py; use --lite only for an environment-free package')
@@ -71,12 +71,12 @@ def main():
         copy(source, source.name)
     for name_ in ('README.md', 'pyproject.toml'):
         copy(root / name_, name_)
-    for name_ in ('desktop_server.py', 'run.py', 'diagnose_pins.py', 'repin_all.py'):
+    for name_ in ('desktop_server.py', 'run.py', 'diagnose_pins.py'):
         copy(root / 'scripts' / name_, Path('scripts') / name_)
     shutil.copytree(root / 'docs', destination / 'docs')
-    # Ship the small source example referenced by the hot-refresh guide.
-    shutil.copytree(root / 'examples/dropins', destination / 'examples/dropins',
-                    ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
+    # Ship the small SDK examples referenced by the extension guides.
+    shutil.copytree(root / 'examples', destination / 'examples',
+                    ignore=shutil.ignore_patterns('__pycache__', '*.pyc', 'build', 'dist', '*.egg-info'))
     shutil.copytree(root / 'THIRD_PARTY_NOTICES', destination / 'THIRD_PARTY_NOTICES')
     # Regenerate frontend notices from the lockfile actually used for this build.
     lock = json.loads((root / 'frontend/package-lock.json').read_text(encoding='utf-8'))

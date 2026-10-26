@@ -48,14 +48,14 @@ from ._microbiome import metadata
 
 class FilterByStep(Step):
     """Keep positions along a dim that satisfy thresholds from another form."""
+    description = 'Keep positions along a dim that satisfy thresholds from another form.'
 
     name = "filter_by"
     inputs_arity = 2
     outputs = []
     title = 'Filter by metrics'
-    category = 'Analysis'
+    category = '数据整理'
     builtin_package = 'biopipe-core'
-    legacy_parameters = False
     parameters_schema = SCHEMAS['filter_by']
     input_contracts, output_contract = CONTRACTS['filter_by']
     output_parameter = 'output'
@@ -224,3 +224,4 @@ class FilterByStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'Funnel'

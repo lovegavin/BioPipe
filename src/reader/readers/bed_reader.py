@@ -72,6 +72,12 @@ _BED_COLUMNS = [
 
 class BedReader(Reader):
     """Reader for UCSC .bed files."""
+    parameters_schema = {'type': 'object',
+     'properties': {'encoders': {'type': 'object',
+                                 'title': 'Encoders',
+                                 'description': 'Per-field encoder configuration.',
+                                 'additionalProperties': True}},
+     'additionalProperties': True}
 
     output_contract = reader_contract()
 

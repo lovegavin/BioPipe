@@ -91,6 +91,8 @@ def _extract(form, region_dim, field_dim, chrom_field, start_field, end_field,
 
 class IntervalOverlapStep(Step):
     """Pairwise overlap of intervals between two BED forms."""
+    title = 'interval_overlap'
+    description = 'Pairwise overlap of intervals between two BED forms.'
 
     name = "interval_overlap"
     category = "analysis"

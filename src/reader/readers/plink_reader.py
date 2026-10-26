@@ -80,6 +80,7 @@ _FAM_COLUMNS = ["FID", "IID", "PID", "MID", "SEX", "PHENO"]
 
 class Plink1Reader(Reader):
     """Reader for PLINK 1.x .bed / .bim / .fam triplets."""
+    parameters_schema = {'type': 'object', 'properties': {}, 'additionalProperties': True}
     dependencies = ['bed-reader>=1.0']
     dependency_imports = ['bed_reader']
 
@@ -159,6 +160,7 @@ class Plink1Reader(Reader):
 
 class Plink2Reader(Reader):
     """Reader for PLINK 2.x .pgen / .pvar / .psam triplets."""
+    parameters_schema = {'type': 'object', 'properties': {}, 'additionalProperties': True}
     dependencies = ['pgenlib>=0.90']
     dependency_imports = ['pgenlib']
 

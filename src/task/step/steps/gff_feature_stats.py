@@ -41,6 +41,8 @@ _STAT_LABELS = (
 
 class GffFeatureStatsStep(Step):
     """Per-feature-type length and count statistics for GFF3/GTF."""
+    title = 'gff_feature_stats'
+    description = 'Per-feature-type length and count statistics for GFF3/GTF.'
 
     name = "gff_feature_stats"
     category = "analysis"

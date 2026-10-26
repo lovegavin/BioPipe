@@ -59,6 +59,22 @@ _STAT_LABELS = {
 
 class CoxRegressionStep(Step):
     """Fit a Cox proportional hazards model."""
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'time_label': {'title': '随访时间字段', 'type': 'string'},
+                    'event_label': {'title': '事件字段', 'type': 'string'},
+                    'covariates': {'title': '协变量', 'type': 'array', 'items': {'type': 'string'}},
+                    'weights_label': {'title': '权重字段', 'type': 'string'},
+                    'categorical': {'title': '分类协变量',
+                                    'type': 'array',
+                                    'default': [],
+                                    'items': {'type': 'string'}}},
+     'additionalProperties': True,
+     'required': ['time_label', 'event_label', 'covariates']}
+    title = 'Cox'
+    category = '统计分析'
+    icon = 'TrendUp'
+    description = '多变量比例风险回归'
     dependencies = ['lifelines>=0.30,<0.31']
     dependency_imports = ['lifelines']
 

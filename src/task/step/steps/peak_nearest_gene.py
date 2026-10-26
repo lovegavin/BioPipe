@@ -113,6 +113,8 @@ def _read_intervals(form, region_dim, field_dim, chrom_field,
 
 class PeakNearestGeneStep(Step):
     """Assign every BED interval to its nearest annotated gene."""
+    title = 'peak_nearest_gene'
+    description = 'Assign every BED interval to its nearest annotated gene.'
 
     name = "peak_nearest_gene"
     category = "analysis"

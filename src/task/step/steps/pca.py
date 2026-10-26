@@ -32,6 +32,21 @@ class PcaStep(Step):
         n_components : number of components to keep (default 10)
         output       : context key for the result (default: step name)
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '压缩维度', 'type': 'string', 'x-ui-default': 'feature'},
+                    'n_components': {'title': '主成分数量',
+                                     'type': 'integer',
+                                     'minimum': 1,
+                                     'default': 10,
+                                     'x-ui-default': 2}},
+     'additionalProperties': True,
+     'required': ['dim']}
+    title = 'PCA'
+    category = '统计分析'
+    icon = 'ChartScatter'
+    description = '标准化数据，提取主成分；缺失值以特征均值填充。'
+    title_aliases = ['主成分分析']
 
     name = "pca"
     inputs_arity = 1

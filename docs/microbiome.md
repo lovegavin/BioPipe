@@ -68,7 +68,7 @@ allocation. An admitted estimate is not a hard native-memory ceiling.
 `distance_matrix` and `correlation` accept an optional `max_positions` guard.
 The adapter defaults it to null, using budget-based admission instead of the
 upstream fixed 10,000-position cap. Explicit positive limits are still honored.
-The shipped 16S template enables memory management. Standalone legacy YAML only
+The shipped 16S template enables memory management. Standalone YAML only
 uses admission checks when `runtime.memory.enabled` is true.
 
 The Reader package keeps H5AD/MTX `dense-writer-v1` preparation, and `describe`

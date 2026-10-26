@@ -5,18 +5,19 @@ from typing import Any, Literal
 from jsonschema import Draft202012Validator
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-PROTOCOL_VERSION = 1
+PROTOCOL_VERSION = 2
 
 
 class Descriptor(BaseModel):
-    # Legacy UI fields are retained as extension fields in catalog v1.
-    model_config = ConfigDict(extra="allow")
-    protocol_version: Literal[1] = 1
+    """Canonical, versioned extension declaration; UI projections are separate."""
+    model_config = ConfigDict(extra="forbid")
+    protocol_version: Literal[2] = 2
     id: str = Field(pattern=r"^[A-Za-z_][A-Za-z0-9_.-]{0,79}$")
     version: str = Field(pattern=r"^\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?$")
     kind: Literal["operator", "reader"]
     entry_point: str
     title: str
+    description: str = ""
     category: str | None = Field(default=None, description="Operator library category, independent of package origin. Custom labels are allowed.")
     icon: str | None = Field(default=None, description="Optional module-relative image path or Studio icon name. Missing or unknown names use the category default.")
     icon_image: str | None = Field(default=None, pattern=r"^data:image/(png|jpeg|webp|gif|svg\+xml);base64,[A-Za-z0-9+/]+={0,2}$", description="SDK-generated portable image data; authors declare a relative path in icon.")
@@ -25,6 +26,17 @@ class Descriptor(BaseModel):
     resources: dict[str, Any]
     dependencies: list[str] = Field(default_factory=list, description="PEP 508 dependencies; compatible versions share the host runtime, conflicting versions use a private dependency directory and subprocess with the same Python.")
     dependency_imports: list[str] = Field(default_factory=list, description="Optional import smoke checks, run outside the UI process.")
+    inputs_arity: int | Literal["*"] = 0
+    outputs: list[str] = Field(default_factory=list)
+    output_parameter: Literal["output"] | None = None
+    extensions: list[str] = Field(default_factory=list)
+    requires_siblings: list[str] = Field(default_factory=list)
+    excludes_siblings: list[str] = Field(default_factory=list)
+    handles_compression: bool = False
+    file_input: dict[str, Any] | None = None
+    preview: dict[str, Any] | None = None
+    title_aliases: list[str] = Field(default_factory=list)
+    title_parameter: dict[str, Any] | None = None
 
     @field_validator('dependencies')
     @classmethod
@@ -41,13 +53,14 @@ class Descriptor(BaseModel):
 
 class PackageDescriptor(BaseModel):
     """One installation unit; operator identities remain independent of origin."""
-    model_config = ConfigDict(extra="allow")
-    protocol_version: Literal[1] = 1
+    model_config = ConfigDict(extra="forbid")
+    protocol_version: Literal[2] = 2
     name: str = Field(pattern=r"^[a-z0-9][a-z0-9.-]*$")
     version: str
     title: str | None = None
     origin: Literal["bundled", "wheel"] = "wheel"
     descriptors: list[Descriptor]
+    dependencies: list[str] = Field(default_factory=list)
 
 
 def validate_schema(schema):
@@ -99,51 +112,35 @@ def schema_to_fields(schema):
         for source, target in (("default", "default"), ("minimum", "min"), ("maximum", "max"), ("enum", "options")):
             if source in value:
                 field[target] = deepcopy(value[source])
+        if "x-ui-default" in value:
+            field["default"] = deepcopy(value["x-ui-default"])
+        if "x-ui-step" in value:
+            field["step"] = value["x-ui-step"]
         result.append(field)
     return result
 
 
-def legacy_schema(fields, defaults):
-    properties = {}
-    for field in fields:
-        kind = field["type"]
-        value = {"title": field.get("label", field["key"])}
-        types = {"list": "array", "scalar": ["string", "number"], "json": ["object", "array"]}
-        if kind == "choice":
-            value["enum"] = field.get("options", [])
-        else:
-            value["type"] = types.get(kind, kind)
-        for source, target in (("min", "minimum"), ("max", "maximum")):
-            if source in field:
-                value[target] = field[source]
-        if field["key"] in defaults:
-            value["default"] = defaults[field["key"]]
-        properties[field["key"]] = value
-    # Existing manifests can contain additional engine parameters. The adapter
-    # advertises them without tightening historical validation behavior.
-    return {"$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object",
-            "properties": properties, "additionalProperties": True,
-            "required": [f["key"] for f in fields if f.get("required") and f["key"] not in defaults]}
+def _schema(cls):
+    schema = deepcopy(cls.parameters_schema)
+    if schema is None:
+        raise ValueError(f"{cls.__name__}: protocol v2 requires parameters_schema; run the migration tool for v1 sources")
+    for key, value in getattr(cls, "ui_defaults", {}).items():
+        if key not in schema.get("properties", {}):
+            raise ValueError(f"Unknown UI preset parameter: {key}")
+        schema["properties"][key]["x-ui-default"] = deepcopy(value)
+    validate_schema(schema)
+    return schema
 
 
-def describe_operator(cls, legacy=None):
-    packaged = getattr(cls, "_package_descriptor", None)
-    value = deepcopy(packaged or legacy or {})
-    schema = getattr(cls, "parameters_schema", None)
-    if schema is not None:
-        validate_schema(schema)
-        if not packaged:
-            value["parameters"] = schema_to_fields(schema)
-            value["runtime_defaults"] = {key: field["default"] for key, field in schema.get("properties", {}).items() if "default" in field}
-    else:
-        schema = legacy_schema(value.get("parameters", []), value.get("runtime_defaults", {}))
-    output_parameter = getattr(cls, "output_parameter", None)
-    value.update(protocol_version=1, id=cls.name, version=getattr(cls, "version", "1.0.0"), kind="operator",
-                 entry_point=f"{cls.__module__}:{cls.__name__}", module=cls.__module__,
-                 title=getattr(cls, "title", None) or value.get("title", cls.name),
-                 parameters_schema=schema, name=cls.name, inputs_arity=cls.inputs_arity,
-                 outputs=list(cls.outputs), output_parameter=output_parameter,
-                 legacy_parameters=bool(getattr(cls, "legacy_parameters", False)),
+def describe_operator(cls):
+    """Generate the sole executable declaration from the implementation class."""
+    value = dict(protocol_version=PROTOCOL_VERSION, id=cls.name,
+                 version=cls.version, kind="operator",
+                 entry_point=f"{cls.__module__}:{cls.__name__}",
+                 title=getattr(cls, "title", None) or cls.name,
+                 description=getattr(cls, "description", None) or (cls.__doc__ or "").strip(),
+                 parameters_schema=_schema(cls), inputs_arity=cls.inputs_arity,
+                 outputs=list(cls.outputs), output_parameter=cls.output_parameter,
                  contracts={"version": 1, "inputs": cls.input_contracts, "output": cls.output_contract},
                  resources={"memory_modes": ["full", "stream"] if cls.supports_streaming else ["full"],
                             "supports_cuda": bool(getattr(cls, "supports_cuda", False)),
@@ -151,44 +148,42 @@ def describe_operator(cls, legacy=None):
                             **({"stream_protocol": cls.stream_protocol,
                                 "stream_buffer_multiplier": cls.stream_buffer_multiplier,
                                 "stream_fixed_bytes": cls.stream_fixed_bytes} if cls.supports_streaming else {})})
-    # Declarations travel through source scans and wheel manifests alike. A base
-    # class's None defaults must not erase older packaged presentation metadata.
-    for field in ("category", "icon"):
-        declared = getattr(cls, field, None)
+    for key in ("category", "icon", "preview", "title_aliases", "title_parameter"):
+        declared = getattr(cls, key, None)
         if declared is not None:
-            value[field] = declared
-    if value.get("category") is None:
-        value["category"] = "Plugins"
+            value[key] = deepcopy(declared)
+    value.setdefault("category", "Plugins")
     from biopipe_sdk.icons import resolve_icon
-    resolve_icon(cls, value)
     from biopipe_sdk.dependencies import declarations
-    value.update(declarations(cls, value))
-    value.setdefault("description", (cls.__doc__ or "").strip())
-    value.setdefault("input_type", "Form")
-    value.setdefault("output_type", "Form" if cls.outputs or output_parameter else "Report")
-    value.update(memory_modes=value["resources"]["memory_modes"], supports_cuda=value["resources"]["supports_cuda"])
-    # Preserve the shape of previously built wheel manifests: optional display
-    # fields that were never declared must not suddenly appear as null.
+    resolve_icon(cls, value)
+    value.update(declarations(cls))
     return Descriptor.model_validate(value).model_dump(exclude_unset=True)
 
 
 def describe_reader(reader):
     cls = type(reader)
     from biopipe_sdk.dependencies import declarations
-    schema = getattr(cls, "parameters_schema", None) or {"type": "object", "additionalProperties": True}
-    validate_schema(schema)
-    return Descriptor(protocol_version=1, id=getattr(cls, "name", None) or cls.__name__,
-                      version=getattr(cls, "version", "1.0.0"), kind="reader",
-                      entry_point=f"{cls.__module__}:{cls.__name__}", title=getattr(cls, "title", None) or cls.__name__,
-                      parameters_schema=schema, contracts={"version": 1, "inputs": [], "output": reader.output_contract},
-                      parameters=schema_to_fields(schema),
-                      resources={"memory_modes": ["full", "disk"] if reader.supports_disk_read else ["full"], "supports_cuda": False,
-                                 **({"disk_protocol": reader.disk_protocol} if reader.supports_disk_read else {})},
-                      name=cls.__name__, module=cls.__module__, extensions=list(reader.extensions),
-                      requires_siblings=list(reader.requires_siblings), excludes_siblings=list(reader.excludes_siblings),
-                      handles_compression=reader.handles_compression,
-                      **({"file_input": deepcopy(reader.file_input)} if reader.file_input is not None else {}),
-                      output_contract=reader.output_contract, **declarations(cls, getattr(cls, '_package_descriptor', None))).model_dump(exclude_unset=True)
+    value = dict(protocol_version=PROTOCOL_VERSION, id=getattr(cls, "name", None) or cls.__name__,
+                 version=cls.version, kind="reader", entry_point=f"{cls.__module__}:{cls.__name__}",
+                 title=getattr(cls, "title", None) or cls.__name__,
+                 parameters_schema=_schema(cls), contracts={"version": 1, "inputs": [], "output": reader.output_contract},
+                 resources={"memory_modes": ["full", "disk"] if reader.supports_disk_read else ["full"], "supports_cuda": False,
+                            **({"disk_protocol": reader.disk_protocol} if reader.supports_disk_read else {})},
+                 extensions=list(reader.extensions), requires_siblings=list(reader.requires_siblings),
+                 excludes_siblings=list(reader.excludes_siblings), handles_compression=reader.handles_compression,
+                 **({"file_input": deepcopy(reader.file_input)} if reader.file_input is not None else {}),
+                 **declarations(cls))
+    return Descriptor.model_validate(value).model_dump(exclude_unset=True)
+
+
+def catalog_entry(descriptor):
+    """UI projection. These derived fields are never stored in a package."""
+    value = deepcopy(descriptor)
+    schema = value["parameters_schema"]
+    value["parameters"] = schema_to_fields(schema)
+    value["runtime_defaults"] = {key: deepcopy(field["default"])
+                                 for key, field in schema.get("properties", {}).items() if "default" in field}
+    return value
 
 
 def validate_output_rule(rule):
@@ -227,7 +222,7 @@ def validate_port_rule(rule):
 
 
 def validate_extension(cls, kind):
-    """Strict authoring requirements for new extensions; legacy adapters stay permissive."""
+    """One authoring contract for bundled and external implementations."""
     from src.task.step.base import Step
     from src.reader.base import Reader
     base = Step if kind == "operator" else Reader
@@ -236,11 +231,13 @@ def validate_extension(cls, kind):
     if cls.parameters_schema is None:
         raise ValueError("Plugins must declare parameters_schema, including readers with no options")
     validate_schema(cls.parameters_schema)
+    if hasattr(cls, "legacy_parameters"):
+        raise ValueError("legacy_parameters was removed in protocol v2; migrate the source declaration")
     if not cls.output_contract:
         raise ValueError("Plugins must declare output_contract")
     if kind == "operator":
         if cls.output_parameter not in (None, "output"):
-            raise ValueError("Plugin v1 supports only the dynamic output parameter 'output'")
+            raise ValueError("Protocol v2 supports only the dynamic output parameter 'output'")
         arity = cls.inputs_arity
         if arity != "*" and (type(arity) is not int or arity < 0 or arity > 20):
             raise ValueError("inputs_arity must be an integer from 0 to 20 or '*'")

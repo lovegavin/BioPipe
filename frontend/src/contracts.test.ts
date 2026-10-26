@@ -16,7 +16,7 @@ describe("port info", () => {
     expect(rows.filter(([key]) => key.startsWith("labels"))).toEqual([["labels.statistic", "P"]]);
   });
   it("refreshes contracts on parameter changes without refetching for node movement or budget edits", () => {
-    const graph = { schema_version: 1, name: "test", base_dir: ".", memory: { enabled: true }, edges: [], nodes: [{ id: "pca", kind: "operator", operator: "pca", title: "PCA", position: { x: 0, y: 0 }, params: { dim: "feature" }, input_count: 1 }] } as Graph;
+    const graph = { schema_version: 2, name: "test", base_dir: ".", memory: { enabled: true }, edges: [], nodes: [{ id: "pca", kind: "operator", operator: "pca", title: "PCA", position: { x: 0, y: 0 }, params: { dim: "feature" }, input_count: 1 }] } as Graph;
     const moved = structuredClone(graph);
     moved.nodes[0].position.x = 100;
     moved.memory.budget_mb = 128;

@@ -22,12 +22,10 @@ def imports(values):
     return sorted(set(values))
 
 
-def declarations(cls, previous=None):
+def declarations(cls):
     result = {}
     for key, validate in (('dependencies', requirements), ('dependency_imports', imports)):
         value = getattr(cls, key, None)
-        if value is None:
-            value = (previous or {}).get(key)
         if value is not None:
             result[key] = validate(value)
     return result

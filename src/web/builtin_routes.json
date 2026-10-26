@@ -18,7 +18,7 @@
     },
     "route_274abd24ce8d": {
       "path": "routes/rnaseq_de/task.yaml",
-      "sha256": "e90f253eba3a0f37e1f5d32c971f3d3f67b25667f286e435762a2558be2fc7c2",
+      "sha256": "c250481c89c7acb9219ecddf6dd670d6993cfddf69bc5aa38feda90fcb4cb04e",
       "commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95"
     },
     "route_bf78f7a6e12f": {
@@ -264,8 +264,8 @@
             },
             "params": {
               "dim": "component",
-              "point_size": 8,
               "alpha": 0.7,
+              "point_size": 8,
               "filename": "pca.png",
               "title": "Sample PCA",
               "x_label": "PC1",
@@ -903,8 +903,8 @@
             },
             "params": {
               "dim": "component",
-              "point_size": 30,
               "alpha": 0.75,
+              "point_size": 30,
               "color_label": "meta_site",
               "filename": "pcoa_by_site.png",
               "title": "PCoA (Bray-Curtis), colored by site",
@@ -927,8 +927,8 @@
             },
             "params": {
               "dim": "component",
-              "point_size": 30,
               "alpha": 0.75,
+              "point_size": 30,
               "color_label": "meta_horizon",
               "filename": "pcoa_by_horizon.png",
               "title": "PCoA (Bray-Curtis), colored by horizon",
@@ -951,8 +951,8 @@
             },
             "params": {
               "dim": "component",
-              "point_size": 30,
               "alpha": 0.75,
+              "point_size": 30,
               "color_label": "meta_transect",
               "filename": "pcoa_by_transect.png",
               "title": "PCoA (Bray-Curtis), colored by transect",
@@ -1943,9 +1943,9 @@
             },
             "params": {
               "method": "fdr",
+              "alpha": 0.05,
               "pfield": "P",
               "dim": "statistic",
-              "alpha": 0.05,
               "output": "de_result"
             },
             "context_params": {},
@@ -2661,7 +2661,7 @@
     },
     {
       "id": "route_f6f466bace35",
-      "version": 2,
+      "version": 3,
       "name": "GWAS",
       "graph": {
         "schema_version": 2,
@@ -2915,7 +2915,6 @@
               "y": 100.0
             },
             "params": {
-              "_input_names": [],
               "axis": "feature",
               "output": "combined"
             },
@@ -2934,11 +2933,11 @@
               "y": 100.0
             },
             "params": {
-              "method": "auto",
               "covariates": [
                 "sex",
                 "batch"
               ],
+              "method": "auto",
               "dim": "feature",
               "output": "raw",
               "response": "trait_value"
@@ -2959,9 +2958,9 @@
             },
             "params": {
               "method": "fdr",
+              "alpha": 0.05,
               "pfield": "P",
               "dim": "statistic",
-              "alpha": 0.05,
               "output": "assoc_result"
             },
             "context_params": {},
@@ -3002,8 +3001,8 @@
             },
             "params": {
               "dim": "feature",
-              "point_size": 6,
               "alpha": 0.85,
+              "point_size": 6,
               "chrom_label": "chrom",
               "filename": "manhattan.png",
               "p_dim": "statistic",
@@ -3027,8 +3026,8 @@
             },
             "params": {
               "dim": "component",
-              "point_size": 8,
               "alpha": 0.7,
+              "point_size": 8,
               "filename": "pca_scatter.png",
               "title": "PCA",
               "x_label": "PC1",
@@ -3052,9 +3051,9 @@
             },
             "params": {
               "dim": "statistic",
-              "ylabel": "Count",
               "bins": 20,
               "log_y": false,
+              "ylabel": "Count",
               "filename": "pvalue_hist.png",
               "title": "P-value distribution",
               "value_label": "P",

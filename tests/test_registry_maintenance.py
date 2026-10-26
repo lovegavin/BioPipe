@@ -102,7 +102,7 @@ def test_sdk_operator_is_discovered_and_missing_startup_index_can_be_rebuilt(che
     code, report = cli(checkout, 'build')
     assert code == 0 and not report['errors']
     assert 'removed.operator' not in index.read_text(encoding='utf-8')
-    runtime = subprocess.run([sys.executable, '-c', "from src.task import STEPS; assert not STEPS['example.probe'].legacy_parameters"],
+    runtime = subprocess.run([sys.executable, '-c', "from src.task import STEPS; assert not hasattr(STEPS['example.probe'], 'legacy_parameters')"],
                              cwd=checkout, capture_output=True, text=True, timeout=30)
     assert runtime.returncode == 0, runtime.stderr
 
@@ -142,7 +142,7 @@ def test_new_bundled_package_migrates_without_restoring_removals(tmp_path):
     state = deepcopy(bundled_state())
     state["packages"] = [p for p in state["packages"] if p["name"] != "biopipe-microbiome"]
     state["descriptors"] = [d for d in state["descriptors"] if d["distribution"] != "biopipe-microbiome"]
-    state.update(protocol_version=1, package_protocol_version=1, generation="before16s")
+    state.update(protocol_version=2, package_protocol_version=2, generation="before16s", bundled_seen=[p["name"] for p in state["packages"]])
     history = manager.directory / "snapshots"
     history.mkdir()
     (history / "old.json").write_text(json.dumps(state), encoding="utf-8")

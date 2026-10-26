@@ -11,7 +11,7 @@ env/
 
 # 任务数据与结果
 tasks/*/input/
-tasks/*/output/steps
+tasks/**/output/
 input/
 #output/
 

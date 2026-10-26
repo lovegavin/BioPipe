@@ -79,14 +79,14 @@ _STATS = ("mean", "median", "min", "max", "first")
 
 class BinStep(Step):
     """Discretize a continuous axis into bins."""
+    description = 'Discretize a continuous axis into bins.'
 
     name = "bin"
     inputs_arity = 1
     outputs = []
     title = 'Bin'
-    category = 'Analysis'
+    category = '数据整理'
     builtin_package = 'biopipe-core'
-    legacy_parameters = False
     parameters_schema = SCHEMAS['bin']
     input_contracts, output_contract = CONTRACTS['bin']
     output_parameter = 'output'
@@ -248,6 +248,7 @@ class BinStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'Columns'
 
 
 def _values_from_column(form: Form, dim: str, value_label: str):

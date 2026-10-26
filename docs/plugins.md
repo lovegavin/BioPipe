@@ -50,7 +50,7 @@ No absolute paths or external image server are needed. Omit `icon` for an automa
 category default, or keep an existing bundled icon name. See the
 [image declaration reference](operator_protocol.md#operator-categories-and-icons).
 
-The scanner snapshots both source trees and the legacy UI metadata, imports them
+The scanner snapshots both source trees and their declared image resources, imports them
 in a separate process, validates the public protocol, and prepares immutable
 provider code internally. Only a completely successful scan/installation replaces
 the active profile registry. The first refresh freezes the managed source library;
@@ -164,7 +164,7 @@ Refresh never edits the scanned source files or fetches code from GitHub.
 
 A failed installation leaves the old active registry intact. Diagnostic/staging
 directories may remain for investigation. There is no automatic environment garbage
-collection in v1 because old jobs/routes can still reference them.
+collection because old jobs/routes can still reference them.
 
 ## Upgrade, removal and saved routes
 
@@ -196,9 +196,8 @@ the frozen fingerprint and refuses to execute different bytes under that lock.
 Create a new run once the source update is complete.
 
 `python scripts/diagnose_pins.py --profile-dir <profile>` reports old pins without
-changing them. `repin_all.py` now delegates to this read-only check: it no longer
-overwrites historical `plugins.lock.json`, removes plugin targets, or rewrites
-saved routes. The normal profile environment override is supported as well.
+changing them. The obsolete `repin_all.py` alias has been removed.
+Historical locks are never rewritten by diagnostics or profile migration. The normal profile environment override is supported as well.
 
 `biopipe plugin remove <distribution-name>` publishes a generation without that
 package. It does not delete its wheels or historical environments. Saved pinned

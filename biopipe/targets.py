@@ -82,23 +82,20 @@ class TargetBuilder:
         self.state = deepcopy(state)
         self.state.update(runtime_protocol=1, _runtime_root=str(manager.directory.resolve()))
         self.shared = list(state.get('shared_paths', []))
-        # Read old generations without creating another Python environment.
-        if state.get('python') and not state.get('runtime_protocol'):
-            old = manager.directory / state['python']
-            site = old.parent.parent / ('Lib/site-packages' if os.name == 'nt' else f'lib/python{sys.version_info.major}.{sys.version_info.minor}/site-packages')
-            if site.exists():
-                self.shared.append(str(site.relative_to(manager.directory)))
         self.prepared = {}
         self.staging = manager.directory / 'staging'
         self.staging.mkdir(parents=True, exist_ok=True)
 
     def prepare(self, dependencies):
+        from biopipe import __version__ as host_version
         from biopipe_sdk.dependencies import requirements
         deps = requirements(dependencies)
         # Engine code is always supplied by the host; never install a second SDK.
         for value in deps:
             req = Requirement(value)
-            if canonicalize_name(req.name) == 'biopipe-studio' and not req.specifier.contains(metadata.version('biopipe-studio')):
+            active = not req.marker or req.marker.evaluate()
+            if (active and canonicalize_name(req.name) == 'biopipe-studio'
+                    and not req.specifier.contains(host_version, prereleases=True)):
                 raise ValueError(f'Operator requires an incompatible BioPipe SDK: {value}')
         deps = [v for v in deps if canonicalize_name(Requirement(v).name) != 'biopipe-studio']
         key = tuple(deps)

@@ -61,7 +61,7 @@ def check_interface(graph, catalog):
         fail("路线输入必须与内部数据源一一对应。")
     if not any(node.kind != "source" for node in graph.nodes):
         fail("路线至少需要一个处理算子。")
-    registry = {item["name"]: item for item in catalog["operators"]}
+    registry = {item["id"]: item for item in catalog["operators"]}
     seen = set()
     for port in interface.outputs:
         key = (port.node_id, port_index(port.handle))
@@ -93,7 +93,7 @@ def prepare_interface(graph, catalog, root):
         candidates = old.outputs
     else:
         # A data port consumed only by a report remains a useful route output.
-        registry = {o["name"]: o for o in catalog["operators"]}
+        registry = {o["id"]: o for o in catalog["operators"]}
         nodes = {n.id: n for n in result.nodes}
         consumed = {(e.source, port_index(e.sourceHandle)) for e in result.edges
                     if e.target in nodes and output_names(nodes[e.target], registry)}
@@ -118,7 +118,7 @@ def expand_routes(graph, catalog):
     body participates in the same memory plan and deterministic ordering as the
     outer DAG. Snapshots, nesting depth, and expanded size are bounded.
     """
-    registry = {item["name"]: item for item in catalog["operators"]}
+    registry = {item["id"]: item for item in catalog["operators"]}
     flat_nodes, flat_edges, owners, keeps = [], [], {}, []
     serial = 0
 
@@ -365,7 +365,7 @@ class RouteLibrary:
     def manage_item(self, key, action):
         with self.lock:
             self._reload(force=True)
-            atomic = {item["name"] for item in self.catalog["operators"]}
+            atomic = {item["id"] for item in self.catalog["operators"]}
             if key not in atomic and key not in self.registered:
                 raise KeyError("算子已不存在，请刷新算子库。")
             state = self.library_state()
@@ -425,5 +425,7 @@ class RouteLibrary:
         try:
             value = Workspace.model_validate_json((self.directory / "workspace.json").read_text(encoding="utf-8"))
             return value.model_dump(mode="json")
-        except (ValueError, OSError):
+        except FileNotFoundError:
             return None
+        except ValueError as exc:
+            fail("Workspace is invalid or uses an older graph protocol. Close Studio and run biopipe migrate; the file has been preserved. " + str(exc))

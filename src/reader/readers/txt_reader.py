@@ -26,6 +26,26 @@ from src.core.contracts import reader_contract, validate_form, validate_output, 
 
 class TxtReader(Reader):
     """Read generic text files by delegating to another reader."""
+    parameters_schema = {'type': 'object',
+     'properties': {'header': {'type': 'boolean', 'title': 'Header row', 'default': True},
+                    'sep': {'type': 'string', 'title': 'Separator', 'minLength': 1},
+                    'encoders': {'type': 'object',
+                                 'title': 'Encoders',
+                                 'description': 'Per-field encoder configuration.',
+                                 'additionalProperties': True},
+                    'columns': {'type': 'array',
+                                'items': {'type': 'string'},
+                                'title': 'Columns',
+                                'description': 'Restrict the reader to these header names, in order. Label '
+                                               'indices still refer to the original file.'},
+                    'info_columns': {'type': 'object',
+                                     'title': 'Info columns',
+                                     'description': 'Map a header name to an info field. The column is '
+                                                    'read as strings into info[field] and declared '
+                                                    'parallel to the row dimension.',
+                                     'additionalProperties': {'type': 'string'}},
+                    'reader': {'type': 'string', 'title': 'Delegate reader', 'default': 'csv'}},
+     'additionalProperties': True}
 
     # The delegate owns dimensionality and format-specific metadata guarantees.
     output_contract = {**reader_contract(ndim=None), "info_open": True}

@@ -1,5 +1,9 @@
 # Write a BioPipe plugin in 30 minutes
 
+This guide targets SDK 2.0 / protocol v2. The class declaration is authoritative;
+no separate UI JSON or schema adapter is required. For old extensions and saved
+workflows, use the [one-time migration guide](migration_v2.md).
+
 This walkthrough assumes a working BioPipe Python environment and an existing
 small algorithm. It scaffolds a real wheel, tests contracts, hot-installs it and
 makes it available in the desktop. BioPipe does not need an AI provider.

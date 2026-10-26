@@ -54,7 +54,6 @@ class Settings:
     code_root: Path | None = None
     desktop: bool = False
     profile: dict | None = None
-    migrate_legacy: bool = False
     builtin_routes: bool = False
     instance_url: str | None = None
 
@@ -122,20 +121,6 @@ class JobService:
                         write_json(record, value)
                 self.jobs[value["id"]] = value
 
-    def load_draft(self):
-        value = read_json(self.directory / "draft.json")
-        if value is None:
-            return None
-        try:
-            return Graph.model_validate(value).model_dump(mode="json")
-        except ValueError:
-            return None
-
-    def save_draft(self, graph: Graph):
-        # Incomplete graphs are valid drafts; execution validates connections.
-        with self.lock:
-            write_json(self.directory / "draft.json", graph.model_dump(mode="json"))
-
     def _demo(self):
         path = self.assets_dir / "expression-demo.csv"
         if not path.exists():
@@ -145,7 +130,7 @@ class JobService:
             values[rng.random(values.shape) < .015] = np.nan
             np.savetxt(path, values, delimiter=",", header=",".join(f"gene_{i+1:02d}" for i in range(24)), comments="", fmt="%.5f")
         return {
-            "schema_version": 1, "name": "表达矩阵 · 质量控制与降维", "base_dir": ".",
+            "schema_version": 2, "name": "表达矩阵 · 质量控制与降维", "base_dir": ".",
             "memory": {"enabled": True, "auto_spill": True},
             "nodes": [
                 {"id": "expression", "kind": "source", "title": "表达矩阵", "position": {"x": 60, "y": 160},

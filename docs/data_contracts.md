@@ -10,7 +10,7 @@ Every built-in Reader declares `output_contract`; every Step declares ordered
 `input_contracts` and `output_contract`. Dynamic outputs use `output_parameter =
 "output"`. All built-in operators and Readers publish contracts in the registry.
 New external plugins use the [public protocol](operator_protocol.md) and
-[SDK](sdk_quickstart.md). Existing compatibility adapters retain legacy parameter
+[SDK](sdk_quickstart.md). All built-in declarations publish explicit parameter
 semantics; new modules must pass protocol validation before index generation.
 
 ```python

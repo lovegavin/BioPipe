@@ -47,6 +47,12 @@ from src.reader.readers._labels import unique_labels
 
 class ParquetReader(Reader):
     """Reader for .parquet files."""
+    parameters_schema = {'type': 'object',
+     'properties': {'encoders': {'type': 'object',
+                                 'title': 'Encoders',
+                                 'description': 'Per-field encoder configuration.',
+                                 'additionalProperties': True}},
+     'additionalProperties': True}
     dependencies = ['pyarrow>=14']
     dependency_imports = ['pyarrow']
 

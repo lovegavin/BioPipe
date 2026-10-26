@@ -1,6 +1,6 @@
 # Resource planner and spill runtime
 
-BioPipe uses a fixed-order resource planner. Existing YAML tasks retain legacy
+BioPipe uses a fixed-order resource planner. Existing YAML tasks retain eager
 execution unless `runtime.memory` or a memory CLI override enables management.
 Studio enables it by default. The analysis implementations remain CPU-based.
 
@@ -106,9 +106,10 @@ calculation. Chunk size depends on dtype, available reservation and `chunk_mb`,
 including the block, finite-value selection and statistical temporary arrays.
 
 PCA, regression, filters, joins and the newer analysis operators use full arrays.
-The internal chunk scheduler is specific to a single real input and describe's
-buffer model. New external SDK plugins cannot enable streaming with a flag: v1
-rejects it until a generic chunk API is available.
+One-input report operators can implement `flat-reduction-v1` with equivalent
+`run` and `run_stream` methods. The same public resource protocol is available to
+bundled and external operators; a flag without the hooks is rejected. See the
+[resource example](../examples/resource_plugin/) and [protocol](package_protocol.md).
 
 A background thread samples RSS/managed usage every `poll_ms`. Above the spill
 threshold it attempts eviction toward `target_fraction`, rate-limiting repeated
@@ -169,7 +170,7 @@ Studio additionally records graph snapshots and `plugins.lock.json` per job.
 `python -m pytest -q` covers spill/reload, noncontiguous arrays, metadata, shared
 allocations, pinned inputs, versions, admission, budget changes, RSS pressure, quotas,
 failed commits and run isolation. `python scripts/verify_memory.py` generates CSVs,
-compares legacy/managed branched selection, PCA, concat and chunk statistics, and
+compares eager/managed branched selection, PCA, concat and chunk statistics, and
 checks unused sources are not read. Evidence is written under
 `.verification/resource_demo/verification.json`.
 
@@ -214,6 +215,6 @@ the disk during a write.
 
 This is not universal out-of-core execution. Other readers still use their existing
 read implementations, and most analysis operators still require complete Forms.
-The legacy path (`runtime.memory.enabled: false`) intentionally retains original
+The eager path (`runtime.memory.enabled: false`) intentionally retains original
 eager reading behavior. RSS monitoring requires `process_limit_mb`; this mechanism
 does not provide a hard process-memory ceiling or monitor other processes' free RAM.

@@ -110,7 +110,7 @@ def test_moved_workspace_keeps_history_arrays_figures_and_runnable_task(tmp_path
         graph["nodes"].append({"id": "hist", "kind": "operator", "operator": "histogram", "position": {"x": 0, "y": 0},
                                "params": {"dim": "component", "value_label": "PC1", "filename": "pc1.png"}})
         graph["edges"].append({"id": "pca-hist", "source": "pca", "target": "hist", "targetHandle": "in-0"})
-        assert client.post("/api/draft", json=graph).status_code == 200
+        assert client.post("/api/workspace", json={"schema_version": 1, "active_id": "a", "documents": [{"id": "a", "graph": graph}]}).status_code == 200
         response = client.post("/api/jobs", json=graph)
         assert response.status_code == 202, response.text
         key = response.json()["id"]
@@ -124,8 +124,9 @@ def test_moved_workspace_keeps_history_arrays_figures_and_runnable_task(tmp_path
     assert original.resolve().parent == moved.resolve().parent == tmp_path.resolve()
     original.rename(moved)
     with TestClient(create_app(settings(moved))) as client:
-        restored = bootstrap(client)
-        assert restored["draft"] == Graph.model_validate(graph).model_dump(mode="json")
+        bootstrap(client)
+        restored_graph = client.get("/api/workspace").json()["documents"][0]["graph"]
+        assert restored_graph == Graph.model_validate(graph).model_dump(mode="json")
         assert client.get("/api/jobs").json()[0]["status"] == "complete"
         response = client.get(f"/api/jobs/{key}")
         assert response.status_code == 200, response.text
@@ -134,7 +135,7 @@ def test_moved_workspace_keeps_history_arrays_figures_and_runnable_task(tmp_path
         assert client.get(f"/api/jobs/{key}/artifacts/{pcs['artifact_id']}/download").content == array
         assert client.get(f"/api/jobs/{key}/artifacts/{pcs['artifact_id']}/preview").status_code == 200
         assert client.get(f"/api/jobs/{key}/exports/3/figure").content == figure
-        response = client.post("/api/jobs", json=restored["draft"])
+        response = client.post("/api/jobs", json=restored_graph)
         assert response.status_code == 202, response.text
         finished(client, response.json()["id"])
 

@@ -138,7 +138,7 @@ def test_worker_still_rejects_a_stale_frozen_job_lock(tmp_path):
     for descriptor in state['descriptors']:
         if descriptor['distribution'] == 'biopipe-core':
             descriptor['implementation']['sha256'] = '0' * 64
-    state['package_protocol_version'] = 1
+    state.update(package_protocol_version=2, bundled_seen=[p['name'] for p in state['packages']])
     (tmp_path / 'plugins.lock.json').write_text(json.dumps(state), encoding='utf-8')
     (tmp_path / 'task.yaml').write_text('sources: {}\nsteps: []\n', encoding='utf-8')
     result = subprocess.run([sys.executable, str(ROOT / 'scripts/run.py'), str(tmp_path)],
@@ -178,7 +178,7 @@ def test_retained_wheel_generation_refreshes_only_bundled_metadata(tmp_path):
     assert next(d for d in chosen['descriptors'] if d['id'] == 'compare_groups')['implementation']['sha256'] != '0' * 64
 
 
-def test_repin_command_is_read_only_and_respects_profile(tmp_path):
+def test_pin_diagnostic_is_read_only_and_respects_profile(tmp_path):
     profile = tmp_path / 'custom-profile'
     job = profile / 'workspace/.studio/jobs/example'
     job.mkdir(parents=True)
@@ -187,9 +187,9 @@ def test_repin_command_is_read_only_and_respects_profile(tmp_path):
     graph = profile / 'workspace/.studio/draft.json'
     graph.write_text(json.dumps({'plugin_lock': {'describe': {'sha256': 'old'}}}), encoding='utf-8')
     before = {p: p.read_bytes() for p in (lock, graph)}
-    result = subprocess.run([sys.executable, str(ROOT / 'scripts/repin_all.py'), '--profile-dir', str(profile)],
+    result = subprocess.run([sys.executable, str(ROOT / 'scripts/diagnose_pins.py'), '--profile-dir', str(profile)],
         capture_output=True, text=True, encoding='utf-8', timeout=45)
     assert result.returncode == 0, result.stderr
-    assert 'read-only' in result.stdout
+    assert 'repin' not in result.stdout.lower()
     assert all(p.read_bytes() == content for p, content in before.items())
     assert not list(profile.rglob('*.bak'))

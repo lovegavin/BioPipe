@@ -43,6 +43,32 @@ from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 class VolcanoStep(Step):
     """Draw a volcano plot."""
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '分析维度', 'type': 'string', 'default': 'gene'},
+                    'stat_dim': {'title': '统计量维度', 'type': 'string', 'default': 'statistic'},
+                    'lfc_label': {'title': 'log2FC 字段', 'type': 'string', 'default': 'log2FC'},
+                    'p_label': {'title': 'P / Q 字段', 'type': 'string', 'default': 'P'},
+                    'filename': {'title': '图片文件名', 'type': 'string', 'x-ui-default': 'volcano.png'},
+                    'title': {'title': '图标题', 'type': 'string'},
+                    'xlabel': {'title': 'X 轴标题', 'type': 'string'},
+                    'ylabel': {'title': 'Y 轴标题', 'type': 'string', 'default': '-log10(P)'},
+                    'lfc_threshold': {'title': 'log2FC 阈值', 'type': 'number', 'default': 1.0},
+                    'p_threshold': {'title': '显著性阈值',
+                                    'type': 'number',
+                                    'minimum': 0,
+                                    'maximum': 1,
+                                    'default': 0.05},
+                    'point_size': {'title': '点大小', 'type': 'number', 'minimum': 1, 'default': 8},
+                    'alpha': {'title': '透明度', 'type': 'number', 'minimum': 0, 'maximum': 1, 'default': 0.7},
+                    'label_top': {'title': '标记前 N 个特征', 'type': 'integer', 'minimum': 0, 'default': 0}},
+     'additionalProperties': True,
+     'required': ['filename']}
+    title = 'Volcano'
+    category = '可视化'
+    icon = 'ChartLine'
+    description = '效应大小与显著性'
+    preview = {'kind': 'volcano', 'caption': '效应大小与显著性'}
 
     name = "volcano"
     inputs_arity = 1

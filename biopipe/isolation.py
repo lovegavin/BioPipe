@@ -215,7 +215,7 @@ def proxy_step(descriptor, state):
         def run_stream(self, ctx, stream): self._run(ctx, [], stream)
         def export(self, ctx): return self.report
 
-    for key in ('version', 'parameters_schema', 'inputs_arity', 'outputs', 'output_parameter', 'legacy_parameters'):
+    for key in ('version', 'parameters_schema', 'inputs_arity', 'outputs', 'output_parameter'):
         if key in descriptor: setattr(IsolatedStep, key, deepcopy(descriptor[key]))
     IsolatedStep.name = descriptor['id']
     IsolatedStep.input_contracts = descriptor['contracts']['inputs']
@@ -225,7 +225,6 @@ def proxy_step(descriptor, state):
     # Account for the IPC block in each process plus the encoded write buffer.
     IsolatedStep.stream_buffer_multiplier = resources.get('stream_buffer_multiplier', 4) + 3
     IsolatedStep.stream_fixed_bytes = resources.get('stream_fixed_bytes', 0) + 2 * 65536
-    IsolatedStep._package_descriptor = descriptor
     return IsolatedStep
 
 

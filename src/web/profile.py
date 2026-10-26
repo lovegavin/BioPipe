@@ -1,8 +1,7 @@
 """The single directory policy used by Python launchers and the desktop host.
 
 Resolution is read-only. Relative profile overrides are anchored to the user's
-home, never cwd or the executable directory. AppData is a legacy import source,
-not a default destination (packaged Windows parents can virtualize AppData).
+home, never cwd or the executable directory. The default remains independent of checkout and executable location.
 """
 from dataclasses import dataclass
 import os
@@ -14,13 +13,11 @@ class StudioProfile:
     profile_dir: Path | None
     workspace: Path
     data_dir: Path
-    migrate_legacy: bool = False
 
     def as_dict(self):
         return {"profile_dir": str(self.profile_dir) if self.profile_dir else None,
                 "workspace": str(self.workspace), "data_dir": str(self.data_dir),
-                "registry": str(self.data_dir / "workflows/registry.json"),
-                "migrate_legacy": self.migrate_legacy}
+                "registry": str(self.data_dir / "workflows/registry.json")}
 
 
 def resolve_profile(code_root, *, profile_dir=None, workspace=None, data_dir=None,
@@ -38,43 +35,20 @@ def resolve_profile(code_root, *, profile_dir=None, workspace=None, data_dir=Non
         return (base / text).resolve()
 
     override = profile_dir or env.get("BIOPIPE_STUDIO_HOME")
-    legacy_data = data_dir or env.get("BIOPIPE_STUDIO_DATA")
+    workspace_data = data_dir or env.get("BIOPIPE_STUDIO_DATA")
     if workspace is not None:
         if profile_dir is not None:
             raise ValueError("--workspace 与 --profile-dir 不能同时使用。")
         root = expand(workspace, code_root)
-        data = expand(legacy_data or ".studio", root)
+        data = expand(workspace_data or ".studio", root)
         if not data.is_relative_to(root):
             raise ValueError("--data-dir 必须位于 --workspace 内。")
         return StudioProfile(None, root, data)
-    if legacy_data is not None:
-        raise ValueError("旧 BIOPIPE_STUDIO_DATA / --data-dir 需配合 --workspace；共享目录请改用 BIOPIPE_STUDIO_HOME / --profile-dir。")
+    if workspace_data is not None:
+        raise ValueError("BIOPIPE_STUDIO_DATA / --data-dir requires --workspace; use BIOPIPE_STUDIO_HOME / --profile-dir for a shared profile.")
     profile = expand(override or ".biopipe/studio", home)
-    return StudioProfile(profile, profile / "workspace", profile / "workspace/.studio", not bool(override))
+    return StudioProfile(profile, profile / "workspace", profile / "workspace/.studio")
 
-
-def legacy_locations(code_root, *, environ=None, home=None):
-    """Known BioPipe locations only; never scan arbitrary user directories."""
-    env = os.environ if environ is None else environ
-    home = Path.home() if home is None else Path(home)
-    root = Path(code_root).resolve()
-    candidates = [(root, root / ".local/studio")]
-    local = env.get("LOCALAPPDATA")
-    if local:
-        workspace = Path(local) / "BioPipe Studio/workspace"
-        candidates.append((workspace, workspace / ".studio"))
-    # Enumerate only the old BioPipe suffix in package-local caches. The package
-    # family is discovered, so this also works outside any particular dev tool.
-    packages = home / "AppData/Local/Packages"
-    if packages.is_dir():
-        for data in sorted(packages.glob("*/LocalCache/Local/BioPipe Studio/workspace/.studio")):
-            candidates.append((data.parent, data))
-    seen = set()
-    for workspace, data in candidates:
-        key = os.path.normcase(str(data.resolve()))
-        if key not in seen and data.is_dir():
-            seen.add(key)
-            yield workspace.resolve(), data.resolve()
 
 
 def upload_limit_from_env():
@@ -90,7 +64,7 @@ def upload_limit_from_env():
 
 
 def make_settings(code_root, frontend, *, desktop=False, profile_dir=None,
-                  workspace=None, data_dir=None, migrate_legacy=None):
+                  workspace=None, data_dir=None):
     from .service import Settings
     profile = resolve_profile(code_root, profile_dir=profile_dir, workspace=workspace, data_dir=data_dir)
     profile.data_dir.mkdir(parents=True, exist_ok=True)
@@ -98,4 +72,4 @@ def make_settings(code_root, frontend, *, desktop=False, profile_dir=None,
     return Settings(profile.workspace, profile.data_dir, Path(frontend).resolve(),
                     max_upload=upload_limit_from_env(),
                     code_root=Path(code_root).resolve(), desktop=desktop, profile=profile.as_dict(),
-                    migrate_legacy=profile.migrate_legacy if migrate_legacy is None else migrate_legacy, builtin_routes=True)
+                    builtin_routes=True)

@@ -5,7 +5,7 @@ const base =
   (import.meta as ImportMeta & { env: { VITE_API_BASE?: string } }).env
     .VITE_API_BASE || "";
 let token = "";
-let draftWrite: Promise<unknown> = Promise.resolve();
+let workspaceWrite: Promise<unknown> = Promise.resolve();
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -64,8 +64,8 @@ export const api = {
   catalog: () => request<Bootstrap["catalog"]>("/api/operators"),
   workspace: () => request<Workspace | null>("/api/workspace"),
   saveWorkspace: (workspace: Workspace) => {
-    draftWrite = draftWrite.catch(() => undefined).then(() => request<{saved: boolean}>("/api/workspace", workspace));
-    return draftWrite;
+    workspaceWrite = workspaceWrite.catch(() => undefined).then(() => request<{saved: boolean}>("/api/workspace", workspace));
+    return workspaceWrite;
   },
   workflows: () => request<WorkflowSummary[]>("/api/workflows"),
   workflow: (id: string) => request<SavedWorkflow>(`/api/workflows/${encodeURIComponent(id)}`),
@@ -75,13 +75,6 @@ export const api = {
   libraryState: () => request<LibraryState>("/api/library/state"),
   manageLibrary: (key: string, action: LibraryAction) => request<{routes: RouteDefinition[]; state: LibraryState}>("/api/library/manage", {key, action}),
   registerRoutes: (workflow_ids: string[]) => request<RouteDefinition[]>("/api/routes/register", {workflow_ids}),
-  saveDraft: (graph: Graph) => {
-    // Serialize writes so an earlier autosave cannot overwrite a newer draft.
-    draftWrite = draftWrite
-      .catch(() => undefined)
-      .then(() => request<{ saved: boolean }>("/api/draft", graph));
-    return draftWrite;
-  },
   bootstrap: async () => {
     const data = await request<Bootstrap>("/api/bootstrap");
     token = data.token;

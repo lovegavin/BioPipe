@@ -10,7 +10,7 @@ import {
 import { spillCounts } from "./Results";
 import type { Graph, Operator, RunEvent } from "./types";
 const graph: Graph = {
-  schema_version: 1,
+  schema_version: 2,
   name: "branch",
   base_dir: ".",
   memory: { enabled: true },
@@ -110,9 +110,9 @@ describe("visual DAG contract", () => {
     };
     expect(() => executionOrder(cyclic)).toThrow();
   });
-  it("creates unique outputs and restores omitted v1 defaults", () => {
+  it("creates unique outputs and restores omitted view defaults", () => {
     const spec = {
-      name: "qc",
+      id: "qc",
       title: "QC",
       inputs_arity: "*",
       output_parameter: "output",

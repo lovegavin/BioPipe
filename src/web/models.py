@@ -62,7 +62,7 @@ class RouteInterface(StrictModel):
 
 
 class Graph(StrictModel):
-    schema_version: Literal[1, 2] = 1
+    schema_version: Literal[2] = 2
     name: str = Field(default="我的工作流", min_length=1, max_length=120)
     base_dir: str = Field(default=".", max_length=2048)
     nodes: list[GraphNode] = Field(max_length=1000)

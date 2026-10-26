@@ -57,6 +57,8 @@ def _revcomp(seq: str) -> str:
 
 class FindOrfsStep(Step):
     """Locate complete ATG..stop ORFs on both strands."""
+    title = 'find_orfs'
+    description = 'Locate complete ATG..stop ORFs on both strands.'
 
     name = "find_orfs"
     category = "analysis"

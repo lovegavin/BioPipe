@@ -47,6 +47,7 @@ from src.reader.readers._labels import unique_labels
 
 class BgenReader(Reader):
     """Reader for .bgen files."""
+    parameters_schema = {'type': 'object', 'properties': {}, 'additionalProperties': True}
     dependencies = ['bgen-reader>=4.0']
     dependency_imports = ['bgen_reader']
 

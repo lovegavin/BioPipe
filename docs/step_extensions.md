@@ -1,5 +1,9 @@
 # Add a Step or Operator
 
+This guide targets SDK 2.0 / protocol v2. The class declaration is authoritative;
+no separate UI JSON or schema adapter is required. For old extensions and saved
+workflows, use the [one-time migration guide](migration_v2.md).
+
 Use `Operator` for a function that consumes Forms and returns one Form or a report.
 It is a small adapter over the existing `Step` API. Use `Step` directly when you
 need the established `run(ctx, inputs)` / `export(ctx)` lifecycle or named outputs.

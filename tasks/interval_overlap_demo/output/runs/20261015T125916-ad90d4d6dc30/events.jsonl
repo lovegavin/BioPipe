@@ -1,4 +1,0 @@
-{"message": "Loading the analysis engine", "time": "2026-10-15T12:59:16.238204+00:00", "event": "worker_started"}
-{"run_id": "20261015T125916-ad90d4d6dc30", "memory_enabled": false, "time": "2026-10-15T12:59:17.217477+00:00", "event": "run_started"}
-{"name": "ccre", "shape": [1063878, 6], "dims": ["region", "field"], "time": "2026-10-15T12:59:20.928256+00:00", "event": "source_loaded"}
-{"status": "failed", "error": "BED file has inconsistent column counts: /tmp/tmpet6m25r_.bed", "time": "2026-10-15T12:59:20.932392+00:00", "event": "run_finished"}

@@ -51,7 +51,7 @@ sandboxes that cannot inspect the desktop process table.
 The Agent panel generates a configuration using the actual interpreter and resolved
 workspace/data directory. This is convenient for isolated workspaces and clients
 with a different PATH. Regenerate that configuration after moving the installation.
-`--data-dir` is available with an explicit `--workspace` for legacy custom layouts.
+`--data-dir` is available with an explicit `--workspace` for explicitly selected layouts.
 
 ## Selection context
 

@@ -31,7 +31,7 @@ internal static class Program
         var selectRuntime = false;
         for (var i = 0; i < args.Length; i++)
         {
-            if ((args[i] == "--data-dir" || args[i] == "--profile-dir") && i + 1 < args.Length) profileOverride = args[++i];
+            if (args[i] == "--profile-dir" && i + 1 < args.Length) profileOverride = args[++i];
             else if (args[i] == "--smoke-test") smoke = true;
             else if (args[i] == "--check-profile") checkProfile = true;
             else if (args[i] == "--select-runtime") selectRuntime = true;
@@ -161,7 +161,6 @@ internal sealed class StudioWindow : Form
             foreach (var value in new[] { "-I", "-X", "utf8", "-B", "-u", script, "--profile-dir", dataDir, "--frontend", frontend,
                 "--port", preferredPort.ToString(), "--wait-for-host" })
                 start.ArgumentList.Add(value);
-            if (profile.MigrateLegacy) start.ArgumentList.Add("--migrate-legacy");
             start.Environment["PYTHONIOENCODING"] = "utf-8";
             start.Environment["PYTHONUTF8"] = "1";
             start.Environment.Remove("PYTHONHOME");

@@ -39,6 +39,8 @@ _STAT_LABELS = (
 
 class IntervalStatsStep(Step):
     """Per-chromosome interval count and length statistics."""
+    title = 'interval_stats'
+    description = 'Per-chromosome interval count and length statistics.'
 
     name = "interval_stats"
     category = "analysis"

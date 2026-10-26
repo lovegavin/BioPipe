@@ -108,12 +108,11 @@ import type {
   LibraryAction,
 } from "./types";
 
-const DRAFT_KEY = "biopipe-studio-draft-v1";
 const nodeTypes = { block: WorkflowNode };
 const edgeTypes = { workflow: WorkflowEdge };
 const defaultViewport = { x: 0, y: 0, zoom: 1 };
 const emptyGraph: Graph = {
-  schema_version: 1,
+  schema_version: 2,
   name: "我的工作流",
   base_dir: ".",
   nodes: [],
@@ -156,7 +155,6 @@ class ErrorBoundary extends Component<
         <button
           className="text-button"
           onClick={() => {
-            localStorage.removeItem(DRAFT_KEY);
             location.reload();
           }}
         >
@@ -496,16 +494,6 @@ function Studio() {
       setLibraryState(state);
       setPanelWidths(workspace?.panel_widths || automaticPanels);
       let initial = normalizeGraph(data.demo);
-      try {
-        if (data.desktop) {
-          if (data.draft) initial = normalizeGraph(data.draft);
-        } else {
-          const draft = localStorage.getItem(DRAFT_KEY);
-          if (draft) initial = normalizeGraph(JSON.parse(draft));
-        }
-      } catch {
-        notify("上次草稿无法恢复，已载入示例。");
-      }
       const running = data.history.find((item) => item.status === "running");
       if (running) {
         const current = await api.job(running.id);
@@ -866,7 +854,7 @@ function Studio() {
   function add(operator?: string, position?: { x: number; y: number }) {
     if (busy) return;
     if (operator && (libraryState.disabled.includes(operator) || libraryState.hidden.includes(operator))) return;
-    const spec = catalog.operators.find((o) => o.name === operator);
+    const spec = catalog.operators.find((o) => o.id === operator);
     const area = canvas.current?.getBoundingClientRect();
     const location =
       position ||
@@ -1101,8 +1089,8 @@ function Studio() {
         )}
       </div>
     );
-  const filtered = catalog.operators.filter((o) => (showHidden || !libraryState.hidden.includes(o.name)) &&
-    `${o.title} ${o.name} ${o.description} ${(o.title_aliases || []).join(" ")}`
+  const filtered = catalog.operators.filter((o) => (showHidden || !libraryState.hidden.includes(o.id)) &&
+    `${o.title} ${o.id} ${o.description} ${(o.title_aliases || []).join(" ")}`
       .toLowerCase()
       .includes(search.toLowerCase()),
   );
@@ -1276,7 +1264,7 @@ function Studio() {
         >
           <div className="panel-heading">
             <h2>算子库</h2>
-            <span className="count-badge">{catalog.operators.filter(item => !libraryState.hidden.includes(item.name)).length + routes.length}</span>
+            <span className="count-badge">{catalog.operators.filter(item => !libraryState.hidden.includes(item.id)).length + routes.length}</span>
             <button className="icon-button register-route-button" aria-label="添加路线算子" title="从已保存路线添加算子" onClick={() => setPicker("register")}><Plus size={18}/></button>
             <button className="icon-button library-refresh" aria-label="刷新算子库" title="扫描算子与 Reader 目录并热更新" disabled={refreshingPlugins} onClick={() => void refreshPlugins()}><ArrowClockwise size={16} className={refreshingPlugins ? "spin" : ""}/></button>
             <button
@@ -1331,28 +1319,28 @@ function Studio() {
                   .filter((o) => o.category === category)
                   .map((spec) => (
                     <button
-                      key={spec.name}
-                      className={`operator-item ${spec.preview ? "has-preview" : ""} ${libraryState.disabled.includes(spec.name) || libraryState.hidden.includes(spec.name) ? "is-library-disabled" : ""}`}
+                      key={spec.id}
+                      className={`operator-item ${spec.preview ? "has-preview" : ""} ${libraryState.disabled.includes(spec.id) || libraryState.hidden.includes(spec.id) ? "is-library-disabled" : ""}`}
                       disabled={busy}
-                      aria-disabled={libraryState.disabled.includes(spec.name) || libraryState.hidden.includes(spec.name)}
+                      aria-disabled={libraryState.disabled.includes(spec.id) || libraryState.hidden.includes(spec.id)}
                       title={spec.description}
-                      draggable={!busy && !libraryState.disabled.includes(spec.name) && !libraryState.hidden.includes(spec.name)}
-                      onContextMenu={event => {event.preventDefault(); setContextMenu({x: event.clientX, y: event.clientY, libraryKey: spec.name});}}
+                      draggable={!busy && !libraryState.disabled.includes(spec.id) && !libraryState.hidden.includes(spec.id)}
+                      onContextMenu={event => {event.preventDefault(); setContextMenu({x: event.clientX, y: event.clientY, libraryKey: spec.id});}}
                       onDragStart={(e) => {
                         e.dataTransfer.setData(
                           "application/biopipe",
-                          spec.name,
+                          spec.id,
                         );
                         e.dataTransfer.effectAllowed = "move";
                       }}
-                      onClick={() => add(spec.name)}
+                      onClick={() => add(spec.id)}
                     >
                       <span className="operator-icon">
                         <OperatorArtwork spec={spec} size={18}/>
                       </span>
                       <span>
                         <strong>{spec.title}</strong>
-                        {libraryState.hidden.includes(spec.name) ? <small>已删除</small> : libraryState.disabled.includes(spec.name) ? <small>已禁用</small> : null}
+                        {libraryState.hidden.includes(spec.id) ? <small>已删除</small> : libraryState.disabled.includes(spec.id) ? <small>已禁用</small> : null}
                       </span>
                       <Plus className="add-hint" size={14} />
                     </button>

@@ -67,7 +67,7 @@ def main():
     startup = subprocess.STARTUPINFO()
     startup.dwFlags = subprocess.STARTF_USESHOWWINDOW
     startup.wShowWindow = 0
-    host = subprocess.Popen([str(application / executable.name), "--data-dir", str(profile)],
+    host = subprocess.Popen([str(application / executable.name), "--profile-dir", str(profile)],
                             cwd=temporary, env=environment, startupinfo=startup)
     checks = []
     try:

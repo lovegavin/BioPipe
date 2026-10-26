@@ -48,6 +48,7 @@ _METHODS = ("kmeans", "hierarchical", "louvain")
 
 class ClusterAxisStep(Step):
     """Cluster positions along one axis."""
+    description = 'Cluster positions along one axis.'
     dependencies = ['scikit-learn>=1.5', 'networkx>=3.2']
     dependency_imports = ['sklearn', 'networkx']
 
@@ -55,9 +56,8 @@ class ClusterAxisStep(Step):
     inputs_arity = 1
     outputs = []
     title = 'Clustering'
-    category = 'Analysis'
+    category = '统计分析'
     builtin_package = 'biopipe-core'
-    legacy_parameters = False
     parameters_schema = SCHEMAS['cluster_axis']
     input_contracts, output_contract = CONTRACTS['cluster_axis']
     output_parameter = 'output'
@@ -185,6 +185,7 @@ class ClusterAxisStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'TreeStructure'
 
 
 def _kmeans(X: np.ndarray, k: int, random_state: int) -> np.ndarray:

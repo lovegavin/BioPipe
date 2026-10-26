@@ -440,7 +440,7 @@ export function Inspector({
                   />
                 </label>
                 {!!reader?.parameters?.length && <div className="reader-options">
-                  <p className="section-caption">{reader.name} · 读取参数</p>
+                  <p className="section-caption">{reader.id} · 读取参数</p>
                   {reader.parameters?.map(field => <ParameterField key={`${node.id}-${field.key}`} field={field}
                     value={node.source!.args[field.key] ?? field.default} disabled={busy}
                     onChange={value => {
@@ -537,8 +537,8 @@ export function Inspector({
                 <div className="capability">
                   <Cpu size={16} />
                   <span>
-                    {spec?.supports_cuda ? "CPU / CUDA" : "CPU"}
-                    {node.kind === "route" ? " · 共享外层内存规划" : spec?.memory_modes.includes("stream")
+                    {spec?.resources.supports_cuda ? "CPU / CUDA" : "CPU"}
+                    {node.kind === "route" ? " · 共享外层内存规划" : spec?.resources.memory_modes.includes("stream")
                       ? " · 支持分块"
                       : " · 整体处理"}
                   </span>

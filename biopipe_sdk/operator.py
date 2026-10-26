@@ -1,4 +1,4 @@
-"""Small function-oriented operator API layered over the compatible Step API."""
+"""Function-oriented operator API layered over the Step execution interface."""
 from abc import abstractmethod
 from src.task.step.base import Step
 from src.core import Form, StepError
@@ -8,7 +8,7 @@ class Operator(Step):
     """Implement compute(inputs, params, context) and return one Form or a report.
 
     Set output_parameter=None and output_contract={"mode": "report"} for a
-    report-only operator. Use Step directly for legacy multi-output behavior.
+    report-only operator. Use Step directly for multiple named outputs.
     """
     inputs_arity = 1
     output_parameter = "output"

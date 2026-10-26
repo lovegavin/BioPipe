@@ -68,7 +68,7 @@ def plan_input(names, catalog):
     name, reader, _ = complete[0]
     hints = reader.get('file_input') or {}
     dims = deepcopy(hints.get('dims', ['sample', 'feature']))
-    return {'filename': name, 'reader': reader['name'], 'source': {
+    return {'filename': name, 'reader': reader['id'], 'source': {
         'dims': dims, 'labels': deepcopy(hints.get('labels', {dim: 'auto' for dim in dims})), 'args': {}}}
 
 

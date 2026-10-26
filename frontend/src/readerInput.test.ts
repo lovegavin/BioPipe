@@ -5,9 +5,9 @@ import type { Catalog } from './types';
 describe('registry-based input file filters', () => {
   it('includes companions and only supported compression variants', () => {
     const catalog: Catalog = {schema_version:1, operators:[], readers:[
-      {name:'CsvReader', extensions:['.csv'], output_contract:null},
-      {name:'Plink1Reader', extensions:['.bed'], requires_siblings:['.bim','.fam'], handles_compression:true, output_contract:null},
-      {name:'MtxReader', extensions:['.mtx'], handles_compression:true, output_contract:null,
+      {id:'CsvReader', extensions:['.csv'], contracts:{output:null}},
+      {id:'Plink1Reader', extensions:['.bed'], requires_siblings:['.bim','.fam'], handles_compression:true, contracts:{output:null}},
+      {id:'MtxReader', extensions:['.mtx'], handles_compression:true, contracts:{output:null},
         file_input:{compression:['.gz'], companions:[['barcodes.tsv','barcodes.tsv.gz']]}},
     ]};
     const values = inputAccept(catalog).split(',');
@@ -16,18 +16,18 @@ describe('registry-based input file filters', () => {
     expect(values).not.toContain('.csv.zst');
   });
   it('accepts newly registered formats without a frontend extension table', () => {
-    expect(inputAccept({schema_version:1, operators:[], readers:[{name:'LabReader',extensions:['.lab'],handles_compression:true,output_contract:null}]})).toBe('.lab');
+    expect(inputAccept({schema_version:1, operators:[], readers:[{id:'LabReader',extensions:['.lab'],handles_compression:true,contracts:{output:null}}]})).toBe('.lab');
   });
   it('uses the same declared compression rules for selection and the inspector', () => {
     const catalog: Catalog = {schema_version:1, operators:[], readers:[
-      {name:'GafReader', extensions:['.gaf'], handles_compression:true, output_contract:null,
+      {id:'GafReader', extensions:['.gaf'], handles_compression:true, contracts:{output:null},
         file_input:{compression:['.gz']}},
-      {name:'H5adReader', extensions:['.h5ad'], handles_compression:false, output_contract:null},
+      {id:'H5adReader', extensions:['.h5ad'], handles_compression:false, contracts:{output:null}},
     ]};
     expect(inputAccept(catalog)).toContain('.gaf.gz');
-    expect(readerForPath(catalog, 'INPUT.GAF.GZ')?.name).toBe('GafReader');
+    expect(readerForPath(catalog, 'INPUT.GAF.GZ')?.id).toBe('GafReader');
     expect(readerForPath(catalog, 'input.gaf.xz')).toBeUndefined();
-    expect(readerForPath(catalog, 'input.h5ad.xz')?.name).toBe('H5adReader');
+    expect(readerForPath(catalog, 'input.h5ad.xz')?.id).toBe('H5adReader');
     expect(readerForPath(catalog, 'input.h5ad.zst')).toBeUndefined();
   });
 });

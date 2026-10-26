@@ -52,14 +52,14 @@ from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metada
 
 class JoinStep(Step):
     """Join two forms along a shared dim by label."""
+    description = 'Join two forms along a shared dim by label.'
 
     name = "join"
     inputs_arity = 2
     outputs = []
     title = 'Join'
-    category = "Microbiome"
+    category = '数据整理'
     builtin_package = "biopipe-microbiome"
-    legacy_parameters = False
     parameters_schema = SCHEMAS['join']
     input_contracts, output_contract = CONTRACTS['join']
     output_parameter = "output"
@@ -266,3 +266,4 @@ class JoinStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'Unite'

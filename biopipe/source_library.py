@@ -12,6 +12,7 @@ from pathlib import Path
 import sys
 
 from biopipe.plugins import ROOT, run_process
+from biopipe_sdk.protocol import PROTOCOL_VERSION
 
 SOURCE_DIRS = {"operator": "src/task/step/steps", "reader": "src/reader/readers"}
 
@@ -28,8 +29,6 @@ def describe(root, output, sources=None):
     for relative in SOURCE_DIRS.values():
         package = importlib.import_module(relative.replace("/", "."))
         package.__path__ = [str(root / relative)]
-    from src.task import operator_catalog
-    operator_catalog.__file__ = str(root / "src/task/operator_catalog.py")
     from biopipe.registry import scan_sources, package_manifest, PACKAGE_INDEX, read_json
     descriptors, errors = scan_sources(root, sources)
     if sources is not None:
@@ -68,7 +67,6 @@ def provider_wheel(package, root, output):
     groups = {"operator": [], "reader": []}
     for index, descriptor in enumerate(definitions):
         descriptor["entry_point"] = rewrite(descriptor["entry_point"])
-        descriptor["module"] = descriptor["entry_point"].split(":")[0]
         source_module, clsname = descriptor["entry_point"].split(":")
         alias = f"Entry{index}"
         # __getattr__ resolves only the selected entry.
@@ -77,8 +75,7 @@ def provider_wheel(package, root, output):
                  "    if index < 0 or index >= len(_definitions): raise AttributeError(name)",
                  "    d = _definitions[index]", "    module, clsname = d['entry_point'].split(':')",
                  "    cls = getattr(import_module(module), clsname)",
-                 "    cls.parameters_schema = d['parameters_schema']", "    cls.legacy_parameters = d.get('legacy_parameters', True)",
-                 "    cls._package_descriptor = d", "    return cls"])
+                 "    return cls"])
     files[f"{module}/__init__.py"] = ("\n".join(init) + "\n").encode()
     files[f"{module}/definitions.json"] = json.dumps(definitions, ensure_ascii=False, sort_keys=True).encode()
     info = f"{name.replace('-', '_').replace('.', '_')}-{version}.dist-info"
@@ -88,7 +85,7 @@ def provider_wheel(package, root, output):
             entries.extend([f"[biopipe.{group}]", *groups[kind], ""])
     files[f"{info}/entry_points.txt"] = "\n".join(entries).encode()
     # Requirements belong to each descriptor; a package may contain conflicts.
-    files[f"{info}/biopipe.json"] = json.dumps({"protocol_version": 1, "name": name, "version": version,
+    files[f"{info}/biopipe.json"] = json.dumps({"protocol_version": PROTOCOL_VERSION, "name": name, "version": version,
         "descriptors": definitions}).encode()
     return write_wheel(files, name, version, [], output)
 
@@ -101,7 +98,7 @@ def prepare(manager, current, temporary):
         return {"wheels": [], "updated": [], "unchanged": [], "receipt": current.get("source_library")}
     staged = temporary / "source"
     digest = hashlib.sha256()
-    for relative in [*SOURCE_DIRS.values(), "src/task/operator_ui.json", "biopipe/builtin_packages.json"]:
+    for relative in [*SOURCE_DIRS.values(), "biopipe/builtin_packages.json"]:
         source = root / relative
         target = staged / relative if source.is_dir() else (staged / relative).parent
         digest.update(relative.encode() + snapshot(source, target).encode())

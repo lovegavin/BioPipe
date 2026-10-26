@@ -28,8 +28,6 @@ def refresh():
     if report["errors"]:
         raise ValueError(json.dumps(report["errors"], ensure_ascii=False))
     from biopipe.packages import bundled_manifest, bundled_state
-    bundled_manifest.cache_clear()
-    bundled_state.cache_clear()
     return json.loads((ROOT / "biopipe/builtin_packages.json").read_text(encoding="utf-8"))
 
 
@@ -72,8 +70,7 @@ def build_package(name, output):
                  "    if index < 0 or index >= len(_definitions): raise AttributeError(name)",
                  "    d = _definitions[index]", "    module, clsname = d['entry_point'].split(':')",
                  "    cls = getattr(import_module(module), clsname)",
-                 "    cls.parameters_schema = d['parameters_schema']", "    cls.legacy_parameters = d.get('legacy_parameters', True)",
-                 "    cls._package_descriptor = d", "    return cls"])
+                 "    return cls"])
     (target / "__init__.py").write_text("\n".join(init) + "\n", encoding="utf-8")
     (target / "definitions.json").write_text(json.dumps(definitions, ensure_ascii=False), encoding="utf-8")
     project = ['[build-system]', 'requires = ["setuptools>=69"]', 'build-backend = "setuptools.build_meta"',

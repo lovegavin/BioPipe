@@ -31,6 +31,30 @@ class HistogramStep(Step):
         ylabel      : optional y-axis label (default: "Count")
         log_y       : use log scale on the y axis (default False)
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '数值维度',
+                            'type': 'string',
+                            'default': 'feature',
+                            'x-ui-default': 'statistic'},
+                    'value_label': {'title': '数值标签', 'type': 'string', 'x-ui-default': 'P'},
+                    'bins': {'title': '分箱数量',
+                             'type': 'integer',
+                             'minimum': 1,
+                             'default': 40,
+                             'x-ui-default': 20},
+                    'filename': {'title': '文件名', 'type': 'string', 'x-ui-default': 'histogram.png'},
+                    'log_y': {'title': 'Log Y axis', 'type': 'boolean', 'default': False},
+                    'title': {'title': 'Title', 'type': 'string'},
+                    'xlabel': {'title': 'X axis label', 'type': 'string'},
+                    'ylabel': {'title': 'Y axis label', 'type': 'string', 'default': 'Count'}},
+     'additionalProperties': True,
+     'required': ['value_label', 'filename']}
+    title = '直方图'
+    category = '可视化'
+    icon = 'ChartBar'
+    description = '查看指定数值标签的分布。'
+    preview = {'kind': 'histogram', 'caption': '数值分布与频数'}
 
     name = "histogram"
     inputs_arity = 1

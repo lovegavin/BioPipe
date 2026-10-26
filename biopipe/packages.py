@@ -42,10 +42,6 @@ def bundled_entries(kind):
 def load_entry(descriptor):
     module, name = descriptor["entry_point"].split(":", 1)
     cls = getattr(importlib.import_module(module), name)
-    # Legacy Python/YAML callers keep their historical parameter semantics.
-    cls.parameters_schema = deepcopy(descriptor["parameters_schema"])
-    cls.legacy_parameters = bool(descriptor.get("legacy_parameters", True))
-    cls._package_descriptor = deepcopy(descriptor)
     return cls
 
 
@@ -82,6 +78,6 @@ def _bundled_state(index, sources):
     return {"packages": packages, "descriptors": descriptors}
 
 
-def owns_legacy_id(package, identifier):
+def owns_builtin_id(package, identifier):
     return any(p["name"] == package and d["id"] == identifier
                for p in bundled_manifest()["packages"] for d in p["descriptors"])

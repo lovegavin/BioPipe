@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "biopipe-resource-example"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["biopipe-studio>=0.3,<1"]
+dependencies = ["biopipe-studio>=0.5.0.dev0,<1"]
 
 [project.entry-points."biopipe.operators"]
 sum = "resource_example:Sum"

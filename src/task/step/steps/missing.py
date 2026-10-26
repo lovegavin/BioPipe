@@ -19,6 +19,22 @@ class MissingStep(Step):
         threshold : maximum allowed missing rate
         output    : context key for the result (default: step name)
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '过滤维度', 'type': 'string', 'x-ui-default': 'feature'},
+                    'threshold': {'title': '最大缺失比例',
+                                  'type': 'number',
+                                  'minimum': 0,
+                                  'maximum': 1,
+                                  'default': 0.1,
+                                  'x-ui-default': 0.05,
+                                  'x-ui-step': 0.01}},
+     'additionalProperties': True,
+     'required': ['dim']}
+    title = '缺失值过滤'
+    category = '质量控制'
+    icon = 'Funnel'
+    description = '按指定维度过滤缺失比例过高的样本或特征。'
 
     name = "missing"
     inputs_arity = 1

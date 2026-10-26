@@ -41,6 +41,8 @@ _BASES = ("A", "C", "G", "T")
 
 class KmerCountStep(Step):
     """Count k-mers per sequence for any sequence-codes Form."""
+    title = 'kmer_count'
+    description = 'Count k-mers per sequence for any sequence-codes Form.'
 
     name = "kmer_count"
     category = "analysis"

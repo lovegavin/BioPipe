@@ -39,6 +39,8 @@ _STAT_LABELS = ("n_exons", "n_introns", "gene_length", "cds_total", "strand")
 
 class GeneStructureStep(Step):
     """Per-gene exon/intron/CDS summary for GFF3/GTF."""
+    title = 'gene_structure'
+    description = 'Per-gene exon/intron/CDS summary for GFF3/GTF.'
 
     name = "gene_structure"
     category = "analysis"

@@ -35,7 +35,6 @@ def main():
     parser.add_argument("--workspace", type=Path, help="Explicit isolated workspace")
     parser.add_argument("--profile-dir", type=Path, help="Shared Studio profile")
     parser.add_argument("--resolve-profile", action="store_true")
-    parser.add_argument("--migrate-legacy", action="store_true", default=None)
     parser.add_argument("--frontend", type=Path, default=CODE_ROOT / "frontend/dist")
     parser.add_argument("--port", type=int, default=0)
     parser.add_argument("--wait-for-host", action="store_true")
@@ -61,8 +60,7 @@ def main():
 
     if not (args.frontend / "index.html").is_file():
         parser.error("Frontend index.html is missing")
-    settings = make_settings(CODE_ROOT, args.frontend, desktop=True,
-                             migrate_legacy=args.migrate_legacy, **options)
+    settings = make_settings(CODE_ROOT, args.frontend, desktop=True, **options)
     app = create_app(settings)
     finished = threading.Event()
     with bind_loopback(args.port) as listener:

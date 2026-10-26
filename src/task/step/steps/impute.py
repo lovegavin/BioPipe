@@ -51,6 +51,17 @@ _METHODS = ("min", "median", "mean")
 
 class ImputeStep(Step):
     """Fill missing values in a form."""
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'method': {'title': '方法', 'enum': ['min', 'median', 'mean'], 'x-ui-default': 'median'},
+                    'dim': {'title': '分析维度', 'type': 'string', 'x-ui-default': 'feature'},
+                    'min_scale': {'title': '最小值倍率', 'type': 'number', 'minimum': 0, 'default': 1.0}},
+     'additionalProperties': True,
+     'required': ['method', 'dim']}
+    title = '缺失值填补'
+    category = '数据整理'
+    icon = 'PuzzlePiece'
+    description = '以 Min、Median 或 Mean 填补缺失'
 
     name = "impute"
     inputs_arity = 1

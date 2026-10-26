@@ -48,7 +48,7 @@ def test_registry_all_ports_and_readers_json():
     catalog = build_catalog(STEPS)
     assert catalog["contract_version"] == 1
     assert len(catalog["readers"]) == len(READERS)
-    assert all(reader["output_contract"] for reader in catalog["readers"])
+    assert all(reader["contracts"]["output"] for reader in catalog["readers"])
     assert all(op["contracts"]["inputs"] and op["contracts"]["output"] for op in catalog["operators"])
     json.dumps(catalog, allow_nan=False)
 
@@ -147,6 +147,7 @@ def test_attach_uses_label_positions_not_insertion_order(tmp_path):
 def test_runtime_checks_output_before_cache_and_requires_new_write(tmp_path, monkeypatch):
     class Broken(Step):
         name = "broken"
+        parameters_schema = {"type": "object", "properties": {}}
         inputs_arity = 1
         input_contracts = [port()]
         output_contract = {"mode": "preserve"}

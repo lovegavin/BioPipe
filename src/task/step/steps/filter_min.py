@@ -30,6 +30,17 @@ from src.core.forms.metadata import project_metadata
 
 class FilterMinStep(Step):
     """Drop positions that do not reach a minimum value."""
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '分析维度', 'type': 'string', 'x-ui-default': 'feature'},
+                    'min_value': {'title': '最低信号', 'type': 'number', 'minimum': 0, 'default': 1},
+                    'min_samples': {'title': '最少样本数', 'type': 'integer', 'minimum': 1, 'default': 1}},
+     'additionalProperties': True,
+     'required': ['dim']}
+    title = '低表达过滤'
+    category = '数据整理'
+    icon = 'Funnel'
+    description = '按最低信号和有效样本数过滤'
 
     name = "filter_min"
     inputs_arity = 1

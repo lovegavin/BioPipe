@@ -34,6 +34,8 @@ from src.task.step.base import Step
 
 class ExplodeStep(Step):
     """Expand a multi-valued info field into separate positions."""
+    title = 'explode'
+    description = 'Expand a multi-valued info field into separate positions.'
 
     name = "explode"
     category = "data"

@@ -77,6 +77,7 @@ _COMPONENT_PREFIX = {
 
 class ReduceStep(Step):
     """Reduce one axis of a 2D form to a small number of components."""
+    description = 'Reduce one axis of a 2D form to a small number of components.'
     dependencies = ['scikit-learn>=1.5', 'umap-learn>=0.5']
     dependency_imports = ['sklearn', 'umap']
 
@@ -84,9 +85,8 @@ class ReduceStep(Step):
     inputs_arity = 1
     outputs = []
     title = 'PCA / PCoA / UMAP / t-SNE'
-    category = "Microbiome"
+    category = '统计分析'
     builtin_package = "biopipe-microbiome"
-    legacy_parameters = False
     parameters_schema = SCHEMAS['reduce']
     input_contracts, output_contract = CONTRACTS['reduce']
     output_parameter = "output"
@@ -328,6 +328,7 @@ class ReduceStep(Step):
             np.zeros(k)
 
         return coords, explained
+    icon = 'ArrowsIn'
 
 
 # ---------------------------------------------------------------------- #

@@ -19,6 +19,23 @@ class MafStep(Step):
         threshold : minimum allowed MAF
         output    : context key for the result
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '变异维度', 'type': 'string', 'x-ui-default': 'variant'},
+                    'threshold': {'title': '最低 MAF',
+                                  'type': 'number',
+                                  'minimum': 0,
+                                  'maximum': 0.5,
+                                  'default': 0.01,
+                                  'x-ui-default': 0.05,
+                                  'x-ui-step': 0.01}},
+     'additionalProperties': True,
+     'required': ['dim']}
+    title = 'MAF'
+    category = '质量控制'
+    icon = 'Dna'
+    description = '过滤低频变异。输入需要基因型及 ploidy 元数据。'
+    title_aliases = ['等位基因频率']
 
     name = "maf"
     inputs_arity = 1

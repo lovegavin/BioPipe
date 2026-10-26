@@ -14,7 +14,7 @@ internal sealed class DesktopConfiguration
 }
 
 internal sealed record RuntimePaths(string BackendRoot, string Python, string EntryPoint, string Frontend);
-internal sealed record ProfilePaths(string ProfileDir, string Workspace, string DataDir, string Registry, bool MigrateLegacy);
+internal sealed record ProfilePaths(string ProfileDir, string Workspace, string DataDir, string Registry);
 internal sealed class RuntimeNotFoundException(string message, bool automatic) : InvalidOperationException(message)
 {
     public bool Automatic { get; } = automatic;
@@ -47,8 +47,7 @@ internal static class RuntimeLocator
         using var json = JsonDocument.Parse(await output);
         var data = json.RootElement;
         return new(data.GetProperty("profile_dir").GetString()!, data.GetProperty("workspace").GetString()!,
-            data.GetProperty("data_dir").GetString()!, data.GetProperty("registry").GetString()!,
-            data.GetProperty("migrate_legacy").GetBoolean());
+            data.GetProperty("data_dir").GetString()!, data.GetProperty("registry").GetString()!);
     }
 
     public static async Task<RuntimePaths> Resolve(string install, string? pythonOverride = null)

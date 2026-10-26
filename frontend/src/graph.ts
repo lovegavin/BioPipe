@@ -36,7 +36,7 @@ export function runSignature(graph: Graph): string {
 }
 export function normalizeGraph(value: Graph): Graph {
   if (
-    ![1, 2].includes(value.schema_version) ||
+    value.schema_version !== 2 ||
     !Array.isArray(value.nodes) ||
     !Array.isArray(value.edges)
   )
@@ -135,7 +135,7 @@ export function makeNode(
   spec: Operator | undefined,
   position: { x: number; y: number },
 ): GraphNode {
-  const prefix = spec?.name || "data";
+  const prefix = spec?.id || "data";
   let number = 1;
   const names = new Set(
     graph.nodes.flatMap((n) => [n.id, String(n.params.output || "")]),
@@ -145,7 +145,7 @@ export function makeNode(
   return {
     id,
     kind: spec ? "operator" : "source",
-    operator: spec?.name,
+    operator: spec?.id,
     title: spec?.title || "输入数据",
     position,
     input_count: spec?.inputs_arity === "*" ? 2 : (spec?.inputs_arity ?? 0),
@@ -176,13 +176,13 @@ export function specFor(
   catalog: Catalog,
 ): Operator | undefined {
   if (node.kind === "route" && node.route) return routeSpec(node.route);
-  return catalog.operators.find((o) => o.name === node.operator);
+  return catalog.operators.find((o) => o.id === node.operator);
 }
 export function routeSpec(route: RouteDefinition): Operator {
-  return { name: route.id, title: route.name, category: "路线算子", description: `${route.graph.nodes.filter(n => n.kind !== "source").length} 个内部节点 · v${route.version}`,
+  return { id: route.id, title: route.name, category: "路线算子", description: `${route.graph.nodes.filter(n => n.kind !== "source").length} 个内部节点 · v${route.version}`,
     icon: "Stack", inputs_arity: route.graph.interface?.inputs.length || 0,
     outputs: route.graph.interface?.outputs.map(p => p.label) || [], output_parameter: null,
-    input_type: "info", output_type: "info", memory_modes: ["adaptive"], supports_cuda: false, parameters: [] };
+    resources: {memory_modes: ["adaptive"], supports_cuda: false}, parameters: [] };
 }
 export function makeRouteNode(graph: Graph, route: RouteDefinition, position: {x: number; y: number}): GraphNode {
   const node = makeNode(graph, routeSpec(route), position);
@@ -198,7 +198,7 @@ export function displayTitle(node: GraphNode, spec?: Operator): string {
     node.kind === "source" ||
     !spec ||
     (node.title !== spec.title &&
-      node.title !== spec.name &&
+      node.title !== spec.id &&
       !spec.title_aliases?.includes(node.title))
   )
     return node.title;

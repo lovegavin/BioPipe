@@ -46,14 +46,14 @@ _INNER_MODES = ("box", "quartile", "point", "none")
 
 class ViolinStep(Step):
     """Draw violin plots of a value column grouped by a label."""
+    description = 'Draw violin plots of a value column grouped by a label.'
 
     name = "violin"
     inputs_arity = 2
     outputs = []
     title = 'Violin plot'
-    category = 'Visualization'
+    category = '可视化'
     builtin_package = 'biopipe-plots'
-    legacy_parameters = False
     parameters_schema = SCHEMAS['violin']
     input_contracts, output_contract = CONTRACTS['violin']
     output_parameter = None
@@ -288,6 +288,8 @@ class ViolinStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'ChartLine'
+    preview = {'kind': 'violin', 'caption': '分组密度与分布'}
 
 
 def _draw_inner_box(ax, data_per_group, positions):

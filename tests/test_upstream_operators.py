@@ -31,9 +31,9 @@ def test_registry_thirteen_adapted_operators():
     catalog = build_catalog(STEPS)
     assert new <= set(STEPS)
     for item in catalog['operators']:
-        if item['name'] not in new: continue
+        if item['id'] not in new: continue
         assert item['parameters'] and item['contracts']['inputs'] and item['contracts']['output']
-        assert item['memory_modes'] == ['full'] and not item['supports_cuda']
+        assert item['resources']['memory_modes'] == ['full'] and not item['resources']['supports_cuda']
 
 
 @pytest.mark.parametrize('method',['cpm','total','median_of_ratios','quantile','zscore'])

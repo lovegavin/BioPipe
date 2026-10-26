@@ -19,6 +19,10 @@ def parser():
     root.add_argument("--session")
     root.add_argument("--json", action="store_true", help="JSON is the default output format")
     commands = root.add_subparsers(dest="command", required=True)
+    migrate = commands.add_parser("migrate", help="Preview explicit protocol v2 conversion; --apply backs up and writes")
+    migrate.add_argument("path", nargs="?", type=Path, help="Graph/workspace JSON, task YAML, or extension Python; omit to migrate the selected profile")
+    migrate.add_argument("--manifest", type=Path, help="Old descriptor JSON for Python source conversion")
+    migrate.add_argument("--apply", action="store_true")
     registry = commands.add_parser("registry", help="Discover, validate and build repository indexes without a running Studio")
     registry.add_argument("action", choices=["discover", "check", "build"])
     registry.add_argument("--source-ref")
@@ -62,6 +66,10 @@ def parser():
 
 
 def execute(args):
+    if args.command == "migrate":
+        from .migrate import migrate
+        return migrate(path=args.path, profile_dir=args.profile_dir, workspace=args.workspace,
+                       data_dir=args.data_dir, manifest=args.manifest, apply=args.apply)
     if args.command == "registry":
         from .registry import inventory, maintain
         if args.source_ref and args.action != "discover":

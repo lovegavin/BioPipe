@@ -40,6 +40,29 @@ from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 class ForestPlotStep(Step):
     """Draw a forest plot of hazard ratios."""
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '分析维度', 'type': 'string', 'default': 'covariate'},
+                    'stat_dim': {'title': '统计量维度', 'type': 'string', 'default': 'statistic'},
+                    'hr_label': {'title': 'HR 字段', 'type': 'string', 'default': 'HR'},
+                    'low_label': {'title': 'CI 下界字段', 'type': 'string', 'default': 'CI_low'},
+                    'high_label': {'title': 'CI 上界字段', 'type': 'string', 'default': 'CI_high'},
+                    'p_label': {'title': 'P / Q 字段', 'type': 'string', 'default': 'P'},
+                    'filename': {'title': '图片文件名', 'type': 'string', 'x-ui-default': 'forest_plot.png'},
+                    'title': {'title': '图标题', 'type': 'string'},
+                    'xlabel': {'title': 'X 轴标题', 'type': 'string', 'default': 'Hazard ratio (95% CI)'},
+                    'xlim': {'title': 'X 轴范围', 'type': ['object', 'array']},
+                    'color_sig': {'title': 'color_sig', 'type': 'string', 'default': '#D62728'},
+                    'color_ns': {'title': 'color_ns', 'type': 'string', 'default': '#4C72B0'},
+                    'sort_by': {'title': '排序', 'enum': ['input', 'hr', 'p'], 'default': 'input'},
+                    'log_scale': {'title': 'Log 坐标', 'type': 'boolean', 'default': True}},
+     'additionalProperties': True,
+     'required': ['filename']}
+    title = 'Forest plot'
+    category = '可视化'
+    icon = 'ChartLine'
+    description = 'HR 与置信区间'
+    preview = {'kind': 'forest', 'caption': '效应估计与置信区间'}
 
     name = "forest_plot"
     inputs_arity = 1

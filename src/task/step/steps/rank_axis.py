@@ -68,14 +68,14 @@ _STATS = (
 
 class RankAxisStep(Step):
     """Rank positions along one axis by a statistic."""
+    description = 'Rank positions along one axis by a statistic.'
 
     name = "rank_axis"
     inputs_arity = 1
     outputs = []
     title = 'Rank features'
-    category = 'Analysis'
+    category = '数据整理'
     builtin_package = 'biopipe-core'
-    legacy_parameters = False
     parameters_schema = SCHEMAS['rank_axis']
     input_contracts, output_contract = CONTRACTS['rank_axis']
     output_parameter = 'output'
@@ -233,6 +233,7 @@ class RankAxisStep(Step):
 
     def export(self, ctx: Context) -> dict:
         return self._export_data
+    icon = 'SortAscending'
 
 
 def _compute_stat(name: str, flat: np.ndarray, valid: np.ndarray):

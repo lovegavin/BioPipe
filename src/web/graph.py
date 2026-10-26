@@ -56,7 +56,7 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
         json.dumps(graph.model_dump(), allow_nan=False)
     except (ValueError, TypeError) as exc:
         raise GraphError("参数不能包含 NaN 或无穷大。") from exc
-    registry = {operator["name"]: operator for operator in catalog["operators"]}
+    registry = {operator["id"]: operator for operator in catalog["operators"]}
     nodes = {node.id: node for node in graph.nodes}
     if len(nodes) != len(graph.nodes):
         raise GraphError("节点 ID 重复。")
@@ -75,44 +75,16 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
             if node.operator not in registry:
                 raise GraphError(f"未找到算子 {node.operator!r}；请更新算子清单。", node.id)
             spec = registry[node.operator]
-            strict_parameters = spec.get("parameters_schema") and not spec.get("legacy_parameters")
-            if strict_parameters:
-                from biopipe_sdk.protocol import validate_parameters
-                params = dict(node.params)
-                if spec.get("output_parameter"):
-                    params.pop(spec["output_parameter"], None)
-                try:
-                    validate_parameters(spec["parameters_schema"], params)
-                except ValueError as error:
-                    raise GraphError(str(error), node.id) from error
+            from biopipe_sdk.protocol import validate_parameters
+            params = dict(node.params)
+            if spec.get("output_parameter"):
+                params.pop(spec["output_parameter"], None)
+            try:
+                validate_parameters(spec["parameters_schema"], params)
+            except ValueError as error:
+                raise GraphError(str(error), node.id) from error
             outputs[node.id] = ([str(node.params.get("output", node.id))] if spec["output_parameter"]
                                 else spec["outputs"])
-            for field in ([] if strict_parameters else spec["parameters"]):
-                value = node.params.get(field["key"])
-                if field.get("required") and (value is None or value == "" or value == []):
-                    raise GraphError(f"请填写{field['label']}。", node.id)
-                if value is None:
-                    continue
-                kind = field["type"]
-                if kind in ("number", "integer"):
-                    if isinstance(value, bool) or not isinstance(value, (int, float)):
-                        raise GraphError(f"{field['label']}需要数字。", node.id)
-                    if kind == "integer" and int(value) != value:
-                        raise GraphError(f"{field['label']}需要整数。", node.id)
-                    if ("min" in field and value < field["min"]) or ("max" in field and value > field["max"]):
-                        raise GraphError(f"{field['label']}超出允许范围。", node.id)
-                if kind == "list" and not isinstance(value, list):
-                    raise GraphError(f"{field['label']}需要标签列表。", node.id)
-                if kind == "choice" and value not in field["options"]:
-                    raise GraphError(f"{field['label']}不是可选值。", node.id)
-                if kind == "string" and not isinstance(value, str):
-                    raise GraphError(f"{field['label']}需要文本。", node.id)
-                if kind == "scalar" and (isinstance(value, bool) or not isinstance(value, (str, int, float))):
-                    raise GraphError(f"{field['label']}需要文本或数值。", node.id)
-                if kind == "boolean" and not isinstance(value, bool):
-                    raise GraphError(f"{field['label']}需要开关值。", node.id)
-                if kind == "json" and not isinstance(value, (dict, list)):
-                    raise GraphError(f"{field['label']}需要 JSON 对象或列表。", node.id)
         for name in outputs[node.id]:
             if not name or name in used_names:
                 raise GraphError(f"输出名称 {name!r} 重复或为空，请为它设置独立名称。", node.id)
@@ -208,7 +180,7 @@ def import_manifest(text, base_dir, catalog, root):
     _validate_sources(raw["sources"])
     _validate_steps(raw["steps"])
     MemoryConfig.parse(raw, detect_available=False)
-    registry = {o["name"]: o for o in catalog["operators"]}
+    registry = {o["id"]: o for o in catalog["operators"]}
     nodes, edges, latest, names = [], [], {}, set()
     def unique(name):
         base = "".join(c if c.isascii() and (c.isalnum() or c in "_.-") else "_" for c in name) or "data"

@@ -64,6 +64,12 @@ _GTF_COLUMNS = [
 
 class GtfReader(Reader):
     """Reader for .gtf files."""
+    parameters_schema = {'type': 'object',
+     'properties': {'encoders': {'type': 'object',
+                                 'title': 'Encoders',
+                                 'description': 'Per-field encoder configuration.',
+                                 'additionalProperties': True}},
+     'additionalProperties': True}
 
     output_contract = reader_contract()
 

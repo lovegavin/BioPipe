@@ -19,6 +19,19 @@ class DropStep(Step):
         labels : list of label names to remove
         output : context key for the result
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '移除维度', 'type': 'string', 'x-ui-default': 'feature'},
+                    'labels': {'title': '移除的标签',
+                               'type': 'array',
+                               'x-ui-default': ['f0'],
+                               'items': {'type': 'string'}}},
+     'additionalProperties': True,
+     'required': ['dim', 'labels']}
+    title = '移除特征'
+    category = '数据整理'
+    icon = 'MinusSquare'
+    description = '移除指定维度上的标签。'
 
     name = "drop"
     inputs_arity = 1

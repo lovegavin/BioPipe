@@ -99,7 +99,7 @@ export const WorkflowNode = memo(function WorkflowNode({
         labels={node.route?.graph.interface?.outputs.map(p=>p.label)}
         hint={source
             ? node.source?.dims.join(" × ")
-            : spec?.memory_modes.includes("stream")
+            : spec?.resources.memory_modes.includes("stream")
               ? "可分块"
               : spec?.output_parameter
                 ? String(node.params.output || node.id)

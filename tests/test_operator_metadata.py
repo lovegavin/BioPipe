@@ -38,17 +38,14 @@ def test_class_metadata_reaches_sdk_and_catalog():
         assert descriptor["icon"] == "Intersect"
 
 
-def test_omitted_icon_preserves_existing_wheel_descriptor_shape():
+def test_omitted_icon_uses_only_declared_metadata():
     descriptor = describe_operator(MinimalOperator)
     assert descriptor["category"] == "Plugins"
     assert "icon" not in descriptor
-    # Adding typed optional fields must not inject nulls into old manifests.
+    # Optional presentation fields are omitted from the canonical descriptor.
     assert Descriptor.model_validate(descriptor).model_dump(exclude_unset=True) == descriptor
-    legacy = {"category": "Custom category", "icon": "Tag"}
-    described = describe_operator(MinimalOperator, legacy)
-    assert described["category"] == "Custom category"
-    assert described["icon"] == "Tag"
-    assert legacy == {"category": "Custom category", "icon": "Tag"}
+    with pytest.raises(TypeError):
+        describe_operator(MinimalOperator, {"icon": "Tag"})
 
 
 def test_explicit_metadata_overrides_packaged_defaults_without_mutating_them():

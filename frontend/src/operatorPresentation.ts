@@ -23,36 +23,10 @@ export function compareCategories(a: string, b: string): number {
   return rank(a) - rank(b) || a.localeCompare(b, "zh-CN");
 }
 
-// Presentation is independent of package ownership and runtime fingerprints.
-// Saved catalogs and already-installed providers receive the same UI treatment.
-const artwork = (category: string, icon: string, kind: string, caption: string) => ({
-  category, icon, preview: { kind, caption },
-});
-export const builtinPresentation = {
-  bin: { category: "数据整理", icon: "Columns" },
-  filter_by: { category: "数据整理", icon: "Funnel" },
-  rank_axis: { category: "数据整理", icon: "SortAscending" },
-  join: { category: "数据整理", icon: "Unite" },
-  aggregate: { category: "数据整理", icon: "Stack" },
-  cluster_axis: { category: "统计分析", icon: "TreeStructure" },
-  reduce_axis: { category: "统计分析", icon: "Sigma" },
-  reduce: { category: "统计分析", icon: "ArrowsIn" },
-  diversity: { category: "统计分析", icon: "CirclesThree" },
-  distance_matrix: { category: "统计分析", icon: "Ruler" },
-  correlation: { category: "统计分析", icon: "Intersect" },
-  permanova: { category: "统计分析", icon: "Shuffle" },
-  dotplot: artwork("可视化", "ChartScatter", "dotplot", "点大小与强度"),
-  violin: artwork("可视化", "ChartLine", "violin", "分组密度与分布"),
-  barplot: artwork("可视化", "ChartBar", "composition", "各组组成比例"),
-} satisfies Record<string, Pick<Operator, "category" | "icon" | "preview">>;
-
 export function presentOperator(spec: Operator): Operator {
-  const fallback = (builtinPresentation as Record<string, Partial<Operator>>)[spec.name];
   return {
     ...spec,
-    category: categoryLabel(fallback?.category ?? spec.category),
-    icon: spec.icon ?? fallback?.icon,
-    preview: spec.preview ?? fallback?.preview,
+    category: categoryLabel(spec.category),
   };
 }
 

@@ -27,14 +27,9 @@ def read_json(path, default):
 
 def scan_sources(root=ROOT, sources=None):
     """Import fresh declarations, collect every error, and reject duplicate IDs."""
-    from biopipe_sdk.protocol import validate_extension, describe_reader
+    from biopipe_sdk.protocol import validate_extension, describe_reader, describe_operator, PROTOCOL_VERSION, catalog_entry
     from src.task.step.base import Step
     from src.reader.base import Reader
-    from src.task.operator_catalog import build_catalog
-    from src.reader.schemas import builtin_schema
-    definitions = read_json(root / "src/task/operator_ui.json", {})
-    previous = read_json(root / PACKAGE_INDEX, {"packages": []})
-    old_readers = {d["id"] for p in previous["packages"] for d in p["descriptors"] if d["kind"] == "reader"}
     classes, errors, seen = [], [], set()
     for folder, base, kind in (("src/task/step/steps", Step, "operator"), ("src/reader/readers", Reader, "reader")):
         for path in sorted((root / folder).glob("*.py")):
@@ -52,14 +47,6 @@ def scan_sources(root=ROOT, sources=None):
                     if identifier in seen:
                         raise ValueError(f"Duplicate extension ID: {identifier}")
                     seen.add(identifier)
-                    # Only established builtins have compatibility adapters.
-                    if cls.parameters_schema is None:
-                        if kind == "operator" and identifier in definitions:
-                            cls.legacy_parameters = True
-                        elif kind == "reader" and identifier in old_readers:
-                            cls.parameters_schema = builtin_schema(cls.__name__)
-                        else:
-                            raise ValueError(f"{identifier}: missing parameters_schema")
                     classes.append((kind, cls, path.relative_to(root).as_posix()))
             except Exception as exc:
                 errors.append({"source": path.relative_to(root).as_posix(), "error": str(exc)})
@@ -68,10 +55,8 @@ def scan_sources(root=ROOT, sources=None):
     for kind, cls, source in classes:
         try:
             if kind == "operator":
-                descriptor = build_catalog({cls.name: cls})["operators"][0]
-                if cls.parameters_schema is None:
-                    cls.parameters_schema = deepcopy(descriptor["parameters_schema"])
                 validate_extension(cls, kind)
+                descriptor = describe_operator(cls)
             else:
                 validate_extension(cls, kind)
                 descriptor = describe_reader(cls())
@@ -82,6 +67,7 @@ def scan_sources(root=ROOT, sources=None):
 
 
 def package_manifest(descriptors, previous):
+    from biopipe_sdk.protocol import PROTOCOL_VERSION
     owners = {(d["kind"], d["id"]): p["name"] for p in previous["packages"] for d in p["descriptors"]}
     packages = {p["name"]: {**deepcopy(p), "descriptors": []} for p in previous["packages"]}
     for descriptor, declared_owner, source in descriptors:
@@ -89,14 +75,15 @@ def package_manifest(descriptors, previous):
         name = declared_owner or owners.get(key) or ("biopipe-readers" if descriptor["kind"] == "reader" else "biopipe-core")
         if key in owners and name != owners[key]:
             raise ValueError(f"{source}: ownership of {descriptor['id']} cannot move from {owners[key]} to {name}")
-        package = packages.setdefault(name, {"protocol_version": 1, "name": name, "title": name,
+        package = packages.setdefault(name, {"protocol_version": PROTOCOL_VERSION, "name": name, "title": name,
                                             "version": "1.0.0", "origin": "bundled", "descriptors": []})
         package["descriptors"].append(descriptor)
     from biopipe_sdk.protocol import PackageDescriptor
     for package in packages.values():
+        package["protocol_version"] = PROTOCOL_VERSION
         package["descriptors"].sort(key=lambda d: (d["kind"], d["id"]))
         PackageDescriptor.model_validate(package)
-    return {"protocol_version": 1, "packages": list(packages.values())}
+    return {"protocol_version": PROTOCOL_VERSION, "packages": list(packages.values())}
 
 
 def route_sources(root, route_roots=None):
@@ -243,13 +230,14 @@ def inventory(root=ROOT, source_ref=None, route_roots=None):
 
 
 def maintain(action="check", *, root=ROOT, route_roots=None, output_dir=None, scope="all"):
+    from biopipe_sdk.protocol import PROTOCOL_VERSION, catalog_entry
     root = Path(root).resolve()
-    previous = read_json(root / PACKAGE_INDEX, {"protocol_version": 1, "packages": []})
+    previous = read_json(root / PACKAGE_INDEX, {"protocol_version": PROTOCOL_VERSION, "packages": []})
     descriptors, errors = scan_sources(root)
     candidate = package_manifest(descriptors, previous)
-    catalog = {"schema_version": 1, "protocol_version": 1, "contract_version": 1,
-               "operators": [d for d, _, _ in descriptors if d["kind"] == "operator"],
-               "readers": [d for d, _, _ in descriptors if d["kind"] == "reader"]}
+    catalog = {"schema_version": 1, "protocol_version": PROTOCOL_VERSION, "contract_version": 1,
+               "operators": [catalog_entry(d) for d, _, _ in descriptors if d["kind"] == "operator"],
+               "readers": [catalog_entry(d) for d, _, _ in descriptors if d["kind"] == "reader"]}
     outputs = {}
     if scope != "routes":
         outputs[PACKAGE_INDEX] = candidate

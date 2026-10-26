@@ -1,9 +1,0 @@
-# Optional file-format readers; availability of native wheels depends on the OS.
-# Install into the same Python environment used by BioPipe.
-anndata>=0.10
-h5py>=3.9
-pyarrow>=14
-bed-reader>=1.0
-bgen-reader>=4.0
-cyvcf2>=0.30
-pgenlib>=0.90

@@ -33,9 +33,6 @@ def create_app(settings=None):
         from .profile import make_settings
         settings = make_settings(root, root / "frontend/dist")
     catalog = build_catalog(STEPS)
-    if settings.migrate_legacy:
-        from .migration import migrate_profile
-        migrate_profile(settings, catalog)
     service = JobService(settings, catalog)
     catalog = service.catalog
     imports = AssetImports(service)
@@ -124,7 +121,7 @@ def create_app(settings=None):
                 "upload_extensions": accepted_extensions(catalog),
                 "storage": settings.profile or {"workspace": str(service.root), "data_dir": str(service.directory),
                                                 "registry": str(service.routes.directory / "registry.json")},
-                "desktop": settings.desktop, "draft": service.load_draft() if settings.desktop else None}
+                "desktop": settings.desktop}
 
     @app.get("/api/workspace")
     def workspace():
@@ -133,9 +130,6 @@ def create_app(settings=None):
     @app.post("/api/workspace")
     def save_workspace(workspace: Workspace):
         service.routes.save_workspace(workspace)
-        active = next(document for document in workspace.documents if document.id == workspace.active_id)
-        if settings.desktop:
-            service.save_draft(active.graph)
         return {"saved": True}
 
     @app.get("/api/workflows")
@@ -171,13 +165,6 @@ def create_app(settings=None):
     @app.post("/api/library/manage")
     def manage_library(payload: LibraryAction):
         return service.routes.manage_item(payload.key, payload.action)
-
-    @app.post("/api/draft")
-    def save_draft(graph: Graph):
-        if not settings.desktop:
-            raise HTTPException(404, "Desktop draft storage is not enabled")
-        service.save_draft(graph)
-        return {"saved": True}
 
     @app.get("/api/operators")
     def operators():

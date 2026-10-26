@@ -5,8 +5,8 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Studio 0.4.1 preserves upstream Python Steps, Readers and YAML
-tasks, with **64 built-in operators, 15 readers, six provider packages and five
+The **0.5.0.dev0 development candidate** adopts **SDK 2.0 / protocol v2**, retaining the calculation
+implementations and stable IDs, with **64 built-in operators, 15 readers, six provider packages and five
 reusable route templates**: GWAS, RNA-seq DE, Proteomics DE, survival analysis and
 [16S microbiome](docs/microbiome.md). The desktop package includes this catalog and
 the latest editor. The catalog includes upstream axis/single-cell building blocks,
@@ -43,8 +43,10 @@ dependencies, optional analyses and troubleshooting resolver backtracking.
 Choose the archive without `Lite` for the bundled environment. The smaller
 `Windows-x64-Lite.zip` uses an existing Python environment instead.
 
-See [release notes](docs/releases/v0.4.1.md) for this version and
-[legacy/](legacy/README.md) for the archived previous source.
+The published v0.4.1 release remains unchanged. This branch requires a one-time
+[migration](docs/migration_v2.md) for old routes/registries/extensions. The runtime
+accepts only protocol v2. Historical source and generated outputs remain available
+at Git tag `v0.4.1`; they are no longer duplicated in the active source tree.
 
 ## Start Studio
 
@@ -83,6 +85,8 @@ Both desktop and development entry points use `~/.biopipe/studio` by default.
 `BIOPIPE_STUDIO_HOME` or `--profile-dir` selects another shared profile;
 `--workspace` explicitly isolates a workspace. CLI and MCP use the same resolver.
 No developer username, installation drive or fixed backend port is embedded.
+While evaluating this development version, start with `--profile-dir biopipe-v2-test`
+to keep a published v0.4.1 desktop profile intact. Startup does not migrate files.
 
 ## Maintain built-in registries
 

@@ -18,6 +18,16 @@ class RenameDimStep(Step):
         to     : new dim name
         output : context key for the result
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'from': {'title': '原维度', 'type': 'string', 'x-ui-default': 'feature'},
+                    'to': {'title': '新维度', 'type': 'string', 'x-ui-default': 'variant'}},
+     'additionalProperties': True,
+     'required': ['from', 'to']}
+    title = '重命名维度'
+    category = '数据整理'
+    icon = 'TextT'
+    description = '为一个维度更换名称。'
 
     name = "rename_dim"
     inputs_arity = 1

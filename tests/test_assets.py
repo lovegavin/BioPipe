@@ -140,7 +140,7 @@ def test_collision_free_sets_relative_paths_and_plugin_descriptors(studio):
     first_path = (root / 'tasks/demo' / first.json()['source']['path']).resolve()
     assert first_path.read_bytes() == b'a\n1\n'
     assert first_path != root / second.json()['source']['path']
-    plugin = {'name':'CustomReader', 'extensions':['.custom'], 'handles_compression':False,
+    plugin = {'id':'CustomReader', 'extensions':['.custom'], 'handles_compression':False,
               'file_input':{'dims':['row','column']}}
     assert plan_input(['a.custom.xz'], {'readers':[plugin]})['reader'] == 'CustomReader'
     for item in data['catalog']['readers']:

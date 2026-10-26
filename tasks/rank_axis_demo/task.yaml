@@ -14,7 +14,7 @@ steps:
     params:
       method: total
       dim: cell
-      target_sum: 1e4
+      target_sum: 1.0e+4
       output: counts_norm
 
   - name: log_transform

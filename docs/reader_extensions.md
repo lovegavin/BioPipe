@@ -1,5 +1,9 @@
 # Add a Reader
 
+This guide targets SDK 2.0 / protocol v2. The class declaration is authoritative;
+no separate UI JSON or schema adapter is required. For old extensions and saved
+workflows, use the [one-time migration guide](migration_v2.md).
+
 A Reader converts files into a `Form`: numeric data, named dimensions, labels,
 global `info` and dimension-aligned `axis_info`. Reader discovery, dependencies,
 contracts and installation use the same protocol as Steps.

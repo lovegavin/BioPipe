@@ -63,15 +63,14 @@ def test_package_disable_remove_restore_and_pinned_graph(tmp_path):
     assert manager.state() == before
 
 
-def test_pre_package_registry_migrates_without_losing_environment(tmp_path):
+def test_pre_package_registry_requires_explicit_migration(tmp_path):
     manager = PluginManager(tmp_path)
     manager.directory.mkdir(parents=True)
-    manager.registry.write_text(json.dumps({'protocol_version': 1, 'generation': 'old', 'packages': [],
-                                           'descriptors': [], 'python': 'environments/old/Scripts/python.exe'}))
-    current = manager.state()
-    assert len(current['packages']) == len(bundled_manifest()['packages'])
-    assert current['python'] == 'environments/old/Scripts/python.exe'
-    assert current['package_protocol_version'] == 1
+    original = json.dumps({'protocol_version': 1, 'generation': 'old', 'packages': [], 'descriptors': []})
+    manager.registry.write_text(original)
+    with pytest.raises(ValueError, match='migrate'):
+        manager.state()
+    assert manager.registry.read_text() == original
 
 
 def test_resource_claims_require_real_hooks():
@@ -202,7 +201,7 @@ def test_hot_microbiome_wheel_runs_with_strict_contracts(tmp_path, builtin_wheel
     manager = PluginManager(tmp_path / 'state')
     installed = manager.install(builtin_wheels['biopipe-microbiome'])
     descriptor = next(d for d in installed['descriptors'] if d['id'] == 'diversity')
-    assert descriptor['origin'] == 'wheel' and not descriptor['legacy_parameters']
+    assert descriptor['origin'] == 'wheel' and 'legacy_parameters' not in descriptor
     path = tmp_path / 'counts.csv'
     path.write_text('a,b\n1,0\n0,1\n1,1\n2,0\n', encoding='utf-8')
     sources = {'counts': {'path': str(path), 'dims': ['sample', 'species'], 'labels': {'sample': 'auto', 'species': 'builtin'}}}

@@ -47,6 +47,21 @@ class RegressStep(Step):
         method     : "ols" | "logit" | "auto" (default)
         output     : context key for the result
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '特征维度', 'type': 'string', 'x-ui-default': 'feature'},
+                    'response': {'title': '响应变量标签', 'type': 'string', 'x-ui-default': 'trait'},
+                    'covariates': {'title': '协变量标签',
+                                   'type': 'array',
+                                   'default': [],
+                                   'items': {'type': 'string'}},
+                    'method': {'title': '模型', 'enum': ['auto', 'ols', 'logit'], 'default': 'auto'}},
+     'additionalProperties': True,
+     'required': ['dim', 'response']}
+    title = '回归分析'
+    category = '统计分析'
+    icon = 'TrendUp'
+    description = '逐个特征拟合回归模型，可加入协变量。'
 
     name = "regress"
     inputs_arity = 1

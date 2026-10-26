@@ -43,6 +43,30 @@ class ManhattanStep(Step):
         point_size  : marker size (default 6)
         alpha       : marker transparency (default 0.85)
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '变异维度', 'type': 'string', 'default': 'feature'},
+                    'chrom_label': {'title': '染色体字段', 'type': 'string', 'x-ui-default': 'chrom'},
+                    'pos_label': {'title': '位置字段', 'type': 'string', 'x-ui-default': 'pos'},
+                    'p_dim': {'title': '统计量维度', 'type': 'string', 'x-ui-default': 'statistic'},
+                    'p_label': {'title': 'P 值标签', 'type': 'string', 'x-ui-default': 'P'},
+                    'filename': {'title': '文件名', 'type': 'string', 'x-ui-default': 'manhattan.png'},
+                    'alpha': {'title': 'Opacity',
+                              'type': 'number',
+                              'minimum': 0,
+                              'maximum': 1,
+                              'default': 0.85,
+                              'x-ui-step': 0.05},
+                    'point_size': {'title': 'Point size', 'type': 'number', 'minimum': 0, 'default': 6},
+                    'threshold': {'title': 'Significance threshold', 'type': 'number'},
+                    'title': {'title': 'Title', 'type': 'string'}},
+     'additionalProperties': True,
+     'required': ['chrom_label', 'pos_label', 'p_label', 'filename']}
+    title = '曼哈顿图'
+    category = '可视化'
+    icon = 'ChartBar'
+    description = '用染色体、位置和 P 值绘制关联结果。'
+    preview = {'kind': 'manhattan', 'caption': '基因组位置与显著性'}
 
     name = "manhattan"
     inputs_arity = 1

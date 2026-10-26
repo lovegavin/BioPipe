@@ -43,6 +43,20 @@ _STAT_LABELS = {"chi2": 0, "df": 1, "P": 2}
 
 class LogrankTestStep(Step):
     """Log-rank test for survival differences across groups."""
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'time_label': {'title': '随访时间字段', 'type': 'string'},
+                    'event_label': {'title': '事件字段', 'type': 'string'},
+                    'group_label': {'title': '分组字段', 'type': 'string'},
+                    'group_map': {'title': '分组映射', 'type': ['object', 'array']},
+                    'groups': {'title': '显示分组顺序', 'type': 'array', 'items': {'type': 'string'}},
+                    'pairwise': {'title': '两两比较', 'type': 'boolean', 'default': False}},
+     'additionalProperties': True,
+     'required': ['time_label', 'event_label', 'group_label']}
+    title = 'Log-rank'
+    category = '统计分析'
+    icon = 'Sigma'
+    description = '整体与两两生存差异检验'
     dependencies = ['lifelines>=0.30,<0.31']
     dependency_imports = ['lifelines']
 

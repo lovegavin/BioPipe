@@ -89,6 +89,6 @@ and invalid-environment diagnostics, and uses isolated data rather than user rou
 The active-source/package audit rejects literal drive paths and personal home
 paths. Packaging runs the same audit before creating a ZIP. Release assemblies
 omit source/PDB debug paths. Historical `tasks/*/output` reports and the immutable
-`legacy/` snapshot can contain original paths as historical evidence; neither is
+v0.4.1 Git snapshot can contain original paths as historical evidence; neither is
 used as a current default or included in desktop packages. Verification output,
 virtual environments, runtime hints and user profiles are also excluded.

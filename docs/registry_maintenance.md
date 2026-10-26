@@ -66,13 +66,14 @@ the user's active plugin registry.
    `output_parameter = "output"` or fixed `outputs`.
    Set `category` to its purpose (`quality_control`, `analysis`, `data`,
    `visualization`, or a custom label). Optionally declare an `icon` name, for
-   example `icon = "Funnel"`; otherwise Studio uses its default icon. See
+   example `icon = "Funnel"`; otherwise Studio uses the category default icon. See
    [display metadata](operator_protocol.md#operator-categories-and-icons).
 3. Run `discover`, then `check` to see missing declarations and duplicate IDs.
 4. Add numerical/metadata tests, run `build`, and review the JSON diff.
 
-Only the established legacy adapters may synthesize schemas from their existing
-UI definitions. A new undeclared module fails validation. Scanning cannot infer
+Every built-in and external module must declare `parameters_schema` and contracts.
+No schema or calculation defaults are inferred from UI JSON or method source.
+An undeclared module fails validation. Scanning cannot infer
 the biological meaning of data, implement a streaming kernel, or make an
 unbounded calculation fit a memory budget.
 

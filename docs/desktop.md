@@ -65,7 +65,6 @@ Python to resolve it. The default does not use AppData or depend on cwd.
   port.txt                     last preferred loopback port
   workspace/.studio/
     operators.json             generated catalog
-    draft.json                 legacy single-page draft
     workflows/
       workspace.json           open/closed pages and view preferences
       route_<id>.json          saved routes and interfaces
@@ -76,7 +75,7 @@ Python to resolve it. The default does not use AppData or depend on cwd.
     agent/                     local discovery and canvas sessions
     assets/                    imported inputs
     jobs/                      graphs, configurations, logs and results
-    migrations/<source-id>/    source copies, backups and migration receipts
+    migrations/v2/<batch-id>/  original bytes, hashes and explicit migration receipt
 ```
 
 BioPipe registries are ordinary JSON files; discovery reads, but never modifies,
@@ -84,18 +83,15 @@ the Windows registry.
 First launch installs GWAS, RNA-seq DE, Proteomics DE, survival and 16S microbiome templates. Saving
 a graph does not register it: select saved routes with the library plus button.
 
-Default startup imports known legacy repository/AppData/package-sandbox directories
-once per source. It preserves source files and receipts, merges identical snapshots,
-separates ID collisions, imports referenced workspace-local inputs and keeps old
-large caches/run history in place. Missing/out-of-workspace inputs produce receipt
-warnings. Corrupt registry files fail visibly rather than being overwritten as empty.
+Startup reads the selected profile without searching or importing other directories.
+For v0.4.1 data, close Studio and use [explicit migration](migration_v2.md).
+The migration previews changes, keeps original bytes and leaves job history intact.
 
 Both entry points accept `--profile-dir` or `BIOPIPE_STUDIO_HOME`; explicit argument
 wins over environment, then default. Relative profile paths are home-relative.
-The exe's old `--data-dir` is an alias for `--profile-dir`. Python `--workspace`
+The EXE uses `--profile-dir`. Python `--workspace`
 selects an isolated workspace with `.studio` by default; its `--data-dir` is a
-workspace-relative legacy override. Explicit profiles/workspaces disable default
-legacy import. `BIOPIPE_STUDIO_DATA` is supported only with explicit workspace mode.
+workspace-relative override. `BIOPIPE_STUDIO_DATA` is supported only with explicit workspace mode.
 
 Cross-process locks and atomic files protect registries. Libraries refresh on focus
 and periodically; hot-installed wheels require no backend restart. Use **Refresh

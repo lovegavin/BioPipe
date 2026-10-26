@@ -49,6 +49,8 @@ _STAT_LABELS = ("start", "end", "length", "n_intervals")
 
 class IntervalMergeStep(Step):
     """Merge overlapping BED intervals per chromosome."""
+    title = 'interval_merge'
+    description = 'Merge overlapping BED intervals per chromosome.'
 
     name = "interval_merge"
     category = "analysis"

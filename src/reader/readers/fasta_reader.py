@@ -63,6 +63,7 @@ _PROTEIN_CHARS = set("ACDEFGHIKLMNPQRSTVWY")
 
 class FastaReader(Reader):
     """Reader for .fasta / .fa / .fna / .faa files."""
+    parameters_schema = {'type': 'object', 'properties': {}, 'additionalProperties': True}
 
     output_contract = reader_contract(extra={
         "alphabet": {"type": "string"},

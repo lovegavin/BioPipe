@@ -47,6 +47,8 @@ _IUPAC = {
 
 class MotifScanStep(Step):
     """Count IUPAC motif occurrences per sequence."""
+    title = 'motif_scan'
+    description = 'Count IUPAC motif occurrences per sequence.'
 
     name = "motif_scan"
     category = "analysis"

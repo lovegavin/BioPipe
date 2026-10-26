@@ -2,13 +2,13 @@ import manifest from "../../biopipe/builtin_packages.json";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { OperatorArtwork, OperatorPreview } from "./OperatorArtwork";
-import { builtinPresentation, categoryLabel, compareCategories, presentCatalog, presentOperator } from "./operatorPresentation";
+import { categoryLabel, compareCategories, presentCatalog, presentOperator } from "./operatorPresentation";
 import type { Catalog, Operator } from "./types";
 
 // Exercise the shipped registry, including descriptors already present in saved
 // provider generations, instead of duplicating synthetic operator metadata.
 const operators = manifest.packages.flatMap(p =>
-  p.descriptors.filter(d => d.kind === "operator")) as Operator[];
+  p.descriptors.filter(d => d.kind === "operator").map(d => ({...d, parameters: []}))) as Operator[];
 const catalog: Catalog = {schema_version: 1, operators};
 
 describe("operator presentation", () => {
@@ -17,17 +17,17 @@ describe("operator presentation", () => {
     const presented = presentCatalog(catalog);
     const groups = [...new Set(presented.operators.map(o => o.category))].sort(compareCategories);
     expect(groups).toEqual(["质量控制", "统计分析", "数据整理", "可视化"]);
-    expect(new Set(presented.operators.map(o => o.name)).size).toBe(operators.length);
+    expect(new Set(presented.operators.map(o => o.id)).size).toBe(operators.length);
     expect(catalog).toEqual(before);
     for (const spec of presented.operators) {
-      const original = operators.find(o => o.name === spec.name)!;
+      const original = operators.find(o => o.id === spec.id)!;
       expect(spec.contracts).toBe(original.contracts);
       expect(spec.parameters).toBe(original.parameters);
     }
   });
 
-  it.each(Object.keys(builtinPresentation))("renders %s with the appropriate level of detail", name => {
-    const spec = presentOperator(operators.find(o => o.name === name)!);
+  it.each(['bin', 'filter_by', 'rank_axis', 'join', 'aggregate', 'cluster_axis', 'reduce_axis', 'reduce', 'diversity', 'distance_matrix', 'correlation', 'permanova', 'dotplot', 'violin', 'barplot'])("renders %s with the appropriate level of detail", name => {
+    const spec = presentOperator(operators.find(o => o.id === name)!);
     const art = renderToStaticMarkup(<OperatorArtwork spec={spec}/>);
     if (spec.category === "可视化") {
       expect(spec.preview?.kind).toBeTruthy();
@@ -45,14 +45,14 @@ describe("operator presentation", () => {
   it("does not silently render any shipped operator as a generic placeholder", () => {
     for (const spec of presentCatalog(catalog).operators) {
       const generic = renderToStaticMarkup(<OperatorArtwork spec={{...spec, category: "", icon: undefined, preview: undefined}}/>);
-      expect(renderToStaticMarkup(<OperatorArtwork spec={spec}/>), spec.name).not.toBe(generic);
+      expect(renderToStaticMarkup(<OperatorArtwork spec={spec}/>), spec.id).not.toBe(generic);
     }
   });
 
   it("also merges plugin category aliases and preserves plugin-provided visuals", () => {
     expect(categoryLabel(" Visualization ")).toBe("可视化");
     expect(categoryLabel("ANALYSIS")).toBe("统计分析");
-    const plugin = {...operators[0], name: "example.chart", category: "Visualization",
+    const plugin = {...operators[0], id: "example.chart", category: "Visualization",
       preview: {kind: "boxplot", caption: "Custom plot"}};
     expect(presentOperator(plugin).preview).toBe(plugin.preview);
     expect(presentOperator(plugin).category).toBe("可视化");
@@ -62,7 +62,7 @@ describe("operator presentation", () => {
   });
 
   it("uses the default icon for absent or unknown names and renders declared icons", () => {
-    const plugin = {...operators[0], name: "example.custom", category: "analysis", preview: undefined};
+    const plugin = {...operators[0], id: "example.custom", category: "analysis", preview: undefined};
     const renderIcon = (icon?: string | null) => renderToStaticMarkup(<OperatorArtwork spec={presentOperator({...plugin, icon})}/>);
     expect(presentOperator(plugin).category).toBe("统计分析");
     expect(renderIcon("Intersect")).not.toBe(renderIcon());
@@ -77,7 +77,7 @@ describe("operator presentation", () => {
 
   it("keeps missing categories distinct from package origin", () => {
     for (const category of ["", "Plugins", "Extensions", "扩展算子"]) {
-      expect(presentOperator({...operators[0], name: "example.custom", category}).category).toBe("未分类");
+      expect(presentOperator({...operators[0], id: "example.custom", category}).category).toBe("未分类");
     }
     expect(categoryLabel("Spatial biology")).toBe("Spatial biology");
     expect(categoryLabel("constructor")).toBe("constructor");
@@ -86,7 +86,7 @@ describe("operator presentation", () => {
 
   it("chooses category defaults for new operators without display declarations", () => {
     const render = (category: string) => renderToStaticMarkup(<OperatorArtwork spec={{...operators[0],
-      name: "example.new", category, icon: undefined, preview: undefined}}/>);
+      id: "example.new", category, icon: undefined, preview: undefined}}/>);
     expect(render("analysis")).toBe(render("统计分析"));
     expect(render("qc")).toBe(render("质量控制"));
     const groups = ["analysis", "data", "visualization", "quality_control", "microbiome", "Custom"];
@@ -95,7 +95,7 @@ describe("operator presentation", () => {
 
   it("uses a portable author image ahead of chart previews and blocks external image URLs", () => {
     const image = "data:image/svg+xml;base64,PHN2Zy8+";
-    const spec = {...operators[0], name: "example.picture", category: "analysis", icon: "icons/custom.svg",
+    const spec = {...operators[0], id: "example.picture", category: "analysis", icon: "icons/custom.svg",
       icon_image: image, preview: {kind: "scatter", caption: "Plot"}};
     const art = renderToStaticMarkup(<OperatorArtwork spec={spec} size={18}/>);
     expect(art).toContain(`<img`);

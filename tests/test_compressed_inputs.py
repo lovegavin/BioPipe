@@ -198,6 +198,7 @@ def test_custom_metadata_probe_gets_same_unwrapped_input_as_read(tmp_path, monke
     observed = []
 
     class HeaderReader(Reader):
+        parameters_schema = {'type': 'object'}
         extensions = ['.header']
         output_contract = reader_contract()
 

@@ -52,6 +52,8 @@ _MAX_CELLS = 200_000_000_0
 
 class PivotStep(Step):
     """Pivot a long 2D table into a wide matrix by two categorical columns."""
+    title = 'pivot'
+    description = 'Pivot a long 2D table into a wide matrix by two categorical columns.'
 
     name = "pivot"
     category = "data"

@@ -205,6 +205,9 @@ def test_context_overrides_are_step_local(tmp_path, monkeypatch):
     observed = []
     class Observe(Step):
         name = 'observe_context'
+        parameters_schema = {'type': 'object'}
+        input_contracts = []
+        output_contract = {'mode': 'report'}
         inputs_arity = 0
         def run(self, ctx, inputs):
             observed.append(dict(ctx.params))
@@ -261,10 +264,10 @@ def test_plugin_endpoints_use_worker_and_publish_only_success(studio, monkeypatc
 
 def test_reader_and_operator_options_are_discoverable():
     catalog = build_catalog(STEPS)
-    readers = {r['name']: r for r in catalog['readers']}
+    readers = {r['id']: r for r in catalog['readers']}
     assert {'header', 'sep', 'encoders'} <= set(readers['CsvReader']['parameters_schema']['properties'])
     assert readers['H5adReader']['parameters'][0]['type'] == 'string'
-    ops = {o['name']: o for o in catalog['operators']}
+    ops = {o['id']: o for o in catalog['operators']}
     assert {'align', 'label'} <= set(ops['concat']['parameters_schema']['properties'])
     assert {'alpha', 'point_size', 'color_label'} <= {p['key'] for p in ops['scatter']['parameters']}
 

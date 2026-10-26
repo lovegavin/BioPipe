@@ -23,6 +23,18 @@ class TransposeStep(Step):
         order  : list of dimension names, the desired new axis order
         output : context key for the result
     """
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'order': {'title': '维度顺序',
+                              'type': 'array',
+                              'x-ui-default': ['feature', 'sample'],
+                              'items': {'type': 'string'}}},
+     'additionalProperties': True,
+     'required': ['order']}
+    title = '维度转置'
+    category = '数据整理'
+    icon = 'ArrowsDownUp'
+    description = '调整命名维度的排列顺序。'
 
     name = "transpose"
     inputs_arity = 1

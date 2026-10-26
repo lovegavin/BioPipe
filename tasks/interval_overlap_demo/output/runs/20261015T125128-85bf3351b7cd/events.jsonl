@@ -1,4 +1,0 @@
-{"message": "Loading the analysis engine", "time": "2026-10-15T12:51:28.254733+00:00", "event": "worker_started"}
-{"run_id": "20261015T125128-85bf3351b7cd", "memory_enabled": false, "time": "2026-10-15T12:51:29.284258+00:00", "event": "run_started"}
-{"name": "ccre", "shape": [1063878, 6], "dims": ["region", "field"], "time": "2026-10-15T12:51:33.159494+00:00", "event": "source_loaded"}
-{"status": "failed", "error": "Not a gzipped file (b'<!')", "time": "2026-10-15T12:51:33.173836+00:00", "event": "run_finished"}

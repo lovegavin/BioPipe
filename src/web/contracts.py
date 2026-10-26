@@ -10,7 +10,7 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=()):
     from .routes import check_interface, require_route, port_index
     if len(ancestry) > 6:
         raise GraphError("路线嵌套最多支持 6 层。")
-    registry = {item["name"]: item for item in catalog["operators"]}
+    registry = {item["id"]: item for item in catalog["operators"]}
     nodes = {node.id: node for node in graph.nodes}
     if len(nodes) != len(graph.nodes):
         raise GraphError("节点 ID 重复。")
@@ -34,16 +34,16 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=()):
                               and not any(path.with_suffix(s).exists() for s in reader.get("excludes_siblings", []))))]
                 if len(candidates) == 1:
                     reader = candidates[0]
-                    if reader["name"] == "TxtReader":
+                    if reader["id"] == "TxtReader":
                         name = source.args.get("reader", "csv")
                         delegates = [item for item in catalog["readers"] if isinstance(name, str)
-                                     and item["name"] != "TxtReader" and name.lower() in
-                                     (item["name"].lower(), item["name"].removesuffix("Reader").lower())]
+                                     and item["id"] != "TxtReader" and name.lower() in
+                                     (item["id"].lower(), item["id"].removesuffix("Reader").lower())]
                         if len(delegates) != 1:
                             raise GraphError("TxtReader 的 reader 参数无效。", node.id)
                         reader = delegates[0]
-                    schema = source_schema(reader["output_contract"], source.dims)
-                    schema["reader"] = reader["name"]
+                    schema = source_schema(reader["contracts"]["output"], source.dims)
+                    schema["reader"] = reader["id"]
             ports[node.id] = {"inputs": [], "outputs": [schema]}
         elif node.kind == "route":
             route = require_route(node)

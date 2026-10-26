@@ -52,6 +52,32 @@ from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 class HeatmapStep(Step):
     """Draw a heatmap of a 2D form."""
+    parameters_schema = {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     'type': 'object',
+     'properties': {'dim': {'title': '分析维度', 'type': 'string', 'default': 'feature'},
+                    'other_dim': {'title': '样本维度', 'type': 'string', 'default': 'sample'},
+                    'select': {'title': '特征选择',
+                               'enum': ['variance', 'label', 'all'],
+                               'default': 'variance'},
+                    'labels': {'title': '特征标签', 'type': 'array', 'items': {'type': 'string'}},
+                    'standardize': {'title': '标准化', 'enum': ['none', 'row', 'col'], 'default': 'none'},
+                    'filename': {'title': '图片文件名', 'type': 'string', 'x-ui-default': 'heatmap.png'},
+                    'title': {'title': '图标题', 'type': 'string'},
+                    'cmap': {'title': '配色', 'type': 'string', 'default': 'RdBu_r'},
+                    'nan_color': {'title': '缺失值颜色', 'type': 'string', 'default': '#DDDDDD'},
+                    'figsize': {'title': '画布尺寸 [宽, 高]', 'type': ['object', 'array']},
+                    'top_n': {'title': '最多特征数', 'type': 'integer', 'minimum': 1, 'default': 50},
+                    'cluster_rows': {'title': '聚类行', 'type': 'boolean', 'default': True},
+                    'cluster_cols': {'title': '聚类列', 'type': 'boolean', 'default': True},
+                    'show_row_labels': {'title': '显示行标签', 'type': 'boolean', 'default': False},
+                    'show_col_labels': {'title': '显示列标签', 'type': 'boolean', 'default': True}},
+     'additionalProperties': True,
+     'required': ['filename']}
+    title = 'Heatmap'
+    category = '可视化'
+    icon = 'ChartLine'
+    description = '矩阵热图与层次聚类'
+    preview = {'kind': 'heatmap', 'caption': '矩阵强度与聚类结构'}
 
     name = "heatmap"
     inputs_arity = 1
