@@ -1,6 +1,6 @@
 # Operator protocol v3
 
-BioPipe 0.5.0.dev0 uses SDK 3.0.0 and protocol 3. Operator IDs, numerical kernels,
+BioPipe 0.5.0 uses SDK 3.0.0 and protocol 3. Operator IDs, numerical kernels,
 Form contracts and resource protocols retain their existing meaning.
 
 ## Authoring unit: code + its own parameter JSON

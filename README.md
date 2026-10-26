@@ -5,7 +5,7 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-The **0.5.0.dev0 development candidate** adopts **SDK 3.0 / protocol v3**, retaining the calculation
+The **0.5.0 release** adopts **SDK 3.0 / protocol v3**, retaining the calculation
 implementations and stable IDs, with **64 built-in operators, 15 readers, six provider packages and five
 reusable route templates**: GWAS, RNA-seq DE, Proteomics DE, survival analysis and
 [16S microbiome](docs/microbiome.md). The desktop package includes this catalog and
@@ -43,14 +43,16 @@ dependencies, optional analyses and troubleshooting resolver backtracking.
 Choose the archive without `Lite` for the bundled environment. The smaller
 `Windows-x64-Lite.zip` uses an existing Python environment instead.
 
-The published v0.4.1 release remains unchanged. This branch requires a one-time
+Release v0.5.0 is maintained on `release/v0.5.0`; `main` retains the author's separate
+upstream development. See the [release notes](docs/releases/v0.5.0.md) for scope.
+Upgrading from v0.4.1 requires a one-time
 [migration](docs/migration_v2.md) for old routes/registries/extensions. The runtime
 accepts only protocol v3. Historical source and generated outputs remain available
 at Git tag `v0.4.1`; they are no longer duplicated in the active source tree.
 
 ## Start Studio
 
-Use Python 3.11+ (this candidate is tested with 3.11 on Windows). Build the frontend with Node 22.12+:
+Use Python 3.11+ (this release is tested with 3.11 on Windows). Build the frontend with Node 22.12+:
 
 ```text
 python -m venv .venv

@@ -1,6 +1,6 @@
 # Migration to protocol v3
 
-The current candidate requires protocol **3**. Graph schema **2** and workspace
+BioPipe 0.5.0 requires protocol **3**. Graph schema **2** and workspace
 schema **1** are separate versions and remain unchanged. Migrate a copy first.
 Published v0.4.1 and the local protocol-v2 baseline remain available for comparison.
 
@@ -26,6 +26,11 @@ in package data, then run `biopipe plugin check`, `test`, and `build`.
 ## Profiles and saved work
 
 Close Studio and run `biopipe --profile-dir <profile> migrate` before adding `--apply`.
+The Full Windows package includes the CLI: from the extracted folder, use
+`runtime\python\python.exe -I -m biopipe migrate` to preview the default profile,
+then `runtime\python\python.exe -I -m biopipe migrate --apply` to apply with backups.
+No system Python installation is needed. Keep the previous release and its profile
+backup until the migrated workflows have been checked.
 Bundled v1/v2 profiles migrate with disabled/removed providers preserved. Historical
 job folders and frozen locks remain untouched. External v1/v2 wheels must be rebuilt;
 keep their old profile and install rebuilt wheels in a separate v3 profile before

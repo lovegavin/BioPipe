@@ -148,6 +148,21 @@ New dependencies need internet access. Existing bundled analyses work offline.
 User graphs, dependency targets and logs use the shared Studio profile.
 See docs/installation.md, docs/reader_extensions.md and docs/step_extensions.md.
 ''', encoding='utf-8')
+    with (destination / 'START_HERE.txt').open('a', encoding='utf-8') as guide:
+        guide.write('''
+UPGRADING FROM 0.4.1 / OLDER PROTOCOLS
+Close Studio first. Protocol v3 requires an explicit one-time profile migration.
+Preview before applying; originals are backed up and past jobs are not rewritten.
+External old-protocol operator wheels must be rebuilt with SDK 3.
+See docs/migration_v2.md for profile selection, extension conversion and restore.
+''')
+        if not args.lite:
+            guide.write('''From this extracted folder (no system Python needed):
+  runtime\\python\\python.exe -I -m biopipe migrate
+  runtime\\python\\python.exe -I -m biopipe migrate --apply
+''')
+        else:
+            guide.write('Run in the Python environment selected for Lite:\n  python -m biopipe migrate\n  python -m biopipe migrate --apply\n')
     audit = audit_files((p for p in destination.rglob('*') if p.is_file()
                         and not {'THIRD_PARTY_NOTICES', 'runtime'}.intersection(p.relative_to(destination).parts)), destination)
     if audit['findings']:
