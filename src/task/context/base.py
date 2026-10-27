@@ -106,8 +106,11 @@ class Context:
             self.forms.register_source(name, loader, path.resolve(), probe, disk_loader)
         else:
             self[name] = loader()
-            self.event("source_loaded", name=name, shape=list(self[name].data.shape), dims=self[name].dims)
-            print(f"[source] {name}: shape={self[name].data.shape}, dims={self[name].dims}")
+            from src.core.files import FileArtifact
+            form = self[name]
+            shape = [] if isinstance(form, FileArtifact) else list(form.data.shape)
+            self.event("source_loaded", name=name, shape=shape, dims=form.dims)
+            print(f"[source] {name}: shape={shape}, dims={form.dims}")
 
     def __getitem__(self, name: str) -> Form:
         if name not in self.forms:

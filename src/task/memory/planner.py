@@ -43,6 +43,11 @@ class LifetimePlan:
 
 def full_estimate(name: str, forms: list, params: dict, profiles: dict) -> tuple[int, int]:
     """Return estimated additional workspace and output bytes, not a hard bound."""
+    from src.core.files import FileArtifact
+    if any(isinstance(form, FileArtifact) for form in forms):
+        # File-aware operators override this hook. For incompatible connections,
+        # leave allocation at zero so contract validation supplies the error.
+        return 0, 0
     data = sum(f.data.nbytes for f in forms)
     metadata = sum(sum(len(v) for v in f.labels.values()) * 96 for f in forms)
     workspace = 2 * data

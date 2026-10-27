@@ -5,10 +5,23 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-The **0.5.1 release** adopts **SDK 3.0 / protocol v3**, retaining the calculation
-implementations and stable IDs, with **64 built-in operators, 15 readers, six provider packages and five
-reusable route templates**: GWAS, RNA-seq DE, Proteomics DE, survival analysis and
-[16S microbiome](docs/microbiome.md). The desktop package includes this catalog and
+Release **v0.6.0** adds [Hi-C workflows](docs/HIC.md): paired FASTQ,
+BAM/SAM or pairs to contact matrices and expected/compartment/insulation/loop/pileup
+analysis. It reuses existing QC, selection and plotting operators, with three new
+tool adapters and four file Readers. The bundled catalog has 67 operators,
+19 Readers, seven provider packages and eight route templates. Linux tools are
+required for the full raw-read workflow and run on a prepared Linux server or WSL.
+
+The desktop editor also supports [SSH remote execution](docs/REMOTE_EXECUTION.md):
+edit on Windows, browse inputs on a Linux server, submit workflows and reconnect
+to server-owned jobs and logs. Data and computation stay on the server; existing
+memory management and independent parameter JSON files are retained. Linux-only
+tool adapters are marked in the operator library and canvas.
+
+The release retains **SDK 3.0 / protocol v3**, existing calculation implementations
+and stable IDs. The five existing route templates remain available: GWAS, RNA-seq
+DE, Proteomics DE, survival analysis and [16S microbiome](docs/microbiome.md), joined
+by FASTQ, BAM and pairs Hi-C routes. The desktop package includes this catalog and
 the latest editor. The catalog includes upstream axis/single-cell building blocks,
 multi-group comparisons, GO enrichment, sequence analysis, annotation QC and
 genomic interval analysis; example YAML remains under `tasks/`.
@@ -16,10 +29,11 @@ genomic interval analysis; example YAML remains under `tasks/`.
 Download the ready-built Windows desktop package from
 [GitHub Releases](https://github.com/lovegavin/BioPipe/releases/latest).
 Extract the complete ZIP and double-click `BioPipe Studio.exe`. The **full Windows
-x64 package includes Python and the built-in CPU analysis/Reader dependencies**.
+x64 package includes Python, SSH support and the built-in Windows CPU analysis/Reader dependencies**.
 No Python, Conda or compiler setup is required. Keep the `runtime` folder beside
 the EXE. If WebView2 is missing, its official Microsoft installer prepares it
-automatically; that one-time step requires internet access.
+automatically; that one-time step requires internet access. Linux command-line
+tools for Hi-C are installed on the execution server, not in the Windows runtime.
 
 Studio checks Reader/Step dependencies at startup and after library changes, and
 retains successful checks for the session. Compatible operators share the runtime;
@@ -43,8 +57,8 @@ dependencies, optional analyses and troubleshooting resolver backtracking.
 Choose the archive without `Lite` for the bundled environment. The smaller
 `Windows-x64-Lite.zip` uses an existing Python environment instead.
 
-Release v0.5.1 is maintained on `release/v0.5.1`; `main` retains the author's separate
-upstream development. See the [release notes](docs/releases/v0.5.1.md) for scope.
+Release v0.6.0 is maintained on `release/v0.6.0`; `main` retains the author's separate
+upstream development. See the [release notes](docs/releases/v0.6.0.md) for scope.
 Upgrading from v0.4.1 requires a one-time
 [migration](docs/migration_v2.md) for old routes/registries/extensions. The runtime
 accepts only protocol v3. Historical source and generated outputs remain available

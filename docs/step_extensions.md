@@ -73,3 +73,14 @@ See [resource protocols](resource_runtime.md) and the executable
 Optional `definition.icon` accepts an image path relative to the implementation
 module. Omit it for the category's default icon. Relative paths move with the pair;
 never reference a developer's home directory or installation drive.
+
+## File-aware operator examples
+
+The Hi-C implementation keeps scientific tools behind three small SDK v3 Steps:
+`align_reads`, `build_contacts`, and `analyze_contacts`. Each Step has its own
+`*.parameters.json`; command execution, cancellation and logs share
+`biopipe/tool_runner.py`. `sequence_stats` and `select` demonstrate extending an
+existing operator to accept both Form and FileArtifact explicitly, while keeping
+the original numeric path. The frozen run workspace is admitted through
+`estimate_memory`; subprocesses do not rescan available host memory. See
+[Hi-C workflows](HIC.md) for inputs, coordinate conventions and real-tool tests.

@@ -67,3 +67,12 @@ Set `info` and `axis_info` consistently with dimensions and labels. Report optio
 parser dependencies using distribution names in `dependencies` and import names in
 `dependency_imports`. Compatible dependencies share the runtime; conflicts run with
 private dependency directories and an independent process using the same Python.
+
+## File-backed Reader example
+
+For large disk datasets, the Hi-C Readers demonstrate metadata-only loading:
+`src/reader/readers/fastq_reader.py` declares the file contract and
+`fastq.parameters.json` owns the mate-path and quality-encoding schema. Runtime
+returns `FileArtifact`, and `sequence_stats` consumes it record by record. The
+existing numeric Reader disk protocol and streaming methods are unchanged.
+See [SDK file datasets](sdk_reference.md#file-backed-datasets) and [Hi-C](HIC.md).

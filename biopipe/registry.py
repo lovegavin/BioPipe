@@ -118,6 +118,12 @@ def build_routes(root, catalog, previous, route_roots=None):
             raw = yaml.safe_load(path.read_text(encoding="utf-8"))
             if not isinstance(raw, dict):
                 raise ValueError("Route YAML must be an object")
+            parameter_hash = None
+            if 'parameters_file' in raw:
+                from biopipe.parameter_values import read_values, restore_task
+                values = read_values(path.parent, raw['parameters_file'])
+                parameter_hash = sha256(json.dumps(values, sort_keys=True).encode()).hexdigest()
+                raw = restore_task(raw, values)
             normalize_numbers(raw, catalog)
             paths = [settings.get("base_dir", "."), *[s.get("path", "") for s in raw.get("sources", {}).values()]]
             if any(Path(p).is_absolute() or PureWindowsPath(p).is_absolute() for p in paths):
@@ -145,6 +151,8 @@ def build_routes(root, catalog, previous, route_roots=None):
             RouteDefinition.model_validate(record)
             sources[identifier] = {"path": path.relative_to(root).as_posix() if path.is_relative_to(root) else path.name,
                                    "sha256": sha256(path.read_text(encoding="utf-8").encode("utf-8")).hexdigest()}
+            if parameter_hash:
+                sources[identifier]['parameters_sha256'] = parameter_hash
             if settings.get("source_commit"):
                 sources[identifier]["commit"] = settings["source_commit"]
             routes.append(record)

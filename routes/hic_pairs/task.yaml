@@ -1,0 +1,27 @@
+name: Hi-C from PAIRS
+sources:
+  reads:
+    path: input/reads.pairs.gz
+    dims:
+    - file
+    labels: {}
+steps:
+- name: build_contacts
+  inputs:
+  - reads
+- name: analyze_contacts
+  inputs:
+  - contacts
+- name: analyze_contacts
+  inputs:
+  - contacts
+- name: select
+  inputs:
+  - contacts
+- name: heatmap
+  inputs:
+  - window
+runtime:
+  memory:
+    enabled: true
+parameters_file: parameters.json

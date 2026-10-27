@@ -17,11 +17,54 @@
       "items": {
         "type": "string"
       }
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "form",
+        "contact_matrix"
+      ],
+      "default": "form"
+    },
+    "region": {
+      "type": "string"
+    },
+    "region2": {
+      "type": "string"
+    },
+    "balanced": {
+      "type": "boolean",
+      "default": true
+    },
+    "weight_name": {
+      "type": "string",
+      "default": "weight"
     }
   },
   "additionalProperties": true,
-  "required": [
-    "dim",
-    "labels"
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source_type": {
+            "const": "contact_matrix"
+          }
+        },
+        "required": [
+          "source_type"
+        ]
+      },
+      "then": {
+        "required": [
+          "region"
+        ]
+      },
+      "else": {
+        "required": [
+          "dim",
+          "labels"
+        ]
+      }
+    }
   ]
 }

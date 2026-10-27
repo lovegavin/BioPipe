@@ -188,7 +188,7 @@ class MemoryRuntime:
                     self.store.stage_source(entry)
                     if entry.disk is None:
                         self.store._load(entry)
-                can_stream = entry.dtype.kind in "biuf"
+                can_stream = entry.dtype is not None and entry.dtype.kind in "biuf"
         if can_stream:
             entry = self.store.entry(spec["inputs"][0])
             with self.store.lock:

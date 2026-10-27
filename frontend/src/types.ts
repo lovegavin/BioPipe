@@ -1,4 +1,5 @@
 export type Parameter = {
+  path_kind?: 'source' | 'workflow';
   description?: string;
   key: string;
   label: string;
@@ -18,6 +19,8 @@ export type PluginState = {generation: string | null; packages: PluginPackage[];
   source_directories?: {operator: string; reader: string};
   descriptors: {id: string; kind: 'reader' | 'operator'; title: string; distribution: string; resources?: {memory_modes: string[]}}[]};
 export type Operator = {
+  supported_systems?: string[];
+  systems_status?: 'inferred' | 'unknown';
   id: string;
   title: string;
   title_aliases?: string[];
@@ -42,6 +45,7 @@ export type ReaderSpec = { id: string; extensions: string[]; contracts: {output:
 export type Catalog = { schema_version: 1; contract_version?: number; operators: Operator[]; readers?: ReaderSpec[] };
 export type InfoRule = { type?: string | string[]; items?: string | string[]; const?: unknown; enum?: unknown[]; optional?: boolean; min?: number; display?: string };
 export type PortContract = {
+  kind?: "form" | "file" | ("form" | "file")[];
   version?: number;
   ndim?: number;
   dims?: string[] | null;
@@ -116,6 +120,8 @@ export type WorkflowSummary = { id: string; version: number; name: string; updat
 export type WorkspaceDocument = { id: string; graph: Graph; viewport?: { x: number; y: number; zoom: number }; workflow_id?: string; workflow_version?: number };
 export type Workspace = { schema_version: 1; active_id: string; documents: WorkspaceDocument[]; closed_documents?: WorkspaceDocument[]; panel_widths?: import("./panelLayout").PanelWidths };
 export type Artifact = {
+  kind?: "form" | "file";
+  external_file_bytes?: number;
   artifact_id: string;
   name: string;
   shape: number[];
@@ -140,6 +146,7 @@ export type SpillCounts = {
   final: number;
 };
 export type Job = {
+  remote?: {profile_id: string; job_id: string; name: string; workspace: string};
   id: string;
   name: string;
   status: "running" | "complete" | "failed" | "cancelled" | "interrupted";
@@ -165,6 +172,9 @@ export type Job = {
   } | null;
 };
 export type Preview = {
+  format?: string;
+  files?: {role: string; name: string; bytes: number; downloadable: boolean}[];
+  info?: Record<string, unknown>;
   descriptor: Artifact;
   rows: (number | null)[][];
   points: (number | null)[][];
@@ -180,3 +190,13 @@ export type Bootstrap = {
   history: Job[];
   upload_limit_mb: number | null;
 };
+
+export type RemoteProfile = {id?: string; name: string; host: string; port: number; username: string;
+  auth: 'password' | 'key' | 'agent'; key_path: string; python: string; app_dir: string; workspace: string;
+  mode: 'exec' | 'shell'; menu_choice: string};
+export type RemoteInfo = {catalog: Catalog; history: Job[]; system: string; version: string; python: string;
+  workspace: string; automatic_memory_budget_bytes: number; automatic_memory_fraction: number; tools: Record<string, boolean>};
+export type RemoteStatus = {profile: RemoteProfile; fingerprint?: string; connected: boolean; info?: RemoteInfo};
+export type RemoteListing = {path: string; parent: string; next_offset: number | null;
+  entries: {name: string; path: string; directory: boolean; bytes: number; modified: number}[]};
+export type BrowseRemote = (current: string, onSelected: (path: string, source?: DataSource) => void, source?: boolean) => void;

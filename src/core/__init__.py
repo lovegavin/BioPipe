@@ -10,6 +10,9 @@ from src.core.errors import (
     ValidationError,
 )
 def __getattr__(name):
+    if name == "FileArtifact":
+        from src.core.files import FileArtifact
+        return FileArtifact
     if name != "Form":
         raise AttributeError(name)
     from src.core.forms import Form
@@ -24,4 +27,5 @@ __all__ = [
     "StepError",
     "ValidationError",
     "Form",
+    "FileArtifact",
 ]

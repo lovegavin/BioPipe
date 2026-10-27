@@ -218,3 +218,12 @@ read implementations, and most analysis operators still require complete Forms.
 The eager path (`runtime.memory.enabled: false`) intentionally retains original
 eager reading behavior. RSS monitoring requires `process_limit_mb`; this mechanism
 does not provide a hard process-memory ceiling or monitor other processes' free RAM.
+## File artifacts and external tools
+
+Hi-C file artifacts charge only their descriptors to managed memory; their disk
+payload bytes are reported separately. Cache eviction removes the descriptor's
+cache files, never an external input. Existing numeric disk readers and reduction
+streaming retain their protocols. External tools receive a frozen admitted
+workspace and bounded sort/chunk settings; their private memory is sampled and
+can trigger process termination, but cannot be converted into a BioPipe array
+spill. See [Hi-C memory and streaming](HIC.md#memory-streaming-and-logs).

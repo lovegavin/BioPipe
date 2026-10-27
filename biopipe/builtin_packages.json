@@ -14,7 +14,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.bed_reader:BedReader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "8214022c311ca24db44f686887620df9c32ae586e12c8964ad657b11b95306d7",
           "title": "BedReader",
           "parameters_schema": {
@@ -88,7 +88,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.bgen_reader:BgenReader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "0a89ff88ff10c457e04f593e2be54c45c082eca83bae7bf32485b0a0a26853d7",
           "title": "BgenReader",
           "parameters_schema": {
@@ -167,7 +167,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.csv_reader:CsvReader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "31ee8c4c174d58f5aabff8ec1f9070606521cdbbb76a80d9a7867356123a6fb7",
           "title": "CsvReader",
           "parameters_schema": {
@@ -265,7 +265,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.fasta_reader:FastaReader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "449a79794a697b6085f4d56825beae7c66e937f1cd674f1c3d011dead60b8750",
           "title": "FastaReader",
           "parameters_schema": {
@@ -344,7 +344,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.gaf_reader:GafReader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "7f4446f36dfea572180365309b6316d2e84d8c03a15cb90030e34c209318d170",
           "title": "GafReader",
           "parameters_schema": {
@@ -410,7 +410,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.gff3_reader:Gff3Reader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "aee8acb9a6df957631db3d5696daed6889dcc22d071cab057ea3bf87b67446f3",
           "title": "Gff3Reader",
           "parameters_schema": {
@@ -481,7 +481,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.gtf_reader:GtfReader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "4b2460ec3c06b3b3b9bc8ac784925ef657c97f300e8d07d1d2e7ce1b324f4e2c",
           "title": "GtfReader",
           "parameters_schema": {
@@ -551,7 +551,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.h5ad_reader:H5adReader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "67cdc50b8e95e52c4993b42184b0125f9c6da3a598649f7f46767e18d5cf400e",
           "title": "H5adReader",
           "parameters_schema": {
@@ -635,7 +635,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.mtx_reader:MtxReader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "77038d09f258ddacf05e51b33d486cdfe1fb891c4a0c884f090e191708c57705",
           "title": "MtxReader",
           "parameters_schema": {
@@ -716,7 +716,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.parquet_reader:ParquetReader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "acae9b1506762ab17c5df99b76011fa67393d403dc93219fe01fa437dd129f60",
           "title": "ParquetReader",
           "parameters_schema": {
@@ -792,7 +792,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.plink_reader:Plink1Reader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "3ec78057253dc4c1c2dd28dc481012cbeab802c6291941583ef7d7fe0422dc74",
           "title": "Plink1Reader",
           "parameters_schema": {
@@ -890,7 +890,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.plink_reader:Plink2Reader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "510112d2be52f1da610387c50d9a5615682eedc9414bb0fe8743922f32cfb6c9",
           "title": "Plink2Reader",
           "parameters_schema": {
@@ -988,7 +988,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.tsv_reader:TsvReader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "c74471f605e89373755f2fcbe41dbabf74595a86437716998618941773a921db",
           "title": "TsvReader",
           "parameters_schema": {
@@ -1081,7 +1081,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.txt_reader:TxtReader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "9dead3ccdce2c56285ebd608206f7eec524aa4c71e68142a7067064d1d981fee",
           "title": "TxtReader",
           "parameters_schema": {
@@ -1182,7 +1182,7 @@
           "version": "1.0.0",
           "kind": "reader",
           "entry_point": "src.reader.readers.vcf_reader:VcfReader",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "29ce3784d3d8b5dbce95a4cb10e11b3069595e68d04850472926310d97d6a5bc",
           "title": "VcfReader",
           "parameters_schema": {
@@ -1282,7 +1282,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.annotate:AnnotateStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "3d52e79a5ac4e70173e9dd94a793ce12a4b45035794d5b82482d7c9cc7d7f50d",
           "title": "annotate",
           "description": "Attach reference fields onto a target by key label.",
@@ -1377,7 +1377,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.annotation_gaps:AnnotationGapsStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "8c696614e2f418a07d80cc7163b78435fabdfa04f19ee0949bb6c2562bca87d6",
           "title": "annotation_gaps",
           "description": "Inter-gene gap lengths for GFF3/GTF annotation QC.",
@@ -1465,7 +1465,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.attach_info:AttachInfoStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "53d00c6ab3f6339f431159de041dc609259281ea97bec1c34ab1b8f80616dc96",
           "title": "附加注释",
           "description": "输入 1 为目标数据，输入 2 为注释来源。",
@@ -1551,7 +1551,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.bin:BinStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "2e6e03e2e7d475cdb9d2bfdf3ba8f352381d9fd1fc5269077144c31f7d722aa9",
           "title": "Bin",
           "description": "Discretize a continuous axis into bins.",
@@ -1663,7 +1663,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.cluster_axis:ClusterAxisStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "106c50389fc682bd9e6afbcac5e3dab733cb08cadbb773910a575dfe29240622",
           "title": "Clustering",
           "description": "Cluster positions along one axis.",
@@ -1782,7 +1782,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.concat:ConcatStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "2772950fe0e397a48204027467a24c025ed0579a434534dd25406ae3eda770d3",
           "title": "合并数据",
           "description": "按指定维度连接多个输入，输入端口顺序决定合并顺序。",
@@ -1852,7 +1852,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.describe:DescribeStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "77af105d397a80c04e3da80194f818517a86a2f32048f55926496afa486894c0",
           "title": "数据概览",
           "description": "查看形状、标签、缺失情况与全局统计。支持分块读取。",
@@ -1902,7 +1902,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.drop:DropStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "466e6c77b342bd75584aa0eeeafbdf4c3193ad142acd42edba01c3b49131b7ba",
           "title": "移除特征",
           "description": "移除指定维度上的标签。",
@@ -1983,7 +1983,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.enrich_go:EnrichGoStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "ce10a8129e2d66a69724b46d305056e40d76791fdc991ccfecf09e3254f0f134",
           "title": "enrich_go",
           "description": "Hypergeometric enrichment of one term axis over two inputs.",
@@ -2093,7 +2093,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.enrichment_plot:EnrichmentPlotStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "1ab3a01e3a8ab1542f96267a851bac4a655c88af2c1744157e72df202367d36c",
           "title": "enrichment_plot",
           "description": "Horizontal bar plot of enrichment results.",
@@ -2173,7 +2173,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.explode:ExplodeStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "1498082f7a4a7c19b65c4fac774aedd03ef985ca9bee4330ab4aa8218e9b27aa",
           "title": "explode",
           "description": "Expand a multi-valued info field into separate positions.",
@@ -2266,7 +2266,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.filter_by:FilterByStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "362aef88cd153b196ad597d7a1760d8d5170551696ddab279d572c0ec4c4b712",
           "title": "Filter by metrics",
           "description": "Keep positions along a dim that satisfy thresholds from another form.",
@@ -2374,7 +2374,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.find_orfs:FindOrfsStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "0b698ca4b0e7684374e4832deafd14e1a89c179bd34c979fd75c9e52f680b32d",
           "title": "find_orfs",
           "description": "Locate complete ATG..stop ORFs on both strands.",
@@ -2475,7 +2475,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.gene_structure:GeneStructureStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "5571e5ae69bb2e85bd0a7cd5b13295aa92f3ad4b478d0fff9aa1acdc9ecd125e",
           "title": "gene_structure",
           "description": "Per-gene exon/intron/CDS summary for GFF3/GTF.",
@@ -2558,7 +2558,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.gff_feature_stats:GffFeatureStatsStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "58ad967d65c9879fd0cf0f97294d519103328a6473abe1ea78d6ba2aee019c4a",
           "title": "gff_feature_stats",
           "description": "Per-feature-type length and count statistics for GFF3/GTF.",
@@ -2641,7 +2641,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.interval_merge:IntervalMergeStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "6ec3647ba935b769520db5a035ad8e2c2f608f7749c06b5108691d4bceb97ed3",
           "title": "interval_merge",
           "description": "Merge overlapping BED intervals per chromosome.",
@@ -2741,7 +2741,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.interval_overlap:IntervalOverlapStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "bf5375764f91caec493cb68c2b179b8b38f13cc43221c21841e5dd28e633dea4",
           "title": "interval_overlap",
           "description": "Pairwise overlap of intervals between two BED forms.",
@@ -2895,7 +2895,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.interval_stats:IntervalStatsStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "3ada2ed440b75cdc70bc9e0a5dccede1fac97de3b98695e77e288b7f1894380d",
           "title": "interval_stats",
           "description": "Per-chromosome interval count and length statistics.",
@@ -2990,7 +2990,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.kmer_count:KmerCountStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "4ebe23ba3f2cbe27cae0d944259430f17673442ba72bc2528a48ca3034946a1b",
           "title": "kmer_count",
           "description": "Count k-mers per sequence for any sequence-codes Form.",
@@ -3092,7 +3092,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.motif_scan:MotifScanStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "305471e73aea1ac32178d136a8d8beab008a0ef7884e7529b6cb47730d8f7762",
           "title": "motif_scan",
           "description": "Count IUPAC motif occurrences per sequence.",
@@ -3199,7 +3199,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.order_axis:OrderAxisStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "e73de451ddefd40085a67942e373239d56bda252805d164dc281071925fcda64",
           "title": "order_axis",
           "description": "Reorder an axis by a numeric info field, keeping all positions.",
@@ -3281,7 +3281,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.peak_nearest_gene:PeakNearestGeneStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "30bbe32d149ea736e523c678ada39ca842ba224019ac6a4ed31570a335b0482b",
           "title": "peak_nearest_gene",
           "description": "Assign every BED interval to its nearest annotated gene.",
@@ -3441,7 +3441,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.pivot:PivotStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "15922ec41a911db317ff49e67c173d5fa2fe783db16094e9c30db2858a441c94",
           "title": "pivot",
           "description": "Pivot a long 2D table into a wide matrix by two categorical columns.",
@@ -3535,7 +3535,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.prioritize:PrioritizeStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "7c12504f47cafed5fc00c0e72853e397bf036e4335ba693d5cb20aaaa33f62e2",
           "title": "prioritize",
           "description": "Keep the top positions along a dimension, ranked by an info field.",
@@ -3625,7 +3625,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.rank_axis:RankAxisStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "e39c52ff2e056f17b57832cbda2118e2d275be8db7cd8743fbdfca0cc565feca",
           "title": "Rank features",
           "description": "Rank positions along one axis by a statistic.",
@@ -3722,7 +3722,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.reduce_axis:ReduceAxisStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "4cd53d35253a4500d025b177679abbfb9dab1ed833c295304d0b08cba208067e",
           "title": "Axis statistics",
           "description": "Reduce one axis of a form to summary statistics.",
@@ -3845,7 +3845,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.rename_dim:RenameDimStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "f6dd125dd10cc9ae7aced99f0a1b8919a1144b70e03eaf652a34617a17511f43",
           "title": "重命名维度",
           "description": "为一个维度更换名称。",
@@ -3907,11 +3907,11 @@
         {
           "protocol_version": 3,
           "id": "select",
-          "version": "1.0.0",
+          "version": "1.1.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.select:SelectStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
-          "declaration_sha": "28fd5fe4e607839f1adf616f466f393dad069596088ad7cb36aa1cb0d940bff8",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
+          "declaration_sha": "498d50e4d6ad65770269148ca04aba69bccd51e2095a32f8472c24857b0653a0",
           "title": "选择特征",
           "description": "按标签选择样本或特征。",
           "category": "数据整理",
@@ -3935,44 +3935,97 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "source_type": {
+                "type": "string",
+                "enum": [
+                  "form",
+                  "contact_matrix"
+                ],
+                "default": "form"
+              },
+              "region": {
+                "type": "string"
+              },
+              "region2": {
+                "type": "string"
+              },
+              "balanced": {
+                "type": "boolean",
+                "default": true
+              },
+              "weight_name": {
+                "type": "string",
+                "default": "weight"
               }
             },
             "additionalProperties": true,
-            "required": [
-              "dim",
-              "labels"
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "source_type": {
+                      "const": "contact_matrix"
+                    }
+                  },
+                  "required": [
+                    "source_type"
+                  ]
+                },
+                "then": {
+                  "required": [
+                    "region"
+                  ]
+                },
+                "else": {
+                  "required": [
+                    "dim",
+                    "labels"
+                  ]
+                }
+              }
             ]
           },
           "contracts": {
             "version": 1,
             "inputs": [
               {
-                "version": 1,
-                "numeric": true,
-                "info": {},
-                "dims": [
-                  {
-                    "param": "dim",
-                    "default": null
-                  }
+                "kind": [
+                  "form",
+                  "file"
                 ],
-                "labels": [
-                  {
-                    "dim": {
-                      "param": "dim",
-                      "default": null
-                    },
-                    "values": {
-                      "param": "labels",
-                      "default": null
-                    }
-                  }
-                ],
-                "parallel": []
+                "info": {}
               }
             ],
             "output": {
-              "mode": "select"
+              "mode": "choose",
+              "param": "source_type",
+              "default": "form",
+              "cases": {
+                "contact_matrix": {
+                  "mode": "declare",
+                  "schema": {
+                    "kind": "form",
+                    "numeric": true,
+                    "ndim": 2,
+                    "dims": [
+                      "bin1",
+                      "bin2"
+                    ],
+                    "info": {
+                      "representation": {
+                        "type": "string",
+                        "const": "contact_window"
+                      }
+                    },
+                    "info_open": true,
+                    "axis_info_open": true
+                  }
+                }
+              },
+              "otherwise": {
+                "mode": "select"
+              }
             }
           },
           "resources": {
@@ -3982,6 +4035,9 @@
             "supports_cuda": false,
             "estimate": "estimate_memory"
           },
+          "dependencies": [
+            "h5py>=3"
+          ],
           "inputs_arity": 1,
           "outputs": [],
           "output_parameter": "output"
@@ -3989,11 +4045,11 @@
         {
           "protocol_version": 3,
           "id": "sequence_stats",
-          "version": "1.0.0",
+          "version": "1.1.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.sequence_stats:SequenceStatsStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
-          "declaration_sha": "a858962837ac351e499d627d0b2987baf361efeb022cb2e4b0e76f6cd17d5efe",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
+          "declaration_sha": "4ac75999d0d9ae095664bac25482c3b8a94b771eb2133c8dd5b614102f75771b",
           "title": "sequence_stats",
           "description": "Per-sequence length, GC and N content for any sequence-codes Form.",
           "category": "analysis",
@@ -4011,6 +4067,15 @@
               },
               "output": {
                 "type": "string"
+              },
+              "fastq_summary": {
+                "type": "boolean",
+                "default": false
+              },
+              "record_buffer_mb": {
+                "type": "number",
+                "default": 1,
+                "exclusiveMinimum": 0
               }
             },
             "additionalProperties": false
@@ -4019,55 +4084,54 @@
             "version": 1,
             "inputs": [
               {
-                "version": 1,
-                "numeric": true,
+                "kind": [
+                  "form",
+                  "file"
+                ],
                 "info": {
-                  "missing_code": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
                   "representation": {
                     "type": "string",
-                    "const": "sequence_codes"
-                  },
-                  "alphabet_map": {
-                    "type": "object"
-                  },
-                  "unknown_code": {
-                    "type": "integer"
-                  },
-                  "alphabet": {
-                    "type": "string",
                     "enum": [
-                      "dna",
-                      "rna"
+                      "sequence_codes",
+                      "fastq"
                     ]
                   }
-                },
-                "dims": [
-                  {
-                    "param": "sequence_dim",
-                    "default": "sequence"
-                  },
-                  {
-                    "param": "position_dim",
-                    "default": "position"
-                  }
-                ],
-                "labels": [],
-                "parallel": [],
-                "ndim": 2
+                }
               }
             ],
             "output": {
-              "mode": "declare",
-              "schema": {
-                "ndim": 2,
-                "numeric": true,
-                "info_open": true,
-                "axis_info_open": true
+              "mode": "choose",
+              "param": "fastq_summary",
+              "default": false,
+              "cases": {
+                "True": {
+                  "mode": "declare",
+                  "schema": {
+                    "kind": "form",
+                    "numeric": true,
+                    "ndim": 2,
+                    "dims": [
+                      "mate",
+                      "statistic"
+                    ],
+                    "info": {
+                      "representation": {
+                        "type": "string",
+                        "const": "fastq_qc"
+                      }
+                    },
+                    "info_open": true
+                  }
+                }
+              },
+              "otherwise": {
+                "mode": "declare",
+                "schema": {
+                  "ndim": 2,
+                  "numeric": true,
+                  "info_open": true,
+                  "axis_info_open": true
+                }
               }
             }
           },
@@ -4088,7 +4152,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.transpose:TransposeStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "531aa0dc41ecf1db77268d61840a5a9cb6ad95cf5f0ce64dca2ca51a084679e1",
           "title": "维度转置",
           "description": "调整命名维度的排列顺序。",
@@ -4160,7 +4224,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.correction:CorrectionStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "02b9c6eee78eb16e351bd632f4f29b4b528a66ef5890de983252decdcbb9f5bd",
           "title": "FDR",
           "description": "进行 Bonferroni 或 FDR 校正。",
@@ -4262,7 +4326,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.hwe:HweStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "799897a79106fd182cac76500f3bcbe9bf221c6d7b435d34a57b6bc50877d7a6",
           "title": "HWE",
           "description": "Hardy–Weinberg 平衡过滤。输入需要二倍体基因型。",
@@ -4349,7 +4413,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.ld_prune:LdPruneStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "fe771183834e2965239da5e5fb633831d0fd4e54a9d0f79326148c9d6717cbc5",
           "title": "LD pruning",
           "description": "在滑动窗口内移除高度相关的变异。",
@@ -4432,7 +4496,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.maf:MafStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "9290675f7de3c179ccf3d2c4e51c196b00b9cf54e2de6ca41a7effa81564177c",
           "title": "MAF",
           "description": "过滤低频变异。输入需要基因型及 ploidy 元数据。",
@@ -4522,7 +4586,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.missing:MissingStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "f7579aa3b407f302ef530d04672fa98fb672140cc118ed9ecaa778b067887055",
           "title": "缺失值过滤",
           "description": "按指定维度过滤缺失比例过高的样本或特征。",
@@ -4597,7 +4661,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.pca:PcaStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "cfd796988648ea9ddc92e18125c63df89cc7b2cbb298c2c51b9069ef0e41d158",
           "title": "PCA",
           "description": "标准化数据，提取主成分；缺失值以特征均值填充。",
@@ -4674,7 +4738,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.regress:RegressStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "499862127575875209d00d67d1a093d49a709a08a574cf82dfda769efc7fbd42",
           "title": "回归分析",
           "description": "逐个特征拟合回归模型，可加入协变量。",
@@ -4787,7 +4851,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.compare_groups:CompareGroupsStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "92ed5e10ad0aef300479e8c5b486a07095ead9c11552d5df9817964d7decf394",
           "title": "Group comparison",
           "description": "T-test、Welch、Mann–Whitney 或 DESeq2",
@@ -4945,7 +5009,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.cox_regression:CoxRegressionStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "904bc29ad73b761abacf9bc16661867fd3193fb65ea89807d436911791e8b6ec",
           "title": "Cox",
           "description": "多变量比例风险回归",
@@ -5052,7 +5116,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.filter_min:FilterMinStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "2f48e6a61fe60954acffa3341dc970a81326e16245f55310e2189fcabb6a37ab",
           "title": "低表达过滤",
           "description": "按最低信号和有效样本数过滤",
@@ -5123,7 +5187,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.impute:ImputeStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "8f395b33127b614cebdeca9b7fdeb9423fc3322aedc7cc20218f0a406bdd9888",
           "title": "缺失值填补",
           "description": "以 Min、Median 或 Mean 填补缺失",
@@ -5199,7 +5263,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.log_transform:LogTransformStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "5d7b8b96a837a84d3d51bd11b3221f3b1d94d432df03d6cfe1a1f2c9179cd24a",
           "title": "Log",
           "description": "按指定底数与伪计数变换",
@@ -5262,7 +5326,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.logrank_test:LogrankTestStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "ea654eaa35a452be28a1d3ad1a5a93498ddba37eb179b3519d08c7a83b22691c",
           "title": "Log-rank",
           "description": "整体与两两生存差异检验",
@@ -5370,7 +5434,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.normalize:NormalizeStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "43f82a0aa11ca3cce9d757afb87bc7fcdb5754e4c98e3c63b0a73c8898fcf7d3",
           "title": "归一化",
           "description": "CPM、DESeq2 size factors、Quantile 或 Z-score",
@@ -5457,7 +5521,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.boxplot:BoxplotStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "0f1cd3261fc2bce27f73c7821b3c8400acbdc3cb2e8d38d650c77b081a3d1776",
           "title": "Boxplot",
           "description": "分组分布与散点",
@@ -5614,7 +5678,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.dotplot:DotplotStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "6677380d3e655144cf2101c8c0c8dd8d8b667dbc820df0ae6c3a43c52d967334",
           "title": "Dot plot",
           "description": "Dot plot of features grouped by a label column.",
@@ -5771,7 +5835,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.forest_plot:ForestPlotStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "5185a48605906723c802d33c99936f93e82813199b2c01eee2fe9488728e8f21",
           "title": "Forest plot",
           "description": "HR 与置信区间",
@@ -5934,7 +5998,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.heatmap:HeatmapStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "cfc101b709e05a918de1aee512d8e11073b356f9d8b9bf8cc2549a7fe529f150",
           "title": "Heatmap",
           "description": "矩阵热图与层次聚类",
@@ -6084,7 +6148,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.histogram:HistogramStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "78fc385b2492fdc24fc28d9f0ba0a1167eab06fbdb24a2e5086cd965ac96253d",
           "title": "直方图",
           "description": "查看指定数值标签的分布。",
@@ -6196,7 +6260,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.kaplan_meier:KaplanMeierStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "b2284a8049b8779d41fd00b0ead6babbb3181c68280002d96f204c039c70e750",
           "title": "KM",
           "description": "分组生存曲线与置信区间",
@@ -6334,7 +6398,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.line:LineStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "23c16583cdda2e87a20f29df8f014f49c8542a027e3fac1daf858bb99303b3c4",
           "title": "折线图",
           "description": "选择两个数值标签，按横坐标排序后绘制曲线。",
@@ -6449,7 +6513,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.ma_plot:MaPlotStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "f82c3441f5f97a3418d390a13f774d27b3206134b89ca2fcac546d802c5a1f9f",
           "title": "MA plot",
           "description": "平均表达量与效应大小",
@@ -6611,7 +6675,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.manhattan:ManhattanStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "1c253a9e21fc07ad2617a8bd95a0e7b83a1c6671aaa86215dbbf45e3a7a202f2",
           "title": "曼哈顿图",
           "description": "用染色体、位置和 P 值绘制关联结果。",
@@ -6759,7 +6823,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.scatter:ScatterStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "41fce2329c7005f76e2304dba601562aa5b942b1d76e3400e4567ecefc4f80d7",
           "title": "散点图",
           "description": "选择两个标签绘制散点图。",
@@ -6899,7 +6963,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.violin:ViolinStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "17b279d2fb69112646237a500fb44ef40e1cd1685946144a4bc9939e19111705",
           "title": "Violin plot",
           "description": "Draw violin plots of a value column grouped by a label.",
@@ -7056,7 +7120,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.volcano:VolcanoStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "3f79cbb557f83305a138b95559a0bd9e6ae87ced612f74412cce648c713f3521",
           "title": "Volcano",
           "description": "效应大小与显著性",
@@ -7214,7 +7278,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.aggregate:AggregateStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "df68506af189c217fcb72fa21ddb6a5610eefcae5b9e6b9fae6934501e9a709d",
           "title": "Aggregate",
           "description": "Aggregate positions along one axis by group.",
@@ -7341,7 +7405,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.barplot:BarplotStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "ae96879adf54f8a86dfafa2877df846c3a251783f6fd7f87de3086b38bfeb3e7",
           "title": "Composition barplot",
           "description": "Stacked bar plot of a matrix along one axis.",
@@ -7468,7 +7532,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.correlation:CorrelationStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "cdcbdf40939fea5f66d529d552636f82555c083ffe62d17557f408dbe01875b2",
           "title": "Correlation",
           "description": "Pairwise correlation matrix along one axis.",
@@ -7581,7 +7645,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.distance_matrix:DistanceMatrixStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "ba9a217e29baa42b43a58a7d1bf6dd150878cf9346618b0d1001bb761db27f18",
           "title": "Distance matrix",
           "description": "Pairwise distance matrix along one axis.",
@@ -7691,7 +7755,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.diversity:DiversityStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "f2c5ccbccc67f900bee011869b623082fa1fef9df52ff341422a1a88b2735f0f",
           "title": "Alpha diversity",
           "description": "Compute diversity metrics along one axis.",
@@ -7806,7 +7870,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.join:JoinStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "ca56e99c29dc843d2a8190fde4e417490e25f4870231426c70522e1c786b43bd",
           "title": "Join",
           "description": "Join two forms along a shared dim by label.",
@@ -7921,7 +7985,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.permanova:PermanovaStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "0eb6d12b32a11c475c3f7ea247b68bf1ba0db1592c0eb0cde5a217f59ed4e3c1",
           "title": "PERMANOVA",
           "description": "PERMANOVA on a distance matrix with a grouping column.",
@@ -8071,7 +8135,7 @@
           "version": "1.0.0",
           "kind": "operator",
           "entry_point": "src.task.step.steps.reduce:ReduceStep",
-          "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
           "declaration_sha": "ec5b5145d6241eb3e6c6a2ef003f41a151c3d4bce52dbda5905cbc8a78149e43",
           "title": "PCA / PCoA / UMAP / t-SNE",
           "description": "Reduce one axis of a 2D form to a small number of components.",
@@ -8241,6 +8305,825 @@
           "inputs_arity": 1,
           "outputs": [],
           "output_parameter": "output"
+        }
+      ]
+    },
+    {
+      "protocol_version": 3,
+      "name": "biopipe-hic",
+      "title": "biopipe-hic",
+      "version": "1.0.0",
+      "origin": "bundled",
+      "descriptors": [
+        {
+          "protocol_version": 3,
+          "id": "align_reads",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.align_reads:AlignReadsStep",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
+          "declaration_sha": "c506295f238abdcbd3b4173fbe5393bceb9d107333ae2e5984487290777b85f5",
+          "title": "Hi-C read alignment",
+          "description": "Hi-C read alignment using versioned, logged external tools.",
+          "category": "data preparation",
+          "icon": "ArrowsIn",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "executor": {
+                "type": "string",
+                "default": "auto",
+                "enum": [
+                  "auto",
+                  "native",
+                  "wsl"
+                ]
+              },
+              "wsl_distribution": {
+                "type": "string"
+              },
+              "threads": {
+                "type": "integer",
+                "default": 1,
+                "minimum": 1
+              },
+              "memory_mb": {
+                "type": "number",
+                "default": 256,
+                "exclusiveMinimum": 0
+              },
+              "timeout_seconds": {
+                "type": "number",
+                "default": 0,
+                "minimum": 0
+              },
+              "tool_paths": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "output": {
+                "type": "string"
+              },
+              "reference_fasta": {
+                "type": "string",
+                "x-biopipe-path": "workflow"
+              },
+              "assembly": {
+                "type": "string",
+                "default": "unknown"
+              },
+              "record_buffer_mb": {
+                "type": "number",
+                "default": 1,
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "reference_fasta"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "kind": "file",
+                "numeric": false,
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "enum": [
+                      "fastq"
+                    ]
+                  }
+                }
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "dims": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "bam"
+                  }
+                },
+                "info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory",
+            "external_tools": [
+              "bwa",
+              "samtools"
+            ]
+          },
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output"
+        },
+        {
+          "protocol_version": 3,
+          "id": "analyze_contacts",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.analyze_contacts:AnalyzeContactsStep",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
+          "declaration_sha": "07de207af09ef7588c882adacdc5d0ef096d8213a45673733c27d96ce396f864",
+          "title": "Hi-C structure analysis",
+          "description": "Hi-C structure analysis using versioned, logged external tools.",
+          "category": "analysis",
+          "icon": "Intersect",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "executor": {
+                "type": "string",
+                "default": "auto",
+                "enum": [
+                  "auto",
+                  "native",
+                  "wsl"
+                ]
+              },
+              "wsl_distribution": {
+                "type": "string"
+              },
+              "threads": {
+                "type": "integer",
+                "default": 1,
+                "minimum": 1
+              },
+              "memory_mb": {
+                "type": "number",
+                "default": 256,
+                "exclusiveMinimum": 0
+              },
+              "timeout_seconds": {
+                "type": "number",
+                "default": 0,
+                "minimum": 0
+              },
+              "tool_paths": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "output": {
+                "type": "string"
+              },
+              "method": {
+                "type": "string",
+                "default": "expected",
+                "enum": [
+                  "expected",
+                  "compartments",
+                  "insulation",
+                  "loops",
+                  "pileup"
+                ]
+              },
+              "resolution": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "view": {
+                "type": "string",
+                "x-biopipe-path": "workflow"
+              },
+              "phasing_track": {
+                "type": "string",
+                "x-biopipe-path": "workflow"
+              },
+              "features": {
+                "type": "string",
+                "x-biopipe-path": "workflow"
+              },
+              "features_format": {
+                "type": "string",
+                "default": "BEDPE",
+                "enum": [
+                  "BED",
+                  "BEDPE"
+                ]
+              },
+              "windows": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "default": [
+                  100000,
+                  250000,
+                  500000
+                ],
+                "minItems": 1
+              },
+              "weight_name": {
+                "type": "string",
+                "default": "weight"
+              },
+              "n_eigs": {
+                "type": "integer",
+                "default": 3,
+                "minimum": 1
+              },
+              "ignore_diags": {
+                "type": "integer",
+                "default": 2,
+                "minimum": 0
+              },
+              "max_loci_separation": {
+                "type": "integer",
+                "default": 2000000,
+                "minimum": 1
+              },
+              "flank": {
+                "type": "integer",
+                "default": 100000,
+                "minimum": 1
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "kind": [
+                  "file",
+                  "form"
+                ],
+                "numeric": false,
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "enum": [
+                      "cool",
+                      "hic_expected",
+                      "hic_compartments",
+                      "hic_insulation",
+                      "hic_loops"
+                    ]
+                  }
+                }
+              }
+            ],
+            "output": {
+              "mode": "choose",
+              "param": "method",
+              "default": "expected",
+              "cases": {
+                "expected": {
+                  "mode": "declare",
+                  "schema": {
+                    "kind": "form",
+                    "numeric": true,
+                    "ndim": 2,
+                    "dims": [
+                      "record",
+                      "statistic"
+                    ],
+                    "info": {
+                      "representation": {
+                        "type": "string",
+                        "const": "hic_expected"
+                      }
+                    },
+                    "info_open": true,
+                    "axis_info_open": true
+                  }
+                },
+                "compartments": {
+                  "mode": "declare",
+                  "schema": {
+                    "kind": "form",
+                    "numeric": true,
+                    "ndim": 2,
+                    "dims": [
+                      "record",
+                      "statistic"
+                    ],
+                    "info": {
+                      "representation": {
+                        "type": "string",
+                        "const": "hic_compartments"
+                      }
+                    },
+                    "info_open": true,
+                    "axis_info_open": true
+                  }
+                },
+                "insulation": {
+                  "mode": "declare",
+                  "schema": {
+                    "kind": "form",
+                    "numeric": true,
+                    "ndim": 2,
+                    "dims": [
+                      "record",
+                      "statistic"
+                    ],
+                    "info": {
+                      "representation": {
+                        "type": "string",
+                        "const": "hic_insulation"
+                      }
+                    },
+                    "info_open": true,
+                    "axis_info_open": true
+                  }
+                },
+                "loops": {
+                  "mode": "declare",
+                  "schema": {
+                    "kind": "form",
+                    "numeric": true,
+                    "ndim": 2,
+                    "dims": [
+                      "record",
+                      "statistic"
+                    ],
+                    "info": {
+                      "representation": {
+                        "type": "string",
+                        "const": "hic_loops"
+                      }
+                    },
+                    "info_open": true,
+                    "axis_info_open": true
+                  }
+                },
+                "pileup": {
+                  "mode": "declare",
+                  "schema": {
+                    "kind": "form",
+                    "numeric": true,
+                    "ndim": 2,
+                    "dims": [
+                      "offset1",
+                      "offset2"
+                    ],
+                    "info": {
+                      "representation": {
+                        "type": "string",
+                        "const": "hic_pileup"
+                      }
+                    },
+                    "info_open": true,
+                    "axis_info_open": true
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory",
+            "external_tools": [
+              "cooltools"
+            ]
+          },
+          "dependencies": [
+            "h5py>=3"
+          ],
+          "inputs_arity": "*",
+          "outputs": [],
+          "output_parameter": "output"
+        },
+        {
+          "protocol_version": 3,
+          "id": "build_contacts",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.build_contacts:BuildContactsStep",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
+          "declaration_sha": "436703971b4c580dda31f96343498d2908deb6273824f2b7dc4d0ba691b3d83f",
+          "title": "Build contact map",
+          "description": "Build contact map using versioned, logged external tools.",
+          "category": "data preparation",
+          "icon": "GridNine",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "executor": {
+                "type": "string",
+                "default": "auto",
+                "enum": [
+                  "auto",
+                  "native",
+                  "wsl"
+                ]
+              },
+              "wsl_distribution": {
+                "type": "string"
+              },
+              "threads": {
+                "type": "integer",
+                "default": 1,
+                "minimum": 1
+              },
+              "memory_mb": {
+                "type": "number",
+                "default": 256,
+                "exclusiveMinimum": 0
+              },
+              "timeout_seconds": {
+                "type": "number",
+                "default": 0,
+                "minimum": 0
+              },
+              "tool_paths": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "output": {
+                "type": "string"
+              },
+              "chromsizes": {
+                "type": "string",
+                "x-biopipe-path": "workflow"
+              },
+              "assembly": {
+                "type": "string",
+                "default": "unknown"
+              },
+              "binsize": {
+                "type": "integer",
+                "default": 10000,
+                "minimum": 1
+              },
+              "min_mapq": {
+                "type": "integer",
+                "default": 30,
+                "minimum": 0
+              },
+              "walks_policy": {
+                "type": "string",
+                "default": "5unique",
+                "enum": [
+                  "5unique",
+                  "mask",
+                  "5any"
+                ]
+              },
+              "max_mismatch": {
+                "type": "integer",
+                "default": 3,
+                "minimum": 0
+              },
+              "pair_types": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Z]{2}$"
+                },
+                "default": [
+                  "UU"
+                ]
+              },
+              "balance": {
+                "type": "boolean",
+                "default": true
+              },
+              "resolutions": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "default": []
+              },
+              "ignore_diags": {
+                "type": "integer",
+                "default": 2,
+                "minimum": 0
+              }
+            },
+            "required": [
+              "chromsizes"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "kind": "file",
+                "numeric": false,
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "enum": [
+                      "sam",
+                      "bam",
+                      "pairs"
+                    ]
+                  }
+                }
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "dims": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "cool"
+                  }
+                },
+                "info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory",
+            "external_tools": [
+              "pairtools",
+              "cooler",
+              "samtools"
+            ]
+          },
+          "dependencies": [
+            "h5py>=3"
+          ],
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output"
+        },
+        {
+          "protocol_version": 3,
+          "id": "AlignmentReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.alignment_reader:AlignmentReader",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
+          "declaration_sha": "74c1755526844295ba66ef4470b10ad2c48ee8ab9d54f1a5c9268cf4cd2c4f1f",
+          "title": "AlignmentReader",
+          "description": "Reference a disk dataset without loading its payload into memory.",
+          "category": "Hi-C",
+          "icon": "File",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "kind": "file",
+              "numeric": false,
+              "ndim": 0,
+              "info": {
+                "representation": {
+                  "type": "string",
+                  "enum": [
+                    "sam",
+                    "bam"
+                  ]
+                }
+              },
+              "info_open": true
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "extensions": [
+            ".sam",
+            ".bam"
+          ],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "file"
+            ],
+            "labels": {},
+            "compression": []
+          }
+        },
+        {
+          "protocol_version": 3,
+          "id": "CoolerReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.cooler_reader:CoolerReader",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
+          "declaration_sha": "22353aacba137b9eee8b51d8b447db1809aeaa7be06818685f5840c3e17720c3",
+          "title": "CoolerReader",
+          "description": "Reference a disk dataset without loading its payload into memory.",
+          "category": "Hi-C",
+          "icon": "File",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "resolution": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "kind": "file",
+              "numeric": false,
+              "ndim": 0,
+              "info": {
+                "representation": {
+                  "type": "string",
+                  "const": "cool"
+                }
+              },
+              "info_open": true
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "dependencies": [
+            "h5py>=3.0"
+          ],
+          "dependency_imports": [
+            "h5py"
+          ],
+          "extensions": [
+            ".cool",
+            ".mcool"
+          ],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "file"
+            ],
+            "labels": {},
+            "compression": []
+          }
+        },
+        {
+          "protocol_version": 3,
+          "id": "FastqReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.fastq_reader:FastqReader",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
+          "declaration_sha": "a20a48e2c4fea25b18a574452a4ec0decfca755370655b9e19b54023c7a6bfe2",
+          "title": "FastqReader",
+          "description": "Reference a disk dataset without loading its payload into memory.",
+          "category": "Hi-C",
+          "icon": "File",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "mate_path": {
+                "type": "string",
+                "description": "R2 path, absolute or relative to the R1 directory.",
+                "x-biopipe-path": "source"
+              },
+              "phred_offset": {
+                "type": "integer",
+                "default": 33,
+                "enum": [
+                  33,
+                  64
+                ]
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "kind": "file",
+              "numeric": false,
+              "ndim": 0,
+              "info": {
+                "representation": {
+                  "type": "string",
+                  "const": "fastq"
+                }
+              },
+              "info_open": true
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "extensions": [
+            ".fastq",
+            ".fq"
+          ],
+          "handles_compression": true,
+          "file_input": {
+            "dims": [
+              "file"
+            ],
+            "labels": {},
+            "compression": [
+              ".gz",
+              ".bz2",
+              ".xz"
+            ]
+          }
+        },
+        {
+          "protocol_version": 3,
+          "id": "PairsReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.pairs_reader:PairsReader",
+          "code_sha": "42c2dcecd49f8a982872ba976182015337f6e4ee97cdb4cb9e431d70ecf33434",
+          "declaration_sha": "f84f839ce6c53d8fdb740bb40b28721e4f8ef57c5ad7514fba5529ac55c18218",
+          "title": "PairsReader",
+          "description": "Reference a disk dataset without loading its payload into memory.",
+          "category": "Hi-C",
+          "icon": "File",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "kind": "file",
+              "numeric": false,
+              "ndim": 0,
+              "info": {
+                "representation": {
+                  "type": "string",
+                  "const": "pairs"
+                }
+              },
+              "info_open": true
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "extensions": [
+            ".pairs"
+          ],
+          "handles_compression": true,
+          "file_input": {
+            "dims": [
+              "file"
+            ],
+            "labels": {},
+            "compression": [
+              ".gz",
+              ".bz2",
+              ".xz"
+            ]
+          }
         }
       ]
     }

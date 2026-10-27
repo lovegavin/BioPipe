@@ -61,6 +61,8 @@ def create_app(settings=None):
     app.state.bridge = bridge
     from .plugin_api import mount_plugins
     mount_plugins(app, service)
+    from .remote_api import mount_remote
+    remote_events, remote_console = mount_remote(app, service)
 
     @app.middleware("http")
     async def local_boundary(request, call_next):
@@ -138,9 +140,7 @@ def create_app(settings=None):
 
     @app.post("/api/workflows/prepare")
     def prepare_workflow(graph: Graph):
-        graph = service.plugins.pin(graph)
-        resolved = service.plugins.catalog_for(graph, service.base_catalog)
-        return prepare_interface(freeze_graph(graph, resolved, settings.root), resolved, settings.root).model_dump(mode="json")
+        return service.prepare_graph(graph).model_dump(mode="json")
 
     @app.post("/api/workflows/export")
     def export_workflow(graph: Graph):
@@ -156,7 +156,7 @@ def create_app(settings=None):
 
     @app.post("/api/workflows/save")
     def save_workflow(payload: SaveWorkflow):
-        payload.graph = service.plugins.pin(payload.graph)
+        payload.graph = service.prepare_graph(payload.graph)
         return service.routes.save(payload)
 
     @app.get("/api/workflows/{key}")
@@ -185,19 +185,19 @@ def create_app(settings=None):
 
     @app.post("/api/validate")
     def validate(graph: Graph):
-        resolved = service.plugins.catalog_for(graph, service.base_catalog)
-        manifest, order = compile_graph(graph, resolved, settings.root, require_files=True)
-        return {"valid": True, "order": order, "manifest": manifest,
-                "contracts": analyze_graph(graph, resolved, settings.root)}
+        return service.validate_graph(graph)
 
     @app.post("/api/contracts")
     def contracts(graph: Graph):
-        return analyze_graph(graph, service.plugins.catalog_for(graph, service.base_catalog), settings.root)
+        return analyze_graph(graph, service.graph_catalog(graph), settings.root)
 
     @app.post("/api/export")
     def export(graph: Graph):
+        from .source_paths import remote_profile
+        if remote_profile(graph):
+            return service.remotes.call(remote_profile(graph), 'export', {'graph': graph.model_dump(mode='json')})
         manifest, order = compile_graph(graph, service.plugins.catalog_for(graph, service.base_catalog), settings.root)
-        manifest = relative_manifest(manifest, project_path(settings.root, ".", graph.base_dir))
+        manifest = relative_manifest(manifest, project_path(settings.root, ".", graph.base_dir), service.plugins.catalog_for(graph, service.base_catalog))
         return {"yaml": yaml.safe_dump(manifest, allow_unicode=True, sort_keys=False), "order": order}
 
     @app.post("/api/import")
@@ -272,6 +272,8 @@ def create_app(settings=None):
 
     @app.get("/api/jobs/{key}/events")
     async def events(key: str, request: Request):
+        if service.remotes.owns(key):
+            return await remote_events(key, request)
         service.require(key)
         async def stream():
             offsets = {}
@@ -320,7 +322,13 @@ def create_app(settings=None):
     @app.get("/api/jobs/{key}/artifacts/{artifact_id}/download")
     def download(key: str, artifact_id: str):
         path, descriptor = service.artifact(key, artifact_id)
-        return FileResponse(path, filename=descriptor["name"] + ".npy", media_type="application/octet-stream")
+        suffix = ".files.json" if descriptor.get("kind") == "file" else ".npy"
+        return FileResponse(path, filename=descriptor["name"] + suffix, media_type="application/octet-stream")
+
+    @app.get("/api/jobs/{key}/artifacts/{artifact_id}/files/{role}")
+    def artifact_file(key: str, artifact_id: str, role: str):
+        path = service.artifact_file(key, artifact_id, role)
+        return FileResponse(path, filename=path.name, media_type="application/octet-stream")
 
     @app.get("/api/jobs/{key}/exports/{index}")
     def step_export(key: str, index: int):
@@ -340,6 +348,8 @@ def create_app(settings=None):
 
     @app.get("/api/jobs/{key}/console")
     def console(key: str):
+        if service.remotes.owns(key):
+            return remote_console(key)
         job = service.require(key)
         path = service.jobs_dir / key / "console.log"
         if not path.is_file() or path.stat().st_size == 0:

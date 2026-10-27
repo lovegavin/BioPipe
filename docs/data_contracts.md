@@ -4,6 +4,12 @@
 explicitly binds annotation arrays to named dimensions. Shape, field names and
 array lengths alone do not establish biological meaning.
 
+File-backed datasets use the separate SDK `FileArtifact` and `kind: file` port
+contract. Existing ports default to `kind: form`. File ports additionally declare
+`info.representation` (for example `fastq`, `bam`, `pairs`, or `cool`). They carry
+no dense tensor or biological axes; an adapter must explicitly produce a Form
+before numeric processing. See [Hi-C workflows](HIC.md).
+
 ## Declaration and registry
 
 Every built-in Reader declares `output_contract`; every Step declares ordered

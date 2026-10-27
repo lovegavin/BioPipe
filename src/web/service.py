@@ -57,11 +57,13 @@ class Settings:
     profile: dict | None = None
     builtin_routes: bool = False
     instance_url: str | None = None
+    input_roots: list[Path] | None = None
 
 
 class JobService:
     def __init__(self, settings, catalog):
         self.settings, self.base_catalog = settings, catalog
+        self.remotes = None
         self.root = settings.root.resolve()
         self.directory = settings.data_dir.resolve()
         from biopipe.plugins import PluginManager
@@ -85,9 +87,36 @@ class JobService:
             self.demo = self._demo()
             write_json(self.directory / "operators.json", self.catalog)
         self.routes = RouteLibrary(self.directory / "workflows", self.catalog, self.root,
-                                   lambda graph: self.plugins.catalog_for(graph, self.base_catalog))
+                                   self.graph_catalog)
         if settings.builtin_routes:
             self.routes.install_builtins()
+
+    def graph_catalog(self, graph):
+        from .source_paths import remote_profile
+        if self.remotes and remote_profile(graph):
+            return self.remotes.catalog(graph)
+        return self.plugins.catalog_for(graph, self.base_catalog)
+
+    def prepare_graph(self, graph):
+        from .source_paths import remote_profile
+        from .parameters import freeze_graph
+        from .routes import prepare_interface
+        if self.remotes and remote_profile(graph):
+            return self.remotes.prepare(graph)
+        graph = self.plugins.pin(graph)
+        catalog = self.graph_catalog(graph)
+        return prepare_interface(freeze_graph(graph, catalog, self.root), catalog, self.root)
+
+    def validate_graph(self, graph, require_files=True):
+        from .source_paths import remote_profile
+        from .contracts import analyze_graph
+        if self.remotes and remote_profile(graph):
+            return self.remotes.call(remote_profile(graph), 'validate', {'graph': graph.model_dump(mode='json'),
+                                                                       'require_files': require_files})
+        catalog = self.graph_catalog(graph)
+        manifest, order = compile_graph(graph, catalog, self.root, require_files=require_files,
+                                        input_roots=self.settings.input_roots)
+        return {'valid': True, 'order': order, 'manifest': manifest, 'contracts': analyze_graph(graph, catalog, self.root)}
 
     def refresh_catalog(self):
         state = self.plugins.state()
@@ -152,13 +181,16 @@ class JobService:
         }
 
     def launch(self, graph: Graph):
+        from .source_paths import remote_profile
+        if self.remotes and remote_profile(graph):
+            return self.remotes.launch(graph)
         plugin_snapshot = self.plugins.snapshot(graph)
         graph = self.plugins.pin(graph, snapshot=plugin_snapshot)
         catalog = self.plugins._catalog(plugin_snapshot, self.base_catalog)
         from .parameters import freeze_graph
         from biopipe.parameter_values import split_task
         graph = freeze_graph(graph, catalog, self.root)
-        manifest, order = compile_graph(graph, catalog, self.root, require_files=True)
+        manifest, order = compile_graph(graph, catalog, self.root, require_files=True, input_roots=self.settings.input_roots)
         with self.lock:
             self._refresh_jobs()
             if any(job["status"] == "running" or job.get("logs_complete") is False for job in self.jobs.values()):
@@ -167,7 +199,7 @@ class JobService:
             directory = self.jobs_dir / key
             directory.mkdir()
             write_json(directory / "plugins.lock.json", plugin_snapshot)
-            task, parameter_values = split_task(relative_manifest(manifest, directory))
+            task, parameter_values = split_task(relative_manifest(manifest, directory, catalog))
             write_json(directory / "parameters.json", parameter_values)
             (directory / "task.yaml").write_text(yaml.safe_dump(task, sort_keys=False, allow_unicode=True), encoding="utf-8")
             job = {"id": key, "name": graph.name, "status": "running", "created_at": datetime.now(timezone.utc).isoformat(),
@@ -299,6 +331,8 @@ class JobService:
         return signature, {"console": content, "console_truncated": False}
 
     def details(self, key):
+        if self.remotes and self.remotes.owns(key):
+            return self.remotes.job(key)
         with self.lock:
             job = dict(self.require(key))
             summary = read_json(self.jobs_dir / key / "output/run_summary.json")
@@ -354,10 +388,14 @@ class JobService:
     def history(self):
         with self.lock:
             self._refresh_jobs()
-            return [{k: value[k] for k in ("id", "name", "status", "created_at", "finished_at", "error")}
+            local = [{k: value[k] for k in ("id", "name", "status", "created_at", "finished_at", "error")}
                     for value in sorted(self.jobs.values(), key=lambda j: j["created_at"], reverse=True)[:30]]
+        return sorted(local + (self.remotes.history() if self.remotes else []),
+                      key=lambda item: item['created_at'], reverse=True)[:60]
 
     def cancel(self, key):
+        if self.remotes and self.remotes.owns(key):
+            return self.remotes.cancel(key)
         with self.lock:
             job = self.require(key)
             if job["status"] == "running":
@@ -377,6 +415,8 @@ class JobService:
             return self.details(key)
 
     def shutdown(self):
+        if self.remotes:
+            self.remotes.close()
         self.dependencies.cancel.set()
         for key in list(self.processes):
             self.cancel(key)
@@ -388,13 +428,27 @@ class JobService:
         match = next((a for a in (report or {}).get("artifacts", []) if a["artifact_id"] == artifact_id), None)
         if not match or not match["disk_uri"]:
             raise KeyError("产物尚未保存，或这次运行没有保留它。")
-        path = (Path(match["disk_uri"]) / "data.npy").resolve()
-        if not path.is_relative_to(self.root) or not path.is_file():
+        path = (Path(match["disk_uri"]) / ("files.json" if match.get("kind") == "file" else "data.npy")).resolve()
+        if not path.is_relative_to(self.root):
+            raise KeyError("产物文件不可用。")
+        # Validate containment before using Windows' extended I/O path. A cache
+        # directory can be renamed successfully past MAX_PATH while ordinary
+        # stat/open subsequently report that the existing payload is absent.
+        from biopipe.bytecode import filesystem_path
+        path = Path(filesystem_path(path))
+        if not path.is_file():
             raise KeyError("产物文件不可用。")
         return path, match
 
     def preview(self, key, artifact_id):
         path, descriptor = self.artifact(key, artifact_id)
+        if descriptor.get("kind") == "file":
+            payload = self._file_payload(key, path)
+            return {"descriptor": descriptor, "rows": [], "points": [], "format": payload["format"],
+                    "files": [{"role": role, "name": Path(value).name,
+                                 "downloadable": Path(value).resolve().is_relative_to((self.jobs_dir / key / "output").resolve()),
+                               "bytes": payload["fingerprints"][role]["size"]}
+                              for role, value in payload["files"].items()], "info": payload["info"]}
         import numpy as np
         data = np.load(path, mmap_mode="r", allow_pickle=False)
         if data.ndim != 2 or data.dtype.kind not in "biuf":
@@ -403,6 +457,33 @@ class JobService:
         points = data[:200, :2].tolist() if data.shape[1] >= 2 else []
         del data
         return safe_json({"descriptor": descriptor, "rows": rows, "points": points})
+
+    def _file_payload(self, key, path):
+        payload = read_json(path)
+        summary = self.details(key).get('summary') or {}
+        for role, value in payload['files'].items():
+            try:
+                payload['files'][role] = str(self._record_path(key, value, summary))
+            except KeyError:
+                # External sources remain external and are never downloadable.
+                pass
+        return payload
+
+    def artifact_file(self, key, artifact_id, role):
+        path, descriptor = self.artifact(key, artifact_id)
+        if descriptor.get("kind") != "file":
+            raise KeyError("Not a file dataset")
+        from src.core.files import FileArtifact
+        artifact = FileArtifact(**self._file_payload(key, path))
+        artifact.validate()
+        if role not in artifact.files:
+            raise KeyError("Unknown file role")
+        # Download generated outputs only. Source references can point outside
+        # the job, but the HTTP endpoint must not become an arbitrary file reader.
+        target = Path(artifact.files[role]).resolve()
+        if not target.is_relative_to((self.jobs_dir / key / "output").resolve()):
+            raise KeyError("This file is an external input, not a downloadable job output")
+        return target
 
     def export_file(self, key, index):
         summary = self.details(key).get("summary") or {}

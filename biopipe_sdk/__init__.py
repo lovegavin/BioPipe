@@ -11,6 +11,7 @@ _EXPORTS = {
     "load_class": ("biopipe_sdk.declarations", "load_class"),
     "bind_class": ("biopipe_sdk.declarations", "bind_class"),
     "Form": ("src.core", "Form"),
+    "FileArtifact": ("src.core", "FileArtifact"),
     "Step": ("src.task.step.base", "Step"),
     "Reader": ("src.reader.base", "Reader"),
     "DenseDiskWriter": ("src.reader.disk", "DenseDiskWriter"),

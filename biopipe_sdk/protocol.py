@@ -121,6 +121,8 @@ def schema_to_fields(schema):
             field["default"] = deepcopy(value["x-ui-default"])
         if "x-ui-step" in value:
             field["step"] = value["x-ui-step"]
+        if value.get('x-biopipe-path') in ('workflow', 'source'):
+            field['path_kind'] = value['x-biopipe-path']
         result.append(field)
     return result
 
@@ -138,6 +140,9 @@ def describe_reader(reader):
 def catalog_entry(descriptor):
     """UI projection. These derived fields are never stored in a package."""
     value = deepcopy(descriptor)
+    from biopipe.platforms import supported_systems, systems_status
+    value['supported_systems'] = supported_systems(descriptor)
+    value['systems_status'] = systems_status(descriptor)
     schema = value["parameters_schema"]
     value["parameters"] = schema_to_fields(schema)
     value["runtime_defaults"] = {key: deepcopy(field["default"])
@@ -168,6 +173,10 @@ def validate_output_rule(rule):
 def validate_port_rule(rule):
     if not isinstance(rule, dict):
         raise ValueError("Port contracts must be objects")
+    kinds = rule.get("kind", "form")
+    kinds = kinds if isinstance(kinds, list) else [kinds]
+    if not kinds or any(value not in ("form", "file") for value in kinds):
+        raise ValueError("Port kind must be form, file, or a list of these kinds")
     if "numeric" in rule and not isinstance(rule["numeric"], bool):
         raise ValueError("Port numeric must be boolean")
     if rule.get("ndim") is not None and (type(rule["ndim"]) is not int or rule["ndim"] < 0):

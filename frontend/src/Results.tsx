@@ -194,7 +194,7 @@ export function Results({
     setStep(-1);
   }, [job?.id]);
   useEffect(() => {
-    if (!job || !artifacts.length) return;
+    if (!job || job.remote || !artifacts.length) return;
     const id =
       selected && artifacts.some((a) => a.artifact_id === selected)
         ? selected
@@ -412,6 +412,15 @@ export function Results({
               <h3>暂无运行结果</h3>
             </div>
           </div>
+        ) : job.remote ? (
+          <div className="remote-results">
+            <h3>{job.remote.name} · {statusLabel[job.status]}</h3>
+            {job.error && <p className="field-error" role="alert">{job.error}</p>}
+            <div className="remote-result-file"><strong>服务器运行目录</strong><code>{job.remote.workspace}/.studio/jobs/{job.remote.job_id}</code></div>
+            {artifacts.map(item => <div className="remote-result-file" key={item.artifact_id}><strong>{item.name}</strong><code>{item.disk_uri}</code></div>)}
+            {job.summary?.steps.map((item, i) => <div className="remote-result-file" key={i}><strong>{item.name}</strong><code>{item.export_path}</code></div>)}
+            <button className="subtle-button" onClick={() => onTab('logs')}>查看运行日志</button>
+          </div>
         ) : job.error ? (
           <div className="run-error">
             <WarningCircle size={24} />
@@ -523,8 +532,7 @@ export function Results({
                     <strong>
                       {preview.descriptor.name}
                       <span>
-                        {preview.descriptor.shape.join(" × ")} ·{" "}
-                        {preview.descriptor.dtype}
+                        {preview.format || `${preview.descriptor.shape.join(" × ")} · ${preview.descriptor.dtype}`}
                       </span>
                     </strong>
                     <a
@@ -534,17 +542,22 @@ export function Results({
                       )}
                     >
                       <ArrowDown size={14} />
-                      下载 .npy
+                      {preview.format ? "下载文件清单" : "下载 .npy"}
                     </a>
                   </div>
                   <div className="data-preview">
+                    {preview.files?.map(file => (
+                      file.downloadable ? <a key={file.role} className="text-button" href={api.url(`/api/jobs/${job.id}/artifacts/${selected}/files/${encodeURIComponent(file.role)}`)}>
+                        <ArrowDown size={14} /> {file.name} · {(file.bytes / 1024 ** 2).toFixed(2)} MiB
+                      </a> : <span key={file.role}>{file.name} · {(file.bytes / 1024 ** 2).toFixed(2)} MiB</span>
+                    ))}
                     {preview.points.length > 0 && (
                       <div className="chart-preview">
                         <Scatter preview={preview} />
                         <small>前两列 · 最多 200 行</small>
                       </div>
                     )}
-                    <div className="table-preview">
+                    {!preview.format && <div className="table-preview">
                       <table>
                         <caption className="sr-only">
                           产物预览，最多 20 行与 8 列
@@ -572,7 +585,7 @@ export function Results({
                           ))}
                         </tbody>
                       </table>
-                    </div>
+                    </div>}
                   </div>
                 </>
               ) : (

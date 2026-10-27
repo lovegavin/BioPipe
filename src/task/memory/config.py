@@ -65,8 +65,8 @@ class MemoryConfig:
         available_at_start = None
         if detect_available and "budget_mb" not in raw:
             try:
-                import psutil
-                available_at_start = int(psutil.virtual_memory().available)
+                from .system import available_memory
+                available_at_start = available_memory()
             except (ImportError, OSError, RuntimeError) as error:
                 raise ManifestError("Cannot scan available memory for an automatic budget; "
                                     "ensure psutil is available or set runtime.memory.budget_mb explicitly") from error

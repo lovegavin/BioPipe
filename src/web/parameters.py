@@ -31,12 +31,8 @@ def freeze_graph(graph, catalog, root, *, bound=False, depth=0):
                 raise GraphError(f"Missing operator definition: {node.operator}", node.id)
             node.params = _defaults(operators[node.operator], node.params)
         elif node.kind == "source" and node.source and node.source.path and not bound:
-            from .graph import project_path
-            path = project_path(root, node.source.path, graph.base_dir)
-            candidates = [item for item in catalog["readers"] if primary_ext(path) in item["extensions"]
-                          and (not path.is_file() or (
-                              all(path.with_suffix(s).exists() for s in item.get("requires_siblings", []))
-                              and not any(path.with_suffix(s).exists() for s in item.get("excludes_siblings", []))))]
+            from .source_paths import source_candidates
+            candidates = source_candidates(graph, catalog, root, node.source.path)
             if len(candidates) == 1:
                 reader = candidates[0]
                 node.source.args = _defaults(reader, node.source.args)

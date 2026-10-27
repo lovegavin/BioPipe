@@ -28,7 +28,7 @@ def test_builtin_install_library_controls_and_persisted_removal(tmp_path):
     with TestClient(app) as client:
         client.headers["X-Studio-Token"] = client.get("/api/bootstrap").json()["token"]
         routes = client.get("/api/routes").json()
-        assert {r["name"] for r in routes} == {"GWAS", "RNA-seq DE", "Proteomics DE", "生存分析", "16S Microbiome"}
+        assert {r["name"] for r in routes} == {"GWAS", "RNA-seq DE", "Proteomics DE", "生存分析", "16S Microbiome", "Hi-C from FASTQ", "Hi-C from BAM", "Hi-C from PAIRS"}
         key = routes[0]["id"]
         for operator in (key, "pca"):
             result = client.post("/api/library/manage", json={"key": operator, "action": "disable"})
@@ -95,6 +95,8 @@ def synthetic_sources(graph, directory):
 
 @pytest.mark.parametrize("definition", BUNDLE, ids=[r["name"] for r in BUNDLE])
 def test_each_shipped_route_expands_and_executes_all_branches(tmp_path, definition):
+    if definition['name'].startswith('Hi-C from '):
+        pytest.skip('File-backed routes use real Linux fixtures in test_hic_real.py, not the numeric CSV fixture')
     if definition["name"] == "RNA-seq DE":
         pytest.importorskip("pydeseq2")
     if definition["name"] == "生存分析":

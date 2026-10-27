@@ -1,0 +1,8 @@
+# External command environment, separate from the Windows desktop interpreter.
+# Install bwa=0.7.19 and samtools=1.22.1 with conda/bioconda first.
+cooler==0.10.4
+pairtools==1.1.2
+cooltools==0.7.1
+# cooltools 0.7.1 dot clustering uses the pre-pandas-3 all-NA idxmin semantics.
+pandas==2.2.3
+h5py>=3

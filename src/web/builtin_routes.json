@@ -6,6 +6,21 @@
       "sha256": "506bfa195cf9523de8fe6cc15ced7ce46bd2b94a07ec39f8c1fcc6950cd47407",
       "commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95"
     },
+    "route_e43131160eaa": {
+      "path": "routes/hic_bam/task.yaml",
+      "sha256": "1cbcaa73e3e0568d7b9b750234bef9dfa4bd6cd96c16cb6cdddc8e709a1867ac",
+      "parameters_sha256": "4406f64f0246123e1956dcab5844bfbb92ccddb9078a9efb1eed716dd46df9b0"
+    },
+    "route_7219caa8ef7d": {
+      "path": "routes/hic_fastq/task.yaml",
+      "sha256": "0518a68132dcf833bc5f59fe90c1245a4f70798b67603c3b7d3437b0a463b93e",
+      "parameters_sha256": "574b295ca08dd38fb92dc9fb1766168f2f7a262cc7f2a57553b444fc7cc9c09c"
+    },
+    "route_240979c8e1c4": {
+      "path": "routes/hic_pairs/task.yaml",
+      "sha256": "64336290654cdbad26aeb2eb428f9840fdad5473ba7617540864f994ff42ba90",
+      "parameters_sha256": "4c3da2d37574933705ce941371beaf0fa5d827266054977600ca247574d998ef"
+    },
     "route_5d8f861d9506": {
       "path": "routes/microbiome/task.yaml",
       "sha256": "7679048c80c791c3b3de810b9f76ebb07877a257e44ff24a576627642c00a25c",
@@ -28,6 +43,335 @@
     }
   },
   "routes": [
+    {
+      "id": "route_240979c8e1c4",
+      "version": 1,
+      "name": "Hi-C from PAIRS",
+      "graph": {
+        "schema_version": 2,
+        "name": "Hi-C from PAIRS",
+        "base_dir": ".studio/builtin-inputs/hic_pairs",
+        "nodes": [
+          {
+            "id": "reads",
+            "kind": "source",
+            "operator": null,
+            "title": "reads",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/reads.pairs.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "build_contacts_1",
+            "kind": "operator",
+            "operator": "build_contacts",
+            "title": "Build contact map",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "executor": "auto",
+              "threads": 1,
+              "memory_mb": 2048,
+              "timeout_seconds": 0,
+              "assembly": "unknown",
+              "binsize": 10000,
+              "min_mapq": 0,
+              "walks_policy": "5unique",
+              "max_mismatch": 3,
+              "pair_types": [
+                "UU"
+              ],
+              "balance": true,
+              "resolutions": [],
+              "ignore_diags": 2,
+              "chromsizes": "input/chrom.sizes",
+              "output": "contacts"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "analyze_contacts_2",
+            "kind": "operator",
+            "operator": "analyze_contacts",
+            "title": "Hi-C structure analysis",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "executor": "auto",
+              "threads": 1,
+              "memory_mb": 2048,
+              "timeout_seconds": 0,
+              "method": "expected",
+              "features_format": "BEDPE",
+              "windows": [
+                100000,
+                250000,
+                500000
+              ],
+              "weight_name": "weight",
+              "n_eigs": 3,
+              "ignore_diags": 2,
+              "max_loci_separation": 2000000,
+              "flank": 100000,
+              "output": "expected"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "analyze_contacts_3",
+            "kind": "operator",
+            "operator": "analyze_contacts",
+            "title": "Hi-C structure analysis",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "executor": "auto",
+              "threads": 1,
+              "memory_mb": 2048,
+              "timeout_seconds": 0,
+              "method": "insulation",
+              "features_format": "BEDPE",
+              "windows": [
+                100000,
+                250000,
+                500000
+              ],
+              "weight_name": "weight",
+              "n_eigs": 3,
+              "ignore_diags": 2,
+              "max_loci_separation": 2000000,
+              "flank": 100000,
+              "output": "insulation"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "select_4",
+            "kind": "operator",
+            "operator": "select",
+            "title": "选择特征",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "source_type": "contact_matrix",
+              "balanced": true,
+              "weight_name": "weight",
+              "output": "window",
+              "region": "chr1:0-1000000"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "heatmap_5",
+            "kind": "operator",
+            "operator": "heatmap",
+            "title": "Heatmap",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "dim": "bin1",
+              "other_dim": "bin2",
+              "select": "all",
+              "standardize": "none",
+              "cmap": "Reds",
+              "nan_color": "#DDDDDD",
+              "top_n": 50,
+              "cluster_rows": false,
+              "cluster_cols": false,
+              "show_row_labels": false,
+              "show_col_labels": true,
+              "filename": "contacts.png"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "reads-build_contacts_1-0",
+            "source": "reads",
+            "target": "build_contacts_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "build_contacts_1-analyze_contacts_2-0",
+            "source": "build_contacts_1",
+            "target": "analyze_contacts_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "build_contacts_1-analyze_contacts_3-0",
+            "source": "build_contacts_1",
+            "target": "analyze_contacts_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "build_contacts_1-select_4-0",
+            "source": "build_contacts_1",
+            "target": "select_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "select_4-heatmap_5-0",
+            "source": "select_4",
+            "target": "heatmap_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "reads",
+              "label": "reads",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "pairs"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "analyze_contacts_2",
+              "handle": "out",
+              "label": "Hi-C structure analysis",
+              "contract": {
+                "version": 1,
+                "dims": [
+                  "record",
+                  "statistic"
+                ],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "hic_expected"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "form",
+                "numeric": true,
+                "ndim": 2
+              }
+            },
+            {
+              "node_id": "analyze_contacts_3",
+              "handle": "out",
+              "label": "Hi-C structure analysis",
+              "contract": {
+                "version": 1,
+                "dims": [
+                  "record",
+                  "statistic"
+                ],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "hic_insulation"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "form",
+                "numeric": true,
+                "ndim": 2
+              }
+            },
+            {
+              "node_id": "select_4",
+              "handle": "out",
+              "label": "选择特征",
+              "contract": {
+                "version": 1,
+                "dims": [
+                  "bin1",
+                  "bin2"
+                ],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "contact_window"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "form",
+                "numeric": true,
+                "ndim": 2
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
     {
       "id": "route_274abd24ce8d",
       "version": 3,
@@ -1778,6 +2122,422 @@
       }
     },
     {
+      "id": "route_7219caa8ef7d",
+      "version": 2,
+      "name": "Hi-C from FASTQ",
+      "graph": {
+        "schema_version": 2,
+        "name": "Hi-C from FASTQ",
+        "base_dir": ".studio/builtin-inputs/hic_fastq",
+        "nodes": [
+          {
+            "id": "reads",
+            "kind": "source",
+            "operator": null,
+            "title": "reads",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/reads.fastq",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {
+                "mate_path": "mate.fastq",
+                "phred_offset": 33
+              }
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "sequence_stats_1",
+            "kind": "operator",
+            "operator": "sequence_stats",
+            "title": "sequence_stats",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "fastq_summary": true,
+              "record_buffer_mb": 1,
+              "output": "read_qc"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "align_reads_2",
+            "kind": "operator",
+            "operator": "align_reads",
+            "title": "Hi-C read alignment",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "executor": "auto",
+              "threads": 1,
+              "memory_mb": 2048,
+              "timeout_seconds": 0,
+              "assembly": "unknown",
+              "record_buffer_mb": 1,
+              "output": "bam",
+              "reference_fasta": "input/reference.fa"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "build_contacts_3",
+            "kind": "operator",
+            "operator": "build_contacts",
+            "title": "Build contact map",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "executor": "auto",
+              "threads": 1,
+              "memory_mb": 2048,
+              "timeout_seconds": 0,
+              "assembly": "unknown",
+              "binsize": 10000,
+              "min_mapq": 30,
+              "walks_policy": "5unique",
+              "max_mismatch": 3,
+              "pair_types": [
+                "UU"
+              ],
+              "balance": true,
+              "resolutions": [],
+              "ignore_diags": 2,
+              "chromsizes": "input/chrom.sizes",
+              "output": "contacts"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "analyze_contacts_4",
+            "kind": "operator",
+            "operator": "analyze_contacts",
+            "title": "Hi-C structure analysis",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "executor": "auto",
+              "threads": 1,
+              "memory_mb": 2048,
+              "timeout_seconds": 0,
+              "method": "expected",
+              "features_format": "BEDPE",
+              "windows": [
+                100000,
+                250000,
+                500000
+              ],
+              "weight_name": "weight",
+              "n_eigs": 3,
+              "ignore_diags": 2,
+              "max_loci_separation": 2000000,
+              "flank": 100000,
+              "output": "expected"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "analyze_contacts_5",
+            "kind": "operator",
+            "operator": "analyze_contacts",
+            "title": "Hi-C structure analysis",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "executor": "auto",
+              "threads": 1,
+              "memory_mb": 2048,
+              "timeout_seconds": 0,
+              "method": "insulation",
+              "features_format": "BEDPE",
+              "windows": [
+                100000,
+                250000,
+                500000
+              ],
+              "weight_name": "weight",
+              "n_eigs": 3,
+              "ignore_diags": 2,
+              "max_loci_separation": 2000000,
+              "flank": 100000,
+              "output": "insulation"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "select_6",
+            "kind": "operator",
+            "operator": "select",
+            "title": "选择特征",
+            "position": {
+              "x": 940.0,
+              "y": 520.0
+            },
+            "params": {
+              "source_type": "contact_matrix",
+              "balanced": true,
+              "weight_name": "weight",
+              "output": "window",
+              "region": "chr1:0-1000000"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "heatmap_7",
+            "kind": "operator",
+            "operator": "heatmap",
+            "title": "Heatmap",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "dim": "bin1",
+              "other_dim": "bin2",
+              "select": "all",
+              "standardize": "none",
+              "cmap": "Reds",
+              "nan_color": "#DDDDDD",
+              "top_n": 50,
+              "cluster_rows": false,
+              "cluster_cols": false,
+              "show_row_labels": false,
+              "show_col_labels": true,
+              "filename": "contacts.png"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "reads-sequence_stats_1-0",
+            "source": "reads",
+            "target": "sequence_stats_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reads-align_reads_2-0",
+            "source": "reads",
+            "target": "align_reads_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "align_reads_2-build_contacts_3-0",
+            "source": "align_reads_2",
+            "target": "build_contacts_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "build_contacts_3-analyze_contacts_4-0",
+            "source": "build_contacts_3",
+            "target": "analyze_contacts_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "build_contacts_3-analyze_contacts_5-0",
+            "source": "build_contacts_3",
+            "target": "analyze_contacts_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "build_contacts_3-select_6-0",
+            "source": "build_contacts_3",
+            "target": "select_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "select_6-heatmap_7-0",
+            "source": "select_6",
+            "target": "heatmap_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "reads",
+              "label": "reads",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "fastq"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "sequence_stats_1",
+              "handle": "out",
+              "label": "sequence_stats",
+              "contract": {
+                "version": 1,
+                "dims": [
+                  "mate",
+                  "statistic"
+                ],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "fastq_qc"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "form",
+                "numeric": true,
+                "ndim": 2
+              }
+            },
+            {
+              "node_id": "analyze_contacts_4",
+              "handle": "out",
+              "label": "Hi-C structure analysis",
+              "contract": {
+                "version": 1,
+                "dims": [
+                  "record",
+                  "statistic"
+                ],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "hic_expected"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "form",
+                "numeric": true,
+                "ndim": 2
+              }
+            },
+            {
+              "node_id": "analyze_contacts_5",
+              "handle": "out",
+              "label": "Hi-C structure analysis",
+              "contract": {
+                "version": 1,
+                "dims": [
+                  "record",
+                  "statistic"
+                ],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "hic_insulation"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "form",
+                "numeric": true,
+                "ndim": 2
+              }
+            },
+            {
+              "node_id": "select_6",
+              "handle": "out",
+              "label": "选择特征",
+              "contract": {
+                "version": 1,
+                "dims": [
+                  "bin1",
+                  "bin2"
+                ],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "contact_window"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "form",
+                "numeric": true,
+                "ndim": 2
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
       "id": "route_88fb083f4238",
       "version": 3,
       "name": "Proteomics DE",
@@ -2652,6 +3412,338 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_e43131160eaa",
+      "version": 1,
+      "name": "Hi-C from BAM",
+      "graph": {
+        "schema_version": 2,
+        "name": "Hi-C from BAM",
+        "base_dir": ".studio/builtin-inputs/hic_bam",
+        "nodes": [
+          {
+            "id": "reads",
+            "kind": "source",
+            "operator": null,
+            "title": "reads",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/reads.bam",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "build_contacts_1",
+            "kind": "operator",
+            "operator": "build_contacts",
+            "title": "Build contact map",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "executor": "auto",
+              "threads": 1,
+              "memory_mb": 2048,
+              "timeout_seconds": 0,
+              "assembly": "unknown",
+              "binsize": 10000,
+              "min_mapq": 30,
+              "walks_policy": "5unique",
+              "max_mismatch": 3,
+              "pair_types": [
+                "UU"
+              ],
+              "balance": true,
+              "resolutions": [],
+              "ignore_diags": 2,
+              "chromsizes": "input/chrom.sizes",
+              "output": "contacts"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "analyze_contacts_2",
+            "kind": "operator",
+            "operator": "analyze_contacts",
+            "title": "Hi-C structure analysis",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "executor": "auto",
+              "threads": 1,
+              "memory_mb": 2048,
+              "timeout_seconds": 0,
+              "method": "expected",
+              "features_format": "BEDPE",
+              "windows": [
+                100000,
+                250000,
+                500000
+              ],
+              "weight_name": "weight",
+              "n_eigs": 3,
+              "ignore_diags": 2,
+              "max_loci_separation": 2000000,
+              "flank": 100000,
+              "output": "expected"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "analyze_contacts_3",
+            "kind": "operator",
+            "operator": "analyze_contacts",
+            "title": "Hi-C structure analysis",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "executor": "auto",
+              "threads": 1,
+              "memory_mb": 2048,
+              "timeout_seconds": 0,
+              "method": "insulation",
+              "features_format": "BEDPE",
+              "windows": [
+                100000,
+                250000,
+                500000
+              ],
+              "weight_name": "weight",
+              "n_eigs": 3,
+              "ignore_diags": 2,
+              "max_loci_separation": 2000000,
+              "flank": 100000,
+              "output": "insulation"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "select_4",
+            "kind": "operator",
+            "operator": "select",
+            "title": "选择特征",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "source_type": "contact_matrix",
+              "balanced": true,
+              "weight_name": "weight",
+              "output": "window",
+              "region": "chr1:0-1000000"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "heatmap_5",
+            "kind": "operator",
+            "operator": "heatmap",
+            "title": "Heatmap",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "dim": "bin1",
+              "other_dim": "bin2",
+              "select": "all",
+              "standardize": "none",
+              "cmap": "Reds",
+              "nan_color": "#DDDDDD",
+              "top_n": 50,
+              "cluster_rows": false,
+              "cluster_cols": false,
+              "show_row_labels": false,
+              "show_col_labels": true,
+              "filename": "contacts.png"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "reads-build_contacts_1-0",
+            "source": "reads",
+            "target": "build_contacts_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "build_contacts_1-analyze_contacts_2-0",
+            "source": "build_contacts_1",
+            "target": "analyze_contacts_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "build_contacts_1-analyze_contacts_3-0",
+            "source": "build_contacts_1",
+            "target": "analyze_contacts_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "build_contacts_1-select_4-0",
+            "source": "build_contacts_1",
+            "target": "select_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "select_4-heatmap_5-0",
+            "source": "select_4",
+            "target": "heatmap_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "reads",
+              "label": "reads",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "enum": [
+                      "sam",
+                      "bam"
+                    ]
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "analyze_contacts_2",
+              "handle": "out",
+              "label": "Hi-C structure analysis",
+              "contract": {
+                "version": 1,
+                "dims": [
+                  "record",
+                  "statistic"
+                ],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "hic_expected"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "form",
+                "numeric": true,
+                "ndim": 2
+              }
+            },
+            {
+              "node_id": "analyze_contacts_3",
+              "handle": "out",
+              "label": "Hi-C structure analysis",
+              "contract": {
+                "version": 1,
+                "dims": [
+                  "record",
+                  "statistic"
+                ],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "hic_insulation"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "form",
+                "numeric": true,
+                "ndim": 2
+              }
+            },
+            {
+              "node_id": "select_4",
+              "handle": "out",
+              "label": "选择特征",
+              "contract": {
+                "version": 1,
+                "dims": [
+                  "bin1",
+                  "bin2"
+                ],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "contact_window"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "form",
+                "numeric": true,
+                "ndim": 2
               }
             }
           ]

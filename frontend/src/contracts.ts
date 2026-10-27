@@ -15,7 +15,8 @@ export function contractRows(contract: PortContract | null): [string, string][] 
   if (!contract) return [["契约", "尚未声明，运行时检查数据结构"]];
   const rows: [string, string][] = [];
   if (contract.reader) rows.push(["reader", contract.reader]);
-  rows.push(["dims", contract.dims?.length ? contract.dims.join(" × ") : contract.ndim ? `${contract.ndim}D` : "由输入确定"]);
+  if (contract.kind === "file") rows.push(["storage", "磁盘文件"]);
+  else rows.push(["dims", contract.dims?.length ? contract.dims.join(" × ") : contract.ndim ? `${contract.ndim}D` : "由输入确定"]);
   for (const [key, rule] of Object.entries(contract.info || {})) rows.push([`info.${key}`, infoRuleLabel(rule)]);
   if (Array.isArray(contract.labels)) {
     for (const rule of contract.labels) {

@@ -28,6 +28,10 @@ class Wire:
 
     def encode(self, value):
         from src.core import Form
+        from src.core.files import FileArtifact
+        if isinstance(value, FileArtifact):
+            value.validate()
+            return {"type": "file_artifact", "value": self.encode(value.to_dict())}
         if isinstance(value, np.ndarray):
             if value.dtype.hasobject:
                 raise ValueError('Isolated operators cannot exchange object-dtype arrays')
@@ -66,6 +70,11 @@ class Wire:
         if not isinstance(value, dict):
             return value
         kind = value['type']
+        if kind == 'file_artifact':
+            from src.core.files import FileArtifact
+            artifact = FileArtifact(**self.decode(value['value'], mmap=mmap))
+            artifact.validate()
+            return artifact
         if kind == 'array':
             return np.load(self.path(value['file']), allow_pickle=False, mmap_mode='c' if mmap else None)
         if kind == 'float':

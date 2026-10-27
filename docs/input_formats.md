@@ -16,6 +16,10 @@ Choose **Select data files** in the input inspector. Select one dataset at a tim
 | GFF3 / GTF | `.gff`, `.gff3`, `.gtf` | None |
 | GO annotations | `.gaf`, `.gaf.gz` | None |
 | FASTA | `.fasta`, `.fa`, `.fna`, `.faa` | None |
+| FASTQ | `.fastq`, `.fq`, optionally `.gz`, `.bz2`, `.xz` | Set `mate_path` to R2 for paired reads |
+| Alignment | `.bam`, `.sam` | No index is needed for name sorting/parsing |
+| Hi-C pairs | `.pairs`, optionally `.gz`, `.bz2`, `.xz` | `#columns` header is required at execution |
+| Cooler | `.cool`, `.mcool` | Select a resolution for mcool |
 | AnnData | `.h5ad` | None |
 | Parquet | `.parquet` | None |
 | BGEN | `.bgen` | None; the current reader uses embedded sample identifiers |

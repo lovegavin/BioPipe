@@ -1,0 +1,104 @@
+{
+  "type": "object",
+  "properties": {
+    "executor": {
+      "type": "string",
+      "default": "auto",
+      "enum": [
+        "auto",
+        "native",
+        "wsl"
+      ]
+    },
+    "wsl_distribution": {
+      "type": "string"
+    },
+    "threads": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 1
+    },
+    "memory_mb": {
+      "type": "number",
+      "default": 256,
+      "exclusiveMinimum": 0
+    },
+    "timeout_seconds": {
+      "type": "number",
+      "default": 0,
+      "minimum": 0
+    },
+    "tool_paths": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "output": {
+      "type": "string"
+    },
+    "chromsizes": {
+      "type": "string",
+      "x-biopipe-path": "workflow"
+    },
+    "assembly": {
+      "type": "string",
+      "default": "unknown"
+    },
+    "binsize": {
+      "type": "integer",
+      "default": 10000,
+      "minimum": 1
+    },
+    "min_mapq": {
+      "type": "integer",
+      "default": 30,
+      "minimum": 0
+    },
+    "walks_policy": {
+      "type": "string",
+      "default": "5unique",
+      "enum": [
+        "5unique",
+        "mask",
+        "5any"
+      ]
+    },
+    "max_mismatch": {
+      "type": "integer",
+      "default": 3,
+      "minimum": 0
+    },
+    "pair_types": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2}$"
+      },
+      "default": [
+        "UU"
+      ]
+    },
+    "balance": {
+      "type": "boolean",
+      "default": true
+    },
+    "resolutions": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "default": []
+    },
+    "ignore_diags": {
+      "type": "integer",
+      "default": 2,
+      "minimum": 0
+    }
+  },
+  "required": [
+    "chromsizes"
+  ],
+  "additionalProperties": false
+}

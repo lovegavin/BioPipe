@@ -150,6 +150,13 @@ See docs/installation.md, docs/reader_extensions.md and docs/step_extensions.md.
 ''', encoding='utf-8')
     with (destination / 'START_HERE.txt').open('a', encoding='utf-8') as guide:
         guide.write('''
+HI-C AND SSH EXECUTION
+Choose a server target in the top toolbar to browse server inputs and run there.
+Inputs, outputs and computation stay on the server. Prepare its BioPipe/Python
+environment and Linux tools first; the Windows package does not install them.
+See docs/REMOTE_EXECUTION.md and docs/HIC.md for setup and supported workflows.
+''')
+        guide.write('''
 UPGRADING FROM 0.4.1 / OLDER PROTOCOLS
 Close Studio first. Protocol v3 requires an explicit one-time profile migration.
 Preview before applying; originals are backed up and past jobs are not rewritten.

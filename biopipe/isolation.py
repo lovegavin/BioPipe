@@ -197,6 +197,10 @@ def proxy_step(descriptor, state):
         def _run(self, ctx, inputs, stream=None):
             payload = {'inputs': inputs, 'context': {key: getattr(ctx, key) for key in
                        ('task_dir', 'out_dir', 'manifest', 'params', 'step_params', 'metadata', 'artifacts')}}
+            if ctx.memory:
+                payload['context']['metadata'] = {**ctx.metadata, 'external_resource_snapshot': {
+                    'budget_bytes': ctx.memory.config.budget_bytes,
+                    'disk_limit_bytes': ctx.memory.config.disk_limit_bytes}}
             if stream:
                 payload['stream'] = {k: stream[k] for k in ('metadata', 'shape')}
             result = call(state, descriptor, 'stream' if stream else 'run', payload, ctx=ctx,

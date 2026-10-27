@@ -1,0 +1,33 @@
+name: Hi-C from FASTQ
+sources:
+  reads:
+    path: input/reads.fastq
+    dims:
+    - file
+    labels: {}
+steps:
+- name: sequence_stats
+  inputs:
+  - reads
+- name: align_reads
+  inputs:
+  - reads
+- name: build_contacts
+  inputs:
+  - bam
+- name: analyze_contacts
+  inputs:
+  - contacts
+- name: analyze_contacts
+  inputs:
+  - contacts
+- name: select
+  inputs:
+  - contacts
+- name: heatmap
+  inputs:
+  - window
+runtime:
+  memory:
+    enabled: true
+parameters_file: parameters.json

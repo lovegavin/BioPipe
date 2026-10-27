@@ -92,10 +92,16 @@ def describe_metadata(metadata, shape, numeric=True):
 
 
 def describe_form(form):
+    from src.core.files import FileArtifact
+    if isinstance(form, FileArtifact):
+        return {**describe_metadata({"dims": [], "labels": {}, "info": form.info}, (), False), "kind": "file"}
     return describe_metadata(vars(form), form.data.shape, form.data.dtype.kind in "biuf")
 
 
 def source_schema(contract, dims):
+    if contract and contract.get("kind") == "file":
+        return {**unknown(), **deepcopy(contract), "kind": "file", "numeric": False,
+                "dims": [], "ndim": 0, "labels": {}, "axis_info": {}}
     if not contract:
         return {**unknown(), "dims": list(dims), "ndim": len(dims)}
     return {"version": VERSION, "ndim": contract.get("ndim", len(dims)), "numeric": True,
@@ -116,6 +122,9 @@ def compatible(schema, requirement):
             pending.append(message)
     if requirement is None:
         return {"status": "unknown", "reasons": ["算子尚未声明输入契约"]}
+    kinds = requirement.get("kind", "form")
+    kinds = kinds if isinstance(kinds, list) else [kinds]
+    check(schema.get("kind", "form") in kinds, f"需要 {' / '.join(kinds)} 类型数据")
     if "ndim" in requirement:
         check(None if "ndim" not in schema else schema["ndim"] == requirement["ndim"],
               f"需要 {requirement['ndim']} 维数据")
@@ -203,7 +212,9 @@ def validate_form(form, requirement, where):
             if any(_type(value) not in types and not (_type(value) == "integer" and "number" in types)
                    for value in form.info[key]):
                 raise StepError(f"{where} contract: info.{key} requires {rule['items']} items")
-    validate_values(form.data, form.info, requirement, where, form=form)
+    from src.core.files import FileArtifact
+    if not isinstance(form, FileArtifact):
+        validate_values(form.data, form.info, requirement, where, form=form)
 
 
 def validate_values(data, info, requirement, where, *, form=None):
@@ -378,7 +389,7 @@ def infer_output(rule, inputs, params):
 
 def validate_output(form, expected, where):
     """Check output promises before handing the Form to the cache manager."""
-    required = {"numeric": expected.get("numeric", True), "info": expected.get("info", {}),
+    required = {"kind": expected.get("kind", "form"), "numeric": expected.get("numeric", True), "info": expected.get("info", {}),
                 "dims": expected.get("dims") or [], "labels": [], "parallel": []}
     if "ndim" in expected:
         required["ndim"] = expected["ndim"]

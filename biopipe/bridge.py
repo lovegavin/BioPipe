@@ -174,9 +174,8 @@ class Bridge:
             self.actor(request, "context")
             from biopipe.documents import layout
             graph = Graph.model_validate(layout(payload["graph"]))
-            manifest, order = compile_graph(graph, service.plugins.catalog_for(graph, service.base_catalog), service.root,
-                                             require_files=payload.get("require_files", False))
-            return {"valid": True, "order": order, "graph": graph.model_dump(mode="json")}
+            result = service.validate_graph(graph, require_files=payload.get("require_files", False))
+            return {**result, "graph": graph.model_dump(mode="json")}
 
         @app.post("/api/agent/sessions/{session}/run")
         def run(session: str, request: Request, payload: dict):

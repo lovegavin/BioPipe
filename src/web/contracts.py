@@ -26,12 +26,8 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=()):
                 schema = source_overrides[node.id]
             elif source:
                 schema.update(dims=source.dims, ndim=len(source.dims))
-                path = project_path(root, source.path, graph.base_dir)
-                # A BED filename alone cannot distinguish PLINK from intervals.
-                # Use sibling routing only when the source actually exists.
-                candidates = [reader for reader in catalog["readers"] if primary_ext(path) in reader["extensions"]
-                              and (not path.is_file() or (all(path.with_suffix(s).exists() for s in reader.get("requires_siblings", []))
-                              and not any(path.with_suffix(s).exists() for s in reader.get("excludes_siblings", []))))]
+                from .source_paths import source_candidates
+                candidates = source_candidates(graph, catalog, root, source.path)
                 if len(candidates) == 1:
                     reader = candidates[0]
                     if reader["id"] == "TxtReader":

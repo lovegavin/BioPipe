@@ -223,7 +223,7 @@ def test_source_library_discovers_plain_author_modules_without_manifest_edits(tm
     manager = PluginManager(tmp_path / 's', source_root=source_root)
     initial = manager.refresh()
     state = manager.state()
-    assert len(initial['updated']) == 6
+    assert len(initial['updated']) == 7
     descriptor = next(d for d in state['descriptors'] if d['id'] == 'hello_hot')
     assert descriptor['distribution'] == 'biopipe-core'
     assert descriptor['category'] == 'Quality control'

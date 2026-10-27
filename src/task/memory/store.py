@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections.abc import MutableMapping
 from dataclasses import dataclass, field
 import heapq
+import json
 import os
 from pathlib import Path
 import pickle
@@ -21,6 +22,7 @@ import uuid
 import numpy as np
 
 from src.core import ContextError, Form
+from src.core.files import FileArtifact
 from .config import MemoryBudgetError, DiskBudgetError
 from .planner import NEVER
 from src.core.contracts import VERSION
@@ -85,6 +87,8 @@ class Entry:
     pins: int = 0
     heap_version: int = 0
     keep: bool = False
+    kind: str = "form"
+    external_bytes: int = 0
 
 
 class ArtifactStore(MutableMapping):
@@ -252,12 +256,19 @@ class ArtifactStore(MutableMapping):
     def _account(self, entry):
         # Managed numeric payloads are immutable while registered. Operators
         # create new Forms; a same-name output gets a new version and cache URI.
-        entry.form.data.setflags(write=False)
+        if not isinstance(entry.form, FileArtifact):
+            entry.form.data.setflags(write=False)
         self._unaccount(entry)
         entry.refs = footprint(entry.form)
         entry.size = sum(entry.refs.values())
-        entry.shape, entry.dtype = entry.form.data.shape, entry.form.data.dtype
-        payload = {k: getattr(entry.form, k) for k in ("dims", "labels", "info", "axis_info")}
+        if isinstance(entry.form, FileArtifact):
+            entry.kind = "file"
+            entry.shape, entry.dtype = (), None
+            entry.external_bytes = entry.form.file_bytes
+            payload = entry.form.to_dict()
+        else:
+            entry.shape, entry.dtype = entry.form.data.shape, entry.form.data.dtype
+            payload = {k: getattr(entry.form, k) for k in ("dims", "labels", "info", "axis_info")}
         entry.metadata_size = sum(footprint(payload).values())
         for key, size in entry.refs.items():
             record = self.allocations.get(key)
@@ -336,11 +347,14 @@ class ArtifactStore(MutableMapping):
         self.trim_source_blocks(entry, float("inf"), "full_mode_admission")
         self.ensure(entry.size, "load_reservation")
         if entry.disk is not None:
-            payload = self.read_metadata(entry)
-            data = np.load(entry.disk / "data.npy", allow_pickle=False)
-            if data.shape != entry.shape or data.dtype != entry.dtype:
-                raise ContextError("Cache descriptor/header mismatch")
-            entry.form = Form(data=data, **payload)
+            if entry.kind == "file":
+                entry.form = FileArtifact(**json.loads((entry.disk / "files.json").read_text(encoding="utf-8")))
+            else:
+                payload = self.read_metadata(entry)
+                data = np.load(entry.disk / "data.npy", allow_pickle=False)
+                if data.shape != entry.shape or data.dtype != entry.dtype:
+                    raise ContextError("Cache descriptor/header mismatch")
+                entry.form = Form(data=data, **payload)
             entry.form.validate()
             self.event("load", name=entry.name, artifact_id=entry.key, disk_uri=str(entry.disk))
         elif entry.loader is not None:
@@ -461,6 +475,23 @@ class ArtifactStore(MutableMapping):
             finally:
                 writer.close()
 
+        if isinstance(entry.form, FileArtifact):
+            try:
+                entry.form.validate()
+                writer = Writer(temporary / "files.json")
+                try:
+                    writer.write(json.dumps(entry.form.to_dict(), ensure_ascii=False, allow_nan=False).encode("utf-8"))
+                finally:
+                    writer.close()
+                os.replace(temporary, final)
+                entry.disk, entry.disk_bytes = final, written[0]
+                self.disk_bytes += written[0]
+                self.event("disk_commit", **self.describe(entry))
+                return
+            except BaseException:
+                self._delete_folder(temporary)
+                raise
+
         arrays, array_bytes = {}, [entry.form.data.nbytes]
         class MetadataPickler(pickle.Pickler):
             def persistent_id(self, obj):
@@ -560,6 +591,7 @@ class ArtifactStore(MutableMapping):
     def describe(self, entry):
         next_use = self.plan.next_use(entry.name, self.position, entry.generated) if self.plan else NEVER
         return {"name": entry.name, "artifact_id": entry.key,
+                "kind": entry.kind, "external_file_bytes": entry.external_bytes,
                 "producer_step": entry.generated + 1 if entry.generated >= 0 else None,
                 "next_use_step": next_use + 1 if next_use != NEVER else None,
                 "shape": list(entry.shape), "dtype": str(entry.dtype),

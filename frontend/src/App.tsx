@@ -56,6 +56,9 @@ import { api, ApiError, downloadText, downloadBlob } from "./api";
 import { CanvasBridge } from "./agentBridge";
 import type { AgentState } from "./agentBridge";
 import { AgentPanel } from "./AgentPanel";
+import { RemotePanel, RemoteFilePicker, remoteId } from './RemotePanel';
+import type {RemoteStatus, BrowseRemote, DataSource} from './types';
+import {HardDrives as Server} from '@phosphor-icons/react';
 import {
   autoLayout,
   clone,
@@ -178,6 +181,14 @@ function Studio() {
   const agentBridge = useRef<CanvasBridge | null>(null);
   const [agentReady, setAgentReady] = useState(false), [agentPanel, setAgentPanel] = useState(false);
   const [routes, setRoutes] = useState<RouteDefinition[]>([]);
+  const [servers, setServers] = useState<RemoteStatus[]>([]), [remoteOpen, setRemoteOpen] = useState(false);
+  const [remotePicker, setRemotePicker] = useState<{profileId: string; initial: string; source?: boolean; onSelect: (path: string, source?: DataSource) => void} | null>(null);
+  const selectedServerId = remoteId(graph);
+  const selectedServer = servers.find(s => s.profile.id === selectedServerId);
+  const refreshServers = async () => {setServers(await api.remoteStatus()); setHistory(await api.history());};
+  const chooseServer = (id: string) => {if (!busy) commit(current => ({...current, runtime: {...current.runtime,
+    execution: id ? {kind: 'ssh', profile_id: id} : {kind: 'local'}}}));};
+  const browseRemote: BrowseRemote = (initial, onSelect, source) => setRemotePicker({profileId: selectedServerId, initial, onSelect, source});
   const [pluginsOpen, setPluginsOpen] = useState(false);
   const [refreshingPlugins, setRefreshingPlugins] = useState(false);
   const [libraryState, setLibraryState] = useState<LibraryState>({disabled: [], hidden: []});
@@ -240,10 +251,10 @@ function Studio() {
     canvas = useRef<HTMLDivElement>(null);
   const flow = useReactFlow<Block>(),
     busy = job?.status === "running";
-  const catalog = useMemo(() => presentCatalog(bootstrap?.catalog || {
+  const catalog = useMemo(() => presentCatalog((selectedServerId ? selectedServer?.info?.catalog : bootstrap?.catalog) || {
     schema_version: 1 as const,
     operators: [],
-  }), [bootstrap?.catalog]);
+  }), [bootstrap?.catalog, selectedServerId, selectedServer?.info?.catalog]);
   const inspectNode = useCallback((id: string | null) => {
     setSelected(id);
     setInspected(id);
@@ -420,6 +431,7 @@ function Studio() {
     setRoutes(registered); setLibraryState(state);
   }
   async function refreshPlugins() {
+    if (selectedServerId) {setRemoteOpen(true); return;}
     if (refreshingPlugins) return;
     setRefreshingPlugins(true);
     try {
@@ -489,13 +501,14 @@ function Studio() {
     setBootError("");
     try {
       const data = await api.bootstrap();
+      setServers(await api.remoteStatus());
       setHistory(data.history);
       const [workspace, registered, state] = await Promise.all([api.workspace(), api.routes(), api.libraryState()]);
       setRoutes(registered);
       setLibraryState(state);
       setPanelWidths(workspace?.panel_widths || automaticPanels);
       let initial = normalizeGraph(data.demo);
-      const running = data.history.find((item) => item.status === "running");
+      const running = data.history.find((item) => item.status === "running" && !item.remote);
       if (running) {
         const current = await api.job(running.id);
         setJob(current);
@@ -617,7 +630,9 @@ function Studio() {
       const memoryStart = payload.events.find(event => event.event === "run_started" && typeof event.available_at_start_bytes === "number");
       if (memoryStart && typeof memoryStart.budget_bytes === "number") {
         const budget = memoryStart.budget_bytes;
-        setBootstrap(previous => previous ? {...previous, automatic_memory_budget_bytes: budget} : previous);
+        if (payload.job.remote) setServers(previous => previous.map(server => server.profile.id === payload.job.remote!.profile_id && server.info
+          ? {...server, info: {...server.info, automatic_memory_budget_bytes: budget}} : server));
+        else setBootstrap(previous => previous ? {...previous, automatic_memory_budget_bytes: budget} : previous);
       }
       warned = false;
       setEvents((previous) => {
@@ -637,10 +652,13 @@ function Studio() {
           .catch((e) => notify(e.message));
       }
     });
+    source.addEventListener('remote-error', event => {
+      if (!warned) {warned = true; notify(JSON.parse((event as MessageEvent).data).message); void refreshServers();}
+    });
     source.onerror = () => {
       if (!warned) {
         warned = true;
-        notify("事件连接中断，正在自动重连。任务仍在本地进程中运行。");
+        notify(job.remote ? '日志连接中断，请重新连接服务器；远程任务会继续运行。' : "事件连接中断，正在自动重连。任务仍在本地进程中运行。");
       }
     };
     return () => source.close();
@@ -706,6 +724,7 @@ function Studio() {
       contracts: contracts?.nodes[model.id],
       contractChecks: contracts?.edges.filter(edge => edge.target === model.id),
       busy: !!busy,
+      remote: !!selectedServerId,
     },
   }));
   const edges = graph.edges.map((edge) => {
@@ -1208,6 +1227,13 @@ function Studio() {
           <button className="subtle-button agent-control" title="连接自己的 Agent · CLI / MCP" onClick={() => setAgentPanel(true)}>
             <span className={agentReady ? "agent-dot ready" : "agent-dot"}/>Agent
           </button>
+          <div className="execution-target" title={selectedServerId ? (selectedServer?.connected ? '服务器已连接' : '服务器未连接') : '本机运行'}>
+            <Server size={15}/><select aria-label="执行位置" value={selectedServerId} disabled={!!busy} onChange={e => chooseServer(e.target.value)}>
+              <option value="">本机</option>
+              {selectedServerId && !selectedServer && <option value={selectedServerId}>未配置的服务器</option>}
+              {servers.map(server => <option key={server.profile.id} value={server.profile.id}>{server.profile.name}{server.connected ? '' : ' · 离线'}</option>)}
+            </select><button className="icon-button" aria-label="管理服务器" onClick={() => setRemoteOpen(true)}><GearSix size={15}/></button>
+          </div>
           <button
             className="subtle-button check-control"
             disabled={busy || !!action}
@@ -1269,7 +1295,7 @@ function Studio() {
             <h2>算子库</h2>
             <span className="count-badge">{catalog.operators.filter(item => !libraryState.hidden.includes(item.id)).length + routes.length}</span>
             <button className="icon-button register-route-button" aria-label="添加路线算子" title="从已保存路线添加算子" onClick={() => setPicker("register")}><Plus size={18}/></button>
-            <button className="icon-button library-refresh" aria-label="刷新算子库" title="扫描算子与 Reader 目录并热更新" disabled={refreshingPlugins} onClick={() => void refreshPlugins()}><ArrowClockwise size={16} className={refreshingPlugins ? "spin" : ""}/></button>
+            <button className="icon-button library-refresh" aria-label="刷新算子库" title={selectedServerId ? '连接服务器并读取算子库' : '扫描算子与 Reader 目录并热更新'} disabled={refreshingPlugins} onClick={() => void refreshPlugins()}><ArrowClockwise size={16} className={refreshingPlugins ? "spin" : ""}/></button>
             <button
               className="icon-button mobile-close"
               aria-label="关闭算子库"
@@ -1342,7 +1368,7 @@ function Studio() {
                         <OperatorArtwork spec={spec} size={18}/>
                       </span>
                       <span>
-                        <strong>{spec.title}</strong>
+                        <strong>{spec.title}</strong>{spec.supported_systems?.join(',') === 'linux' && <span className="platform-badge" title="此算子的外部工具需要 Linux 运行环境">Linux</span>}
                         {libraryState.hidden.includes(spec.id) ? <small>已删除</small> : libraryState.disabled.includes(spec.id) ? <small>已禁用</small> : null}
                       </span>
                       <Plus className="add-hint" size={14} />
@@ -1361,7 +1387,7 @@ function Studio() {
             )}
           </div>
           <div className="library-footer">
-            <button className="library-packages" onClick={() => setPluginsOpen(true)}><Package size={16}/>算子库管理</button>
+            <button className="library-packages" onClick={() => selectedServerId ? setRemoteOpen(true) : setPluginsOpen(true)}><Package size={16}/>{selectedServerId ? '服务器算子库' : '算子库管理'}</button>
           </div>
           <PanelResizeHandle side="library" width={displayedPanels.library} min={panelLimits.library.min}
             max={panelMaximum("library", displayedPanels, windowWidth)} onResize={value => resizePanel("library", value)}
@@ -1663,8 +1689,9 @@ function Studio() {
             settings={settings}
             busy={!!busy}
             uploadLimit={bootstrap.upload_limit_mb}
-            automaticMemoryFraction={bootstrap.automatic_memory_fraction}
-            automaticMemoryBudget={bootstrap.automatic_memory_budget_bytes}
+            automaticMemoryFraction={selectedServerId ? selectedServer?.info?.automatic_memory_fraction : bootstrap.automatic_memory_fraction}
+            automaticMemoryBudget={selectedServerId ? selectedServer?.info?.automatic_memory_budget_bytes : bootstrap.automatic_memory_budget_bytes}
+            onBrowseRemote={selectedServerId ? browseRemote : undefined}
             onNode={updateNode}
             onMemory={(memory) => commit((current) => ({ ...current, memory }))}
             onParams={(params) => commit((current) => ({...current, params}))}
@@ -1713,6 +1740,8 @@ function Studio() {
       {picker && <WorkflowPicker mode={picker} onClose={() => setPicker(null)} onOpen={openSaved} onRegister={refreshRoutes} onImport={() => routeImport.current?.click()}/>}
       {saveDialog && <SaveWorkflowDialog graph={saveDialog} catalog={catalog} workflowId={documents.find(doc=>doc.id===activeId)?.workflow_id} version={documents.find(doc=>doc.id===activeId)?.workflow_version} onClose={() => setSaveDialog(null)} onSaved={savedWorkflow}/>}
       {agentPanel && <AgentPanel sessionId={agentBridge.current?.state?.id} command={bootstrap.agent_config} onClose={() => setAgentPanel(false)} onCopySelection={() => void copyAgentContext()}/>}
+      {remoteOpen && <RemotePanel servers={servers} active={selectedServerId} onUpdate={refreshServers} onSelect={chooseServer} onClose={() => setRemoteOpen(false)}/>}
+      {remotePicker && <RemoteFilePicker {...remotePicker} onClose={() => setRemotePicker(null)}/>}
       {toast && (
         <div
           className={`toast ${toast.type}`}

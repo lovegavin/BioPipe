@@ -40,7 +40,7 @@ def test_all_descriptors_are_public_and_preserve_ids():
     assert {d["id"] for d in catalog["readers"]} == {type(reader).__name__ for reader in READERS}
     assert {d["id"] for d in catalog["operators"]} == set(STEPS)
     for descriptor in catalog["operators"] + catalog["readers"]:
-        canonical = {k: v for k, v in descriptor.items() if k not in {"parameters", "runtime_defaults"}}
+        canonical = {k: v for k, v in descriptor.items() if k not in {"parameters", "runtime_defaults", "supported_systems", "systems_status"}}
         assert Descriptor.model_validate(canonical).protocol_version == 3
         assert descriptor["contracts"]["output"] is not None
         assert descriptor["entry_point"].count(":") == 1

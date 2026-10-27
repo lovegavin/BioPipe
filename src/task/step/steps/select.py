@@ -22,21 +22,28 @@ class SelectStep(Step):
     parameters_file = 'select.parameters.json'
     definition = {'protocol_version': 3,
      'id': 'select',
-     'version': '1.0.0',
+     'version': '1.1.0',
      'kind': 'operator',
      'title': '选择特征',
      'description': '按标签选择样本或特征。',
      'category': '数据整理',
      'icon': 'Selection',
+     'dependencies': ['h5py>=3'],
      'contracts': {'version': 1,
-                   'inputs': [{'version': 1,
-                               'numeric': True,
-                               'info': {},
-                               'dims': [{'param': 'dim', 'default': None}],
-                               'labels': [{'dim': {'param': 'dim', 'default': None},
-                                           'values': {'param': 'labels', 'default': None}}],
-                               'parallel': []}],
-                   'output': {'mode': 'select'}},
+                   'inputs': [{'kind': ['form', 'file'], 'info': {}}],
+                   'output': {'mode': 'choose',
+                              'param': 'source_type',
+                              'default': 'form',
+                              'cases': {'contact_matrix': {'mode': 'declare',
+                                                           'schema': {'kind': 'form',
+                                                                      'numeric': True,
+                                                                      'ndim': 2,
+                                                                      'dims': ['bin1', 'bin2'],
+                                                                      'info': {'representation': {'type': 'string',
+                                                                                                  'const': 'contact_window'}},
+                                                                      'info_open': True,
+                                                                      'axis_info_open': True}}},
+                              'otherwise': {'mode': 'select'}}},
      'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
      'inputs_arity': 1,
      'outputs': [],
@@ -45,8 +52,28 @@ class SelectStep(Step):
 
 
 
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        from src.core.files import FileArtifact
+        if inputs and isinstance(inputs[0], FileArtifact):
+            from src.task.step.steps._contact_window import estimate_window
+            return estimate_window(inputs[0], params)
+        return super().estimate_memory(inputs, params, profiles)
+
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
+        from src.core.files import FileArtifact
+        if isinstance(form, FileArtifact):
+            if form.format != "cool" or ctx.step_params.get("source_type") != "contact_matrix":
+                raise StepError("select: file input requires source_type=contact_matrix and a Cooler file")
+            from src.task.step.steps._contact_window import select_window
+            selected = select_window(form, ctx.step_params, ctx=ctx)
+            ctx[ctx.step_params.get("output", self.name)] = selected
+            self._export_data = {"region": selected.info["region"], "region2": selected.info["region2"],
+                                 "shape": list(selected.data.shape), "balanced": selected.info["balanced"]}
+            return
+        if ctx.step_params.get("source_type", "form") != "form":
+            raise StepError("contact_matrix selection requires a Cooler file input")
         dim = ctx.step_params["dim"]
         labels = ctx.step_params["labels"]
         out_name = ctx.step_params.get("output", self.name)

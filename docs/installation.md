@@ -63,6 +63,11 @@ no builder path becomes an interpreter setting. `--lite` explicitly builds the
 old package for users supplying their own environment. The full build also
 downloads the official WebView2 bootstrapper and verifies its Microsoft signature.
 
+The runtime builder creates the SDK wheel from a fresh source distribution so
+deleted modules cannot leak in from an old `build/lib` directory. Use
+`python -m build --no-isolation` (the default source-then-wheel build) when producing
+the separate release wheel, too; check its module list against the source tree.
+
 Native dependencies without a compatible Windows wheel must be built and tested
 by the release maintainer, not by the recipient. Supply those artifacts with
 `build_runtime.py --wheelhouse <directory>`. The release's PLINK 2 wheel is built

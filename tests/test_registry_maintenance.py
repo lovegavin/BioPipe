@@ -77,7 +77,7 @@ steps:
     assert code == 1 and check["changed"] and not check["errors"] and indexes(checkout) == before
     code, built = cli(checkout, "build")
     operator_count = sum(d["kind"] == "operator" for d in bundled_state()["descriptors"])
-    assert code == 0 and built["operators"] == operator_count + 1 and built["routes"] == 6
+    assert code == 0 and built["operators"] == operator_count + 1 and built["routes"] == 9
     manifest = json.loads((checkout / "biopipe/builtin_packages.json").read_text(encoding="utf-8"))
     descriptor = next(d for p in manifest["packages"] for d in p["descriptors"] if d["id"] == "example.probe")
     assert descriptor["category"] == "analysis" and descriptor["icon"] == "Sigma"
@@ -166,4 +166,4 @@ def test_maintenance_never_executes_module_top_level(checkout):
     add_extension(checkout, NEW_OPERATOR + '\nraise RuntimeError("must not execute")\n')
     code, report = cli(checkout, "build")
     assert code == 0 and report["errors"] == []
-    assert report["operators"] == 65
+    assert report["operators"] == 68

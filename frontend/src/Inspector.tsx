@@ -102,11 +102,13 @@ function ParameterField({
   value,
   onChange,
   disabled,
+  onBrowse,
 }: {
   field: Parameter;
   value: unknown;
   onChange: (value: unknown) => void;
   disabled: boolean;
+  onBrowse?: import('./types').BrowseRemote;
 }) {
   const id = `param-${field.key}`;
   if (field.type === "json") return <JsonField label={field.label} value={value === undefined ? {} : value} disabled={disabled} onChange={onChange} allowArray/>;
@@ -158,6 +160,7 @@ function ParameterField({
           }
         />
       )}
+      {field.path_kind && onBrowse && <button type="button" className="subtle-button" disabled={disabled} onClick={() => onBrowse(String(value || ''), onChange)}>浏览服务器</button>}
       {field.description && <small className="field-hint">{field.description}</small>}
     </label>
   );
@@ -178,6 +181,7 @@ export function Inspector({
   onError,
   onClose,
   onOpenRoute,
+  onBrowseRemote,
 }: {
   graph: Graph;
   catalog: Catalog;
@@ -194,6 +198,7 @@ export function Inspector({
   onError: (message: string) => void;
   onClose: () => void;
   onOpenRoute: (route: RouteDefinition) => void;
+  onBrowseRemote?: import('./types').BrowseRemote;
 }) {
   const node = graph.nodes.find((n) => n.id === nodeId),
     spec = node ? specFor(node, catalog) : undefined;
@@ -403,17 +408,17 @@ export function Inspector({
                 <button
                   className="upload-button"
                   disabled={busy || uploading}
-                  onClick={() => fileInput.current?.click()}
+                  onClick={() => onBrowseRemote ? onBrowseRemote(node.source!.path, (path, source) => onNode(node.id, {source: source || {...node.source!, path}}), true) : fileInput.current?.click()}
                 >
                   <FileArrowUp size={22} />
-                  <strong>{uploading ? "正在上传…" : "选择数据文件"}</strong>
-                  {uploadLimit != null && <small>每个文件上限 {uploadLimit} MiB</small>}
+                  <strong>{onBrowseRemote ? '选择服务器文件' : uploading ? "正在上传…" : "选择数据文件"}</strong>
+                  {!onBrowseRemote && uploadLimit != null && <small>每个文件上限 {uploadLimit} MiB</small>}
                 </button>
-                <details className="advanced input-format-help"><summary>多文件格式 <CaretDown size={14}/></summary>
+                {!onBrowseRemote && <details className="advanced input-format-help"><summary>多文件格式 <CaretDown size={14}/></summary>
                   <p className="helper">PLINK：同时选择同名的 .bed、.bim、.fam。10x MTX：同时选择 matrix、barcodes 和 features / genes。</p>
-                </details>
+                </details>}
                 <label className="field">
-                  <span>项目内文件路径</span>
+                  <span>{onBrowseRemote ? '服务器文件路径' : '项目内文件路径'}</span>
                   <textarea
                     rows={2}
                     value={node.source.path}
@@ -426,7 +431,7 @@ export function Inspector({
                     }
                   />
                 </label>
-                <label className="field">
+                {reader?.contracts.output?.kind !== "file" && <label className="field">
                   <span>维度名称</span>
                   <CommaSeparatedInput
                     key={node.id}
@@ -438,10 +443,11 @@ export function Inspector({
                       catch (error) { onError((error as Error).message); }
                     }}
                   />
-                </label>
+                </label>}
                 {!!reader?.parameters?.length && <div className="reader-options">
                   <p className="section-caption">{reader.id} · 读取参数</p>
                   {reader.parameters?.map(field => <ParameterField key={`${node.id}-${field.key}`} field={field}
+                    onBrowse={onBrowseRemote}
                     value={node.source!.args[field.key] ?? field.default} disabled={busy}
                     onChange={value => {
                       const args = {...node.source!.args};
@@ -487,6 +493,7 @@ export function Inspector({
                   <ParameterField
                     key={`${node.id}:${field.key}`}
                     field={field}
+                    onBrowse={onBrowseRemote}
                     value={node.params[field.key] === undefined ? spec.runtime_defaults?.[field.key] : node.params[field.key]}
                     disabled={busy}
                     onChange={(value) => param(field.key, value)}

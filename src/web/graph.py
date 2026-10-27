@@ -27,9 +27,24 @@ def project_path(root, path, base="."):
     return candidate
 
 
-def relative_manifest(manifest, directory):
+def relative_manifest(manifest, directory, catalog=None):
     """Keep executable/exported workflows relocatable alongside their data."""
-    result = {**manifest, "sources": {name: dict(spec) for name, spec in manifest["sources"].items()}}
+    from copy import deepcopy
+    result = deepcopy(manifest)
+    if catalog:
+        operators = {item['id']: item for item in catalog['operators']}
+        for step in result['steps']:
+            schema = operators[step['name']]['parameters_schema']
+            for key, field in schema.get('properties', {}).items():
+                if field.get('x-biopipe-path') == 'workflow' and step.get('params', {}).get(key):
+                    step['params'][key] = Path(os.path.relpath(step['params'][key], directory)).as_posix()
+        from biopipe.file_formats import primary_ext
+        for source in result['sources'].values():
+            readers = [r for r in catalog['readers'] if primary_ext(source['path']) in r['extensions']]
+            if len(readers) == 1:
+                for key, field in readers[0]['parameters_schema'].get('properties', {}).items():
+                    if field.get('x-biopipe-path') == 'source' and source.get('args', {}).get(key):
+                        source['args'][key] = Path(os.path.relpath(source['args'][key], Path(source['path']).parent)).as_posix()
     for source in result["sources"].values():
         source["path"] = Path(os.path.relpath(source["path"], directory)).as_posix()
     memory = dict(manifest.get("runtime", {}).get("memory", {}))
@@ -39,7 +54,14 @@ def relative_manifest(manifest, directory):
     return result
 
 
-def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=False):
+def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=False, input_roots=None):
+    def read_path(value, base):
+        if input_roots is None:
+            return project_path(root, value, base)
+        candidate = (root / base / value).resolve()
+        if not any(candidate.is_relative_to(Path(folder).resolve()) for folder in input_roots):
+            raise GraphError('Input path is outside the configured server data roots')
+        return candidate
     from .parameters import freeze_graph
     graph = freeze_graph(graph, catalog, root)
     if any(node.kind == "route" for node in graph.nodes):
@@ -51,7 +73,7 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
                 raise GraphError("；".join(edge["reasons"]), edge["target"])
         expanded, owners = expand_routes(graph, catalog)
         try:
-            return compile_graph(expanded, catalog, root, require_files=require_files)
+            return compile_graph(expanded, catalog, root, require_files=require_files, input_roots=input_roots)
         except GraphError as exc:
             raise GraphError(str(exc), owners.get(exc.node_id, exc.node_id)) from exc
     try:
@@ -129,10 +151,19 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
         node = nodes[key]
         if node.kind == "source":
             source = node.source.model_dump()
-            path = project_path(root, source["path"], graph.base_dir)
+            path = read_path(source["path"], graph.base_dir)
             if require_files and not path.is_file():
                 raise GraphError(f"找不到输入文件：{node.source.path}", key)
             source["path"] = str(path)
+            from biopipe.file_formats import primary_ext
+            readers = [r for r in catalog['readers'] if primary_ext(path) in r['extensions']]
+            if len(readers) == 1:
+                for name, field in readers[0]['parameters_schema'].get('properties', {}).items():
+                    if field.get('x-biopipe-path') == 'source' and source['args'].get(name):
+                        extra = read_path(source['args'][name], str(path.parent))
+                        if require_files and not extra.is_file():
+                            raise GraphError(f'Missing input file: {extra}', key)
+                        source['args'][name] = str(extra)
             sources[key] = source
         else:
             arity = registry[node.operator]["inputs_arity"]
@@ -144,6 +175,12 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
                 index = 0 if edge.sourceHandle == "out" else int(edge.sourceHandle[4:])
                 inputs.append(outputs[edge.source][index])
             params = dict(node.params)
+            for name, field in registry[node.operator]['parameters_schema'].get('properties', {}).items():
+                if field.get('x-biopipe-path') == 'workflow' and params.get(name):
+                    extra = read_path(params[name], graph.base_dir)
+                    if require_files and not extra.is_file():
+                        raise GraphError(f'Missing input file: {extra}', key)
+                    params[name] = str(extra)
             if registry[node.operator]["output_parameter"]:
                 params["output"] = outputs[key][0]
             # Plot filenames must remain in their run's figures directory.

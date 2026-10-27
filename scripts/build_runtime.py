@@ -65,7 +65,10 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
     # Install SDK metadata/code from a wheel without a local direct_url.json or
     # path-bearing console launcher. Operators can then require biopipe-studio.
     with tempfile.TemporaryDirectory(prefix='biopipe-wheel-') as temporary:
-        subprocess.run([python, '-I', '-m', 'build', '--wheel', '--no-isolation', '--outdir', temporary, root], check=True)
+        # The default build creates an sdist, then builds the wheel from its
+        # fresh extraction. A wheel built directly in the checkout can retain
+        # deleted modules from an older setuptools build/lib directory.
+        subprocess.run([python, '-I', '-m', 'build', '--no-isolation', '--outdir', temporary, root], check=True)
         wheel = next(Path(temporary).glob('*.whl'))
         with zipfile.ZipFile(wheel) as archive:
             for name in archive.namelist():

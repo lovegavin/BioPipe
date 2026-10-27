@@ -12,6 +12,7 @@ export class ApiError extends Error {
     public nodeId?: string,
     public status?: number,
     public code?: string,
+    public details?: {fingerprint?: string; changed?: boolean},
   ) {
     super(message);
   }
@@ -40,11 +41,20 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
       value.node_id,
       response.status,
       value.code,
+      value,
     );
   }
   return value as T;
 }
 export const api = {
+  remoteStatus: () => request<import('./types').RemoteStatus[]>('/api/remote'),
+  saveRemote: (profile: import('./types').RemoteProfile) => request<import('./types').RemoteProfile>('/api/remote/profiles', profile),
+  connectRemote: (id: string, credentials: {password?: string; passphrase?: string}) => request<import('./types').RemoteInfo>(`/api/remote/${id}/connect`, credentials),
+  trustRemote: (id: string, fingerprint: string) => request(`/api/remote/${id}/trust`, {fingerprint}),
+  disconnectRemote: (id: string) => request(`/api/remote/${id}/disconnect`, {}),
+  removeRemote: (id: string) => request(`/api/remote/${id}/remove`, {}),
+  browseRemote: (id: string, path: string, offset = 0, hidden = false) => request<import('./types').RemoteListing>(`/api/remote/${id}/browse`, {path, offset, hidden}),
+  sourceRemote: (id: string, path: string) => request<{source: DataSource; filename: string; reader: string}>(`/api/remote/${id}/source`, {path}),
   plugins: () => request<import('./types').PluginState>('/api/plugins'),
   refreshPlugins: () => request<import('./types').PluginOperation>('/api/plugins/refresh', {}),
   repairDependencies: () => request<import('./types').PluginOperation>('/api/plugins/dependencies', {}),

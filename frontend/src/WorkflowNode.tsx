@@ -55,7 +55,7 @@ export const WorkflowNode = memo(function WorkflowNode({
       <InfoPort direction="input" height={portRowHeight(inputs)} source={source}
         labels={node.route?.graph.interface?.inputs.map(p=>p.label)}
         ports={data.contracts?.inputs} checks={data.contractChecks}
-        hint={source ? "本地数据" : inputs > 1 ? `${inputs} 个输入` : "IN"}>
+        hint={source ? (data.remote ? '服务器数据' : "本地数据") : inputs > 1 ? `${inputs} 个输入` : "IN"}>
         {Array.from({ length: inputs }, (_, index) => (
           <Handle
             key={index}
@@ -82,6 +82,7 @@ export const WorkflowNode = memo(function WorkflowNode({
             {title}
           </strong>
           {subtitle && <p>{subtitle}</p>}
+          {spec?.supported_systems?.join(',') === 'linux' && <span className="platform-badge" title="需要 Linux 运行环境">Linux</span>}
         </div>
         <span className="node-state">
           {status === "finished" ? (

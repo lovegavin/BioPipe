@@ -39,30 +39,32 @@ class SequenceStatsStep(Step):
     parameters_file = 'sequence_stats.parameters.json'
     definition = {'protocol_version': 3,
      'id': 'sequence_stats',
-     'version': '1.0.0',
+     'version': '1.1.0',
      'kind': 'operator',
      'title': 'sequence_stats',
      'description': 'Per-sequence length, GC and N content for any sequence-codes Form.',
      'category': 'analysis',
      'icon': 'Ruler',
      'contracts': {'version': 1,
-                   'inputs': [{'version': 1,
-                               'numeric': True,
-                               'info': {'missing_code': {'type': ['number', 'null']},
-                                        'representation': {'type': 'string', 'const': 'sequence_codes'},
-                                        'alphabet_map': {'type': 'object'},
-                                        'unknown_code': {'type': 'integer'},
-                                        'alphabet': {'type': 'string', 'enum': ['dna', 'rna']}},
-                               'dims': [{'param': 'sequence_dim', 'default': 'sequence'},
-                                        {'param': 'position_dim', 'default': 'position'}],
-                               'labels': [],
-                               'parallel': [],
-                               'ndim': 2}],
-                   'output': {'mode': 'declare',
-                              'schema': {'ndim': 2,
-                                         'numeric': True,
-                                         'info_open': True,
-                                         'axis_info_open': True}}},
+                   'inputs': [{'kind': ['form', 'file'],
+                               'info': {'representation': {'type': 'string',
+                                                           'enum': ['sequence_codes', 'fastq']}}}],
+                   'output': {'mode': 'choose',
+                              'param': 'fastq_summary',
+                              'default': False,
+                              'cases': {'True': {'mode': 'declare',
+                                                 'schema': {'kind': 'form',
+                                                            'numeric': True,
+                                                            'ndim': 2,
+                                                            'dims': ['mate', 'statistic'],
+                                                            'info': {'representation': {'type': 'string',
+                                                                                        'const': 'fastq_qc'}},
+                                                            'info_open': True}}},
+                              'otherwise': {'mode': 'declare',
+                                            'schema': {'ndim': 2,
+                                                       'numeric': True,
+                                                       'info_open': True,
+                                                       'axis_info_open': True}}}},
      'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
      'inputs_arity': 1,
      'outputs': [],
@@ -70,8 +72,36 @@ class SequenceStatsStep(Step):
 
 
 
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        from src.core.files import FileArtifact
+        if inputs and isinstance(inputs[0], FileArtifact):
+            return int(float(params.get("record_buffer_mb", 1)) * 8 * 1024**2), 65536
+        return super().estimate_memory(inputs, params, profiles)
+
     def run(self, ctx: Context, inputs) -> None:
         form = inputs[0]
+        from src.core.files import FileArtifact
+        if isinstance(form, FileArtifact):
+            if form.format != "fastq" or not ctx.step_params.get("fastq_summary", False):
+                raise StepError("sequence_stats: file inputs require FASTQ and fastq_summary=true")
+            from src.reader.readers._sequencing import fastq_summary
+            def cancelled():
+                if (ctx.task_dir / "cancel.requested").exists():
+                    raise StepError("Run cancelled by user")
+            result = fastq_summary(form.files, phred_offset=form.info.get("phred_offset", 33),
+                                   record_bytes=int(float(ctx.step_params.get("record_buffer_mb", 1)) * 1024**2), cancelled=cancelled)
+            fields = ["reads", "bases", "mean_length", "min_length", "max_length", "gc", "n_ratio", "mean_quality", "q20", "q30"]
+            ctx[ctx.step_params.get("output", self.name)] = Form(
+                np.array([[row[key] for key in fields] for row in result.values()], dtype=np.float64),
+                ["mate", "statistic"], {"mate": {key: i for i, key in enumerate(result)},
+                                      "statistic": {key: i for i, key in enumerate(fields)}},
+                {"representation": "fastq_qc", "missing_code": np.nan, "phred_offset": form.info.get("phred_offset", 33)})
+            self._export_data = {"kind": "fastq_qc", "mates": result, "paired": len(result) == 2}
+            ctx.event("fastq_qc", reads=result["r1"]["reads"], paired=len(result) == 2)
+            return
+        if ctx.step_params.get("fastq_summary", False):
+            raise StepError("fastq_summary requires a FASTQ file input")
         seq_dim = ctx.step_params.get("sequence_dim", "sequence")
         pos_dim = ctx.step_params.get("position_dim", "position")
         out_name = ctx.step_params.get("output", self.name)

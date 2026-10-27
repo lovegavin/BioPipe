@@ -30,7 +30,7 @@ assert not [k for k in sys.modules if k.startswith(('src.task.step.steps.','src.
 print(json.dumps({'operators':len(catalog['operators']),'readers':len(catalog['readers']), 'import_ms':elapsed,'rss_mib':psutil.Process().memory_info().rss/2**20}))
 app.state.service.shutdown()
 ''', tmp_path)
-    assert (value['operators'], value['readers']) == (64, 15)
+    assert (value['operators'], value['readers']) == (67, 19)
 
 
 def test_worker_imports_only_selected_operators_with_memory_enabled(tmp_path):

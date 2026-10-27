@@ -11,6 +11,15 @@
     },
     "output": {
       "type": "string"
+    },
+    "fastq_summary": {
+      "type": "boolean",
+      "default": false
+    },
+    "record_buffer_mb": {
+      "type": "number",
+      "default": 1,
+      "exclusiveMinimum": 0
     }
   },
   "additionalProperties": false

@@ -1,0 +1,39 @@
+.remote-panel,.remote-files {width:min(820px, calc(100vw - 48px)); max-height:calc(100dvh - 64px); overflow:auto; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius-xl); box-shadow:0 24px 80px #0003;}
+.remote-panel header,.remote-files header {display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid var(--separator);}
+.remote-panel h2,.remote-files h2 {display:flex; gap:12px; align-items:center; font-size:16px; font-weight:600;}
+.remote-layout {display:grid; grid-template-columns:180px 1fr; min-height:400px;}
+.remote-layout nav {padding:12px; background:var(--surface); border-right:1px solid var(--separator);}
+.remote-layout nav button {width:100%; display:flex; align-items:center; gap:10px; padding:12px 10px; text-align:left; border-radius:var(--radius-md); margin-bottom:4px;}
+.remote-layout nav button.active {background:var(--panel); box-shadow:0 1px 3px #0001;}
+.remote-layout nav strong,.remote-layout nav small {display:block; overflow-wrap:anywhere;}
+.remote-layout nav small {color:var(--text-muted); font-size:11px; margin-top:3px;}
+.remote-layout form {padding:22px 24px; min-width:0;}
+.remote-fields {display:grid; grid-template-columns:1fr 1fr; gap:0 18px;}
+.remote-fields .wide {grid-column:1/-1;}
+.remote-panel footer,.remote-files footer {display:flex; align-items:center; gap:10px; padding-top:20px;}
+.remote-panel footer .primary-button,.remote-files footer .primary-button {margin-left:auto;}
+.remote-trust {background:var(--surface); padding:16px; border:1px solid var(--border); border-radius:8px; display:grid; gap:12px; margin:16px 0;}
+.remote-trust code {overflow-wrap:anywhere; font-size:12px;}
+.remote-connected {display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:18px; color:var(--text-secondary);}
+.remote-connected code {width:100%; overflow-wrap:anywhere; font-size:11px;}
+.execution-target {display:flex; align-items:center; border:1px solid var(--border); border-radius:var(--radius-md); height:32px; padding-left:9px; gap:5px; background:var(--panel);}
+.execution-target select {border:0; background:transparent; max-width:160px; padding:0 4px; font-size:12px;}
+.execution-target .icon-button {width:28px; height:28px;}
+.platform-badge {display:inline-flex; align-items:center; font:10px/1.5 var(--font-mono); color:var(--text-muted); border:1px solid var(--border); border-radius:4px; padding:0 4px; margin-left:6px; vertical-align:middle; font-weight:400;}
+.node-copy .platform-badge {margin:3px 0 0;}
+.remote-files {width:min(680px, calc(100vw - 48px)); padding-bottom:20px;}
+.remote-location {display:flex; align-items:center; margin:16px 22px; gap:8px; border:1px solid var(--border); border-radius:6px; padding:4px;}
+.remote-location input {flex:1; border:0; background:transparent; font-family:var(--font-mono); font-size:12px; outline-offset:1px;}
+.remote-file-list {height:320px; overflow:auto; padding:0 16px;}
+.remote-file-list button {width:100%; display:flex; gap:12px; padding:10px; align-items:center; border-radius:5px; text-align:left;}
+.remote-file-list button:hover {background:var(--surface-hover);}
+.remote-file-list button.selected {background:var(--accent-soft); outline:1px solid var(--border-strong); outline-offset:-1px;}
+.remote-file-list span {flex:1; overflow-wrap:anywhere;}
+.remote-file-list small {color:var(--text-muted); font:11px var(--font-mono); white-space:nowrap;}
+.remote-files footer,.remote-files .field-error {margin:0 24px;}
+.remote-files footer label {display:flex; align-items:center; gap:8px; color:var(--text-secondary);}
+.remote-results {padding:24px; overflow:auto; width:100%;}
+.remote-results h3 {margin-bottom:12px;}
+.remote-result-file {display:grid; grid-template-columns:160px 1fr; gap:12px; padding:10px 0; border-bottom:1px solid var(--separator);}
+.remote-result-file code {font-size:11px; overflow-wrap:anywhere; color:var(--text-secondary);}
+@media(max-width:700px) {.remote-layout{grid-template-columns:1fr}.remote-layout nav{display:flex;overflow:auto;border:0}.remote-layout nav button{min-width:130px}.remote-fields{grid-template-columns:1fr}.execution-target select{max-width:90px}}

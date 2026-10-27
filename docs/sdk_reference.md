@@ -135,3 +135,22 @@ packages with SDK 3.0 before installing them into this development version.
 Use `biopipe registry check` to validate local extension declarations and generated
 indexes without starting Studio. New source files with missing schemas/contracts
 are reported, not silently converted into permissive plugins.
+
+## File-backed datasets
+
+`from biopipe_sdk import FileArtifact` provides a distinct descriptor for datasets
+that stay on disk. Construct it with `format`, a `files` mapping of role to path,
+and optional `info`. It has no `.data` tensor. Its `validate()` checks required
+files and captured stat fingerprints; cache and IPC transport only its metadata.
+Declare `kind: file` on ports. Unmarked ports mean `kind: form`, so existing array
+operators cannot accidentally accept a BAM path. An operator intentionally
+supporting both uses `kind: [form, file]` and validates the representation itself.
+Generated files belong under `ctx.artifact_path(...)`; never delete user inputs
+when a cached descriptor is evicted. See [Hi-C](HIC.md) for working Readers and
+operators, their independent parameter JSON files and resource estimates.
+
+Optional parameter-schema annotation `x-biopipe-path: workflow` marks an input
+file relative to the workflow directory. Reader-only `x-biopipe-path: source`
+marks a companion relative to the primary input. Studio resolves these paths at
+job preparation and makes them relative during manifest export. This annotation
+does not create a file or override the project containment boundary.

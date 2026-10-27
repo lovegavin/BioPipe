@@ -24,6 +24,7 @@ import {
   TreeStructure,
   Unite,
   SquaresFour,
+  GridNine,
   Stack,
   SlidersHorizontal,
   Function,
@@ -64,6 +65,7 @@ const icons: Record<string, ComponentType<IconProps>> = {
   PuzzlePiece,
   Sigma,
   SquaresFour,
+  GridNine,
 };
 export function OperatorIcon({
   name,
