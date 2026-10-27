@@ -16,6 +16,9 @@
 .remote-trust code {overflow-wrap:anywhere; font-size:12px;}
 .remote-connected {display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:18px; color:var(--text-secondary);}
 .remote-connected code {width:100%; overflow-wrap:anywhere; font-size:11px;}
+.remote-setup {margin:12px 0; min-width:0; color:var(--text-secondary); font-size:12px;}
+.remote-setup summary {overflow-wrap:anywhere; cursor:pointer;}
+.remote-setup pre {max-height:150px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; padding:10px; border-radius:6px; background:var(--panel); font-size:11px;}
 .execution-target {display:flex; align-items:center; border:1px solid var(--border); border-radius:var(--radius-md); height:32px; padding-left:9px; gap:5px; background:var(--panel);}
 .execution-target select {border:0; background:transparent; max-width:160px; padding:0 4px; font-size:12px;}
 .execution-target .icon-button {width:28px; height:28px;}

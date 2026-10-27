@@ -25,6 +25,15 @@ in package data, then run `biopipe plugin check`, `test`, and `build`.
 
 ## Profiles and saved work
 
+The current desktop source performs this backed-up conversion once, before
+starting services, when the active profile uses a known older built-in protocol.
+It preserves unfinished canvases even when required run parameters have not yet
+been entered. Existing supplied values remain schema-checked; execution still
+requires all mandatory parameters. Unknown protocols and old external wheels
+stop startup with an actionable error and leave the originals intact.
+
+The CLI remains available for previewing or explicitly converting a profile:
+
 Close Studio and run `biopipe --profile-dir <profile> migrate` before adding `--apply`.
 The Full Windows package includes the CLI: from the extracted folder, use
 `runtime\python\python.exe -I -m biopipe migrate` to preview the default profile,
@@ -57,7 +66,8 @@ schema. Standalone conversion uses bundled descriptors unless a v3 profile is
 selected for external providers.
 
 An old `draft.json` can seed a multi-document workspace once. The runtime then
-uses only the workspace. No startup search or implicit profile migration runs.
+uses only the workspace. The desktop examines only the explicitly resolved active
+profile; it never searches other installations for profiles to migrate.
 Old jobs and their outputs/logs remain historical evidence.
 Agent selection and presence metadata remain unchanged; only their canvas and
 undo/redo graph records are converted.
@@ -70,4 +80,4 @@ entry is null. Run the matching old release with the restored profile.
 
 The old `legacy/` tree and examples remain in Git tag `v0.4.1`; they are unnecessary
 in the active tree. The current runtime accepts only protocol 3. Migration is an
-explicit offline tool, not an execution fallback or a bulk rewrite of past jobs.
+one-time upgrade boundary, not an execution fallback or a bulk rewrite of past jobs.

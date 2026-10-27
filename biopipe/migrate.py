@@ -1,4 +1,4 @@
-"""Explicit v1/v2-to-v3 conversion. Never imported by startup or execution.
+"""One-time v1/v2-to-v3 conversion at the desktop upgrade boundary or CLI.
 
 Preflight is read-only. --apply backs up every changed file before publishing;
 failed publication restores original bytes. Completed jobs and pinned snapshots
@@ -39,7 +39,7 @@ def descriptors(value):
     return list(value.get("descriptors", [])) + [d for p in value.get("packages", []) for d in p.get("descriptors", [])]
 
 
-def _parameters(schema, params, output_parameter=None):
+def _parameters(schema, params, output_parameter=None, *, draft=False):
     value = deepcopy(params)
     for key, rule in schema.get("properties", {}).items():
         item = value.get(key)
@@ -52,6 +52,11 @@ def _parameters(schema, params, output_parameter=None):
             if math.isfinite(number) and (kind != "integer" or number.is_integer()):
                 value[key] = int(number) if kind == "integer" else number
     output = value.pop(output_parameter, None) if output_parameter else None
+    if draft:
+        # An editable canvas need not be runnable yet. Keep missing fields
+        # missing; validate supplied values and freeze real defaults as usual.
+        schema = deepcopy(schema)
+        schema.pop('required', None)
     value = validate_parameters(schema, value)
     if output is not None:
         value[output_parameter] = output
@@ -93,7 +98,7 @@ def convert_documents(value, catalog, *, implementations=None, changes=None):
         if spec is None:
             raise ValueError(f"Missing v3 operator {node.get('operator')}; rebuild/install its provider before migration")
         before = node.get("params", {})
-        node["params"] = _parameters(spec["parameters_schema"], before, spec.get("output_parameter"))
+        node["params"] = _parameters(spec["parameters_schema"], before, spec.get("output_parameter"), draft=True)
         if node["params"] != before:
             changes.append({"node": node["id"], "reason": "Execution defaults and numeric values made explicit"})
     for key, before in result.get("plugin_lock", {}).items():

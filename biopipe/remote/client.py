@@ -26,7 +26,7 @@ class HostKeyRequired(RemoteError):
 
 
 class SSHConnection:
-    def __init__(self, profile, credentials):
+    def __init__(self, profile, credentials, *, progress=None, cancel=None):
         import paramiko
         self.profile, self.lock = profile, threading.RLock()
         self.channel = None
@@ -45,21 +45,33 @@ class SSHConnection:
                                 key_filename=profile.get('key_path') or None,
                                 allow_agent=profile['auth'] == 'agent', look_for_keys=profile['auth'] == 'agent',
                                 timeout=20, auth_timeout=30, banner_timeout=30)
-            command = ('cd -- ' + shlex.quote(profile['app_dir']) + ' && exec ' + shlex.quote(profile['python'])
-                       + ' -u -m biopipe.remote.server --workspace ' + shlex.quote(profile['workspace']))
+            managed = profile.get('environment') == 'managed'
+            def bridge_command():
+                # Tools installed alongside Python must be visible to workers.
+                from pathlib import PurePosixPath
+                path = str(PurePosixPath(profile['python']).parent)
+                prefix = ('export PATH=' + shlex.quote(path) + ':"$PATH"; ') if managed else ''
+                return (prefix + 'unset PYTHONHOME PYTHONPATH; export PYTHONNOUSERSITE=1; cd -- '
+                        + shlex.quote(profile['app_dir']) + ' && exec ' + shlex.quote(profile['python'])
+                        + ' -u -m biopipe.remote.server --workspace ' + shlex.quote(profile['workspace']))
             if profile.get('mode', 'exec') == 'shell':
                 self.channel = self.client.invoke_shell(term='vt100', width=160, height=50)
                 self._enter_shell(profile.get('menu_choice', ''))
                 # Binary container envelopes must not undergo terminal newline
                 # rewriting: it changes both their length header and payload.
-                self.channel.sendall(('stty -echo -opost; ' + command + '\n').encode())
+                self.channel.sendall(('stty -echo -opost; ' + ('PS1=; PS2=;' if managed else bridge_command()) + '\n').encode())
                 self.channel.sendall(b'\n')
             else:
                 self.channel = self.client.get_transport().open_session(timeout=20)
                 self.channel.settimeout(2)
-                self.channel.exec_command(command)
+                self.channel.exec_command('bash --noprofile --norc' if managed else bridge_command())
             self.client.get_transport().set_keepalive(20)
             self.channel.settimeout(2)
+            if managed:
+                from .provision import provision
+                profile = provision(self, profile, progress or (lambda message: None), cancel or threading.Event())
+                self.profile = profile
+                self.channel.sendall((bridge_command() + '\n').encode())
             deadline = time.monotonic()+90
             while True:
                 line = self._line(deadline)

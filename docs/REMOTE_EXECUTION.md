@@ -8,6 +8,37 @@ The Windows/Linux acceptance results are recorded in [REMOTE_VALIDATION.md](REMO
 
 ## Prepare the server
 
+New connections default to **Automatic deployment: BioPipe + Hi-C**. Supply the
+SSH endpoint and authentication, verify its host fingerprint, and connect. No
+preinstalled Python or Conda is required. The account needs Linux x86_64, Bash,
+tar, base64, sha256sum, flock, curl or wget, outbound HTTPS and writable disk space.
+The installer downloads a checksum-pinned static micromamba executable from its
+official conda-forge archive, then creates a private Python 3.11 environment with
+BWA, samtools and the compilers needed for native Python extensions. One pip solve
+installs all bundled provider requirements together with pairtools, cooler and
+cooltools. This avoids replacing NumPy underneath conda-built scientific extensions.
+It checks
+the installed packages, import probes and tool executables before connecting.
+
+The default installation directory is `$HOME/.local/share/biopipe`, resolved on
+the server. It can be changed in the connection panel. The default run directory
+is `workspace/` below that location. No sudo, system Python modifications, shell
+startup edits, or global Conda activation are used. Existing connection records
+remain in **Use existing environment** mode until you choose automatic deployment.
+
+Only application code, catalogs and parameter schemas are uploaded; local input
+datasets, profiles and credentials are excluded. The source archive is checked
+by SHA-256 before extraction. Code and environment paths are keyed by the source
+digest, so updating the desktop does not overwrite an older execution environment.
+Repeated connections reuse the same installation and check its requirements.
+Dependency downloads and installation occur only when required. An installation
+lock serializes changes from multiple clients. The panel shows progress and errors;
+the server retains `managed-v1/setup-<digest>.log` for diagnostics. Failed attempts
+do not publish a readiness receipt; reconnect to retry. Cancellation stops waiting
+and closes SSH; allow any outstanding installer to release its lock before retrying.
+
+### Use an existing environment
+
 Use a Linux account that can read the input data and write its run directory.
 Place the same BioPipe source revision on the server, including `scripts/run.py`,
 the generated bundled catalog and the independent `*.parameters.json` files.
@@ -21,9 +52,8 @@ python -m pip install -e .
 ```
 
 The Windows and Linux Python installations are separate. A Windows bundled
-runtime does not supply Linux binaries. This feature uses an existing server
-installation; it does not upload local datasets or install a server environment
-automatically. The remote interpreter's directory is added to the command search
+runtime does not supply Linux binaries. Manual mode uses the selected server
+installation and does not install its dependencies. The remote interpreter's directory is added to the command search
 path, so tools installed beside that interpreter are found without an interactive
 Conda activation. Other tools must already be on the server account's `PATH`.
 
@@ -35,6 +65,8 @@ Open the settings button beside the execution target and add a server:
 |---|---|
 | Name | A local display name |
 | Host, port, username | The SSH endpoint and existing account |
+| Server environment | Automatic deployment (new connections) or an existing environment |
+| Installation directory | Optional absolute Linux path for a managed deployment; defaults to the server user's home |
 | BioPipe directory | Absolute Linux path to the matching source checkout |
 | Run directory | Absolute writable Linux directory for jobs and the server registry |
 | Python | The environment's absolute Python executable, or `python3` on the remote PATH |
@@ -145,6 +177,8 @@ server connection handshake and executable validation remains at runtime.
 |---|---|
 | `biopipe/remote/protocol.py` | Framed, checksummed control messages that tolerate PTY banners and echo |
 | `biopipe/remote/client.py` | SSH authentication, explicit host trust, ordinary/interactive transport |
+| `biopipe/remote/provision.py` | Python-free bootstrap, source allowlist, verified download and installation progress |
+| `biopipe/remote/install_linux.py` | Managed environment requirements, dependency and executable checks, readiness receipt |
 | `biopipe/remote/server.py` | Private socket service, file metadata, detached jobs, resumable logs |
 | `src/web/remote_service.py` | Local profiles, cached catalogs, remote job references and retry identities |
 | `src/web/remote_api.py` | Local token-protected endpoints and log streaming |

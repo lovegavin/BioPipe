@@ -103,6 +103,16 @@ def main():
         parser.error("port must be between 0 and 65535")
     os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
     os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
+    from biopipe.desktop_upgrade import upgrade_profile
+    try:
+        upgrade = upgrade_profile(profile)
+        if upgrade:
+            print('BIOPIPE_STATUS ' + json.dumps({'message': '旧档案已备份并升级。',
+                  'backup': upgrade['backup']}, ensure_ascii=False), flush=True)
+    except Exception as error:
+        print('BIOPIPE_STARTUP_ERROR ' + json.dumps({'message':
+              '用户档案升级未完成，原始文件已保留。\n' + str(error)}, ensure_ascii=False), flush=True)
+        raise
     from src.web.api import create_app
     import uvicorn
 

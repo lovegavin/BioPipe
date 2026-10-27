@@ -32,6 +32,10 @@ def mount_remote(app, service):
     def connect(key: str, payload: dict):
         return manager.connect(key, {k: str(payload[k]) for k in ('password', 'passphrase') if payload.get(k)})
 
+    @app.get('/api/remote/{key}/setup')
+    def setup(key: str):
+        return manager.setup_status(key)
+
     @app.post('/api/remote/{key}/trust')
     def trust(key: str, payload: dict):
         manager.trust(key, payload.get('fingerprint'))

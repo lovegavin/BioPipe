@@ -7,7 +7,7 @@ import re
 import threading
 import uuid
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from .models import StrictModel, Graph
 from .storage import atomic_json
 from .service import read_json
@@ -24,24 +24,32 @@ class ConnectionProfile(StrictModel):
     auth: str = Field(default='password', pattern='^(password|key|agent)$')
     key_path: str = ''
     python: str = 'python3'
-    app_dir: str
-    workspace: str
+    app_dir: str = ''
+    workspace: str = ''
+    environment: str = Field(default='existing', pattern='^(existing|managed)$')
+    managed_root: str = ''
     mode: str = Field(default='exec', pattern='^(exec|shell)$')
     menu_choice: str = Field(default='', pattern='^([0-9]{1,4})?$')
 
-    @field_validator('username', 'key_path', 'python', 'app_dir', 'workspace')
+    @field_validator('username', 'key_path', 'python', 'app_dir', 'workspace', 'managed_root')
     @classmethod
     def no_control(cls, value):
         if any(ord(char) < 32 for char in value):
             raise ValueError('Connection fields cannot contain control characters')
         return value
 
-    @field_validator('app_dir', 'workspace')
+    @field_validator('app_dir', 'workspace', 'managed_root')
     @classmethod
     def absolute_server_path(cls, value):
-        if not PurePosixPath(value).is_absolute():
+        if value and (not PurePosixPath(value).is_absolute() or '..' in PurePosixPath(value).parts):
             raise ValueError('Use an absolute Linux server path')
         return value
+
+    @model_validator(mode='after')
+    def required_existing_paths(self):
+        if self.environment == 'existing' and (not self.app_dir or not self.workspace or not self.python):
+            raise ValueError('Existing environments require BioPipe, Python and workspace paths')
+        return self
 
 
 class RemoteManager:
@@ -51,6 +59,7 @@ class RemoteManager:
         self.path = self.directory/'profiles.json'
         self.state = read_json(self.path, {'profiles': {}, 'jobs': {}, 'pending': {}})
         self.connections, self.credentials, self.pending_keys = {}, {}, {}
+        self.connecting, self.progress = {}, {}
         self.lock = threading.RLock()
 
     def persist(self):
@@ -73,6 +82,8 @@ class RemoteManager:
         with self.lock:
             profile = ConnectionProfile.model_validate(value).model_dump()
             key = profile['id'] or uuid.uuid4().hex; profile['id'] = key
+            if key in self.connecting:
+                raise RemoteError('连接准备中，请先取消。')
             old = self.state['profiles'].get(key, {})
             if old.get('host') == profile['host'] and old.get('port') == profile['port'] and old.get('host_key'):
                 profile['host_key'] = old['host_key']
@@ -92,36 +103,71 @@ class RemoteManager:
 
     def connect(self, key, credentials):
         with self.lock:
+            if key in self.connecting:
+                raise RemoteError('此服务器正在连接或准备环境。')
             profile = deepcopy(self.profile(key))
             secret = credentials or self.credentials.get(key, {})
             if self.connections.get(key): self.connections.pop(key).close()
-            try:
-                connection = self.factory(profile, secret)
-            except HostKeyRequired as exc:
+            cancel = self.connecting[key] = threading.Event()
+            self.progress[key] = {'running': True, 'lines': [], 'error': ''}
+        def report(message):
+            with self.lock:
+                lines = self.progress[key]['lines']
+                if not lines or lines[-1] != message:
+                    lines.append(message); del lines[:-60]
+        try:
+            report('正在连接 SSH')
+            connection = (self.factory(profile, secret, progress=report, cancel=cancel)
+                          if self.factory is SSHConnection else self.factory(profile, secret))
+            with self.lock:
+                if cancel.is_set():
+                    connection.close()
+                    raise RemoteError('连接已取消。', code='remote_cancelled')
+                self.connections[key] = connection; self.credentials[key] = secret
+                info = connection.info
+                if not self.profile(key)['workspace']:
+                    self.profile(key)['workspace'] = info['workspace']
+                atomic_json(self.directory/(key+'.catalog.json'), info)
+                for job in info.get('history', []): self.wrap_job(key, job)
+                self.persist()
+                report('已连接')
+                return info
+        except HostKeyRequired as exc:
+            with self.lock:
                 self.pending_keys[key] = exc.key
-                raise
-            except RemoteError: raise
-            except Exception as exc:
-                raise RemoteError(f'SSH 连接失败：{type(exc).__name__}。请核对主机、认证方式及远端环境。') from exc
-            self.connections[key] = connection; self.credentials[key] = secret
-            info = connection.info
-            atomic_json(self.directory/(key+'.catalog.json'), info)
-            for job in info.get('history', []): self.wrap_job(key, job)
-            self.persist()
-            return info
+            raise
+        except Exception as exc:
+            message = str(exc) if isinstance(exc, RemoteError) else f'SSH 连接失败：{type(exc).__name__}。请核对主机、认证方式及远端环境。'
+            with self.lock:
+                self.progress[key]['error'] = message
+            if isinstance(exc, RemoteError): raise
+            raise RemoteError(message) from exc
+        finally:
+            with self.lock:
+                self.connecting.pop(key, None)
+                self.progress[key]['running'] = False
+
+    def setup_status(self, key):
+        with self.lock:
+            self.profile(key)
+            return deepcopy(self.progress.get(key, {'running': False, 'lines': [], 'error': ''}))
 
     def disconnect(self, key):
         with self.lock:
+            if key in self.connecting: self.connecting[key].set()
             connection = self.connections.pop(key, None)
             if connection: connection.close()
             self.credentials.pop(key, None)
 
     def close(self):
+        for event in self.connecting.values(): event.set()
         for key in list(self.connections): self.disconnect(key)
         self.pending_keys.clear()
 
     def remove(self, key):
         with self.lock:
+            if key in self.connecting:
+                raise RemoteError('请先取消连接，等待环境准备结束后移除。')
             self.profile(key); self.disconnect(key)
             del self.state['profiles'][key]
             self.state['jobs'] = {k:v for k,v in self.state['jobs'].items() if v['profile_id'] != key}

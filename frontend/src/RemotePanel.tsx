@@ -5,7 +5,7 @@ import type {DataSource, RemoteListing, RemoteProfile, RemoteStatus} from './typ
 import './remote.css';
 
 const empty: RemoteProfile = {name: '', host: '', port: 22, username: '', auth: 'password', key_path: '',
-  python: 'python3', app_dir: '', workspace: '', mode: 'exec', menu_choice: ''};
+  python: 'python3', app_dir: '', workspace: '', mode: 'exec', menu_choice: '', environment: 'managed', managed_root: ''};
 
 export function remoteId(graph: {runtime?: Record<string, unknown>}): string {
   const value = graph.runtime?.execution as {kind?: string; profile_id?: string} | undefined;
@@ -18,13 +18,21 @@ export function RemotePanel({servers, active, onUpdate, onSelect, onClose}: {
   const [profile, setProfile] = useState<RemoteProfile>(() => servers.find(s => s.profile.id === active)?.profile || servers[0]?.profile || {...empty});
   const [password, setPassword] = useState(''), [passphrase, setPassphrase] = useState('');
   const [busy, setBusy] = useState(false), [error, setError] = useState('');
+  const [setup, setSetup] = useState<string[]>([]);
+  useEffect(() => {
+    if (!busy || !profile.id) return;
+    let alive = true;
+    const refresh = () => {void api.remoteSetup(profile.id!).then(value => {if (alive) setSetup(value.lines);}).catch(() => {});};
+    refresh(); const timer = window.setInterval(refresh, 1500);
+    return () => {alive = false; window.clearInterval(timer);};
+  }, [busy, profile.id]);
   const [trust, setTrust] = useState<{id: string; fingerprint: string; changed: boolean} | null>(null);
   const selected = servers.find(s => s.profile.id === profile.id);
   useEffect(() => {const key = (e: KeyboardEvent) => {if(e.key === 'Escape' && !busy) onClose();};
     window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key);}, [busy, onClose]);
   function edit(patch: Partial<RemoteProfile>) {setTrust(null); setProfile({...profile, ...patch});}
   async function connect(trusted?: typeof trust) {
-    setBusy(true); setError('');
+    setBusy(true); setError(''); setSetup([]);
     let saved = profile;
     try {
       saved = trusted ? profile : await api.saveRemote(profile);
@@ -41,9 +49,9 @@ export function RemotePanel({servers, active, onUpdate, onSelect, onClose}: {
       await onUpdate();
     } finally {setBusy(false);}
   }
-  const field = (label: string, key: 'name' | 'host' | 'username' | 'python' | 'app_dir' | 'workspace' | 'key_path' | 'menu_choice', placeholder = '') =>
-    <label className="field"><span>{label}</span><input value={profile[key]} disabled={busy} placeholder={placeholder}
-      onChange={e => edit({[key]: e.target.value})} autoComplete="off" required={key !== 'menu_choice' && key !== 'key_path'}/></label>;
+  const field = (label: string, key: 'name' | 'host' | 'username' | 'python' | 'app_dir' | 'workspace' | 'key_path' | 'menu_choice' | 'managed_root', placeholder = '') =>
+    <label className="field"><span>{label}</span><input value={profile[key] || ''} disabled={busy} placeholder={placeholder}
+      onChange={e => edit({[key]: e.target.value})} autoComplete="off" required={['name', 'host', 'username'].includes(key) || (profile.environment !== 'managed' && ['app_dir', 'workspace', 'python'].includes(key))}/></label>;
   return <div className="agent-overlay" onMouseDown={e => {if(e.target === e.currentTarget && !busy) onClose();}}>
     <section className="remote-panel" role="dialog" aria-modal="true" aria-label="服务器连接">
       <header><h2><Server size={22}/>服务器</h2><button className="icon-button" disabled={busy} onClick={onClose} aria-label="关闭服务器面板"><X size={18}/></button></header>
@@ -56,8 +64,10 @@ export function RemotePanel({servers, active, onUpdate, onSelect, onClose}: {
         <div className="remote-fields">
           {field('名称', 'name', '计算服务器')}{field('主机', 'host', 'server.example.org')}
           {field('用户名', 'username')}<label className="field"><span>端口</span><input type="number" min={1} max={65535} required disabled={busy} value={profile.port} onChange={e => edit({port: Number(e.target.value)})}/></label>
-          {field('BioPipe 目录', 'app_dir', '/opt/biopipe')}{field('运行目录', 'workspace', '/srv/biopipe-work')}
-          {field('Python', 'python', 'python3')}
+          <label className="field"><span>服务器环境</span><select disabled={busy} value={profile.environment || 'existing'} onChange={e => edit({environment: e.target.value as RemoteProfile['environment']})}>
+            <option value="managed">自动部署 BioPipe + Hi-C</option><option value="existing">使用已有环境</option></select></label>
+          {profile.environment === 'managed' ? field('安装目录 · 可选', 'managed_root', '服务器用户目录下自动创建') : <>{field('BioPipe 目录', 'app_dir', '/opt/biopipe')}{field('Python', 'python', 'python3')}</>}
+          {field('运行目录', 'workspace', profile.environment === 'managed' ? '安装目录下自动创建' : '/srv/biopipe-work')}
           <label className="field"><span>认证方式</span><select disabled={busy} value={profile.auth} onChange={e => edit({auth: e.target.value as RemoteProfile['auth']})}>
             <option value="password">密码</option><option value="key">私钥文件</option><option value="agent">SSH Agent</option></select></label>
           {profile.auth === 'password' && <label className="field wide"><span>密码 · 仅本次会话</span><input autoComplete="new-password" type="password" disabled={busy} value={password} onChange={e => setPassword(e.target.value)}/></label>}
@@ -70,8 +80,10 @@ export function RemotePanel({servers, active, onUpdate, onSelect, onClose}: {
         {trust && <div className="remote-trust" role="alert"><strong>{trust.changed ? '服务器指纹已变化' : '确认服务器指纹'}</strong><code>{trust.fingerprint}</code>
           <button type="button" className="primary-button" disabled={busy} onClick={() => void connect(trust)}>信任并连接</button></div>}
         {error && <p role="alert" className="field-error">{error}</p>}
+        {!!setup.length && <details className="remote-setup" open={busy}><summary>{busy ? setup[setup.length - 1] : '环境准备记录'}</summary><pre role="log" aria-live="polite">{setup.join('\n')}</pre></details>}
         {selected?.connected && !error && <div className="remote-connected"><span className="status-dot complete"/>{selected.info?.system} · {selected.info?.version}<code>{selected.info?.python}</code></div>}
         <footer>
+          {busy && profile.id && <button type="button" className="subtle-button" onClick={() => {void api.disconnectRemote(profile.id!).catch(e => setError(e.message));}}>取消连接</button>}
           {profile.id && <button type="button" className="subtle-button" disabled={busy} onClick={() => {void api.disconnectRemote(profile.id!).then(onUpdate).catch(e => setError(e.message));}}>断开</button>}
           {profile.id && <button type="button" className="subtle-button" disabled={busy} onClick={() => {void api.removeRemote(profile.id!).then(async () => {setProfile({...empty}); setTrust(null); await onUpdate();}).catch(e => setError(e.message));}}>移除</button>}
           <button className="primary-button" type="submit" disabled={busy || !!trust}>{busy ? <><CircleNotch className="spin" size={16}/>连接中</> : '连接服务器'}</button>

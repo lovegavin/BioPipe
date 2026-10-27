@@ -175,6 +175,12 @@ internal sealed class StudioWindow : Form
                     try { using var value = JsonDocument.Parse(e.Data[14..]); ready.TrySetResult(value.RootElement.GetProperty("url").GetString()!); }
                     catch (Exception error) { ready.TrySetException(error); }
                 }
+                else if (e.Data.StartsWith("BIOPIPE_STARTUP_ERROR "))
+                {
+                    try { using var value = JsonDocument.Parse(e.Data[22..]); ready.TrySetException(new InvalidOperationException(value.RootElement.GetProperty("message").GetString())); }
+                    catch (Exception error) { ready.TrySetException(error); }
+                    Log("Backend: " + e.Data);
+                }
                 else Log("Backend: " + e.Data);
             };
             backend.ErrorDataReceived += (_, e) => { if (e.Data is not null) Log("Backend: " + e.Data); };
