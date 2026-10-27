@@ -17,7 +17,7 @@ import yaml
 from src.core import ManifestError
 from biopipe import __version__
 from .operator_catalog import catalog_from_descriptors
-from src.task.memory.config import AUTO_BUDGET_FRACTION, MemoryConfig
+from src.task.memory.config import AUTO_BUDGET_FRACTION
 from .graph import GraphError, compile_graph, import_manifest, project_path, relative_manifest
 from .models import Graph, ManifestImport, SaveWorkflow, RegisterRoutes, Workspace, LibraryAction
 from .routes import prepare_interface
@@ -37,13 +37,8 @@ def create_app(settings=None):
     catalog = service.catalog
     imports = AssetImports(service)
     token = secrets.token_urlsafe(32)
-    # One startup preview for the UI. Each worker still takes its own single
-    # execution snapshot; repeated bootstrap requests must not rescan RAM.
-    try:
-        startup_memory = MemoryConfig.parse({"runtime": {"memory": {"enabled": True}}})
-        automatic_memory_budget = startup_memory.budget_bytes
-    except ManifestError:
-        automatic_memory_budget = None
+    # Admission owns the one host snapshot. UI and workers use that same value.
+    automatic_memory_budget = service.admission.capacity or None
     @asynccontextmanager
     async def lifespan(app):
         bridge.publish(getattr(app.state, "instance_url", None) or settings.instance_url)
@@ -53,6 +48,7 @@ def create_app(settings=None):
             app.state.check_dependencies()
         yield
         bridge.close()
+        executions.shutdown()
         service.shutdown()
     app = FastAPI(title="BioPipe Studio", version=__version__, lifespan=lifespan)
     app.state.service, app.state.token = service, token
@@ -63,6 +59,19 @@ def create_app(settings=None):
     mount_plugins(app, service)
     from .remote_api import mount_remote
     remote_events, remote_console = mount_remote(app, service)
+    from .execution import ExecutionService
+    executions = ExecutionService(service)
+    app.state.executions = service.executions = executions
+    from .execution_api import mount_execution, ACTIVE_STATUSES
+    execution_events, execution_console = mount_execution(app, service, executions)
+
+    def graph_catalog(graph):
+        return executions.catalog(graph) if executions.applies(graph) else service.graph_catalog(graph)
+
+    def prepare(graph):
+        return executions.prepare(graph) if executions.applies(graph) else service.prepare_graph(graph)
+
+    service.routes.catalog_for = graph_catalog
 
     @app.middleware("http")
     async def local_boundary(request, call_next):
@@ -118,7 +127,7 @@ def create_app(settings=None):
                 "automatic_memory_fraction": AUTO_BUDGET_FRACTION,
                 "automatic_memory_budget_bytes": automatic_memory_budget,
                 "agent_config": {"command": sys.executable, "args": agent_args},
-                "history": service.history(),
+                "history": history(),
                 "upload_limit_mb": settings.max_upload / 1024**2 if settings.max_upload is not None else None,
                 "upload_extensions": accepted_extensions(catalog),
                 "storage": settings.profile or {"workspace": str(service.root), "data_dir": str(service.directory),
@@ -140,7 +149,7 @@ def create_app(settings=None):
 
     @app.post("/api/workflows/prepare")
     def prepare_workflow(graph: Graph):
-        return service.prepare_graph(graph).model_dump(mode="json")
+        return prepare(graph).model_dump(mode="json")
 
     @app.post("/api/workflows/export")
     def export_workflow(graph: Graph):
@@ -156,7 +165,7 @@ def create_app(settings=None):
 
     @app.post("/api/workflows/save")
     def save_workflow(payload: SaveWorkflow):
-        payload.graph = service.prepare_graph(payload.graph)
+        payload.graph = prepare(payload.graph)
         return service.routes.save(payload)
 
     @app.get("/api/workflows/{key}")
@@ -185,15 +194,17 @@ def create_app(settings=None):
 
     @app.post("/api/validate")
     def validate(graph: Graph):
-        return service.validate_graph(graph)
+        return executions.validate(graph) if executions.applies(graph) else service.validate_graph(graph)
 
     @app.post("/api/contracts")
     def contracts(graph: Graph):
-        return analyze_graph(graph, service.graph_catalog(graph), settings.root)
+        return analyze_graph(graph, graph_catalog(graph), settings.root)
 
     @app.post("/api/export")
     def export(graph: Graph):
         from .source_paths import remote_profile
+        if executions.applies(graph):
+            raise GraphError('多环境工作流请导出路线包。')
         if remote_profile(graph):
             return service.remotes.call(remote_profile(graph), 'export', {'graph': graph.model_dump(mode='json')})
         manifest, order = compile_graph(graph, service.plugins.catalog_for(graph, service.base_catalog), settings.root)
@@ -256,22 +267,44 @@ def create_app(settings=None):
 
     @app.get("/api/jobs")
     def history():
-        return service.history()
+        parents = executions.history()
+        child_ids = set()
+        for parent in parents:
+            for child in parent.get('children', []):
+                if not isinstance(child, dict):
+                    continue
+                key = child.get('id') or child.get('job_id')
+                if not key:
+                    continue
+                location = child.get('target') or {}
+                profile = location.get('profile_id') if location.get('kind') == 'ssh' else None
+                if profile:
+                    # Older cached remote summaries omitted parent lineage and
+                    # wrap their server ID when reconnecting to the editor.
+                    prefix = f'ssh-{profile}-'
+                    child_ids.add(key if key.startswith(prefix) else prefix + key)
+                else:
+                    child_ids.add(key)
+        local = [job for job in service.history()
+                 if not job.get('execution_parent_id') and job['id'] not in child_ids]
+        return sorted(local + parents, key=lambda job: job['created_at'], reverse=True)[:60]
 
     @app.post("/api/jobs", status_code=202)
     def run_job(graph: Graph):
-        return service.launch(graph)
+        return executions.launch(graph) if executions.applies(graph) else service.launch(graph)
 
     @app.get("/api/jobs/{key}")
     def details(key: str):
-        return service.details(key)
+        return executions.details(key) if executions.owns(key) else service.details(key)
 
     @app.post("/api/jobs/{key}/cancel")
     def cancel(key: str):
-        return service.cancel(key)
+        return executions.cancel(key) if executions.owns(key) else service.cancel(key)
 
     @app.get("/api/jobs/{key}/events")
     async def events(key: str, request: Request):
+        if executions.owns(key):
+            return await execution_events(key, request)
         if service.remotes.owns(key):
             return await remote_events(key, request)
         service.require(key)
@@ -283,7 +316,7 @@ def create_app(settings=None):
                 # Read completion first: a terminal snapshot guarantees all logs
                 # were flushed. Reading it after the files can lose their last rows.
                 job = service.details(key)
-                terminal = job["status"] != "running" and job.get("logs_complete", True)
+                terminal = job["status"] not in ACTIVE_STATUSES and job.get("logs_complete", True)
                 batch, eof = [], True
                 for path in service.event_paths(key):
                     with open(path, encoding="utf-8") as file:
@@ -317,37 +350,39 @@ def create_app(settings=None):
 
     @app.get("/api/jobs/{key}/artifacts/{artifact_id}/preview")
     def preview(key: str, artifact_id: str):
-        return service.preview(key, artifact_id)
+        return (executions if executions.owns(key) else service).preview(key, artifact_id)
 
     @app.get("/api/jobs/{key}/artifacts/{artifact_id}/download")
     def download(key: str, artifact_id: str):
-        path, descriptor = service.artifact(key, artifact_id)
+        path, descriptor = (executions if executions.owns(key) else service).artifact(key, artifact_id)
         suffix = ".files.json" if descriptor.get("kind") == "file" else ".npy"
         return FileResponse(path, filename=descriptor["name"] + suffix, media_type="application/octet-stream")
 
     @app.get("/api/jobs/{key}/artifacts/{artifact_id}/files/{role}")
     def artifact_file(key: str, artifact_id: str, role: str):
-        path = service.artifact_file(key, artifact_id, role)
+        path = (executions if executions.owns(key) else service).artifact_file(key, artifact_id, role)
         return FileResponse(path, filename=path.name, media_type="application/octet-stream")
 
     @app.get("/api/jobs/{key}/exports/{index}")
     def step_export(key: str, index: int):
-        path = service.export_file(key, index)
+        path = (executions if executions.owns(key) else service).export_file(key, index)
         if path.stat().st_size > 4 * 1024**2:
             return {"message": "步骤报告较大，请下载查看。"}
         return safe_json(read_json(path))
 
     @app.get("/api/jobs/{key}/exports/{index}/download")
     def export_download(key: str, index: int):
-        path = service.export_file(key, index)
+        path = (executions if executions.owns(key) else service).export_file(key, index)
         return FileResponse(path, filename=path.name, media_type="application/json")
 
     @app.get("/api/jobs/{key}/exports/{index}/figure")
     def figure(key: str, index: int):
-        return FileResponse(service.figure_file(key, index))
+        return FileResponse((executions if executions.owns(key) else service).figure_file(key, index))
 
     @app.get("/api/jobs/{key}/console")
     def console(key: str):
+        if executions.owns(key):
+            return execution_console(key)
         if service.remotes.owns(key):
             return remote_console(key)
         job = service.require(key)

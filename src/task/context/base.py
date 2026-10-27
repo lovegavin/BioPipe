@@ -50,6 +50,10 @@ class Context:
 
     def register_source(self, name: str, spec: dict) -> None:
         """Managed sources are read on first use; legacy mode stays eager."""
+        if name in self.manifest.get("runtime", {}).get("exchange_inputs", []):
+            from biopipe.exchange import register_source
+            register_source(self, name, self.task_dir / spec["path"])
+            return
         from src.reader import read_source, pick_reader
         path = self.task_dir / spec["path"]
         selected_reader = pick_reader(path)

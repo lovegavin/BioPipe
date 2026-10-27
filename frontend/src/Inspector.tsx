@@ -11,10 +11,12 @@ import {
 import { OperatorArtwork, OperatorPreview } from "./OperatorArtwork";
 import { OperatorIcon } from "./icons";
 import { HelpTip } from "./HelpTip";
+import {ExecutionSettings} from './ExecutionSettings';
+import {defaultTarget, executionConfig, groupParameters, nodeTarget, targetFromKey, targetKey, targetLabel} from './execution';
 import { api } from "./api";
 import { inputAccept, renameSourceDimensions, readerForPath } from "./readerInput";
 import { bytes, displayTitle, inputCount, outputCount, specFor, retainedOutputs } from "./graph";
-import type { Catalog, Graph, GraphNode, Parameter, RouteDefinition } from "./types";
+import type { Catalog, Graph, Parameter, RouteDefinition, TargetRef, ExecutionConfig, RemoteStatus, NodePatch } from "./types";
 
 function JsonField({
   label,
@@ -97,20 +99,38 @@ function CommaSeparatedInput({
   }} />;
 }
 
-function ParameterField({
+export function ParameterField({
   field,
   value,
   onChange,
   disabled,
   onBrowse,
+  onPath,
+  baseDir = '.',
+  target,
+  onError,
 }: {
   field: Parameter;
   value: unknown;
   onChange: (value: unknown) => void;
   disabled: boolean;
   onBrowse?: import('./types').BrowseRemote;
+  onPath?: (path: string, location: TargetRef) => void;
+  baseDir?: string;
+  target?: TargetRef;
+  onError?: (message: string) => void;
 }) {
   const id = `param-${field.key}`;
+  const input = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  async function localFile(file?: File) {
+    if (!file) return;
+    setUploading(true);
+    try {const result = await api.uploadReference(file, baseDir);
+      if (onPath) onPath(result.path, {kind: 'local'}); else onChange(result.path);
+    } catch (error) {onError?.((error as Error).message);}
+    finally {setUploading(false); if (input.current) input.current.value = '';}
+  }
   if (field.type === "json") return <JsonField label={field.label} value={value === undefined ? {} : value} disabled={disabled} onChange={onChange} allowArray/>;
   return (
     <label className="field" htmlFor={id}>
@@ -160,10 +180,21 @@ function ParameterField({
           }
         />
       )}
-      {field.path_kind && onBrowse && <button type="button" className="subtle-button" disabled={disabled} onClick={() => onBrowse(String(value || ''), onChange)}>浏览服务器</button>}
-      {field.description && <small className="field-hint">{field.description}</small>}
+      {field.path_kind && <div className="path-actions">
+        <input type="file" className="sr-only" ref={input} aria-label={`选择本机文件 ${field.label}`} onChange={e => void localFile(e.target.files?.[0])}/>
+        <button type="button" className="subtle-button" disabled={disabled || uploading} onClick={() => input.current?.click()}>{uploading ? '导入中…' : '本机文件'}</button>
+        {onBrowse && <button type="button" className="subtle-button" disabled={disabled || uploading} onClick={() => onBrowse(String(value || ''), (path, _source, location) => {
+          if (onPath && location) onPath(path, location); else onChange(path);
+        }, false, target)}>服务器文件</button>}
+      </div>}
+      {field.description && <HelpTip label={`${field.label}说明`}>{field.description}</HelpTip>}
     </label>
   );
+}
+export function ParameterGroups({parameters, renderField}: {parameters: Parameter[]; renderField: (field: Parameter) => import('react').ReactNode}) {
+  return <div className="parameter-groups">{groupParameters(parameters).map(group => group.id === 'main'
+    ? <div key={group.id} className="primary-parameters">{group.fields.map(renderField)}</div>
+    : <details key={group.id} className="advanced parameter-section"><summary>{group.label}<CaretDown size={14}/></summary>{group.fields.map(renderField)}</details>)}</div>;
 }
 export function Inspector({
   graph,
@@ -182,6 +213,9 @@ export function Inspector({
   onClose,
   onOpenRoute,
   onBrowseRemote,
+  servers = [],
+  onExecution = () => {},
+  onFileLocation = () => {},
 }: {
   graph: Graph;
   catalog: Catalog;
@@ -191,7 +225,7 @@ export function Inspector({
   uploadLimit: number | null;
   automaticMemoryFraction?: number;
   automaticMemoryBudget?: number | null;
-  onNode: (id: string, patch: Partial<GraphNode>) => void;
+  onNode: (id: string, patch: NodePatch) => void;
   onMemory: (value: Graph["memory"]) => void;
   onParams: (value: Record<string, unknown>) => void;
   onDelete: (id: string) => void;
@@ -199,6 +233,9 @@ export function Inspector({
   onClose: () => void;
   onOpenRoute: (route: RouteDefinition) => void;
   onBrowseRemote?: import('./types').BrowseRemote;
+  servers?: RemoteStatus[];
+  onExecution?: (patch: Partial<ExecutionConfig>) => void;
+  onFileLocation?: (key: string, target: TargetRef) => void;
 }) {
   const node = graph.nodes.find((n) => n.id === nodeId),
     spec = node ? specFor(node, catalog) : undefined;
@@ -212,12 +249,15 @@ export function Inspector({
   const automaticPercent = automaticMemoryFraction == null ? undefined : automaticMemoryFraction * 100;
   const reader = node?.source ? readerForPath(catalog, node.source.path) : undefined;
   const retainedNames = node ? retainedOutputs(node, spec) : [];
+  const sourceLocation = node?.source?.location ?? defaultTarget(graph);
+  const pathTarget = (key: string) => executionConfig(graph).file_locations?.[key] ?? (node ? nodeTarget(graph, node.id) : defaultTarget(graph));
   function param(key: string, value: unknown) {
     if (!node) return;
-    const next = { ...node.params };
-    if (value === undefined) delete next[key];
-    else next[key] = value;
-    onNode(node.id, { params: next });
+    onNode(node.id, current => {
+      const next = {...current.params};
+      if (value === undefined) delete next[key]; else next[key] = value;
+      return {params: next};
+    });
   }
   async function upload(selection: FileList | null) {
     const files = Array.from(selection ?? []);
@@ -228,7 +268,7 @@ export function Inspector({
     try {
       const result = await api.uploadFiles(files, graph.base_dir);
       onNode(node.id, {
-        source: result.source,
+        source: {...result.source, location: {kind: 'local'}},
         title: result.filename.replace(/\.(?:gz|bz2|xz)$/i, '').replace(/\.[^.]+$/, ''),
       });
     } catch (error) {
@@ -257,6 +297,7 @@ export function Inspector({
       <div className="inspector-content" ref={content}>
         {settings ? (
           <>
+            <ExecutionSettings graph={graph} servers={servers} disabled={busy} onChange={onExecution}/>
             <div className="inspector-intro">
               <div className="node-icon">
                 <HardDrives size={20} />
@@ -372,7 +413,7 @@ export function Inspector({
             <div className="section-rule" />
             <div className="capability" title="支线按依赖排序后依次运行。分块由算子的实际能力决定。">
               <Cpu size={17} />
-              <span>CPU · 顺序执行</span>
+              <span>资源充足时并行运行任务</span>
             </div>
           </>
         ) : node ? (
@@ -408,17 +449,26 @@ export function Inspector({
                 <button
                   className="upload-button"
                   disabled={busy || uploading}
-                  onClick={() => onBrowseRemote ? onBrowseRemote(node.source!.path, (path, source) => onNode(node.id, {source: source || {...node.source!, path}}), true) : fileInput.current?.click()}
+                  onClick={() => fileInput.current?.click()}
                 >
                   <FileArrowUp size={22} />
-                  <strong>{onBrowseRemote ? '选择服务器文件' : uploading ? "正在上传…" : "选择数据文件"}</strong>
-                  {!onBrowseRemote && uploadLimit != null && <small>每个文件上限 {uploadLimit} MiB</small>}
+                  <strong>{uploading ? "正在导入…" : "选择本机文件"}</strong>
+                  {uploadLimit != null && <small>每个文件上限 {uploadLimit} MiB</small>}
                 </button>
-                {!onBrowseRemote && <details className="advanced input-format-help"><summary>多文件格式 <CaretDown size={14}/></summary>
+                {onBrowseRemote && <button className="subtle-button source-server-button" disabled={busy || uploading}
+                  onClick={() => onBrowseRemote(node.source!.path, (path, source, location) => onNode(node.id,
+                    {source: {...(source || node.source!), path, location: location || sourceLocation}}), true, sourceLocation)}>选择服务器文件</button>}
+                <details className="advanced input-format-help"><summary>多文件格式 <CaretDown size={14}/></summary>
                   <p className="helper">PLINK：同时选择同名的 .bed、.bim、.fam。10x MTX：同时选择 matrix、barcodes 和 features / genes。</p>
-                </details>}
+                </details>
+                <label className="field"><span>文件所在位置</span><select aria-label="文件所在位置" value={targetKey(sourceLocation)} disabled={busy || uploading}
+                  onChange={e => onNode(node.id, {source: {...node.source!, location: targetFromKey(e.target.value)}})}>
+                  <option value="">本机</option>
+                  {sourceLocation.kind === 'ssh' && !servers.some(server => server.profile.id === sourceLocation.profile_id) && <option value={sourceLocation.profile_id}>未配置的服务器</option>}
+                  {servers.map(server => <option key={server.profile.id} value={server.profile.id}>{server.profile.name}</option>)}
+                </select></label>
                 <label className="field">
-                  <span>{onBrowseRemote ? '服务器文件路径' : '项目内文件路径'}</span>
+                  <span>{targetLabel(sourceLocation, servers)}文件路径</span>
                   <textarea
                     rows={2}
                     value={node.source.path}
@@ -446,14 +496,19 @@ export function Inspector({
                 </label>}
                 {!!reader?.parameters?.length && <div className="reader-options">
                   <p className="section-caption">{reader.id} · 读取参数</p>
-                  {reader.parameters?.map(field => <ParameterField key={`${node.id}-${field.key}`} field={field}
+                  <ParameterGroups parameters={reader.parameters || []} renderField={field => <ParameterField key={`${node.id}-${field.key}`} field={field}
                     onBrowse={onBrowseRemote}
+                    baseDir={graph.base_dir} target={pathTarget(`${node.id}.source.args.${field.key}`)} onError={onError}
+                    onPath={(path, location) => {
+                      onNode(node.id, current => ({source: {...current.source!, args: {...current.source!.args, [field.key]: path}}}));
+                      onFileLocation(`${node.id}.source.args.${field.key}`, location);
+                    }}
                     value={node.source!.args[field.key] ?? field.default} disabled={busy}
                     onChange={value => {
                       const args = {...node.source!.args};
                       if (value === undefined || value === '') delete args[field.key]; else args[field.key] = value;
                       onNode(node.id, {source: {...node.source!, args}});
-                    }}/>) }
+                    }}/>}/>
                 </div>}
                 <details className="advanced">
                   <summary>
@@ -489,16 +544,18 @@ export function Inspector({
                 <div className="section-caption">
                   参数 <span className="mono">{node.operator}</span>
                 </div>
-                {spec?.parameters.map((field) => (
+                <ParameterGroups parameters={spec?.parameters || []} renderField={(field) => (
                   <ParameterField
                     key={`${node.id}:${field.key}`}
                     field={field}
                     onBrowse={onBrowseRemote}
-                    value={node.params[field.key] === undefined ? spec.runtime_defaults?.[field.key] : node.params[field.key]}
+                    baseDir={graph.base_dir} target={pathTarget(`${node.id}.params.${field.key}`)} onError={onError}
+                    onPath={(path, location) => {param(field.key, path); onFileLocation(`${node.id}.params.${field.key}`, location);}}
+                    value={node.params[field.key] === undefined ? spec?.runtime_defaults?.[field.key] : node.params[field.key]}
                     disabled={busy}
                     onChange={(value) => param(field.key, value)}
                   />
-                ))}
+                )}/>
                 {spec?.output_parameter && (
                   <label className="field">
                     <span>输出数据名称</span>

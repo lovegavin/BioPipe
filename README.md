@@ -5,8 +5,9 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Release **v0.6.2** fixes startup with older built-in profiles and adds automatic
-Linux server deployment. It retains the [Hi-C workflows](docs/HIC.md): paired FASTQ,
+Release **v0.7.1** adds resumable input uploads, per-workflow execution environments
+and concurrent task management. It retains automatic Linux server deployment,
+backed-up profile upgrades and the [Hi-C workflows](docs/HIC.md): paired FASTQ,
 BAM/SAM or pairs to contact matrices and expected/compartment/insulation/loop/pileup
 analysis. It reuses existing QC, selection and plotting operators, with three new
 tool adapters and four file Readers. The bundled catalog has 67 operators,
@@ -15,9 +16,18 @@ required for the full raw-read workflow and run on a Linux server or WSL.
 
 The desktop editor also supports [SSH remote execution](docs/REMOTE_EXECUTION.md):
 edit on Windows, browse inputs on a Linux server, submit workflows and reconnect
-to server-owned jobs and logs. Data and computation stay on the server; existing
-memory management and independent parameter JSON files are retained. Linux-only
+to server-owned jobs and logs. Workflows using server-resident inputs can keep
+their data and computation there. Existing memory management and independent
+parameter JSON files are retained. Linux-only
 tool adapters are marked in the operator library and canvas.
+
+Both desktop packages include [execution environments and concurrent tasks](docs/EXECUTION_ENVIRONMENTS.md):
+local inputs can be uploaded automatically with resumable transfers and verified
+reuse; manual or automatic placement can run complete routes or successive stages
+on local/SSH environments. Each saved workflow has its own `execution.json`.
+The task manager shows upload/run progress and cancellation, while host-wide
+memory/CPU admission queues work that cannot safely run concurrently. The inspector
+puts analysis methods first and collapses tool and resource settings.
 
 New SSH connections can automatically deploy a
 private Linux x86_64 environment with Python, BioPipe and Hi-C dependencies.
@@ -71,8 +81,8 @@ dependencies, optional analyses and troubleshooting resolver backtracking.
 Choose the archive without `Lite` for the bundled environment. The smaller
 `Windows-x64-Lite.zip` uses an existing Python environment instead.
 
-Release v0.6.2 is maintained on `release/v0.6.2`; `main` retains the author's separate
-upstream development. See the [release notes](docs/releases/v0.6.2.md) for scope.
+Release v0.7.1 is maintained on `release/v0.7.1`; `main` retains the author's separate
+upstream development. See the [release notes](docs/releases/v0.7.1.md) for scope.
 Upgrading from v0.4.1 uses a one-time backed-up
 [migration](docs/migration_v2.md), automatic for supported built-in desktop profiles;
 old external extensions must be converted explicitly. The runtime
@@ -134,8 +144,9 @@ directories; parameter-only refresh reuses them and preserves frozen job default
 Each explicitly saved route also owns an independent JSON of concrete parameter
 values, including Reader arguments and nested-route values. Editing an operator's
 defaults cannot change saved route values. Each execution keeps its own
-`parameters.json`; portable `.biopipe.zip` bundles contain `graph.json` and
-`parameters.json`. See [workflow parameter values](docs/workflow_parameters.md).
+`parameters.json`; portable `.biopipe.zip` bundles contain `graph.json`,
+`parameters.json` and `execution.json`. See [workflow parameter values](docs/workflow_parameters.md)
+and [per-workflow execution settings](docs/EXECUTION_ENVIRONMENTS.md#workflow-settings-and-frozen-json-values).
 See [protocol v3](docs/operator_protocol.md), [Step examples](docs/step_extensions.md)
 and [Reader examples](docs/reader_extensions.md).
 
@@ -196,6 +207,7 @@ copyable selection context and client revocation. See [CLI/MCP setup](docs/agent
 
 | Guide | Contents |
 | --- | --- |
+| [Execution environments](docs/EXECUTION_ENVIRONMENTS.md) | Automatic/manual placement, local uploads, mixed stages, resource queues and task management |
 | [Registry maintenance](docs/registry_maintenance.md) | Discover additions, validate declarations, generate portable package/route indexes |
 | [16S microbiome](docs/microbiome.md) | Abundance inputs, branches, new operators and resource behavior |
 | [Operator protocol](docs/operator_protocol.md) | Descriptor, parameters, ports, outputs, versions and compatibility |
@@ -224,7 +236,8 @@ plugin wheels/workers, reader dispatch, plugin upgrade/removal, route compatibil
 CLI processes, MCP stdio, revision conflicts, shared undo and data propagation.
 Windows desktop verification is available in `scripts/verify_desktop.py`.
 
-The resource budget is chosen once before a run. Actual sizes refine step admission;
+The host pool uses one startup memory snapshot; each admitted task receives its
+own budget. Actual sizes refine step admission;
 emergency spill protects evictable data. It cannot preempt an active native allocation.
 SDK plugins can implement the documented `flat-reduction-v1` stream or
 `dense-writer-v1` Reader protocols. Built-in `describe` and H5AD/MTX retain those

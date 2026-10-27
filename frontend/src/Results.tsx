@@ -13,15 +13,11 @@ import {
 } from "@phosphor-icons/react";
 import { api } from "./api";
 import { bytes } from "./graph";
+import {isActiveJob, jobStatusLabel} from './execution';
+import {TaskManager, TaskProgress} from './TaskManager';
 import type { Job, Preview, RunEvent, SpillCounts } from "./types";
 
-export const statusLabel: Record<Job["status"], string> = {
-  running: "运行中",
-  complete: "已完成",
-  failed: "失败",
-  cancelled: "已停止",
-  interrupted: "已中断",
-};
+export const statusLabel = jobStatusLabel;
 const eventNames: Record<string, string> = {
   worker_launching: "启动进程",
   worker_spawned: "进程已启动",
@@ -164,6 +160,8 @@ export function Results({
   collapsed,
   onToggle,
   stale,
+  onCancel,
+  cancelling,
 }: {
   job: Job | null;
   events: RunEvent[];
@@ -178,6 +176,8 @@ export function Results({
   collapsed: boolean;
   onToggle: () => void;
   stale: boolean;
+  onCancel?: (id: string) => void;
+  cancelling?: string;
 }) {
   const [preview, setPreview] = useState<Preview | null>(null),
     [selected, setSelected] = useState(""),
@@ -246,6 +246,7 @@ export function Results({
           {[
             ["results", "结果"],
             ["logs", "运行日志"],
+            ['tasks', '任务'],
             ["history", "运行记录"],
           ].map(([key, label]) => (
             <button
@@ -259,6 +260,7 @@ export function Results({
               {key === "history" && history.length > 0 && (
                 <span>{history.length}</span>
               )}
+              {key === 'tasks' && history.some(isActiveJob) && <span>{history.filter(isActiveJob).length}</span>}
             </button>
           ))}
         </div>
@@ -288,7 +290,8 @@ export function Results({
         </div>
       </div>
       <div className="results-body">
-        {tab === "history" ? (
+        {tab === 'tasks' ? <TaskManager jobs={history} selectedId={job?.id} onSelect={onJob} onCancel={onCancel} cancelling={cancelling}
+          onLogs={id => {onJob(id); onTab('logs');}}/> : tab === "history" ? (
           <div className="history-list">
             {history.length ? (
               history.map((item) => (
@@ -296,7 +299,6 @@ export function Results({
                   <Clock size={17} />
                   <button
                     className="history-name"
-                    disabled={job?.status === "running"}
                     onClick={() => onJob(item.id)}
                   >
                     <strong>{item.name}</strong>
@@ -321,7 +323,6 @@ export function Results({
                         .then(onRestore)
                         .catch((e) => onError(e.message));
                     }}
-                    disabled={job?.status === "running"}
                   >
                     载入画布
                   </button>
@@ -432,13 +433,15 @@ export function Results({
               </button>
             </div>
           </div>
-        ) : job.status === "running" ? (
+        ) : isActiveJob(job) ? (
           <div className="results-empty">
             <div className="empty-icon pulse">
               <ChartScatter size={24} />
             </div>
             <div>
-              <h3>正在执行工作流</h3>
+              <h3>{statusLabel[job.status]}</h3>
+              <TaskProgress job={job}/>
+              <button className="text-button" onClick={() => onTab('tasks')}>查看所有任务</button>
             </div>
           </div>
         ) : (

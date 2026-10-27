@@ -32,7 +32,7 @@ def freeze_graph(graph, catalog, root, *, bound=False, depth=0):
             node.params = _defaults(operators[node.operator], node.params)
         elif node.kind == "source" and node.source and node.source.path and not bound:
             from .source_paths import source_candidates
-            candidates = source_candidates(graph, catalog, root, node.source.path)
+            candidates = source_candidates(graph, catalog, root, node.source.path, node.source.location)
             if len(candidates) == 1:
                 reader = candidates[0]
                 node.source.args = _defaults(reader, node.source.args)
@@ -104,9 +104,10 @@ def restore_graph(topology, values):
 
 def export_bundle(graph):
     topology, values = split_graph(graph)
+    topology, execution = split_execution(topology)
     stream = BytesIO()
     with ZipFile(stream, "w", compression=ZIP_DEFLATED) as archive:
-        for name, value in (("graph.json", topology), ("parameters.json", values)):
+        for name, value in (("graph.json", topology), ("parameters.json", values), ("execution.json", execution)):
             archive.writestr(name, json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False))
     return stream.getvalue()
 
@@ -114,12 +115,43 @@ def export_bundle(graph):
 def import_bundle(content):
     try:
         with ZipFile(BytesIO(content)) as archive:
-            if sorted(archive.namelist()) != ["graph.json", "parameters.json"]:
-                raise ValueError("Workflow bundle must contain graph.json and parameters.json only")
+            names = sorted(archive.namelist())
+            if names not in (["graph.json", "parameters.json"], ["execution.json", "graph.json", "parameters.json"]):
+                raise ValueError("Workflow bundle must contain graph.json, parameters.json and optional execution.json only")
             # Only JSON is read in memory. No archive path is extracted or executed.
             topology = json.loads(archive.read("graph.json"))
             values = json.loads(archive.read("parameters.json"))
             json.dumps([topology, values], allow_nan=False)
+            if "execution.json" in names:
+                topology = restore_execution(topology, json.loads(archive.read("execution.json")))
             return restore_graph(topology, values)
     except (BadZipFile, KeyError, UnicodeError, TypeError) as exc:
         raise ValueError(f"Invalid workflow bundle: {exc}") from exc
+
+
+def split_execution(topology):
+    """Keep immutable execution settings alongside each saved parameter snapshot."""
+    topology = deepcopy(topology)
+    config = {"format": "biopipe.graph-execution", "schema_version": 1,
+              "memory": topology.pop("memory", {}), "execution": topology.get("runtime", {}).pop("execution", {}),
+              "routes": {}}
+    for node in topology["nodes"]:
+        if node.get("route"):
+            node["route"]["graph"], config["routes"][node["id"]] = split_execution(node["route"]["graph"])
+    return topology, config
+
+
+def restore_execution(topology, config):
+    topology = deepcopy(topology)
+    routes = {node["id"]: node for node in topology["nodes"] if node.get("route")}
+    if (not isinstance(config, dict) or set(config) != {"format", "schema_version", "memory", "execution", "routes"}
+            or config["format"] != "biopipe.graph-execution" or config["schema_version"] != 1
+            or not all(isinstance(config[k], dict) for k in ("memory", "execution", "routes"))
+            or set(routes) != set(config["routes"])):
+        raise ValueError("Execution settings do not match the saved graph")
+    topology["memory"] = deepcopy(config["memory"])
+    if config["execution"]:
+        topology.setdefault("runtime", {})["execution"] = deepcopy(config["execution"])
+    for key, node in routes.items():
+        node["route"]["graph"] = restore_execution(node["route"]["graph"], config["routes"][key])
+    return topology

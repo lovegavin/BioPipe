@@ -1,4 +1,4 @@
-"""Explicit host trust and SSH-only control transport; no dataset transfers."""
+"""Explicit host trust and framed SSH control, including bounded file chunks."""
 import base64
 from collections import deque
 import hashlib

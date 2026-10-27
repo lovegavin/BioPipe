@@ -12,7 +12,7 @@ import uuid
 
 from .storage import FileLock, atomic_json
 from biopipe.parameter_values import read_values
-from .parameters import freeze_graph, split_graph, restore_graph
+from .parameters import freeze_graph, split_graph, restore_graph, split_execution, restore_execution
 
 from .models import (Graph, GraphEdge, RouteDefinition, RouteInterface, RouteInput,
                      RouteOutput, SavedWorkflow, Workspace, LibraryState)
@@ -122,6 +122,7 @@ def expand_routes(graph, catalog):
     """
     registry = {item["id"]: item for item in catalog["operators"]}
     flat_nodes, flat_edges, owners, keeps = [], [], {}, []
+    exchange_aliases = {}
     serial = 0
 
     def add_node(node, owner):
@@ -240,12 +241,20 @@ def expand_routes(graph, catalog):
                 else:
                     fail(f"保留数据 {name!r} 不存在。", owner)
             keeps.append(local_names[name])
+        if not path:
+            for name in graph.runtime.get('exchange_outputs', []):
+                if name not in local_names:
+                    fail(f"Boundary output {name!r} does not exist")
+                exchange_aliases[name] = local_names[name]
         return source_endpoint
 
     visit(graph)
     result = graph.model_copy(deep=True)
     result.nodes, result.edges, result.interface = flat_nodes, flat_edges, None
     result.memory = {**result.memory, "keep": list(dict.fromkeys(keeps))}
+    if exchange_aliases:
+        result.runtime['exchange_outputs'] = list(dict.fromkeys(exchange_aliases.values()))
+        result.runtime['exchange_aliases'] = exchange_aliases
     return result, owners
 
 
@@ -271,6 +280,9 @@ class RouteLibrary:
         for path in self.directory.glob("route_*.json"):
             try:
                 item = SavedWorkflow.model_validate_json(path.read_text(encoding="utf-8"))
+                if item.execution_file:
+                    item.graph = Graph.model_validate(restore_execution(item.graph.model_dump(mode="json"),
+                                                     read_values(self.directory, item.execution_file)))
                 if item.parameters_file:
                     item.graph = restore_graph(item.graph.model_dump(mode="json"),
                                                read_values(self.directory, item.parameters_file))
@@ -295,10 +307,13 @@ class RouteLibrary:
 
     def _write_saved(self, item):
         topology, values = split_graph(item.graph)
+        topology, execution = split_execution(topology)
         item.parameters_file = f"parameters/{item.id}/v{item.version}.json"
+        item.execution_file = f"execution/{item.id}/v{item.version}.json"
         # Publish the values first. Replacing the route record is the commit
         # point; an interrupted save leaves the previous version usable.
         self._write(self.directory / item.parameters_file, values)
+        self._write(self.directory / item.execution_file, execution)
         record = item.model_dump(mode="json")
         record["graph"] = topology
         self._write(self.directory / f"{item.id}.json", record)

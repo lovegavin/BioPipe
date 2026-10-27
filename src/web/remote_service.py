@@ -214,9 +214,17 @@ class RemoteManager:
         remote_id = job['id']; local_id = 'ssh-'+key+'-'+remote_id
         profile = self.profile(key)
         remote = {'profile_id': key, 'job_id': remote_id, 'name': profile['name'], 'workspace': profile['workspace']}
+        parent = (job.get('execution_parent_id') or
+                  (job.get('graph') or {}).get('runtime', {}).get('execution_parent_id') or
+                  self.state['jobs'].get(local_id, {}).get('summary', {}).get('execution_parent_id'))
+        if parent:
+            # Reconnect bootstrap commonly contains only history summaries.
+            # Preserve lineage learned from a previous detailed job response.
+            job['execution_parent_id'] = parent
         job.update(id=local_id, remote=remote)
         self.state['jobs'][local_id] = {'profile_id': key, 'job_id': remote_id,
-            'summary': {k:job[k] for k in ('id','name','status','created_at','finished_at','error','remote') if k in job}}
+            'summary': {k:job[k] for k in ('id','name','status','created_at','finished_at','error','remote',
+                                          'execution_parent_id') if k in job}}
         return job
 
     def owns(self, key):

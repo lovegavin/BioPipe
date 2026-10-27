@@ -1,0 +1,56 @@
+.execution-settings .segmented {margin-bottom: 18px;}
+.execution-preview-button {width: 100%; justify-content: center;}
+.execution-preview {margin-top: 12px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;}
+.execution-preview > div {display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-bottom: 1px solid var(--border); font-size: 11px;}
+.execution-preview > div > span {min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+.execution-preview strong {font-size: 10px; font-weight: 500;}
+.execution-preview small {color: var(--text-muted);}
+.execution-preview p {margin: 8px 10px; font-size: 11px;}
+.environment-check {display: inline-flex; width: 16px; flex: 0 0 16px; align-items: center;}
+.environment-badge {display: inline-block; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; margin-top: 4px; color: var(--text-muted); font-size: 9px;}
+.canvas-context {max-height: calc(100vh - 16px); overflow-y: auto;}
+.canvas-context button:disabled {cursor: default; opacity: .45;}
+.parameter-section {padding-top: 8px; border-top: 1px solid var(--border); margin: 14px 0;}
+.parameter-section summary {font-weight: 500; font-size: 12px;}
+.parameter-groups .field {position: relative;}
+.parameter-groups .field > .context-help {position: absolute; right: 0; top: 0;}
+.path-actions {display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px;}
+.path-actions button {font-size: 11px; padding: 4px 8px;}
+.source-server-button {margin-top: 8px; width: 100%; justify-content: center;}
+.task-manager {padding: 16px 20px; min-width: 0;}
+.task-section-title {display: flex; align-items: center; gap: 9px; margin: 12px 0 8px; font-size: 11px; color: var(--text-muted); font-weight: 500;}
+.task-section-title > span {font-variant-numeric: tabular-nums;}
+.task-row {display: grid; grid-template-columns: minmax(130px, 1fr) minmax(150px, 1.2fr) 65px 75px; gap: 16px; align-items: center; padding: 10px 12px; border: 1px solid transparent; border-bottom-color: var(--border); border-radius: 7px;}
+.task-row.selected {border-color: var(--border-strong); background: var(--surface-hover);}
+.task-select {display: flex; align-items: center; min-width: 0; gap: 10px; text-align: left;}
+.task-select > svg {flex-shrink: 0; color: var(--text-muted);}
+.task-select > span:not(.status-dot) {min-width: 0; display: grid; gap: 2px;}
+.task-select strong {font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500;}
+.task-select small {font-size: 10px; color: var(--text-muted);}
+.task-progress {min-width: 0; width: 100%;}
+.task-progress-caption {display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 10px; margin-bottom: 5px; color: var(--text-muted);}
+.task-progress-caption > span {white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.task-progress-caption > small {white-space: nowrap; font-variant-numeric: tabular-nums;}
+.task-progress progress {display: block; width: 100%; height: 4px; border: 0; border-radius: 3px; overflow: hidden; background: var(--border); accent-color: var(--text-secondary);}
+.task-progress progress::-webkit-progress-bar {background: var(--border);}
+.task-progress progress::-webkit-progress-value {background: var(--text-secondary); transition: width .2s ease; border-radius: 3px;}
+.task-progress progress:not([value]) {opacity: .45;}
+.task-actions {display: flex; align-items: center; gap: 8px; justify-content: flex-end;}
+.task-actions .text-button {font-size: 11px;}
+.task-row .status-label {font-size: 11px; white-space: nowrap;}
+.status-dot.queued, .status-dot.preparing, .status-dot.uploading, .status-dot.waiting_connection {background: var(--text-muted);}
+.resource-summary {display: flex; flex-wrap: wrap; gap: 8px;}
+.resource-summary:empty {display: none;}
+.resource-summary > div {display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 7px; font-size: 10px; color: var(--text-muted);}
+.resource-summary strong {font-weight: 500; color: var(--text-secondary);}
+.resource-summary small {font-size: 10px;}
+.resource-unavailable {font-size: 10px; color: var(--text-muted);}
+.execution-settings .resource-summary {margin-top: 14px;}
+.execution-settings .resource-summary > div {width: 100%; flex-wrap: wrap;}
+.execution-settings .resource-summary small {margin-left: auto;}
+@media (max-width: 900px) {
+  .task-row {grid-template-columns: minmax(100px, 1fr) 65px 68px; gap: 8px;}
+  .task-row .task-progress {grid-column: 1 / -1; grid-row: 2;}
+  .task-manager {padding: 10px;}
+}
+@media (prefers-reduced-motion: reduce) {.task-progress progress::-webkit-progress-value {transition: none;}}

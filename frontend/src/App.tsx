@@ -41,7 +41,6 @@ import {
   Rows,
   SidebarSimple,
   SquaresFour,
-  Stop,
   X,
   Stack,
   FolderOpen,
@@ -83,6 +82,8 @@ import { WorkflowNode } from "./WorkflowNode";
 import { WorkflowEdge } from "./WorkflowEdge";
 import type { Block } from "./WorkflowNode";
 import { Inspector } from "./Inspector";
+import {EnvironmentMenu} from './ExecutionSettings';
+import {assignNodeTarget, defaultTarget, executionConfig, isActiveJob, nodeStatuses, nodeTarget, targetFromKey, targetLabel, withExecution, withFileLocation, withoutNodeExecution} from './execution';
 import { HelpTip } from "./HelpTip";
 import { LibrarySection } from "./LibrarySection";
 import { Results, statusLabel } from "./Results";
@@ -109,6 +110,7 @@ import type {
   SavedWorkflow,
   LibraryState,
   LibraryAction,
+  NodePatch,
 } from "./types";
 
 const nodeTypes = { block: WorkflowNode };
@@ -121,6 +123,7 @@ const emptyGraph: Graph = {
   nodes: [],
   edges: [],
   memory: { enabled: true, auto_spill: true },
+  runtime: {execution: {kind: 'local', mode: 'auto'}},
 };
 const LoadingSkeleton = memo(function LoadingSkeleton() {
   return (
@@ -186,9 +189,15 @@ function Studio() {
   const selectedServerId = remoteId(graph);
   const selectedServer = servers.find(s => s.profile.id === selectedServerId);
   const refreshServers = async () => {setServers(await api.remoteStatus()); setHistory(await api.history());};
-  const chooseServer = (id: string) => {if (!busy) commit(current => ({...current, runtime: {...current.runtime,
-    execution: id ? {kind: 'ssh', profile_id: id} : {kind: 'local'}}}));};
-  const browseRemote: BrowseRemote = (initial, onSelect, source) => setRemotePicker({profileId: selectedServerId, initial, onSelect, source});
+  const chooseServer = (id: string) => {if (!busy) commit(current => withExecution(current, {...targetFromKey(id), profile_id: id || undefined}));};
+  const browseRemote: BrowseRemote = (initial, onSelect, source, target) => {
+    const profileId = target?.kind === 'ssh' ? target.profile_id : selectedServerId || servers.find(server => server.connected)?.profile.id || servers[0]?.profile.id;
+    if (!profileId) {notify('请先连接服务器。'); return;}
+    setRemotePicker({profileId, initial, source, onSelect: (path, data) => {
+      const location = {kind: 'ssh' as const, profile_id: profileId};
+      onSelect(path, data ? {...data, location} : undefined, location);
+    }});
+  };
   const [pluginsOpen, setPluginsOpen] = useState(false);
   const [refreshingPlugins, setRefreshingPlugins] = useState(false);
   const [libraryState, setLibraryState] = useState<LibraryState>({disabled: [], hidden: []});
@@ -235,6 +244,9 @@ function Studio() {
   const [job, setJob] = useState<Job | null>(null),
     [history, setHistory] = useState<Job[]>([]),
     [events, setEvents] = useState<RunEvent[]>([]);
+  const [cancelling, setCancelling] = useState('');
+  const selectedJobId = useRef(job?.id);
+  selectedJobId.current = job?.id;
   const [consoleText, setConsoleText] = useState("");
   const [consoleTruncated, setConsoleTruncated] = useState(false);
   // React Flow's measurements preserve port bounds across controlled-node updates.
@@ -250,11 +262,19 @@ function Studio() {
     dragOrigin = useRef<Graph | null>(null),
     canvas = useRef<HTMLDivElement>(null);
   const flow = useReactFlow<Block>(),
-    busy = job?.status === "running";
-  const catalog = useMemo(() => presentCatalog((selectedServerId ? selectedServer?.info?.catalog : bootstrap?.catalog) || {
-    schema_version: 1 as const,
-    operators: [],
-  }), [bootstrap?.catalog, selectedServerId, selectedServer?.info?.catalog]);
+    // Runs own immutable snapshots; editing is only briefly gated during submit.
+    busy = action === 'run';
+  const activeJobs = history.filter(isActiveJob);
+  const catalog = useMemo(() => {
+    const preferred = selectedServerId ? selectedServer?.info?.catalog : bootstrap?.catalog;
+    const available = [preferred, bootstrap?.catalog, ...servers.filter(server => server.connected).map(server => server.info?.catalog)].filter(Boolean);
+    const operators = new Map(), readers = new Map();
+    for (const source of available) {
+      for (const operator of source!.operators) if (!operators.has(operator.id)) operators.set(operator.id, operator);
+      for (const reader of source!.readers || []) if (!readers.has(reader.id)) readers.set(reader.id, reader);
+    }
+    return presentCatalog({schema_version: 1, operators: [...operators.values()], readers: [...readers.values()]});
+  }, [bootstrap?.catalog, selectedServerId, servers]);
   const inspectNode = useCallback((id: string | null) => {
     setSelected(id);
     setInspected(id);
@@ -308,6 +328,15 @@ function Studio() {
     },
     [putGraph],
   );
+  function commitDocument(id: string, change: (current: Graph) => Graph) {
+    if (id === activeIdRef.current) {commit(change); return;}
+    const doc = documentsRef.current.find(item => item.id === id);
+    if (!doc) return;
+    const previous = documentHistory.current[id] || {past: [], future: [], selection: []};
+    documentHistory.current[id] = {...previous, past: [...previous.past.slice(-29), clone(doc.graph)], future: []};
+    const pages = documentsRef.current.map(item => item.id === id ? {...item, graph: change(clone(item.graph))} : item);
+    documentsRef.current = pages; setDocuments(pages); setSaved(false);
+  }
   const fit = useCallback(() => {
     requestAnimationFrame(() => {
       if (!canvas.current) return;
@@ -508,7 +537,7 @@ function Studio() {
       setLibraryState(state);
       setPanelWidths(workspace?.panel_widths || automaticPanels);
       let initial = normalizeGraph(data.demo);
-      const running = data.history.find((item) => item.status === "running" && !item.remote);
+      const running = data.history.find(isActiveJob);
       if (running) {
         const current = await api.job(running.id);
         setJob(current);
@@ -615,6 +644,7 @@ function Studio() {
     const source = new EventSource(api.url(`/api/jobs/${job.id}/events`));
     let warned = false;
     source.addEventListener("update", (event) => {
+      if (selectedJobId.current !== job.id) return;
       const payload = JSON.parse((event as MessageEvent).data) as {
         job: Job;
         events: RunEvent[];
@@ -622,7 +652,8 @@ function Studio() {
         console?: string;
         console_truncated?: boolean;
       };
-      setJob((previous) => ({ ...payload.job, graph: previous?.graph }));
+      setJob((previous) => previous?.id === payload.job.id ? ({ ...payload.job, graph: previous.graph ?? payload.job.graph }) : previous);
+      setHistory(previous => [payload.job, ...previous.filter(item => item.id !== payload.job.id)]);
       if (payload.console !== undefined) {
         setConsoleText(payload.console);
         setConsoleTruncated(payload.console_truncated === true);
@@ -663,6 +694,16 @@ function Studio() {
     };
     return () => source.close();
   }, [job?.id, notify]);
+  useEffect(() => {
+    if (!bootstrap) return;
+    let active = true;
+    const refresh = async () => {
+      try {const jobs = await api.history(); if (active) setHistory(jobs);}
+      catch { /* Keep visible tasks through transient disconnects. SSE owns selected-job diagnostics. */ }
+    };
+    const timer = window.setInterval(() => void refresh(), 2000);
+    return () => {active = false; window.clearInterval(timer);};
+  }, [!!bootstrap]);
 
   let order: string[] = [];
   try {
@@ -676,30 +717,7 @@ function Studio() {
     () => !!job?.graph && runSignature(graph) !== runSignature(job.graph),
     [graph, job?.graph],
   );
-  const statuses = useMemo(() => {
-    const result: Record<string, string> = {};
-    let current = -1;
-    if (stale) return result;
-    for (const event of events) {
-      if (event.event === "step_started" || event.event === "step_plan") {
-        current = Number(event.index) - 1;
-        const id = job?.order?.[current];
-        if (id) result[id] = "running";
-      }
-      if (event.event === "step_finished") {
-        const id = job?.order?.[current];
-        if (id) result[id] = "finished";
-      }
-    }
-    if (job?.status === "complete")
-      for (const id of job.order || []) result[id] = "finished";
-    for (const owner of new Set(Object.values(job?.node_owners || {}))) {
-      const steps = (job?.order || []).filter(id => job?.node_owners?.[id] === owner);
-      if (steps.every(id => result[id] === "finished")) result[owner] = "finished";
-      else if (steps.some(id => result[id])) result[owner] = "running";
-    }
-    return result;
-  }, [events, job?.status, job?.order, job?.node_owners, stale]);
+  const statuses = useMemo(() => nodeStatuses(events, job, stale), [events, job, stale]);
   const blocks: Block[] = graph.nodes.map((model) => ({
     id: model.id,
     type: "block",
@@ -724,7 +742,9 @@ function Studio() {
       contracts: contracts?.nodes[model.id],
       contractChecks: contracts?.edges.filter(edge => edge.target === model.id),
       busy: !!busy,
-      remote: !!selectedServerId,
+      remote: (model.source?.location ?? defaultTarget(graph)).kind === 'ssh',
+      environment: executionConfig(graph).mode === 'manual' && executionConfig(graph).node_targets?.[model.id]
+        ? targetLabel(nodeTarget(graph, model.id), servers) : undefined,
     },
   }));
   const edges = graph.edges.map((edge) => {
@@ -737,7 +757,7 @@ function Studio() {
       type: "workflow",
       selected: selectedEdges.includes(edge.id),
       deletable: !busy,
-      animated: busy && statuses[edge.target] === "running",
+      animated: isActiveJob(job) && statuses[edge.target] === "running",
       className: `${related ? "is-related" : ""} ${finished ? "is-finished" : ""} ${contracts?.edges.some(check => check.id === edge.id && check.status === "incompatible") ? "is-contract-invalid" : ""}`,
       interactionWidth: 22,
     };
@@ -745,7 +765,7 @@ function Studio() {
   function deleteNodes(ids: string[]) {
     if (busy) return;
     commit((current) => ({
-      ...current,
+      ...withoutNodeExecution(current, ids),
       nodes: current.nodes.filter((n) => !ids.includes(n.id)),
       edges: current.edges.filter(
         (e) => !ids.includes(e.source) && !ids.includes(e.target),
@@ -906,11 +926,13 @@ function Studio() {
     putGraph(future[0]);
     setFuture(future.slice(1));
   }
-  function updateNode(id: string, patch: Partial<GraphNode>) {
-    commit((current) => {
+  function updateNode(id: string, patch: NodePatch, documentId = activeIdRef.current) {
+    commitDocument(documentId, (current) => {
       const original = current.nodes.find((n) => n.id === id)!;
+      if (!original) return current;
+      const changes = typeof patch === 'function' ? patch(original) : patch;
       const nodes = current.nodes.map((n) =>
-        n.id === id ? { ...n, ...patch } : n,
+        n.id === id ? { ...n, ...changes } : n,
       );
       const updated = nodes.find((n) => n.id === id)!;
       const keep = (current.memory.keep || []).map((k) =>
@@ -968,15 +990,16 @@ function Studio() {
       setAction("");
     }
   }
-  async function stop() {
-    if (!job) return;
-    setAction("stop");
+  async function stop(id: string) {
+    setCancelling(id);
     try {
-      setJob(await api.cancel(job.id));
+      const next = await api.cancel(id);
+      setJob(current => current?.id === id ? {...next, graph: current.graph ?? next.graph} : current);
+      setHistory(current => current.map(item => item.id === id ? next : item));
     } catch (error) {
       failure(error);
     } finally {
-      setAction("");
+      setCancelling('');
     }
   }
   async function importFile(file?: File) {
@@ -1242,16 +1265,9 @@ function Studio() {
             <CheckCircle size={17} />
             检查
           </button>
-          {busy ? (
-            <button
-              className="stop-button"
-              disabled={!!action}
-              onClick={() => void stop()}
-            >
-              <Stop size={14} weight="fill" />
-              停止运行
-            </button>
-          ) : (
+          <button className="subtle-button task-control" onClick={() => {setTab('tasks'); setResultsCollapsed(false); setResultsExpanded(true);}}>
+            <Rows size={16}/>任务{activeJobs.length > 0 && <span className="count-badge">{activeJobs.length}</span>}
+          </button>
             <button
               className="primary-button"
               disabled={!!action}
@@ -1264,7 +1280,6 @@ function Studio() {
               )}
               运行
             </button>
-          )}
         </div>
         <input
           ref={importInput}
@@ -1652,6 +1667,8 @@ function Studio() {
             consoleText={consoleText}
             consoleTruncated={consoleTruncated}
             history={history}
+            cancelling={cancelling}
+            onCancel={id => void stop(id)}
             tab={tab}
             onTab={(value) => {
               setTab(value);
@@ -1683,6 +1700,7 @@ function Studio() {
             max={panelMaximum("inspector", displayedPanels, windowWidth)} onResize={value => resizePanel("inspector", value)}
             onReset={() => resizePanel("inspector", null)} onResizing={setResizingPanel}/>
           <Inspector
+            key={activeId}
             graph={graph}
             catalog={catalog}
             nodeId={inspected}
@@ -1691,8 +1709,11 @@ function Studio() {
             uploadLimit={bootstrap.upload_limit_mb}
             automaticMemoryFraction={selectedServerId ? selectedServer?.info?.automatic_memory_fraction : bootstrap.automatic_memory_fraction}
             automaticMemoryBudget={selectedServerId ? selectedServer?.info?.automatic_memory_budget_bytes : bootstrap.automatic_memory_budget_bytes}
-            onBrowseRemote={selectedServerId ? browseRemote : undefined}
-            onNode={updateNode}
+            onBrowseRemote={servers.length ? browseRemote : undefined}
+            onNode={(id, patch) => updateNode(id, patch, activeId)}
+            servers={servers}
+            onExecution={patch => commitDocument(activeId, current => withExecution(current, patch))}
+            onFileLocation={(key, target) => commitDocument(activeId, current => withFileLocation(current, key, target))}
             onMemory={(memory) => commit((current) => ({ ...current, memory }))}
             onParams={(params) => commit((current) => ({...current, params}))}
             onDelete={(id) => deleteNodes([id])}
@@ -1718,7 +1739,7 @@ function Studio() {
       </footer>
       {contextMenu && <>
         <div className="context-dismiss" onMouseDown={() => setContextMenu(null)} onContextMenu={e => {e.preventDefault(); setContextMenu(null);}}/>
-        <div className="canvas-context" role="menu" aria-label={contextMenu.libraryKey ? "算子库操作" : "画布操作"} style={{left: Math.max(8, Math.min(contextMenu.x, window.innerWidth-244)), top: Math.max(8, Math.min(contextMenu.y, window.innerHeight-290))}}>
+        <div className="canvas-context" role="menu" aria-label={contextMenu.libraryKey ? "算子库操作" : "画布操作"} style={{left: Math.max(8, Math.min(contextMenu.x, window.innerWidth-244)), top: Math.max(8, Math.min(contextMenu.y, window.innerHeight-460))}}>
           {contextMenu.route && <><button role="menuitem" onClick={() => {openRoute(contextMenu.route!); setContextMenu(null);}}><Stack size={16}/>打开路线的算子图</button><div className="context-caption">{contextMenu.route.name} · v{contextMenu.route.version}</div><div className="menu-line"/></>}
           {contextMenu.libraryKey ? <>
             {libraryState.hidden.includes(contextMenu.libraryKey) ? <button role="menuitem" onClick={() => void manageLibrary(contextMenu.libraryKey!, "restore")}><ArrowCounterClockwise size={16}/>恢复到算子库</button> : <>
@@ -1733,6 +1754,8 @@ function Studio() {
             <button role="menuitem" disabled={!selection.length} onClick={() => void copySelection()}><Copy size={16}/>复制节点 <kbd>Ctrl C</kbd></button>
             <button role="menuitem" disabled={busy} onClick={() => void pasteSelection(false, flow.screenToFlowPosition({x: contextMenu.x, y: contextMenu.y}))}><Clipboard size={16}/>粘贴 <kbd>Ctrl V</kbd></button>
             <button role="menuitem" disabled={!selection.length || busy} onClick={() => void pasteSelection(true)}><SquaresFour size={16}/>复制副本 <kbd>Ctrl D</kbd></button>
+            {contextMenu.nodeId && <EnvironmentMenu graph={graph} nodeId={contextMenu.nodeId} servers={servers}
+              onSelect={target => {commit(current => assignNodeTarget(current, contextMenu.nodeId!, target)); setContextMenu(null);}}/>}
           </>}
         </div>
       </>}

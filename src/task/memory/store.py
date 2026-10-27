@@ -523,14 +523,14 @@ class ArtifactStore(MutableMapping):
             self._delete_folder(temporary)
             raise
 
-    def read_metadata(self, entry):
+    def read_metadata(self, entry, *, mmap=False):
         directory = entry.disk
         class MetadataUnpickler(pickle.Unpickler):
             def persistent_load(self, pid):
                 kind, filename = pid
                 if kind != "ndarray" or Path(filename).name != filename:
                     raise ContextError("Invalid run-local array reference")
-                return np.load(directory / filename, allow_pickle=False)
+                return np.load(directory / filename, allow_pickle=False, mmap_mode="r" if mmap else None)
         with open(directory / "metadata.pkl", "rb") as file:
             return MetadataUnpickler(file).load()
 

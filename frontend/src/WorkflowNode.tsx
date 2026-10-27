@@ -83,6 +83,7 @@ export const WorkflowNode = memo(function WorkflowNode({
           </strong>
           {subtitle && <p>{subtitle}</p>}
           {spec?.supported_systems?.join(',') === 'linux' && <span className="platform-badge" title="需要 Linux 运行环境">Linux</span>}
+          {typeof data.environment === 'string' && <span className="environment-badge" title="手动指定的运行环境">{data.environment}</span>}
         </div>
         <span className="node-state">
           {status === "finished" ? (

@@ -62,9 +62,20 @@ class RemoteService:
         self.service = JobService(Settings(workspace, workspace/'.studio', code/'frontend/dist',
                                           code_root=code, input_roots=input_roots or [Path('/')]),
                                   catalog_from_descriptors())
-        memory = MemoryConfig.parse({'runtime': {'memory': {'enabled': True}}})
-        self.memory = {'automatic_memory_budget_bytes': memory.budget_bytes,
+        self.memory = {'automatic_memory_budget_bytes': self.service.admission.capacity,
                        'automatic_memory_fraction': AUTO_BUDGET_FRACTION}
+        from .transfers import TransferStore
+        self.transfers = TransferStore(workspace/'.studio'/'transfers', resolve_input=self.transfer_path)
+        self.transport_leases = {}
+        # Generated checkpoints and verified upload groups belong to this
+        # service even when external input roots were restricted by the owner.
+        if workspace not in self.service.settings.input_roots:
+            self.service.settings.input_roots.append(workspace)
+
+    def transfer_path(self, value):
+        from .transfers import no_symlinks
+        no_symlinks((self.service.root/value).expanduser())
+        return self.path(value)
 
     def graph_catalog(self, graph):
         return self.service.plugins.catalog_for(graph, self.service.base_catalog)
@@ -76,6 +87,33 @@ class RemoteService:
         return path
 
     def dispatch(self, method, params):
+        for lease, expires in list(self.transport_leases.items()):
+            if expires < time.monotonic():
+                self.service.admission.release(lease)
+                del self.transport_leases[lease]
+        if method in ('transport_reserve', 'transport_release'):
+            key = params['id']
+            if not isinstance(key, str) or not __import__('re').fullmatch('transfer-[a-f0-9]{32}', key):
+                raise ValueError('Invalid transfer allocation identity')
+            if method == 'transport_release':
+                self.service.admission.release(key)
+                self.transport_leases.pop(key, None)
+                return {'released': True}
+            # Framing/decoded buffers are bounded by the transport implementation.
+            reserved = self.service.admission.reserve(key, {'reserved_bytes': 6*1024**2, 'cpu_threads': 0, 'kind': 'transport'})
+            if reserved:
+                self.transport_leases[key] = time.monotonic() + 30
+            return {'reserved': reserved}
+        if method.startswith('transfer_'):
+            params = dict(params)
+            lease = params.pop('_transport_lease', None)
+            if lease:
+                if lease not in self.transport_leases:
+                    ready = self.dispatch('transport_reserve', {'id': lease})
+                    if not ready['reserved']:
+                        raise ValueError('Transfer memory is unavailable; retry admission')
+                self.transport_leases[lease] = time.monotonic() + 30
+            return self.transfers.dispatch(method, params)
         from src.web.models import Graph
         from src.web.service import safe_json
         from src.web.graph import compile_graph, relative_manifest
@@ -87,12 +125,50 @@ class RemoteService:
             import platform, shutil
             from biopipe import __version__
             service.refresh_catalog()
-            tools = sorted({tool for spec in service.catalog['operators']
+            tools = sorted({tool for spec in service.catalog['operators'] + service.catalog['readers']
                             for tool in spec.get('resources', {}).get('external_tools', [])})
             return {'protocol_version': VERSION, 'version': __version__, 'system': platform.system().lower(),
                     'python': sys.executable, 'workspace': str(service.root), 'code_root': str(service.settings.code_root),
                     'catalog': service.catalog, 'history': service.history(), 'demo': service.demo,
-                    'tools': {name: bool(shutil.which(name)) for name in tools}, **self.memory}
+                    'tools': {name: bool(shutil.which(name)) for name in tools},
+                    'dependencies': service.dependencies.snapshot(), 'resources': service.resources(), **self.memory}
+        if method == 'resources':
+            return service.resources()
+        if method == 'pin_compatibility':
+            from src.web.execution_pins import validated_pins
+            return validated_pins(service, params.get('pins', {}))
+        if method == 'file_stat':
+            values = params.get('paths', [])
+            if not isinstance(values, list) or len(values) > 256:
+                raise ValueError('Invalid file metadata request')
+            result = []
+            for value in values:
+                path = self.transfer_path(str(self.path(params.get('base', '.')) / value))
+                result.append({'path': str(path), 'exists': path.is_file(),
+                               'bytes': path.stat().st_size if path.is_file() else None})
+            return result
+        if method == 'exchange':
+            key = params['job_id']; service.require(key)
+            path = service.jobs_dir / key / 'output' / 'exchange.json'
+            if not path.is_file():
+                raise ValueError('The stage has no committed exchange outputs')
+            value = json.loads(path.read_text(encoding='utf-8'))
+            return value
+        if method == 'preview':
+            return service.preview(params['job_id'], params['artifact_id'])
+        if method == 'output_file':
+            key = params['job_id']; kind = params['kind']
+            if kind == 'artifact':
+                path, _ = service.artifact(key, params['artifact_id'])
+            elif kind == 'artifact_file':
+                path = service.artifact_file(key, params['artifact_id'], params['role'])
+            elif kind == 'figure':
+                path = service.figure_file(key, params['index'])
+            elif kind == 'export':
+                path = service.export_file(key, params['index'])
+            else:
+                raise ValueError('Unknown output kind')
+            return {'path': str(path), 'bytes': path.stat().st_size, 'name': path.name}
         if method == 'browse':
             folder = self.path(params.get('path') or '.')
             if not folder.is_dir():
@@ -198,7 +274,7 @@ class RemoteService:
             _, console = service.console_snapshot(key, job)
             job.pop('graph', None)
             return safe_json({'job': job, 'events': sorted(events, key=lambda e: e.get('time', '')),
-                              'offsets': result, 'done': job['status'] != 'running' and job.get('logs_complete', True) and eof,
+                              'offsets': result, 'done': job['status'] not in ('running', 'queued', 'preparing', 'uploading') and job.get('logs_complete', True) and eof,
                               **(console or {})})
         raise ValueError('Unknown remote operation')
 

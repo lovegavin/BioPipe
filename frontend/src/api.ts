@@ -47,6 +47,8 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
   return value as T;
 }
 export const api = {
+  executionPlan: (graph: Graph) => request<import('./types').ExecutionPlan>('/api/execution/plan', graph),
+  executionResources: () => request<import('./types').ExecutionResources>('/api/execution/resources'),
   remoteStatus: () => request<import('./types').RemoteStatus[]>('/api/remote'),
   saveRemote: (profile: import('./types').RemoteProfile) => request<import('./types').RemoteProfile>('/api/remote/profiles', profile),
   connectRemote: (id: string, credentials: {password?: string; passphrase?: string}) => request<import('./types').RemoteInfo>(`/api/remote/${id}/connect`, credentials),
@@ -140,6 +142,14 @@ export const api = {
       await request(`/api/assets/batches/${batch.id}/cancel`, {}).catch(() => undefined);
       throw error;
     }
+  },
+  uploadReference: async (file: File, baseDir: string) => {
+    const response = await fetch(`${base}/api/assets/reference?filename=${encodeURIComponent(file.name)}&base_dir=${encodeURIComponent(baseDir)}`, {
+      method: 'POST', headers: {'Content-Type': 'application/octet-stream', 'X-Studio-Token': token}, body: file,
+    });
+    const value = await response.json();
+    if (!response.ok) throw new ApiError(value.message || value.detail || '文件导入失败。');
+    return value as {path: string; bytes: number};
   },
   upload: async (file: File, batch?: string) => {
     const response = await fetch(

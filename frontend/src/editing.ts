@@ -1,12 +1,18 @@
-import type { Graph, GraphNode, GraphEdge } from "./types";
+import type { Graph, GraphNode, GraphEdge, TargetRef } from "./types";
 import { clone } from "./graph";
+import {defaultTarget, executionConfig, withExecution} from './execution';
 
 const FORMAT = "biopipe/graph-fragment-v1";
-export type Fragment = { format: typeof FORMAT; base_dir?: string; nodes: GraphNode[]; edges: GraphEdge[] };
+export type Fragment = { format: typeof FORMAT; base_dir?: string; nodes: GraphNode[]; edges: GraphEdge[];
+  node_targets?: Record<string, TargetRef>; file_locations?: Record<string, TargetRef> };
 export function copyFragment(graph: Graph, selected: string[]): Fragment {
   const ids = new Set(selected);
-  return clone({ format: FORMAT, base_dir: graph.base_dir, nodes: graph.nodes.filter(n => ids.has(n.id)),
-    edges: graph.edges.filter(e => ids.has(e.source) && ids.has(e.target)) });
+  const config = executionConfig(graph);
+  return clone({ format: FORMAT, base_dir: graph.base_dir, nodes: graph.nodes.filter(n => ids.has(n.id)).map(node => node.source
+      ? {...node, source: {...node.source, location: node.source.location ?? defaultTarget(graph)}} : node),
+    edges: graph.edges.filter(e => ids.has(e.source) && ids.has(e.target)),
+    node_targets: Object.fromEntries(Object.entries(config.node_targets || {}).filter(([id]) => ids.has(id))),
+    file_locations: Object.fromEntries(Object.entries(config.file_locations || {}).filter(([key]) => selected.some(id => key.startsWith(`${id}.params.`) || key.startsWith(`${id}.source.args.`)))) });
 }
 export function parseFragment(text: string): Fragment {
   const value = JSON.parse(text) as Fragment;
@@ -52,5 +58,12 @@ export function pasteFragment(graph: Graph, fragment: Fragment, anchor?: {x: num
     next.edges.push({...clone(edge), id: `edge_${crypto.randomUUID()}`, source: ids.get(edge.source)!, target: ids.get(edge.target)!});
   // A pasted node is independent of the saved route boundary until explicitly
   // exposed in the interface editor; no external wires or retention names leak.
-  return {graph: next, ids: [...ids.values()]};
+  const config = executionConfig(next), targets = {...config.node_targets}, locations = {...config.file_locations};
+  for (const [oldId, newId] of ids) {
+    if (fragment.node_targets?.[oldId]) targets[newId] = clone(fragment.node_targets[oldId]);
+    for (const [key, target] of Object.entries(fragment.file_locations || {})) {
+      if (key.startsWith(`${oldId}.params.`) || key.startsWith(`${oldId}.source.args.`)) locations[newId + key.slice(oldId.length)] = clone(target);
+    }
+  }
+  return {graph: withExecution(next, {node_targets: targets, file_locations: locations}), ids: [...ids.values()]};
 }

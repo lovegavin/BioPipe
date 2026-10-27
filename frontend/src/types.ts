@@ -1,4 +1,6 @@
 export type Parameter = {
+  group?: 'main' | 'environment' | 'resources' | 'advanced';
+  priority?: number;
   path_kind?: 'source' | 'workflow';
   description?: string;
   key: string;
@@ -63,6 +65,7 @@ export type ContractCheck = { id: string; source: string; target: string; status
 export type NodeContracts = { inputs: (PortContract | null)[]; outputs: PortContract[] };
 export type ContractAnalysis = { version: number; nodes: Record<string, NodeContracts>; edges: ContractCheck[] };
 export type DataSource = {
+  location?: TargetRef;
   path: string;
   dims: string[];
   labels: Record<string, unknown>;
@@ -87,6 +90,7 @@ export type GraphEdge = {
   sourceHandle: string;
   targetHandle: string;
 };
+export type NodePatch = Partial<GraphNode> | ((current: GraphNode) => Partial<GraphNode>);
 export type Memory = {
   enabled: boolean;
   auto_spill?: boolean;
@@ -149,7 +153,11 @@ export type Job = {
   remote?: {profile_id: string; job_id: string; name: string; workspace: string};
   id: string;
   name: string;
-  status: "running" | "complete" | "failed" | "cancelled" | "interrupted";
+  status: "queued" | "preparing" | "uploading" | "waiting_connection" | "running" | "complete" | "failed" | "cancelled" | "interrupted";
+  progress?: {phase: string; completed: number; total: number; percent?: number; bytes_done?: number; bytes_total?: number; current?: string};
+  allocation?: Record<string, unknown>;
+  children?: unknown[];
+  execution_plan?: ExecutionPlan;
   created_at: string;
   finished_at?: string | null;
   error?: string | null;
@@ -199,4 +207,16 @@ export type RemoteInfo = {catalog: Catalog; history: Job[]; system: string; vers
 export type RemoteStatus = {profile: RemoteProfile; fingerprint?: string; connected: boolean; info?: RemoteInfo};
 export type RemoteListing = {path: string; parent: string; next_offset: number | null;
   entries: {name: string; path: string; directory: boolean; bytes: number; modified: number}[]};
-export type BrowseRemote = (current: string, onSelected: (path: string, source?: DataSource) => void, source?: boolean) => void;
+export type TargetRef = {kind: 'local'} | {kind: 'ssh'; profile_id: string};
+export type ExecutionConfig = {
+  kind: 'local' | 'ssh'; profile_id?: string; mode?: 'manual' | 'auto';
+  node_targets?: Record<string, TargetRef>; file_locations?: Record<string, TargetRef>;
+  eligible_targets?: TargetRef[]; max_parallel_tasks?: number;
+};
+export type ExecutionPlan = {mode: 'manual' | 'auto';
+  units: {id: string; node_ids: string[]; target: TargetRef; reason: string; estimated_bytes?: number}[];
+  transfers: unknown[]; warnings: string[]};
+export type ExecutionResources = {targets: {target: TargetRef; name: string; capacity_bytes: number;
+  reserved_bytes: number; available_bytes: number; active_jobs: number; queued_jobs: number;
+  cpu_capacity: number; cpu_reserved: number}[]};
+export type BrowseRemote = (current: string, onSelected: (path: string, source?: DataSource, location?: TargetRef) => void, source?: boolean, target?: TargetRef) => void;

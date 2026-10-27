@@ -30,6 +30,8 @@ class ToolRunner:
         if self.budget and self.memory_bytes > self.budget:
             raise ValueError("External workspace exceeds the frozen run budget; lower memory_mb")
         self.threads = int(params.get("threads", 1))
+        if os.environ.get('BIOPIPE_CPU_LIMIT'):
+            self.threads = min(self.threads, max(1, int(os.environ['BIOPIPE_CPU_LIMIT'])))
         self.count = 0
         self.versions = {}
         if self.wsl:

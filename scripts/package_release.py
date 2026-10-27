@@ -150,9 +150,19 @@ See docs/installation.md, docs/reader_extensions.md and docs/step_extensions.md.
 ''', encoding='utf-8')
     with (destination / 'START_HERE.txt').open('a', encoding='utf-8') as guide:
         guide.write('''
-HI-C AND SSH EXECUTION
-Choose a server target in the top toolbar to browse server inputs and run there.
-Inputs, outputs and computation stay on the server. New SSH connections default
+EXECUTION ENVIRONMENTS, TRANSFERS AND TASKS
+Use Execution settings to choose automatic placement or manual node targets.
+Local inputs and declared reference/companion files upload automatically when a
+stage runs on a server. Transfers support progress, verified resumption and reuse.
+Inputs already on the execution server remain there. Entirely remote workflows
+keep their results there; mixed stages transfer only required boundary outputs.
+Route operators run in one environment. Each saved workflow keeps its own
+execution.json beside its frozen parameters.json. The Tasks panel manages active
+jobs; per-host memory and CPU admission prevents overcommitting the shared pool.
+See docs/EXECUTION_ENVIRONMENTS.md for settings, recovery and known limits.
+
+HI-C AND SSH SETUP
+Choose a server target in the top toolbar to browse server inputs. New SSH connections default
 to automatic BioPipe + Hi-C deployment on Linux x86_64. Supply the SSH account,
 verify the host fingerprint, and connect; no preconfigured Python is required.
 The server needs writable storage and outbound HTTPS. Progress and setup errors

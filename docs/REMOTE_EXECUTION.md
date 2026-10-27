@@ -1,11 +1,13 @@
 # Windows editing and SSH execution
 
-BioPipe Studio v0.6.2 can prepare a Linux server and run a workflow over SSH. Choose an execution
+BioPipe Studio v0.7.1 can prepare a Linux server and run a workflow over SSH. Choose an execution
 target in the top toolbar, select server files in the input inspector, then use
 the existing **Check**, **Run**, **Stop**, results and log controls. This feature
 is included in both the full and Lite Windows desktop archives.
 The Windows/Linux execution results are recorded in [REMOTE_VALIDATION.md](REMOTE_VALIDATION.md),
 and automatic deployment results in [AUTO_DEPLOY_VALIDATION.md](AUTO_DEPLOY_VALIDATION.md).
+For automatic input uploads, mixed local/SSH
+stages and concurrent task manager, see [execution environments](EXECUTION_ENVIRONMENTS.md).
 
 ## Prepare the server
 
@@ -100,8 +102,9 @@ When importing on another Windows computer, create/select its own server profile
 in the toolbar. Missing connections produce an error; execution never silently
 falls back to the local machine. A disconnected server with a cached catalog
 still supports editing and saving. Checking and running require a live connection.
-Workflow bundles retain `graph.json` and a separate `parameters.json`, including
-frozen Reader and operator values. Existing code pins are retained and verified
+Current workflow bundles retain `graph.json`, a separate `parameters.json` with
+frozen Reader and operator values, and per-workflow `execution.json`. Earlier
+two-file bundles remain readable. Existing code pins are retained and verified
 against the server registry at submission.
 
 ## Files, memory and outputs
@@ -111,29 +114,35 @@ reads an entire input file to determine its size. Directory listings are paged;
 hidden files can be shown explicitly. The account's existing filesystem access
 determines which files it can use. Choosing a primary file selects its Reader;
 companion-file and reference-genome parameters can also browse the server.
-Relative source paths resolve inside the server run directory. Absolute paths
-can refer to data elsewhere on the server. Windows-only paths must be replaced
-with server paths when switching execution targets.
+Relative server source paths resolve inside the server run directory. Absolute
+paths can refer to data elsewhere on the server. In the current editor, local
+file selections record their location explicitly and are automatically staged
+when needed by a server operator. A path entered as a server path must exist on
+that server; changing the preferred execution target does not relocate the file.
 
-The editor sends workflow topology and parameter values only. The server writes
+For server-resident inputs, submission sends workflow topology and parameter
+values. Local inputs assigned to a server are transferred through the verified
+upload cache before submission. The server writes
 `task.yaml`, `parameters.json`, `plugins.lock.json` and `job.json` under
 `<run-directory>/.studio/jobs/<job-id>/`. Reader execution, compressed-file handling,
 file references, subprocess isolation, streaming, planned cache placement and
 emergency spilling use the same existing engine.
 
-The UI displays the server's memory preview. A worker takes its own single
-available-memory snapshot at run start and uses the existing automatic 90% budget
-unless the graph specifies a budget. No Windows RAM value is substituted, and
-there is no periodic available-memory replanning. Runtime pressure still uses the
+The UI displays the server's memory pool. Current host admission takes one
+available-memory snapshot for a host execution session and reserves 90% for its
+shared pool. Workers receive individual shares or explicit requested budgets;
+concurrent workers do not each receive the entire pool. No Windows RAM value is
+substituted, and there is no periodic available-memory replanning. Runtime pressure still uses the
 emergency spill mechanism. External programs retain their existing memory-limit
 and chunk behavior; remote execution does not make an unsupported algorithm stream.
 On Linux, the snapshot is capped by cgroup v1/v2 hard-limit headroom, including
 visible parent groups. Charged file cache is conservatively counted as used memory.
 This prevents a container from budgeting against its host's larger RAM pool.
 
-Results show server artifact/report paths. Input matrices, output arrays and
-figures are not automatically downloaded or locally previewed. Only control
-metadata, diagnostic events and console logs return to the editor. The log panel
+Server outputs remain in their run directories. The task results panel can request
+a preview, report or download. Mixed-environment stages transfer the intermediate
+artifacts needed by downstream operators; they do not mirror the whole server
+workspace. Diagnostic events and console logs return to the editor. The log panel
 shows recent output; **Full process log** streams the complete server console in
 chunks rather than truncating the archived log. A 128 MiB control-message guard
 is a transport safeguard, not an input-data or file-upload limit.
@@ -150,8 +159,10 @@ without a running worker; job records and logs remain on disk.
 A submission identity is persisted before sending a run request. If the response
 is lost, retrying that unchanged submission returns the same server job rather
 than launching it twice. Reusing that identity with another graph is rejected.
-Each server workspace permits one active run, matching the local engine. **Stop**
-explicitly cancels that server job. Disconnecting or removing a local connection
+Current host admission permits concurrent tasks when memory and CPU reservations
+fit; additional tasks queue. The task manager stops individual jobs. If SSH is
+offline, cancellation remains pending until the server acknowledges it; a pending
+request must not be presented as a confirmed stop. Disconnecting or removing a local connection
 does not stop computation. Powering off the server still stops its processes;
 this feature is not checkpoint/restart or a cluster scheduler.
 

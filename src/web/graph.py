@@ -151,6 +151,7 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
         node = nodes[key]
         if node.kind == "source":
             source = node.source.model_dump()
+            source.pop("location", None)
             path = read_path(source["path"], graph.base_dir)
             if require_files and not path.is_file():
                 raise GraphError(f"找不到输入文件：{node.source.path}", key)

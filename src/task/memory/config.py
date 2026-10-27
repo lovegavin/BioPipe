@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import math
+import os
 
 from src.core import ContextError, ManifestError
 
@@ -74,6 +75,10 @@ class MemoryConfig:
             if automatic <= 0:
                 raise ManifestError("No available memory for an automatic budget; retry when memory is available")
         budget = positive("budget_mb", 0, 1024**2) if "budget_mb" in raw else automatic
+        if 'budget_mb' in raw and os.environ.get('BIOPIPE_AVAILABLE_AT_START_BYTES'):
+            # Studio/SSH worker handoff: preserve the host's original audit
+            # snapshot without a second scan or a second 90% allocation.
+            available_at_start = int(os.environ['BIOPIPE_AVAILABLE_AT_START_BYTES'])
         target, spill = raw.get("target_fraction", .70), raw.get("spill_fraction", .85)
         if any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) for v in (target, spill)) or not 0 < target < spill <= 1:
             raise ManifestError("Require 0 < target_fraction < spill_fraction <= 1")

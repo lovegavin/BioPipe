@@ -6,6 +6,7 @@ from biopipe.file_formats import primary_ext
 
 
 def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=()):
+    source_overrides = {**graph.runtime.get("exchange_contracts", {}), **(source_overrides or {})}
     from .graph import GraphError, project_path
     from .routes import check_interface, require_route, port_index
     if len(ancestry) > 6:
@@ -27,7 +28,7 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=()):
             elif source:
                 schema.update(dims=source.dims, ndim=len(source.dims))
                 from .source_paths import source_candidates
-                candidates = source_candidates(graph, catalog, root, source.path)
+                candidates = source_candidates(graph, catalog, root, source.path, source.location)
                 if len(candidates) == 1:
                     reader = candidates[0]
                     if reader["id"] == "TxtReader":

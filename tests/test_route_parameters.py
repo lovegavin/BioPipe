@@ -174,7 +174,7 @@ def test_bundle_api_and_run_use_concrete_task_values(studio):
     exported = client.post('/api/workflows/export', json=graph)
     assert exported.status_code == 200, exported.text
     with ZipFile(BytesIO(exported.content)) as archive:
-        assert sorted(archive.namelist()) == ['graph.json', 'parameters.json']
+        assert sorted(archive.namelist()) == ['execution.json', 'graph.json', 'parameters.json']
         assert json.loads(archive.read('parameters.json'))['nodes']['pca']['params']['n_components'] == 10
     bundle_path = service.root / 'saved.biopipe.zip'
     bundle_path.write_bytes(exported.content)

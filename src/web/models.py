@@ -14,11 +14,17 @@ class Position(StrictModel):
     y: float = Field(ge=-1000000, le=1000000)
 
 
+class ExecutionTarget(StrictModel):
+    kind: Literal["local", "ssh"] = "local"
+    profile_id: str | None = Field(default=None, max_length=120)
+
+
 class Source(StrictModel):
     path: str = Field(default="", max_length=2048)
     dims: list[str] = Field(default_factory=lambda: ["sample", "feature"], min_length=1, max_length=8)
     labels: dict[str, Any] = Field(default_factory=lambda: {"sample": "auto", "feature": "builtin"})
     args: dict[str, Any] = Field(default_factory=dict)
+    location: ExecutionTarget | None = None
 
 
 class GraphNode(StrictModel):
@@ -88,6 +94,7 @@ class SavedWorkflow(StrictModel):
     updated_at: str
     graph: Graph
     parameters_file: str | None = Field(default=None, min_length=1, max_length=2048)
+    execution_file: str | None = Field(default=None, min_length=1, max_length=2048)
 
 
 class SaveWorkflow(StrictModel):

@@ -60,6 +60,9 @@ def main() -> None:
         for name, spec in manifest["sources"].items():
             ctx.register_source(name, spec)
         run(ctx, manifest["steps"])
+        if manifest.get("runtime", {}).get("exchange_outputs"):
+            from biopipe.exchange import export_outputs
+            export_outputs(ctx)
     except BaseException as exc:
         if ctx is None:
             run_log.bootstrap_failure(task_dir, exc)

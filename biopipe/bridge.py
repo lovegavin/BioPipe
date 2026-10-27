@@ -174,7 +174,10 @@ class Bridge:
             self.actor(request, "context")
             from biopipe.documents import layout
             graph = Graph.model_validate(layout(payload["graph"]))
-            result = service.validate_graph(graph, require_files=payload.get("require_files", False))
+            executions = getattr(service, 'executions', None)
+            result = (executions.validate(graph, require_files=payload.get('require_files', False))
+                      if executions and executions.applies(graph) else
+                      service.validate_graph(graph, require_files=payload.get("require_files", False)))
             return {**result, "graph": graph.model_dump(mode="json")}
 
         @app.post("/api/agent/sessions/{session}/run")
@@ -186,17 +189,21 @@ class Bridge:
             doc = next((d for d in snapshot["workspace"]["documents"] if d["id"] == payload["document_id"]), None)
             if doc is None:
                 raise CommandError("not_found", "Unknown document", 404)
-            return service.launch(Graph.model_validate(doc["graph"]))
+            graph = Graph.model_validate(doc['graph'])
+            executions = getattr(service, 'executions', None)
+            return executions.launch(graph) if executions and executions.applies(graph) else service.launch(graph)
 
         @app.get("/api/agent/jobs/{job}")
         def job(job: str, request: Request):
             self.actor(request, "context")
-            return service.details(job)
+            executions = getattr(service, 'executions', None)
+            return executions.details(job) if executions and executions.owns(job) else service.details(job)
 
         @app.post("/api/agent/jobs/{job}/cancel")
         def cancel(job: str, request: Request):
             self.actor(request, "run")
-            return service.cancel(job)
+            executions = getattr(service, 'executions', None)
+            return executions.cancel(job) if executions and executions.owns(job) else service.cancel(job)
 
         @app.get("/api/agent/plugins")
         def plugins(request: Request):

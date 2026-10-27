@@ -27,6 +27,44 @@ def profile(**values):
                 key_path='', python='python3', app_dir='/opt/biopipe', workspace='/work', mode='exec', menu_choice='', **values)
 
 
+@pytest.mark.parametrize('lineage', ['summary', 'graph'])
+def test_reconnect_history_retains_child_lineage_after_reload(tmp_path, lineage):
+    from types import SimpleNamespace
+    child = {'id': 'server-child', 'name': 'Stage', 'status': 'running',
+             'created_at': '2026-01-01', 'finished_at': None, 'error': None}
+    if lineage == 'summary':
+        child['execution_parent_id'] = 'exec-parent'
+    else:
+        child['graph'] = {'runtime': {'execution_parent_id': 'exec-parent'}}
+    bootstrap = {'workspace': '/work', 'history': [child]}
+    class Connection:
+        connected = True
+        def __init__(self, *args): self.info = deepcopy(bootstrap)
+        def close(self): self.connected = False
+    service = SimpleNamespace(directory=tmp_path)
+    manager = RemoteManager(service, connection_factory=Connection)
+    record = manager.save(profile())
+    key = record['id']; wrapped = f'ssh-{key}-server-child'
+    manager.connect(key, {})
+    assert manager.history()[0]['execution_parent_id'] == 'exec-parent'
+    assert manager.history()[0]['id'] == wrapped
+    manager.close()
+    # An older server may omit graph and parent fields on a later reconnect.
+    # Its shorter summary must not erase a previously established association.
+    bootstrap['history'] = [{k: v for k, v in child.items() if k not in ('graph', 'execution_parent_id')}]
+    bootstrap['history'][0]['status'] = 'complete'
+    reopened = RemoteManager(service, connection_factory=Connection)
+    try:
+        reopened.connect(key, {})
+        assert len(reopened.history()) == 1
+        assert reopened.history()[0]['execution_parent_id'] == 'exec-parent'
+        assert reopened.history()[0]['status'] == 'complete'
+        saved = json.loads(reopened.path.read_text(encoding='utf-8'))
+        assert saved['jobs'][wrapped]['summary']['execution_parent_id'] == 'exec-parent'
+    finally:
+        reopened.close()
+
+
 def test_framing_handles_noise_echo_and_large_unicode_metadata():
     payload = {'id': 'test', 'metadata': '输入路径🧬' * 5000}
     decoder = Decoder('R')

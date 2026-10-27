@@ -9,14 +9,16 @@ def remote_profile(graph):
         if not isinstance(key, str) or not key:
             raise ValueError('Choose a server connection for this workflow')
         return key
-    if target and (not isinstance(target, dict) or target.get('kind') != 'local'):
+    if target and (not isinstance(target, dict) or target.get('kind', 'local') != 'local'):
         raise ValueError('Unknown workflow execution target')
     return None
 
 
-def source_candidates(graph, catalog, root, value):
+def source_candidates(graph, catalog, root, value, location=None):
     from .graph import project_path
-    if remote_profile(graph):
+    if hasattr(location, 'model_dump'):
+        location = location.model_dump()
+    if (location and location.get('kind') == 'ssh') or (not location and remote_profile(graph)):
         return [r for r in catalog['readers'] if primary_ext(value) in r['extensions']]
     path = project_path(root, value, graph.base_dir)
     primary = uncompressed_path(path)

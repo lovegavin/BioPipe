@@ -1,5 +1,34 @@
 {
   "$defs": {
+    "ExecutionTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "default": "local",
+          "enum": [
+            "local",
+            "ssh"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "profile_id": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile Id"
+        }
+      },
+      "title": "ExecutionTarget",
+      "type": "object"
+    },
     "Graph": {
       "additionalProperties": false,
       "properties": {
@@ -383,6 +412,17 @@
           "additionalProperties": true,
           "title": "Args",
           "type": "object"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExecutionTarget"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "title": "Source",

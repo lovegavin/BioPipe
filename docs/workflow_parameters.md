@@ -7,6 +7,7 @@ Operator definitions and workflow values have different owners:
 | `pca.py` | Extension author | Literal definition, contracts and execution code |
 | `pca.parameters.json` | Extension author | JSON Schema: types, defaults, constraints and UI hints |
 | A route's parameter values JSON | Workflow author | Concrete values for each individual node in that route |
+| A route's execution JSON | Workflow author | Memory budgets, placement mode, target assignments and file locations for that version |
 | A job's `parameters.json` | Execution record | Concrete values used by one flattened execution |
 
 There is no shared writable parameter-value file for the whole operator library.
@@ -38,6 +39,10 @@ workflows/
     route_0123456789ab/
       v1.json
       v2.json
+  execution/
+    route_0123456789ab/
+      v1.json
+      v2.json
   registry.json
 ```
 
@@ -47,6 +52,9 @@ Its `graph` contains structure and implementation pins; concrete `params`, node
 has a separate subtree in that file. Values are written before the route record is
 atomically replaced. An interrupted save leaves the previous version usable.
 Earlier value files are preserved; optimistic version checks prevent lost edits.
+The corresponding `execution_file` references that version's execution sidecar.
+Its settings are hydrated together with the values; editing a different workflow
+cannot change this route's saved memory or placement configuration.
 
 Opening the route hydrates its values without consulting new defaults. API, CLI,
 MCP, editor state and registered route snapshots receive a complete graph, with
@@ -62,11 +70,12 @@ their current inline values and do not create route versions.
 ## Portable route files
 
 **File → Export route bundle** downloads one `.biopipe.zip`, so the user chooses one
-destination while keeping two independently inspectable JSON files:
+destination while keeping three independently inspectable JSON files:
 
 ```text
 graph.json
 parameters.json
+execution.json
 ```
 
 Import the whole bundle through File, the saved-route picker, or
@@ -74,6 +83,11 @@ Import the whole bundle through File, the saved-route picker, or
 `biopipe graph validate route.biopipe.zip` also accepts the bundle. No archive file
 is extracted or executed. Old self-contained graph JSON imports remain supported.
 Input datasets, environments and implementation packages are not inside this bundle.
+Older two-file bundles remain importable. `execution.json` uses
+`format: "biopipe.graph-execution"`, `schema_version: 1`, and `memory`, `execution`
+and `routes` objects. Nested-route keys must match the topology. See
+[execution settings](EXECUTION_ENVIRONMENTS.md#workflow-settings-and-frozen-json-values)
+for target assignment, per-workflow configuration and compatibility behavior.
 
 Graph values use `format: "biopipe.graph-parameters"`, `schema_version: 1`, a global
 `params` object and a `nodes` object keyed by node ID. Each node records `kind`,
@@ -84,7 +98,7 @@ there is no fallback that quietly replaces it with current defaults.
 
 ## Execution records
 
-Every Studio job, including jobs triggered through CLI or MCP, writes:
+Every scientific worker job, including jobs triggered through CLI or MCP, writes:
 
 ```text
 jobs/<job-id>/
@@ -102,6 +116,11 @@ Step identity/order and source coverage must match the task. The worker loads an
 validates this pair before execution; the memory planner sees the same actual
 values as the operators. Stream processing, disk Readers and memory policy retain
 their existing behavior.
+
+A coordinated multi-environment task additionally keeps a parent execution record,
+its workflow bundle, stage graphs and child-job references. Each scientific child
+uses the worker layout above on its own execution host. Use the workflow bundle
+to preserve placement configuration when sharing or reopening a coordinated route.
 
 All sidecar references are relative and constrained to the containing workflow/job
 directory. Moving the complete profile or route bundle does not introduce machine

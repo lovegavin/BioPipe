@@ -146,18 +146,21 @@ def test_session_token_and_streamed_upload(studio):
     assert client.post("/api/assets?filename=code.py", content=b"print('x')").status_code == 422
 
 
-def test_worker_can_be_cancelled_and_second_run_is_not_admitted(studio):
+def test_worker_can_be_cancelled_and_second_run_is_admitted_or_queued(studio):
     client, data = studio
     response = client.post("/api/jobs", json=data["demo"])
     assert response.status_code == 202
     key = response.json()["id"]
-    assert client.post("/api/jobs", json=data["demo"]).status_code == 422
+    second = client.post("/api/jobs", json=data["demo"])
+    assert second.status_code == 202
+    assert second.json()['status'] in ('running', 'queued')
     response = client.post(f"/api/jobs/{key}/cancel", json={})
     assert response.status_code == 200 and response.json()["status"] == "cancelled"
     deadline = time.monotonic() + 5
     while time.monotonic() < deadline and key in client.app.state.service.processes:
         time.sleep(.05)
     assert key not in client.app.state.service.processes
+    client.post(f"/api/jobs/{second.json()['id']}/cancel", json={})
 
 
 def test_real_worker_branch_result_preview_history_and_events(studio):

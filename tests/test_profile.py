@@ -112,8 +112,8 @@ def test_second_launcher_does_not_interrupt_active_worker(tmp_path, catalog):
         assert job["status"] == "running"
         with pytest.raises(GraphError, match="另一个"):
             second.cancel(launched["id"])
-        with pytest.raises(GraphError, match="已有任务"):
-            second.launch(graph)
+        concurrent = second.launch(graph)
+        assert concurrent['status'] in ('running', 'queued')
         second.shutdown()
         assert first.require(launched["id"])["status"] == "running"
     finally:

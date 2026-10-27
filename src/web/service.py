@@ -8,6 +8,7 @@ from pathlib import Path, PurePosixPath, PureWindowsPath
 import subprocess
 import sys
 import threading
+import time
 import traceback
 import uuid
 
@@ -18,6 +19,7 @@ from .graph import GraphError, compile_graph, relative_manifest
 from .models import Graph
 from .routes import RouteLibrary, expand_routes
 from .storage import FileLock, atomic_json
+from .admission import HostAdmission, MIB, process_alive, process_identity
 
 
 def safe_json(value):
@@ -58,6 +60,7 @@ class Settings:
     builtin_routes: bool = False
     instance_url: str | None = None
     input_roots: list[Path] | None = None
+    admission_dir: Path | None = None
 
 
 class JobService:
@@ -80,8 +83,12 @@ class JobService:
         self.assets_dir.mkdir(exist_ok=True)
         self.lock = FileLock(self.directory / ".jobs.lock")
         self.processes, self.threads, self.jobs = {}, {}, {}
+        self._closed = threading.Event()
+        self._wake = threading.Event()
         import psutil
-        self.owner = {"pid": os.getpid(), "created": psutil.Process().create_time()}
+        self.owner = {"pid": os.getpid(), "created": psutil.Process().create_time(), "service_id": uuid.uuid4().hex}
+        admission_dir = settings.admission_dir or (self.root / '.admission' if settings.testing else None)
+        self.admission = HostAdmission(admission_dir)
         with self.lock:
             self._refresh_jobs()
             self.demo = self._demo()
@@ -90,6 +97,8 @@ class JobService:
                                    self.graph_catalog)
         if settings.builtin_routes:
             self.routes.install_builtins()
+        self.scheduler = threading.Thread(target=self._schedule, name='biopipe-admission', daemon=True)
+        self.scheduler.start()
 
     def graph_catalog(self, graph):
         from .source_paths import remote_profile
@@ -128,12 +137,19 @@ class JobService:
             return True
         return False
 
-    def _refresh_jobs(self):
+    def _refresh_jobs(self, *, active_only=False):
         import psutil
-        for record in self.jobs_dir.glob("*/job.json"):
+        records = ((self.jobs_dir / key / 'job.json' for key, value in list(self.jobs.items())
+                    if value['status'] in ('queued', 'running') or value.get('logs_complete') is False)
+                   if active_only else self.jobs_dir.glob('*/job.json'))
+        for record in records:
             value = read_json(record)
             if value:
-                if value["status"] == "running" or value.get("logs_complete") is False:
+                if value["status"] == "queued":
+                    if not process_alive(value.get('owner', {})):
+                        value['owner'] = self.owner
+                        write_json(record, value)
+                elif value["status"] == "running" or value.get("logs_complete") is False:
                     owner = value.get("owner", {})
                     try:
                         alive = psutil.Process(owner["pid"]).create_time() == owner["created"]
@@ -142,12 +158,28 @@ class JobService:
                     except psutil.AccessDenied:
                         alive = True  # Insufficient permission is not proof of a dead worker.
                     if not alive:
+                        # Do not replay a half-finished analysis after a launcher
+                        # crash. Stop only the recorded, identity-checked worker.
+                        worker = value.get('worker', {})
+                        if worker and process_alive(worker):
+                            process = psutil.Process(worker['pid'])
+                            try:
+                                process.suspend()
+                                children = process.children(recursive=True)
+                                for child in children:
+                                    try: child.suspend(); child.kill()
+                                    except psutil.NoSuchProcess: pass
+                                process.kill()
+                                psutil.wait_procs([process, *children], timeout=5)
+                            except psutil.NoSuchProcess:
+                                pass
                         if value["status"] == "running":
                             value["status"] = "interrupted"
                             value["error"] = "本地服务重启，之前的任务未完成。"
                         self._launcher_event(value, "worker_interrupted", status=value["status"], error=value.get("error"))
                         value["finished_at"] = datetime.now(timezone.utc).isoformat()
                         value["logs_complete"] = True
+                        self._release(value)
                         write_json(record, value)
                 self.jobs[value["id"]] = value
 
@@ -191,20 +223,33 @@ class JobService:
         from biopipe.parameter_values import split_task
         graph = freeze_graph(graph, catalog, self.root)
         manifest, order = compile_graph(graph, catalog, self.root, require_files=True, input_roots=self.settings.input_roots)
+        try:
+            allocation = self.admission.request(manifest)
+        except ValueError as exc:
+            raise GraphError(str(exc)) from exc
         with self.lock:
             self._refresh_jobs()
-            if any(job["status"] == "running" or job.get("logs_complete") is False for job in self.jobs.values()):
-                raise GraphError("已有任务正在运行，请等它结束或先停止。")
+            if self._closed.is_set():
+                raise GraphError('Studio is shutting down; no new jobs can be submitted')
             key = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8]
             directory = self.jobs_dir / key
             directory.mkdir()
             write_json(directory / "plugins.lock.json", plugin_snapshot)
+            # Keep the saved graph unchanged. Only this run receives the fixed
+            # host reservation; a worker never independently claims 90% again.
+            memory = manifest['runtime']['memory']
+            if allocation['memory_enabled']:
+                memory['budget_mb'] = allocation['budget_bytes'] / MIB
+                memory['process_limit_mb'] = allocation['process_limit_bytes'] / MIB
             task, parameter_values = split_task(relative_manifest(manifest, directory, catalog))
             write_json(directory / "parameters.json", parameter_values)
             (directory / "task.yaml").write_text(yaml.safe_dump(task, sort_keys=False, allow_unicode=True), encoding="utf-8")
-            job = {"id": key, "name": graph.name, "status": "running", "created_at": datetime.now(timezone.utc).isoformat(),
+            job = {"id": key, "name": graph.name, "status": "queued", "created_at": datetime.now(timezone.utc).isoformat(),
                    "finished_at": None, "error": None, "exit_code": None, "logs_complete": False,
-                   "order": order, "graph": graph.model_dump(mode="json"), "owner": self.owner}
+                   "order": order, "graph": graph.model_dump(mode="json"), "owner": self.owner,
+                   "allocation": allocation, 'queued_reason': 'Waiting for available host memory and CPU',
+                   'reservation_key': str(directory.resolve()),
+                   'progress': {'phase': 'queued', 'completed': 0, 'total': len(order), 'percent': 0}}
             job["plugins"] = {"generation": plugin_snapshot["generation"], "packages": plugin_snapshot["packages"]}
             if plugin_snapshot.get('bundled_updates'):
                 job['plugins']['bundled_updates'] = plugin_snapshot['bundled_updates']
@@ -212,52 +257,149 @@ class JobService:
                 _, job["node_owners"] = expand_routes(graph, self.catalog)
             self.jobs[key] = job
             write_json(directory / "job.json", job)
-            console = None
+            self._launcher_event(job, 'job_queued', allocation=allocation)
+            self._dispatch()
+            self._wake.set()
+            return self.details(key)
+
+    def _schedule(self):
+        while not self._closed.is_set():
+            self._wake.wait(.25)
+            self._wake.clear()
             try:
-                console = open(directory / "console.log", "a", encoding="utf-8")
-                temporary = directory / "tmp"
-                temporary.mkdir()
-                env = dict(os.environ, PYTHONUNBUFFERED="1", PYTHONIOENCODING="utf-8", PYTHONFAULTHANDLER="1", TEMP=str(temporary), TMP=str(temporary),
-                           MPLCONFIGDIR=str(self.directory / "matplotlib"))
-                code_root = self.settings.code_root or self.root
-                python = self.plugins.python_for(plugin_snapshot)
-                console.write(f"[BioPipe launcher] Job {key}\nPython: {python}\nTask: {directory}\n")
-                console.flush()
-                self._launcher_event(job, "worker_launching", python=python, message="Starting analysis worker")
-                # stdin belongs to the desktop host's control pipe. Inheriting it
-                # can block Python startup on Windows while watch_host reads it.
-                process = subprocess.Popen([python, str(code_root / "scripts/run.py"), str(directory)],
-                                           cwd=self.root, env=env, stdin=subprocess.DEVNULL,
-                                           stdout=console, stderr=subprocess.STDOUT,
-                                           creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
+                with self.lock:
+                    self._refresh_jobs(active_only=True)
+                    self._dispatch()
+                    self.scheduler_error = None
             except Exception as exc:
-                job["status"], job["error"] = "failed", f"{type(exc).__name__}: {exc}"
-                if console is not None:
-                    try:
-                        console.write(traceback.format_exc())
-                        console.close()
-                    except OSError:
-                        pass
-                self._launcher_event(job, "worker_start_failed", error=job["error"])
-                job["finished_at"] = datetime.now(timezone.utc).isoformat()
-                job["logs_complete"] = True
-                write_json(directory / "job.json", job)
-                return self.details(key)
-            self._launcher_event(job, "worker_spawned", pid=process.pid)
+                # Exposed in resources; do not silently abandon a durable queue.
+                self.scheduler_error = f'{type(exc).__name__}: {exc}'
+
+    def _dispatch(self):
+        if self._closed.is_set():
+            return
+        pending = [job for job in self.jobs.values() if job['status'] == 'queued' and job.get('owner') == self.owner]
+        for job in sorted(pending, key=lambda value: value['created_at']):
+            if (job['allocation']['reserved_bytes'] > self.admission.capacity or
+                    job['allocation']['cpu_threads'] > self.admission.cpus):
+                job.update(status='failed', error='The queued reservation exceeds this host session capacity; resubmit with a smaller budget',
+                           finished_at=datetime.now(timezone.utc).isoformat(), logs_complete=True, queued_reason=None)
+                job['allocation']['state'] = 'released'
+                job['progress']['phase'] = 'failed'
+                self._launcher_event(job, 'admission_failed', error=job['error'])
+                write_json(self.jobs_dir / job['id'] / 'job.json', job)
+                continue
+            if not self.admission.reserve(job['reservation_key'], job['allocation']):
+                # FIFO within a launcher avoids starvation of a larger job.
+                break
+            job['allocation']['state'] = 'reserved'
+            self._start(job)
+
+    def _start(self, job):
+        key = job['id']; directory = self.jobs_dir / key
+        console = None
+        try:
+            job['status'] = 'running'
+            job['started_at'] = datetime.now(timezone.utc).isoformat()
+            job['queued_reason'] = None
+            job['progress']['phase'] = 'preparing'
+            write_json(directory / 'job.json', job)
+            console = open(directory / 'console.log', 'a', encoding='utf-8')
+            temporary = directory / 'tmp'; temporary.mkdir(exist_ok=True)
+            env = dict(os.environ, PYTHONUNBUFFERED='1', PYTHONIOENCODING='utf-8', PYTHONFAULTHANDLER='1',
+                       TEMP=str(temporary), TMP=str(temporary), MPLCONFIGDIR=str(self.directory / 'matplotlib'))
+            threads = str(job['allocation']['cpu_threads'])
+            for name in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS',
+                         'NUMEXPR_NUM_THREADS', 'VECLIB_MAXIMUM_THREADS', 'BLIS_NUM_THREADS', 'BIOPIPE_CPU_LIMIT'):
+                env[name] = threads
+            env['BIOPIPE_AVAILABLE_AT_START_BYTES'] = str(job['allocation']['available_at_start_bytes'])
+            code_root = self.settings.code_root or self.root
+            python = self.plugins.python_for(read_json(directory / 'plugins.lock.json'))
+            console.write(f'[BioPipe launcher] Job {key}\nPython: {python}\nTask: {directory}\n')
+            console.flush()
+            self._launcher_event(job, 'worker_launching', python=python, allocation=job['allocation'], message='Starting analysis worker')
+            process = subprocess.Popen([python, str(code_root / 'scripts/run.py'), str(directory)],
+                                       cwd=self.root, env=env, stdin=subprocess.DEVNULL,
+                                       stdout=console, stderr=subprocess.STDOUT,
+                                       creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
             self.processes[key] = process
+            try:
+                job['worker'] = process_identity(process.pid)
+            except Exception:
+                pass  # Already-exited workers are finalized by _watch.
+            self.admission.started(job['reservation_key'], process.pid)
+            self._launcher_event(job, 'worker_spawned', pid=process.pid)
+            write_json(directory / 'job.json', job)
             watcher = threading.Thread(target=self._watch, args=(key, process, console), daemon=True)
             self.threads[key] = watcher
             watcher.start()
-            return self.details(key)
+        except Exception as exc:
+            self.threads.pop(key, None)
+            if key in self.processes:
+                from biopipe.processes import stop_tree
+                stop_tree(self.processes.pop(key))
+            job['status'], job['error'] = 'failed', f'{type(exc).__name__}: {exc}'
+            if console is not None:
+                try:
+                    console.write(traceback.format_exc()); console.close()
+                except OSError:
+                    pass
+            self._launcher_event(job, 'worker_start_failed', error=job['error'])
+            job['finished_at'] = datetime.now(timezone.utc).isoformat()
+            job['logs_complete'] = True
+            job['progress']['phase'] = 'failed'
+            self._release(job)
+            write_json(directory / 'job.json', job)
+
+    def _release(self, job):
+        allocation = job.get('allocation', {})
+        if allocation.get('state') == 'reserved':
+            self.admission.release(job['reservation_key'])
+            allocation['state'] = 'released'
+            allocation['released_at'] = datetime.now(timezone.utc).isoformat()
+
+    def resources(self):
+        with self.lock:
+            result = self.admission.resources()
+            result['queued_jobs'] = sum(job['status'] == 'queued' for job in self.jobs.values())
+            result['scheduler_error'] = getattr(self, 'scheduler_error', None)
+            return result
 
     def _watch(self, key, process, console):
-        code = process.wait()
+        # The runtime first attempts emergency spilling. If a plugin/native
+        # process remains above its reservation, contain that job after a grace
+        # period rather than allowing it to consume another admitted job's RAM.
+        import psutil
+        over_since = None
+        pressure_error = None
+        while True:
+            try:
+                code = process.wait(timeout=.25)
+                break
+            except subprocess.TimeoutExpired:
+                try:
+                    parent = psutil.Process(process.pid)
+                    rss = parent.memory_info().rss
+                    for child in parent.children(recursive=True):
+                        try: rss += child.memory_info().rss
+                        except psutil.Error: pass
+                except psutil.Error:
+                    continue
+                limit = self.jobs[key]['allocation']['process_limit_bytes']
+                if rss > limit:
+                    over_since = over_since or time.monotonic()
+                    if time.monotonic() - over_since >= 2:
+                        pressure_error = f'Worker tree RSS {rss} exceeds its host reservation {limit}; emergency spill could not recover enough memory'
+                        from biopipe.processes import stop_tree
+                        stop_tree(process)
+                else:
+                    over_since = None
         with self.lock:
             job = self.jobs[key]
             summary = read_json(self.jobs_dir / key / "output/run_summary.json", {})
             if job["status"] != "cancelled":
-                job["status"] = "complete" if code == 0 and summary.get("status") == "complete" else "failed"
-                job["error"] = summary.get("error") or (None if job["status"] == "complete" else
+                job["status"] = "complete" if code == 0 and summary.get("status") == "complete" and not pressure_error else "failed"
+                job["error"] = pressure_error or summary.get("error") or (None if job["status"] == "complete" else
                     f"Worker exited with code {code} (0x{code & 0xffffffff:08X}) "
                     + ("without producing a run summary." if not summary else "without completing the run."))
             job["exit_code"] = code
@@ -276,9 +418,12 @@ class JobService:
             job["finished_at"] = datetime.now(timezone.utc).isoformat()
             # Publish terminal completion only after both writers have flushed.
             job["logs_complete"] = True
+            self._release(job)
+            job['progress'] = self._progress(job)
             write_json(self.jobs_dir / key / "job.json", job)
             self.processes.pop(key, None)
             self.threads.pop(key, None)
+            self._wake.set()
 
     def _launcher_event(self, job, event, **details):
         # Separate journal: the parent never competes with the worker's JSONL writer.
@@ -289,12 +434,13 @@ class JobService:
 
     def require(self, key):
         # Jobs created by the other launcher become visible without restarting.
-        value = read_json(self.jobs_dir / key / "job.json") if key.replace("-", "").isalnum() else None
-        if value:
-            self.jobs[key] = value
-        if key not in self.jobs:
-            raise KeyError("找不到这次运行。")
-        return self.jobs[key]
+        with self.lock:
+            value = read_json(self.jobs_dir / key / "job.json") if key.replace("-", "").isalnum() else None
+            if value:
+                self.jobs[key] = value
+            if key not in self.jobs:
+                raise KeyError("找不到这次运行。")
+            return self.jobs[key]
 
     def events_path(self, key):
         self.require(key)
@@ -337,6 +483,10 @@ class JobService:
             job = dict(self.require(key))
             summary = read_json(self.jobs_dir / key / "output/run_summary.json")
             job["summary"] = summary
+            job['progress'] = self._progress(job)
+            queued = sorted((value for value in self.jobs.values() if value['status'] == 'queued'),
+                            key=lambda value: value['created_at'])
+            job['queue_position'] = next((index + 1 for index, value in enumerate(queued) if value['id'] == key), None)
             job["report"] = read_json(self._record_path(key, summary["memory_report"], summary)) if summary and summary.get("memory_report") else None
             if job["report"]:
                 # Reports retain original audit locations on disk. API paths follow a moved workspace.
@@ -345,6 +495,38 @@ class JobService:
                         artifact["disk_uri"] = str(self._record_path(key, artifact["disk_uri"], summary))
                 job["spill_counts"] = self.spill_counts(key)
             return safe_json(job)
+
+    def _progress(self, job):
+        total = len(job.get('order', []))
+        progress = dict(job.get('progress') or {'completed': 0, 'total': total, 'percent': 0})
+        progress['phase'] = job['status']
+        progress['total'] = total
+        # Read a bounded journal tail, using real step indices instead of a
+        # timer-derived percentage. Long-running tools remain at their step.
+        paths = sorted((self.jobs_dir / job['id'] / 'output/runs').glob('*/events.jsonl'))
+        current = None
+        if paths:
+            with paths[-1].open('rb') as stream:
+                size = stream.seek(0, os.SEEK_END)
+                stream.seek(max(0, size - 65536))
+                lines = stream.read().decode('utf-8', errors='replace').splitlines()
+            for line in lines:
+                try: event = json.loads(line)
+                except json.JSONDecodeError: continue
+                if event.get('event') == 'step_started' and isinstance(event.get('index'), int):
+                    current = event['index']
+                    progress['completed'] = max(progress['completed'], current - 1)
+                    progress['current'] = event.get('name')
+                elif event.get('event') == 'step_finished':
+                    completed = event.get('index', current)
+                    if isinstance(completed, int):
+                        progress['completed'] = max(progress['completed'], completed)
+        if job['status'] == 'complete':
+            progress['completed'] = total
+            progress.pop('current', None)
+        progress['completed'] = min(total, progress['completed'])
+        progress['percent'] = round(100 * progress['completed'] / total, 1) if total else 0
+        return progress
 
     def _record_path(self, key, value, summary):
         """Resolve current or historical paths without depending on the original machine."""
@@ -388,8 +570,11 @@ class JobService:
     def history(self):
         with self.lock:
             self._refresh_jobs()
-            local = [{k: value[k] for k in ("id", "name", "status", "created_at", "finished_at", "error")}
-                    for value in sorted(self.jobs.values(), key=lambda j: j["created_at"], reverse=True)[:30]]
+            local = [{**{k: value[k] for k in ("id", "name", "status", "created_at", "finished_at", "error")},
+                      'progress': self._progress(value), 'allocation': value.get('allocation'),
+                      'execution_parent_id': value.get('graph', {}).get('runtime', {}).get('execution_parent_id'),
+                      'queued_reason': value.get('queued_reason')}
+                     for value in sorted(self.jobs.values(), key=lambda j: j["created_at"], reverse=True)[:60]]
         return sorted(local + (self.remotes.history() if self.remotes else []),
                       key=lambda item: item['created_at'], reverse=True)[:60]
 
@@ -398,6 +583,16 @@ class JobService:
             return self.remotes.cancel(key)
         with self.lock:
             job = self.require(key)
+            if job['status'] == 'queued':
+                job['status'] = 'cancelled'
+                job['finished_at'] = datetime.now(timezone.utc).isoformat()
+                job['logs_complete'] = True
+                job['queued_reason'] = None
+                job['allocation']['state'] = 'released'
+                job['progress']['phase'] = 'cancelled'
+                self._launcher_event(job, 'job_cancelled', message='Cancelled before worker launch')
+                write_json(self.jobs_dir / key / 'job.json', job)
+                self._wake.set()
             if job["status"] == "running":
                 if key not in self.processes:
                     raise GraphError("任务由另一个 BioPipe 窗口运行，请在启动它的窗口停止。")
@@ -415,13 +610,22 @@ class JobService:
             return self.details(key)
 
     def shutdown(self):
+        self._closed.set()
+        self._wake.set()
         if self.remotes:
             self.remotes.close()
         self.dependencies.cancel.set()
         for key in list(self.processes):
             self.cancel(key)
+        with self.lock:
+            for job in list(self.jobs.values()):
+                if job['status'] == 'queued' and job.get('owner') == self.owner:
+                    self.cancel(job['id'])
         for watcher in list(self.threads.values()):
-            watcher.join(timeout=5)
+            watcher.join(timeout=10)
+        if self.scheduler is not threading.current_thread():
+            self.scheduler.join(timeout=5)
+        self.admission.close()
 
     def artifact(self, key, artifact_id):
         report = self.details(key).get("report")
