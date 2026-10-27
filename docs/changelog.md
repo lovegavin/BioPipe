@@ -12,7 +12,7 @@ BioPipe 使用语义化版本和 git tag。当前源码版本：**0.8.0（2026-1
 - 新增 5 条 route：`rnaseq_de_enrichment`、`single_cell_loom`、`gwas_meta_prs`、`proteomics_limma`、`microbiome_diff`。
 - 当前：89 算子 / 19 Reader / 19 route；全部严格 schema/contracts。
 - 新增 Reader/算子/route 单测与端到端 smoke test；`doublet_detect`/`marker_score` 直接调用 Scanpy，`aldex2`/`ancom_bc` 为独立 log-ratio 实现并在文档中明确边界。
-- 验证：**460 passed / 17 skipped**（2026-10-27）；5 条新 route 实际运行；参考页生成检查；本机无 R，`limma_de`/`ancom_bc`/`aldex2` 为独立近似实现，未做 R 外部 oracle 对比。
+- 验证：**460 passed / 17 skipped**（2026-10-27）；5 条新 route 实际运行；参考页生成检查；Studio 新算子展示补齐，前端 **66 passed**；本机无 R，`limma_de`/`ancom_bc`/`aldex2` 为独立近似实现，未做 R 外部 oracle 对比。
 
 ## 0.7.0 — 2026-10-27
 
