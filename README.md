@@ -5,7 +5,7 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Release **v0.6.0** adds [Hi-C workflows](docs/HIC.md): paired FASTQ,
+Release **v0.6.1** adds [Hi-C workflows](docs/HIC.md): paired FASTQ,
 BAM/SAM or pairs to contact matrices and expected/compartment/insulation/loop/pileup
 analysis. It reuses existing QC, selection and plotting operators, with three new
 tool adapters and four file Readers. The bundled catalog has 67 operators,
@@ -57,8 +57,8 @@ dependencies, optional analyses and troubleshooting resolver backtracking.
 Choose the archive without `Lite` for the bundled environment. The smaller
 `Windows-x64-Lite.zip` uses an existing Python environment instead.
 
-Release v0.6.0 is maintained on `release/v0.6.0`; `main` retains the author's separate
-upstream development. See the [release notes](docs/releases/v0.6.0.md) for scope.
+Release v0.6.1 is maintained on `release/v0.6.1`; `main` retains the author's separate
+upstream development. See the [release notes](docs/releases/v0.6.1.md) for scope.
 Upgrading from v0.4.1 requires a one-time
 [migration](docs/migration_v2.md) for old routes/registries/extensions. The runtime
 accepts only protocol v3. Historical source and generated outputs remain available

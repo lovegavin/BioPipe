@@ -14,7 +14,7 @@ import tempfile
 
 
 CORE_MODULES = ("numpy", "pandas", "yaml", "scipy", "statsmodels", "matplotlib", "psutil",
-                "fastapi", "uvicorn", "jsonschema", "pydantic", "packaging", "httpx")
+                "fastapi", "uvicorn", "jsonschema", "pydantic", "packaging", "httpx", "paramiko")
 
 
 def runtime_config_path(*, environ=None, home=None):

@@ -175,7 +175,7 @@ internal static class RuntimeLocator
         start.ArgumentList.Add("-I");
         start.ArgumentList.Add("-c");
         start.ArgumentList.Add("import importlib.util,json,sys; " +
-            "modules=['numpy','pandas','yaml','scipy','statsmodels','matplotlib','psutil','fastapi','uvicorn','jsonschema','pydantic','packaging','httpx']; " +
+            "modules=['numpy','pandas','yaml','scipy','statsmodels','matplotlib','psutil','fastapi','uvicorn','jsonschema','pydantic','packaging','httpx','paramiko']; " +
             "print(json.dumps({'python':sys.executable,'version':list(sys.version_info[:2])," +
             "'missing':[m for m in modules if importlib.util.find_spec(m) is None]}))");
         start.Environment["PYTHONIOENCODING"] = "utf-8";

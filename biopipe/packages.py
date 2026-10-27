@@ -44,10 +44,10 @@ def load_entry(descriptor):
     return load_class(descriptor)
 
 
-def bundled_state():
+def bundled_state(root=None):
     # Check file metadata, not operator imports/scans. A long-lived Studio must
     # observe the same implementation bytes as its next fresh worker process.
-    root = Path(__file__).resolve().parents[1]
+    root = Path(root).resolve() if root is not None else Path(__file__).resolve().parents[1]
     index = _stamp(root / "biopipe/builtin_packages.json")
     paths = {p for package in _manifest(index)["packages"] for p in _provider_paths(root, package)}
     return _bundled_state(index, tuple(_stamp(p) for p in sorted(paths)))

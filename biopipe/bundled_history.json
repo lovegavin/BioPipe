@@ -1,0 +1,204 @@
+{
+  "packages": [
+    {
+      "implementation": {
+        "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+        "package": "biopipe-readers",
+        "sha256": "2ac0afb298f6ad6e6f29fdff232eaee5c44224c074bf1a02c8a567279f5880a3",
+        "version": "1.0.0"
+      },
+      "operators": {
+        "BedReader": "1.0.0",
+        "BgenReader": "1.0.0",
+        "CsvReader": "1.0.0",
+        "FastaReader": "1.0.0",
+        "GafReader": "1.0.0",
+        "Gff3Reader": "1.0.0",
+        "GtfReader": "1.0.0",
+        "H5adReader": "1.0.0",
+        "MtxReader": "1.0.0",
+        "ParquetReader": "1.0.0",
+        "Plink1Reader": "1.0.0",
+        "Plink2Reader": "1.0.0",
+        "TsvReader": "1.0.0",
+        "TxtReader": "1.0.0",
+        "VcfReader": "1.0.0"
+      },
+      "releases": [
+        {
+          "commit": "9fe2dd2a183978c7a63c29276149200519fdb4c7",
+          "tag": "v0.5.0"
+        },
+        {
+          "commit": "672ab8bccc9358ff74aa5ddc1202534ebf147140",
+          "tag": "v0.5.1"
+        }
+      ]
+    },
+    {
+      "implementation": {
+        "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+        "package": "biopipe-core",
+        "sha256": "7a900f465b1a55a57c572b50e8c17d3380fda6c12169393590a54dbb8e959216",
+        "version": "1.0.0"
+      },
+      "operators": {
+        "annotate": "1.0.0",
+        "annotation_gaps": "1.0.0",
+        "attach_info": "1.0.0",
+        "bin": "1.0.0",
+        "cluster_axis": "1.0.0",
+        "concat": "1.0.0",
+        "describe": "1.0.0",
+        "drop": "1.0.0",
+        "enrich_go": "1.0.0",
+        "enrichment_plot": "1.0.0",
+        "explode": "1.0.0",
+        "filter_by": "1.0.0",
+        "find_orfs": "1.0.0",
+        "gene_structure": "1.0.0",
+        "gff_feature_stats": "1.0.0",
+        "interval_merge": "1.0.0",
+        "interval_overlap": "1.0.0",
+        "interval_stats": "1.0.0",
+        "kmer_count": "1.0.0",
+        "motif_scan": "1.0.0",
+        "order_axis": "1.0.0",
+        "peak_nearest_gene": "1.0.0",
+        "pivot": "1.0.0",
+        "prioritize": "1.0.0",
+        "rank_axis": "1.0.0",
+        "reduce_axis": "1.0.0",
+        "rename_dim": "1.0.0",
+        "select": "1.0.0",
+        "sequence_stats": "1.0.0",
+        "transpose": "1.0.0"
+      },
+      "releases": [
+        {
+          "commit": "9fe2dd2a183978c7a63c29276149200519fdb4c7",
+          "tag": "v0.5.0"
+        },
+        {
+          "commit": "672ab8bccc9358ff74aa5ddc1202534ebf147140",
+          "tag": "v0.5.1"
+        }
+      ]
+    },
+    {
+      "implementation": {
+        "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+        "package": "biopipe-genetics",
+        "sha256": "8e11d6bfdb58fd6ee16ec51068af2ecaef763ee5066fe4c922a3189ba114d543",
+        "version": "1.0.0"
+      },
+      "operators": {
+        "correction": "1.0.0",
+        "hwe": "1.0.0",
+        "ld_prune": "1.0.0",
+        "maf": "1.0.0",
+        "missing": "1.0.0",
+        "pca": "1.0.0",
+        "regress": "1.0.0"
+      },
+      "releases": [
+        {
+          "commit": "9fe2dd2a183978c7a63c29276149200519fdb4c7",
+          "tag": "v0.5.0"
+        },
+        {
+          "commit": "672ab8bccc9358ff74aa5ddc1202534ebf147140",
+          "tag": "v0.5.1"
+        }
+      ]
+    },
+    {
+      "implementation": {
+        "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+        "package": "biopipe-expression",
+        "sha256": "758e30590e3943cafdcbc4d12319a583947f7df6ef9b7b7c0fefb021462709a6",
+        "version": "1.0.0"
+      },
+      "operators": {
+        "compare_groups": "1.0.0",
+        "cox_regression": "1.0.0",
+        "filter_min": "1.0.0",
+        "impute": "1.0.0",
+        "log_transform": "1.0.0",
+        "logrank_test": "1.0.0",
+        "normalize": "1.0.0"
+      },
+      "releases": [
+        {
+          "commit": "9fe2dd2a183978c7a63c29276149200519fdb4c7",
+          "tag": "v0.5.0"
+        },
+        {
+          "commit": "672ab8bccc9358ff74aa5ddc1202534ebf147140",
+          "tag": "v0.5.1"
+        }
+      ]
+    },
+    {
+      "implementation": {
+        "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+        "package": "biopipe-plots",
+        "sha256": "891c9cfdd211f7066755a80e456426b4ed9bd33275fdf63b40b6d3a255ae9744",
+        "version": "1.0.0"
+      },
+      "operators": {
+        "boxplot": "1.0.0",
+        "dotplot": "1.0.0",
+        "forest_plot": "1.0.0",
+        "heatmap": "1.0.0",
+        "histogram": "1.0.0",
+        "kaplan_meier": "1.0.0",
+        "line": "1.0.0",
+        "ma_plot": "1.0.0",
+        "manhattan": "1.0.0",
+        "scatter": "1.0.0",
+        "violin": "1.0.0",
+        "volcano": "1.0.0"
+      },
+      "releases": [
+        {
+          "commit": "9fe2dd2a183978c7a63c29276149200519fdb4c7",
+          "tag": "v0.5.0"
+        },
+        {
+          "commit": "672ab8bccc9358ff74aa5ddc1202534ebf147140",
+          "tag": "v0.5.1"
+        }
+      ]
+    },
+    {
+      "implementation": {
+        "code_sha": "6a48d1f2c4cf6b3782417ef21064394c6445b22c42311df4b041cff631f0f6ea",
+        "package": "biopipe-microbiome",
+        "sha256": "a4ab0e6f8ca96c59b9ecabc45283283edcfc1a84db020f0917e0338bc5faff6a",
+        "version": "1.0.0"
+      },
+      "operators": {
+        "aggregate": "1.0.0",
+        "barplot": "1.0.0",
+        "correlation": "1.0.0",
+        "distance_matrix": "1.0.0",
+        "diversity": "1.0.0",
+        "join": "1.0.0",
+        "permanova": "1.0.0",
+        "reduce": "1.0.0"
+      },
+      "releases": [
+        {
+          "commit": "9fe2dd2a183978c7a63c29276149200519fdb4c7",
+          "tag": "v0.5.0"
+        },
+        {
+          "commit": "672ab8bccc9358ff74aa5ddc1202534ebf147140",
+          "tag": "v0.5.1"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

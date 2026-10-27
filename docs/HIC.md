@@ -1,6 +1,6 @@
 # Hi-C workflows
 
-BioPipe Studio v0.6.0 adds three operators and four file Readers. It reuses
+BioPipe Studio v0.6.1 adds three operators and four file Readers. It reuses
 `sequence_stats` for FASTQ quality summaries, `select` for bounded contact-map
 windows, and the existing plotting, filtering and annotation operators for their
 outputs. Both full and Lite desktop archives include these additions. The full

@@ -254,3 +254,27 @@ def test_bundled_code_migration_cannot_cross_a_version_change(version_field):
     graph = Graph.model_validate({'nodes': [], 'edges': [], 'plugin_lock': {'pca': old['implementation']}})
     with pytest.raises(ValueError, match='Required plugin versions'):
         resolve(graph, [current, previous], current)
+
+
+@pytest.mark.parametrize('alteration', ['sha256', 'code_sha', 'package', 'version', 'operator_version', 'wheel', 'disabled'])
+def test_release_receipts_do_not_weaken_execution_identity(alteration):
+    from biopipe.pins import resolve
+    receipt = next(p for p in json.loads((ROOT / 'biopipe/bundled_history.json').read_text(encoding='utf-8'))['packages']
+                   if 'pca' in p['operators'] and any(r['tag'] == 'v0.5.1' for r in p['releases']))
+    pin = deepcopy(receipt['implementation'])
+    current = deepcopy(bundled_state())
+    current['generation'] = 'fresh'
+    descriptor = next(d for d in current['descriptors'] if d['id'] == 'pca')
+    package = next(p for p in current['packages'] if p['name'] == descriptor['distribution'])
+    if alteration in pin:
+        pin[alteration] = 'different'
+    elif alteration == 'operator_version':
+        descriptor['version'] = '2.0.0'
+    elif alteration == 'wheel':
+        descriptor['origin'] = package['origin'] = 'wheel'
+        descriptor['implementation']['sha256'] = 'f' * 64
+    else:
+        package['enabled'] = False
+    graph = Graph.model_validate({'nodes': [], 'edges': [], 'plugin_lock': {'pca': pin}})
+    with pytest.raises(ValueError, match='Required plugin versions'):
+        resolve(graph, [current], current)

@@ -6,8 +6,10 @@ within the same version with an explicit migration receipt. Declaration-only
 changes do not require history; unknown code/wheel artifacts never get a fallback.
 """
 from copy import deepcopy
+from functools import lru_cache
 import hashlib
 import json
+from pathlib import Path
 
 
 PIN_KEYS = ('version', 'package', 'sha256', 'code_sha')
@@ -21,6 +23,34 @@ def identity(pin, *, bundled=False):
     if bundled and pin.get('code_sha'):
         keys = tuple(key for key in keys if key != 'sha256')
     return tuple((key, pin.get(key)) for key in keys)
+
+
+@lru_cache(maxsize=1)
+def _released_pins(path, stamp):
+    data = json.loads(Path(path).read_text(encoding='utf-8'))
+    if data.get('schema_version') != 1:
+        raise ValueError('Unsupported bundled compatibility receipt format')
+    return {(key, identity(package['implementation'])): version
+            for package in data['packages'] for key, version in package['operators'].items()}
+
+
+def released_replacements(graph, current):
+    """Recognize exact shipped artifacts, never infer trust from an ID alone."""
+    path = Path(__file__).with_name('bundled_history.json')
+    if not path.is_file():
+        return {}
+    stat = path.stat()
+    receipts = _released_pins(str(path), (stat.st_mtime_ns, stat.st_ctime_ns, stat.st_size))
+    result = {}
+    for part in graphs(graph):
+        for key, pin in part.plugin_lock.items():
+            new = current.get(key)
+            if (new and new.get('origin') == 'bundled' and
+                    receipts.get((key, identity(pin))) == new.get('version') and
+                    pin.get('package') == new['distribution'] and
+                    pin.get('version') == new['implementation'].get('version')):
+                result[key, identity(pin)] = new['implementation']
+    return result
 
 
 def graphs(graph):
@@ -72,7 +102,8 @@ def refresh_bundled(candidate, bundled):
 
 def resolve(graph, candidates, bundled):
     current = {d['id']: d for d in bundled['descriptors']}
-    replacements = {}
+    released = released_replacements(graph, current)
+    replacements = dict(released)
     for state in candidates:
         for old in state['descriptors']:
             new = current.get(old['id'])
@@ -87,7 +118,9 @@ def resolve(graph, candidates, bundled):
             after = replacements.get((key, identity(before)), before)
             if identity(before, bundled=True) != identity(after, bundled=True):
                 updates[key, identity(before)] = {'operator': key, 'before': before, 'after': after,
-                    'reason': 'Bundled source was updated; historical registry retained metadata only'}
+                    'reason': ('Known released bundled implementation updated using its compatibility receipt'
+                               if (key, identity(before)) in released else
+                               'Bundled source was updated; historical registry retained metadata only')}
     conflict = None
     for raw in candidates:
         candidate = refresh_bundled(raw, bundled)

@@ -68,6 +68,20 @@ deleted modules cannot leak in from an old `build/lib` directory. Use
 `python -m build --no-isolation` (the default source-then-wheel build) when producing
 the separate release wheel, too; check its module list against the source tree.
 
+Before a release changes bundled implementations, record the identities from
+checksum-verified prior release extractions:
+
+```text
+python scripts/record_bundled_history.py --source <verified-release-folder> --release vX.Y.Z --commit <full-release-commit>
+```
+
+This reads code/declaration bytes and checks the source against its index and
+package manifest. It does not import the historical operators. The generated
+`biopipe/bundled_history.json` contains only compact identity receipts, not old
+implementations, profiles or datasets. Commit it and include it in both the SDK
+wheel and desktop packages. Never generate trusted receipts from an unverified
+user extension or from an edited release folder.
+
 Native dependencies without a compatible Windows wheel must be built and tested
 by the release maintainer, not by the recipient. Supply those artifacts with
 `build_runtime.py --wheelhouse <directory>`. The release's PLINK 2 wheel is built

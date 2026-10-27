@@ -123,3 +123,19 @@ digests remain required. Already-created jobs retain and verify their full origi
 descriptors. See [identity rules](operator_protocol.md#identities-and-updates).
 These snapshots do not promise identical results if inputs,
 random seeds, external tools or numerical environments change.
+
+
+## Importing routes from a previous release
+
+As of v0.6.1, a new profile can recognize the exact official v0.5.0/v0.5.1 bundled
+implementation identities through the shipped `biopipe/bundled_history.json`.
+This is a compact compatibility receipt, not a copy of the old registry or code.
+The artifact hash, code hash, package identity, package version and operator
+version must match the trusted receipt and current version rules before rebinding.
+Third-party wheels and unknown pins still require their original packages.
+
+Preparing a recognized route updates its pins to the selected implementations,
+while its separate parameter values remain frozen. Running an unprepared old
+route records `bundled_updates` in the new job and logs the rebinding. Existing
+job locks and the imported original bundle are never modified. Current parameter
+validation still applies; breaking schema/behavior changes require a version bump.

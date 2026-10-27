@@ -337,3 +337,36 @@ def test_bundle_prepares_and_runs_after_default_rebuild_in_a_fresh_profile(tmp_p
     archived = next(d for d in json.loads(old_lock_bytes)['descriptors'] if d['id'] == 'pca')
     from biopipe_sdk.declarations import load_class
     assert load_class(archived).parameters_schema['properties']['n_components']['default'] == 10
+
+
+def test_published_v05_bundle_runs_in_a_new_profile_without_old_snapshots(tmp_path):
+    """Replay the public-release demo pins, not a user route or copied profile."""
+    history = json.loads((ROOT / 'biopipe/bundled_history.json').read_text(encoding='utf-8'))
+    pins = {identifier: deepcopy(p['implementation']) for p in history['packages']
+            for identifier in p['operators'] if any(r['tag'] == 'v0.5.1' for r in p['releases'])}
+    directory = tmp_path / 'fresh'
+    app = create_app(Settings(directory, directory / 's', ROOT / 'frontend/dist', testing=True, code_root=ROOT))
+    with TestClient(app) as client:
+        bootstrap = client.get('/api/bootstrap').json()
+        client.headers['X-Studio-Token'] = bootstrap['token']
+        graph = Graph.model_validate(bootstrap['demo'])
+        graph = app.state.service.prepare_graph(graph)
+        graph.plugin_lock = {key: pins[key] for key in graph.plugin_lock}
+        original = export_bundle(graph)
+        frozen_values = split_graph(graph)[1]
+        snapshots = list((app.state.service.plugins.directory / 'snapshots').glob('*.json'))
+        assert len(snapshots) == 1
+        assert pins['pca']['code_sha'] not in snapshots[0].read_text(encoding='utf-8')
+        imported = client.post('/api/workflows/import', content=original)
+        assert imported.status_code == 200, imported.text
+        prepared = client.post('/api/workflows/prepare', json=imported.json())
+        assert prepared.status_code == 200, prepared.text
+        assert split_graph(Graph.model_validate(prepared.json()))[1] == frozen_values
+        running = client.post('/api/jobs', json=imported.json())
+        assert running.status_code == 202, running.text
+        service = app.state.service
+        service.threads[running.json()['id']].join(timeout=40)
+        job = service.details(running.json()['id'])
+        assert job['status'] == 'complete', job.get('error')
+        assert any('released' in u['reason'] for u in job['plugins']['bundled_updates'])
+        assert node(import_bundle(original), 'pca').params['n_components'] == 2
