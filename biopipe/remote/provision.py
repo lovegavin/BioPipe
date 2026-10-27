@@ -156,7 +156,7 @@ unset PYTHONPATH PYTHONHOME
     script = managed + '/install-' + uuid.uuid4().hex + '.sh'
     shell.upload(script, install.encode())
     progress('检查并补齐 Python、BioPipe 与 Hi-C 依赖（首次可能需要数分钟）')
-    # A dedicated process-group subprocess is killed if its SSH parent disconnects.
+    # Closing SSH requests installer shutdown; an outstanding child may finish.
     command = ('umask 077; flock ' + q(managed + '/environment.lock') + ' bash ' + q(script) +
                ' > ' + q(log) + ' 2>&1 & bp_setup_pid=$!; ' +
                'trap \'kill "$bp_setup_pid" 2>/dev/null || true\' HUP INT TERM; ' +

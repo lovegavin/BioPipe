@@ -19,17 +19,8 @@ def requirements(code):
     return specs + hic, entries
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--code', type=Path, required=True)
-    parser.add_argument('--digest', required=True)
-    args = parser.parse_args()
-    code = args.code.resolve()
-    sys.path.insert(0, str(code))
-    prefix = Path(sys.prefix).resolve()
-    if sys.platform != 'linux' or not prefix.name.startswith('env-') or prefix.parent.name != 'managed-v1':
-        raise ValueError('Installer only writes to a BioPipe managed Linux environment')
-    specs, entries = requirements(code)
+def ensure_requirements(specs, request):
+    """Repair the complete dependency graph, including missing transitive libraries."""
     from packaging.requirements import Requirement
     missing = []
     for spec in specs:
@@ -41,15 +32,29 @@ def main():
                 missing.append(spec)
         except metadata.PackageNotFoundError:
             missing.append(spec)
-    request = prefix / 'biopipe-requirements.txt'
     request.write_text('\n'.join(specs) + '\n', encoding='utf-8')
-    if missing:
-        print(f'Installing {len(missing)} missing or incompatible requirements', flush=True)
+    health = subprocess.run([sys.executable, '-I', '-m', 'pip', 'check'], capture_output=True, text=True)
+    if missing or health.returncode:
+        print(f'Repairing dependencies ({len(missing)} direct requirements missing or incompatible)', flush=True)
         # One pip solve for all Python libraries: do not preinstall conda's
         # NumPy-1 Hi-C builds then replace NumPy underneath their binary ABI.
         # micromamba supplies only Python, native tools and build compilers.
         subprocess.run([sys.executable, '-I', '-m', 'pip', '--isolated', 'install',
                         '--disable-pip-version-check', '-r', str(request)], check=True)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--code', type=Path, required=True)
+    parser.add_argument('--digest', required=True)
+    args = parser.parse_args()
+    code = args.code.resolve()
+    sys.path.insert(0, str(code))
+    prefix = Path(sys.prefix).resolve()
+    if sys.platform != 'linux' or not prefix.name.startswith('env-') or prefix.parent.name != 'managed-v1':
+        raise ValueError('Installer only writes to a BioPipe managed Linux environment')
+    specs, entries = requirements(code)
+    ensure_requirements(specs, prefix / 'biopipe-requirements.txt')
     # Install the SDK distribution metadata (without altering the dependency plan).
     receipt = prefix / 'biopipe-ready.json'
     previous = json.loads(receipt.read_text()) if receipt.exists() else {}

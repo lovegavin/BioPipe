@@ -30,7 +30,8 @@ Only application code, catalogs and parameter schemas are uploaded; local input
 datasets, profiles and credentials are excluded. The source archive is checked
 by SHA-256 before extraction. Code and environment paths are keyed by the source
 digest, so updating the desktop does not overwrite an older execution environment.
-Repeated connections reuse the same installation and check its requirements.
+Repeated connections reuse the same installation and check its requirements,
+including missing or incompatible transitive dependencies reported by `pip check`.
 Dependency downloads and installation occur only when required. An installation
 lock serializes changes from multiple clients. The panel shows progress and errors;
 the server retains `managed-v1/setup-<digest>.log` for diagnostics. Failed attempts

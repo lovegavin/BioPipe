@@ -94,6 +94,26 @@ def test_deployment_requirements_include_all_current_provider_dependencies():
     assert all(set(entry.get('dependencies', [])) <= set(specs) for entry in entries)
 
 
+@pytest.mark.parametrize('broken', [False, True])
+def test_installer_repairs_transitive_dependencies_without_reinstalling_healthy_graph(monkeypatch, tmp_path, broken):
+    from types import SimpleNamespace
+    from biopipe.remote import install_linux as installer
+    # Every declared package is present, but a dependency of one may be missing.
+    monkeypatch.setattr(installer.metadata, 'version', lambda name: '1.0')
+    installs = []
+    def run(command, **kwargs):
+        if 'check' in command:
+            return SimpleNamespace(returncode=int(broken), stdout='parent requires child' if broken else '')
+        installs.append(command)
+        return SimpleNamespace(returncode=0)
+    monkeypatch.setattr(installer.subprocess, 'run', run)
+    installer.ensure_requirements(['parent==1.0'], tmp_path/'requirements.txt')
+    assert bool(installs) == broken
+    if broken:
+        request = Path(installs[0][installs[0].index('-r')+1])
+        assert request.read_text() == 'parent==1.0\n'
+
+
 def test_native_bootstrap_does_not_mix_conda_and_pip_scientific_abis(monkeypatch):
     import biopipe.remote.provision as module
     uploaded = {}
