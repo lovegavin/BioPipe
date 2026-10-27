@@ -19,8 +19,9 @@ MAMBA_SHA = '701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd'
 def source_archive(root):
     """Explicit code allowlist. Never includes profiles, datasets, SSH or git files."""
     root = Path(root)
-    files = [root / name for name in ('pyproject.toml', 'README.md', 'requirements-hic-linux.txt')]
-    for directory in ('biopipe', 'biopipe_sdk', 'src', 'scripts'):
+    files = [root / name for name in ('pyproject.toml', 'README.md', 'requirements-hic-linux.txt',
+                                     'scripts/run.py', 'scripts/desktop_server.py')]
+    for directory in ('biopipe', 'biopipe_sdk', 'src'):
         files += [p for p in (root / directory).rglob('*') if p.is_file()
                   and p.suffix in ('.py', '.json', '.png', '.jpg', '.jpeg', '.svg', '.webp', '.gif')
                   and '__pycache__' not in p.parts]
