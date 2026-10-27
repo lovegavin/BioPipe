@@ -86,6 +86,39 @@ class Shell:
                  ' | sha256sum -c - && rm -- ' + shlex.quote(staging) + '/* && rmdir -- ' + shlex.quote(staging))
 
 
+def locate(connection, profile, progress, cancel):
+    """Read one server-owned receipt; never build/upload code or repair packages."""
+    from .client import RemoteError
+    from .installation import MAX_RECEIPT_BYTES, validate
+    shell = Shell(connection, progress, cancel)
+    progress('读取服务端安装登记')
+    base = profile.get('managed_root')
+    if not base:
+        home = shell.run('printf "\\nBP_HOME=%s\\n" "$HOME"')
+        found = re.search(r'BP_HOME=(/[^\r\n]*)', home)
+        if not found:
+            raise RemoteError('无法确定服务器用户目录。', code='server_not_installed')
+        base = found[1].rstrip('/') + '/.local/share/biopipe'
+    receipt = base + '/server.json'
+    q = shlex.quote
+    output = shell.run('if test -f ' + q(receipt) + '; then printf "\\nBP_SERVER_DOCUMENT\\n"; head -c '
+                       + str(MAX_RECEIPT_BYTES + 1) + ' -- ' + q(receipt)
+                       + '; printf "\\nBP_SERVER_END\\n"; fi')
+    if 'BP_SERVER_DOCUMENT\n' not in output:
+        raise RemoteError('未找到服务端安装登记。请先选择“安装 / 升级服务端”，或登记已有安装后重连。', code='server_not_installed')
+    document = output.split('BP_SERVER_DOCUMENT\n', 1)[1].rsplit('\nBP_SERVER_END', 1)[0]
+    try:
+        if len(document.encode('utf-8')) > MAX_RECEIPT_BYTES:
+            raise ValueError('Server installation document is too large')
+        value = validate(json.loads(document))
+    except (ValueError, TypeError, KeyError) as exc:
+        raise RemoteError('服务端安装登记无效，请重新登记或修复安装。', code='server_installation_invalid') from exc
+    progress('复用已安装的服务端；不上传程序、不安装依赖')
+    return {**profile, 'app_dir': value['app_dir'], 'python': value['python'],
+            'workspace': profile.get('workspace') or value['workspace'], 'managed_root': base,
+            'installation_id': value['server_id']}
+
+
 def provision(connection, profile, progress, cancel, root=None):
     from .client import RemoteError
     shell = Shell(connection, progress, cancel)
@@ -164,6 +197,11 @@ unset PYTHONPATH PYTHONHOME
                '; printf "\\n"; sleep 2; done; wait "$bp_setup_pid"; bp_status=$?; tail -n 12 ' + q(log) + '; exit "$bp_status"')
     shell.run(command, timeout=3600)
     workspace = profile.get('workspace') or base + '/workspace'
+    # Publish a stable, server-owned entry point only after successful setup.
+    # Other desktop versions read this document without uploading their code.
+    shell.run(q(python) + ' -I -m biopipe.remote.installation register --base ' + q(base)
+              + ' --app-dir ' + q(code) + ' --workspace ' + q(workspace)
+              + ' --source-sha256 ' + q(digest))
     progress('环境就绪，正在连接运行服务')
     return {**profile, 'python': python, 'app_dir': code, 'workspace': workspace,
             'setup_log': log, 'managed_root': base}

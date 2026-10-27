@@ -16,8 +16,9 @@ export type Parameter = {
 export type PluginRefresh = {generation: string; updated: string[]; unchanged: string[]; directory: string; operators: number; readers: number};
 export type PluginOperation = {id: string; status: 'running' | 'complete' | 'failed'; error: string | null; result?: PluginRefresh};
 export type PluginPackage = {name: string; title?: string; version: string; sha256: string; origin?: 'bundled' | 'wheel'; enabled?: boolean; source_managed?: boolean};
+export type DependencyState = {running: boolean; entries: {id: string; title: string; status: 'unchecked' | 'checking' | 'installing' | 'passed' | 'failed'; error: string; execution?: {mode: 'shared' | 'isolated'; reason?: string}}[]};
 export type PluginState = {generation: string | null; packages: PluginPackage[]; bundled_packages?: PluginPackage[]; inbox?: string;
-  dependencies?: {running: boolean; entries: {id: string; title: string; status: 'unchecked' | 'checking' | 'installing' | 'passed' | 'failed'; error: string; execution?: {mode: 'shared' | 'isolated'; reason?: string}}[]};
+  dependencies?: DependencyState;
   source_directories?: {operator: string; reader: string};
   descriptors: {id: string; kind: 'reader' | 'operator'; title: string; distribution: string; resources?: {memory_modes: string[]}}[]};
 export type Operator = {
@@ -166,7 +167,7 @@ export type Job = {
   node_owners?: Record<string, string>;
   spill_counts?: SpillCounts;
   summary?: {
-    steps: { name: string; export_path: string }[];
+    steps: { name: string; export_path: string; figures?: {format: string; path: string; filename: string}[] }[];
     memory_report?: string;
     [key: string]: unknown;
   } | null;
@@ -203,7 +204,9 @@ export type RemoteProfile = {id?: string; name: string; host: string; port: numb
   auth: 'password' | 'key' | 'agent'; key_path: string; python: string; app_dir: string; workspace: string;
   mode: 'exec' | 'shell'; menu_choice: string; environment?: 'managed' | 'existing'; managed_root?: string};
 export type RemoteInfo = {catalog: Catalog; history: Job[]; system: string; version: string; python: string;
-  workspace: string; automatic_memory_budget_bytes: number; automatic_memory_fraction: number; tools: Record<string, boolean>};
+  workspace: string; automatic_memory_budget_bytes: number; automatic_memory_fraction: number; tools: Record<string, boolean>;
+  dependencies?: DependencyState;
+  handshake?: {version: number; server_id: string; catalog_digest: string; dependency_revision: string; capabilities: string[]; operator_protocol: number}};
 export type RemoteStatus = {profile: RemoteProfile; fingerprint?: string; connected: boolean; info?: RemoteInfo};
 export type RemoteListing = {path: string; parent: string; next_offset: number | null;
   entries: {name: string; path: string; directory: boolean; bytes: number; modified: number}[]};

@@ -1,6 +1,6 @@
 # Windows editing and SSH execution
 
-BioPipe Studio v0.7.1 can prepare a Linux server and run a workflow over SSH. Choose an execution
+BioPipe Studio v0.8.1 can prepare a Linux server and run a workflow over SSH. Choose an execution
 target in the top toolbar, select server files in the input inspector, then use
 the existing **Check**, **Run**, **Stop**, results and log controls. This feature
 is included in both the full and Lite Windows desktop archives.
@@ -9,11 +9,21 @@ and automatic deployment results in [AUTO_DEPLOY_VALIDATION.md](AUTO_DEPLOY_VALI
 For automatic input uploads, mixed local/SSH
 stages and concurrent task manager, see [execution environments](EXECUTION_ENVIRONMENTS.md).
 
-## Prepare the server
+## Connect or maintain the server
 
-New connections default to **Automatic deployment: BioPipe + Hi-C**. Supply the
-SSH endpoint and authentication, verify its host fingerprint, and connect. No
-preinstalled Python or Conda is required. The account needs Linux x86_64, Bash,
+Both v0.8.1 editions separate ordinary connection from installation.
+Older v0.7.1 packages retain the earlier automatic-deployment-on-connect flow.
+See [the handshake contract](SERVER_HANDSHAKE.md) for compatibility and cache rules.
+
+For an installed server, supply the SSH endpoint and authentication, verify its
+host fingerprint and connect. The desktop reads the stable `server.json`, starts
+or reconnects to its bridge, and negotiates protocol/capabilities plus the server's
+operator and dependency documents. Desktop and server application versions need
+not match. Ordinary connection never uploads source or invokes an installer.
+
+For first installation or an intentional upgrade, choose **Server maintenance >
+Install / upgrade server**. No preinstalled Python or Conda is required.
+The installer needs Linux x86_64, Bash,
 tar, base64, sha256sum, flock, curl or wget, outbound HTTPS and writable disk space.
 The installer downloads a checksum-pinned static micromamba executable from its
 official conda-forge archive, then creates a private Python 3.11 environment with
@@ -26,25 +36,28 @@ the installed packages, import probes and tool executables before connecting.
 The default installation directory is `$HOME/.local/share/biopipe`, resolved on
 the server. It can be changed in the connection panel. The default run directory
 is `workspace/` below that location. No sudo, system Python modifications, shell
-startup edits, or global Conda activation are used. Existing connection records
-remain in **Use existing environment** mode until you choose automatic deployment.
+startup edits, or global Conda activation are used. Existing manually specified
+connection records remain supported. The server is installed once per chosen
+installation directory; any compatible desktop with SSH access can reuse it.
 
 Only application code, catalogs and parameter schemas are uploaded; local input
 datasets, profiles and credentials are excluded. The source archive is checked
 by SHA-256 before extraction. Code and environment paths are keyed by the source
-digest, so updating the desktop does not overwrite an older execution environment.
-Repeated connections reuse the same installation and check its requirements,
-including missing or incompatible transitive dependencies reported by `pip check`.
-Dependency downloads and installation occur only when required. An installation
+digest for explicit installs, so upgrading does not overwrite older execution
+environments. Only successful installation publishes the stable `server.json`
+entry point. Repeated connections reuse it without rebuilding the desktop source
+archive or rerunning `pip check` and import probes. The installer records verified
+dependency state; ordinary handshake restores compatible readiness documents.
+Dependency downloads occur only during explicit installation/repair. An installation
 lock serializes changes from multiple clients. The panel shows progress and errors;
 the server retains `managed-v1/setup-<digest>.log` for diagnostics. Failed attempts
-do not publish a readiness receipt; reconnect to retry. Cancellation stops waiting
+do not publish a new installation pointer; choose installation again to retry. Cancellation stops waiting
 and closes SSH; allow any outstanding installer to release its lock before retrying.
 
 ### Use an existing environment
 
 Use a Linux account that can read the input data and write its run directory.
-Place the same BioPipe source revision on the server, including `scripts/run.py`,
+Place a compatible BioPipe server installation on the server, including `scripts/run.py`,
 the generated bundled catalog and the independent `*.parameters.json` files.
 Prepare Python 3.11+ and the dependencies of the operators you will use. For Hi-C,
 follow [the Linux environment instructions](HIC.md#linux-tool-environment).
@@ -54,6 +67,17 @@ For a general source installation, activate the chosen environment and run:
 ```sh
 python -m pip install -e .
 ```
+
+Either use its paths directly in **Manually specify environment**, or register
+that installation once for discovery by other desktops:
+
+```sh
+python -m biopipe.remote.installation register --app-dir /srv/biopipe --workspace /srv/biopipe-work
+```
+
+The paths above are examples chosen by the administrator. Add `--base` for a
+nondefault installation registry; desktops use that same installation directory.
+This command only publishes a registration document and does not install packages.
 
 The Windows and Linux Python installations are separate. A Windows bundled
 runtime does not supply Linux binaries. Manual mode uses the selected server
@@ -69,9 +93,9 @@ Open the settings button beside the execution target and add a server:
 |---|---|
 | Name | A local display name |
 | Host, port, username | The SSH endpoint and existing account |
-| Server environment | Automatic deployment (new connections) or an existing environment |
+| Server environment | Registered BioPipe server (default) or manually specified environment |
 | Installation directory | Optional absolute Linux path for a managed deployment; defaults to the server user's home |
-| BioPipe directory | Absolute Linux path to the matching source checkout |
+| BioPipe directory | Absolute Linux path to a compatible installed server |
 | Run directory | Absolute writable Linux directory for jobs and the server registry |
 | Python | The environment's absolute Python executable, or `python3` on the remote PATH |
 | Authentication | Password, a local private-key file, or SSH Agent |
@@ -140,7 +164,11 @@ visible parent groups. Charged file cache is conservatively counted as used memo
 This prevents a container from budgeting against its host's larger RAM pool.
 
 Server outputs remain in their run directories. The task results panel can request
-a preview, report or download. Mixed-environment stages transfer the intermediate
+a preview, report or download. In **Run history**, use **View results** or
+**View logs** to inspect a previous run without replacing the current canvas;
+**Load canvas** is a separate action. This also works for server jobs recovered
+after reconnecting. Array previews are sampled on the server; requested downloads
+use verified, resumable local caching. Mixed-environment stages transfer the intermediate
 artifacts needed by downstream operators; they do not mirror the whole server
 workspace. Diagnostic events and console logs return to the editor. The log panel
 shows recent output; **Full process log** streams the complete server console in

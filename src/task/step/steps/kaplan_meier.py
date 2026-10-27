@@ -34,7 +34,7 @@ import numpy as np
 from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.task.step.steps._plot_helpers import save_figure, setup_style
+from src.task.step.steps._plot_helpers import save_figure, setup_style, figure_report
 
 
 class KaplanMeierStep(Step):
@@ -74,7 +74,7 @@ class KaplanMeierStep(Step):
     def run(self, ctx: Context, inputs) -> None:
         import matplotlib.pyplot as plt
 
-        setup_style()
+        setup_style(ctx)
 
         form = inputs[0]
         time_label = ctx.step_params.get("time_label")
@@ -276,7 +276,7 @@ class KaplanMeierStep(Step):
         print(f"[kaplan_meier] {summary} -> {out_path}")
 
     def export(self, ctx: Context) -> dict:
-        return self._export_data
+        return figure_report(self._export_data)
 
 
 def _km_estimate(times: np.ndarray, events: np.ndarray) -> dict:

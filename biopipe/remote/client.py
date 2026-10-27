@@ -2,6 +2,7 @@
 import base64
 from collections import deque
 import hashlib
+import json
 import re
 import shlex
 import threading
@@ -26,7 +27,7 @@ class HostKeyRequired(RemoteError):
 
 
 class SSHConnection:
-    def __init__(self, profile, credentials, *, progress=None, cancel=None):
+    def __init__(self, profile, credentials, *, progress=None, cancel=None, install=False, cached_info=None):
         import paramiko
         self.profile, self.lock = profile, threading.RLock()
         self.channel = None
@@ -68,21 +69,57 @@ class SSHConnection:
             self.client.get_transport().set_keepalive(20)
             self.channel.settimeout(2)
             if managed:
-                from .provision import provision
-                profile = provision(self, profile, progress or (lambda message: None), cancel or threading.Event())
+                from .provision import locate, provision
+                action = provision if install else locate
+                profile = action(self, profile, progress or (lambda message: None), cancel or threading.Event())
                 self.profile = profile
                 self.channel.sendall((bridge_command() + '\n').encode())
             deadline = time.monotonic()+90
             while True:
                 line = self._line(deadline)
                 if line.strip() == 'BIOPIPE_REMOTE_READY 1': break
+                if line.startswith('BIOPIPE_REMOTE_ERROR '):
+                    try: failure = json.loads(line.split(' ', 1)[1])
+                    except ValueError: failure = {}
+                    raise RemoteError(failure.get('error', '服务端无法完成握手。'),
+                                      code=failure.get('code', 'handshake_required'))
                 self.stderr = (self.stderr + line + '\n')[-6000:]
-            self.info = self.call('bootstrap')
-            if self.info.get('protocol_version') != 1:
-                raise RemoteError('服务器与桌面端的远程接口版本不兼容。')
+            if progress: progress('确认服务端接口、算子清单与依赖状态')
+            self.info = self.handshake(cached_info)
         except BaseException:
             self.close()
             raise
+
+    def handshake(self, cached_info=None):
+        from .protocol import VERSION
+        from biopipe_sdk.protocol import PROTOCOL_VERSION
+        capabilities = ['manifest_handshake', 'dependency_readiness', 'registry_refresh',
+                        'jobs', 'execution_pins', 'streaming', 'spill', 'upload']
+        cached_info = cached_info or {}
+        known = cached_info.get('handshake', {}).get('catalog_digest')
+        params = {'version': 1, 'protocol_version': VERSION, 'operator_protocol': PROTOCOL_VERSION,
+                  'required_capabilities': capabilities}
+        if known and cached_info.get('catalog'):
+            params['known_catalog_digest'] = known
+        try:
+            info = self.call('handshake', params)
+        except RemoteError as exc:
+            if 'Unknown remote operation' in str(exc):
+                raise RemoteError('此服务端尚不支持清单握手，请先升级一次服务端。日常连接不会自动覆盖服务端。',
+                                  code='handshake_required') from exc
+            raise
+        handshake = info.get('handshake', {})
+        if (info.get('protocol_version') != VERSION or handshake.get('version') != 1 or
+                handshake.get('operator_protocol') != PROTOCOL_VERSION or
+                not set(capabilities) <= set(handshake.get('capabilities', []))):
+            raise RemoteError('服务端接口或能力不兼容，请安装兼容的服务端版本。', code='handshake_incompatible')
+        if info.get('catalog_unchanged'):
+            if not known or handshake.get('catalog_digest') != known or not cached_info.get('catalog'):
+                raise RemoteError('服务端清单缓存无法确认，请重新连接。', code='handshake_incompatible')
+            info['catalog'] = cached_info['catalog']
+        if not isinstance(info.get('catalog'), dict):
+            raise RemoteError('服务端未提供有效算子清单。', code='handshake_incompatible')
+        return info
 
     @property
     def connected(self):
@@ -145,7 +182,8 @@ class SSHConnection:
                     if decoder.ack: self.channel.sendall(decoder.ack.encode())
                     if response is None or response.get('id') != identity: continue
                     if not response.get('ok'):
-                        raise RemoteError(response.get('error', 'Remote operation failed'), node_id=response.get('node_id'))
+                        raise RemoteError(response.get('error', 'Remote operation failed'),
+                                          code=response.get('code', 'remote_error'), node_id=response.get('node_id'))
                     return response['value']
             except RemoteError as exc:
                 if exc.code == 'remote_disconnected': self.close()

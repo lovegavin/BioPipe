@@ -32,6 +32,17 @@ def mount_remote(app, service):
     def connect(key: str, payload: dict):
         return manager.connect(key, {k: str(payload[k]) for k in ('password', 'passphrase') if payload.get(k)})
 
+    @app.post('/api/remote/{key}/install')
+    def install(key: str, payload: dict):
+        return manager.connect(key, {k: str(payload[k]) for k in ('password', 'passphrase') if payload.get(k)}, install=True)
+
+    @app.post('/api/remote/{key}/refresh')
+    def refresh(key: str, payload: dict | None = None):
+        value = (payload or {}).get('verify_all', False)
+        if not isinstance(value, bool):
+            raise RemoteError('verify_all must be boolean')
+        return manager.refresh(key, verify_all=value)
+
     @app.get('/api/remote/{key}/setup')
     def setup(key: str):
         return manager.setup_status(key)

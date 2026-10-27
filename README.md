@@ -5,8 +5,9 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Release **v0.7.1** adds resumable input uploads, per-workflow execution environments
-and concurrent task management. It retains automatic Linux server deployment,
+Release **v0.8.1** adds independent server handshakes, historical result viewing
+and automatically saved publication figures. It retains resumable input uploads,
+per-workflow execution environments, concurrent tasks, explicit Linux server deployment,
 backed-up profile upgrades and the [Hi-C workflows](docs/HIC.md): paired FASTQ,
 BAM/SAM or pairs to contact matrices and expected/compartment/insulation/loop/pileup
 analysis. It reuses existing QC, selection and plotting operators, with three new
@@ -29,12 +30,22 @@ The task manager shows upload/run progress and cancellation, while host-wide
 memory/CPU admission queues work that cannot safely run concurrently. The inspector
 puts analysis methods first and collapses tool and resource settings.
 
-New SSH connections can automatically deploy a
-private Linux x86_64 environment with Python, BioPipe and Hi-C dependencies.
-Choose **Automatic deployment** in the server panel; installation progress and
-errors are shown there. Existing manual server configurations remain supported.
-See [server deployment](docs/REMOTE_EXECUTION.md#prepare-the-server) for prerequisites
+Both desktop editions separate [server connection and maintenance](docs/SERVER_HANDSHAKE.md).
+Ordinary SSH connection reads an installed server's registration, negotiates
+interface capabilities and reuses its operator/dependency manifests. It does not
+upload this desktop's source or install dependencies. Use **Server maintenance >
+Install / upgrade server** explicitly to prepare a private Linux x86_64 environment
+with Python, BioPipe and Hi-C dependencies. Multiple compatible desktops can reuse
+that installation. Existing manual server configurations remain supported.
+See [server deployment](docs/REMOTE_EXECUTION.md#connect-or-maintain-the-server) for prerequisites
 and the on-server installation layout.
+
+Run history opens results or logs without replacing the current canvas. Local,
+coordinated and recovered server jobs share the result viewer. The 14 built-in
+plotting operators automatically save white-background PNG (300 DPI), PDF and SVG
+files; **Saved figures** provides direct original-file links. Software previews
+remain sampled inspection aids. Physical size, font size and resolution are
+ordinary frozen JSON parameters. See [publication figures](docs/PUBLICATION_FIGURES.md).
 
 The release retains **SDK 3.0 / protocol v3**, existing calculation implementations
 and stable IDs. The five existing route templates remain available: GWAS, RNA-seq
@@ -81,8 +92,8 @@ dependencies, optional analyses and troubleshooting resolver backtracking.
 Choose the archive without `Lite` for the bundled environment. The smaller
 `Windows-x64-Lite.zip` uses an existing Python environment instead.
 
-Release v0.7.1 is maintained on `release/v0.7.1`; `main` retains the author's separate
-upstream development. See the [release notes](docs/releases/v0.7.1.md) for scope.
+Release v0.8.1 is maintained on `release/v0.8.1`; `main` and the author's `v0.8.0`
+tag retain separate upstream development. See the [release notes](docs/releases/v0.8.1.md) for scope.
 Upgrading from v0.4.1 uses a one-time backed-up
 [migration](docs/migration_v2.md), automatic for supported built-in desktop profiles;
 old external extensions must be converted explicitly. The runtime
@@ -219,6 +230,7 @@ copyable selection context and client revocation. See [CLI/MCP setup](docs/agent
 | [Data contracts](docs/data_contracts.md) | Static compatibility, runtime checks and metadata propagation |
 | [Reusable routes](docs/route_operators.md) | Save/register separation, nested graphs and version snapshots |
 | [Studio interaction](docs/frontend_requirements.md) | Canvas editing, panels, results and visual design |
+| [Publication figures](docs/PUBLICATION_FIGURES.md) | Automatically saved PNG/PDF/SVG, original-file links and physical figure sizing |
 | [Resource runtime](docs/resource_runtime.md) | Fixed budget, admission, spill, cache format and limits |
 | [Desktop](docs/desktop.md) / [portability](docs/portability.md) | Build, launch, profiles and moving computers |
 

@@ -118,7 +118,13 @@ def test_real_local_ssh_host_trust_and_transport():
                     request = decoder.feed(line.decode() if isinstance(line, bytes) else line)
                     if decoder.ack: channel.sendall(decoder.ack.encode())
                     if request is None: continue
-                    value = {'protocol_version': 1} if request['method'] == 'bootstrap' else request['params']
+                    if request['method'] == 'handshake':
+                        from biopipe.remote.handshake import CAPABILITIES
+                        value = {'protocol_version': 1, 'catalog': {'operators': [], 'readers': []},
+                                 'handshake': {'version': 1, 'operator_protocol': 3,
+                                               'capabilities': list(CAPABILITIES), 'catalog_digest': 'test'}}
+                    else:
+                        value = request['params']
                     for line in frames({'id': request['id'], 'ok': True, 'value': value}, 'R'):
                         channel.sendall(line.encode())
         except (EOFError, OSError): pass

@@ -105,7 +105,8 @@ def run(ctx: Context, steps: list[dict]) -> None:
                     json.dump(content, file, indent=2, ensure_ascii=False)
                 exports.append({"index": i, "name": name, "elapsed": round(elapsed, 4),
                                 "inputs": list(names), "params": spec.get("params", {}),
-                                "export_path": relative})
+                                "export_path": relative,
+                                **({"figures": content["figures"]} if isinstance(content, dict) and content.get("figures") else {})})
                 ctx.metadata.setdefault("steps", []).append({"name": name, "elapsed": elapsed})
                 ctx.event("contract_checked", name=name, inputs=len(names), outputs=declared_outputs, contract_version=1)
                 successful = True

@@ -1,10 +1,11 @@
-"""Editor-side connection records and remote job references; no data payloads."""
+"""Editor-side remote references and on-demand, bounded result transfers."""
 from copy import deepcopy
 import hashlib
 import json
 from pathlib import Path, PurePosixPath
 import re
 import threading
+import time
 import uuid
 
 from pydantic import Field, field_validator, model_validator
@@ -101,11 +102,13 @@ class RemoteManager:
             self.profile(key)['host_key'] = observed
             del self.pending_keys[key]; self.persist()
 
-    def connect(self, key, credentials):
+    def connect(self, key, credentials, *, install=False):
         with self.lock:
             if key in self.connecting:
                 raise RemoteError('此服务器正在连接或准备环境。')
             profile = deepcopy(self.profile(key))
+            if install and profile.get('environment') != 'managed':
+                raise RemoteError('已有环境请由服务端管理员维护；自动安装仅用于托管安装目录。')
             secret = credentials or self.credentials.get(key, {})
             if self.connections.get(key): self.connections.pop(key).close()
             cancel = self.connecting[key] = threading.Event()
@@ -117,7 +120,9 @@ class RemoteManager:
                     lines.append(message); del lines[:-60]
         try:
             report('正在连接 SSH')
-            connection = (self.factory(profile, secret, progress=report, cancel=cancel)
+            cached = read_json(self.directory/(key+'.catalog.json'))
+            connection = (self.factory(profile, secret, progress=report, cancel=cancel,
+                                       install=install, cached_info=cached)
                           if self.factory is SSHConnection else self.factory(profile, secret))
             with self.lock:
                 if cancel.is_set():
@@ -146,6 +151,31 @@ class RemoteManager:
             with self.lock:
                 self.connecting.pop(key, None)
                 self.progress[key]['running'] = False
+
+    def refresh(self, key, *, verify_all=False):
+        """Explicit maintenance only; ordinary connect never scans/installs."""
+        connection = self.connections.get(key)
+        if not connection or not connection.connected:
+            raise RemoteError('请先连接服务器。', code='remote_disconnected')
+        info = connection.call('refresh_registry', {'verify_all': bool(verify_all)})
+        deadline = time.monotonic() + 600
+        while True:
+            if not isinstance(info, dict) or not isinstance(info.get('catalog'), dict):
+                raise RemoteError('服务端没有返回有效的算子清单。')
+            with self.lock:
+                if self.connections.get(key) is not connection:
+                    raise RemoteError('连接已改变；服务端维护仍可独立完成。', code='remote_disconnected')
+                connection.info = info
+                atomic_json(self.directory/(key+'.catalog.json'), info)
+            maintenance = info.get('registry_refresh', {})
+            if not maintenance.get('running'):
+                if maintenance.get('error'):
+                    raise RemoteError(maintenance['error'], code='registry_refresh_failed')
+                return info
+            if time.monotonic() >= deadline:
+                raise RemoteError('服务端维护仍在进行，可稍后刷新查看结果。', code='registry_refresh_pending')
+            time.sleep(.5)
+            info = connection.call('refresh_status')
 
     def setup_status(self, key):
         with self.lock:
@@ -253,6 +283,46 @@ class RemoteManager:
         ref = self.reference(key)
         result = self.wrap_job(ref['profile_id'], self.call(ref['profile_id'], 'job', {'job_id': ref['job_id']}))
         self.persist(); return result
+
+    def fetch_output(self, profile, job_id, kind, **fields):
+        """Resolve an authorized job output, then reuse the resumable transfer cache."""
+        from .transfers import TransferClient
+        from biopipe.remote.transfers import basename
+        self.profile(profile)
+        result = self.call(profile, 'output_file', {'job_id': job_id, 'kind': kind, **fields})
+        name = basename(result['name'])
+        if kind == 'figure' and fields.get('format') and Path(name).suffix.lower() != '.' + fields['format']:
+            raise ValueError('服务器尚不支持打开此图表格式，请更新服务端后重试。')
+        client = TransferClient(lambda method, params=None: self.call(profile, method, params),
+                                self.service.directory / 'exchange' / profile)
+        identity = hashlib.sha256(json.dumps([job_id, kind, fields], sort_keys=True).encode()).hexdigest()[:24]
+        downloaded = client.download(result['path'], client.cache_dir / 'results' / identity / name)
+        return Path(downloaded['path'])
+
+    def preview(self, key, artifact_id):
+        ref = self.reference(key)
+        # Sampling happens on the server; opening a preview never downloads the array.
+        return self.call(ref['profile_id'], 'preview', {'job_id': ref['job_id'], 'artifact_id': artifact_id})
+
+    def artifact(self, key, artifact_id):
+        match = next((a for a in (self.job(key).get('report') or {}).get('artifacts', [])
+                      if a['artifact_id'] == artifact_id and a.get('disk_uri')), None)
+        if not match:
+            raise KeyError('产物尚未保存，或这次运行没有保留它。')
+        return self._output(key, 'artifact', artifact_id=artifact_id), match
+
+    def _output(self, key, kind, **fields):
+        ref = self.reference(key)
+        return self.fetch_output(ref['profile_id'], ref['job_id'], kind, **fields)
+
+    def artifact_file(self, key, artifact_id, role):
+        return self._output(key, 'artifact_file', artifact_id=artifact_id, role=role)
+
+    def export_file(self, key, index):
+        return self._output(key, 'export', index=index)
+
+    def figure_file(self, key, index, format=None):
+        return self._output(key, 'figure', index=index, **({'format': format} if format else {}))
 
     def cancel(self, key):
         ref = self.reference(key)

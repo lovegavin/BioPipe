@@ -775,11 +775,7 @@ class ExecutionService:
 
     def _fetch_output(self, key, child, kind, **fields):
         profile = target_key(child['target'])
-        result = self.service.remotes.call(profile, 'output_file', {'job_id': child['id'], 'kind': kind, **fields})
-        client = TransferClient(lambda method, params=None: self.service.remotes.call(profile, method, params), self.cache / profile)
-        identity = hashlib.sha256(json.dumps([key, child['unit_id'], kind, fields], sort_keys=True).encode()).hexdigest()[:24]
-        downloaded = client.download(result['path'], client.cache_dir / 'results' / identity / result['name'])
-        return Path(downloaded['path'])
+        return self.service.remotes.fetch_output(profile, child['id'], kind, **fields)
 
     def preview(self, key, artifact_id):
         child, match = self._artifact_ref(key, artifact_id)
@@ -811,9 +807,10 @@ class ExecutionService:
         child, index = self._export_ref(key, index)
         return self.service.export_file(child['id'], index) if child['target']['kind'] == 'local' else self._fetch_output(key, child, 'export', index=index)
 
-    def figure_file(self, key, index):
+    def figure_file(self, key, index, format=None):
         child, index = self._export_ref(key, index)
-        return self.service.figure_file(child['id'], index) if child['target']['kind'] == 'local' else self._fetch_output(key, child, 'figure', index=index)
+        fields = {'index': index, **({'format': format} if format else {})}
+        return self.service.figure_file(child['id'], index, format=format) if child['target']['kind'] == 'local' else self._fetch_output(key, child, 'figure', **fields)
 
     def history(self):
         return sorted([self.details(path.parent.name) for path in self.directory.glob('exec-*/job.json')],

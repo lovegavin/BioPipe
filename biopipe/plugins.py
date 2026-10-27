@@ -116,23 +116,29 @@ def load_runtime(lock, manifest=None):
 
 
 class PluginManager:
-    def __init__(self, data_dir, *, source_root=ROOT):
+    def __init__(self, data_dir, *, source_root=ROOT, manifest_only=False):
         self.directory = Path(data_dir) / "plugins"
         self.source_root = Path(source_root).resolve() if source_root is not None else None
+        self.manifest_only = manifest_only
         self.registry = self.directory / "registry.json"
         self.lock = FileLock(self.directory / ".install.lock", timeout=600)
+
+    def bundled_state(self):
+        """Use one discovery policy for live, restored, and archived catalogs."""
+        return bundled_state(manifest_only=True) if self.manifest_only else bundled_state()
 
     def state(self):
         # atomic_json publishes a complete generation. Readers must NOT wait on
         # the installation lock while pip prepares a new environment.
+        bundled = self.bundled_state()
         if not self.registry.exists():
             with self.lock:
                 if not self.registry.exists():
                     self._publish({"protocol_version": PROTOCOL_VERSION, "package_protocol_version": PROTOCOL_VERSION,
-                                   **deepcopy(bundled_state()), "bundled_seen": sorted(p["name"] for p in bundled_state()["packages"])})
+                                   **deepcopy(bundled), "bundled_seen": sorted(p["name"] for p in bundled["packages"])})
         value = json.loads(self.registry.read_text(encoding="utf-8"))
         require_current_state(value)
-        current = {p["name"]: p for p in bundled_state()["packages"]}
+        current = {p["name"]: p for p in bundled["packages"]}
         changed = {p["name"] for p in value["packages"] if p.get("origin") == "bundled"
                    and p["name"] in current and p.get("sha256") != current[p["name"]]["sha256"]}
         # Persisted receipt distinguishes new providers from deliberate removals.
@@ -143,13 +149,22 @@ class PluginManager:
                 value = json.loads(self.registry.read_text(encoding="utf-8"))
                 additions -= set(value.get("bundled_seen", [])) | {p["name"] for p in value["packages"]}
                 value["packages"].extend(deepcopy(current[name]) for name in sorted(additions))
+                # The first metadata-only read changes the package digest policy,
+                # not its executable identity. Retain declaration overlays and
+                # their original audit pins when the compiled code is unchanged.
+                policy_only = {p["name"] for p in value["packages"] if self.manifest_only
+                               and p["name"] in changed and not p.get("manifest_only")
+                               and p.get("origin") == "bundled"
+                               and p.get("version") == current[p["name"]]["version"]
+                               and p.get("code_sha") == current[p["name"]]["code_sha"]}
                 for package in value["packages"]:
                     if package["name"] in changed and package.get("origin") == "bundled":
                         enabled = package.get("enabled", True)
+                        package.pop("manifest_only", None)
                         package.update(deepcopy(current[package["name"]]), enabled=enabled)
                 installed = {p["name"] for p in value["packages"] if p.get("origin") == "bundled"}
-                replacing = (changed & installed) | additions
-                value["descriptors"] = [d for d in value["descriptors"] if d["distribution"] not in replacing] + [deepcopy(d) for d in bundled_state()["descriptors"] if d["distribution"] in replacing]
+                replacing = ((changed - policy_only) & installed) | additions
+                value["descriptors"] = [d for d in value["descriptors"] if d["distribution"] not in replacing] + [deepcopy(d) for d in bundled["descriptors"] if d["distribution"] in replacing]
                 value["bundled_seen"] = sorted(seen | set(value.get("bundled_seen", [])) | set(current))
                 self._publish(value)
         value["_runtime_root"] = str(self.directory.resolve())
@@ -178,7 +193,7 @@ class PluginManager:
             value = self.state()
             package = next((p for p in value["packages"] if p["name"] == name), None)
             if action == "restore":
-                bundled = deepcopy(bundled_state())
+                bundled = deepcopy(self.bundled_state())
                 original = next((p for p in bundled["packages"] if p["name"] == name), None)
                 if original is None:
                     raise ValueError(f"No bundled package named {name}")
@@ -225,7 +240,7 @@ class PluginManager:
                 if candidate.get("package_protocol_version") == PROTOCOL_VERSION:
                     candidate["_runtime_root"] = str(self.directory.resolve())
                     candidates.append(candidate)
-        return resolve(graph, candidates, bundled_state())
+        return resolve(graph, candidates, self.bundled_state())
 
     def pin(self, graph, *, snapshot=None):
         state = self.snapshot(graph) if snapshot is None else snapshot

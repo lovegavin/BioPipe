@@ -246,6 +246,7 @@ function Studio() {
     [events, setEvents] = useState<RunEvent[]>([]);
   const [cancelling, setCancelling] = useState('');
   const selectedJobId = useRef(job?.id);
+  const historyRequest = useRef(0);
   selectedJobId.current = job?.id;
   const [consoleText, setConsoleText] = useState("");
   const [consoleTruncated, setConsoleTruncated] = useState(false);
@@ -1682,8 +1683,10 @@ function Studio() {
               setResultsCollapsed(!resultsCollapsed);
               setResultsExpanded(true);
             }}
-            onJob={(id) => {
-              void api.job(id).then(setJob).catch(failure);
+            onJob={async (id) => {
+              const request = ++historyRequest.current;
+              const next = await api.job(id);
+              if (request === historyRequest.current) setJob(next);
             }}
             onRestore={(value) => {
               if (!value.graph || busy) return;

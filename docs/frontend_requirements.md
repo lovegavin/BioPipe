@@ -38,6 +38,26 @@ navigate adjacent tabs. Up to 20 pages can be open. All open pages and recently
 closed pages are autosaved to the backend. Layout/viewport and panel preferences
 are separate from analysis semantics. See [route operators](route_operators.md).
 
+## Run history and outputs
+
+Each history entry has separate **View results**, **View logs** and **Load canvas**
+actions. Clicking the run name also opens its results; neither viewing action
+changes the current graph. Active jobs offer **View progress**. Navigation waits
+for the selected job to load, and a failed connection keeps the history visible.
+
+The result viewer shows retained array previews, file outputs, step reports and
+figures, with downloads for the corresponding saved outputs. Failed runs can
+still expose partial outputs alongside the error and log action. Preview failures
+offer **Retry**. This applies to local, coordinated and recovered server jobs.
+Server previews are sampled remotely; complete files transfer only when requested
+and use verified, resumable local caching. Reconnect the server to view its outputs;
+missing or removed artifacts cannot be reconstructed from the history alone.
+
+**Saved figures** lists links to the PNG/PDF/SVG files already created by plotting
+operators. Opening these originals is separate from the sampled data preview and
+does not require another export action. See [publication figures](PUBLICATION_FIGURES.md)
+for output styling, physical dimensions and the independent JSON parameters.
+
 ## Visual system
 
 The workspace follows a restrained Linear/Vercel-inspired style: neutral surfaces,

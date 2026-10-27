@@ -52,6 +52,30 @@
     "ylabel": {
       "title": "Y axis label",
       "type": "string"
+    },
+    "figure_width_mm": {
+      "title": "Figure width (mm)",
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Physical output width; height keeps its aspect ratio unless set separately."
+    },
+    "figure_height_mm": {
+      "title": "Figure height (mm)",
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "figure_dpi": {
+      "title": "Figure resolution (DPI)",
+      "type": "integer",
+      "minimum": 72,
+      "default": 300,
+      "description": "PNG and rasterized layers; PDF/SVG labels and axes remain vector."
+    },
+    "figure_font_size": {
+      "title": "Figure font size (pt)",
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 8
     }
   },
   "additionalProperties": true,

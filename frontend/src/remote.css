@@ -14,8 +14,14 @@
 .remote-panel footer .primary-button,.remote-files footer .primary-button {margin-left:auto;}
 .remote-trust {background:var(--surface); padding:16px; border:1px solid var(--border); border-radius:8px; display:grid; gap:12px; margin:16px 0;}
 .remote-trust code {overflow-wrap:anywhere; font-size:12px;}
-.remote-connected {display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:18px; color:var(--text-secondary);}
-.remote-connected code {width:100%; overflow-wrap:anywhere; font-size:11px;}
+.remote-maintenance {margin-top:12px; font-size:12px; color:var(--text-secondary);}
+.remote-maintenance summary {cursor:pointer;}
+.remote-maintenance .subtle-button {margin-top:8px;}
+.remote-connected {display:grid; gap:8px; margin-top:18px; padding-top:14px; border-top:1px solid var(--separator); color:var(--text-secondary); font-size:12px;}
+.remote-status-heading {display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.remote-status-heading strong {font-weight:500; color:var(--text-primary);}
+.remote-status-heading .subtle-button {margin-left:auto; font-size:12px;}
+.remote-status-counts {display:flex; align-items:center; flex-wrap:wrap; gap:6px 16px; color:var(--text-muted); font-size:11px; font-variant-numeric:tabular-nums;}
 .remote-setup {margin:12px 0; min-width:0; color:var(--text-secondary); font-size:12px;}
 .remote-setup summary {overflow-wrap:anywhere; cursor:pointer;}
 .remote-setup pre {max-height:150px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; padding:10px; border-radius:6px; background:var(--panel); font-size:11px;}

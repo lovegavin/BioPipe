@@ -31,7 +31,7 @@ import numpy as np
 from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.task.step.steps._plot_helpers import setup_style, save_figure
+from src.task.step.steps._plot_helpers import setup_style, save_figure, figure_report
 
 
 class EnrichmentPlotStep(Step):
@@ -144,7 +144,7 @@ class EnrichmentPlotStep(Step):
         from matplotlib.cm import ScalarMappable
         from matplotlib.colors import Normalize
 
-        setup_style()
+        setup_style(ctx)
 
         height = max(3.0, 0.4 * len(kept_names) + 1.0)
         fig, ax = plt.subplots(figsize=(8, height))
@@ -203,4 +203,4 @@ class EnrichmentPlotStep(Step):
         )
 
     def export(self, ctx: Context) -> dict:
-        return self._export_data
+        return figure_report(self._export_data)

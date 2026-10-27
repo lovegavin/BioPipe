@@ -5,6 +5,7 @@ import json
 import logging
 import os
 from pathlib import Path
+from typing import Literal
 import secrets
 from urllib.parse import urlparse
 import uuid
@@ -348,36 +349,44 @@ def create_app(settings=None):
                 await asyncio.sleep(.4)
         return StreamingResponse(stream(), media_type="text/event-stream", headers={"X-Accel-Buffering": "no", "Cache-Control": "no-cache"})
 
+    def result_service(key):
+        if executions.owns(key):
+            return executions
+        if service.remotes.owns(key):
+            return service.remotes
+        return service
+
     @app.get("/api/jobs/{key}/artifacts/{artifact_id}/preview")
     def preview(key: str, artifact_id: str):
-        return (executions if executions.owns(key) else service).preview(key, artifact_id)
+        return result_service(key).preview(key, artifact_id)
 
     @app.get("/api/jobs/{key}/artifacts/{artifact_id}/download")
     def download(key: str, artifact_id: str):
-        path, descriptor = (executions if executions.owns(key) else service).artifact(key, artifact_id)
+        path, descriptor = result_service(key).artifact(key, artifact_id)
         suffix = ".files.json" if descriptor.get("kind") == "file" else ".npy"
         return FileResponse(path, filename=descriptor["name"] + suffix, media_type="application/octet-stream")
 
     @app.get("/api/jobs/{key}/artifacts/{artifact_id}/files/{role}")
     def artifact_file(key: str, artifact_id: str, role: str):
-        path = (executions if executions.owns(key) else service).artifact_file(key, artifact_id, role)
+        path = result_service(key).artifact_file(key, artifact_id, role)
         return FileResponse(path, filename=path.name, media_type="application/octet-stream")
 
     @app.get("/api/jobs/{key}/exports/{index}")
     def step_export(key: str, index: int):
-        path = (executions if executions.owns(key) else service).export_file(key, index)
+        path = result_service(key).export_file(key, index)
         if path.stat().st_size > 4 * 1024**2:
             return {"message": "步骤报告较大，请下载查看。"}
         return safe_json(read_json(path))
 
     @app.get("/api/jobs/{key}/exports/{index}/download")
     def export_download(key: str, index: int):
-        path = (executions if executions.owns(key) else service).export_file(key, index)
+        path = result_service(key).export_file(key, index)
         return FileResponse(path, filename=path.name, media_type="application/json")
 
     @app.get("/api/jobs/{key}/exports/{index}/figure")
-    def figure(key: str, index: int):
-        return FileResponse((executions if executions.owns(key) else service).figure_file(key, index))
+    def figure(key: str, index: int, format: Literal["png", "pdf", "svg", "jpg", "jpeg", "webp", "tif", "tiff"] | None = None):
+        path = result_service(key).figure_file(key, index, format=format)
+        return FileResponse(path, filename=path.name, content_disposition_type="inline")
 
     @app.get("/api/jobs/{key}/console")
     def console(key: str):

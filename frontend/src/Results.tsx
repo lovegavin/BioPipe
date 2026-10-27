@@ -5,6 +5,7 @@ import {
   CaretDown,
   CheckCircle,
   ChartScatter,
+  CircleNotch,
   Clock,
   FileCode,
   Play,
@@ -15,6 +16,7 @@ import { api } from "./api";
 import { bytes } from "./graph";
 import {isActiveJob, jobStatusLabel} from './execution';
 import {TaskManager, TaskProgress} from './TaskManager';
+import {FigureLinks, figureFormats, figureUrl} from './FigureOutputs';
 import type { Job, Preview, RunEvent, SpillCounts } from "./types";
 
 export const statusLabel = jobStatusLabel;
@@ -170,7 +172,7 @@ export function Results({
   history: Job[];
   tab: string;
   onTab: (tab: string) => void;
-  onJob: (id: string) => void;
+  onJob: (id: string) => void | Promise<void>;
   onRestore: (job: Job) => void;
   onError: (message: string) => void;
   collapsed: boolean;
@@ -182,25 +184,50 @@ export function Results({
   const [preview, setPreview] = useState<Preview | null>(null),
     [selected, setSelected] = useState(""),
     [loading, setLoading] = useState(false);
+  const [opening, setOpening] = useState(''), [previewError, setPreviewError] = useState('');
+  const [reload, setReload] = useState(0);
+  const selectionRequest = useRef(0);
   const [detail, setDetail] = useState<Record<string, unknown> | null>(null),
     [step, setStep] = useState(-1);
   const reportRequest = useRef(0);
   const artifacts = job?.report?.artifacts.filter((a) => a.disk_uri) || [];
+  const hasOutputs = artifacts.length > 0 || !!job?.summary?.steps.length;
+  const savedFormats = figureFormats(detail);
+  const imageFormat = savedFormats.find(format => ['png','svg','jpg','jpeg','webp'].includes(format));
+  const savedFigures = job?.summary?.steps.flatMap((item, index) => {
+    const formats = figureFormats(item);
+    return formats.length ? [{...item, index, formats}] : [];
+  }) || [];
+  async function openJob(id: string, destination: string) {
+    const request = ++selectionRequest.current;
+    setOpening(id);
+    try {
+      await onJob(id);
+      if (request === selectionRequest.current) onTab(destination);
+    } catch (error) {
+      if (request === selectionRequest.current) onError((error as Error).message);
+    } finally {
+      if (request === selectionRequest.current) setOpening('');
+    }
+  }
   useEffect(() => {
     reportRequest.current++;
     setPreview(null);
     setSelected("");
     setDetail(null);
     setStep(-1);
+    setPreviewError('');
+    setLoading(false);
   }, [job?.id]);
   useEffect(() => {
-    if (!job || job.remote || !artifacts.length) return;
+    if (!job || tab !== 'results' || step >= 0 || !artifacts.length) return;
     const id =
       selected && artifacts.some((a) => a.artifact_id === selected)
         ? selected
         : artifacts[artifacts.length - 1].artifact_id;
     let alive = true;
     setLoading(true);
+    setPreviewError('');
     api
       .preview(job.id, id)
       .then((value) => {
@@ -210,7 +237,7 @@ export function Results({
         }
       })
       .catch((error) => {
-        if (alive) onError(error.message);
+        if (alive) setPreviewError(error.message);
       })
       .finally(() => {
         if (alive) setLoading(false);
@@ -221,6 +248,9 @@ export function Results({
   }, [
     job?.id,
     job?.status,
+    tab,
+    step,
+    reload,
     selected,
     artifacts.map((a) => a.artifact_id).join(","),
   ]);
@@ -229,14 +259,18 @@ export function Results({
     const request = ++reportRequest.current;
     setStep(index);
     setDetail(null);
+    setPreviewError('');
     const jobId = job.id;
     try {
       const value = await api.step(jobId, index);
       if (request === reportRequest.current) setDetail(value);
     } catch (error) {
-      onError((error as Error).message);
+      if (request === reportRequest.current) setPreviewError((error as Error).message);
     }
   }
+  useEffect(() => {
+    if (tab === 'results' && !artifacts.length && job?.summary?.steps.length && step < 0) void report(0);
+  }, [tab, job?.id, artifacts.length, job?.summary?.steps.length, step]);
   const counts = job?.spill_counts || spillCounts(events);
   const completed = events.filter((e) => e.event === "step_finished").length;
   return (
@@ -290,16 +324,17 @@ export function Results({
         </div>
       </div>
       <div className="results-body">
-        {tab === 'tasks' ? <TaskManager jobs={history} selectedId={job?.id} onSelect={onJob} onCancel={onCancel} cancelling={cancelling}
-          onLogs={id => {onJob(id); onTab('logs');}}/> : tab === "history" ? (
+        {tab === 'tasks' ? <TaskManager jobs={history} selectedId={job?.id} onSelect={id => void openJob(id, 'results')} onCancel={onCancel} cancelling={cancelling}
+          onLogs={id => void openJob(id, 'logs')}/> : tab === "history" ? (
           <div className="history-list">
             {history.length ? (
               history.map((item) => (
-                <div className="history-item" key={item.id}>
-                  <Clock size={17} />
+                <div className={`history-item ${job?.id === item.id ? 'selected' : ''}`} key={item.id} aria-busy={opening === item.id}>
+                  {opening === item.id ? <CircleNotch size={17} className="spin"/> : <Clock size={17} />}
                   <button
                     className="history-name"
-                    onClick={() => onJob(item.id)}
+                    onClick={() => void openJob(item.id, 'results')}
+                    aria-label={`查看结果 ${item.name}`}
                   >
                     <strong>{item.name}</strong>
                     <small>
@@ -315,6 +350,13 @@ export function Results({
                   <span className={`status-label ${item.status}`}>
                     {statusLabel[item.status]}
                   </span>
+                  <div className="history-actions">
+                  <button className="text-button history-view" onClick={() => void openJob(item.id, 'results')}>
+                    <ChartScatter size={15}/>{isActiveJob(item) ? '查看进度' : '查看结果'}
+                  </button>
+                  <button className="text-button" onClick={() => void openJob(item.id, 'logs')}>
+                    <Terminal size={15}/>查看日志
+                  </button>
                   <button
                     className="text-button"
                     onClick={() => {
@@ -326,6 +368,7 @@ export function Results({
                   >
                     载入画布
                   </button>
+                  </div>
                 </div>
               ))
             ) : (
@@ -413,16 +456,7 @@ export function Results({
               <h3>暂无运行结果</h3>
             </div>
           </div>
-        ) : job.remote ? (
-          <div className="remote-results">
-            <h3>{job.remote.name} · {statusLabel[job.status]}</h3>
-            {job.error && <p className="field-error" role="alert">{job.error}</p>}
-            <div className="remote-result-file"><strong>服务器运行目录</strong><code>{job.remote.workspace}/.studio/jobs/{job.remote.job_id}</code></div>
-            {artifacts.map(item => <div className="remote-result-file" key={item.artifact_id}><strong>{item.name}</strong><code>{item.disk_uri}</code></div>)}
-            {job.summary?.steps.map((item, i) => <div className="remote-result-file" key={i}><strong>{item.name}</strong><code>{item.export_path}</code></div>)}
-            <button className="subtle-button" onClick={() => onTab('logs')}>查看运行日志</button>
-          </div>
-        ) : job.error ? (
+        ) : job.error && !hasOutputs ? (
           <div className="run-error">
             <WarningCircle size={24} />
             <div>
@@ -447,6 +481,14 @@ export function Results({
         ) : (
           <div className="result-content">
             <div className="artifact-sidebar">
+              {job.remote && <div className="result-location" title={`${job.remote.workspace}/.studio/jobs/${job.remote.job_id}`}>{job.remote.name}</div>}
+              {savedFigures.length > 0 && <>
+                <div className="section-caption">输出图表 <span>{savedFigures.length}</span></div>
+                {savedFigures.map(item => <div className="saved-figure" key={item.index}>
+                  <button className="text-button" onClick={() => void report(item.index)}><ChartScatter size={15}/>{item.name}</button>
+                  <FigureLinks jobId={job.id} step={item.index} formats={item.formats} compact/>
+                </div>)}
+              </>}
               <div className="section-caption">
                 数据产物 <span>{artifacts.length}</span>
               </div>
@@ -455,6 +497,8 @@ export function Results({
                   key={artifact.artifact_id}
                   className={`artifact-option ${selected === artifact.artifact_id && step < 0 ? "active" : ""}`}
                   onClick={() => {
+                    reportRequest.current++;
+                    setPreviewError('');
                     setSelected(artifact.artifact_id);
                     setStep(-1);
                   }}
@@ -484,7 +528,8 @@ export function Results({
               ))}
             </div>
             <div className="preview-content">
-              {step >= 0 ? (
+              {job.error && <div className="result-warning" role="alert"><WarningCircle size={16}/><span>{job.error}</span><button className="text-button" onClick={() => onTab('logs')}>查看日志</button></div>}
+              {previewError ? <div className="result-warning" role="alert"><WarningCircle size={18}/><span>{previewError}</span><button className="text-button" onClick={() => step >= 0 ? void report(step) : setReload(value => value + 1)}>重试</button></div> : step >= 0 ? (
                 <>
                   <div className="preview-heading">
                     <strong>步骤 {step + 1} · 分析报告</strong>
@@ -498,28 +543,12 @@ export function Results({
                       JSON
                     </a>
                   </div>
-                  {detail?.path &&
-                  /\.(png|jpg|jpeg|webp|svg)$/i.test(
-                    String(detail.filename || ""),
-                  ) ? (
+                  {savedFormats.length ? (
                     <div className="figure-preview">
-                      <img
-                        src={api.url(
-                          `/api/jobs/${job.id}/exports/${step}/figure`,
-                        )}
-                        alt={`${detail.kind || "分析"}图像产物`}
-                      />
-                      <a
-                        href={api.url(
-                          `/api/jobs/${job.id}/exports/${step}/figure`,
-                        )}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-button"
-                      >
-                        <ArrowSquareOut size={13} />
-                        查看原图
-                      </a>
+                      {imageFormat && <a className="figure-image-link" href={figureUrl(job.id, step, imageFormat)} target="_blank" rel="noreferrer" aria-label="打开已保存原图">
+                        <img src={figureUrl(job.id, step, imageFormat)} alt={`${detail?.kind || '分析'}图像产物`}/>
+                      </a>}
+                      <FigureLinks jobId={job.id} step={step} formats={savedFormats}/>
                     </div>
                   ) : (
                     <pre className="report-json">
@@ -557,7 +586,7 @@ export function Results({
                     {preview.points.length > 0 && (
                       <div className="chart-preview">
                         <Scatter preview={preview} />
-                        <small>前两列 · 最多 200 行</small>
+                        <small>数据预览 · 前两列 · 最多 200 行</small>
                       </div>
                     )}
                     {!preview.format && <div className="table-preview">
@@ -595,7 +624,7 @@ export function Results({
                 <div className="mini-empty">
                   {loading
                     ? "正在读取产物…"
-                    : "本次运行没有保留数组产物，可查看步骤报告。"}
+                    : "本次运行没有保存可查看的产物。"}
                 </div>
               )}
             </div>

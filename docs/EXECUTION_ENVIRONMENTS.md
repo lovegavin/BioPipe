@@ -5,7 +5,7 @@ connected Linux server, or in successive stages on both. Input files have their
 own locations. Selecting a server as the execution target does not require
 moving those files by hand.
 
-This guide describes the v0.7.1 desktop implementation. For SSH connection
+This guide describes the v0.8.1 desktop implementation. For SSH connection
 setup, host-key verification and automatic Linux deployment, see
 [Windows editing and SSH execution](REMOTE_EXECUTION.md). Both Lite and bundled
 Windows archives include the mixed-environment task coordinator described here.

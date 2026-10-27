@@ -61,6 +61,7 @@ class Settings:
     instance_url: str | None = None
     input_roots: list[Path] | None = None
     admission_dir: Path | None = None
+    manifest_only_registry: bool = False
 
 
 class JobService:
@@ -70,7 +71,7 @@ class JobService:
         self.root = settings.root.resolve()
         self.directory = settings.data_dir.resolve()
         from biopipe.plugins import PluginManager
-        self.plugins = PluginManager(self.directory)
+        self.plugins = PluginManager(self.directory, manifest_only=settings.manifest_only_registry)
         from biopipe.dependencies import DependencySession
         self.dependencies = DependencySession(self.plugins)
         self.dependencies.sync(self.plugins.state())
@@ -700,12 +701,24 @@ class JobService:
             raise KeyError("报告路径不可用。")
         return path
 
-    def figure_file(self, key, index):
+    def figure_file(self, key, index, format=None):
         content = read_json(self.export_file(key, index), {})
-        if not isinstance(content, dict) or not content.get("path"):
+        if not isinstance(content, dict):
+            raise KeyError("此步骤没有图像产物。")
+        value = content.get("path") or content.get("figure_path")
+        if format is not None:
+            if format not in {"png", "pdf", "svg", "jpg", "jpeg", "webp", "tif", "tiff"}:
+                raise KeyError("不支持此图表格式。")
+            recorded = next((item for item in content.get("figures", [])
+                             if item.get("format") == format), None)
+            if recorded:
+                value = recorded.get("path")
+            elif not value or Path(value).suffix.lower() != '.' + format:
+                raise KeyError("此运行没有保存该格式的图表。")
+        if not value or Path(value).suffix.lower() not in {".png", ".pdf", ".svg", ".jpg", ".jpeg", ".webp", ".tif", ".tiff"}:
             raise KeyError("此步骤没有图像产物。")
         summary = read_json(self.jobs_dir / key / "output/run_summary.json", {})
-        path = self._record_path(key, content["path"], summary)
+        path = self._record_path(key, value, summary)
         directory = (self.jobs_dir / key).resolve()
         if not path.is_relative_to(directory) or not path.is_file():
             raise KeyError("图像路径不可用。")

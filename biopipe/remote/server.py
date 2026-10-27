@@ -12,7 +12,7 @@ import sys
 import tempfile
 import time
 
-from .protocol import Decoder, VERSION, transmit
+from .protocol import Decoder, transmit
 
 
 def receive(sock, size):
@@ -58,12 +58,18 @@ class RemoteService:
         workspace.mkdir(parents=True, exist_ok=True)
         code = Path(__file__).resolve().parents[2]
         # Explicit interpreter selection must also select its command-line tools.
-        os.environ['PATH'] = str(Path(sys.executable).parent) + os.pathsep + os.environ.get('PATH', '')
+        binary_directory = str(Path(sys.executable).parent)
+        current_path = os.environ.get('PATH', '')
+        if os.path.normcase(current_path.split(os.pathsep)[0]) != os.path.normcase(binary_directory):
+            os.environ['PATH'] = binary_directory + os.pathsep + current_path
         self.service = JobService(Settings(workspace, workspace/'.studio', code/'frontend/dist',
-                                          code_root=code, input_roots=input_roots or [Path('/')]),
+                                          code_root=code, input_roots=input_roots or [Path('/')],
+                                          manifest_only_registry=True),
                                   catalog_from_descriptors())
         self.memory = {'automatic_memory_budget_bytes': self.service.admission.capacity,
                        'automatic_memory_fraction': AUTO_BUDGET_FRACTION}
+        from .handshake import ManifestHandshake
+        self.handshake = ManifestHandshake(self.service, self.memory)
         from .transfers import TransferStore
         self.transfers = TransferStore(workspace/'.studio'/'transfers', resolve_input=self.transfer_path)
         self.transport_leases = {}
@@ -91,6 +97,12 @@ class RemoteService:
             if expires < time.monotonic():
                 self.service.admission.release(lease)
                 del self.transport_leases[lease]
+        if method in ('handshake', 'bootstrap'):
+            return self.handshake.response(params, legacy=method == 'bootstrap')
+        if method == 'refresh_registry':
+            return self.handshake.refresh(params)
+        if method == 'refresh_status':
+            return self.handshake.response(params, legacy=True)
         if method in ('transport_reserve', 'transport_release'):
             key = params['id']
             if not isinstance(key, str) or not __import__('re').fullmatch('transfer-[a-f0-9]{32}', key):
@@ -121,17 +133,6 @@ class RemoteService:
         from src.web.parameters import freeze_graph
         from src.web.routes import prepare_interface
         service = self.service
-        if method == 'bootstrap':
-            import platform, shutil
-            from biopipe import __version__
-            service.refresh_catalog()
-            tools = sorted({tool for spec in service.catalog['operators'] + service.catalog['readers']
-                            for tool in spec.get('resources', {}).get('external_tools', [])})
-            return {'protocol_version': VERSION, 'version': __version__, 'system': platform.system().lower(),
-                    'python': sys.executable, 'workspace': str(service.root), 'code_root': str(service.settings.code_root),
-                    'catalog': service.catalog, 'history': service.history(), 'demo': service.demo,
-                    'tools': {name: bool(shutil.which(name)) for name in tools},
-                    'dependencies': service.dependencies.snapshot(), 'resources': service.resources(), **self.memory}
         if method == 'resources':
             return service.resources()
         if method == 'pin_compatibility':
@@ -163,7 +164,7 @@ class RemoteService:
             elif kind == 'artifact_file':
                 path = service.artifact_file(key, params['artifact_id'], params['role'])
             elif kind == 'figure':
-                path = service.figure_file(key, params['index'])
+                path = service.figure_file(key, params['index'], format=params.get('format'))
             elif kind == 'export':
                 path = service.export_file(key, params['index'])
             else:
@@ -289,17 +290,15 @@ def rpc(workspace, request):
 
 def ensure_daemon(workspace):
     import fcntl
+    from .handshake import daemon_request, validate_daemon_response
     address = socket_path(workspace)
     with address.with_suffix('.lock').open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         try:
-            response = rpc(workspace, {'method': 'bootstrap', 'params': {}})
-            if not response.get('ok'):
-                raise RuntimeError(response.get('error', 'Remote service is unavailable'))
-            if response['value']['code_root'] != str(Path(__file__).resolve().parents[2]):
-                raise RuntimeError('This workspace is served by a different BioPipe installation. Use its app directory or a separate workspace.')
+            response = rpc(workspace, daemon_request())
+            validate_daemon_response(response)
             return
-        except (ConnectionError, OSError):
+        except (FileNotFoundError, ConnectionRefusedError):
             pass
         directory = Path(workspace)/'.studio/remote'
         directory.mkdir(parents=True, exist_ok=True)
@@ -310,9 +309,9 @@ def ensure_daemon(workspace):
         deadline = time.monotonic()+60
         while time.monotonic() < deadline:
             try:
-                rpc(workspace, {'method': 'bootstrap', 'params': {}})
+                validate_daemon_response(rpc(workspace, daemon_request()))
                 return
-            except (ConnectionError, OSError):
+            except (FileNotFoundError, ConnectionRefusedError):
                 time.sleep(.15)
         raise RuntimeError('Remote service did not start; inspect .studio/remote/service.log on the server')
 
@@ -329,7 +328,8 @@ def serve(workspace):
             while True:
                 try: connection, _ = listener.accept()
                 except socket.timeout:
-                    if time.monotonic()-last_request > 300 and not service.service.processes:
+                    if (time.monotonic()-last_request > 300 and not service.service.processes
+                            and not service.handshake.maintenance_running):
                         break
                     continue
                 last_request = time.monotonic()
@@ -342,12 +342,14 @@ def serve(workspace):
                     except Exception as exc:
                         import traceback
                         traceback.print_exc()
-                        response = {'ok': False, 'error': str(exc), 'node_id': getattr(exc, 'node_id', None)}
+                        response = {'ok': False, 'error': str(exc), 'code': getattr(exc, 'code', 'remote_error'),
+                                    'node_id': getattr(exc, 'node_id', None)}
                     try: send_message(connection, response)
                     except (BrokenPipeError, ConnectionError, OSError): pass
         finally:
             address.unlink(missing_ok=True)
             service.service.shutdown()
+            service.handshake.close()
 
 
 class TerminalInput:
@@ -376,7 +378,12 @@ def main():
     workspace = Path(args.workspace).expanduser().resolve()
     if args.serve:
         serve(workspace); return
-    ensure_daemon(workspace)
+    try:
+        ensure_daemon(workspace)
+    except Exception as exc:
+        print('BIOPIPE_REMOTE_ERROR ' + json.dumps({'code': getattr(exc, 'code', 'service_unavailable'),
+                                                   'error': str(exc)}, ensure_ascii=False), flush=True)
+        return
     print('\nBIOPIPE_REMOTE_READY 1', flush=True)
     decoder = Decoder('Q')
     terminal = TerminalInput()
@@ -390,7 +397,8 @@ def main():
         if decoder.ack: write(decoder.ack)
         if request is None: continue
         try: response = rpc(workspace, request)
-        except Exception as exc: response = {'ok': False, 'error': str(exc)}
+        except Exception as exc:
+            response = {'ok': False, 'error': str(exc), 'code': getattr(exc, 'code', 'remote_error')}
         response['id'] = request.get('id')
         try: transmit(response, 'R', write, terminal.line)
         except (EOFError, TimeoutError): return

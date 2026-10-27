@@ -89,7 +89,7 @@ export function groupParameters(parameters: Parameter[]): ParameterGroup[] {
   const resources = /^(threads?|n_threads|n_jobs|workers?|cpus?|memory(_.*)?|.*_memory(_.*)?|timeout(_.*)?|chunk(_.*)?|batch_size)$/;
   for (const field of parameters) {
     const key = field.key.toLowerCase();
-    const id = field.group ?? (environment.test(key) ? 'environment' : resources.test(key) ? 'resources' : 'main');
+    const id = field.group ?? (environment.test(key) ? 'environment' : resources.test(key) ? 'resources' : key.startsWith('figure_') ? 'advanced' : 'main');
     (groups.find(group => group.id === id) ?? groups[0]).fields.push(field);
   }
   const priority = (field: Parameter) => field.priority ?? (/^(methods?|analysis|mode)$/.test(field.key) ? -20 : field.required ? -10 : 0);

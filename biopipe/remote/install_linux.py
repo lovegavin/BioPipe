@@ -76,6 +76,8 @@ def main():
         print(name + ': ready', flush=True)
     value = {'source_sha256': args.digest, 'python': sys.version, 'operators_checked': len(results),
              'packages': {d.metadata['Name']: d.version for d in metadata.distributions()}}
+    from biopipe.remote.handshake import installation_readiness
+    value['dependency_readiness'] = installation_readiness(entries, results)
     temporary = receipt.with_suffix('.tmp')
     temporary.write_text(json.dumps(value, indent=2), encoding='utf-8')
     os.replace(temporary, receipt)

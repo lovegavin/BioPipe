@@ -58,7 +58,13 @@ def test_real_local_ssh_binary_upload_download_without_sftp(tmp_path):
                 if decoder.ack: channel.sendall(decoder.ack.encode())
                 if request is None: continue
                 try:
-                    result = {'protocol_version': 1} if request['method'] == 'bootstrap' else store.dispatch(request['method'], request['params'])
+                    if request['method'] == 'handshake':
+                        from biopipe.remote.handshake import CAPABILITIES
+                        result = {'protocol_version': 1, 'catalog': {'operators': [], 'readers': []},
+                                  'handshake': {'version': 1, 'operator_protocol': 3,
+                                                'capabilities': list(CAPABILITIES), 'catalog_digest': 'test'}}
+                    else:
+                        result = store.dispatch(request['method'], request['params'])
                     response = {'id': request['id'], 'ok': True, 'value': result}
                 except Exception as exc:
                     response = {'id': request['id'], 'ok': False, 'error': str(exc)}

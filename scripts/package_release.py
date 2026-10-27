@@ -162,12 +162,22 @@ jobs; per-host memory and CPU admission prevents overcommitting the shared pool.
 See docs/EXECUTION_ENVIRONMENTS.md for settings, recovery and known limits.
 
 HI-C AND SSH SETUP
-Choose a server target in the top toolbar to browse server inputs. New SSH connections default
-to automatic BioPipe + Hi-C deployment on Linux x86_64. Supply the SSH account,
-verify the host fingerprint, and connect; no preconfigured Python is required.
-The server needs writable storage and outbound HTTPS. Progress and setup errors
-appear in the connection panel. Existing manual environments remain supported.
+Choose a server target in the top toolbar to browse server inputs. Ordinary SSH
+connections reuse the registered server installation and negotiate compatible
+interfaces, operator manifests and cached dependency readiness. They do not upload
+desktop code or install packages. For first installation or an intentional upgrade,
+use Server maintenance > Install / upgrade server; no preconfigured Python is
+required on Linux x86_64. Installation needs writable storage and outbound HTTPS.
+Existing manual environments remain supported. Refresh operators and dependencies
+is a separate maintenance action. See docs/SERVER_HANDSHAKE.md for cache rules.
 See docs/REMOTE_EXECUTION.md and docs/HIC.md for setup and supported workflows.
+
+HISTORICAL RESULTS AND SAVED FIGURES
+Run history provides View results and View logs separately from Load canvas.
+Plotting steps automatically save white-background PNG (300 DPI), PDF and SVG.
+Use Saved figures links to open the existing files; no extra export is required.
+Server originals stay on the server and are fetched only when opened. The small
+interactive data preview is not a publication export. See docs/PUBLICATION_FIGURES.md.
 ''')
         guide.write('''
 UPGRADING FROM 0.4.1 / OLDER PROTOCOLS

@@ -118,6 +118,8 @@ def test_moved_workspace_keeps_history_arrays_figures_and_runnable_task(tmp_path
         pcs = next(a for a in job["report"]["artifacts"] if a["name"] == "pcs")
         array = client.get(f"/api/jobs/{key}/artifacts/{pcs['artifact_id']}/download").content
         figure = client.get(f"/api/jobs/{key}/exports/3/figure").content
+        vector = client.get(f"/api/jobs/{key}/exports/3/figure?format=pdf").content
+        assert vector.startswith(b'%PDF')
         manifest = yaml.safe_load((original / ".studio/jobs" / key / "task.yaml").read_text(encoding="utf-8"))
         assert not Path(manifest["sources"]["expression"]["path"]).is_absolute()
     moved = tmp_path / "新电脑 workspace"
@@ -135,6 +137,7 @@ def test_moved_workspace_keeps_history_arrays_figures_and_runnable_task(tmp_path
         assert client.get(f"/api/jobs/{key}/artifacts/{pcs['artifact_id']}/download").content == array
         assert client.get(f"/api/jobs/{key}/artifacts/{pcs['artifact_id']}/preview").status_code == 200
         assert client.get(f"/api/jobs/{key}/exports/3/figure").content == figure
+        assert client.get(f"/api/jobs/{key}/exports/3/figure?format=pdf").content == vector
         response = client.post("/api/jobs", json=restored_graph)
         assert response.status_code == 202, response.text
         finished(client, response.json()["id"])
