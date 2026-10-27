@@ -5,8 +5,10 @@ const categoryAliases: Record<string, string> = {
   analysis: "统计分析", statistics: "统计分析", "statistical analysis": "统计分析",
   visualization: "可视化", plotting: "可视化", plots: "可视化",
   "quality control": "质量控制", quality_control: "质量控制", qc: "质量控制",
+  "single cell": "质量控制", single_cell: "质量控制", proteomics: "数据整理",
   data: "数据整理", "data preparation": "数据整理", "data processing": "数据整理",
   plugins: "未分类", extensions: "未分类", "扩展算子": "未分类", microbiome: "微生物组",
+  genetics: "统计分析",
 };
 
 export function categoryLabel(category?: string | null): string {
@@ -41,6 +43,17 @@ export const builtinPresentation = {
   distance_matrix: { category: "统计分析", icon: "Ruler" },
   correlation: { category: "统计分析", icon: "Intersect" },
   permanova: { category: "统计分析", icon: "Shuffle" },
+  doublet_detect: { category: "质量控制", icon: "CheckSquare" },
+  marker_score: { category: "统计分析", icon: "Tag" },
+  pseudobulk: { category: "统计分析", icon: "Stack" },
+  gsea: { category: "统计分析", icon: "TrendUp" },
+  ora: { category: "统计分析", icon: "Selection" },
+  limma_de: { category: "统计分析", icon: "ArrowsDownUp" },
+  meta_analysis: { category: "统计分析", icon: "Scales" },
+  prs: { category: "统计分析", icon: "Dna" },
+  ancom_bc: { category: "统计分析", icon: "CirclesThree" },
+  aldex2: { category: "统计分析", icon: "CirclesThree" },
+  protein_rollup: { category: "数据整理", icon: "Stack" },
   dotplot: artwork("可视化", "ChartScatter", "dotplot", "点大小与强度"),
   violin: artwork("可视化", "ChartLine", "violin", "分组密度与分布"),
   barplot: artwork("可视化", "ChartBar", "composition", "各组组成比例"),
