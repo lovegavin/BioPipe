@@ -34,7 +34,7 @@
 
 1. [架构总览](architecture.md)
 2. [协议总集](protocol_suite.md)
-3. [数据契约](data_contracts.md) 与 [算子协议](operator_protocol.md)
+3. [协议总集](protocol_suite.md) 与 [算子协议](operator_protocol.md)
 4. [Reader 扩展](reader_extensions.md) / [Step 扩展](step_extensions.md)
 5. [SDK 快速开始](sdk_quickstart.md) / [SDK 参考](sdk_reference.md)
 6. [注册表维护](registry_maintenance.md) 与 [插件生命周期](plugins.md)
@@ -60,19 +60,18 @@
 | [llm_guide.md](llm_guide.md) / [user_guide.md](user_guide.md) | 当前指南 | LLM/真人的操作手册 |
 | [sop_matrix.md](sop_matrix.md) | 证据快照 | 覆盖级别、oracle、缺口 |
 | [installation.md](installation.md)、[desktop.md](desktop.md)、[portability.md](portability.md) | 专题 | 安装、桌面、迁移 |
-| [input_formats.md](input_formats.md)、[input_boundary.md](input_boundary.md) | 专题 | 输入格式/边界 |
+| [input_formats.md](input_formats.md) | 专题 | 输入格式/边界 |
 | [resource_runtime.md](resource_runtime.md) | 专题 | 预算、准入、spill |
 | [plugins.md](plugins.md)、[dependency_isolation.md](dependency_isolation.md) | 专题 | 插件、依赖隔离 |
 | [agent_api.md](agent_api.md) | 专题 | CLI/MCP/Agent |
 | [route_operators.md](route_operators.md) | 专题 | 路线复用/注册 |
 | [frontend_requirements.md](frontend_requirements.md) | 专题 | Studio 交互 |
-| [operator_protocol.md](operator_protocol.md)、[data_contracts.md](data_contracts.md)、[package_protocol.md](package_protocol.md) | 实现细节 | 与协议总集冲突时以协议总集为准 |
+| [operator_protocol.md](operator_protocol.md)、[package_protocol.md](package_protocol.md) | 实现细节 | 与协议总集冲突时以协议总集为准 |
 | [reader_extensions.md](reader_extensions.md)、[step_extensions.md](step_extensions.md)、[sdk_quickstart.md](sdk_quickstart.md)、[sdk_reference.md](sdk_reference.md) | 实现细节 | 扩展模板/API |
 | [microbiome.md](microbiome.md) | 专题 | 16S 示例 |
-| [changelog.md](changelog.md) / [releases/](releases/README.md) | 历史 | 版本记录；不是当前规范 |
-| [audit_report.md](audit_report.md) | 历史审计 | 2026-10 的审计记录；不是当前规范 |
+| [changelog.md](changelog.md) | 历史 | 当前版本摘要；历史从 git tag 查 |
 
-**冲突处理**：架构/协议 > 实现细节 > 历史记录。自动生成的参考页以源码声明为准。
+**冲突处理**：架构/协议 > 实现细节 > 历史记录。自动生成的参考页以源码声明为准。旧 release/audit 文档已从工作树移除，需要时从 git 历史查。
 
 ## 4. 当前版本与能力
 
@@ -81,6 +80,7 @@
 - 所有内置 Reader/算子参数严格（`additionalProperties: false`）
 - Reader 覆盖：CSV/TSV/TXT/Parquet、BED/GFF3/GTF/GAF、FASTA、MTX、H5AD、10x H5、VCF、PLINK1/2、BGEN
 - 已知边界：尚未支持 FASTQ/BAM/CRAM/BigWig/mzML/FCS/空间转录组等；扩展计划见 [架构总览](architecture.md) 的“扩展方向”
+- Windows 环境快照：[conda](../windows-biopipe-conda.yml) / [pip](../windows-biopipe-pip-freeze.txt)
 
 ## 5. 最常用的五个命令
 

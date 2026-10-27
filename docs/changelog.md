@@ -1,8 +1,7 @@
 # 更新记录
 
 BioPipe 使用语义化版本和 git tag。当前源码版本：**0.7.0（2026-10-27）**。
-
-本页只保留简洁摘要；详细发布说明在 [releases/](releases/README.md)，历史审计在 [audit_report.md](audit_report.md)。
+更早版本从 git tag/history 查；本页只保留当前版本摘要。
 
 ## 0.7.0 — 2026-10-27
 
@@ -15,7 +14,7 @@ BioPipe 使用语义化版本和 git tag。当前源码版本：**0.7.0（2026-1
 - 修复 Studio 导入：从 `code_root` 搜索任务输入；支持 YAML 绝对路径；跨盘 job 不再调用 `os.path.relpath`；重选文件保留 Reader 参数；`_input_names` 在边界剥离。
 - heatmap 增加 `max_cells`/`max_pixels`，阻止 5247×5247 相关矩阵触发 168 GiB 渲染分配。
 - 验证：440 passed / 12 skipped、14/14 verify、49/49 demo、registry check、ruff、compileall、portability。
-- 详见 [0.7.0 release notes](releases/v0.7.0.md)。
+- Windows 环境快照：[conda](../windows-biopipe-conda.yml) / [pip](../windows-biopipe-pip-freeze.txt)。
 
 ## 更早版本
 
@@ -25,4 +24,4 @@ BioPipe 使用语义化版本和 git tag。当前源码版本：**0.7.0（2026-1
 | 0.3.x | 上游引擎/桌面迭代 |
 | 0.2.x | 早期桌面与协议 |
 
-历史发布说明按版本保留在 [releases/](releases/README.md)；其中数字反映当时版本，不代表当前状态。
+历史发布说明不单独维护；需要追溯时从 git tag/release history 查看。

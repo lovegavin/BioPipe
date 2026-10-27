@@ -104,9 +104,8 @@ docs/reference/    自动生成 Reader/算子参考页
 ## 版本与更新记录
 
 - 当前：**0.7.0**，见 [CHANGELOG](docs/changelog.md)。
-- 历史发布说明：[docs/releases/](docs/releases/README.md)。
-- Windows 测试环境快照：[conda](docs/environment/windows-biopipe-conda.yml) /
-  [pip](docs/environment/windows-biopipe-pip-freeze.txt)。
+- Windows 测试环境快照：[conda](windows-biopipe-conda.yml) /
+  [pip](windows-biopipe-pip-freeze.txt)。
 
 ## 许可证
 

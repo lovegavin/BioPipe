@@ -1,5 +1,12 @@
 # Importing data in Studio
 
+BioPipe is an analysis layer, not a sequencing or imaging pipeline
+front end. Its inputs are analysis-ready tables, matrices, variant calls,
+annotations, intervals or sequences produced by upstream tools (BWA, STAR,
+Salmon, Cell Ranger, GATK, MACS2, MSFragger and so on). It does not align reads,
+call variants, quantify transcripts, segment images or pick peaks. When an
+end-to-end run is needed, the upstream toolchain runs outside BioPipe.
+
 The input node accepts every format in the reader registry. The file picker and
 server use reader descriptors, so optional parsing packages do not need to be
 installed to upload files, configure an input, save a canvas, or export a workflow.

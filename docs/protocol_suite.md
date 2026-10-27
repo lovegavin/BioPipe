@@ -8,7 +8,7 @@
 
 > 阅读约定：**MUST** 为硬性要求，**SHOULD** 为默认要求（偏离需写明理由），**MAY** 为可选。
 > 【现状】表示当前代码已基本满足；【收紧】表示后续优化必须补齐；【新增】表示本协议新增的约定。
-> 本文件是总协议；`docs/operator_protocol.md`、`docs/data_contracts.md`、`docs/package_protocol.md` 等作为实现细节文档，冲突时以本文件为准。
+> 本文件是总协议；`docs/operator_protocol.md`、`docs/package_protocol.md` 等作为实现细节文档，冲突时以本文件为准。
 
 ---
 
@@ -23,7 +23,7 @@
 
 ### 0.2 非目标
 
-- 不把 BioPipe 变成 FASTQ/BAM/mzML/CZI 等原始数据的前端；输入边界仍以 `docs/input_boundary.md` 为准。
+- 不把 BioPipe 变成 FASTQ/BAM/mzML/CZI 等原始数据的前端；输入边界见 `docs/input_formats.md`。
 - 不在本协议周期内新增 Reader 或算子；只修正现有实现、契约、参数和文档。
 - 不承诺“任意算法都能自动流式/自动省内存”；只承诺如实声明能力并在边界处失败。
 
@@ -184,7 +184,7 @@ Reader 只负责把一种“分析就绪”的文件/文件组读成 Form。**MU
 3. 缺失/越界/截断/错误列数；
 4. 压缩与未压缩结果一致；
 5. 普通读取 vs 磁盘读取一致（如支持）；
-6. 至少一份真实公开数据与外部数值参考（按 `input_boundary.md` 四条准入）。
+6. 至少一份真实公开数据与外部数值参考（按 `input_formats.md` 的输入说明）。
 
 ---
 
@@ -429,7 +429,7 @@ Reader 只负责把一种“分析就绪”的文件/文件组读成 Form。**MU
 
 ### 9.3 覆盖矩阵
 
-每个 Reader/算子 **MUST** 在 `docs/audit_report.md` 或扩展文档中有测试映射：文件、覆盖点、未覆盖分支。未覆盖分支要写明原因（如 plot 无数值契约、logit 分支未验）。
+每个 Reader/算子 **MUST** 在 `docs/sop_matrix.md` 或扩展文档中有测试映射：文件、覆盖点、未覆盖分支。未覆盖分支要写明原因（如 plot 无数值契约、logit 分支未验）。
 
 ---
 
