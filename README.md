@@ -5,13 +5,13 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-This source tree is **BioPipe Studio 0.5.0**, with **78 built-in operators,
+This source tree is **BioPipe Studio 0.7.0**, with **78 built-in operators,
 16 readers, six provider packages and 14 reusable route templates**, including GWAS, RNA-seq DE,
 proteomics DE, survival analysis, [16S microbiome](docs/microbiome.md),
 single-cell clustering, GTF annotation, BGEN dosage QC, genomic intervals,
 GO enrichment, sequence features, multi-omics and ML models. The published
 The published Studio 0.4.1 release shipped 64 operators, 15 readers and five
-templates. See [0.5.0 release notes](docs/releases/v0.5.0.md) for the current
+templates. See [0.7.0 release notes](docs/releases/v0.7.0.md) for the current
 source release and [0.4.1](docs/releases/v0.4.1.md) for the previous desktop
 package. Example YAML remains under `tasks/`.
 
@@ -45,7 +45,7 @@ dependencies, optional analyses and troubleshooting resolver backtracking.
 Choose the archive without `Lite` for the bundled environment. The smaller
 `Windows-x64-Lite.zip` uses an existing Python environment instead.
 
-See [release notes](docs/releases/v0.5.0.md) for this version and
+See [release notes](docs/releases/v0.7.0.md) for this version and
 [legacy/](legacy/README.md) for the archived previous source.
 
 ## Start Studio
