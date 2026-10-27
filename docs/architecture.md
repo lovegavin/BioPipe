@@ -1,0 +1,156 @@
+# BioPipe 架构总览
+
+本文让读者在不通读源码的情况下理解仓库：BioPipe 是什么、数据如何流动、模块边界在哪、改一个功能应看哪里。
+
+## 1. 一句话与边界
+
+BioPipe 是**本地生信流水线引擎 + Studio 可视化 + Agent/CLI 接口**。它消费标准格式文件，组装 `Form`（带维度/标签/元数据的多维数组），通过算子和契约生成结果、图片和报告。
+
+它**不负责**自动理解生物学问题、自动识图、自动写论文结论，也不内置 AI 服务；LLM/Agent 是外部调用者。
+
+## 2. 执行流
+
+### 2.1 CLI / 任务
+
+```text
+task.yaml
+  → load_manifest()            校验 sources/steps 结构
+  → Context                  注册 source、运行目录、内存、事件
+  → Runner                   按顺序执行 steps
+  → Reader                   解析 source → Form
+  → Step.run()               Form → Form / report / figure
+  → outputs/                 run_summary、steps/*.json、figures/*.png
+```
+
+### 2.2 Studio
+
+```text
+React Graph
+  → /api/validate / /api/contracts   静态检查
+  → compile_graph()                   Graph → 确定性 manifest
+  → /api/jobs                         写入 job 目录
+  → scripts/run.py                   独立 worker 进程执行
+  → /api/jobs/{id}/exports|figures    结果回读
+```
+
+### 2.3 导入任务
+
+```text
+YAML / JSON
+  → /api/import
+  → import_manifest()         YAML → Graph；自动定位项目/任务输入
+  → 前端画布                  用户检查/微调
+  → compile_graph()           Graph → manifest
+```
+
+## 3. 四个核心协议
+
+完整规范见 [protocol_suite.md](protocol_suite.md)。
+
+| 协议 | 核心对象 | 关键点 |
+|---|---|---|
+| Manifest | `task.yaml` | `sources` + `steps`；相对/绝对路径；输出名唯一 |
+| Reader | `Reader` | 格式语义、坐标基准、缺失、编码、压缩、sibling、磁盘/流式 |
+| Operator/Step | `Step` | 输入/输出契约、参数 schema、输出模式、确定性、内存 |
+| Form | `Form` | `data` + `dims` + `labels` + `info` + `axis_info`；标签是唯一对齐依据 |
+
+### 3.1 Form 的关键不变量
+
+- `data.ndim == len(dims)`;
+- 每个 dim 的 `labels` 是 `{label: position}`，position 连续、唯一；
+- `axis_info[dim]` 中的字段必须与轴平行；
+- 坐标/计数保持精确；浮点只在可证明无损时压缩；
+- 缺失值必须由 `info["missing_code"]` 或 NaN 明确声明；
+- 不静默改标签、顺序、编码或缺失语义。
+
+### 3.2 契约
+
+- `port`、`param`、`MISSING` 组成端口 DSL；
+- 三态兼容：`compatible` / `incompatible` / `unknown`；
+- 静态检查 + 运行时校验；
+- 输出模式：`passthrough`、`transform`、`subset`、`project`、`choose`、`declare`、`rename`、`transpose`、`concat`、`attach`、`report`、`none` 等；
+- 参数必须严格；未知参数报错；`output` 和 `_input_names` 是引擎边界参数，不是算子 schema 参数。
+
+## 4. 模块地图
+
+| 路径 | 职责 | 典型改动 |
+|---|---|---|
+| `src/core/` | `Form`、契约、错误、数值精度 | 核心数据语义、契约扩展 |
+| `src/reader/` | Reader 路由、格式解析、编码、磁盘/流式 | 新格式、格式 bug、压缩/sibling |
+| `src/task/` | manifest、Context、Runner、Step、内存/资源 | 执行语义、参数校验、资源 |
+| `src/task/step/steps/` | 内置算子实现 | 新算子、数学修复 |
+| `src/web/` | FastAPI、Graph 编译、路线、任务、资产 | 导入/导出、Studio 后端 |
+| `frontend/src/` | React 画布、检查器、结果 | 可视化交互 |
+| `biopipe/` | CLI、注册表、包、插件、`inspect` | 命令行、注册表、Agent 接口 |
+| `biopipe_sdk/` | 公开 SDK、schema、测试辅助 | 外部扩展 |
+| `desktop/` | WinForms/WebView2 宿主 | Windows 桌面启动 |
+| `scripts/` | `run.py`、`studio.py`、registry、文档生成 | 入口/工具 |
+| `tasks/` | 示例和自定义任务 | 新分析示例 |
+| `routes/` | 可复用路线模板 | 新路线 |
+| `tests/` | 单元、契约、SOP、路线 | 测试 |
+
+### 4.1 “我要改 X，应该看哪里”
+
+| 需求 | 先看 | 再改 |
+|---|---|---|
+| 新文件格式 | `src/reader/base.py`、`src/reader/__init__.py` | `src/reader/readers/` + 文档/测试 |
+| Reader 坐标/缺失 bug | 该 Reader 页 + `docs/reference/readers/` | Reader + 精确 fixture |
+| 新算子 | `src/task/step/base.py`、`operator_protocol.md` | `src/task/step/steps/` + schema/contracts + tests |
+| 参数校验 | `biopipe_sdk/protocol.py`、`runner.py` | schema/descriptor/测试 |
+| Studio 导入 | `src/web/graph.py`、`src/web/api.py` | 前后端 + 回归 |
+| 路线编译 | `src/web/graph.py`、`routes.py` | Graph/compile 测试 |
+| 内存/资源 | `src/task/memory/` | 预算/准入/spill 测试 |
+| Agent 接口 | `biopipe/cli.py`、`docs/agent_api.md` | CLI/MCP + 测试 |
+| 文档 | `docs/README.md`、本文件 | 生成器/权威页 |
+
+## 5. 注册表与扩展
+
+- `src/task/step/steps/*.py` 与 `src/reader/readers/*.py` 是内置实现；
+- `registry build` 生成 `biopipe/builtin_packages.json` 与 `src/web/builtin_routes.json`；
+- `routes/**/task.yaml` 是可复用路线；
+- 外部扩展通过 `biopipe_sdk`：单文件 drop-in、wheel、route；
+- 扩展不得修改引擎、手改 JSON 索引、依赖私有路径；
+- 每个扩展必须有严格 schema、契约、文档页、测试和 owner/version pin。
+
+## 6. 测试与证据
+
+| 层 | 内容 | 命令 |
+|---|---|---|
+| 单元/契约 | 小矩阵、端口、schema | `python -m pytest -q` |
+| 独立 SOP | 外部库/手算/独立解析器 | `python -m pytest -q tests/sop` |
+| 主题 verify | 统计/遗传/序列/区间/GO | `python tasks/verify_*.py` |
+| demo | 真实数据端到端 | `python tasks/*_demo/test_*.py` |
+| 注册表 | 声明/生成物一致性 | `python -m biopipe registry check` |
+| 文档 | 参考页完整性 | `python scripts/build_reference_docs.py --check` |
+
+证据分级和缺口见 [sop_matrix.md](sop_matrix.md)。原则：**没有独立 oracle 的算子不标 stable**。
+
+## 7. 当前能力与边界
+
+- Reader：CSV/TSV/TXT/Parquet、BED/GFF3/GTF/GAF、FASTA、MTX、H5AD、10x H5、VCF、PLINK1/2、BGEN；
+- 算子：QC、变换、统计、生存、遗传、单细胞、序列、注释、区间、微生物、ML、绘图、GO；
+- 尚未支持：FASTQ、BAM/CRAM、BigWig/BigBed、mzML、FCS、空间转录组、影像等；
+- 大矩阵：heatmap 有 `max_cells/max_pixels` 保护；H5AD/10x full 模式仍可能 densify。
+
+## 8. 扩展方向
+
+优先按**数据家族 + 科学问题**扩展，而不是按后缀堆叠：
+
+1. **基础格式**：BAM/CRAM、BigWig/BigBed、narrowPeak/BEDPE、BIOM；
+2. **核心算子**：TMM/RLE/voom、ComBat、GSEA/ORA、pseudobulk、marker scoring；
+3. **单细胞/空间**：doublet、ambient RNA、Leiden、轨迹、Visium；
+4. **蛋白/代谢**：peptide rollup、limma/MSstats、mzML；
+5. **遗传**：关联、meta、PRS、fine-mapping；
+6. **专用格式**：FCS、loom/h5Seurat、GenBank/Newick/PDB、影像。
+
+每个新增必须走 RFC、契约、独立 oracle、公开数据、文档、注册表和全量回归；详见 [protocol_suite.md](protocol_suite.md) 与 [sop_matrix.md](sop_matrix.md)。
+
+## 9. 进一步阅读
+
+- [协议总集](protocol_suite.md)
+- [参考索引](reference/README.md)
+- [任务 SOP](route_sop.md)
+- [LLM 手册](llm_guide.md)
+- [用户手册](user_guide.md)
+- [测试矩阵](sop_matrix.md)
+- [更新记录](changelog.md)

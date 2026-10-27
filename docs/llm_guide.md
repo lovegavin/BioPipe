@@ -1,15 +1,16 @@
 # LLM 路线搭建手册
 
-本手册给具备终端/文件读取能力的 LLM。目标：**不通读仓库**，只读 `docs/route_sop.md`、机器索引、少量算子页和必要的源码/测试，就能为用户搭建可校验的 BioPipe 任务。
+本手册给具备终端/文件读取能力的 LLM。目标：**不通读仓库**，只读 `docs/README.md`、`docs/architecture.md`、`docs/route_sop.md`、机器索引、少量算子页和必要的源码/测试，就能为用户搭建可校验的 BioPipe 任务。
 
 ## 1. 阅读顺序（严格遵守）
 
-1. `docs/route_sop.md`（流程和验收）；
-2. `docs/reference/operator_index.json` / `reader_index.json`（先筛选候选）；
-3. 只打开候选 Reader/算子页面（3–8 个）；
-4. 页面链接的源码/测试，仅在语义、边界、参数不确定时阅读；
-5. `docs/templates/ANALYSIS.md`；
-6. 本手册的“输出格式”。
+1. `docs/README.md` 与 `docs/architecture.md`（入口和仓库结构）；
+2. `docs/route_sop.md`（流程和验收）；
+3. `docs/reference/operator_index.json` / `reader_index.json`（先筛选候选）；
+4. 只打开候选 Reader/算子页面（3–8 个）；
+5. 页面链接的源码/测试，仅在语义、边界、参数不确定时阅读；
+6. `docs/templates/ANALYSIS.md`；
+7. 本手册的“输出格式”。
 
 不要一开始递归读取整个 `src/`；不要根据算子名猜行为。
 

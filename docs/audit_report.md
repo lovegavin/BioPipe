@@ -1,6 +1,9 @@
+# 历史审计报告
+
+> 这是 2026-10 的历史审计记录，不是当前规范。当前入口：[docs/README.md](README.md)。
 > 2026-10-23 增量：本文件 §1–§8 记录 10-22 第一轮审计。随后按协议 v2 完成了严格参数 schema、`operator_ui.json` 参数去重、参数标题/分组、独立 Reader SOP 与核心算子 SOP。最新测试数字与覆盖矩阵见文末“2026-10-23 增量”及 [SOP 矩阵](sop_matrix.md)。
 
-# BioPipe 审计、加固与架构梳理报告
+**BioPipe 审计、加固与架构梳理报告**
 
 日期：2026-10-22  
 范围：当前 `main` 工作树（HEAD `6262172`，包含未提交的交接文档）  
@@ -286,7 +289,7 @@ Manifest (task.yaml)
 
 ### 最终测试
 
-- 全量 pytest：**439 passed, 12 skipped, 0 failed**（含 29 个 SOP）。
+- 全量 pytest：**440 passed, 12 skipped, 0 failed**（含 29 个 SOP）。
 - `biopipe registry check`：`changed: []`。
 - 14 个 verify 脚本与 49 个 demo 自测在严格 schema 后复跑通过（见 SOP 矩阵的复现命令）。
 - 额外修复：`concat` 缺省输出名、`filter_min` YAML 参数、测试专用严格的 report/stream schema、`tree_snapshot.txt` 过期生成物。

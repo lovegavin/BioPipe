@@ -1,5 +1,7 @@
 # Reference index
 
+> Entry: [docs/README.md](../README.md) · [architecture.md](../architecture.md).
+
 `operator_index.json` and `reader_index.json` are generated from the live
 classes and schemas. Read the JSON index first, then only the pages for the
 operators you are considering. The workflow is in `../route_sop.md`; the

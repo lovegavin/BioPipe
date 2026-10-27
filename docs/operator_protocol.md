@@ -1,5 +1,7 @@
 # BioPipe Operator Protocol v1
 
+> 入口：[文档首页](README.md) / [架构总览](architecture.md) / [协议总集](protocol_suite.md)。本文是实现细节；冲突时以架构/协议总集为准。
+
 Status: protocol v1, implemented for BioPipe Studio 0.3 and SDK 1.2. Python 3.11 or newer is required.
 This document is the public contract for new Python plugins. Existing `Step`, `Reader`,
 YAML tasks, graph v1/v2 files and route snapshots remain supported through adapters.

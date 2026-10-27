@@ -1,5 +1,7 @@
 # Write a BioPipe plugin in 30 minutes
 
+> 入口：[文档首页](README.md) / [架构总览](architecture.md) / [协议总集](protocol_suite.md)。本文是实现细节；冲突时以架构/协议总集为准。
+
 This walkthrough assumes a working BioPipe Python environment and an existing
 small algorithm. It scaffolds a real wheel, tests contracts, hot-installs it and
 makes it available in the desktop. BioPipe does not need an AI provider.

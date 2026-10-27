@@ -1,5 +1,7 @@
 # Add a Reader
 
+> 入口：[文档首页](README.md) / [架构总览](architecture.md) / [协议总集](protocol_suite.md)。本文是实现细节；冲突时以架构/协议总集为准。
+
 A Reader converts files into a `Form`: numeric data, named dimensions, labels,
 global `info` and dimension-aligned `axis_info`. Reader discovery, dependencies,
 contracts and installation use the same protocol as Steps.

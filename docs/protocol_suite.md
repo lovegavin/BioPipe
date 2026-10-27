@@ -1,8 +1,10 @@
-# BioPipe Protocol Suite v2（待确认草案）
+# BioPipe Protocol Suite v2
 
 状态：Active（2026-10-23 起按维护者授权执行；决策 1=B，其余按推荐/最优判断；底层数据协议如需再改，先确认）  
 适用范围：`src/core`、`src/reader`、`src/task`、`src/web`、`biopipe_sdk`、`biopipe`、`routes/`、桌面端  
-原则：先协议、后实现；先测试、后优化；不新增 Reader/算子。
+原则：先协议、后实现；先测试、后优化。扩展遵循同一协议。
+
+> 入口：[文档首页](README.md) / [架构总览](architecture.md)。
 
 > 阅读约定：**MUST** 为硬性要求，**SHOULD** 为默认要求（偏离需写明理由），**MAY** 为可选。
 > 【现状】表示当前代码已基本满足；【收紧】表示后续优化必须补齐；【新增】表示本协议新增的约定。

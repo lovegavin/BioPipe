@@ -1,5 +1,7 @@
 # Add a Step or Operator
 
+> 入口：[文档首页](README.md) / [架构总览](architecture.md) / [协议总集](protocol_suite.md)。本文是实现细节；冲突时以架构/协议总集为准。
+
 Use `Operator` for a function that consumes Forms and returns one Form or a report.
 It is a small adapter over the existing `Step` API. Use `Step` directly when you
 need the established `run(ctx, inputs)` / `export(ctx)` lifecycle or named outputs.

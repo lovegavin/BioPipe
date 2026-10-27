@@ -1,5 +1,7 @@
 # Reader and operator data contracts
 
+> 入口：[文档首页](README.md) / [架构总览](architecture.md) / [协议总集](protocol_suite.md)。本文是实现细节；冲突时以架构/协议总集为准。
+
 `Form` is the numeric tensor container. `info` describes semantics; `axis_info`
 explicitly binds annotation arrays to named dimensions. Shape, field names and
 array lengths alone do not establish biological meaning.
