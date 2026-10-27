@@ -25,7 +25,7 @@ in package data, then run `biopipe plugin check`, `test`, and `build`.
 
 ## Profiles and saved work
 
-The current desktop source performs this backed-up conversion once, before
+Desktop v0.6.2 performs this backed-up conversion once, before
 starting services, when the active profile uses a known older built-in protocol.
 It preserves unfinished canvases even when required run parameters have not yet
 been entered. Existing supplied values remain schema-checked; execution still

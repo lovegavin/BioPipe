@@ -152,24 +152,28 @@ See docs/installation.md, docs/reader_extensions.md and docs/step_extensions.md.
         guide.write('''
 HI-C AND SSH EXECUTION
 Choose a server target in the top toolbar to browse server inputs and run there.
-Inputs, outputs and computation stay on the server. Prepare its BioPipe/Python
-environment and Linux tools first; the Windows package does not install them.
+Inputs, outputs and computation stay on the server. New SSH connections default
+to automatic BioPipe + Hi-C deployment on Linux x86_64. Supply the SSH account,
+verify the host fingerprint, and connect; no preconfigured Python is required.
+The server needs writable storage and outbound HTTPS. Progress and setup errors
+appear in the connection panel. Existing manual environments remain supported.
 See docs/REMOTE_EXECUTION.md and docs/HIC.md for setup and supported workflows.
 ''')
         guide.write('''
 UPGRADING FROM 0.4.1 / OLDER PROTOCOLS
-Close Studio first. Protocol v3 requires an explicit one-time profile migration.
-Preview before applying; originals are backed up and past jobs are not rewritten.
+Close the older Studio instance first. This desktop version automatically performs
+a one-time backed-up migration of supported built-in profiles before startup.
+Unfinished drafts remain editable; past jobs and their locks are not rewritten.
 External old-protocol operator wheels must be rebuilt with SDK 3.
 See docs/migration_v2.md for profile selection, extension conversion and restore.
 ''')
         if not args.lite:
-            guide.write('''From this extracted folder (no system Python needed):
+            guide.write('''For manual migration preview/apply (no system Python needed):
   runtime\\python\\python.exe -I -m biopipe migrate
   runtime\\python\\python.exe -I -m biopipe migrate --apply
 ''')
         else:
-            guide.write('Run in the Python environment selected for Lite:\n  python -m biopipe migrate\n  python -m biopipe migrate --apply\n')
+            guide.write('For manual migration preview/apply, use the Python environment selected for Lite:\n  python -m biopipe migrate\n  python -m biopipe migrate --apply\n')
     audit = audit_files((p for p in destination.rglob('*') if p.is_file()
                         and not {'THIRD_PARTY_NOTICES', 'runtime'}.intersection(p.relative_to(destination).parts)), destination)
     if audit['findings']:

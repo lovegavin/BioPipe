@@ -5,12 +5,13 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Release **v0.6.1** adds [Hi-C workflows](docs/HIC.md): paired FASTQ,
+Release **v0.6.2** fixes startup with older built-in profiles and adds automatic
+Linux server deployment. It retains the [Hi-C workflows](docs/HIC.md): paired FASTQ,
 BAM/SAM or pairs to contact matrices and expected/compartment/insulation/loop/pileup
 analysis. It reuses existing QC, selection and plotting operators, with three new
 tool adapters and four file Readers. The bundled catalog has 67 operators,
 19 Readers, seven provider packages and eight route templates. Linux tools are
-required for the full raw-read workflow and run on a prepared Linux server or WSL.
+required for the full raw-read workflow and run on a Linux server or WSL.
 
 The desktop editor also supports [SSH remote execution](docs/REMOTE_EXECUTION.md):
 edit on Windows, browse inputs on a Linux server, submit workflows and reconnect
@@ -18,7 +19,7 @@ to server-owned jobs and logs. Data and computation stay on the server; existing
 memory management and independent parameter JSON files are retained. Linux-only
 tool adapters are marked in the operator library and canvas.
 
-In the current source build, new SSH connections can automatically deploy a
+New SSH connections can automatically deploy a
 private Linux x86_64 environment with Python, BioPipe and Hi-C dependencies.
 Choose **Automatic deployment** in the server panel; installation progress and
 errors are shown there. Existing manual server configurations remain supported.
@@ -42,7 +43,7 @@ the EXE. If WebView2 is missing, its official Microsoft installer prepares it
 automatically; that one-time step requires internet access. Linux command-line
 tools for Hi-C are installed on the execution server, not in the Windows runtime.
 
-The current desktop source also upgrades known legacy built-in profiles before
+The desktop also upgrades known legacy built-in profiles before
 startup, with recoverable backups under `.studio/migrations/v3/`. Unfinished
 canvas drafts remain editable; required parameters are still checked before a
 run. Old external provider packages require conversion to protocol v3 and produce
@@ -70,10 +71,11 @@ dependencies, optional analyses and troubleshooting resolver backtracking.
 Choose the archive without `Lite` for the bundled environment. The smaller
 `Windows-x64-Lite.zip` uses an existing Python environment instead.
 
-Release v0.6.1 is maintained on `release/v0.6.1`; `main` retains the author's separate
-upstream development. See the [release notes](docs/releases/v0.6.1.md) for scope.
-Upgrading from v0.4.1 requires a one-time
-[migration](docs/migration_v2.md) for old routes/registries/extensions. The runtime
+Release v0.6.2 is maintained on `release/v0.6.2`; `main` retains the author's separate
+upstream development. See the [release notes](docs/releases/v0.6.2.md) for scope.
+Upgrading from v0.4.1 uses a one-time backed-up
+[migration](docs/migration_v2.md), automatic for supported built-in desktop profiles;
+old external extensions must be converted explicitly. The runtime
 accepts only protocol v3. Historical source and generated outputs remain available
 at Git tag `v0.4.1`; they are no longer duplicated in the active source tree.
 

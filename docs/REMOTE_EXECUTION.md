@@ -1,10 +1,11 @@
 # Windows editing and SSH execution
 
-BioPipe Studio v0.6.1 can run a workflow on a Linux server. Choose an execution
+BioPipe Studio v0.6.2 can prepare a Linux server and run a workflow over SSH. Choose an execution
 target in the top toolbar, select server files in the input inspector, then use
 the existing **Check**, **Run**, **Stop**, results and log controls. This feature
 is included in both the full and Lite Windows desktop archives.
-The Windows/Linux acceptance results are recorded in [REMOTE_VALIDATION.md](REMOTE_VALIDATION.md).
+The Windows/Linux execution results are recorded in [REMOTE_VALIDATION.md](REMOTE_VALIDATION.md),
+and automatic deployment results in [AUTO_DEPLOY_VALIDATION.md](AUTO_DEPLOY_VALIDATION.md).
 
 ## Prepare the server
 
