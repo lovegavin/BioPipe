@@ -53,7 +53,10 @@ def bundled_state():
     # Check file metadata, not operator imports/scans. A long-lived Studio must
     # observe the same implementation bytes as its next fresh worker process.
     root = Path(__file__).resolve().parents[1]
-    index = _stamp(root / "biopipe/builtin_packages.json")
+    index_path = root / "biopipe/builtin_packages.json"
+    # Metadata alone can miss a same-size edit when the filesystem timestamp
+    # granularity is coarse. The manifest is small, so hash its bytes as well.
+    index = (*_stamp(index_path), hashlib.sha256(index_path.read_bytes()).hexdigest())
     paths = {p for package in _manifest(index)["packages"] for p in _provider_paths(root, package)}
     return _bundled_state(index, tuple(_stamp(p) for p in sorted(paths)))
 

@@ -6,6 +6,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
+from src.core.numeric import compact_numeric
 from src.task.context import Context
 from src.task.step.base import Step
 
@@ -94,7 +95,7 @@ class GffFeatureStatsStep(Step):
         })
 
         n_types = len(type_names)
-        out_data = np.zeros((n_types, len(_STAT_LABELS)), dtype=np.float32)
+        out_data = np.zeros((n_types, len(_STAT_LABELS)), dtype=np.float64)
 
         name_per_record = [
             type_enc.inverse[int(round(float(c)))] for c in type_codes
@@ -117,6 +118,7 @@ class GffFeatureStatsStep(Step):
             idx = type_names.index("gene")
             out_data[idx, 5] = n_exon / n_gene
 
+        out_data = compact_numeric(out_data)
         info, axis_info = project_metadata(form, keep_dims=[], derived=True)
         info["missing_code"] = np.nan
         info["representation"] = "gff_feature_stats"

@@ -3,7 +3,6 @@ from contextlib import asynccontextmanager
 import hmac
 import json
 import logging
-import os
 from pathlib import Path
 import secrets
 from urllib.parse import urlparse
@@ -23,7 +22,7 @@ from .graph import GraphError, compile_graph, import_manifest, project_path, rel
 from .models import Graph, ManifestImport, SaveWorkflow, RegisterRoutes, Workspace, LibraryAction
 from .routes import prepare_interface
 from .contracts import analyze_graph
-from .service import JobService, Settings, read_json, safe_json
+from .service import JobService, read_json, safe_json
 from .assets import AssetImports, accepted_extensions
 
 
@@ -197,13 +196,31 @@ def create_app(settings=None):
     @app.post("/api/export")
     def export(graph: Graph):
         manifest, order = compile_graph(graph, service.plugins.catalog_for(graph, service.base_catalog), settings.root)
-        manifest = relative_manifest(manifest, project_path(settings.root, ".", graph.base_dir))
+        # Project tasks live under code_root; uploaded data lives under the
+        # Studio workspace. Use code_root only for an explicit task base_dir
+        # or an absolute source inside the project.
+        base_root = settings.root
+        project = settings.code_root
+        if project is not None:
+            project = Path(project).resolve()
+            base = Path(graph.base_dir)
+            if not base.is_absolute() and graph.base_dir not in ("", ".") and (project / base).is_dir():
+                base_root = project
+            else:
+                source_paths = [Path(n.source.path) for n in graph.nodes
+                                if n.kind == "source" and n.source and n.source.path]
+                if any(path.is_absolute() and path.resolve().is_relative_to(project) for path in source_paths):
+                    base_root = project
+        manifest = relative_manifest(manifest, project_path(base_root, ".", graph.base_dir))
         return {"yaml": yaml.safe_dump(manifest, allow_unicode=True, sort_keys=False), "order": order}
 
     @app.post("/api/import")
     def import_yaml(payload: ManifestImport):
         try:
-            return import_manifest(payload.text, payload.base_dir, catalog, settings.root).model_dump(mode="json")
+            # Imported task YAML normally lives under the source checkout,
+            # not under ~/.biopipe/studio/workspace.
+            import_root = settings.code_root or settings.root
+            return import_manifest(payload.text, payload.base_dir, catalog, import_root).model_dump(mode="json")
         except yaml.YAMLError as exc:
             raise GraphError("YAML 格式有误，请检查缩进及字段。") from exc
 

@@ -44,9 +44,10 @@ def _discover() -> list[Reader]:
                 and attr is not Reader
                 and getattr(attr, "extensions", None)
             ):
-                from .schemas import builtin_schema
                 if attr.parameters_schema is None:
-                    attr.parameters_schema = builtin_schema(attr.__name__)
+                    raise ReaderError(
+                        f"Reader {attr.__name__} must declare parameters_schema"
+                    )
                 instances.append(attr())
     return instances
 
@@ -59,13 +60,29 @@ def _from_packages():
 READERS: list[Reader] = [] if os.getenv("BIOPIPE_REGISTRY_MAINTENANCE") == "1" else _from_packages()
 
 
-def pick_reader(path: Path) -> Reader:
+def pick_reader(path: Path, name: str | None = None) -> Reader:
     """Return the single reader that claims this path.
 
     Selection is based on the original path (compression suffix
     included), so a ``.bed.gz`` still routes to the correct reader.
+    An explicit ``name`` (for example ``csv`` or ``CsvReader``) overrides
+    extension dispatch; manifests use this to read a tab-separated file
+    with the CSV reader.
     """
     path = Path(path)
+    if name is not None:
+        target = str(name).strip().lower()
+        candidates = [
+            r for r in READERS
+            if type(r).__name__.lower() == target
+            or type(r).__name__.lower().removesuffix("reader") == target
+        ]
+        if not candidates:
+            known = sorted({type(r).__name__ for r in READERS})
+            raise ReaderError(f"Unknown reader {name!r}. Known readers: {known}")
+        if len(candidates) > 1:
+            raise ReaderError(f"Reader selector {name!r} is ambiguous: {[type(r).__name__ for r in candidates]}")
+        return candidates[0]
     candidates = [r for r in READERS if r.matches(path)]
 
     if not candidates:
@@ -127,7 +144,8 @@ def read_source(
     ``handles_compression = True``.
     """
     path = Path(path)
-    reader = pick_reader(path)
+    reader_name = args.pop("reader", None)
+    reader = pick_reader(path, name=reader_name)
     if reader.parameters_schema is not None:
         from biopipe_sdk.protocol import validate_parameters
         args = validate_parameters(reader.parameters_schema, args)

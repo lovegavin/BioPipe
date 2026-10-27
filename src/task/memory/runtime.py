@@ -13,7 +13,7 @@ import time
 from src.core import ManifestError
 from biopipe.run_log import RunLog
 from .config import DiskBudgetError, MemoryBudgetError
-from .planner import LifetimePlan, NEVER, block_elements, full_estimate
+from .planner import LifetimePlan, NEVER, block_elements
 from .store import ArtifactStore
 
 

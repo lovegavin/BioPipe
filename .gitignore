@@ -60,3 +60,5 @@ dist/
 build/
 _run.sh
 tmp.txt
+snapshot.txt
+tree_snapshot.txt

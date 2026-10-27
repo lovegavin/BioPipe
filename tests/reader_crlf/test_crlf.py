@@ -5,10 +5,8 @@ both, and asserts the Form is byte-identical: same shape, same data,
 same labels, same info. Only readers that were patched for CRLF are
 tested here.
 """
-from pathlib import Path
 
 import numpy as np
-import pytest
 
 from src.reader import read_source
 

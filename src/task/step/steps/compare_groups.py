@@ -60,8 +60,6 @@ from src.task.context import Context
 from src.task.step.base import Step
 from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
 from ._microbiome import metadata
-from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
-from ._microbiome import metadata
 
 
 _METHODS = (
@@ -83,23 +81,15 @@ class CompareGroupsStep(Step):
     dependency_imports = ['pydeseq2']
 
     name = "compare_groups"
+    title = "Group comparison"
+    category = "Analysis"
+    builtin_package = "biopipe-expression"
     inputs_arity = 2
     outputs = []
     parameters_schema = SCHEMAS['compare_groups']
     input_contracts, output_contract = CONTRACTS['compare_groups']
     output_parameter = 'output'
     legacy_parameters = False
-
-    @classmethod
-    def estimate_memory(cls, inputs, params, profiles):
-        return estimate_axis(cls.name, inputs, params, profiles)
-    title = 'Group comparison'
-    category = 'Analysis'
-    builtin_package = 'biopipe-expression'
-    legacy_parameters = False
-    parameters_schema = SCHEMAS['compare_groups']
-    input_contracts, output_contract = CONTRACTS['compare_groups']
-    output_parameter = 'output'
 
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):

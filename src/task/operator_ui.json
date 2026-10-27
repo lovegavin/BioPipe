@@ -3,26 +3,7 @@
     "title": "缺失值过滤",
     "category": "质量控制",
     "description": "按指定维度过滤缺失比例过高的样本或特征。",
-    "icon": "Funnel",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "过滤维度",
-        "type": "string",
-        "default": "feature",
-        "required": true
-      },
-      {
-        "key": "threshold",
-        "label": "最大缺失比例",
-        "type": "number",
-        "default": 0.05,
-        "min": 0,
-        "max": 1,
-        "step": 0.01,
-        "required": true
-      }
-    ]
+    "icon": "Funnel"
   },
   "maf": {
     "title": "MAF",
@@ -31,25 +12,7 @@
     ],
     "category": "质量控制",
     "description": "过滤低频变异。输入需要基因型及 ploidy 元数据。",
-    "icon": "Dna",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "变异维度",
-        "type": "string",
-        "default": "variant",
-        "required": true
-      },
-      {
-        "key": "threshold",
-        "label": "最低 MAF",
-        "type": "number",
-        "default": 0.05,
-        "min": 0,
-        "max": 0.5,
-        "step": 0.01
-      }
-    ]
+    "icon": "Dna"
   },
   "hwe": {
     "title": "HWE",
@@ -58,25 +21,7 @@
     ],
     "category": "质量控制",
     "description": "Hardy–Weinberg 平衡过滤。输入需要二倍体基因型。",
-    "icon": "Scales",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "变异维度",
-        "type": "string",
-        "default": "variant",
-        "required": true
-      },
-      {
-        "key": "threshold",
-        "label": "最低 P 值",
-        "type": "number",
-        "default": 0.0001,
-        "min": 0,
-        "max": 1,
-        "step": 0.0001
-      }
-    ]
+    "icon": "Scales"
   },
   "ld_prune": {
     "title": "LD pruning",
@@ -85,32 +30,7 @@
     ],
     "category": "质量控制",
     "description": "在滑动窗口内移除高度相关的变异。",
-    "icon": "Intersect",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "变异维度",
-        "type": "string",
-        "default": "variant",
-        "required": true
-      },
-      {
-        "key": "window",
-        "label": "窗口大小",
-        "type": "integer",
-        "default": 50,
-        "min": 1
-      },
-      {
-        "key": "r2",
-        "label": "R² 阈值",
-        "type": "number",
-        "default": 0.2,
-        "min": 0,
-        "max": 1,
-        "step": 0.05
-      }
-    ]
+    "icon": "Intersect"
   },
   "pca": {
     "title": "PCA",
@@ -120,64 +40,14 @@
     "category": "统计分析",
     "description": "标准化数据，提取主成分；缺失值以特征均值填充。",
     "icon": "ChartScatter",
-    "output_type": "Scores",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "压缩维度",
-        "type": "string",
-        "default": "feature",
-        "required": true
-      },
-      {
-        "key": "n_components",
-        "label": "主成分数量",
-        "type": "integer",
-        "default": 2,
-        "min": 1,
-        "required": true
-      }
-    ]
+    "output_type": "Scores"
   },
   "regress": {
     "title": "回归分析",
     "category": "统计分析",
     "description": "逐个特征拟合回归模型，可加入协变量。",
     "icon": "TrendUp",
-    "output_type": "Association",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "特征维度",
-        "type": "string",
-        "default": "feature",
-        "required": true
-      },
-      {
-        "key": "response",
-        "label": "响应变量标签",
-        "type": "string",
-        "default": "trait",
-        "required": true
-      },
-      {
-        "key": "covariates",
-        "label": "协变量标签",
-        "type": "list",
-        "default": []
-      },
-      {
-        "key": "method",
-        "label": "模型",
-        "type": "choice",
-        "default": "auto",
-        "options": [
-          "auto",
-          "ols",
-          "logit"
-        ]
-      }
-    ]
+    "output_type": "Association"
   },
   "correction": {
     "title": "FDR",
@@ -194,188 +64,50 @@
     "category": "统计分析",
     "description": "进行 Bonferroni 或 FDR 校正。",
     "icon": "CheckSquare",
-    "output_type": "Association",
-    "parameters": [
-      {
-        "key": "method",
-        "label": "校正方法",
-        "type": "choice",
-        "default": "fdr",
-        "options": [
-          "fdr",
-          "bonferroni"
-        ]
-      },
-      {
-        "key": "alpha",
-        "label": "显著性水平",
-        "type": "number",
-        "default": 0.05,
-        "min": 0,
-        "max": 1,
-        "step": 0.01
-      },
-      {
-        "key": "pfield",
-        "label": "P 值标签",
-        "type": "string",
-        "default": "P"
-      },
-      {
-        "key": "dim",
-        "label": "统计量维度",
-        "type": "string",
-        "default": "statistic"
-      }
-    ]
+    "output_type": "Association"
   },
   "describe": {
     "title": "数据概览",
     "category": "数据整理",
     "description": "查看形状、标签、缺失情况与全局统计。支持分块读取。",
     "icon": "ListBullets",
-    "output_type": "Report",
-    "parameters": []
+    "output_type": "Report"
   },
   "select": {
     "title": "选择特征",
     "category": "数据整理",
     "description": "按标签选择样本或特征。",
-    "icon": "Selection",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "选择维度",
-        "type": "string",
-        "default": "feature",
-        "required": true
-      },
-      {
-        "key": "labels",
-        "label": "保留的标签",
-        "type": "list",
-        "default": [
-          "f0",
-          "f1"
-        ],
-        "required": true
-      }
-    ]
+    "icon": "Selection"
   },
   "drop": {
     "title": "移除特征",
     "category": "数据整理",
     "description": "移除指定维度上的标签。",
-    "icon": "MinusSquare",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "移除维度",
-        "type": "string",
-        "default": "feature",
-        "required": true
-      },
-      {
-        "key": "labels",
-        "label": "移除的标签",
-        "type": "list",
-        "default": [
-          "f0"
-        ],
-        "required": true
-      }
-    ]
+    "icon": "MinusSquare"
   },
   "transpose": {
     "title": "维度转置",
     "category": "数据整理",
     "description": "调整命名维度的排列顺序。",
-    "icon": "ArrowsDownUp",
-    "parameters": [
-      {
-        "key": "order",
-        "label": "维度顺序",
-        "type": "list",
-        "default": [
-          "feature",
-          "sample"
-        ],
-        "required": true
-      }
-    ]
+    "icon": "ArrowsDownUp"
   },
   "rename_dim": {
     "title": "重命名维度",
     "category": "数据整理",
     "description": "为一个维度更换名称。",
-    "icon": "TextT",
-    "parameters": [
-      {
-        "key": "from",
-        "label": "原维度",
-        "type": "string",
-        "default": "feature",
-        "required": true
-      },
-      {
-        "key": "to",
-        "label": "新维度",
-        "type": "string",
-        "default": "variant",
-        "required": true
-      }
-    ]
+    "icon": "TextT"
   },
   "concat": {
     "title": "合并数据",
     "category": "数据整理",
     "description": "按指定维度连接多个输入，输入端口顺序决定合并顺序。",
-    "icon": "Unite",
-    "parameters": [
-      {
-        "key": "axis",
-        "label": "合并维度",
-        "type": "string",
-        "default": "feature",
-        "required": true
-      },
-      {
-        "key": "align",
-        "label": "Alignment",
-        "type": "json",
-        "description": "For example: {\"dim\":\"sample\",\"key\":{\"left\":\"id\",\"right\":\"id\"}}"
-      },
-      {
-        "key": "label",
-        "label": "Merged key label",
-        "type": "string"
-      }
-    ]
+    "icon": "Unite"
   },
   "attach_info": {
     "title": "附加注释",
     "category": "数据整理",
     "description": "输入 1 为目标数据，输入 2 为注释来源。",
-    "icon": "Tag",
-    "parameters": [
-      {
-        "key": "fields",
-        "label": "注释字段",
-        "type": "list",
-        "default": [
-          "chrom",
-          "pos"
-        ],
-        "required": true
-      },
-      {
-        "key": "target_dim",
-        "label": "目标维度",
-        "type": "string",
-        "default": "feature",
-        "required": true
-      }
-    ]
+    "icon": "Tag"
   },
   "scatter": {
     "title": "散点图",
@@ -383,70 +115,6 @@
     "description": "选择两个标签绘制散点图。",
     "icon": "ChartScatter",
     "output_type": "Figure",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "坐标维度",
-        "type": "string",
-        "default": "component",
-        "required": true
-      },
-      {
-        "key": "x_label",
-        "label": "横坐标标签",
-        "type": "string",
-        "default": "PC1",
-        "required": true
-      },
-      {
-        "key": "y_label",
-        "label": "纵坐标标签",
-        "type": "string",
-        "default": "PC2",
-        "required": true
-      },
-      {
-        "key": "filename",
-        "label": "文件名",
-        "type": "string",
-        "default": "scatter.png",
-        "required": true
-      },
-      {
-        "key": "alpha",
-        "label": "Opacity",
-        "type": "number",
-        "min": 0,
-        "max": 1,
-        "step": 0.05
-      },
-      {
-        "key": "color_label",
-        "label": "Color field",
-        "type": "string"
-      },
-      {
-        "key": "point_size",
-        "label": "Point size",
-        "type": "number",
-        "min": 0
-      },
-      {
-        "key": "title",
-        "label": "Title",
-        "type": "string"
-      },
-      {
-        "key": "xlabel",
-        "label": "X axis label",
-        "type": "string"
-      },
-      {
-        "key": "ylabel",
-        "label": "Y axis label",
-        "type": "string"
-      }
-    ],
     "preview": {
       "kind": "scatter",
       "caption": "两变量的分布与关系"
@@ -458,56 +126,6 @@
     "description": "查看指定数值标签的分布。",
     "icon": "ChartBar",
     "output_type": "Figure",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "数值维度",
-        "type": "string",
-        "default": "statistic",
-        "required": true
-      },
-      {
-        "key": "value_label",
-        "label": "数值标签",
-        "type": "string",
-        "default": "P",
-        "required": true
-      },
-      {
-        "key": "bins",
-        "label": "分箱数量",
-        "type": "integer",
-        "default": 20,
-        "min": 1
-      },
-      {
-        "key": "filename",
-        "label": "文件名",
-        "type": "string",
-        "default": "histogram.png",
-        "required": true
-      },
-      {
-        "key": "log_y",
-        "label": "Log Y axis",
-        "type": "boolean"
-      },
-      {
-        "key": "title",
-        "label": "Title",
-        "type": "string"
-      },
-      {
-        "key": "xlabel",
-        "label": "X axis label",
-        "type": "string"
-      },
-      {
-        "key": "ylabel",
-        "label": "Y axis label",
-        "type": "string"
-      }
-    ],
     "preview": {
       "kind": "histogram",
       "caption": "数值分布与频数"
@@ -519,56 +137,6 @@
     "description": "选择两个数值标签，按横坐标排序后绘制曲线。",
     "icon": "ChartLine",
     "output_type": "Figure",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "维度",
-        "type": "string",
-        "default": "feature",
-        "required": true
-      },
-      {
-        "key": "x_label",
-        "label": "横坐标标签",
-        "type": "string",
-        "default": "f0",
-        "required": true
-      },
-      {
-        "key": "y_label",
-        "label": "纵坐标标签",
-        "type": "string",
-        "default": "f1",
-        "required": true
-      },
-      {
-        "key": "filename",
-        "label": "文件名",
-        "type": "string",
-        "default": "line.png",
-        "required": true
-      },
-      {
-        "key": "sort",
-        "label": "Sort by X",
-        "type": "boolean"
-      },
-      {
-        "key": "title",
-        "label": "Title",
-        "type": "string"
-      },
-      {
-        "key": "xlabel",
-        "label": "X axis label",
-        "type": "string"
-      },
-      {
-        "key": "ylabel",
-        "label": "Y axis label",
-        "type": "string"
-      }
-    ],
     "preview": {
       "kind": "line",
       "caption": "随序列变化的趋势"
@@ -580,73 +148,6 @@
     "description": "用染色体、位置和 P 值绘制关联结果。",
     "icon": "ChartBar",
     "output_type": "Figure",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "变异维度",
-        "type": "string",
-        "default": "feature",
-        "required": true
-      },
-      {
-        "key": "chrom_label",
-        "label": "染色体字段",
-        "type": "string",
-        "default": "chrom",
-        "required": true
-      },
-      {
-        "key": "pos_label",
-        "label": "位置字段",
-        "type": "string",
-        "default": "pos",
-        "required": true
-      },
-      {
-        "key": "p_dim",
-        "label": "统计量维度",
-        "type": "string",
-        "default": "statistic"
-      },
-      {
-        "key": "p_label",
-        "label": "P 值标签",
-        "type": "string",
-        "default": "P",
-        "required": true
-      },
-      {
-        "key": "filename",
-        "label": "文件名",
-        "type": "string",
-        "default": "manhattan.png",
-        "required": true
-      },
-      {
-        "key": "alpha",
-        "label": "Opacity",
-        "type": "number",
-        "min": 0,
-        "max": 1,
-        "step": 0.05
-      },
-      {
-        "key": "point_size",
-        "label": "Point size",
-        "type": "number",
-        "min": 0
-      },
-      {
-        "key": "threshold",
-        "label": "Significance threshold",
-        "type": "number"
-      },
-      {
-        "key": "title",
-        "label": "Title",
-        "type": "string"
-      }
-    ],
     "preview": {
       "kind": "manhattan",
       "caption": "基因组位置与显著性"
@@ -656,255 +157,37 @@
     "title": "低表达过滤",
     "description": "按最低信号和有效样本数过滤",
     "category": "数据整理",
-    "icon": "Funnel",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "分析维度",
-        "type": "string",
-        "required": true,
-        "default": "feature"
-      },
-      {
-        "key": "min_value",
-        "label": "最低信号",
-        "type": "integer",
-        "default": 1,
-        "min": 0
-      },
-      {
-        "key": "min_samples",
-        "label": "最少样本数",
-        "type": "integer",
-        "default": 1,
-        "min": 1
-      }
-    ]
+    "icon": "Funnel"
   },
   "normalize": {
     "title": "归一化",
     "description": "CPM、DESeq2 size factors、Quantile 或 Z-score",
     "category": "数据整理",
-    "icon": "SlidersHorizontal",
-    "parameters": [
-      {
-        "key": "method",
-        "label": "方法",
-        "type": "choice",
-        "options": [
-          "cpm",
-          "total",
-          "median_of_ratios",
-          "quantile",
-          "zscore"
-        ],
-        "required": true,
-        "default": "cpm"
-      },
-      {
-        "key": "dim",
-        "label": "分析维度",
-        "type": "string",
-        "required": true,
-        "default": "sample"
-      },
-      {
-        "key": "target_sum",
-        "label": "目标总量",
-        "type": "number",
-        "default": 1000000.0,
-        "min": 0
-      }
-    ]
+    "icon": "SlidersHorizontal"
   },
   "log_transform": {
     "title": "Log",
     "description": "按指定底数与伪计数变换",
     "category": "数据整理",
-    "icon": "Function",
-    "parameters": [
-      {
-        "key": "base",
-        "label": "底数",
-        "type": "choice",
-        "options": [
-          2,
-          10,
-          "e"
-        ],
-        "default": 2
-      },
-      {
-        "key": "pseudocount",
-        "label": "伪计数",
-        "type": "integer",
-        "default": 1,
-        "min": 0
-      }
-    ]
+    "icon": "Function"
   },
   "impute": {
     "title": "缺失值填补",
     "description": "以 Min、Median 或 Mean 填补缺失",
     "category": "数据整理",
-    "icon": "PuzzlePiece",
-    "parameters": [
-      {
-        "key": "method",
-        "label": "方法",
-        "type": "choice",
-        "options": [
-          "min",
-          "median",
-          "mean"
-        ],
-        "required": true,
-        "default": "median"
-      },
-      {
-        "key": "dim",
-        "label": "分析维度",
-        "type": "string",
-        "required": true,
-        "default": "feature"
-      },
-      {
-        "key": "min_scale",
-        "label": "最小值倍率",
-        "type": "number",
-        "default": 1.0,
-        "min": 0
-      }
-    ]
+    "icon": "PuzzlePiece"
   },
   "compare_groups": {
     "title": "组间比较",
     "description": "T-test、Welch、Mann–Whitney 或 DESeq2",
     "category": "统计分析",
-    "icon": "Intersect",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "分析维度",
-        "type": "string",
-        "required": true,
-        "default": "feature"
-      },
-      {
-        "key": "group_dim",
-        "label": "样本维度",
-        "type": "string",
-        "required": true,
-        "default": "sample"
-      },
-      {
-        "key": "group_label",
-        "label": "分组字段",
-        "type": "string",
-        "required": true
-      },
-      {
-        "key": "group_a",
-        "label": "对照组（数值或标签）",
-        "type": "scalar",
-        "required": true
-      },
-      {
-        "key": "group_b",
-        "label": "实验组（数值或标签）",
-        "type": "scalar",
-        "required": true
-      },
-      {
-        "key": "method",
-        "label": "方法",
-        "type": "choice",
-        "options": [
-          "ttest",
-          "welch",
-          "mannwhitney",
-          "deseq2"
-        ],
-        "default": "ttest"
-      }
-    ]
+    "icon": "Intersect"
   },
   "kaplan_meier": {
     "title": "KM",
     "description": "分组生存曲线与置信区间",
     "category": "可视化",
     "icon": "ChartLine",
-    "parameters": [
-      {
-        "key": "time_label",
-        "label": "随访时间字段",
-        "type": "string",
-        "required": true
-      },
-      {
-        "key": "event_label",
-        "label": "事件字段",
-        "type": "string",
-        "required": true
-      },
-      {
-        "key": "group_label",
-        "label": "分组字段",
-        "type": "string",
-        "required": true
-      },
-      {
-        "key": "group_map",
-        "label": "分组映射",
-        "type": "json"
-      },
-      {
-        "key": "groups",
-        "label": "显示分组顺序",
-        "type": "list"
-      },
-      {
-        "key": "filename",
-        "label": "图片文件名",
-        "type": "string",
-        "required": true,
-        "default": "kaplan_meier.png"
-      },
-      {
-        "key": "title",
-        "label": "图标题",
-        "type": "string"
-      },
-      {
-        "key": "xlabel",
-        "label": "X 轴标题",
-        "type": "string",
-        "default": "Time"
-      },
-      {
-        "key": "ylabel",
-        "label": "Y 轴标题",
-        "type": "string",
-        "default": "Survival probability"
-      },
-      {
-        "key": "xlim",
-        "label": "X 轴范围",
-        "type": "json"
-      },
-      {
-        "key": "show_censors",
-        "label": "显示删失标记",
-        "type": "boolean",
-        "default": true
-      },
-      {
-        "key": "show_ci",
-        "label": "显示置信区间",
-        "type": "boolean",
-        "default": false
-      }
-    ],
     "preview": {
       "kind": "survival",
       "caption": "时间与生存概率"
@@ -914,171 +197,19 @@
     "title": "Log-rank",
     "description": "整体与两两生存差异检验",
     "category": "统计分析",
-    "icon": "Sigma",
-    "parameters": [
-      {
-        "key": "time_label",
-        "label": "随访时间字段",
-        "type": "string",
-        "required": true
-      },
-      {
-        "key": "event_label",
-        "label": "事件字段",
-        "type": "string",
-        "required": true
-      },
-      {
-        "key": "group_label",
-        "label": "分组字段",
-        "type": "string",
-        "required": true
-      },
-      {
-        "key": "group_map",
-        "label": "分组映射",
-        "type": "json"
-      },
-      {
-        "key": "groups",
-        "label": "显示分组顺序",
-        "type": "list"
-      },
-      {
-        "key": "pairwise",
-        "label": "两两比较",
-        "type": "boolean",
-        "default": false
-      }
-    ]
+    "icon": "Sigma"
   },
   "cox_regression": {
     "title": "Cox",
     "description": "多变量比例风险回归",
     "category": "统计分析",
-    "icon": "TrendUp",
-    "parameters": [
-      {
-        "key": "time_label",
-        "label": "随访时间字段",
-        "type": "string",
-        "required": true
-      },
-      {
-        "key": "event_label",
-        "label": "事件字段",
-        "type": "string",
-        "required": true
-      },
-      {
-        "key": "covariates",
-        "label": "协变量",
-        "type": "list",
-        "required": true
-      },
-      {
-        "key": "weights_label",
-        "label": "权重字段",
-        "type": "string"
-      },
-      {
-        "key": "categorical",
-        "label": "分类协变量",
-        "type": "list",
-        "default": []
-      }
-    ]
+    "icon": "TrendUp"
   },
   "volcano": {
     "title": "Volcano",
     "description": "效应大小与显著性",
     "category": "可视化",
     "icon": "ChartLine",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "分析维度",
-        "type": "string",
-        "default": "gene"
-      },
-      {
-        "key": "stat_dim",
-        "label": "统计量维度",
-        "type": "string",
-        "default": "statistic"
-      },
-      {
-        "key": "lfc_label",
-        "label": "log2FC 字段",
-        "type": "string",
-        "default": "log2FC"
-      },
-      {
-        "key": "p_label",
-        "label": "P / Q 字段",
-        "type": "string",
-        "default": "P"
-      },
-      {
-        "key": "filename",
-        "label": "图片文件名",
-        "type": "string",
-        "required": true,
-        "default": "volcano.png"
-      },
-      {
-        "key": "title",
-        "label": "图标题",
-        "type": "string"
-      },
-      {
-        "key": "xlabel",
-        "label": "X 轴标题",
-        "type": "string"
-      },
-      {
-        "key": "ylabel",
-        "label": "Y 轴标题",
-        "type": "string",
-        "default": "-log10(P)"
-      },
-      {
-        "key": "lfc_threshold",
-        "label": "log2FC 阈值",
-        "type": "number",
-        "default": 1.0
-      },
-      {
-        "key": "p_threshold",
-        "label": "显著性阈值",
-        "type": "number",
-        "default": 0.05,
-        "min": 0,
-        "max": 1
-      },
-      {
-        "key": "point_size",
-        "label": "点大小",
-        "type": "integer",
-        "default": 8,
-        "min": 1
-      },
-      {
-        "key": "alpha",
-        "label": "透明度",
-        "type": "number",
-        "default": 0.7,
-        "min": 0,
-        "max": 1
-      },
-      {
-        "key": "label_top",
-        "label": "标记前 N 个特征",
-        "type": "integer",
-        "default": 0,
-        "min": 0
-      }
-    ],
     "preview": {
       "kind": "volcano",
       "caption": "效应大小与显著性"
@@ -1089,97 +220,6 @@
     "description": "平均表达量与效应大小",
     "category": "可视化",
     "icon": "ChartLine",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "分析维度",
-        "type": "string",
-        "default": "gene"
-      },
-      {
-        "key": "stat_dim",
-        "label": "统计量维度",
-        "type": "string",
-        "default": "statistic"
-      },
-      {
-        "key": "lfc_label",
-        "label": "log2FC 字段",
-        "type": "string",
-        "default": "log2FC"
-      },
-      {
-        "key": "mean_a_label",
-        "label": "对照组均值字段",
-        "type": "string",
-        "default": "mean_a"
-      },
-      {
-        "key": "mean_b_label",
-        "label": "实验组均值字段",
-        "type": "string",
-        "default": "mean_b"
-      },
-      {
-        "key": "p_label",
-        "label": "P / Q 字段",
-        "type": "string",
-        "default": "P"
-      },
-      {
-        "key": "filename",
-        "label": "图片文件名",
-        "type": "string",
-        "required": true,
-        "default": "ma_plot.png"
-      },
-      {
-        "key": "title",
-        "label": "图标题",
-        "type": "string"
-      },
-      {
-        "key": "xlabel",
-        "label": "X 轴标题",
-        "type": "string",
-        "default": "log2 mean"
-      },
-      {
-        "key": "ylabel",
-        "label": "Y 轴标题",
-        "type": "string"
-      },
-      {
-        "key": "p_threshold",
-        "label": "显著性阈值",
-        "type": "number",
-        "default": 0.05,
-        "min": 0,
-        "max": 1
-      },
-      {
-        "key": "point_size",
-        "label": "点大小",
-        "type": "integer",
-        "default": 8,
-        "min": 1
-      },
-      {
-        "key": "alpha",
-        "label": "透明度",
-        "type": "number",
-        "default": 0.7,
-        "min": 0,
-        "max": 1
-      },
-      {
-        "key": "label_top",
-        "label": "标记前 N 个特征",
-        "type": "integer",
-        "default": 0,
-        "min": 0
-      }
-    ],
     "preview": {
       "kind": "ma",
       "caption": "平均表达与倍数变化"
@@ -1190,107 +230,6 @@
     "description": "矩阵热图与层次聚类",
     "category": "可视化",
     "icon": "ChartLine",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "分析维度",
-        "type": "string",
-        "default": "feature"
-      },
-      {
-        "key": "other_dim",
-        "label": "样本维度",
-        "type": "string",
-        "default": "sample"
-      },
-      {
-        "key": "select",
-        "label": "特征选择",
-        "type": "choice",
-        "options": [
-          "variance",
-          "label",
-          "all"
-        ],
-        "default": "variance"
-      },
-      {
-        "key": "labels",
-        "label": "特征标签",
-        "type": "list"
-      },
-      {
-        "key": "standardize",
-        "label": "标准化",
-        "type": "choice",
-        "options": [
-          "none",
-          "row",
-          "col"
-        ],
-        "default": "none"
-      },
-      {
-        "key": "filename",
-        "label": "图片文件名",
-        "type": "string",
-        "required": true,
-        "default": "heatmap.png"
-      },
-      {
-        "key": "title",
-        "label": "图标题",
-        "type": "string"
-      },
-      {
-        "key": "cmap",
-        "label": "配色",
-        "type": "string",
-        "default": "RdBu_r"
-      },
-      {
-        "key": "nan_color",
-        "label": "缺失值颜色",
-        "type": "string",
-        "default": "#DDDDDD"
-      },
-      {
-        "key": "figsize",
-        "label": "画布尺寸 [宽, 高]",
-        "type": "json"
-      },
-      {
-        "key": "top_n",
-        "label": "最多特征数",
-        "type": "integer",
-        "default": 50,
-        "min": 1
-      },
-      {
-        "key": "cluster_rows",
-        "label": "聚类行",
-        "type": "boolean",
-        "default": true
-      },
-      {
-        "key": "cluster_cols",
-        "label": "聚类列",
-        "type": "boolean",
-        "default": true
-      },
-      {
-        "key": "show_row_labels",
-        "label": "显示行标签",
-        "type": "boolean",
-        "default": false
-      },
-      {
-        "key": "show_col_labels",
-        "label": "显示列标签",
-        "type": "boolean",
-        "default": true
-      }
-    ],
     "preview": {
       "kind": "heatmap",
       "caption": "矩阵强度与聚类结构"
@@ -1301,81 +240,6 @@
     "description": "分组分布与散点",
     "category": "可视化",
     "icon": "ChartLine",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "分析维度",
-        "type": "string",
-        "default": "feature"
-      },
-      {
-        "key": "value_label",
-        "label": "数值字段",
-        "type": "string",
-        "required": true
-      },
-      {
-        "key": "group_dim",
-        "label": "样本维度",
-        "type": "string",
-        "required": true,
-        "default": "sample"
-      },
-      {
-        "key": "group_label",
-        "label": "分组字段",
-        "type": "string",
-        "required": true
-      },
-      {
-        "key": "groups",
-        "label": "显示分组顺序",
-        "type": "list"
-      },
-      {
-        "key": "filename",
-        "label": "图片文件名",
-        "type": "string",
-        "required": true,
-        "default": "boxplot.png"
-      },
-      {
-        "key": "title",
-        "label": "图标题",
-        "type": "string"
-      },
-      {
-        "key": "xlabel",
-        "label": "X 轴标题",
-        "type": "string"
-      },
-      {
-        "key": "ylabel",
-        "label": "Y 轴标题",
-        "type": "string"
-      },
-      {
-        "key": "show_points",
-        "label": "显示散点",
-        "type": "boolean",
-        "default": true
-      },
-      {
-        "key": "point_size",
-        "label": "点大小",
-        "type": "integer",
-        "default": 4,
-        "min": 1
-      },
-      {
-        "key": "point_alpha",
-        "label": "点透明度",
-        "type": "number",
-        "default": 0.5,
-        "min": 0,
-        "max": 1
-      }
-    ],
     "preview": {
       "kind": "boxplot",
       "caption": "分组分布与离群值"
@@ -1386,96 +250,6 @@
     "description": "HR 与置信区间",
     "category": "可视化",
     "icon": "ChartLine",
-    "parameters": [
-      {
-        "key": "dim",
-        "label": "分析维度",
-        "type": "string",
-        "default": "covariate"
-      },
-      {
-        "key": "stat_dim",
-        "label": "统计量维度",
-        "type": "string",
-        "default": "statistic"
-      },
-      {
-        "key": "hr_label",
-        "label": "HR 字段",
-        "type": "string",
-        "default": "HR"
-      },
-      {
-        "key": "low_label",
-        "label": "CI 下界字段",
-        "type": "string",
-        "default": "CI_low"
-      },
-      {
-        "key": "high_label",
-        "label": "CI 上界字段",
-        "type": "string",
-        "default": "CI_high"
-      },
-      {
-        "key": "p_label",
-        "label": "P / Q 字段",
-        "type": "string",
-        "default": "P"
-      },
-      {
-        "key": "filename",
-        "label": "图片文件名",
-        "type": "string",
-        "required": true,
-        "default": "forest_plot.png"
-      },
-      {
-        "key": "title",
-        "label": "图标题",
-        "type": "string"
-      },
-      {
-        "key": "xlabel",
-        "label": "X 轴标题",
-        "type": "string",
-        "default": "Hazard ratio (95% CI)"
-      },
-      {
-        "key": "xlim",
-        "label": "X 轴范围",
-        "type": "json"
-      },
-      {
-        "key": "color_sig",
-        "label": "color_sig",
-        "type": "string",
-        "default": "#D62728"
-      },
-      {
-        "key": "color_ns",
-        "label": "color_ns",
-        "type": "string",
-        "default": "#4C72B0"
-      },
-      {
-        "key": "sort_by",
-        "label": "排序",
-        "type": "choice",
-        "options": [
-          "input",
-          "hr",
-          "p"
-        ],
-        "default": "input"
-      },
-      {
-        "key": "log_scale",
-        "label": "Log 坐标",
-        "type": "boolean",
-        "default": true
-      }
-    ],
     "preview": {
       "kind": "forest",
       "caption": "效应估计与置信区间"

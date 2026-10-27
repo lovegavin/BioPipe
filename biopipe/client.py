@@ -1,7 +1,6 @@
 """Shared transport client for the CLI and MCP adapter."""
 from pathlib import Path
 import json
-import time
 from urllib.parse import urlsplit
 
 import httpx

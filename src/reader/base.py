@@ -56,6 +56,15 @@ class Reader(ABC):
     supports_disk_read: ClassVar[bool] = False
     disk_protocol: ClassVar[str | None] = None
 
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        schema = cls.__dict__.get("parameters_schema")
+        if schema is not None:
+            from copy import deepcopy
+            schema = deepcopy(schema)
+            schema["additionalProperties"] = False
+            cls.parameters_schema = schema
+
     def probe(self, path: Path, **args) -> dict:
         """Inspect metadata only. File bytes are never treated as RAM bytes."""
         return {"file_bytes": Path(path).stat().st_size, "dense_bytes": None}

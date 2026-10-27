@@ -15,7 +15,21 @@ export function renameSourceDimensions(source: DataSource, dims: string[]): Data
   return {...source, dims, labels};
 }
 
-export function readerForPath(catalog: Catalog, path: string): ReaderSpec | undefined {
+export function rePointSource(previous: DataSource, uploaded: DataSource): DataSource {
+  // Re-pointing an existing source changes only the path; dims/labels/args
+  // (including args.reader and Reader options) belong to the user's setup.
+  return previous.path ? {...previous, path: uploaded.path} : uploaded;
+}
+
+export function readerForPath(catalog: Catalog, path: string, selector?: unknown): ReaderSpec | undefined {
+  const wanted = typeof selector === "string" ? selector.trim().toLowerCase() : "";
+  if (wanted) {
+    const selected = (catalog.readers ?? []).filter(reader => {
+      const name = reader.name.toLowerCase();
+      return name === wanted || name.replace(/reader$/, "") === wanted;
+    });
+    if (selected.length === 1) return selected[0];
+  }
   const candidates = (catalog.readers ?? []).filter(reader =>
     readerExtensions(reader).some(ext => path.toLowerCase().endsWith(ext.toLowerCase())));
   // A .bed path alone cannot distinguish BED text from PLINK binary.

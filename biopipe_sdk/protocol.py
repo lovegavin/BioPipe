@@ -1,4 +1,5 @@
 """JSON-compatible public descriptors and parameter validation."""
+import math
 from copy import deepcopy
 from typing import Any, Literal
 
@@ -68,9 +69,36 @@ def validate_schema(schema):
     check(schema)
 
 
+def _normalize_numeric_strings(result, schema):
+    """Accept YAML 1.1 strings such as ``1e6`` for declared numeric fields.
+
+    YAML 1.1 parses an unquoted exponent without a decimal point as a
+    string. Existing manifests use that spelling. The conversion is
+    limited to fields the schema declares as number/integer, must be
+    finite, and must be integral for integer-only fields.
+    """
+    for name, field in schema.get("properties", {}).items():
+        if name not in result or not isinstance(result[name], str):
+            continue
+        types = field.get("type")
+        types = types if isinstance(types, list) else [types]
+        if "number" not in types and "integer" not in types:
+            continue
+        try:
+            number = float(result[name])
+        except ValueError:
+            continue
+        if not math.isfinite(number):
+            continue
+        if "number" not in types and not number.is_integer():
+            continue
+        result[name] = int(number) if number.is_integer() else number
+    return result
+
+
 def validate_parameters(schema, params):
     validate_schema(schema)
-    result = deepcopy(params)
+    result = _normalize_numeric_strings(deepcopy(params), schema)
     for name, field in schema.get("properties", {}).items():
         if name not in result and "default" in field:
             result[name] = deepcopy(field["default"])
@@ -126,12 +154,196 @@ def legacy_schema(fields, defaults):
             "required": [f["key"] for f in fields if f.get("required") and f["key"] not in defaults]}
 
 
+_PARAM_TITLES = {
+    "dim": "分析维度",
+    "sample_dim": "样本维度",
+    "feature_dim": "特征维度",
+    "label_dim": "标签维度",
+    "group_dim": "分组维度",
+    "record_dim": "记录维度",
+    "region_dim": "区间维度",
+    "field_dim": "字段维度",
+    "stat_dim": "统计维度",
+    "dist_dim": "距离维度",
+    "sequence_dim": "序列维度",
+    "position_dim": "位置维度",
+    "target_dim": "目标维度",
+    "source_dim": "参考维度",
+    "index_label": "行标签",
+    "columns_label": "列标签",
+    "values_label": "数值字段",
+    "target_label": "目标字段",
+    "group_label": "分组字段",
+    "value_label": "数值字段",
+    "other_label": "另一维度标签",
+    "feature_type": "特征类型",
+    "feature_id_field": "特征标识",
+    "chrom_field": "染色体列",
+    "start_field": "起始列",
+    "end_field": "结束列",
+    "type_field": "类型列",
+    "attr_field": "属性列",
+    "strand_field": "链方向列",
+    "output": "输出名称",
+    "method": "方法",
+    "mode": "模式",
+    "metric": "距离/相关指标",
+    "metrics": "指标",
+    "statistic": "统计量",
+    "stats": "统计量",
+    "threshold": "阈值",
+    "min_value": "最小值",
+    "max_value": "最大值",
+    "min_samples": "最少样本数",
+    "min_per_group": "每组最少样本",
+    "min_overlap": "最小重叠",
+    "min_gap": "最小间隙",
+    "min_aa": "最短氨基酸",
+    "min_valid": "最少有效值",
+    "max_positions": "最大位置数",
+    "max_output": "最大输出数",
+    "max_distance": "最大距离",
+    "top_n": "保留数量",
+    "n_components": "主成分数",
+    "n_clusters": "聚类数",
+    "n_neighbors": "邻居数",
+    "n_permutations": "置换次数",
+    "n_estimators": "树数量",
+    "n_iter": "迭代次数",
+    "bins": "分箱数",
+    "k": "k-mer 长度",
+    "window_size": "窗口大小",
+    "step_size": "步长",
+    "resolution": "分辨率",
+    "learning_rate": "学习率",
+    "max_depth": "最大深度",
+    "test_size": "测试集比例",
+    "cv_folds": "交叉验证折数",
+    "random_state": "随机种子",
+    "scale": "标准化",
+    "standardize": "标准化",
+    "normalize": "归一化",
+    "keep_ties": "保留并列",
+    "descending": "降序",
+    "pairwise": "两两比较",
+    "groups": "分组顺序",
+    "group_a": "A 组",
+    "group_b": "B 组",
+    "features": "特征列表",
+    "genes": "基因列表",
+    "motifs": "模体列表",
+    "rules": "过滤规则",
+    "columns": "列",
+    "prefix": "前缀",
+    "by": "排序依据",
+    "filename": "图片文件名",
+    "title": "图标题",
+    "xlabel": "X 轴标题",
+    "ylabel": "Y 轴标题",
+    "cmap": "配色",
+    "figsize": "图片尺寸",
+    "legend": "显示图例",
+    "legend_ncol": "图例列数",
+    "rotate_labels": "旋转标签",
+    "dot_scale": "点大小",
+    "point_size": "点大小",
+    "point_alpha": "点透明度",
+    "show_points": "显示散点",
+    "proportion_mode": "比例模式",
+    "inner": "内部显示",
+    "alpha": "显著性水平",
+    "epsilon": "epsilon",
+    "C": "正则强度 C",
+    "penalty": "惩罚项",
+    "class_weight": "类别权重",
+    "valid_labels": "有效标签",
+    "weights_label": "权重字段",
+    "categorical": "分类协变量",
+    "covariates": "协变量",
+    "response": "响应变量",
+    "time_label": "随访时间字段",
+    "event_label": "事件字段",
+    "pfield": "P 值字段",
+    "p_label": "P 值字段",
+    "lfc_label": "log2FC 字段",
+    "hr_label": "HR 字段",
+    "low_label": "下限字段",
+    "high_label": "上限字段",
+    "lfc_threshold": "log2FC 阈值",
+    "p_threshold": "P 值阈值",
+    "sort_by": "排序字段",
+    "color_sig": "显著颜色",
+    "color_ns": "不显著颜色",
+    "log_scale": "对数坐标",
+    "xlim": "X 轴范围",
+    "label_top": "标注数量",
+    "select": "选择方式",
+    "labels": "标签",
+    "nan_color": "缺失颜色",
+    "cluster_rows": "聚类行",
+    "cluster_cols": "聚类列",
+    "show_row_labels": "显示行标签",
+    "show_col_labels": "显示列标签",
+    "other_dim": "另一维度",
+    "how": "连接方式",
+    "agg": "聚合方式",
+    "group_col": "分组列",
+    "index_name": "行轴名",
+    "columns_name": "列轴名",
+    "align": "对齐",
+    "axis": "轴",
+    "label": "标签",
+    "fields": "字段",
+    "field": "字段",
+    "min_scale": "最小尺度",
+    "target_sum": "目标总量",
+    "base": "底数",
+    "pseudocount": "伪计数",
+}
+
+
+def _default_title(key):
+    if key in _PARAM_TITLES:
+        return _PARAM_TITLES[key]
+    for prefix, side in (("a_", "A："), ("b_", "B：")):
+        if key.startswith(prefix):
+            return side + _default_title(key[len(prefix):])
+    return key.replace("_", " ").strip().title()
+
+
+_ADVANCED_PARAMS = {
+    "random_state", "test_size", "cv_folds", "n_estimators", "max_depth",
+    "learning_rate", "n_iter", "perplexity", "n_neighbors", "min_dist",
+    "metric", "penalty", "C", "epsilon", "alpha", "class_weight",
+    "valid_labels", "cmap", "figsize", "legend", "legend_ncol",
+    "point_size", "point_alpha", "rotate_labels", "show_points",
+    "show_row_labels", "show_col_labels", "cluster_rows", "cluster_cols",
+    "nan_color", "max_value", "min_scale", "prefix", "index_name",
+    "columns_name", "agg", "how", "align", "field_dim", "stat_dim",
+}
+
+
+def normalize_schema_titles(schema):
+    result = deepcopy(schema)
+    for order, (key, field) in enumerate((result.get("properties") or {}).items()):
+        if not isinstance(field, dict):
+            continue
+        if not field.get("title"):
+            field["title"] = _default_title(key)
+        field.setdefault("x-ui-group", "advanced" if key in _ADVANCED_PARAMS else "basic")
+        field.setdefault("x-ui-order", order * 10)
+        if key in {"window_size", "step_size", "min_gap", "max_distance"}:
+            field.setdefault("x-ui-unit", "bp")
+    return result
+
+
 def describe_operator(cls, legacy=None):
     packaged = getattr(cls, "_package_descriptor", None)
     value = deepcopy(packaged or legacy or {})
     schema = getattr(cls, "parameters_schema", None)
     if schema is not None:
         validate_schema(schema)
+        schema = normalize_schema_titles(schema)
         if not packaged:
             value["parameters"] = schema_to_fields(schema)
             value["runtime_defaults"] = {key: field["default"] for key, field in schema.get("properties", {}).items() if "default" in field}
@@ -177,6 +389,7 @@ def describe_reader(reader):
     from biopipe_sdk.dependencies import declarations
     schema = getattr(cls, "parameters_schema", None) or {"type": "object", "additionalProperties": True}
     validate_schema(schema)
+    schema = normalize_schema_titles(schema)
     return Descriptor(protocol_version=1, id=getattr(cls, "name", None) or cls.__name__,
                       version=getattr(cls, "version", "1.0.0"), kind="reader",
                       entry_point=f"{cls.__module__}:{cls.__name__}", title=getattr(cls, "title", None) or cls.__name__,

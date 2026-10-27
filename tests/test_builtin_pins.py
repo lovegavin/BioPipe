@@ -125,7 +125,6 @@ def test_nested_builtin_pins_normalize_but_wheel_pins_stay_strict(tmp_path):
 
 def test_unknown_pin_is_not_silently_updated(tmp_path):
     manager = PluginManager(tmp_path)
-    state = manager.state()
     graph = Graph.model_validate({'nodes': [], 'edges': [], 'plugin_lock': {
         'describe': {'package': 'biopipe-core', 'version': '1.0.0', 'sha256': 'f' * 64}}})
     with pytest.raises(ValueError, match='Unknown or wheel pins'):

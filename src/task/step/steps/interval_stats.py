@@ -27,6 +27,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
+from src.core.numeric import compact_numeric
 from src.task.context import Context
 from src.task.step.base import Step
 
@@ -125,7 +126,7 @@ class IntervalStatsStep(Step):
 
         chrom_names = sorted(by_chrom)
         out_data = np.zeros((len(chrom_names), len(_STAT_LABELS)),
-                            dtype=np.float32)
+                            dtype=np.float64)
 
         for ci, chrom in enumerate(chrom_names):
             records = by_chrom[chrom]
@@ -140,6 +141,7 @@ class IntervalStatsStep(Step):
             out_data[ci, 5] = float(lens.max())
             out_data[ci, 6] = float(end_max - start_min)
 
+        out_data = compact_numeric(out_data)
         info, axis_info = project_metadata(form, keep_dims=[], derived=True)
         info["missing_code"] = np.nan
         info["representation"] = "interval_stats"

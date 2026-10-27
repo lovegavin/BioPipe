@@ -12,7 +12,7 @@ import { OperatorArtwork, OperatorPreview } from "./OperatorArtwork";
 import { OperatorIcon } from "./icons";
 import { HelpTip } from "./HelpTip";
 import { api } from "./api";
-import { inputAccept, renameSourceDimensions, readerForPath } from "./readerInput";
+import { inputAccept, renameSourceDimensions, readerForPath, rePointSource } from "./readerInput";
 import { bytes, displayTitle, inputCount, outputCount, specFor, retainedOutputs } from "./graph";
 import type { Catalog, Graph, GraphNode, Parameter, RouteDefinition } from "./types";
 
@@ -205,7 +205,7 @@ export function Inspector({
   const [uploading, setUploading] = useState(false);
   const memory = graph.memory;
   const automaticPercent = automaticMemoryFraction == null ? undefined : automaticMemoryFraction * 100;
-  const reader = node?.source ? readerForPath(catalog, node.source.path) : undefined;
+  const reader = node?.source ? readerForPath(catalog, node.source.path, node.source.args?.reader) : undefined;
   const retainedNames = node ? retainedOutputs(node, spec) : [];
   function param(key: string, value: unknown) {
     if (!node) return;
@@ -222,8 +222,10 @@ export function Inspector({
     setUploading(true);
     try {
       const result = await api.uploadFiles(files, graph.base_dir);
+      const previous = node.source!;
+      const source = rePointSource(previous, result.source);
       onNode(node.id, {
-        source: result.source,
+        source,
         title: result.filename.replace(/\.(?:gz|bz2|xz)$/i, '').replace(/\.[^.]+$/, ''),
       });
     } catch (error) {

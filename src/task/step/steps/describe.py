@@ -7,8 +7,10 @@ import numpy as np
 
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
+from src.core.contracts import port
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class DescribeStep(Step):
     """Print a summary of one input form.
@@ -17,6 +19,8 @@ class DescribeStep(Step):
     """
 
     name = "describe"
+    parameters_schema = LEGACY_SCHEMAS['describe']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port()]

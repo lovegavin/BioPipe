@@ -5,11 +5,13 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.contracts import MISSING, param, port
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class MafStep(Step):
     """Filter positions along one dimension by MAF.
@@ -21,6 +23,8 @@ class MafStep(Step):
     """
 
     name = "maf"
+    parameters_schema = LEGACY_SCHEMAS['maf']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(info={"missing_code": MISSING, "ploidy": {"type": "integer", "min": 1}, "representation": {"type": "string", "enum": ["hard_call", "dosage"]}}, dims=[param("dim")], values="allele_count")]

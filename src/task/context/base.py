@@ -52,15 +52,20 @@ class Context:
         """Managed sources are read on first use; legacy mode stays eager."""
         from src.reader import read_source, pick_reader
         path = self.task_dir / spec["path"]
-        selected_reader = pick_reader(path)
+        reader_args = dict(spec.get("args", {}))
+        reader_name = reader_args.pop("reader", None)
+        selected_reader = pick_reader(path, name=reader_name)
         if hasattr(selected_reader, '_context'):
             selected_reader._context = self
         def loader():
+            args = dict(reader_args)
+            if reader_name is not None:
+                args["reader"] = reader_name
             return read_source(path, dims=spec["dims"], labels=spec.get("labels", {}),
-                               **spec.get("args", {}))
+                               **args)
         if self.memory:
-            reader = pick_reader(path)
-            args = dict(spec.get("args", {}))
+            reader = selected_reader
+            args = dict(reader_args)
             if reader.parameters_schema is not None:
                 from biopipe_sdk.protocol import validate_parameters
                 args = validate_parameters(reader.parameters_schema, args)

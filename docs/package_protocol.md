@@ -11,12 +11,12 @@ operators and readers, not a new route packaging format.
 
 | Package | Entries | Purpose |
 | --- | ---: | --- |
-| `biopipe-core` | 7 | Selection, dimensions, concatenation, metadata and describe |
+| `biopipe-core` | 44 | Selection, dimensions, concatenation, metadata, sequence/interval/GO/ML operators and describe |
 | `biopipe-genetics` | 7 | QC, PCA, regression and correction |
 | `biopipe-expression` | 7 | Expression transformations and statistical analysis |
-| `biopipe-plots` | 10 | Plots, including survival curves |
+| `biopipe-plots` | 12 | Plots, including survival curves |
 | `biopipe-microbiome` | 8 | Abundance diversity, distances, ordination, joins, PERMANOVA, correlation and composition |
-| `biopipe-readers` | 13 | File readers, including H5AD and MTX disk preparation |
+| `biopipe-readers` | 16 | File readers, including H5AD, MTX, 10x H5 and GAF |
 
 The startup index is `biopipe/builtin_packages.json`. It enumerates each package's
 name, version, title and descriptors. Paths are Python import entry points, never

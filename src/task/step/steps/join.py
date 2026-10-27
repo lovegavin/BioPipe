@@ -47,7 +47,7 @@ from src.core import Form, StepError
 from src.task.context import Context
 from src.core.forms.metadata import project_metadata
 from src.task.step.base import Step
-from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate, metadata
+from src.task.step.steps._microbiome import CONTRACTS, SCHEMAS, estimate
 
 
 class JoinStep(Step):
@@ -173,12 +173,6 @@ class JoinStep(Step):
         out_data = np.full(
             (n_common, n_out_feat), np.nan, dtype=np.float32
         )
-
-        data_fill = data_form.info.get("missing_code", np.nan)
-        if not (isinstance(data_fill, float) and np.isnan(data_fill)):
-            data_fill_val = float(data_fill)
-        else:
-            data_fill_val = np.nan
 
         for i, l in enumerate(common):
             if l in data_row_labels:

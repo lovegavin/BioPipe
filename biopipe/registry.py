@@ -31,10 +31,7 @@ def scan_sources(root=ROOT, sources=None):
     from src.task.step.base import Step
     from src.reader.base import Reader
     from src.task.operator_catalog import build_catalog
-    from src.reader.schemas import builtin_schema
     definitions = read_json(root / "src/task/operator_ui.json", {})
-    previous = read_json(root / PACKAGE_INDEX, {"packages": []})
-    old_readers = {d["id"] for p in previous["packages"] for d in p["descriptors"] if d["kind"] == "reader"}
     classes, errors, seen = [], [], set()
     for folder, base, kind in (("src/task/step/steps", Step, "operator"), ("src/reader/readers", Reader, "reader")):
         for path in sorted((root / folder).glob("*.py")):
@@ -56,14 +53,11 @@ def scan_sources(root=ROOT, sources=None):
                     if cls.parameters_schema is None:
                         if kind == "operator" and identifier in definitions:
                             cls.legacy_parameters = True
-                        elif kind == "reader" and identifier in old_readers:
-                            cls.parameters_schema = builtin_schema(cls.__name__)
                         else:
                             raise ValueError(f"{identifier}: missing parameters_schema")
                     classes.append((kind, cls, path.relative_to(root).as_posix()))
             except Exception as exc:
                 errors.append({"source": path.relative_to(root).as_posix(), "error": str(exc)})
-    operators = {cls.name: cls for kind, cls, _ in classes if kind == "operator"}
     descriptors = []
     for kind, cls, source in classes:
         try:

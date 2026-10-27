@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import sys
 
-from biopipe.plugins import ROOT, run_process
+from biopipe.plugins import ROOT
 
 SOURCE_DIRS = {"operator": "src/task/step/steps", "reader": "src/reader/readers"}
 
@@ -110,7 +110,6 @@ def prepare(manager, current, temporary):
     if previous.get("sha256") == fingerprint:
         return {"wheels": [], "updated": [], "unchanged": ["operator / Reader source directories"], "receipt": previous}
     output = temporary / "manifest.json"
-    environment = dict(os.environ, BIOPIPE_REGISTRY_MAINTENANCE="1")
     # Scan in the shared runtime first. Only modules that actually need an
     # unavailable/conflicting import are retried in a prepared dependency target.
     # Optional lazy imports do not prevent unrelated operators from registering.

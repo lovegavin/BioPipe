@@ -231,6 +231,12 @@ class VcfReader(Reader):
 
     extensions = [".vcf"]
     handles_compression = True
+    parameters_schema = {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": True,
+    }
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:

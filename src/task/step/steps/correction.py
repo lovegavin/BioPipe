@@ -10,8 +10,10 @@ from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.forms.metadata import project_metadata
-from src.core.contracts import MISSING, param, port
+from src.core.contracts import param, port
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class CorrectionStep(Step):
     """Multiple-testing correction on a result table.
@@ -26,6 +28,8 @@ class CorrectionStep(Step):
     """
 
     name = "correction"
+    parameters_schema = LEGACY_SCHEMAS['correction']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(ndim=2, dims=[param("dim", "statistic")], labels=[{"dim": param("dim", "statistic"), "values": param("pfield", "P")}], values="pvalue")]

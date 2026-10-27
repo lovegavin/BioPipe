@@ -39,11 +39,10 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
-from ._microbiome import metadata
 
 
 class FilterByStep(Step):
@@ -118,7 +117,6 @@ class FilterByStep(Step):
             )
 
         # Gather metric arrays.
-        metrics_axis = metrics_form.dims.index(dim)
         stat_axis = metrics_form.dims.index(stat_dim)
 
         keep_mask = np.ones(len(common), dtype=bool)
@@ -187,7 +185,6 @@ class FilterByStep(Step):
         new_form = data_form.subset_axis(dim, data_positions)
         ctx[out_name] = new_form
 
-        kept_set = set(kept_labels)
         dropped_with_reason = {
             l: reason_per_label.get(l, "did not satisfy all rules")
             for l in dropped_labels

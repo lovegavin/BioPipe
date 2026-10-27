@@ -17,8 +17,10 @@ from src.core import Form, StepError
 from src.reader.readers._encoder import get_encoder
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
+from src.core.contracts import param, port
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class AttachInfoStep(Step):
     """Attach source info arrays to a target dimension.
@@ -34,6 +36,8 @@ class AttachInfoStep(Step):
     """
 
     name = "attach_info"
+    parameters_schema = LEGACY_SCHEMAS['attach_info']
+    legacy_parameters = False
     inputs_arity = 2
     outputs = []
     input_contracts = [port(dims=[param("target_dim")]), port(parallel=[{"fields": param("fields")}])]

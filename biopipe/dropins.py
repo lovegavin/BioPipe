@@ -14,7 +14,6 @@ import sys
 import tempfile
 import zipfile
 
-from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
 from packaging.version import Version
 from biopipe_sdk.icons import icon_path, is_image_icon

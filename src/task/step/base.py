@@ -41,6 +41,15 @@ class Step(ABC):
     version: ClassVar[str] = "1.0.0"
     parameters_schema: ClassVar[dict | None] = None
 
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        schema = cls.__dict__.get("parameters_schema")
+        if schema is not None:
+            from copy import deepcopy
+            schema = deepcopy(schema)
+            schema["additionalProperties"] = False
+            cls.parameters_schema = schema
+
     @classmethod
     def estimate_memory(cls, inputs, params, profiles):
         """Return (temporary workspace bytes, output bytes); not a hard bound.

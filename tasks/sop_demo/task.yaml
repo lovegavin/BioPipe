@@ -1,0 +1,35 @@
+name: sop_demo
+
+sources:
+  table:
+    path: input/test_party_1.csv
+    dims: [sample, feature]
+    labels:
+      sample: auto
+      feature: builtin
+
+steps:
+  - name: describe
+    inputs: [table]
+
+  - name: pca
+    inputs: [table]
+    params:
+      dim: feature
+      n_components: 3
+      output: pcs
+
+  - name: describe
+    inputs: [pcs]
+
+  - name: heatmap
+    inputs: [table]
+    params:
+      dim: feature
+      other_dim: sample
+      select: variance
+      top_n: 10
+      cluster_rows: false
+      cluster_cols: false
+      filename: top_features.png
+      title: "SOP demo: first ten features"

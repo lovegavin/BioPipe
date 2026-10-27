@@ -1,0 +1,135 @@
+# BioPipe SOP 验证矩阵
+本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
+
+当前基线：全量 pytest **439 passed / 12 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+
+## 1. 分级
+| 级别 | 含义 |
+|---|---|
+| S | 独立的 SOP 测试（不依赖旧 verify/demo；外部库/手算/独立解析器逐值对比） |
+| A | 主题验证脚本：外部权威值、独立实现或数学不变量 |
+| B | 算子 demo 自测：手工可算的小例子 |
+| C | 仅契约/route/artifact 覆盖；没有独立数值 oracle |
+
+## 2. Reader（16）
+| Reader | 级别 | 证据/独立 oracle |
+|---|---|---|
+| `BedReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `BgenReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `CsvReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `FastaReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `GafReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `Gff3Reader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `GtfReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `H5adReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `MtxReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `ParquetReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `Plink1Reader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `Plink2Reader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `TenxH5Reader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `TsvReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `TxtReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `VcfReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+
+Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
+## 3. Operator（78）
+| Operator | 包 | 级别 | 证据 |
+|---|---|---|---|
+| `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
+| `annotate` | biopipe-core | A | verify_transform_operators.py |
+| `annotation_gaps` | biopipe-core | A | verify_gtf_annotation.py, verify_operators.py |
+| `attach_info` | biopipe-core | A | verify_transform_operators.py |
+| `barplot` | biopipe-microbiome | B | test_barplot.py |
+| `bin` | biopipe-core | A | verify_transform_operators.py |
+| `boxplot` | biopipe-plots | C | test_builtin_routes.py route artifact |
+| `cluster_axis` | biopipe-core | A | verify_single_cell.py, verify_stats_operators.py |
+| `compare_groups` | biopipe-expression | A | verify_existing_operators.py |
+| `concat` | biopipe-core | S | tests/sop + verify_transform_operators.py, test_core_operators_sop.py |
+| `correction` | biopipe-genetics | A | verify_existing_operators.py |
+| `correlation` | biopipe-microbiome | A | verify_existing_operators.py |
+| `cox_regression` | biopipe-expression | A | verify_stats_operators.py |
+| `describe` | biopipe-core | B | test_contracts.py, test_memory_runtime.py |
+| `distance_matrix` | biopipe-microbiome | A | verify_existing_operators.py |
+| `diversity` | biopipe-microbiome | A | verify_existing_operators.py |
+| `dotplot` | biopipe-plots | B | test_dotplot.py |
+| `drop` | biopipe-core | S | tests/sop + verify_transform_operators.py, test_core_operators_sop.py |
+| `enrich_go` | biopipe-core | A | verify_go_enrichment.py, verify_stats_operators.py |
+| `enrichment_plot` | biopipe-core | B | test_enrichment_plot.py + test_plot_artifacts_sop.py |
+| `explode` | biopipe-core | A | verify_transform_operators.py |
+| `filter_by` | biopipe-core | S | tests/sop + test_filter_by.py, test_single_cell_route.py, verify_single_cell.py, verify_transform_operators.py, test_core_operators_sop.py |
+| `filter_min` | biopipe-expression | S | tests/sop + test_single_cell_route.py, verify_existing_operators.py, verify_single_cell.py, test_core_operators_sop.py |
+| `find_orfs` | biopipe-core | A | verify_operators.py, verify_sequence_features.py |
+| `forest_plot` | biopipe-plots | C | test_builtin_routes.py route artifact |
+| `gc_skew_profile` | biopipe-core | A | verify_operators.py |
+| `gene_list_to_hits` | biopipe-core | A | verify_go_enrichment.py |
+| `gene_structure` | biopipe-core | A | verify_gtf_annotation.py, verify_operators.py |
+| `gff_feature_stats` | biopipe-core | A | verify_gtf_annotation.py, verify_operators.py |
+| `gradient_boosting_classifier` | biopipe-core | A | verify_ml_classification.py |
+| `gradient_boosting_regressor` | biopipe-core | A | verify_ml_regression.py |
+| `heatmap` | biopipe-plots | C | test_builtin_routes.py route artifact |
+| `histogram` | biopipe-plots | C | test_builtin_routes.py route artifact |
+| `hwe` | biopipe-genetics | A | verify_genetics_operators.py |
+| `impute` | biopipe-expression | A | verify_existing_operators.py, verify_ml_classification.py, verify_ml_regression.py |
+| `interval_merge` | biopipe-core | A | verify_interval_analysis.py, verify_operators.py |
+| `interval_overlap` | biopipe-core | A | verify_interval_analysis.py, verify_operators.py |
+| `interval_stats` | biopipe-core | A | verify_interval_analysis.py, verify_operators.py |
+| `join` | biopipe-microbiome | A | verify_multi_omics.py, verify_transform_operators.py |
+| `kaplan_meier` | biopipe-plots | C | test_builtin_routes.py route artifact |
+| `kmer_count` | biopipe-core | A | verify_operators.py |
+| `lasso_regression` | biopipe-core | A | verify_ml_regression.py |
+| `ld_prune` | biopipe-genetics | A | verify_bgen_qc.py, verify_genetics_operators.py |
+| `line` | biopipe-plots | C | test_builtin_routes.py route artifact + test_plot_artifacts_sop.py |
+| `linear_regression` | biopipe-core | A | verify_ml_regression.py |
+| `log_transform` | biopipe-expression | S | tests/sop + test_ml_classification.py, test_ml_regression.py, test_multi_omics_route.py, test_single_cell_route.py, verify_existing_operators.py, verify_ml_classification.py, verify_ml_regression.py, verify_multi_omics.py, verify_single_cell.py, test_core_operators_sop.py |
+| `logistic_regression` | biopipe-core | A | verify_ml_classification.py |
+| `logrank_test` | biopipe-expression | A | verify_stats_operators.py |
+| `ma_plot` | biopipe-plots | C | test_builtin_routes.py route artifact |
+| `maf` | biopipe-genetics | A | verify_bgen_qc.py, verify_genetics_operators.py |
+| `manhattan` | biopipe-plots | C | test_builtin_routes.py route artifact |
+| `missing` | biopipe-genetics | A | verify_bgen_qc.py, verify_existing_operators.py, verify_ml_classification.py, verify_ml_regression.py |
+| `motif_scan` | biopipe-core | A | verify_sequence_features.py |
+| `normalize` | biopipe-expression | S | tests/sop + test_ml_classification.py, test_ml_regression.py, test_multi_omics_route.py, test_single_cell_route.py, verify_existing_operators.py, verify_ml_classification.py, verify_ml_regression.py, verify_multi_omics.py, verify_single_cell.py, test_core_operators_sop.py |
+| `order_axis` | biopipe-core | A | verify_transform_operators.py |
+| `pca` | biopipe-genetics | A | verify_bgen_qc.py, verify_existing_operators.py, verify_multi_omics.py |
+| `peak_nearest_gene` | biopipe-core | A | verify_operators.py |
+| `permanova` | biopipe-microbiome | A | verify_stats_operators.py |
+| `pivot` | biopipe-core | A | verify_go_enrichment.py, verify_transform_operators.py |
+| `prioritize` | biopipe-core | A | verify_transform_operators.py |
+| `qc_metrics` | biopipe-core | S | tests/sop + test_qc_metrics.py, test_single_cell_route.py, verify_operators.py, verify_single_cell.py, test_core_operators_sop.py |
+| `random_forest_classifier` | biopipe-core | A | verify_ml_classification.py |
+| `random_forest_regressor` | biopipe-core | A | verify_ml_regression.py |
+| `rank_axis` | biopipe-core | A | verify_existing_operators.py, verify_multi_omics.py, verify_single_cell.py |
+| `reduce` | biopipe-microbiome | A | verify_single_cell.py, verify_stats_operators.py |
+| `reduce_axis` | biopipe-core | A | verify_existing_operators.py |
+| `regress` | biopipe-genetics | A | verify_genetics_operators.py |
+| `rename_dim` | biopipe-core | S | tests/sop + verify_transform_operators.py, test_core_operators_sop.py |
+| `ridge_regression` | biopipe-core | A | verify_ml_regression.py |
+| `scale_features` | biopipe-core | S | tests/sop + test_scale_features.py, verify_operators.py, test_core_operators_sop.py |
+| `scatter` | biopipe-plots | C | test_builtin_routes.py route artifact |
+| `select` | biopipe-core | S | tests/sop + verify_transform_operators.py, test_core_operators_sop.py |
+| `sequence_stats` | biopipe-core | A | verify_operators.py, verify_sequence_features.py |
+| `svm_classifier` | biopipe-core | A | verify_ml_classification.py |
+| `svm_regressor` | biopipe-core | B | test_ml_regression.py |
+| `transpose` | biopipe-core | S | tests/sop + test_ml_classification.py, test_ml_regression.py, verify_ml_classification.py, verify_ml_regression.py, verify_transform_operators.py, test_core_operators_sop.py |
+| `violin` | biopipe-plots | B | test_violin.py |
+| `volcano` | biopipe-plots | C | test_builtin_routes.py route artifact |
+
+## 4. Route 端到端
+- 14/14 route graph 通过 `test_all_shipped_route_graphs_compile` 编译。
+- 5/14 route 由 `test_builtin_routes.py` 的合成输入执行到全部输出与 PNG。
+- 9/14 route 由真实数据 demo 自测覆盖；49/49 demo 测试通过。
+- 9 条 route 仍无 pytest 合成 fixture；这是测试覆盖缺口，不是 demo 功能缺口。
+
+## 5. 缺口
+- 10 个 C 级绘图算子由 route 的 PNG artifact 覆盖；line/enrichment 另有直接 artifact 测试；绘图无数值契约，不设数值 oracle。
+- C 级且非绘图：无。
+- 运行中的 skip：9 条内置 route 无合成 fixture；桌面 3 项因无 `frontend/dist`。
+
+## 6. 复现命令
+```bash
+python -m pytest -q                    # 全量单元/契约/route
+python -m pytest -q tests/sop          # 独立 SOP
+python -m biopipe registry check       # 注册表
+for f in tasks/verify_*.py; do python "$f"; done
+for f in tasks/*_demo/test_*.py; do python "$f"; done
+```

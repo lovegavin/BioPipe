@@ -1,13 +1,12 @@
 """Contracts, real transformations and cache round-trips, including false promises."""
 from copy import deepcopy
-from pathlib import Path
 
 import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
 from src.core import Form, StepError
-from src.core.contracts import compatible, describe_form, port, resolve, validate_form
+from src.core.contracts import port
 from src.reader import READERS, read_source
 from src.task import Context, STEPS, run
 from src.task.operator_catalog import build_catalog
@@ -40,7 +39,10 @@ def execute(tmp_path, inputs, steps, managed=False):
 
 
 def step(name, inputs=None, **params):
-    return {"name": name, "inputs": inputs or ["x"], "params": {"output": "out", **params}}
+    payload = {"name": name, "inputs": inputs or ["x"], "params": dict(params)}
+    if STEPS[name].output_parameter:
+        payload["params"].setdefault("output", "out")
+    return payload
 
 
 def test_registry_all_ports_and_readers_json():
@@ -198,6 +200,11 @@ def test_stream_contract_checks_cached_values_without_loading_whole_tensor(tmp_p
     from src.task.step.steps.describe import DescribeStep
     class StrictStream(DescribeStep):
         name = "strict_stream"
+        parameters_schema = {
+            "type": "object",
+            "properties": {"dim": {"type": "string"}},
+            "additionalProperties": False,
+        }
         input_contracts = STEPS["hwe"].input_contracts
     monkeypatch.setitem(STEPS, "strict_stream", StrictStream)
     ctx = Context(tmp_path, {"runtime": {"memory": {"budget_mb": 8}}})

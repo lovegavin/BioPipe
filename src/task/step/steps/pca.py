@@ -24,6 +24,8 @@ from src.core.forms.metadata import project_metadata
 from src.core.contracts import MISSING, param, port
 
 
+from ._legacy_schemas import LEGACY_SCHEMAS
+
 class PcaStep(Step):
     """PCA along one dimension.
 
@@ -34,6 +36,8 @@ class PcaStep(Step):
     """
 
     name = "pca"
+    parameters_schema = LEGACY_SCHEMAS['pca']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(info={"missing_code": MISSING}, dims=[param("dim")], ndim=2)]

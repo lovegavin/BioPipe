@@ -81,7 +81,7 @@ Python to resolve it. The default does not use AppData or depend on cwd.
 
 BioPipe registries are ordinary JSON files; discovery reads, but never modifies,
 the Windows registry.
-First launch installs GWAS, RNA-seq DE, Proteomics DE, survival and 16S microbiome templates. Saving
+First launch installs the shipped route templates, including GWAS, RNA-seq DE, proteomics DE, survival, 16S microbiome, single-cell, annotation, interval, GO, sequence, multi-omics and ML templates. Saving
 a graph does not register it: select saved routes with the library plus button.
 
 Default startup imports known legacy repository/AppData/package-sandbox directories

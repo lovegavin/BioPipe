@@ -30,18 +30,21 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.contracts import port, param
-from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class ForestPlotStep(Step):
     """Draw a forest plot of hazard ratios."""
 
     name = "forest_plot"
+    parameters_schema = LEGACY_SCHEMAS['forest_plot']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(ndim=2, dims=[param("dim", "covariate"), param("stat_dim", "statistic")], labels=[{"dim": param("stat_dim", "statistic"), "values": [param("hr_label", "HR"), param("low_label", "CI_low"), param("high_label", "CI_high"), param("p_label", "P")]}])]
@@ -88,7 +91,6 @@ class ForestPlotStep(Step):
                 f"got {sort_by!r}"
             )
 
-        cov_axis = form.dims.index(dim)
         stat_axis = form.dims.index(stat_dim)
         stat_labels = form.labels.get(stat_dim, {})
 

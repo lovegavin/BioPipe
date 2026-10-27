@@ -331,10 +331,11 @@ and hooks are rejected. See [package/resource protocol](package_protocol.md).
 
 ## Compatibility and persistence
 
-The 31 legacy Steps retain compatibility adapters; eight new microbiome Steps
-declare strict schemas. All 13 Readers publish the same descriptor protocol;
-their names and YAML entry points are unchanged. New plugins import from
-`biopipe_sdk`, avoiding dependencies on private engine modules.
+Legacy Steps retain compatibility adapters; newer Steps declare strict
+schemas. All 16 built-in Readers publish the same descriptor protocol; their
+names and YAML entry points are unchanged. New plugins import from
+`biopipe_sdk`, avoiding dependencies on private engine modules. The generated
+registry is the authoritative count of current operators and Readers.
 
 Graph v1/v2 files accept optional `plugin_lock` entries containing package/version/
 SHA-256. Saved graphs, nested route snapshots and launched jobs retain their pins.

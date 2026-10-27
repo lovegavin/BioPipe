@@ -1,5 +1,4 @@
 """Synthetic expression/survival routes, numeric results and metadata contracts."""
-from pathlib import Path
 import gzip
 import numpy as np
 import pytest
@@ -102,7 +101,7 @@ def test_txt_reader_csv_separator_and_compression(tmp_path):
         if filename.endswith('.gz'):
             with gzip.open(path,'wt') as stream: stream.write(content)
         else: path.write_text(content)
-        form=read_source(path,['sample','feature'],{'sample':{'feature':0},'feature':'builtin'},reader='csv')
+        form=read_source(path,['sample','feature'],{'sample':{'feature':0},'feature':'builtin'},reader='csv',sep='\t')
         np.testing.assert_array_equal(form.data,[[1,2],[3,4]])
         assert form.labels['sample']=={'s0':0,'s1':1}
     path=tmp_path/'semi.csv';path.write_text('a;b\n1;2\n')

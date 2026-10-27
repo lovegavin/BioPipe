@@ -78,15 +78,24 @@ No installation drive or username is hard-coded.
 
 ## Bundled routes and library management
 
-First launch registers five templates from `src/web/builtin_routes.json`:
+First launch registers the 14 templates in `src/web/builtin_routes.json`:
 
 | Route | Inputs | Outputs | Internal nodes |
 | --- | ---: | ---: | ---: |
-| GWAS | 3 | 2 | 19 |
+| BGEN Dosage QC | 1 | 1 | 9 |
+| Sequence feature analysis | 1 | 3 | 10 |
 | RNA-seq DE | 2 | 3 | 14 |
+| Genomic interval analysis | 2 | 3 | 11 |
+| Multi-omics integration | 2 | 2 | 15 |
+| ML regression (multi-model) | 2 | 3 | 13 |
+| 16S Microbiome | 2 | 9 | 24 |
+| GO enrichment | 1 | 1 | 6 |
+| ML classification (multi-model) | 2 | 3 | 13 |
 | Proteomics DE | 2 | 2 | 12 |
 | Survival analysis | 1 | 2 | 6 |
-| 16S Microbiome | 2 | 9 | 24 |
+| GTF Annotation Analysis | 1 | 3 | 9 |
+| Single-cell QC and clustering | 1 | 2 | 15 |
+| GWAS | 3 | 2 | 19 |
 
 Node counts include input nodes.
 

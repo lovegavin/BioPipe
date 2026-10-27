@@ -6,6 +6,7 @@ from __future__ import annotations
 import sys
 import os
 import argparse
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -22,8 +23,19 @@ def main() -> None:
     parser.add_argument("--disk-mb", type=float, help="Run-local spill quota in MiB")
     parser.add_argument("--cache-dir", help="Spill parent directory")
     parser.add_argument("--no-auto-spill", action="store_true")
+    parser.add_argument("--check", action="store_true", help="Validate paths, Reader options, params and contracts without running")
     args = parser.parse_args()
     task_dir = args.task_dir.resolve()
+    if args.check:
+        from src.task import load_manifest
+        from src.task.check import check_manifest
+        manifest = load_manifest(task_dir / "task.yaml")
+        report = check_manifest(task_dir, manifest)
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        if not report["ok"]:
+            raise SystemExit(1)
+        print("CHECK OK")
+        return
     run_log = RunLog(task_dir / "output")
     run_log.event("worker_started", message="Loading the analysis engine")
     ctx = None
@@ -33,12 +45,10 @@ def main() -> None:
         # being edited (or containing a failed hot-update candidate).
         if plugin_lock.is_file():
             os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
-            import json
             from biopipe.targets import activate
             activate(json.loads(plugin_lock.read_text(encoding='utf-8')))
         from src.task import Context, load_manifest, run
         if plugin_lock.is_file():
-            import json
             from biopipe.plugins import load_runtime
             lock = json.loads(plugin_lock.read_text(encoding="utf-8"))
             if lock.get('bundled_updates'):

@@ -40,14 +40,16 @@ import numpy as np
 import pandas as pd
 
 from src.core import Form, StepError
-from src.core.contracts import param, port
+from src.core.contracts import port
 from src.task.context import Context
 from src.task.step.base import Step
 
 
 _AGGS = ("sum", "first", "max", "min", "count")
 # Hard cap on dense output cells (~800 MB at float32).
-_MAX_CELLS = 200_000_000_0
+# 5e8 cells is ~2 GB at float32. Real GO GAF pivots reach ~3.5e8
+# cells, while an accidental dense pivot can exceed the run budget.
+_MAX_CELLS = 500_000_000
 
 
 class PivotStep(Step):

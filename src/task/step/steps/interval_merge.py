@@ -39,6 +39,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
+from src.core.numeric import compact_numeric
 from src.reader.readers._labels import unique_labels
 from src.task.context import Context
 from src.task.step.base import Step
@@ -166,7 +167,7 @@ class IntervalMergeStep(Step):
             chrom_col.append(chrom)
             name_col.append(f"{chrom}:{int(cur_s)}-{int(cur_e)}")
 
-        out_data = np.asarray(merged_rows, dtype=np.float32)
+        out_data = compact_numeric(np.asarray(merged_rows, dtype=np.float64))
 
         unique_ids = unique_labels(name_col, "merged_region", "interval_merge")
 

@@ -17,6 +17,8 @@ at multiples of step_size (default = window_size):
               running (sum of G - C) / (running sum of G + C)
               accumulated across every window emitted so far, NaN
               when the running (G + C) is zero.
+    cumulative_gc
+              running sum of (G - C) across emitted windows.
 
 valid counts A, C, G, T; N and other codes are excluded. NaN padding
 at the end of the sequence is excluded as well. The last window may
@@ -24,9 +26,9 @@ be shorter than window_size when the sequence length is not a
 multiple of step_size.
 
 Output:
-    data   2D float32, shape (n_windows, 6)
+    data   2D float32, shape (n_windows, 7)
     dims   [window, statistic]
-    statistic = (start, end, gc, at, gc_skew, cumulative_skew)
+    statistic = (start, end, gc, at, gc_skew, cumulative_skew, cumulative_gc)
     start / end are 0-based half-open positions on the sequence.
     info["window_size"], info["step_size"], info["sequence_length"],
     info["representation"] = "gc_skew_profile".

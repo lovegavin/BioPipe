@@ -21,17 +21,20 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.contracts import port, param
-from src.core.forms.metadata import project_metadata
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class FilterMinStep(Step):
     """Drop positions that do not reach a minimum value."""
 
     name = "filter_min"
+    parameters_schema = LEGACY_SCHEMAS['filter_min']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(dims=[param("dim")])]

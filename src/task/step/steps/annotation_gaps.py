@@ -6,6 +6,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.core.contracts import MISSING, param, port
 from src.core.forms.metadata import project_metadata
+from src.core.numeric import compact_numeric
 from src.task.context import Context
 from src.task.step.base import Step
 
@@ -127,7 +128,7 @@ class AnnotationGapsStep(Step):
                 right_col.append(f"{sid}:{int(rs)}-{int(re)}")
 
         if rows:
-            out_data = np.asarray(rows, dtype=np.float32)
+            out_data = compact_numeric(np.asarray(rows, dtype=np.float64))
         else:
             out_data = np.zeros((0, len(_STAT_LABELS)), dtype=np.float32)
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { inputAccept, readerForPath, renameSourceDimensions } from './readerInput';
+import { inputAccept, readerForPath, renameSourceDimensions, rePointSource } from './readerInput';
 import type { Catalog } from './types';
 
 describe('registry-based input file filters', () => {
@@ -29,6 +29,23 @@ describe('registry-based input file filters', () => {
     expect(readerForPath(catalog, 'input.gaf.xz')).toBeUndefined();
     expect(readerForPath(catalog, 'input.h5ad.xz')?.name).toBe('H5adReader');
     expect(readerForPath(catalog, 'input.h5ad.zst')).toBeUndefined();
+  });
+  it('keeps source settings when re-pointing an existing file', () => {
+    const previous = {path:'tasks/x/input/a.txt', dims:['sample','feature'],
+      labels:{sample:'auto',feature:'builtin'}, args:{reader:'csv', sep:'\t'}};
+    const uploaded = {path:'tasks/x/input/b.txt', dims:['cell','gene'],
+      labels:{cell:'auto',gene:'builtin'}, args:{}};
+    expect(rePointSource(previous, uploaded)).toEqual({...previous, path:uploaded.path});
+    expect(rePointSource({...previous, path:''}, uploaded)).toBe(uploaded);
+  });
+  it('honors an explicit reader selector before extension dispatch', () => {
+    const catalog: Catalog = {schema_version:1, operators:[], readers:[
+      {name:'CsvReader', extensions:['.csv'], output_contract:null},
+      {name:'TxtReader', extensions:['.txt'], output_contract:null},
+    ]};
+    expect(readerForPath(catalog, 'input/data.txt', 'csv')?.name).toBe('CsvReader');
+    expect(readerForPath(catalog, 'input/data.txt', 'CsvReader')?.name).toBe('CsvReader');
+    expect(readerForPath(catalog, 'input/data.txt')?.name).toBe('TxtReader');
   });
 });
 

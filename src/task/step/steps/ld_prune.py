@@ -5,11 +5,13 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.contracts import MISSING, param, port
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class LdPruneStep(Step):
     """Prune positions along one dimension by LD.
@@ -22,6 +24,8 @@ class LdPruneStep(Step):
     """
 
     name = "ld_prune"
+    parameters_schema = LEGACY_SCHEMAS['ld_prune']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(info={"missing_code": MISSING}, dims=[param("dim")])]

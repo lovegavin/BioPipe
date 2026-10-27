@@ -163,6 +163,7 @@ def test_bgen_wrapper_transport_and_handle_cleanup(tmp_path, monkeypatch, suffix
             stream.write(b'index')
             paths.append((path, sidecar))
             yield SimpleNamespace(ids=['v1'], samples=['s1'],
+                chromosomes=['1'], positions=[100],
                 read=lambda: np.array([[[0., 1., 0.]]]))
 
     monkeypatch.setattr(bgen_reader, 'open_bgen', open_bgen)
@@ -170,6 +171,8 @@ def test_bgen_wrapper_transport_and_handle_cleanup(tmp_path, monkeypatch, suffix
     path.write_bytes(CODECS[suffix](b'BGEN parser input'))
     result = read_source(path, ['variant', 'sample'], {})
     np.testing.assert_array_equal(result.data, [[1.]])
+    assert result.info["chrom"] == ["1"]
+    assert result.info["pos"] == [100]
     assert all(not p.exists() for pair in paths for p in pair)
 
 

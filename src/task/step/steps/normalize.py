@@ -50,10 +50,14 @@ _METHODS = (
 _SIZE_FACTOR_METHODS = ("cpm", "total", "median_of_ratios")
 
 
+from ._legacy_schemas import LEGACY_SCHEMAS
+
 class NormalizeStep(Step):
     """Normalize a Form along one dimension."""
 
     name = "normalize"
+    parameters_schema = LEGACY_SCHEMAS['normalize']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(dims=[param("dim")])]
@@ -247,7 +251,6 @@ def _median_of_ratios(flat, valid):
     strictly positive. For each sample, the size factor is the median
     over eligible genes of (count / geometric mean).
     """
-    positive = valid & (flat > 0)
     valid_zero = valid & (flat == 0)
     has_any_valid = valid.any(axis=0)
     has_valid_zero = valid_zero.any(axis=0)

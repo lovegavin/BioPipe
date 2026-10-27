@@ -1,5 +1,4 @@
 """Shipped workflows are real reusable graphs, with persistent library controls."""
-from copy import deepcopy
 import json
 from pathlib import Path
 
@@ -20,6 +19,7 @@ from src.web.service import Settings
 
 ROOT = Path(__file__).resolve().parents[1]
 BUNDLE = json.loads((ROOT / "src/web/builtin_routes.json").read_text(encoding="utf-8"))["routes"]
+SYNTHETIC_ROUTES = {"GWAS", "RNA-seq DE", "Proteomics DE", "生存分析", "16S Microbiome"}
 
 
 def test_builtin_install_library_controls_and_persisted_removal(tmp_path):
@@ -28,7 +28,7 @@ def test_builtin_install_library_controls_and_persisted_removal(tmp_path):
     with TestClient(app) as client:
         client.headers["X-Studio-Token"] = client.get("/api/bootstrap").json()["token"]
         routes = client.get("/api/routes").json()
-        assert {r["name"] for r in routes} == {"GWAS", "RNA-seq DE", "Proteomics DE", "生存分析", "16S Microbiome"}
+        assert {r["name"] for r in routes} == {r["name"] for r in BUNDLE}
         key = routes[0]["id"]
         for operator in (key, "pca"):
             result = client.post("/api/library/manage", json={"key": operator, "action": "disable"})
@@ -93,12 +93,28 @@ def synthetic_sources(graph, directory):
     return forms
 
 
+def test_all_shipped_route_graphs_compile(tmp_path):
+    catalog = build_catalog(STEPS)
+    for definition in BUNDLE:
+        route = RouteDefinition.model_validate(definition)
+        sources = [node.model_copy(deep=True) for node in route.graph.nodes if node.kind == "source"]
+        outer = Graph(name=route.name, nodes=sources + [GraphNode(id="route", kind="route", title=route.name,
+                      position=Position(x=300, y=100), route=route)],
+                      edges=[GraphEdge(id=f"e{i}", source=port.node_id, target="route", targetHandle=f"in-{i}")
+                             for i, port in enumerate(route.graph.interface.inputs)],
+                      memory={"enabled": True, "budget_mb": 512, "keep": [f"route__out_{i+1}" for i in range(len(route.graph.interface.outputs))]})
+        manifest, order = compile_graph(outer, catalog, tmp_path)
+        assert len(order) == len(route.graph.nodes) - len(sources), route.name
+
+
 @pytest.mark.parametrize("definition", BUNDLE, ids=[r["name"] for r in BUNDLE])
 def test_each_shipped_route_expands_and_executes_all_branches(tmp_path, definition):
     if definition["name"] == "RNA-seq DE":
         pytest.importorskip("pydeseq2")
     if definition["name"] == "生存分析":
         pytest.importorskip("lifelines")
+    if definition["name"] not in SYNTHETIC_ROUTES:
+        pytest.skip("no synthetic fixture; real-data execution is covered by the route demo")
     route = RouteDefinition.model_validate(definition)
     sources = [node.model_copy(deep=True) for node in route.graph.nodes if node.kind == "source"]
     outer = Graph(name=route.name, nodes=sources + [GraphNode(id="route", kind="route", title=route.name,

@@ -5,7 +5,6 @@ import hmac
 import json
 import os
 import secrets
-import time
 import uuid
 
 from fastapi import HTTPException, Request

@@ -54,6 +54,10 @@ def parser():
     plugin.add_argument("--template", choices=["operator", "reader"], default="operator")
     schema = commands.add_parser("schema")
     schema.add_argument("name", choices=["operator", "package", "graph", "workspace"])
+    inspect = commands.add_parser("inspect", help="Inspect an input file's shape, labels and stats without running a task")
+    inspect.add_argument("path", type=Path)
+    inspect.add_argument("--reader")
+    inspect.add_argument("--arg", action="append", default=[], help="Reader option as key=value (repeatable)")
     mcp = commands.add_parser("mcp")
     mcp.add_argument("--allow-run", action="store_true")
     mcp.add_argument("--read-only", action="store_true")
@@ -73,6 +77,18 @@ def execute(args):
         from biopipe_sdk.protocol import Descriptor, PackageDescriptor
         from src.web.models import Graph, Workspace
         return {"operator": Descriptor, "package": PackageDescriptor, "graph": Graph, "workspace": Workspace}[args.name].model_json_schema()
+    if args.command == "inspect":
+        from .inspect import inspect_source
+        reader_args = {}
+        for item in args.arg:
+            key, separator, value = item.partition("=")
+            if not separator or not key:
+                raise ValueError(f"--arg must be key=value, got {item!r}")
+            try:
+                reader_args[key] = json.loads(value)
+            except json.JSONDecodeError:
+                reader_args[key] = value
+        return inspect_source(args.path, reader_name=args.reader, args=reader_args)
     if args.command == "plugin":
         from . import developer
         from .plugins import PluginManager, run_process

@@ -33,6 +33,10 @@ def run(ctx: Context, steps: list[dict]) -> None:
             names = spec.get("inputs", [])
             _check_arity(name, step.inputs_arity, names)
             ctx.step_params = dict(spec.get("params", {}))
+            # _input_names is injected below for multi-input operators. Old
+            # graphs/jobs may have persisted it; it is engine state, never a
+            # user parameter, so strip it before strict validation.
+            ctx.step_params.pop("_input_names", None)
             if cls.parameters_schema is not None and not getattr(cls, "legacy_parameters", False):
                 from biopipe_sdk.protocol import validate_parameters
                 output = ctx.step_params.pop(cls.output_parameter, None) if cls.output_parameter else None

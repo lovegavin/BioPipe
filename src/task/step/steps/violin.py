@@ -33,11 +33,10 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
-from ._microbiome import metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 

@@ -24,7 +24,7 @@ import time
 from packaging.utils import canonicalize_name
 from biopipe_sdk.protocol import describe_operator, describe_reader, validate_extension
 from src.web.storage import FileLock, atomic_json
-from biopipe.packages import bundled_manifest, bundled_state, owns_legacy_id
+from biopipe.packages import bundled_manifest, bundled_state
 
 
 def active_descriptors(state):
@@ -147,7 +147,6 @@ def load_runtime(lock):
     """Register plugins in a fresh worker against a frozen installation lock."""
     from src.task.step import STEPS
     from src.reader import READERS
-    import importlib
     if lock.get("package_protocol_version"):
         STEPS.clear()
         READERS.clear()

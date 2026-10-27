@@ -28,7 +28,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.core.contracts import param, port
 from src.task.context import Context
 from src.task.step.base import Step

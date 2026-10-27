@@ -57,12 +57,16 @@ _STAT_LABELS = {
 }
 
 
+from ._legacy_schemas import LEGACY_SCHEMAS
+
 class CoxRegressionStep(Step):
     """Fit a Cox proportional hazards model."""
     dependencies = ['lifelines>=0.30,<0.31']
     dependency_imports = ['lifelines']
 
     name = "cox_regression"
+    parameters_schema = LEGACY_SCHEMAS['cox_regression']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [{**port(ndim=2), "labels_axis": [{"axis": 1, "values": [param("time_label"), param("event_label")]}, {"axis": 1, "values": param("covariates", [])}]}]
@@ -70,17 +74,6 @@ class CoxRegressionStep(Step):
     output_parameter = "output"
 
     def run(self, ctx: Context, inputs) -> None:
-        try:
-            from lifelines import CoxPHFitter
-            from lifelines.exceptions import (
-                ConvergenceError,
-            )
-        except ImportError as exc:
-            raise StepError(
-                "cox_regression: lifelines is required. "
-                "Install with: pip install lifelines"
-            ) from exc
-
         try:
             from lifelines import CoxPHFitter
         except ImportError as exc:

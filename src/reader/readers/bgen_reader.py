@@ -67,6 +67,12 @@ class BgenReader(Reader):
 
     extensions = [".bgen"]
     handles_compression = False
+    parameters_schema = {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": False,
+    }
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:
@@ -88,6 +94,8 @@ class BgenReader(Reader):
                 probs = bgen.read()
                 variant_ids = [str(v) for v in bgen.ids]
                 sample_ids = [str(s) for s in bgen.samples]
+                chromosomes = [str(v) for v in bgen.chromosomes]
+                positions = [int(v) for v in bgen.positions]
         except ValueError as exc:
             if "allow_complex is False" in str(exc):
                 raise ReaderError(
@@ -144,6 +152,11 @@ class BgenReader(Reader):
                 f"Samples table has {len(sample_ids)} rows but "
                 f"data has {n_samples} samples"
             )
+        if len(chromosomes) != n_variants or len(positions) != n_variants:
+            raise ReaderError(
+                "BGEN reader: chromosome/position metadata length "
+                "does not match the variant count"
+            )
 
         final = _resolve_labels(
             labels, variant_dim, sample_dim, variant_ids, sample_ids
@@ -157,7 +170,10 @@ class BgenReader(Reader):
                 "missing_code": np.nan,
                 "ploidy": 2,
                 "representation": "dosage",
+                "chrom": chromosomes,
+                "pos": positions,
             },
+            axis_info={variant_dim: ["chrom", "pos"]},
         )
 
 

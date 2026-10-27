@@ -11,12 +11,14 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import MISSING, param, port
+from src.core.contracts import param, port
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class HistogramStep(Step):
     """Draw a histogram.
@@ -33,6 +35,8 @@ class HistogramStep(Step):
     """
 
     name = "histogram"
+    parameters_schema = LEGACY_SCHEMAS['histogram']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(ndim=2, dims=[param("dim", "feature")], labels=[{"dim": param("dim", "feature"), "values": param("value_label")}])]

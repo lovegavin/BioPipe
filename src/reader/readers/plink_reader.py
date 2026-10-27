@@ -90,6 +90,12 @@ class Plink1Reader(Reader):
     extensions = [".bed"]
     requires_siblings = [".bim", ".fam"]
     handles_compression = True
+    parameters_schema = {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": True,
+    }
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         try:
@@ -169,6 +175,12 @@ class Plink2Reader(Reader):
     extensions = [".pgen"]
     requires_siblings = [".pvar", ".psam"]
     handles_compression = True
+    parameters_schema = {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": True,
+    }
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:

@@ -31,18 +31,21 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.contracts import port, param
-from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class KaplanMeierStep(Step):
     """Draw Kaplan-Meier survival curves."""
 
     name = "kaplan_meier"
+    parameters_schema = LEGACY_SCHEMAS['kaplan_meier']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [{**port(ndim=2), "labels_axis": [{"axis": 1, "values": [param("time_label"), param("event_label"), param("group_label")]}]}]

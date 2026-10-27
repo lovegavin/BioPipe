@@ -60,6 +60,7 @@ from src.reader.base import Reader
 from src.core.contracts import reader_contract
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
+from src.core.numeric import compact_numeric
 
 
 _BED_COLUMNS = [
@@ -80,6 +81,19 @@ class BedReader(Reader):
     extensions = [".bed"]
     excludes_siblings = [".bim", ".fam", ".pgen"]
     handles_compression = False
+    parameters_schema = {
+        "type": "object",
+        "properties": {
+            "encoders": {
+                "type": "object",
+                "title": "Encoders",
+                "description": "Per-field encoder configuration.",
+                "additionalProperties": True,
+            }
+        },
+        "additionalProperties": True,
+    }
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:
@@ -168,7 +182,7 @@ class BedReader(Reader):
             col = df.iloc[:, old_idx]
             numeric = True
             try:
-                values = col.to_numpy(dtype=np.float32)
+                values = col.to_numpy(dtype=np.float64)
             except (ValueError, TypeError):
                 numeric = False
 
@@ -186,7 +200,7 @@ class BedReader(Reader):
             cols_data.append(encoder.fit_transform(col.tolist()))
             encoders_used[name] = encoder
 
-        data = np.stack(cols_data, axis=1).astype(np.float32)
+        data = compact_numeric(np.stack(cols_data, axis=1))
 
         final: dict[str, dict[str, int]] = {}
 
@@ -229,7 +243,12 @@ def _load(path: Path) -> pd.DataFrame:
             line = line.rstrip("\r\n")
             if not line.strip():
                 continue
-            parts = line.split()
+            if line.startswith("#"):
+                continue
+            # BED is tab-delimited. Fall back to arbitrary whitespace for
+            # legacy space-aligned files, but keep a tab-separated name
+            # field such as "CTCF binding site" intact.
+            parts = line.split("\t") if "\t" in line else line.split()
             if parts and parts[0] in ("track", "browser"):
                 continue
             rows.append(parts)

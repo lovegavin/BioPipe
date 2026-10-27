@@ -33,18 +33,21 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.contracts import port, param
-from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class VolcanoStep(Step):
     """Draw a volcano plot."""
 
     name = "volcano"
+    parameters_schema = LEGACY_SCHEMAS['volcano']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(ndim=2, dims=[param("dim", "gene"), param("stat_dim", "statistic")], labels=[{"dim": param("stat_dim", "statistic"), "values": [param("lfc_label", "log2FC"), param("p_label", "P")]}])]
@@ -95,7 +98,6 @@ class VolcanoStep(Step):
                     f"Available: {form.dims}"
                 )
 
-        feat_axis = form.dims.index(dim)
         stat_axis = form.dims.index(stat_dim)
         stat_labels = form.labels.get(stat_dim, {})
         for lbl, name in ((lfc_label, "lfc_label"), (p_label, "p_label")):

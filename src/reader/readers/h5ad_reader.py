@@ -59,6 +59,19 @@ class H5adReader(Reader):
 
     extensions = [".h5ad"]
     handles_compression = False
+    parameters_schema = {
+        "type": "object",
+        "properties": {
+            "layer": {
+                "type": ["string", "null"],
+                "x-ui-type": "string",
+                "title": "Layer",
+                "description": "Leave unset to read X.",
+            }
+        },
+        "additionalProperties": True,
+    }
+
     supports_disk_read = True
     disk_protocol = "dense-writer-v1"
 

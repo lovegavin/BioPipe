@@ -39,11 +39,10 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from ._axis_contracts import SCHEMAS, CONTRACTS, estimate_axis
-from ._microbiome import metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
 
@@ -203,9 +202,6 @@ class DotplotStep(Step):
         sample_groups = [
             _decode(group_codes[i], encoder) for i in range(n_samples)
         ]
-        valid_sample = np.array(
-            [g is not None for g in sample_groups]
-        )
 
         # Collect group set.
         all_groups = sorted({

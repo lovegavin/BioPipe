@@ -22,14 +22,18 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
-from src.core.contracts import port, param
+from src.core.contracts import port
 from src.core.forms.metadata import project_metadata
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class LogTransformStep(Step):
     """Apply log_base(x + pseudocount) elementwise."""
 
     name = "log_transform"
+    parameters_schema = LEGACY_SCHEMAS['log_transform']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port()]

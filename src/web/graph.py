@@ -21,20 +21,37 @@ class GraphError(ValueError):
 def project_path(root, path, base="."):
     root = Path(root).resolve()
     directory = (root / base).resolve()
-    candidate = (directory / path).resolve()
+    raw = Path(path)
+    candidate = (directory / raw).resolve()
+    # Studio's profile root is normally the isolated workspace, while a
+    # user-authored task may live under the source checkout. Absolute source
+    # paths are explicit user intent and are allowed; relative paths remain
+    # confined to the selected workspace for safety and relocatability.
+    if raw.is_absolute():
+        return candidate
     if not directory.is_relative_to(root) or not candidate.is_relative_to(root):
-        raise GraphError("文件路径必须位于当前 BioPipe 项目内；外部 CSV 可通过上传添加。")
+        raise GraphError("相对文件路径必须位于当前 BioPipe 项目内；外部文件请写绝对路径或通过上传添加。")
     return candidate
+
+
+def _relative_or_absolute(path, directory):
+    """Relativize when possible; keep absolute across Windows drives."""
+    try:
+        return Path(os.path.relpath(path, directory)).as_posix()
+    except ValueError:
+        # os.path.relpath raises on Windows when source and job live on
+        # different drives.
+        return Path(path).as_posix()
 
 
 def relative_manifest(manifest, directory):
     """Keep executable/exported workflows relocatable alongside their data."""
     result = {**manifest, "sources": {name: dict(spec) for name, spec in manifest["sources"].items()}}
     for source in result["sources"].values():
-        source["path"] = Path(os.path.relpath(source["path"], directory)).as_posix()
+        source["path"] = _relative_or_absolute(source["path"], directory)
     memory = dict(manifest.get("runtime", {}).get("memory", {}))
     if memory.get("cache_dir"):
-        memory["cache_dir"] = Path(os.path.relpath(memory["cache_dir"], directory)).as_posix()
+        memory["cache_dir"] = _relative_or_absolute(memory["cache_dir"], directory)
     result["runtime"] = {**manifest.get("runtime", {}), "memory": memory}
     return result
 
@@ -79,6 +96,7 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
             if strict_parameters:
                 from biopipe_sdk.protocol import validate_parameters
                 params = dict(node.params)
+                params.pop("_input_names", None)
                 if spec.get("output_parameter"):
                     params.pop(spec["output_parameter"], None)
                 try:
@@ -170,6 +188,7 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
                 index = 0 if edge.sourceHandle == "out" else int(edge.sourceHandle[4:])
                 inputs.append(outputs[edge.source][index])
             params = dict(node.params)
+            params.pop("_input_names", None)
             if registry[node.operator]["output_parameter"]:
                 params["output"] = outputs[key][0]
             # Plot filenames must remain in their run's figures directory.
@@ -201,10 +220,105 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
     return manifest, step_ids
 
 
+def _resolve_import_base(raw, base_dir, root):
+    """Return (base_dir, raw) with sources located under the project root.
+
+    A browser cannot expose the local directory of a selected YAML file.
+    Imported task YAMLs normally use paths relative to their task directory
+    (``input/foo.csv``), so when the requested base does not resolve every
+    source we look for the task by its YAML name, then for a unique relative
+    path match under tasks/routes/examples. We never guess between multiple
+    candidates.
+    """
+    from pathlib import Path
+    import os
+
+    root = Path(root).resolve()
+    base = (root / base_dir).resolve() if not Path(base_dir).is_absolute() else Path(base_dir).resolve()
+    sources = raw.get("sources") or {}
+    missing = []
+    for name, spec in sources.items():
+        path = Path(str(spec.get("path", "")))
+        if not path.is_absolute() and not (base / path).is_file():
+            missing.append((name, spec, path))
+        elif path.is_absolute() and not path.is_file():
+            missing.append((name, spec, path))
+    if not missing:
+        return base_dir, raw
+
+    # 1. Exact task/route directory named like the YAML.
+    name_hint = str(raw.get("name") or "").strip()
+    likely = []
+    if name_hint:
+        likely = [root / "tasks" / name_hint, root / "routes" / name_hint]
+    for directory in likely:
+        if directory.is_dir() and all(
+            (directory / Path(str(spec["path"]))).is_file()
+            for _, spec, _ in missing
+        ):
+            for _, spec, path in missing:
+                # Studio shows the resolved file directly; exporting a graph
+                # still relativizes it against base_dir via relative_manifest.
+                spec["path"] = str((directory / path).resolve())
+            return Path(os.path.relpath(directory, root)).as_posix(), raw
+
+    # 2. Unique suffix match under the usual content roots.
+    search_roots = [root / "tasks", root / "routes", root / "examples"]
+    matches = {}
+    for name, spec, relative in missing:
+        if relative.is_absolute():
+            matches[name] = [relative]
+            continue
+        suffix = relative.as_posix()
+        found = []
+        for base_root in search_roots:
+            if not base_root.is_dir():
+                continue
+            for candidate in base_root.rglob(relative.name):
+                if not candidate.is_file():
+                    continue
+                if candidate.as_posix().endswith("/" + suffix):
+                    if "output" not in candidate.relative_to(root).parts:
+                        found.append(candidate.resolve())
+        found = sorted(set(found))
+        if not found:
+            return base_dir, raw
+        if len(found) > 1:
+            raise ValueError(
+                f"导入的 YAML 无法唯一定位 {name!r} 的输入文件 {suffix!r}；"
+                f"找到 {len(found)} 个候选。请在导入框中填写 YAML 输入相对目录，"
+                f"或把 YAML 放到对应任务目录。"
+            )
+        matches[name] = found
+
+    # All sources must share one base directory, otherwise the graph cannot
+    # represent them with a single base_dir.
+    bases = []
+    for name, spec, relative in missing:
+        candidate = matches[name][0]
+        base_candidate = candidate
+        for _ in relative.parts[:-1]:
+            base_candidate = base_candidate.parent
+        bases.append(base_candidate)
+    unique_bases = sorted({str(path) for path in bases})
+    if len(unique_bases) != 1:
+        raise ValueError(
+            "导入的 YAML 输入文件不在同一任务目录；请在导入框中填写正确的基准目录。"
+        )
+    resolved_base = Path(unique_bases[0])
+    for name, spec, relative in missing:
+        spec["path"] = str(matches[name][0])
+    return Path(os.path.relpath(resolved_base, root)).as_posix(), raw
+
+
 def import_manifest(text, base_dir, catalog, root):
     raw = yaml.safe_load(text)
     if not isinstance(raw, dict) or not isinstance(raw.get("sources"), dict) or not isinstance(raw.get("steps"), list):
         raise GraphError("任务 YAML 需要 sources 和 steps。")
+    try:
+        base_dir, raw = _resolve_import_base(raw, base_dir, root)
+    except ValueError as exc:
+        raise GraphError(str(exc)) from exc
     _validate_sources(raw["sources"])
     _validate_steps(raw["steps"])
     MemoryConfig.parse(raw, detect_available=False)
@@ -232,6 +346,7 @@ def import_manifest(text, base_dir, catalog, root):
         key = unique(f"{name}_{i+1}")
         params = dict(registry[name].get("runtime_defaults", {}))
         params.update(spec.get("params") or {})
+        params.pop("_input_names", None)
         aliases = {}
         for alias, (producer, handle) in latest.items():
             node = next(n for n in nodes if n.id == producer)

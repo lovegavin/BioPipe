@@ -56,6 +56,7 @@ from src.reader.base import Reader
 from src.core.contracts import reader_contract
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
+from src.core.numeric import compact_numeric
 
 
 class CsvReader(Reader):
@@ -70,6 +71,8 @@ class CsvReader(Reader):
     }
 
     extensions = [".csv"]
+    default_sep = ","
+    format_name = "CSV"
     handles_compression = True
     parameters_schema = {
         "type": "object",
@@ -106,21 +109,21 @@ class CsvReader(Reader):
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:
             raise ReaderError(
-                f"CSV reader requires exactly two dims, got {dims}"
+                f"{self.format_name} reader requires exactly two dims, got {dims}"
             )
         row_dim, col_dim = dims[0], dims[1]
 
         has_header = bool(args.get("header", True))
 
-        sep = args.get("sep", ",")
+        sep = args.get("sep", self.default_sep)
         if not isinstance(sep, str) or not sep:
             raise ReaderError(
-                f"CSV reader: 'sep' must be a non-empty string, got {sep!r}"
+                f"{self.format_name} reader: 'sep' must be a non-empty string, got {sep!r}"
             )
 
         encoders_cfg = args.get("encoders", {})
         if not isinstance(encoders_cfg, dict):
-            raise ReaderError("CSV reader: 'encoders' must be a mapping")
+            raise ReaderError(f"{self.format_name} reader: 'encoders' must be a mapping")
 
         columns_cfg = args.get("columns")
         if columns_cfg is not None:
@@ -129,36 +132,36 @@ class CsvReader(Reader):
                     or any(not isinstance(c, str) or not c
                            for c in columns_cfg)):
                 raise ReaderError(
-                    "CSV reader: 'columns' must be a non-empty list of "
+                    f"{self.format_name} reader: 'columns' must be a non-empty list of "
                     "header names"
                 )
             if len(set(columns_cfg)) != len(columns_cfg):
                 raise ReaderError(
-                    "CSV reader: 'columns' contains duplicates"
+                    f"{self.format_name} reader: 'columns' contains duplicates"
                 )
 
         info_columns_cfg = args.get("info_columns", {})
         if not isinstance(info_columns_cfg, dict):
             raise ReaderError(
-                "CSV reader: 'info_columns' must be a mapping of "
+                f"{self.format_name} reader: 'info_columns' must be a mapping of "
                 "column name -> info field name"
             )
         for col_name, info_key in info_columns_cfg.items():
             if not isinstance(col_name, str) or not col_name:
                 raise ReaderError(
-                    f"CSV reader: info_columns key must be a non-empty "
+                    f"{self.format_name} reader: info_columns key must be a non-empty "
                     f"string, got {col_name!r}"
                 )
             if not isinstance(info_key, str) or not info_key:
                 raise ReaderError(
-                    f"CSV reader: info_columns['{col_name}'] must be a "
+                    f"{self.format_name} reader: info_columns['{col_name}'] must be a "
                     f"non-empty string, got {info_key!r}"
                 )
 
         df = pd.read_csv(path, header=0 if has_header else None, sep=sep)
         if df.shape[0] == 0:
             raise ReaderError(
-                f"CSV reader: file has zero data rows: {path}"
+                f"{self.format_name} reader: file has zero data rows: {path}"
             )
 
         if has_header:
@@ -169,7 +172,7 @@ class CsvReader(Reader):
 
         if len(set(col_names)) != len(col_names):
             raise ReaderError(
-                "CSV reader: header contains duplicate column names; "
+                f"{self.format_name} reader: header contains duplicate column names; "
                 "rename them before reading"
             )
 
@@ -177,13 +180,13 @@ class CsvReader(Reader):
             missing = [c for c in columns_cfg if c not in col_names]
             if missing:
                 raise ReaderError(
-                    f"CSV reader: requested columns not in header: "
+                    f"{self.format_name} reader: requested columns not in header: "
                     f"{missing}. Available: {col_names}"
                 )
         for col_name in info_columns_cfg:
             if col_name not in col_names:
                 raise ReaderError(
-                    f"CSV reader: info_columns key '{col_name}' not in "
+                    f"{self.format_name} reader: info_columns key '{col_name}' not in "
                     f"header. Available: {col_names}"
                 )
 
@@ -193,7 +196,7 @@ class CsvReader(Reader):
         for dim_name, rule in labels.items():
             if dim_name not in dims:
                 raise ReaderError(
-                    f"CSV reader: labels entry '{dim_name}' is not "
+                    f"{self.format_name} reader: labels entry '{dim_name}' is not "
                     f"one of {dims}"
                 )
             if rule in (None, "auto"):
@@ -202,7 +205,7 @@ class CsvReader(Reader):
             if rule == "builtin":
                 if dim_name != col_dim:
                     raise ReaderError(
-                        f"CSV reader: 'builtin' is only valid for the "
+                        f"{self.format_name} reader: 'builtin' is only valid for the "
                         f"column dim '{col_dim}', not '{dim_name}'"
                     )
                 continue
@@ -212,7 +215,7 @@ class CsvReader(Reader):
                     k = rule[col_dim]
                     if not 0 <= k < df.shape[1]:
                         raise ReaderError(
-                            f"CSV reader: labels.{row_dim} column "
+                            f"{self.format_name} reader: labels.{row_dim} column "
                             f"index {k} out of range "
                             f"(file has {df.shape[1]} columns)"
                         )
@@ -231,13 +234,13 @@ class CsvReader(Reader):
                     }
                 else:
                     raise ReaderError(
-                        f"CSV reader: unsupported label rule for "
+                        f"{self.format_name} reader: unsupported label rule for "
                         f"'{dim_name}': {rule!r}"
                     )
                 continue
 
             raise ReaderError(
-                f"CSV reader: labels.{dim_name} must be 'builtin', "
+                f"{self.format_name} reader: labels.{dim_name} must be 'builtin', "
                 f"'auto', a mapping, or omitted; got {rule!r}"
             )
 
@@ -247,13 +250,13 @@ class CsvReader(Reader):
             idx = col_names.index(col_name)
             if idx in label_cols_to_drop:
                 raise ReaderError(
-                    f"CSV reader: column '{col_name}' is already "
+                    f"{self.format_name} reader: column '{col_name}' is already "
                     f"consumed as a label column; cannot also declare "
                     f"it as an info column"
                 )
             if info_key in info_extracted:
                 raise ReaderError(
-                    f"CSV reader: info field '{info_key}' is declared "
+                    f"{self.format_name} reader: info field '{info_key}' is declared "
                     f"twice in info_columns"
                 )
             info_extracted[info_key] = (
@@ -285,7 +288,7 @@ class CsvReader(Reader):
         ]
         if not keep:
             raise ReaderError(
-                "CSV reader: no data columns remain after label and "
+                f"{self.format_name} reader: no data columns remain after label and "
                 "info column extraction"
             )
         kept_names = [col_names[i] for i in keep]
@@ -296,7 +299,7 @@ class CsvReader(Reader):
             col = df.iloc[:, old_idx]
             numeric = True
             try:
-                values = col.to_numpy(dtype=np.float32)
+                values = col.to_numpy(dtype=np.float64)
             except (ValueError, TypeError):
                 numeric = False
 
@@ -314,7 +317,7 @@ class CsvReader(Reader):
             cols_data.append(encoder.fit_transform(col.tolist()))
             encoders_used[name] = encoder
 
-        data = np.stack(cols_data, axis=1).astype(np.float32)
+        data = compact_numeric(np.stack(cols_data, axis=1))
 
         final: dict[str, dict[str, int]] = {}
 

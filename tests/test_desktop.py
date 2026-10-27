@@ -79,6 +79,8 @@ def test_preferred_port_conflict_falls_back_without_stealing_listener():
         assert fallback.getsockname()[1] != occupied.getsockname()[1]
 
 
+@pytest.mark.skipif(not (ROOT / "frontend/dist/index.html").is_file(),
+                    reason="frontend build artifacts are not present")
 @pytest.mark.parametrize("exit_mode", ["shutdown", "eof"])
 def test_desktop_server_owns_port_and_exits_with_host(tmp_path, exit_mode):
     workspace = tmp_path / "desktop process 中文"

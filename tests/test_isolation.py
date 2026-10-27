@@ -1,6 +1,5 @@
 """Real conflicting wheels, real processes, real memory/streaming protocols."""
 import json
-import os
 from pathlib import Path
 import subprocess
 import sys

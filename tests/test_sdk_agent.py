@@ -2,7 +2,6 @@
 from copy import deepcopy
 import json
 from pathlib import Path
-import subprocess
 import sys
 import time
 
@@ -180,7 +179,6 @@ def test_view_changes_do_not_invalidate_graph_revision(gateway):
 
 def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeypatch):
     from biopipe.developer import scaffold, build
-    from biopipe.plugins import PluginManager
     client, app, data, state = gateway
     source = tmp_path / "scale_plugin"
     scaffold(source)

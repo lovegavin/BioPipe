@@ -13,8 +13,7 @@ import yaml
 from src.task import Context, STEPS, load_manifest
 from src.task.operator_catalog import build_catalog
 from src.web.api import create_app
-from src.web.graph import GraphError, compile_graph, import_manifest
-from src.web.models import Graph
+from src.web.graph import compile_graph, import_manifest
 from src.web.service import Settings
 
 ROOT = Path(__file__).resolve().parents[1]

@@ -30,18 +30,21 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.contracts import port, param
-from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class MaPlotStep(Step):
     """Draw an MA plot."""
 
     name = "ma_plot"
+    parameters_schema = LEGACY_SCHEMAS['ma_plot']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(ndim=2, dims=[param("dim", "gene"), param("stat_dim", "statistic")], labels=[{"dim": param("stat_dim", "statistic"), "values": [param("lfc_label", "log2FC"), param("p_label", "P"), param("mean_a_label", "mean_a"), param("mean_b_label", "mean_b")]}])]
@@ -86,7 +89,6 @@ class MaPlotStep(Step):
                     f"Available: {form.dims}"
                 )
 
-        feat_axis = form.dims.index(dim)
         stat_axis = form.dims.index(stat_dim)
         stat_labels = form.labels.get(stat_dim, {})
         for lbl, name in (

@@ -5,13 +5,15 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Studio 0.4.1 preserves upstream Python Steps, Readers and YAML
-tasks, with **64 built-in operators, 15 readers, six provider packages and five
-reusable route templates**: GWAS, RNA-seq DE, Proteomics DE, survival analysis and
-[16S microbiome](docs/microbiome.md). The desktop package includes this catalog and
-the latest editor. The catalog includes upstream axis/single-cell building blocks,
-multi-group comparisons, GO enrichment, sequence analysis, annotation QC and
-genomic interval analysis; example YAML remains under `tasks/`.
+This source tree is **BioPipe Studio 0.5.0**, with **78 built-in operators,
+16 readers, six provider packages and 14 reusable route templates**, including GWAS, RNA-seq DE,
+proteomics DE, survival analysis, [16S microbiome](docs/microbiome.md),
+single-cell clustering, GTF annotation, BGEN dosage QC, genomic intervals,
+GO enrichment, sequence features, multi-omics and ML models. The published
+The published Studio 0.4.1 release shipped 64 operators, 15 readers and five
+templates. See [0.5.0 release notes](docs/releases/v0.5.0.md) for the current
+source release and [0.4.1](docs/releases/v0.4.1.md) for the previous desktop
+package. Example YAML remains under `tasks/`.
 
 Download the ready-built Windows desktop package from
 [GitHub Releases](https://github.com/lovegavin/BioPipe/releases/latest).
@@ -43,7 +45,7 @@ dependencies, optional analyses and troubleshooting resolver backtracking.
 Choose the archive without `Lite` for the bundled environment. The smaller
 `Windows-x64-Lite.zip` uses an existing Python environment instead.
 
-See [release notes](docs/releases/v0.4.1.md) for this version and
+See [release notes](docs/releases/v0.5.0.md) for this version and
 [legacy/](legacy/README.md) for the archived previous source.
 
 ## Start Studio
@@ -160,11 +162,21 @@ copyable selection context and client revocation. See [CLI/MCP setup](docs/agent
 | [Studio interaction](docs/frontend_requirements.md) | Canvas editing, panels, results and visual design |
 | [Resource runtime](docs/resource_runtime.md) | Fixed budget, admission, spill, cache format and limits |
 | [Desktop](docs/desktop.md) / [portability](docs/portability.md) | Build, launch, profiles and moving computers |
+| [Protocol suite](docs/protocol_suite.md) | Form, Reader, operator, registry, desktop, extension and testing protocols |
+| [SOP matrix](docs/sop_matrix.md) | Reader/operator coverage, independent oracles and reproducible validation commands |
+| [Route authoring SOP](docs/route_sop.md) | Custom task folder, absolute-path handoff, YAML, validation and figure explanation |
+| [LLM route guide](docs/llm_guide.md) / [user guide](docs/user_guide.md) | Machine-facing and human-facing step-by-step instructions |
+| [Reference index](docs/reference/README.md) | Generated per-operator/Reader pages and JSON indexes |
+| [Windows environment freeze](docs/environment/windows-biopipe-conda.yml) / [pip freeze](docs/environment/windows-biopipe-pip-freeze.txt) | Exact conda/pip snapshot of the Windows test environment |
 
 ## Validation
 
 ```text
 python -m pytest -q
+python -m pytest -q tests/sop
+python scripts/build_reference_docs.py --check
+python scripts/run.py tasks/<task> --check
+python -m biopipe registry check
 cd frontend
 npm test
 npm run build
@@ -454,7 +466,7 @@ class Reader(ABC):
 ### Routing and auto-discovery
 
 `src/reader/__init__.py` loads explicit entry points from
-`biopipe/builtin_packages.json`. The 15 readers ship as the `biopipe-readers`
+`biopipe/builtin_packages.json`. The 16 readers ship as the `biopipe-readers`
 package; a hot-installed replacement uses the same IDs and resource contracts.
 Scanning is a maintenance command (`python scripts/build_builtin_packages.py --refresh`),
 not a runtime registration mechanism.
@@ -529,7 +541,7 @@ class Step(ABC):
 ### Auto-discovery
 
 `src/task/step/__init__.py` loads the checked-in package manifest into `STEPS`.
-The 39 operators ship in core, genetics, expression, visualization and microbiome packages.
+The built-in operators ship in six packages: core, genetics, expression, plots and microbiome, plus the separate readers package.
 Package installation validates entry points and atomically publishes a new registry.
 New workers load the selected package generation; running workers keep their lock.
 

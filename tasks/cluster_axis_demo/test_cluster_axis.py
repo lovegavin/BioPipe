@@ -282,7 +282,7 @@ def main():
         test_louvain_two_groups,
         test_output_shape_and_labels,
         test_cluster_ids_are_sequential,
-        test_axis_info_ignored,
+        test_axis_info_preserved_on_surviving_axis,
         test_with_nan,
         test_bad_params_raise,
         test_1d_rejected,

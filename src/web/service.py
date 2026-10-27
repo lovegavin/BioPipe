@@ -6,7 +6,6 @@ import math
 import os
 from pathlib import Path, PurePosixPath, PureWindowsPath
 import subprocess
-import sys
 import threading
 import traceback
 import uuid

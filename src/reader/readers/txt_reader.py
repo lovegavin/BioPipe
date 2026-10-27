@@ -34,6 +34,46 @@ class TxtReader(Reader):
 
     extensions = [".txt", ".tab"]
     handles_compression = False
+    parameters_schema = {
+        "type": "object",
+        "properties": {
+            "header": {
+                "type": "boolean",
+                "title": "Header row",
+                "default": True,
+            },
+            "sep": {
+                "type": "string",
+                "title": "Separator",
+                "minLength": 1,
+            },
+            "encoders": {
+                "type": "object",
+                "title": "Encoders",
+                "description": "Per-field encoder configuration.",
+                "additionalProperties": True,
+            },
+            "columns": {
+                "type": "array",
+                "items": {"type": "string"},
+                "title": "Columns",
+                "description": "Restrict the reader to these header names, in order. Label indices still refer to the original file.",
+            },
+            "info_columns": {
+                "type": "object",
+                "title": "Info columns",
+                "description": "Map a header name to an info field. The column is read as strings into info[field] and declared parallel to the row dimension.",
+                "additionalProperties": {"type": "string"},
+            },
+            "reader": {
+                "type": "string",
+                "title": "Delegate reader",
+                "default": "csv",
+            },
+        },
+        "additionalProperties": True,
+    }
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         reader_name = args.pop("reader", "csv")

@@ -1,0 +1,1155 @@
+[
+  {
+    "id": "BedReader",
+    "kind": "reader",
+    "extensions": [
+      ".bed"
+    ],
+    "file_input": {
+      "dims": [
+        "region",
+        "field"
+      ],
+      "labels": {
+        "region": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "title": "Encoders",
+          "description": "Per-field encoder configuration.",
+          "additionalProperties": true,
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/bed_reader.py",
+    "tests": [
+      "tests/test_assets.py"
+    ],
+    "doc": "docs/reference/readers/BedReader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "BgenReader",
+    "kind": "reader",
+    "extensions": [
+      ".bgen"
+    ],
+    "file_input": {
+      "dims": [
+        "variant",
+        "sample"
+      ],
+      "labels": {
+        "variant": "builtin",
+        "sample": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        },
+        "representation": {
+          "type": "string",
+          "const": "dosage"
+        },
+        "ploidy": {
+          "type": "integer",
+          "min": 1,
+          "const": 2
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "values": "allele_count",
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/bgen_reader.py",
+    "tests": [
+      "tests/test_assets.py"
+    ],
+    "doc": "docs/reference/readers/BgenReader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "CsvReader",
+    "kind": "reader",
+    "extensions": [
+      ".csv"
+    ],
+    "file_input": {
+      "dims": [
+        "sample",
+        "feature"
+      ],
+      "labels": {
+        "sample": "auto",
+        "feature": "builtin"
+      },
+      "compression": [
+        ".gz",
+        ".bz2",
+        ".xz"
+      ]
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "header": {
+          "type": "boolean",
+          "title": "Header row",
+          "default": true,
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sep": {
+          "type": "string",
+          "title": "Separator",
+          "minLength": 1,
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "encoders": {
+          "type": "object",
+          "title": "Encoders",
+          "additionalProperties": true,
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Columns",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "info_columns": {
+          "type": "object",
+          "title": "Info columns",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/csv_reader.py",
+    "tests": [
+      "tests/test_assets.py",
+      "tests/test_audit_fixes.py",
+      "tests/test_contracts.py",
+      "tests/test_task_tools.py"
+    ],
+    "doc": "docs/reference/readers/CsvReader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "FastaReader",
+    "kind": "reader",
+    "extensions": [
+      ".fasta",
+      ".fa",
+      ".fna",
+      ".faa"
+    ],
+    "file_input": {
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {
+        "sequence": "builtin",
+        "position": "auto"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        },
+        "alphabet": {
+          "type": "string"
+        },
+        "representation": {
+          "type": "string",
+          "const": "sequence_codes"
+        },
+        "alphabet_map": {
+          "type": "object"
+        },
+        "unknown_code": {
+          "type": "integer"
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/fasta_reader.py",
+    "tests": [
+      "tests/test_assets.py"
+    ],
+    "doc": "docs/reference/readers/FastaReader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "GafReader",
+    "kind": "reader",
+    "extensions": [
+      ".gaf"
+    ],
+    "file_input": {
+      "dims": [
+        "annotation",
+        "field"
+      ],
+      "labels": {
+        "annotation": "auto",
+        "field": "builtin"
+      },
+      "compression": [
+        ".gz"
+      ]
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/gaf_reader.py",
+    "tests": [
+      "tests/test_assets.py"
+    ],
+    "doc": "docs/reference/readers/GafReader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "Gff3Reader",
+    "kind": "reader",
+    "extensions": [
+      ".gff",
+      ".gff3"
+    ],
+    "file_input": {
+      "dims": [
+        "record",
+        "field"
+      ],
+      "labels": {
+        "record": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "title": "Encoders",
+          "description": "Per-field encoder configuration.",
+          "additionalProperties": true,
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/gff3_reader.py",
+    "tests": [
+      "tests/test_assets.py"
+    ],
+    "doc": "docs/reference/readers/Gff3Reader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "GtfReader",
+    "kind": "reader",
+    "extensions": [
+      ".gtf"
+    ],
+    "file_input": {
+      "dims": [
+        "record",
+        "field"
+      ],
+      "labels": {
+        "record": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "title": "Encoders",
+          "description": "Per-field encoder configuration.",
+          "additionalProperties": true,
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/gtf_reader.py",
+    "tests": [
+      "tests/test_assets.py"
+    ],
+    "doc": "docs/reference/readers/GtfReader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "H5adReader",
+    "kind": "reader",
+    "extensions": [
+      ".h5ad"
+    ],
+    "file_input": {
+      "dims": [
+        "sample",
+        "feature"
+      ],
+      "labels": {
+        "sample": "builtin",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "layer": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-ui-type": "string",
+          "title": "Layer",
+          "description": "Leave unset to read X.",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/h5ad_reader.py",
+    "tests": [
+      "tests/test_assets.py",
+      "tests/test_audit_fixes.py",
+      "tests/test_packages.py"
+    ],
+    "doc": "docs/reference/readers/H5adReader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "MtxReader",
+    "kind": "reader",
+    "extensions": [
+      ".mtx"
+    ],
+    "file_input": {
+      "dims": [
+        "gene",
+        "cell"
+      ],
+      "labels": {
+        "gene": "builtin",
+        "cell": "builtin"
+      },
+      "compression": [
+        ".gz"
+      ],
+      "companions": [
+        [
+          "barcodes.tsv",
+          "barcodes.tsv.gz"
+        ],
+        [
+          "features.tsv",
+          "features.tsv.gz",
+          "genes.tsv",
+          "genes.tsv.gz"
+        ]
+      ]
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/mtx_reader.py",
+    "tests": [
+      "tests/test_assets.py",
+      "tests/test_audit_fixes.py",
+      "tests/test_packages.py"
+    ],
+    "doc": "docs/reference/readers/MtxReader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "ParquetReader",
+    "kind": "reader",
+    "extensions": [
+      ".parquet"
+    ],
+    "file_input": {
+      "dims": [
+        "sample",
+        "feature"
+      ],
+      "labels": {
+        "sample": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "title": "Encoders",
+          "description": "Per-field encoder configuration.",
+          "additionalProperties": true,
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/parquet_reader.py",
+    "tests": [
+      "tests/test_assets.py"
+    ],
+    "doc": "docs/reference/readers/ParquetReader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "Plink1Reader",
+    "kind": "reader",
+    "extensions": [
+      ".bed"
+    ],
+    "file_input": {
+      "dims": [
+        "variant",
+        "sample"
+      ],
+      "labels": {
+        "variant": "builtin",
+        "sample": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        },
+        "representation": {
+          "type": "string",
+          "const": "hard_call"
+        },
+        "ploidy": {
+          "type": "integer",
+          "min": 1,
+          "const": 2
+        },
+        "chrom": {
+          "type": "array",
+          "items": "string"
+        },
+        "pos": {
+          "type": "array",
+          "items": "integer"
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "values": "allele_count",
+      "axis_fields": [
+        {
+          "axis": 0,
+          "fields": [
+            "chrom",
+            "pos"
+          ]
+        }
+      ],
+      "info_open": false
+    },
+    "source": "src/reader/readers/plink_reader.py",
+    "tests": [
+      "tests/test_assets.py"
+    ],
+    "doc": "docs/reference/readers/Plink1Reader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "Plink2Reader",
+    "kind": "reader",
+    "extensions": [
+      ".pgen"
+    ],
+    "file_input": {
+      "dims": [
+        "variant",
+        "sample"
+      ],
+      "labels": {
+        "variant": "builtin",
+        "sample": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        },
+        "representation": {
+          "type": "string",
+          "const": "hard_call"
+        },
+        "ploidy": {
+          "type": "integer",
+          "min": 1,
+          "const": 2
+        },
+        "chrom": {
+          "type": "array",
+          "items": "string"
+        },
+        "pos": {
+          "type": "array",
+          "items": "integer"
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "values": "allele_count",
+      "axis_fields": [
+        {
+          "axis": 0,
+          "fields": [
+            "chrom",
+            "pos"
+          ]
+        }
+      ],
+      "info_open": false
+    },
+    "source": "src/reader/readers/plink_reader.py",
+    "tests": [
+      "tests/test_assets.py",
+      "tests/test_plink2_native.py"
+    ],
+    "doc": "docs/reference/readers/Plink2Reader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "TenxH5Reader",
+    "kind": "reader",
+    "extensions": [
+      ".h5"
+    ],
+    "file_input": {
+      "dims": [
+        "feature",
+        "cell"
+      ],
+      "labels": {
+        "feature": "builtin",
+        "cell": "builtin"
+      },
+      "compression": [],
+      "companions": []
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_type": {
+          "type": "string",
+          "title": "特征类型",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_id_field": {
+          "type": "string",
+          "enum": [
+            "name",
+            "id"
+          ],
+          "default": "name",
+          "title": "特征标识",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        },
+        "representation": {
+          "type": "string",
+          "const": "counts"
+        },
+        "feature_types": {
+          "type": "array",
+          "items": "string"
+        },
+        "genome": {
+          "type": "array",
+          "items": "string"
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/tenx_h5_reader.py",
+    "tests": [],
+    "doc": "docs/reference/readers/TenxH5Reader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "TsvReader",
+    "kind": "reader",
+    "extensions": [
+      ".tsv"
+    ],
+    "file_input": {
+      "dims": [
+        "sample",
+        "feature"
+      ],
+      "labels": {
+        "sample": "auto",
+        "feature": "builtin"
+      },
+      "compression": [
+        ".gz",
+        ".bz2",
+        ".xz"
+      ]
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "header": {
+          "type": "boolean",
+          "title": "Header row",
+          "default": true,
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sep": {
+          "type": "string",
+          "title": "Separator",
+          "minLength": 1,
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "encoders": {
+          "type": "object",
+          "title": "Encoders",
+          "additionalProperties": true,
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Columns",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "info_columns": {
+          "type": "object",
+          "title": "Info columns",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/tsv_reader.py",
+    "tests": [
+      "tests/test_assets.py"
+    ],
+    "doc": "docs/reference/readers/TsvReader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "TxtReader",
+    "kind": "reader",
+    "extensions": [
+      ".txt",
+      ".tab"
+    ],
+    "file_input": {
+      "dims": [
+        "sample",
+        "feature"
+      ],
+      "labels": {
+        "sample": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "header": {
+          "type": "boolean",
+          "title": "Header row",
+          "default": true,
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sep": {
+          "type": "string",
+          "title": "Separator",
+          "minLength": 1,
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "encoders": {
+          "type": "object",
+          "title": "Encoders",
+          "description": "Per-field encoder configuration.",
+          "additionalProperties": true,
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Columns",
+          "description": "Restrict the reader to these header names, in order. Label indices still refer to the original file.",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "info_columns": {
+          "type": "object",
+          "title": "Info columns",
+          "description": "Map a header name to an info field. The column is read as strings into info[field] and declared parallel to the row dimension.",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "reader": {
+          "type": "string",
+          "title": "Delegate reader",
+          "default": "csv",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "axis_fields": [],
+      "info_open": true
+    },
+    "source": "src/reader/readers/txt_reader.py",
+    "tests": [
+      "tasks/peak_nearest_gene_demo/test_peak_nearest_gene_gtf.py",
+      "tests/test_assets.py"
+    ],
+    "doc": "docs/reference/readers/TxtReader.md",
+    "quality": "reviewed"
+  },
+  {
+    "id": "VcfReader",
+    "kind": "reader",
+    "extensions": [
+      ".vcf"
+    ],
+    "file_input": {
+      "dims": [
+        "variant",
+        "sample"
+      ],
+      "labels": {
+        "variant": "builtin",
+        "sample": "builtin"
+      },
+      "compression": [
+        ".gz"
+      ]
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        },
+        "representation": {
+          "type": "string",
+          "const": "hard_call"
+        },
+        "ploidy": {
+          "type": "integer",
+          "min": 1
+        },
+        "chrom": {
+          "type": "array",
+          "items": "string"
+        },
+        "pos": {
+          "type": "array",
+          "items": "integer"
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "values": "allele_count",
+      "axis_fields": [
+        {
+          "axis": 0,
+          "fields": [
+            "chrom",
+            "pos"
+          ]
+        }
+      ],
+      "info_open": false
+    },
+    "source": "src/reader/readers/vcf_reader.py",
+    "tests": [
+      "tests/test_assets.py",
+      "tests/test_vcf_windows.py"
+    ],
+    "doc": "docs/reference/readers/VcfReader.md",
+    "quality": "reviewed"
+  }
+]

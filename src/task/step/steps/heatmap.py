@@ -34,6 +34,8 @@ Params:
     cmap         : matplotlib colormap (default "RdBu_r")
     nan_color    : color for missing cells (default "#DDDDDD")
     figsize      : [width, height] in inches (default auto)
+    max_cells    : refuse selected matrices larger than this (default 4,000,000)
+    max_pixels   : clamp the rendered canvas to this pixel budget (default 40,000,000)
     show_row_labels   : show row tick labels (default False)
     show_col_labels   : show column tick labels (default True)
 """
@@ -42,18 +44,21 @@ from __future__ import annotations
 
 import numpy as np
 
-from src.core import Form, StepError
+from src.core import StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.contracts import port, param
-from src.core.forms.metadata import project_metadata
 from src.task.step.steps._plot_helpers import save_figure, setup_style
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class HeatmapStep(Step):
     """Draw a heatmap of a 2D form."""
 
     name = "heatmap"
+    parameters_schema = LEGACY_SCHEMAS['heatmap']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(ndim=2, dims=[param("dim", "feature"), param("other_dim", "sample")])]
@@ -69,6 +74,8 @@ class HeatmapStep(Step):
         other_dim = ctx.step_params.get("other_dim", "sample")
         select = ctx.step_params.get("select", "variance")
         top_n = int(ctx.step_params.get("top_n", 50))
+        max_cells = int(ctx.step_params.get("max_cells", 4_000_000))
+        max_pixels = int(ctx.step_params.get("max_pixels", 40_000_000))
         labels_list = ctx.step_params.get("labels")
         standardize = ctx.step_params.get("standardize", "none")
         cluster_rows = bool(ctx.step_params.get("cluster_rows", True))
@@ -124,7 +131,7 @@ class HeatmapStep(Step):
         feat_axis = form.dims.index(dim)
         other_axis = form.dims.index(other_dim)
         matrix = np.moveaxis(form.data, (feat_axis, other_axis), (0, 1))
-        matrix = matrix.astype(np.float64)
+        matrix = np.asarray(matrix)
 
         row_labels_map = form.labels[dim]
         col_labels_map = form.labels[other_dim]
@@ -164,6 +171,16 @@ class HeatmapStep(Step):
 
         if matrix.size == 0:
             raise StepError("heatmap: selected matrix is empty")
+        if max_cells < 1:
+            raise StepError("heatmap: max_cells must be >= 1")
+        if matrix.size > max_cells:
+            raise StepError(
+                f"heatmap: selected matrix is {matrix.shape[0]} x {matrix.shape[1]} "
+                f"= {matrix.size:,} cells, above max_cells={max_cells:,}. "
+                "Use select='variance' with a smaller top_n, select='label', "
+                "or subset the data before heatmap."
+            )
+        matrix = matrix.astype(np.float64, copy=False)
 
         # Standardization
         if standardize == "row":
@@ -213,6 +230,19 @@ class HeatmapStep(Step):
             h = max(3.0, 0.12 * matrix.shape[0] + 1.5)
             figsize = [w, h]
 
+        # A square heatmap can make Matplotlib resample to an enormous
+        # canvas even when the matrix itself is modest.  Clamp the auto
+        # figure (or an explicitly supplied one) to a pixel budget.
+        if max_pixels < 1_000_000:
+            raise StepError("heatmap: max_pixels must be >= 1000000")
+        dpi = float(plt.rcParams.get("savefig.dpi", 200))
+        pixels = float(figsize[0]) * float(figsize[1]) * dpi * dpi
+        if pixels > max_pixels:
+            import math
+            scale = math.sqrt(max_pixels / pixels)
+            figsize = [max(1.0, float(figsize[0]) * scale),
+                       max(1.0, float(figsize[1]) * scale)]
+
         fig, ax = plt.subplots(figsize=tuple(figsize))
         im = ax.imshow(
             matrix, aspect="auto", cmap=cmap_obj,
@@ -261,6 +291,8 @@ class HeatmapStep(Step):
             "cluster_cols": cluster_cols,
             "n_rows": int(matrix.shape[0]),
             "n_cols": int(matrix.shape[1]),
+            "max_cells": max_cells,
+            "figsize": [float(figsize[0]), float(figsize[1])],
             "vmin": vmin,
             "vmax": vmax,
             "row_order": [row_names[i] for i in range(matrix.shape[0])],

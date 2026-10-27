@@ -30,15 +30,6 @@ steps:
       fields: [MAPPED_GENE, risk_allele_frequency]
       output: annotated
 
-  - name: filter_min
-    inputs: [ annotated ]
-    params:
-      dim: variant
-      rules:
-        - field: risk_allele_frequency
-          min: 0.0001
-      output: annotated_nonzero
-
   - name: prioritize
     inputs: [annotated]
     params:

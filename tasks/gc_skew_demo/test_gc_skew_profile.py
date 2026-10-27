@@ -41,7 +41,8 @@ def _make_form(seq):
 def _row(out, i):
     return {n: float(out.data[i, j])
             for j, n in enumerate(("start", "end", "gc", "at",
-                                   "gc_skew", "cumulative_skew"))}
+                                   "gc_skew", "cumulative_skew",
+                                   "cumulative_gc"))}
 
 
 def test_hand_counted_five_windows():
@@ -56,10 +57,10 @@ def test_hand_counted_five_windows():
     out = run_operator(GcSkewProfileStep, [_make_form(seq)],
                        {"window_size": 4, "step_size": 4})
     assert out.dims == ["window", "statistic"]
-    assert out.data.shape == (5, 6)
+    assert out.data.shape == (5, 7)
     assert out.labels["statistic"] == {
         "start": 0, "end": 1, "gc": 2, "at": 3,
-        "gc_skew": 4, "cumulative_skew": 5,
+        "gc_skew": 4, "cumulative_skew": 5, "cumulative_gc": 6,
     }
     assert out.info["window_size"] == 4
     assert out.info["step_size"] == 4
@@ -71,12 +72,14 @@ def test_hand_counted_five_windows():
     assert r0["gc"] == 1.0 and r0["at"] == 0.0
     assert r0["gc_skew"] == 1.0
     assert r0["cumulative_skew"] == 1.0
+    assert r0["cumulative_gc"] == 4.0
 
     r1 = _row(out, 1)
     assert r1["start"] == 4.0 and r1["end"] == 8.0
     assert r1["gc"] == 1.0 and r1["at"] == 0.0
     assert r1["gc_skew"] == -1.0
     assert r1["cumulative_skew"] == 0.0
+    assert r1["cumulative_gc"] == 0.0
 
     r2 = _row(out, 2)
     assert r2["gc"] == 0.0 and r2["at"] == 1.0
@@ -102,7 +105,7 @@ def test_last_window_shorter_when_length_not_multiple():
     seq = "GGGGCCCCAA"
     out = run_operator(GcSkewProfileStep, [_make_form(seq)],
                        {"window_size": 4, "step_size": 4})
-    assert out.data.shape == (3, 6)
+    assert out.data.shape == (3, 7)
     r2 = _row(out, 2)
     assert r2["start"] == 8.0
     assert r2["end"] == 10.0

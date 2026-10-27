@@ -41,12 +41,16 @@ from src.core.forms.metadata import project_metadata
 _STAT_LABELS = {"chi2": 0, "df": 1, "P": 2}
 
 
+from ._legacy_schemas import LEGACY_SCHEMAS
+
 class LogrankTestStep(Step):
     """Log-rank test for survival differences across groups."""
     dependencies = ['lifelines>=0.30,<0.31']
     dependency_imports = ['lifelines']
 
     name = "logrank_test"
+    parameters_schema = LEGACY_SCHEMAS['logrank_test']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [{**port(ndim=2), "labels_axis": [{"axis": 1, "values": [param("time_label"), param("event_label"), param("group_label")]}]}]
@@ -98,7 +102,7 @@ class LogrankTestStep(Step):
             for k, v in group_map.items():
                 group_map_norm[str(k)] = str(v)
 
-        sample_dim, feature_dim = form.dims[0], form.dims[1]
+        feature_dim = form.dims[1]
         labels = form.labels.get(feature_dim, {})
         for lbl, name in (
             (time_label, "time_label"),

@@ -49,10 +49,14 @@ from src.core.forms.metadata import project_metadata
 _METHODS = ("min", "median", "mean")
 
 
+from ._legacy_schemas import LEGACY_SCHEMAS
+
 class ImputeStep(Step):
     """Fill missing values in a form."""
 
     name = "impute"
+    parameters_schema = LEGACY_SCHEMAS['impute']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(dims=[param("dim")])]

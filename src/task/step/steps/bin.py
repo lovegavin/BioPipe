@@ -153,7 +153,7 @@ class BinStep(Step):
         n_valid = int(valid.sum())
         if n_valid < 2:
             raise StepError(
-                f"bin: fewer than 2 positions have a finite value"
+                "bin: fewer than 2 positions have a finite value"
             )
 
         values = summaries[valid]

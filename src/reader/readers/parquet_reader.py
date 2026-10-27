@@ -43,6 +43,7 @@ from src.reader.base import Reader
 from src.core.contracts import reader_contract
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
+from src.core.numeric import compact_numeric
 
 
 class ParquetReader(Reader):
@@ -56,6 +57,19 @@ class ParquetReader(Reader):
 
     extensions = [".parquet"]
     handles_compression = False
+    parameters_schema = {
+        "type": "object",
+        "properties": {
+            "encoders": {
+                "type": "object",
+                "title": "Encoders",
+                "description": "Per-field encoder configuration.",
+                "additionalProperties": True,
+            }
+        },
+        "additionalProperties": True,
+    }
+
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:
@@ -137,7 +151,7 @@ class ParquetReader(Reader):
             col = df.iloc[:, old_idx]
             numeric = True
             try:
-                values = col.to_numpy(dtype=np.float32)
+                values = col.to_numpy(dtype=np.float64)
             except (ValueError, TypeError):
                 numeric = False
 
@@ -155,7 +169,7 @@ class ParquetReader(Reader):
             cols_data.append(encoder.fit_transform(col.tolist()))
             encoders_used[name] = encoder
 
-        data = np.stack(cols_data, axis=1).astype(np.float32)
+        data = compact_numeric(np.stack(cols_data, axis=1))
 
         final: dict[str, dict[str, int]] = {}
 

@@ -34,8 +34,10 @@ from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.forms.metadata import project_metadata
-from src.core.contracts import MISSING, param, port
+from src.core.contracts import param, port
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class RegressStep(Step):
     """Regression of a response on each predictor, adjusting for covariates.
@@ -49,6 +51,8 @@ class RegressStep(Step):
     """
 
     name = "regress"
+    parameters_schema = LEGACY_SCHEMAS['regress']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(ndim=2, dims=[param("dim")], labels=[{"dim": param("dim"), "values": param("response")}, {"dim": param("dim"), "values": param("covariates", [])}])]

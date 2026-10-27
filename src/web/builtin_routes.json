@@ -166,8 +166,8 @@
               "y": 100.0
             },
             "params": {
-              "window": 50,
               "r2": 0.2,
+              "window": 50,
               "dim": "variant",
               "output": "geno_pruned"
             },
@@ -205,9 +205,9 @@
               "y": 100.0
             },
             "params": {
+              "alpha": 0.7,
               "dim": "component",
               "point_size": 8,
-              "alpha": 0.7,
               "filename": "pca_scatter.png",
               "title": "BGEN dosage QC: PC1 vs PC2",
               "x_label": "PC1",
@@ -548,10 +548,10 @@
               "y": 730.0
             },
             "params": {
-              "dim": "statistic",
-              "ylabel": "Count",
               "bins": 30,
+              "dim": "statistic",
               "log_y": false,
+              "ylabel": "Count",
               "filename": "seq_length_hist.png",
               "title": "Sequence lengths",
               "value_label": "length",
@@ -572,10 +572,10 @@
               "y": 940.0
             },
             "params": {
-              "dim": "statistic",
-              "ylabel": "Count",
               "bins": 30,
+              "dim": "statistic",
               "log_y": false,
+              "ylabel": "Count",
               "filename": "gc_hist.png",
               "title": "GC content per sequence",
               "value_label": "gc",
@@ -596,10 +596,10 @@
               "y": 1150.0
             },
             "params": {
-              "dim": "statistic",
-              "ylabel": "Count",
               "bins": 40,
+              "dim": "statistic",
               "log_y": false,
+              "ylabel": "Count",
               "filename": "orf_length_hist.png",
               "title": "ORF lengths",
               "value_label": "length_aa",
@@ -784,7 +784,7 @@
     },
     {
       "id": "route_274abd24ce8d",
-      "version": 3,
+      "version": 4,
       "name": "RNA-seq DE",
       "graph": {
         "schema_version": 2,
@@ -857,8 +857,8 @@
               "y": 100.0
             },
             "params": {
-              "min_value": 10,
               "min_samples": 3,
+              "min_value": 10,
               "dim": "gene",
               "output": "counts_filtered"
             },
@@ -902,16 +902,16 @@
               "y": 100.0
             },
             "params": {
+              "alpha": 0.7,
               "dim": "gene",
-              "stat_dim": "statistic",
+              "label_top": 8,
               "lfc_label": "log2FC",
-              "p_label": "Q_VALUE",
-              "ylabel": "-log10(P)",
               "lfc_threshold": 1.0,
+              "p_label": "Q_VALUE",
               "p_threshold": 0.05,
               "point_size": 8,
-              "alpha": 0.7,
-              "label_top": 8,
+              "stat_dim": "statistic",
+              "ylabel": "-log10(P)",
               "filename": "volcano.png",
               "title": "Airway: dex vs untrt"
             },
@@ -930,17 +930,17 @@
               "y": 310.0
             },
             "params": {
+              "alpha": 0.7,
               "dim": "gene",
-              "stat_dim": "statistic",
+              "label_top": 0,
               "lfc_label": "log2FC",
               "mean_a_label": "mean_a",
               "mean_b_label": "mean_b",
               "p_label": "Q_VALUE",
-              "xlabel": "log2 mean",
               "p_threshold": 0.05,
               "point_size": 8,
-              "alpha": 0.7,
-              "label_top": 0,
+              "stat_dim": "statistic",
+              "xlabel": "log2 mean",
               "filename": "ma.png",
               "title": "Airway: dex vs untrt"
             },
@@ -1017,9 +1017,9 @@
               "y": 100.0
             },
             "params": {
+              "alpha": 0.7,
               "dim": "component",
               "point_size": 8,
-              "alpha": 0.7,
               "filename": "pca.png",
               "title": "Sample PCA",
               "x_label": "PC1",
@@ -1040,17 +1040,19 @@
               "y": 310.0
             },
             "params": {
+              "cluster_cols": true,
+              "cluster_rows": true,
+              "cmap": "RdBu_r",
               "dim": "gene",
+              "nan_color": "#DDDDDD",
               "other_dim": "sample",
               "select": "variance",
-              "standardize": "row",
-              "cmap": "RdBu_r",
-              "nan_color": "#DDDDDD",
-              "top_n": 50,
-              "cluster_rows": true,
-              "cluster_cols": true,
-              "show_row_labels": false,
               "show_col_labels": true,
+              "show_row_labels": false,
+              "standardize": "row",
+              "max_cells": 4000000,
+              "max_pixels": 40000000,
+              "top_n": 50,
               "filename": "top50_heatmap.png",
               "title": "Top 50 variable genes"
             },
@@ -1091,9 +1093,9 @@
             },
             "params": {
               "dim": "gene",
-              "show_points": true,
-              "point_size": 4,
               "point_alpha": 0.5,
+              "point_size": 4,
+              "show_points": true,
               "filename": "ZBTB16_boxplot.png",
               "group_dim": "sample",
               "group_label": "dex",
@@ -1593,10 +1595,10 @@
               "y": 730.0
             },
             "params": {
-              "dim": "statistic",
-              "ylabel": "Count",
               "bins": 30,
+              "dim": "statistic",
               "log_y": false,
+              "ylabel": "Count",
               "filename": "n_intervals_per_chrom.png",
               "title": "cCRE count per chromosome",
               "value_label": "n_intervals",
@@ -1617,10 +1619,10 @@
               "y": 940.0
             },
             "params": {
-              "dim": "statistic",
-              "ylabel": "Count",
               "bins": 50,
+              "dim": "statistic",
               "log_y": false,
+              "ylabel": "Count",
               "filename": "merged_length_hist.png",
               "title": "Merged cCRE region lengths",
               "value_label": "length",
@@ -1641,10 +1643,10 @@
               "y": 1150.0
             },
             "params": {
-              "dim": "statistic",
-              "ylabel": "Count",
               "bins": 50,
+              "dim": "statistic",
               "log_y": false,
+              "ylabel": "Count",
               "filename": "overlap_length_hist.png",
               "title": "Overlap length (cCRE vs regulatory)",
               "value_label": "overlap_length",
@@ -1828,7 +1830,7 @@
     },
     {
       "id": "route_3dedbe0d6655",
-      "version": 1,
+      "version": 2,
       "name": "Multi-omics integration",
       "graph": {
         "schema_version": 2,
@@ -2132,17 +2134,19 @@
               "y": 520.0
             },
             "params": {
+              "cluster_cols": false,
+              "cluster_rows": false,
+              "cmap": "RdBu_r",
               "dim": "cell",
+              "nan_color": "#DDDDDD",
               "other_dim": "cell_b",
               "select": "all",
-              "standardize": "none",
-              "cmap": "RdBu_r",
-              "nan_color": "#DDDDDD",
-              "top_n": 50,
-              "cluster_rows": false,
-              "cluster_cols": false,
-              "show_row_labels": false,
               "show_col_labels": true,
+              "show_row_labels": false,
+              "standardize": "none",
+              "max_cells": 4000000,
+              "max_pixels": 40000000,
+              "top_n": 50,
               "filename": "protein_cell_correlation.png",
               "title": "Cell-cell correlation across 32 surface proteins"
             },
@@ -2953,7 +2957,7 @@
     },
     {
       "id": "route_5d8f861d9506",
-      "version": 2,
+      "version": 3,
       "name": "16S Microbiome",
       "graph": {
         "schema_version": 2,
@@ -3032,8 +3036,8 @@
               "y": 100.0
             },
             "params": {
-              "min_value": 10,
               "min_samples": 5,
+              "min_value": 10,
               "dim": "species",
               "output": "otu_filtered"
             },
@@ -3204,9 +3208,9 @@
               "y": 100.0
             },
             "params": {
+              "alpha": 0.75,
               "dim": "component",
               "point_size": 30,
-              "alpha": 0.75,
               "color_label": "meta_site",
               "filename": "pcoa_by_site.png",
               "title": "PCoA (Bray-Curtis), colored by site",
@@ -3228,9 +3232,9 @@
               "y": 310.0
             },
             "params": {
+              "alpha": 0.75,
               "dim": "component",
               "point_size": 30,
-              "alpha": 0.75,
               "color_label": "meta_horizon",
               "filename": "pcoa_by_horizon.png",
               "title": "PCoA (Bray-Curtis), colored by horizon",
@@ -3252,9 +3256,9 @@
               "y": 520.0
             },
             "params": {
+              "alpha": 0.75,
               "dim": "component",
               "point_size": 30,
-              "alpha": 0.75,
               "color_label": "meta_transect",
               "filename": "pcoa_by_transect.png",
               "title": "PCoA (Bray-Curtis), colored by transect",
@@ -3366,17 +3370,19 @@
               "y": 940.0
             },
             "params": {
+              "cluster_cols": true,
+              "cluster_rows": true,
+              "cmap": "RdBu_r",
               "dim": "sample",
+              "nan_color": "#DDDDDD",
               "other_dim": "sample_b",
               "select": "all",
-              "standardize": "none",
-              "cmap": "RdBu_r",
-              "nan_color": "#DDDDDD",
-              "top_n": 50,
-              "cluster_rows": true,
-              "cluster_cols": true,
-              "show_row_labels": false,
               "show_col_labels": true,
+              "show_row_labels": false,
+              "standardize": "none",
+              "max_cells": 4000000,
+              "max_pixels": 40000000,
+              "top_n": 50,
               "filename": "sample_correlation.png",
               "title": "Sample-sample Spearman correlation"
             },
@@ -4870,7 +4876,7 @@
     },
     {
       "id": "route_88fb083f4238",
-      "version": 3,
+      "version": 4,
       "name": "Proteomics DE",
       "graph": {
         "schema_version": 2,
@@ -5033,10 +5039,10 @@
               "y": 100.0
             },
             "params": {
+              "alpha": 0.05,
+              "dim": "statistic",
               "method": "fdr",
               "pfield": "P",
-              "dim": "statistic",
-              "alpha": 0.05,
               "output": "de_result"
             },
             "context_params": {},
@@ -5054,16 +5060,16 @@
               "y": 100.0
             },
             "params": {
+              "alpha": 0.7,
               "dim": "protein",
-              "stat_dim": "statistic",
+              "label_top": 10,
               "lfc_label": "log2FC",
-              "p_label": "Q_VALUE",
-              "ylabel": "-log10(P)",
               "lfc_threshold": 0.5,
+              "p_label": "Q_VALUE",
               "p_threshold": 0.05,
               "point_size": 8,
-              "alpha": 0.7,
-              "label_top": 10,
+              "stat_dim": "statistic",
+              "ylabel": "-log10(P)",
               "filename": "volcano.png",
               "title": "CPTAC BRCA: Stage III vs Stage II"
             },
@@ -5082,17 +5088,17 @@
               "y": 310.0
             },
             "params": {
+              "alpha": 0.7,
               "dim": "protein",
-              "stat_dim": "statistic",
+              "label_top": 0,
               "lfc_label": "log2FC",
               "mean_a_label": "mean_a",
               "mean_b_label": "mean_b",
               "p_label": "Q_VALUE",
-              "xlabel": "log2 mean",
               "p_threshold": 0.05,
               "point_size": 8,
-              "alpha": 0.7,
-              "label_top": 0,
+              "stat_dim": "statistic",
+              "xlabel": "log2 mean",
               "filename": "ma.png",
               "title": "CPTAC BRCA: Stage III vs Stage II"
             },
@@ -5132,17 +5138,19 @@
               "y": 310.0
             },
             "params": {
+              "cluster_cols": true,
+              "cluster_rows": true,
+              "cmap": "RdBu_r",
               "dim": "protein",
+              "nan_color": "#DDDDDD",
               "other_dim": "sample",
               "select": "variance",
-              "standardize": "row",
-              "cmap": "RdBu_r",
-              "nan_color": "#DDDDDD",
-              "top_n": 50,
-              "cluster_rows": true,
-              "cluster_cols": true,
-              "show_row_labels": false,
               "show_col_labels": true,
+              "show_row_labels": false,
+              "standardize": "row",
+              "max_cells": 4000000,
+              "max_pixels": 40000000,
+              "top_n": 50,
               "filename": "heatmap.png",
               "title": "Top 50 variable proteins"
             },
@@ -5449,10 +5457,10 @@
               "y": 100.0
             },
             "params": {
-              "xlabel": "Time (days)",
-              "ylabel": "Survival probability",
               "show_censors": true,
               "show_ci": false,
+              "xlabel": "Time (days)",
+              "ylabel": "Survival probability",
               "event_label": "OS_event_nature2012",
               "filename": "km_stage.png",
               "group_label": "AJCC_Stage_nature2012",
@@ -5555,17 +5563,17 @@
               "y": 100.0
             },
             "params": {
-              "dim": "covariate",
-              "stat_dim": "statistic",
-              "hr_label": "HR",
-              "low_label": "CI_low",
-              "high_label": "CI_high",
-              "p_label": "P",
-              "xlabel": "Hazard ratio (95% CI)",
-              "color_sig": "#D62728",
               "color_ns": "#4C72B0",
-              "sort_by": "p",
+              "color_sig": "#D62728",
+              "dim": "covariate",
+              "high_label": "CI_high",
+              "hr_label": "HR",
               "log_scale": true,
+              "low_label": "CI_low",
+              "p_label": "P",
+              "sort_by": "p",
+              "stat_dim": "statistic",
+              "xlabel": "Hazard ratio (95% CI)",
               "filename": "forest.png",
               "title": "TCGA BRCA: multivariable Cox regression"
             },
@@ -5898,10 +5906,10 @@
               "y": 730.0
             },
             "params": {
-              "dim": "statistic",
-              "ylabel": "Count",
               "bins": 30,
+              "dim": "statistic",
               "log_y": false,
+              "ylabel": "Count",
               "filename": "exon_count_hist.png",
               "title": "Exons per gene (S. cerevisiae GTF)",
               "value_label": "n_exons",
@@ -5922,10 +5930,10 @@
               "y": 940.0
             },
             "params": {
-              "dim": "statistic",
-              "ylabel": "Count",
               "bins": 40,
+              "dim": "statistic",
               "log_y": false,
+              "ylabel": "Count",
               "filename": "gap_length_hist.png",
               "title": "Inter-gene gap lengths (>= 500 bp)",
               "value_label": "gap_length",
@@ -6205,8 +6213,8 @@
               "y": 100.0
             },
             "params": {
-              "min_value": 1,
               "min_samples": 3,
+              "min_value": 1,
               "dim": "gene",
               "output": "genes_filtered"
             },
@@ -6377,9 +6385,9 @@
               "y": 310.0
             },
             "params": {
+              "alpha": 0.7,
               "dim": "component",
               "point_size": 8,
-              "alpha": 0.7,
               "filename": "umap.png",
               "title": "PBMC 3k: UMAP of cells",
               "x_label": "UMAP1",
@@ -6659,7 +6667,7 @@
     },
     {
       "id": "route_f6f466bace35",
-      "version": 2,
+      "version": 3,
       "name": "GWAS",
       "graph": {
         "schema_version": 2,
@@ -6834,8 +6842,8 @@
               "y": 100.0
             },
             "params": {
-              "window": 50,
               "r2": 0.2,
+              "window": 50,
               "dim": "variant",
               "output": "geno_pruned"
             },
@@ -6913,7 +6921,6 @@
               "y": 100.0
             },
             "params": {
-              "_input_names": [],
               "axis": "feature",
               "output": "combined"
             },
@@ -6932,11 +6939,11 @@
               "y": 100.0
             },
             "params": {
-              "method": "auto",
               "covariates": [
                 "sex",
                 "batch"
               ],
+              "method": "auto",
               "dim": "feature",
               "output": "raw",
               "response": "trait_value"
@@ -6956,10 +6963,10 @@
               "y": 100.0
             },
             "params": {
+              "alpha": 0.05,
+              "dim": "statistic",
               "method": "fdr",
               "pfield": "P",
-              "dim": "statistic",
-              "alpha": 0.05,
               "output": "assoc_result"
             },
             "context_params": {},
@@ -6999,9 +7006,9 @@
               "y": 100.0
             },
             "params": {
+              "alpha": 0.85,
               "dim": "feature",
               "point_size": 6,
-              "alpha": 0.85,
               "chrom_label": "chrom",
               "filename": "manhattan.png",
               "p_dim": "statistic",
@@ -7024,9 +7031,9 @@
               "y": 310.0
             },
             "params": {
+              "alpha": 0.7,
               "dim": "component",
               "point_size": 8,
-              "alpha": 0.7,
               "filename": "pca_scatter.png",
               "title": "PCA",
               "x_label": "PC1",
@@ -7049,10 +7056,10 @@
               "y": 310.0
             },
             "params": {
-              "dim": "statistic",
-              "ylabel": "Count",
               "bins": 20,
+              "dim": "statistic",
               "log_y": false,
+              "ylabel": "Count",
               "filename": "pvalue_hist.png",
               "title": "P-value distribution",
               "value_label": "P",

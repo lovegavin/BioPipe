@@ -7,9 +7,13 @@ from src.core.forms.metadata import concat_metadata, equal_metadata
 from src.task.step.base import Step
 
 
+from ._legacy_schemas import LEGACY_SCHEMAS
+
 class ConcatStep(Step):
     """Concatenate inputs on axis; align other axes by label or a unique key."""
     name = "concat"
+    parameters_schema = LEGACY_SCHEMAS['concat']
+    legacy_parameters = False
     inputs_arity = "*"
     outputs = []
     input_contracts = [port(dims=[param("axis")])]
@@ -20,7 +24,7 @@ class ConcatStep(Step):
         if len(inputs) < 2:
             raise StepError("concat needs at least two inputs")
         axis = ctx.step_params["axis"]
-        out_name = ctx.step_params["output"]
+        out_name = ctx.step_params.get("output", self.name)
         align = ctx.step_params.get("align")
         merged_label = ctx.step_params.get("label")
         names = ctx.step_params.get("_input_names", [])

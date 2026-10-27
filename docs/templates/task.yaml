@@ -1,0 +1,24 @@
+name: <slug>
+
+sources:
+  <source_name>:
+    path: input/<file>
+    dims: [<dim0>, <dim1>]
+    labels:
+      <dim0>: <auto|builtin|{...}>
+      <dim1>: builtin
+    # args:
+    #   reader: csv
+    #   sep: "\t"
+
+steps:
+  - name: <operator>
+    inputs: [<source_name>]
+    params:
+      <required_param>: <value>
+      output: <output_name>
+
+  # - name: <next_operator>
+  #   inputs: [<output_name>]
+  #   params:
+  #     output: <next_output>

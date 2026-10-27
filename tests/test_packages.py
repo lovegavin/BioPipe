@@ -1,9 +1,7 @@
 """Unified provider lifecycle and real wheel execution, including resource modes."""
-from copy import deepcopy
 import json
 from pathlib import Path
 import subprocess
-import sys
 
 import numpy as np
 import pytest

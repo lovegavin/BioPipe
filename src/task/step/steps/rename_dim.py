@@ -7,8 +7,10 @@ from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.core.forms.metadata import project_metadata
-from src.core.contracts import MISSING, param, port
+from src.core.contracts import param, port
 
+
+from ._legacy_schemas import LEGACY_SCHEMAS
 
 class RenameDimStep(Step):
     """Rename a single dimension.
@@ -20,6 +22,8 @@ class RenameDimStep(Step):
     """
 
     name = "rename_dim"
+    parameters_schema = LEGACY_SCHEMAS['rename_dim']
+    legacy_parameters = False
     inputs_arity = 1
     outputs = []
     input_contracts = [port(dims=[param("from")])]

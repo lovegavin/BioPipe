@@ -12,7 +12,7 @@ import uuid
 
 from .storage import FileLock, atomic_json
 
-from .models import (Graph, GraphEdge, RouteDefinition, RouteInterface, RouteInput,
+from .models import (GraphEdge, RouteDefinition, RouteInterface, RouteInput,
                      RouteOutput, SavedWorkflow, Workspace, LibraryState)
 
 

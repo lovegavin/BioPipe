@@ -4,16 +4,10 @@ from pathlib import Path
 import time
 
 from fastapi.testclient import TestClient
-import numpy as np
 import pytest
 
-from src.task import STEPS
-from src.task.operator_catalog import build_catalog
 from src.web.api import create_app
-from src.web.contracts import analyze_graph
-from src.web.graph import compile_graph, GraphError
-from src.web.models import Graph, RouteDefinition, GraphNode, Position, SaveWorkflow
-from src.web.routes import RouteLibrary, expand_routes, prepare_interface
+from src.web.routes import RouteLibrary
 from src.web.service import Settings
 
 ROOT = Path(__file__).resolve().parents[1]

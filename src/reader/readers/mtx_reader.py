@@ -67,6 +67,12 @@ class MtxReader(Reader):
     handles_compression = True
     supports_disk_read = True
     disk_protocol = "dense-writer-v1"
+    parameters_schema = {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": True,
+    }
+
 
     def probe(self, path, **args):
         with _open_maybe_gz(Path(path)) as handle:
