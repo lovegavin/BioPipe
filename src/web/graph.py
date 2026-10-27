@@ -311,14 +311,15 @@ def _resolve_import_base(raw, base_dir, root):
     return Path(os.path.relpath(resolved_base, root)).as_posix(), raw
 
 
-def import_manifest(text, base_dir, catalog, root):
+def import_manifest(text, base_dir, catalog, root, auto_locate=True):
     raw = yaml.safe_load(text)
     if not isinstance(raw, dict) or not isinstance(raw.get("sources"), dict) or not isinstance(raw.get("steps"), list):
         raise GraphError("任务 YAML 需要 sources 和 steps。")
-    try:
-        base_dir, raw = _resolve_import_base(raw, base_dir, root)
-    except ValueError as exc:
-        raise GraphError(str(exc)) from exc
+    if auto_locate:
+        try:
+            base_dir, raw = _resolve_import_base(raw, base_dir, root)
+        except ValueError as exc:
+            raise GraphError(str(exc)) from exc
     _validate_sources(raw["sources"])
     _validate_steps(raw["steps"])
     MemoryConfig.parse(raw, detect_available=False)

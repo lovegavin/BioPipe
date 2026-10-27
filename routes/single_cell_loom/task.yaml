@@ -1,0 +1,60 @@
+name: single_cell_loom
+sources:
+  expr:
+    path: input/small.loom
+    dims: [gene, cell]
+    labels:
+      gene: builtin
+      cell: builtin
+  meta:
+    path: input/meta.csv
+    dims: [cell, feature]
+    labels:
+      cell: {feature: 0}
+      feature: builtin
+  markers:
+    path: input/markers.gmt
+    dims: [gene, gene_set]
+    labels:
+      gene: builtin
+      gene_set: builtin
+steps:
+  - name: qc_metrics
+    inputs: [expr]
+    params:
+      feature_dim: gene
+      sample_dim: cell
+      metrics:
+        - {name: total, op: sum}
+        - {name: n_detected, op: nonzero}
+      output: qc
+  - name: normalize
+    inputs: [expr]
+    params: {method: cpm, dim: cell, output: cpm}
+  - name: log_transform
+    inputs: [cpm]
+    params: {output: logged}
+  - name: transpose
+    inputs: [logged]
+    params: {order: [cell, gene], output: cells_by_gene}
+  - name: doublet_detect
+    inputs: [cells_by_gene]
+    params: {cell_dim: cell, gene_dim: gene, n_prin_comps: 10, output: doublets}
+  - name: pseudobulk
+    inputs: [cells_by_gene, meta]
+    params: {cell_dim: cell, gene_dim: gene, group_label: group, method: sum, output: pseudobulk}
+  - name: marker_score
+    inputs: [cells_by_gene, markers]
+    params: {cell_dim: cell, gene_dim: gene, gene_set_dim: gene_set, min_genes: 5, output: scores}
+  - name: describe
+    inputs: [qc]
+    params: {}
+  - name: describe
+    inputs: [doublets]
+    params: {}
+  - name: describe
+    inputs: [pseudobulk]
+    params: {}
+  - name: describe
+    inputs: [scores]
+    params: {}

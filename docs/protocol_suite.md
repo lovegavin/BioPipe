@@ -468,11 +468,11 @@ Reader 只负责把一种“分析就绪”的文件/文件组读成 Form。**MU
 | 协议 | 现状 | 需要补齐 |
 |---|---|---|
 | P1 Form | 基本满足 | 统一 dtype 精度测试；更多算子输出精度审计 |
-| P2 Reader | 16 个已声明 schema；精度/FASTA/GFF/BED 已修 | 每个 Reader 的格式语义表与真实数据覆盖；BGEN 坐标 |
-| P3 Operator | 78 个严格 schema；30 个 legacy 已迁移；标题/UI 分组已归一化 | 仍需逐个审计未覆盖的数学分支 |
+| P2 Reader | 19 个已声明 schema；精度/FASTA/GFF/BED 已修 | 每个 Reader 的格式语义表与真实数据覆盖；BGEN 坐标 |
+| P3 Operator | 89 个严格 schema；30 个 legacy 已迁移；标题/UI 分组已归一化 | 仍需逐个审计未覆盖的数学分支 |
 | P4 Contract | 三态 + 运行时校验已实现；Step/Reader 基类强制严格参数 | 更多负例覆盖；输出 mode 逐项测试 |
 | P5 Registry | 生成物干净；source 为唯一参数真源；`operator_ui.json` 已只保留展示元数据（1485→258 行） | 无 |
-| P6 Route | 14 条；编译/展开/注册已实现 | 9 条缺合成 fixture |
+| P6 Route | 19 条；编译/展开/注册已实现 | 9 条旧 route 缺合成 fixture；5 条 0.8.0 新 route 已有独立 smoke test |
 | P7 Desktop | 参数 title/group/unit 由 schema 提供；前端未改 | 前端接入 `x-ui-*`、输入预览、错误定位 |
 | P8 Extension | SDK/wheel/drop-in/route 已实现 | 外部插件测试矩阵与私有 import 扫描 |
 | P9 Testing | 29 个独立 SOP + 全量 pytest + 251 verify + 49 demo；见 [SOP 矩阵](sop_matrix.md) | frontend 未构建；9 条 route skip；10 个 plot 为 route artifact，4 个有 demo 逐值 |
@@ -504,7 +504,7 @@ Reader 只负责把一种“分析就绪”的文件/文件组读成 Form。**MU
    - A（推荐）：外部必须 `lab.*` 命名空间；内置保留历史 ID。
    - B：所有新 ID 强制命名空间（包括内置新增）。
 7. **测试门禁**
-   - A（推荐）：14 verify + 49 demo + 389 pytest + registry check + ruff F 全过才算完成；frontend 构建纳入 CI。
+   - A（推荐）：14 verify + 49 demo + 460 pytest + registry check + ruff F 全过才算完成；frontend 构建纳入 CI。
    - B：pytest + registry check 为准，verify/demo 作为发布前检查。
 8. **BGEN/H5AD 是否纳入本轮**
    - A（推荐）：纳入 BGEN 的 `chrom/pos` 元数据与 H5AD/10x 的磁盘路径；不新增 Reader/算子。

@@ -127,8 +127,9 @@ YAML / JSON
 
 ## 7. 当前能力与边界
 
-- Reader：CSV/TSV/TXT/Parquet、BED/GFF3/GTF/GAF、FASTA、MTX、H5AD、10x H5、VCF、PLINK1/2、BGEN；
+- Reader：CSV/TSV/TXT/Parquet、BED/GFF3/GTF/GAF、FASTA、MTX、H5AD、10x H5、VCF、PLINK1/2、BGEN、GMT、Loom、BIOM；
 - 算子：QC、变换、统计、生存、遗传、单细胞、序列、注释、区间、微生物、ML、绘图、GO；
+- 0.8.0 新增：GSEA/ORA、单细胞 doublet/pseudobulk/marker score、GWAS meta/PRS、蛋白组 rollup/moderated t、微生物 ANCOM-style/ALDEx-style；
 - 尚未支持：FASTQ、BAM/CRAM、BigWig/BigBed、mzML、FCS、空间转录组、影像等；
 - 大矩阵：heatmap 有 `max_cells/max_pixels` 保护；H5AD/10x full 模式仍可能 densify。
 
@@ -136,12 +137,15 @@ YAML / JSON
 
 优先按**数据家族 + 科学问题**扩展，而不是按后缀堆叠：
 
-1. **基础格式**：BAM/CRAM、BigWig/BigBed、narrowPeak/BEDPE、BIOM；
-2. **核心算子**：TMM/RLE/voom、ComBat、GSEA/ORA、pseudobulk、marker scoring；
-3. **单细胞/空间**：doublet、ambient RNA、Leiden、轨迹、Visium；
-4. **蛋白/代谢**：peptide rollup、limma/MSstats、mzML；
-5. **遗传**：关联、meta、PRS、fine-mapping；
-6. **专用格式**：FCS、loom/h5Seurat、GenBank/Newick/PDB、影像。
+0.8.0 已完成第一批：GMT/Loom/BIOM、GSEA/ORA、doublet/pseudobulk/marker score、meta/PRS、rollup/moderated t、ANCOM/ALDEx 风格差异丰度。
+
+下一批：
+1. **基础格式**：BAM/CRAM、BigWig/BigBed、narrowPeak/BEDPE；
+2. **核心算子**：TMM/RLE/voom、ComBat、GSEA 的 fgsea 对照、ambient RNA；
+3. **单细胞/空间**：Leiden、轨迹、Visium；
+4. **蛋白/代谢**：MSstats 对照、mzML；
+5. **遗传**：fine-mapping、VEP 注释；
+6. **专用格式**：FCS、h5Seurat、GenBank/Newick/PDB、影像。
 
 每个新增必须走 RFC、契约、独立 oracle、公开数据、文档、注册表和全量回归；详见 [protocol_suite.md](protocol_suite.md) 与 [sop_matrix.md](sop_matrix.md)。
 

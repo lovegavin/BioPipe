@@ -1,0 +1,39 @@
+name: gwas_meta_prs
+sources:
+  geno:
+    path: input/geno.vcf
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample: builtin
+  effects:
+    path: input/effects.csv
+    dims: [variant, study]
+    labels:
+      variant: {study: 0}
+      study: builtin
+  stds:
+    path: input/stds.csv
+    dims: [variant, study]
+    labels:
+      variant: {study: 0}
+      study: builtin
+  weights:
+    path: input/weights.csv
+    dims: [variant, statistic]
+    labels:
+      variant: {statistic: 0}
+      statistic: builtin
+steps:
+  - name: meta_analysis
+    inputs: [effects, stds]
+    params: {variant_dim: variant, study_dim: study, method: random, output: meta}
+  - name: prs
+    inputs: [geno, weights]
+    params: {variant_dim: variant, sample_dim: sample, weight_label: beta, output: prs}
+  - name: describe
+    inputs: [meta]
+    params: {}
+  - name: describe
+    inputs: [prs]
+    params: {}

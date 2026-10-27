@@ -1,0 +1,5 @@
+{
+  "key": "single_cell_loom",
+  "name": "Single-cell Loom workflow",
+  "base_dir": "routes/single_cell_loom"
+}

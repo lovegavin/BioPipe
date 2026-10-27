@@ -145,7 +145,7 @@ def build_routes(root, catalog, previous, route_roots=None):
             if name in names:
                 raise ValueError(f"Duplicate route name: {name}")
             names.add(name)
-            graph = import_manifest(yaml.safe_dump(raw, allow_unicode=True), settings.get("base_dir", f".studio/builtin-inputs/{key}"), catalog, root)
+            graph = import_manifest(yaml.safe_dump(raw, allow_unicode=True), settings.get("base_dir", f".studio/builtin-inputs/{key}"), catalog, root, auto_locate=False)
             graph.name = name
             levels, rows = {}, {}
             for node in graph.nodes:

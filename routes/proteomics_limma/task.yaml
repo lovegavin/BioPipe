@@ -1,0 +1,49 @@
+name: proteomics_limma
+sources:
+  peptides:
+    path: input/peptides.csv
+    dims: [peptide, sample]
+    labels:
+      peptide: {sample: 0}
+      sample: builtin
+  mapping:
+    path: input/mapping.csv
+    dims: [peptide, protein]
+    labels:
+      peptide: {protein: 0}
+      protein: builtin
+  meta:
+    path: input/meta.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+steps:
+  - name: protein_rollup
+    inputs: [peptides, mapping]
+    params: {peptide_dim: peptide, sample_dim: sample, protein_dim: protein, method: sum, min_peptides: 1, output: proteins}
+  - name: missing
+    inputs: [proteins]
+    params: {dim: protein, threshold: 0.5, output: filtered}
+  - name: impute
+    inputs: [filtered]
+    params: {method: min, dim: protein, output: imputed}
+  - name: normalize
+    inputs: [imputed]
+    params: {method: quantile, dim: sample, output: normalized}
+  - name: limma_de
+    inputs: [normalized, meta]
+    params:
+      feature_dim: protein
+      sample_dim: sample
+      group_label: group
+      group_a: ctrl
+      group_b: case
+      prior_df: 0
+      output: de
+  - name: volcano
+    inputs: [de]
+    params: {dim: protein, stat_dim: statistic, lfc_label: logFC, p_label: P_VALUE, filename: volcano.png}
+  - name: ma_plot
+    inputs: [de]
+    params: {dim: protein, stat_dim: statistic, lfc_label: logFC, mean_a_label: mean_a, mean_b_label: mean_b, p_label: P_VALUE, filename: ma.png}

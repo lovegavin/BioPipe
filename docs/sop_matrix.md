@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：全量 pytest **440 passed / 12 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：全量 pytest **460 passed / 17 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -11,7 +11,7 @@
 | B | 算子 demo 自测：手工可算的小例子 |
 | C | 仅契约/route/artifact 覆盖；没有独立数值 oracle |
 
-## 2. Reader（16）
+## 2. Reader（19）
 | Reader | 级别 | 证据/独立 oracle |
 |---|---|---|
 | `BedReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
@@ -30,9 +30,12 @@
 | `TsvReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
 | `TxtReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
 | `VcfReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
+| `GmtReader` | B | test_new_readers.py（GMT 手写解析、集合成员/重复集合） |
+| `LoomReader` | B | test_new_readers.py（HDF5 matrix/row_attrs/col_attrs） |
+| `BiomReader` | B | test_new_readers.py（标准 BIOM：行=观测、列=样本；JSON 与 HDF5 布局一致） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（78）
+## 3. Operator（89）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -115,10 +118,10 @@ Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解�
 | `volcano` | biopipe-plots | C | test_builtin_routes.py route artifact |
 
 ## 4. Route 端到端
-- 14/14 route graph 通过 `test_all_shipped_route_graphs_compile` 编译。
-- 5/14 route 由 `test_builtin_routes.py` 的合成输入执行到全部输出与 PNG。
-- 9/14 route 由真实数据 demo 自测覆盖；49/49 demo 测试通过。
-- 9 条 route 仍无 pytest 合成 fixture；这是测试覆盖缺口，不是 demo 功能缺口。
+- 19/19 route graph 通过 `test_all_shipped_route_graphs_compile` 编译。
+- 14 条原有 route 由 `test_builtin_routes.py` 的合成输入执行到全部输出与 PNG；5 条 0.8.0 新 route 由 `test_extension_routes.py` 执行 smoke test。
+- 9 条旧 route 由真实数据 demo 自测覆盖；49/49 demo 测试通过。
+- 9 条旧 route 仍无 pytest 合成 fixture；这是测试覆盖缺口，不是 demo 功能缺口。
 
 ## 5. 缺口
 - 10 个 C 级绘图算子由 route 的 PNG artifact 覆盖；line/enrichment 另有直接 artifact 测试；绘图无数值契约，不设数值 oracle。
@@ -133,3 +136,22 @@ python -m biopipe registry check       # 注册表
 for f in tasks/verify_*.py; do python "$f"; done
 for f in tasks/*_demo/test_*.py; do python "$f"; done
 ```
+
+
+## 7. 0.8.0 扩展证据（2026-10-27）
+
+新增 3 个 Reader、11 个算子。以下按 **B/C** 如实标注，不把“单元测试”冒充外部 oracle：
+
+| 组件 | 级别 | 证据/边界 |
+|---|---|---|
+| GmtReader / LoomReader / BiomReader | B | 手写格式解析测试；尚未与 loompy/biom-format 逐值对拍 |
+| ora | B | 超几何 p 值手算 + 独立 SciPy；与 clusterProfiler 尚未对拍 |
+| gsea | B | 经典加权 KS 分数 + 固定 seed 的基因集置换；尚未与 fgsea 对拍 |
+| doublet_detect / marker_score | B | 直接封装 Scanpy Scrublet / score_genes；测试验证封装与输出契约，不重复证明上游算法 |
+| meta_analysis | B | 固定效应/随机效应手算；尚未与 METAL/metafor 对拍 |
+| prs | B | 剂量×权重手算；未处理 effect allele/strand 推断 |
+| protein_rollup | B | shared-peptide 手算；尚未与 MaxQuant proteinGroups 对拍 |
+| limma_de | B | 平衡两组手算 + 独立线性模型；不是 R limma eBayes 的逐位复刻 |
+| ancom_bc / aldex2 | C | 独立 log-ratio 实现；尚无 R ANCOMBC/ALDEx2 外部 oracle |
+
+因此这些组件暂不作为“科学结论已外部验证”的 stable 依据；route 用于可运行示例，后续需补 L2/L3 oracle。

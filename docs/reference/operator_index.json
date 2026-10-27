@@ -132,6 +132,330 @@
     "quality": "auto"
   },
   {
+    "id": "aldex2",
+    "kind": "operator",
+    "title": "Compositional differential abundance",
+    "package": "biopipe-microbiome",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "taxon_dim",
+              "default": "taxon"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2,
+          "labels_any": [
+            {
+              "param": "group_label",
+              "default": null
+            }
+          ]
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "taxon_dim": {
+          "type": "string",
+          "default": "taxon",
+          "title": "Taxon Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_a": {
+          "type": [
+            "string",
+            "number"
+          ],
+          "title": "A 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_b": {
+          "type": [
+            "string",
+            "number"
+          ],
+          "title": "B 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "n_mc": {
+          "type": "integer",
+          "minimum": 8,
+          "default": 128,
+          "title": "N Mc",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "seed": {
+          "type": "integer",
+          "default": 0,
+          "title": "Seed",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "pseudocount": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 0.5,
+          "title": "伪计数",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "monte_carlo": {
+          "type": "boolean",
+          "default": true,
+          "title": "Monte Carlo",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "correction": {
+          "type": "string",
+          "enum": [
+            "fdr",
+            "bonferroni",
+            "holm",
+            "hommel",
+            "fdr_by"
+          ],
+          "default": "fdr",
+          "title": "Correction",
+          "x-ui-group": "basic",
+          "x-ui-order": 90
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 100
+        }
+      },
+      "required": [
+        "group_label",
+        "group_a",
+        "group_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/aldex2.py",
+    "tests": [
+      "tests/test_extension_operators.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/aldex2.md",
+    "quality": "auto"
+  },
+  {
+    "id": "ancom_bc",
+    "kind": "operator",
+    "title": "Log-ratio differential abundance",
+    "package": "biopipe-microbiome",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "taxon_dim",
+              "default": "taxon"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2,
+          "labels_any": [
+            {
+              "param": "group_label",
+              "default": null
+            }
+          ]
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "taxon_dim": {
+          "type": "string",
+          "default": "taxon",
+          "title": "Taxon Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_a": {
+          "type": [
+            "string",
+            "number"
+          ],
+          "title": "A 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_b": {
+          "type": [
+            "string",
+            "number"
+          ],
+          "title": "B 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "pseudocount": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1.0,
+          "title": "伪计数",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "correction": {
+          "type": "string",
+          "enum": [
+            "fdr",
+            "bonferroni",
+            "holm",
+            "hommel",
+            "fdr_by"
+          ],
+          "default": "fdr",
+          "title": "Correction",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "group_label",
+        "group_a",
+        "group_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/ancom_bc.py",
+    "tests": [
+      "tests/test_extension_operators.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/ancom_bc.md",
+    "quality": "auto"
+  },
+  {
     "id": "annotate",
     "kind": "operator",
     "title": "annotate",
@@ -2090,6 +2414,119 @@
     "quality": "auto"
   },
   {
+    "id": "doublet_detect",
+    "kind": "operator",
+    "title": "Doublet detection",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "cell_dim",
+              "default": "cell"
+            },
+            {
+              "param": "gene_dim",
+              "default": "gene"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "cell_dim": {
+          "type": "string",
+          "default": "cell",
+          "title": "Cell Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "gene_dim": {
+          "type": "string",
+          "default": "gene",
+          "title": "Gene Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "expected_doublet_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.06,
+          "title": "Expected Doublet Rate",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 30
+        },
+        "threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.25,
+          "title": "阈值",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "n_prin_comps": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 20,
+          "title": "N Prin Comps",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/doublet_detect.py",
+    "tests": [
+      "tests/test_extension_operators.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/doublet_detect.md",
+    "quality": "auto"
+  },
+  {
     "id": "drop",
     "kind": "operator",
     "title": "drop",
@@ -3693,6 +4130,171 @@
     "quality": "auto"
   },
   {
+    "id": "gsea",
+    "kind": "operator",
+    "title": "Preranked GSEA",
+    "package": "biopipe-expression",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "gene_dim",
+              "default": "gene"
+            },
+            {
+              "param": "stat_dim",
+              "default": "statistic"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "gene_dim",
+              "default": "gene"
+            },
+            {
+              "param": "gene_set_dim",
+              "default": "gene_set"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "gene_dim": {
+          "type": "string",
+          "default": "gene",
+          "title": "Gene Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "stat_dim": {
+          "type": "string",
+          "default": "statistic",
+          "title": "统计维度",
+          "x-ui-group": "advanced",
+          "x-ui-order": 10
+        },
+        "gene_set_dim": {
+          "type": "string",
+          "default": "gene_set",
+          "title": "Gene Set Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "rank_label": {
+          "type": "string",
+          "default": "log2FC",
+          "title": "Rank Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "default": 1.0,
+          "title": "Weight",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "n_permutations": {
+          "type": "integer",
+          "minimum": 10,
+          "default": 1000,
+          "title": "置换次数",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "seed": {
+          "type": "integer",
+          "default": 0,
+          "title": "Seed",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "min_set_size": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 5,
+          "title": "Min Set Size",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "max_set_size": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 500,
+          "title": "Max Set Size",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "correction": {
+          "type": "string",
+          "enum": [
+            "fdr",
+            "bonferroni",
+            "holm",
+            "hommel",
+            "fdr_by"
+          ],
+          "default": "fdr",
+          "title": "Correction",
+          "x-ui-group": "basic",
+          "x-ui-order": 90
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 100
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/gsea.py",
+    "tests": [
+      "tests/test_extension_operators.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/gsea.md",
+    "quality": "auto"
+  },
+  {
     "id": "heatmap",
     "kind": "operator",
     "title": "heatmap",
@@ -5192,6 +5794,156 @@
     "quality": "reviewed"
   },
   {
+    "id": "limma_de",
+    "kind": "operator",
+    "title": "Moderated t differential analysis",
+    "package": "biopipe-expression",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "protein"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2,
+          "labels_any": [
+            {
+              "param": "group_label",
+              "default": null
+            }
+          ]
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "protein",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_a": {
+          "type": [
+            "string",
+            "number"
+          ],
+          "title": "A 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_b": {
+          "type": [
+            "string",
+            "number"
+          ],
+          "title": "B 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "prior_df": {
+          "type": "integer",
+          "minimum": 0,
+          "title": "Prior Df",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "correction": {
+          "type": "string",
+          "enum": [
+            "fdr",
+            "bonferroni",
+            "holm",
+            "hommel",
+            "fdr_by"
+          ],
+          "default": "fdr",
+          "title": "Correction",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "group_label",
+        "group_a",
+        "group_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/limma_de.py",
+    "tests": [
+      "tests/test_extension_operators.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/limma_de.md",
+    "quality": "auto"
+  },
+  {
     "id": "line",
     "kind": "operator",
     "title": "line",
@@ -6224,6 +6976,265 @@
     "quality": "auto"
   },
   {
+    "id": "marker_score",
+    "kind": "operator",
+    "title": "Signature score",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "cell_dim",
+              "default": "cell"
+            },
+            {
+              "param": "gene_dim",
+              "default": "gene"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "gene_dim",
+              "default": "gene"
+            },
+            {
+              "param": "gene_set_dim",
+              "default": "gene_set"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "cell_dim": {
+          "type": "string",
+          "default": "cell",
+          "title": "Cell Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "gene_dim": {
+          "type": "string",
+          "default": "gene",
+          "title": "Gene Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "gene_set_dim": {
+          "type": "string",
+          "default": "gene_set",
+          "title": "Gene Set Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "min_genes": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "title": "Min Genes",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "ctrl_size": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 50,
+          "title": "Ctrl Size",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "n_bins": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 25,
+          "title": "N Bins",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/marker_score.py",
+    "tests": [
+      "tests/test_extension_operators.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/marker_score.md",
+    "quality": "auto"
+  },
+  {
+    "id": "meta_analysis",
+    "kind": "operator",
+    "title": "Meta-analysis",
+    "package": "biopipe-genetics",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "variant_dim",
+              "default": "variant"
+            },
+            {
+              "param": "study_dim",
+              "default": "study"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "variant_dim",
+              "default": "variant"
+            },
+            {
+              "param": "study_dim",
+              "default": "study"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "variant_dim": {
+          "type": "string",
+          "default": "variant",
+          "title": "Variant Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "study_dim": {
+          "type": "string",
+          "default": "study",
+          "title": "Study Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "fixed",
+            "random"
+          ],
+          "default": "random",
+          "title": "方法",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "correction": {
+          "type": "string",
+          "enum": [
+            "fdr",
+            "bonferroni",
+            "holm",
+            "hommel",
+            "fdr_by"
+          ],
+          "default": "fdr",
+          "title": "Correction",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/meta_analysis.py",
+    "tests": [
+      "tests/test_extension_operators.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/meta_analysis.md",
+    "quality": "auto"
+  },
+  {
     "id": "missing",
     "kind": "operator",
     "title": "missing",
@@ -6525,6 +7536,180 @@
       "tasks/violin_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/normalize.md",
+    "quality": "auto"
+  },
+  {
+    "id": "ora",
+    "kind": "operator",
+    "title": "Gene-set ORA",
+    "package": "biopipe-expression",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "gene_dim",
+              "default": "gene"
+            },
+            {
+              "param": "stat_dim",
+              "default": "statistic"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "gene_dim",
+              "default": "gene"
+            },
+            {
+              "param": "gene_set_dim",
+              "default": "gene_set"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "gene_dim": {
+          "type": "string",
+          "default": "gene",
+          "title": "Gene Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "stat_dim": {
+          "type": "string",
+          "default": "statistic",
+          "title": "统计维度",
+          "x-ui-group": "advanced",
+          "x-ui-order": 10
+        },
+        "gene_set_dim": {
+          "type": "string",
+          "default": "gene_set",
+          "title": "Gene Set Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "p_label": {
+          "type": "string",
+          "default": "Q_VALUE",
+          "title": "P 值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "lfc_label": {
+          "type": "string",
+          "default": "log2FC",
+          "title": "log2FC 字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "p_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.05,
+          "title": "P 值阈值",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "lfc_threshold": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0.0,
+          "title": "log2FC 阈值",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "up",
+            "down",
+            "both"
+          ],
+          "default": "both",
+          "title": "Direction",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "correction": {
+          "type": "string",
+          "enum": [
+            "fdr",
+            "bonferroni",
+            "holm",
+            "hommel",
+            "fdr_by"
+          ],
+          "default": "fdr",
+          "title": "Correction",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "min_set_size": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "title": "Min Set Size",
+          "x-ui-group": "basic",
+          "x-ui-order": 90
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 100
+        }
+      },
+      "required": [
+        "p_label",
+        "lfc_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/ora.py",
+    "tests": [
+      "tests/test_extension_operators.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/ora.md",
     "quality": "auto"
   },
   {
@@ -7268,6 +8453,365 @@
       "tasks/prioritize_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/prioritize.md",
+    "quality": "auto"
+  },
+  {
+    "id": "protein_rollup",
+    "kind": "operator",
+    "title": "Peptide to protein rollup",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "peptide_dim",
+              "default": "peptide"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "peptide_dim",
+              "default": "peptide"
+            },
+            {
+              "param": "protein_dim",
+              "default": "protein"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "peptide_dim": {
+          "type": "string",
+          "default": "peptide",
+          "title": "Peptide Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "protein_dim": {
+          "type": "string",
+          "default": "protein",
+          "title": "Protein Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "sum",
+            "mean"
+          ],
+          "default": "sum",
+          "title": "方法",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "min_peptides": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "title": "Min Peptides",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/protein_rollup.py",
+    "tests": [
+      "tests/test_extension_operators.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/protein_rollup.md",
+    "quality": "auto"
+  },
+  {
+    "id": "prs",
+    "kind": "operator",
+    "title": "Polygenic risk score",
+    "package": "biopipe-genetics",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "variant_dim",
+              "default": "variant"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "variant_dim",
+              "default": "variant"
+            },
+            {
+              "param": "stat_dim",
+              "default": "statistic"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "variant_dim": {
+          "type": "string",
+          "default": "variant",
+          "title": "Variant Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "stat_dim": {
+          "type": "string",
+          "default": "statistic",
+          "title": "统计维度",
+          "x-ui-group": "advanced",
+          "x-ui-order": 20
+        },
+        "weight_label": {
+          "type": "string",
+          "default": "beta",
+          "title": "Weight Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "weight_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/prs.py",
+    "tests": [
+      "tests/test_extension_operators.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/prs.md",
+    "quality": "auto"
+  },
+  {
+    "id": "pseudobulk",
+    "kind": "operator",
+    "title": "Pseudobulk aggregation",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "cell_dim",
+              "default": "cell"
+            },
+            {
+              "param": "gene_dim",
+              "default": "gene"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "cell_dim",
+              "default": "cell"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2,
+          "labels_any": [
+            {
+              "param": "group_label",
+              "default": null
+            }
+          ]
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "cell_dim": {
+          "type": "string",
+          "default": "cell",
+          "title": "Cell Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "gene_dim": {
+          "type": "string",
+          "default": "gene",
+          "title": "Gene Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "sum",
+            "mean"
+          ],
+          "default": "sum",
+          "title": "方法",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/pseudobulk.py",
+    "tests": [
+      "tests/test_extension_operators.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/pseudobulk.md",
     "quality": "auto"
   },
   {

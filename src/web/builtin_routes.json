@@ -18,6 +18,10 @@
       "sha256": "506bfa195cf9523de8fe6cc15ced7ce46bd2b94a07ec39f8c1fcc6950cd47407",
       "commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95"
     },
+    "route_a087d55ab488": {
+      "path": "routes/gwas_meta_prs/task.yaml",
+      "sha256": "1b2c45b2f7f08097e89668ccb7086bb4d46460ae905035db7e2b9410eb84ea77"
+    },
     "route_34254db160bf": {
       "path": "routes/interval_analysis/task.yaml",
       "sha256": "791780f17a2c8769aa9ecf3f1017c416c9b60051c75ea09fc7ed17420cbcd356"
@@ -26,6 +30,10 @@
       "path": "routes/microbiome/task.yaml",
       "sha256": "7679048c80c791c3b3de810b9f76ebb07877a257e44ff24a576627642c00a25c",
       "commit": "fa267bc46a30ee9c9483b7442ff119b9aefcf62c"
+    },
+    "route_9580fe9ac50f": {
+      "path": "routes/microbiome_diff/task.yaml",
+      "sha256": "b5d938065072dbe442828d3dd32f39ab4d99cef65bd2c48a127d587fe5ad5475"
     },
     "route_876d0954bbc6": {
       "path": "routes/ml_classification/task.yaml",
@@ -44,10 +52,18 @@
       "sha256": "92020573ced5e395004973b35656b8374fb3cd5a905105454971b36cf3b38963",
       "commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95"
     },
+    "route_7c04c85a4d99": {
+      "path": "routes/proteomics_limma/task.yaml",
+      "sha256": "b3eb5dca77de54a8743934aa5fe88429928781c5b40e84ad081206cfa19d7609"
+    },
     "route_274abd24ce8d": {
       "path": "routes/rnaseq_de/task.yaml",
       "sha256": "e90f253eba3a0f37e1f5d32c971f3d3f67b25667f286e435762a2558be2fc7c2",
       "commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95"
+    },
+    "route_edc889939265": {
+      "path": "routes/rnaseq_de_enrichment/task.yaml",
+      "sha256": "c5f28cc4b662525524b22c443c439383fd0ea20c9d6f252a59ebb0cd179b5e26"
     },
     "route_27299bdee8dc": {
       "path": "routes/sequence_features/task.yaml",
@@ -56,6 +72,10 @@
     "route_d6c3db6fe153": {
       "path": "routes/single_cell/task.yaml",
       "sha256": "8ac17bee4e16660a07a6e68434199e0ab66f1d6ae484e55710648734494db1be"
+    },
+    "route_765bf596a9a5": {
+      "path": "routes/single_cell_loom/task.yaml",
+      "sha256": "157ac8497a6950d4c1323a69af4e43e591867e8f1d3c0b92dee843cac228c21b"
     },
     "route_bf78f7a6e12f": {
       "path": "routes/survival/task.yaml",
@@ -4338,6 +4358,1039 @@
       }
     },
     {
+      "id": "route_765bf596a9a5",
+      "version": 1,
+      "name": "Single-cell Loom workflow",
+      "graph": {
+        "schema_version": 2,
+        "name": "Single-cell Loom workflow",
+        "base_dir": "routes/single_cell_loom",
+        "nodes": [
+          {
+            "id": "expr",
+            "kind": "source",
+            "operator": null,
+            "title": "expr",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/small.loom",
+              "dims": [
+                "gene",
+                "cell"
+              ],
+              "labels": {
+                "cell": "builtin",
+                "gene": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "markers",
+            "kind": "source",
+            "operator": null,
+            "title": "markers",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/markers.gmt",
+              "dims": [
+                "gene",
+                "gene_set"
+              ],
+              "labels": {
+                "gene": "builtin",
+                "gene_set": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "meta",
+            "kind": "source",
+            "operator": null,
+            "title": "meta",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/meta.csv",
+              "dims": [
+                "cell",
+                "feature"
+              ],
+              "labels": {
+                "cell": {
+                  "feature": 0
+                },
+                "feature": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "qc_metrics_1",
+            "kind": "operator",
+            "operator": "qc_metrics",
+            "title": "qc_metrics",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "feature_dim": "gene",
+              "sample_dim": "cell",
+              "metrics": [
+                {
+                  "name": "total",
+                  "op": "sum"
+                },
+                {
+                  "name": "n_detected",
+                  "op": "nonzero"
+                }
+              ],
+              "output": "qc"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "normalize_2",
+            "kind": "operator",
+            "operator": "normalize",
+            "title": "归一化",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "target_sum": 1000000.0,
+              "dim": "cell",
+              "method": "cpm",
+              "output": "cpm"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "log_transform_3",
+            "kind": "operator",
+            "operator": "log_transform",
+            "title": "Log",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "base": 2,
+              "pseudocount": 1,
+              "output": "logged"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "transpose_4",
+            "kind": "operator",
+            "operator": "transpose",
+            "title": "维度转置",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "order": [
+                "cell",
+                "gene"
+              ],
+              "output": "cells_by_gene"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "doublet_detect_5",
+            "kind": "operator",
+            "operator": "doublet_detect",
+            "title": "Doublet detection",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "cell_dim": "cell",
+              "gene_dim": "gene",
+              "expected_doublet_rate": 0.06,
+              "random_state": 0,
+              "threshold": 0.25,
+              "n_prin_comps": 10,
+              "output": "doublets"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pseudobulk_6",
+            "kind": "operator",
+            "operator": "pseudobulk",
+            "title": "Pseudobulk aggregation",
+            "position": {
+              "x": 1230.0,
+              "y": 310.0
+            },
+            "params": {
+              "cell_dim": "cell",
+              "gene_dim": "gene",
+              "method": "sum",
+              "group_label": "group",
+              "output": "pseudobulk"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "marker_score_7",
+            "kind": "operator",
+            "operator": "marker_score",
+            "title": "Signature score",
+            "position": {
+              "x": 1230.0,
+              "y": 520.0
+            },
+            "params": {
+              "cell_dim": "cell",
+              "gene_dim": "gene",
+              "gene_set_dim": "gene_set",
+              "min_genes": 5,
+              "ctrl_size": 50,
+              "n_bins": 25,
+              "random_state": 0,
+              "output": "scores"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "describe_8",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_9",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_10",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1520.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_11",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1520.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "expr-qc_metrics_1-0",
+            "source": "expr",
+            "target": "qc_metrics_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "expr-normalize_2-0",
+            "source": "expr",
+            "target": "normalize_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_2-log_transform_3-0",
+            "source": "normalize_2",
+            "target": "log_transform_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_3-transpose_4-0",
+            "source": "log_transform_3",
+            "target": "transpose_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "transpose_4-doublet_detect_5-0",
+            "source": "transpose_4",
+            "target": "doublet_detect_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "transpose_4-pseudobulk_6-0",
+            "source": "transpose_4",
+            "target": "pseudobulk_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "meta-pseudobulk_6-1",
+            "source": "meta",
+            "target": "pseudobulk_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "transpose_4-marker_score_7-0",
+            "source": "transpose_4",
+            "target": "marker_score_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "markers-marker_score_7-1",
+            "source": "markers",
+            "target": "marker_score_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "qc_metrics_1-describe_8-0",
+            "source": "qc_metrics_1",
+            "target": "describe_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "doublet_detect_5-describe_9-0",
+            "source": "doublet_detect_5",
+            "target": "describe_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pseudobulk_6-describe_10-0",
+            "source": "pseudobulk_6",
+            "target": "describe_10",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "marker_score_7-describe_11-0",
+            "source": "marker_score_7",
+            "target": "describe_11",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "expr",
+              "label": "expr",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "gene",
+                  "cell"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "markers",
+              "label": "markers",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "gene",
+                  "gene_set"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "meta",
+              "label": "meta",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "cell",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "qc_metrics_1",
+              "handle": "out",
+              "label": "qc_metrics",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {},
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "doublet_detect_5",
+              "handle": "out",
+              "label": "Doublet detection",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "axis_info": {},
+                "info_open": false,
+                "axis_info_open": false,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "pseudobulk_6",
+              "handle": "out",
+              "label": "Pseudobulk aggregation",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "axis_info": {},
+                "info_open": false,
+                "axis_info_open": false,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "marker_score_7",
+              "handle": "out",
+              "label": "Signature score",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "axis_info": {},
+                "info_open": false,
+                "axis_info_open": false,
+                "ndim": 2,
+                "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_7c04c85a4d99",
+      "version": 2,
+      "name": "Proteomics rollup and moderated t",
+      "graph": {
+        "schema_version": 2,
+        "name": "Proteomics rollup and moderated t",
+        "base_dir": "routes/proteomics_limma",
+        "nodes": [
+          {
+            "id": "mapping",
+            "kind": "source",
+            "operator": null,
+            "title": "mapping",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/mapping.csv",
+              "dims": [
+                "peptide",
+                "protein"
+              ],
+              "labels": {
+                "peptide": {
+                  "protein": 0
+                },
+                "protein": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "meta",
+            "kind": "source",
+            "operator": null,
+            "title": "meta",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/meta.csv",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "peptides",
+            "kind": "source",
+            "operator": null,
+            "title": "peptides",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/peptides.csv",
+              "dims": [
+                "peptide",
+                "sample"
+              ],
+              "labels": {
+                "peptide": {
+                  "sample": 0
+                },
+                "sample": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "protein_rollup_1",
+            "kind": "operator",
+            "operator": "protein_rollup",
+            "title": "Peptide to protein rollup",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "peptide_dim": "peptide",
+              "sample_dim": "sample",
+              "protein_dim": "protein",
+              "method": "sum",
+              "min_peptides": 1,
+              "output": "proteins"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "missing_2",
+            "kind": "operator",
+            "operator": "missing",
+            "title": "缺失值过滤",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "threshold": 0.5,
+              "dim": "protein",
+              "output": "filtered"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "impute_3",
+            "kind": "operator",
+            "operator": "impute",
+            "title": "缺失值填补",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_scale": 1.0,
+              "dim": "protein",
+              "method": "min",
+              "output": "imputed"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "normalize_4",
+            "kind": "operator",
+            "operator": "normalize",
+            "title": "归一化",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "target_sum": 1000000.0,
+              "dim": "sample",
+              "method": "quantile",
+              "output": "normalized"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "limma_de_5",
+            "kind": "operator",
+            "operator": "limma_de",
+            "title": "Moderated t differential analysis",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {
+              "feature_dim": "protein",
+              "sample_dim": "sample",
+              "correction": "fdr",
+              "group_a": "ctrl",
+              "group_b": "case",
+              "group_label": "group",
+              "output": "de",
+              "prior_df": 0
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "volcano_6",
+            "kind": "operator",
+            "operator": "volcano",
+            "title": "Volcano",
+            "position": {
+              "x": 1810.0,
+              "y": 100.0
+            },
+            "params": {
+              "alpha": 0.7,
+              "dim": "protein",
+              "label_top": 0,
+              "lfc_label": "logFC",
+              "lfc_threshold": 1.0,
+              "p_label": "P_VALUE",
+              "p_threshold": 0.05,
+              "point_size": 8,
+              "stat_dim": "statistic",
+              "ylabel": "-log10(P)",
+              "filename": "volcano.png"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ma_plot_7",
+            "kind": "operator",
+            "operator": "ma_plot",
+            "title": "MA plot",
+            "position": {
+              "x": 1810.0,
+              "y": 310.0
+            },
+            "params": {
+              "alpha": 0.7,
+              "dim": "protein",
+              "label_top": 0,
+              "lfc_label": "logFC",
+              "mean_a_label": "mean_a",
+              "mean_b_label": "mean_b",
+              "p_label": "P_VALUE",
+              "p_threshold": 0.05,
+              "point_size": 8,
+              "stat_dim": "statistic",
+              "xlabel": "log2 mean",
+              "filename": "ma.png"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "peptides-protein_rollup_1-0",
+            "source": "peptides",
+            "target": "protein_rollup_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "mapping-protein_rollup_1-1",
+            "source": "mapping",
+            "target": "protein_rollup_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "protein_rollup_1-missing_2-0",
+            "source": "protein_rollup_1",
+            "target": "missing_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "missing_2-impute_3-0",
+            "source": "missing_2",
+            "target": "impute_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "impute_3-normalize_4-0",
+            "source": "impute_3",
+            "target": "normalize_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_4-limma_de_5-0",
+            "source": "normalize_4",
+            "target": "limma_de_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "meta-limma_de_5-1",
+            "source": "meta",
+            "target": "limma_de_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "limma_de_5-volcano_6-0",
+            "source": "limma_de_5",
+            "target": "volcano_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "limma_de_5-ma_plot_7-0",
+            "source": "limma_de_5",
+            "target": "ma_plot_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "mapping",
+              "label": "mapping",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "peptide",
+                  "protein"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "meta",
+              "label": "meta",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "peptides",
+              "label": "peptides",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "peptide",
+                  "sample"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "limma_de_5",
+              "handle": "out",
+              "label": "Moderated t differential analysis",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "axis_info": {},
+                "info_open": false,
+                "axis_info_open": false,
+                "ndim": 2,
+                "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
       "id": "route_876d0954bbc6",
       "version": 4,
       "name": "ML classification (multi-model)",
@@ -5400,6 +6453,901 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_9580fe9ac50f",
+      "version": 1,
+      "name": "Microbiome differential abundance",
+      "graph": {
+        "schema_version": 2,
+        "name": "Microbiome differential abundance",
+        "base_dir": "routes/microbiome_diff",
+        "nodes": [
+          {
+            "id": "meta",
+            "kind": "source",
+            "operator": null,
+            "title": "meta",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/meta.csv",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "table",
+            "kind": "source",
+            "operator": null,
+            "title": "table",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/table.biom",
+              "dims": [
+                "sample",
+                "taxon"
+              ],
+              "labels": {
+                "sample": "builtin",
+                "taxon": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "filter_min_1",
+            "kind": "operator",
+            "operator": "filter_min",
+            "title": "低表达过滤",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_samples": 2,
+              "min_value": 1,
+              "dim": "taxon",
+              "output": "filtered"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "normalize_2",
+            "kind": "operator",
+            "operator": "normalize",
+            "title": "归一化",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "target_sum": 1000000.0,
+              "dim": "sample",
+              "method": "total",
+              "output": "relative"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ancom_bc_3",
+            "kind": "operator",
+            "operator": "ancom_bc",
+            "title": "Log-ratio differential abundance",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "taxon_dim": "taxon",
+              "pseudocount": 1.0,
+              "correction": "fdr",
+              "group_a": "ctrl",
+              "group_b": "case",
+              "group_label": "group",
+              "output": "ancom"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "aldex2_4",
+            "kind": "operator",
+            "operator": "aldex2",
+            "title": "Compositional differential abundance",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "taxon_dim": "taxon",
+              "n_mc": 32,
+              "seed": 3,
+              "pseudocount": 0.5,
+              "monte_carlo": true,
+              "correction": "fdr",
+              "group_a": "ctrl",
+              "group_b": "case",
+              "group_label": "group",
+              "output": "aldex"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "describe_5",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_6",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1230.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "transpose_7",
+            "kind": "operator",
+            "operator": "transpose",
+            "title": "维度转置",
+            "position": {
+              "x": 940.0,
+              "y": 520.0
+            },
+            "params": {
+              "order": [
+                "taxon",
+                "sample"
+              ],
+              "output": "taxa_by_sample"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "barplot_8",
+            "kind": "operator",
+            "operator": "barplot",
+            "title": "Composition barplot",
+            "position": {
+              "x": 1230.0,
+              "y": 520.0
+            },
+            "params": {
+              "top_n": 10,
+              "other_label": "Other",
+              "normalize": true,
+              "cmap": "tab20",
+              "legend": true,
+              "legend_ncol": 3,
+              "rotate_labels": true,
+              "dim": "taxon",
+              "filename": "composition.png",
+              "sample_dim": "sample"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "table-filter_min_1-0",
+            "source": "table",
+            "target": "filter_min_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "filter_min_1-normalize_2-0",
+            "source": "filter_min_1",
+            "target": "normalize_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_2-ancom_bc_3-0",
+            "source": "normalize_2",
+            "target": "ancom_bc_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "meta-ancom_bc_3-1",
+            "source": "meta",
+            "target": "ancom_bc_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "normalize_2-aldex2_4-0",
+            "source": "normalize_2",
+            "target": "aldex2_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "meta-aldex2_4-1",
+            "source": "meta",
+            "target": "aldex2_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "ancom_bc_3-describe_5-0",
+            "source": "ancom_bc_3",
+            "target": "describe_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "aldex2_4-describe_6-0",
+            "source": "aldex2_4",
+            "target": "describe_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_2-transpose_7-0",
+            "source": "normalize_2",
+            "target": "transpose_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "transpose_7-barplot_8-0",
+            "source": "transpose_7",
+            "target": "barplot_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "meta",
+              "label": "meta",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "table",
+              "label": "table",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "taxon"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "ancom_bc_3",
+              "handle": "out",
+              "label": "Log-ratio differential abundance",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "axis_info": {},
+                "info_open": false,
+                "axis_info_open": false,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "aldex2_4",
+              "handle": "out",
+              "label": "Compositional differential abundance",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "axis_info": {},
+                "info_open": false,
+                "axis_info_open": false,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "transpose_7",
+              "handle": "out",
+              "label": "维度转置",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "taxon",
+                  "sample"
+                ],
+                "labels": {
+                  "sample": null,
+                  "taxon": null
+                },
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "normalize"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_a087d55ab488",
+      "version": 2,
+      "name": "GWAS meta-analysis and PRS",
+      "graph": {
+        "schema_version": 2,
+        "name": "GWAS meta-analysis and PRS",
+        "base_dir": "routes/gwas_meta_prs",
+        "nodes": [
+          {
+            "id": "effects",
+            "kind": "source",
+            "operator": null,
+            "title": "effects",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/effects.csv",
+              "dims": [
+                "variant",
+                "study"
+              ],
+              "labels": {
+                "study": "builtin",
+                "variant": {
+                  "study": 0
+                }
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "geno",
+            "kind": "source",
+            "operator": null,
+            "title": "geno",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/geno.vcf",
+              "dims": [
+                "variant",
+                "sample"
+              ],
+              "labels": {
+                "sample": "builtin",
+                "variant": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "stds",
+            "kind": "source",
+            "operator": null,
+            "title": "stds",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/stds.csv",
+              "dims": [
+                "variant",
+                "study"
+              ],
+              "labels": {
+                "study": "builtin",
+                "variant": {
+                  "study": 0
+                }
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "weights",
+            "kind": "source",
+            "operator": null,
+            "title": "weights",
+            "position": {
+              "x": 70.0,
+              "y": 730.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/weights.csv",
+              "dims": [
+                "variant",
+                "statistic"
+              ],
+              "labels": {
+                "statistic": "builtin",
+                "variant": {
+                  "statistic": 0
+                }
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "meta_analysis_1",
+            "kind": "operator",
+            "operator": "meta_analysis",
+            "title": "Meta-analysis",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "variant_dim": "variant",
+              "study_dim": "study",
+              "method": "random",
+              "correction": "fdr",
+              "output": "meta"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "prs_2",
+            "kind": "operator",
+            "operator": "prs",
+            "title": "Polygenic risk score",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "variant_dim": "variant",
+              "sample_dim": "sample",
+              "stat_dim": "statistic",
+              "weight_label": "beta",
+              "output": "prs"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "describe_3",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_4",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "effects-meta_analysis_1-0",
+            "source": "effects",
+            "target": "meta_analysis_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "stds-meta_analysis_1-1",
+            "source": "stds",
+            "target": "meta_analysis_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "geno-prs_2-0",
+            "source": "geno",
+            "target": "prs_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "weights-prs_2-1",
+            "source": "weights",
+            "target": "prs_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "meta_analysis_1-describe_3-0",
+            "source": "meta_analysis_1",
+            "target": "describe_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "prs_2-describe_4-0",
+            "source": "prs_2",
+            "target": "describe_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "effects",
+              "label": "effects",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "variant",
+                  "study"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "geno",
+              "label": "geno",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "variant",
+                  "sample"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "hard_call"
+                  },
+                  "ploidy": {
+                    "type": "integer",
+                    "min": 1
+                  },
+                  "chrom": {
+                    "type": "array",
+                    "items": "string"
+                  },
+                  "pos": {
+                    "type": "array",
+                    "items": "integer"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": [
+                  {
+                    "dim": "variant",
+                    "fields": [
+                      "chrom",
+                      "pos"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "node_id": "stds",
+              "label": "stds",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "variant",
+                  "study"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "weights",
+              "label": "weights",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "variant",
+                  "statistic"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "meta_analysis_1",
+              "handle": "out",
+              "label": "Meta-analysis",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "axis_info": {},
+                "info_open": false,
+                "axis_info_open": false,
+                "ndim": 2,
+                "numeric": true
+              }
+            },
+            {
+              "node_id": "prs_2",
+              "handle": "out",
+              "label": "Polygenic risk score",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "axis_info": {},
+                "info_open": false,
+                "axis_info_open": false,
+                "ndim": 2,
+                "numeric": true
               }
             }
           ]
@@ -6658,6 +8606,453 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_edc889939265",
+      "version": 2,
+      "name": "RNA-seq DE + enrichment",
+      "graph": {
+        "schema_version": 2,
+        "name": "RNA-seq DE + enrichment",
+        "base_dir": "routes/rnaseq_de_enrichment",
+        "nodes": [
+          {
+            "id": "counts",
+            "kind": "source",
+            "operator": null,
+            "title": "counts",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/counts.csv",
+              "dims": [
+                "gene",
+                "sample"
+              ],
+              "labels": {
+                "gene": {
+                  "sample": 0
+                },
+                "sample": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "meta",
+            "kind": "source",
+            "operator": null,
+            "title": "meta",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/meta.csv",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "sets",
+            "kind": "source",
+            "operator": null,
+            "title": "sets",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/sets.gmt",
+              "dims": [
+                "gene",
+                "gene_set"
+              ],
+              "labels": {
+                "gene": "builtin",
+                "gene_set": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "filter_min_1",
+            "kind": "operator",
+            "operator": "filter_min",
+            "title": "低表达过滤",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_samples": 3,
+              "min_value": 10,
+              "dim": "gene",
+              "output": "filtered"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "compare_groups_2",
+            "kind": "operator",
+            "operator": "compare_groups",
+            "title": "Group comparison",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "mode": "two_groups",
+              "min_per_group": 2,
+              "method": "ttest",
+              "dim": "gene",
+              "group_a": "untrt",
+              "group_b": "trt",
+              "group_dim": "sample",
+              "group_label": "group",
+              "output": "de"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "volcano_3",
+            "kind": "operator",
+            "operator": "volcano",
+            "title": "Volcano",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "alpha": 0.7,
+              "dim": "gene",
+              "label_top": 0,
+              "lfc_label": "log2FC",
+              "lfc_threshold": 1.0,
+              "p_label": "P",
+              "p_threshold": 0.05,
+              "point_size": 8,
+              "stat_dim": "statistic",
+              "ylabel": "-log10(P)",
+              "filename": "de_volcano.png"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ma_plot_4",
+            "kind": "operator",
+            "operator": "ma_plot",
+            "title": "MA plot",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "alpha": 0.7,
+              "dim": "gene",
+              "label_top": 0,
+              "lfc_label": "log2FC",
+              "mean_a_label": "mean_a",
+              "mean_b_label": "mean_b",
+              "p_label": "P",
+              "p_threshold": 0.05,
+              "point_size": 8,
+              "stat_dim": "statistic",
+              "xlabel": "log2 mean",
+              "filename": "de_ma.png"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "gsea_5",
+            "kind": "operator",
+            "operator": "gsea",
+            "title": "Preranked GSEA",
+            "position": {
+              "x": 940.0,
+              "y": 520.0
+            },
+            "params": {
+              "gene_dim": "gene",
+              "stat_dim": "statistic",
+              "gene_set_dim": "gene_set",
+              "rank_label": "log2FC",
+              "weight": 1.0,
+              "n_permutations": 200,
+              "seed": 7,
+              "min_set_size": 3,
+              "max_set_size": 20,
+              "correction": "fdr",
+              "output": "gsea"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "enrichment_plot_6",
+            "kind": "operator",
+            "operator": "enrichment_plot",
+            "title": "enrichment_plot",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "statistic_dim": "statistic",
+              "q_column": "Q_VALUE",
+              "size_column": "set_size",
+              "top_n": 20,
+              "filename": "gsea.png",
+              "term_dim": "gene_set"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_7",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 940.0,
+              "y": 730.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "counts-filter_min_1-0",
+            "source": "counts",
+            "target": "filter_min_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "filter_min_1-compare_groups_2-0",
+            "source": "filter_min_1",
+            "target": "compare_groups_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "meta-compare_groups_2-1",
+            "source": "meta",
+            "target": "compare_groups_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "compare_groups_2-volcano_3-0",
+            "source": "compare_groups_2",
+            "target": "volcano_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "compare_groups_2-ma_plot_4-0",
+            "source": "compare_groups_2",
+            "target": "ma_plot_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "compare_groups_2-gsea_5-0",
+            "source": "compare_groups_2",
+            "target": "gsea_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "sets-gsea_5-1",
+            "source": "sets",
+            "target": "gsea_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "gsea_5-enrichment_plot_6-0",
+            "source": "gsea_5",
+            "target": "enrichment_plot_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "compare_groups_2-describe_7-0",
+            "source": "compare_groups_2",
+            "target": "describe_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "counts",
+              "label": "counts",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "gene",
+                  "sample"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "meta",
+              "label": "meta",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "sets",
+              "label": "sets",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "gene",
+                  "gene_set"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "gsea_5",
+              "handle": "out",
+              "label": "Preranked GSEA",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "axis_info": {},
+                "info_open": false,
+                "axis_info_open": false,
+                "ndim": 2,
+                "numeric": true
               }
             }
           ]

@@ -1,0 +1,39 @@
+name: microbiome_diff
+sources:
+  table:
+    path: input/table.biom
+    dims: [sample, taxon]
+    labels:
+      sample: builtin
+      taxon: builtin
+  meta:
+    path: input/meta.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+steps:
+  - name: filter_min
+    inputs: [table]
+    params: {dim: taxon, min_value: 1, min_samples: 2, output: filtered}
+  - name: normalize
+    inputs: [filtered]
+    params: {method: total, dim: sample, output: relative}
+  - name: ancom_bc
+    inputs: [relative, meta]
+    params: {sample_dim: sample, taxon_dim: taxon, group_label: group, group_a: ctrl, group_b: case, output: ancom}
+  - name: aldex2
+    inputs: [relative, meta]
+    params: {sample_dim: sample, taxon_dim: taxon, group_label: group, group_a: ctrl, group_b: case, n_mc: 32, seed: 3, output: aldex}
+  - name: describe
+    inputs: [ancom]
+    params: {}
+  - name: describe
+    inputs: [aldex]
+    params: {}
+  - name: transpose
+    inputs: [relative]
+    params: {order: [taxon, sample], output: taxa_by_sample}
+  - name: barplot
+    inputs: [taxa_by_sample]
+    params: {dim: taxon, sample_dim: sample, top_n: 10, normalize: true, filename: composition.png}

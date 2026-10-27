@@ -1,0 +1,5 @@
+{
+  "key": "gwas_meta_prs",
+  "name": "GWAS meta-analysis and PRS",
+  "base_dir": "routes/gwas_meta_prs"
+}

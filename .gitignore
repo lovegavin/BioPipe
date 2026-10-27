@@ -12,8 +12,14 @@ env/
 # 任务数据与结果
 tasks/*/input/
 tasks/*/output/
+routes/*/input/*.vcf
+routes/*/input/*.vcf.gz
+routes/*/output/
 input/
 #output/
+!routes/*/input/
+!routes/*/input/*.vcf
+!routes/gwas_meta_prs/input/geno.vcf
 
 # 基因型 / 测序大文件
 *.vcf
@@ -62,3 +68,7 @@ _run.sh
 tmp.txt
 snapshot.txt
 tree_snapshot.txt
+# Route fixtures are source data, not user task data
+!routes/*/input/*.csv
+!routes/*/input/*.tsv
+!routes/*/input/*.vcf

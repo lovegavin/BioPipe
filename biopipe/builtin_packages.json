@@ -229,6 +229,115 @@
         },
         {
           "protocol_version": 1,
+          "id": "BiomReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.biom_reader:BiomReader",
+          "title": "BiomReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "taxonomy": {
+                "type": "boolean",
+                "default": false,
+                "title": "Taxonomy",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "dependencies": [
+            "h5py>=3.9"
+          ],
+          "dependency_imports": [
+            "h5py",
+            "numpy"
+          ],
+          "parameters": [
+            {
+              "key": "taxonomy",
+              "label": "Taxonomy",
+              "type": "boolean",
+              "required": false,
+              "default": false
+            }
+          ],
+          "name": "BiomReader",
+          "module": "src.reader.readers.biom_reader",
+          "extensions": [
+            ".biom"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "sample",
+              "taxon"
+            ],
+            "labels": {
+              "sample": "builtin",
+              "taxon": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "CsvReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -700,6 +809,92 @@
         },
         {
           "protocol_version": 1,
+          "id": "GmtReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.gmt_reader:GmtReader",
+          "title": "GmtReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [],
+          "name": "GmtReader",
+          "module": "src.reader.readers.gmt_reader",
+          "extensions": [
+            ".gmt"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "gene",
+              "gene_set"
+            ],
+            "labels": {
+              "gene": "builtin",
+              "gene_set": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "GtfReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -892,6 +1087,138 @@
             "labels": {
               "sample": "builtin",
               "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "LoomReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.loom_reader:LoomReader",
+          "title": "LoomReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "matrix": {
+                "type": "string",
+                "default": "matrix",
+                "title": "Matrix",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "row_ids": {
+                "type": "string",
+                "title": "Row Ids",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "col_ids": {
+                "type": "string",
+                "title": "Col Ids",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "dependencies": [
+            "h5py>=3.9"
+          ],
+          "dependency_imports": [
+            "h5py"
+          ],
+          "parameters": [
+            {
+              "key": "matrix",
+              "label": "Matrix",
+              "type": "string",
+              "required": false,
+              "default": "matrix"
+            },
+            {
+              "key": "row_ids",
+              "label": "Row Ids",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "col_ids",
+              "label": "Col Ids",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "name": "LoomReader",
+          "module": "src.reader.readers.loom_reader",
+          "extensions": [
+            ".loom"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "gene",
+              "cell"
+            ],
+            "labels": {
+              "gene": "builtin",
+              "cell": "builtin"
             }
           },
           "output_contract": {
@@ -3002,6 +3329,205 @@
           "description": "查看形状、标签、缺失情况与全局统计。支持分块读取。",
           "parameters": [],
           "runtime_defaults": {},
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "doublet_detect",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.doublet_detect:DoubletDetectStep",
+          "title": "Doublet detection",
+          "category": "Single cell",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "cell_dim": {
+                "type": "string",
+                "default": "cell",
+                "title": "Cell Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "gene_dim": {
+                "type": "string",
+                "default": "gene",
+                "title": "Gene Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "expected_doublet_rate": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "default": 0.06,
+                "title": "Expected Doublet Rate",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0,
+                "title": "随机种子",
+                "x-ui-group": "advanced",
+                "x-ui-order": 30
+              },
+              "threshold": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "default": 0.25,
+                "title": "阈值",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "n_prin_comps": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 20,
+                "title": "N Prin Comps",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "cell_dim",
+                    "default": "cell"
+                  },
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "anndata>=0.10",
+            "scanpy>=1.10"
+          ],
+          "dependency_imports": [
+            "anndata",
+            "scanpy"
+          ],
+          "name": "doublet_detect",
+          "module": "src.task.step.steps.doublet_detect",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "cell_dim",
+              "label": "Cell Dim",
+              "type": "string",
+              "required": false,
+              "default": "cell"
+            },
+            {
+              "key": "gene_dim",
+              "label": "Gene Dim",
+              "type": "string",
+              "required": false,
+              "default": "gene"
+            },
+            {
+              "key": "expected_doublet_rate",
+              "label": "Expected Doublet Rate",
+              "type": "number",
+              "required": false,
+              "default": 0.06,
+              "min": 0,
+              "max": 1
+            },
+            {
+              "key": "random_state",
+              "label": "随机种子",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "threshold",
+              "label": "阈值",
+              "type": "number",
+              "required": false,
+              "default": 0.25,
+              "min": 0,
+              "max": 1
+            },
+            {
+              "key": "n_prin_comps",
+              "label": "N Prin Comps",
+              "type": "integer",
+              "required": false,
+              "default": 20,
+              "min": 2
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "cell_dim": "cell",
+            "gene_dim": "gene",
+            "expected_doublet_rate": 0.06,
+            "random_state": 0,
+            "threshold": 0.25,
+            "n_prin_comps": 20
+          },
           "legacy_parameters": false
         },
         {
@@ -6647,6 +7173,234 @@
         },
         {
           "protocol_version": 1,
+          "id": "marker_score",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.marker_score:MarkerScoreStep",
+          "title": "Signature score",
+          "category": "Single cell",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "cell_dim": {
+                "type": "string",
+                "default": "cell",
+                "title": "Cell Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "gene_dim": {
+                "type": "string",
+                "default": "gene",
+                "title": "Gene Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "gene_set_dim": {
+                "type": "string",
+                "default": "gene_set",
+                "title": "Gene Set Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "min_genes": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1,
+                "title": "Min Genes",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "ctrl_size": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 50,
+                "title": "Ctrl Size",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "n_bins": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 25,
+                "title": "N Bins",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0,
+                "title": "随机种子",
+                "x-ui-group": "advanced",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "cell_dim",
+                    "default": "cell"
+                  },
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  },
+                  {
+                    "param": "gene_set_dim",
+                    "default": "gene_set"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "anndata>=0.10",
+            "scanpy>=1.10"
+          ],
+          "dependency_imports": [
+            "anndata",
+            "scanpy"
+          ],
+          "name": "marker_score",
+          "module": "src.task.step.steps.marker_score",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "cell_dim",
+              "label": "Cell Dim",
+              "type": "string",
+              "required": false,
+              "default": "cell"
+            },
+            {
+              "key": "gene_dim",
+              "label": "Gene Dim",
+              "type": "string",
+              "required": false,
+              "default": "gene"
+            },
+            {
+              "key": "gene_set_dim",
+              "label": "Gene Set Dim",
+              "type": "string",
+              "required": false,
+              "default": "gene_set"
+            },
+            {
+              "key": "min_genes",
+              "label": "Min Genes",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1
+            },
+            {
+              "key": "ctrl_size",
+              "label": "Ctrl Size",
+              "type": "integer",
+              "required": false,
+              "default": 50,
+              "min": 1
+            },
+            {
+              "key": "n_bins",
+              "label": "N Bins",
+              "type": "integer",
+              "required": false,
+              "default": 25,
+              "min": 1
+            },
+            {
+              "key": "random_state",
+              "label": "随机种子",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "cell_dim": "cell",
+            "gene_dim": "gene",
+            "gene_set_dim": "gene_set",
+            "min_genes": 1,
+            "ctrl_size": 50,
+            "n_bins": 25,
+            "random_state": 0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "motif_scan",
           "version": "1.0.0",
           "kind": "operator",
@@ -7606,6 +8360,379 @@
           ],
           "runtime_defaults": {
             "ascending": false
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "protein_rollup",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.protein_rollup:ProteinRollupStep",
+          "title": "Peptide to protein rollup",
+          "category": "Proteomics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "peptide_dim": {
+                "type": "string",
+                "default": "peptide",
+                "title": "Peptide Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "protein_dim": {
+                "type": "string",
+                "default": "protein",
+                "title": "Protein Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "sum",
+                  "mean"
+                ],
+                "default": "sum",
+                "title": "方法",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "min_peptides": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1,
+                "title": "Min Peptides",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "peptide_dim",
+                    "default": "peptide"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "peptide_dim",
+                    "default": "peptide"
+                  },
+                  {
+                    "param": "protein_dim",
+                    "default": "protein"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "protein_rollup",
+          "module": "src.task.step.steps.protein_rollup",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "peptide_dim",
+              "label": "Peptide Dim",
+              "type": "string",
+              "required": false,
+              "default": "peptide"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "protein_dim",
+              "label": "Protein Dim",
+              "type": "string",
+              "required": false,
+              "default": "protein"
+            },
+            {
+              "key": "method",
+              "label": "方法",
+              "type": "choice",
+              "required": false,
+              "default": "sum",
+              "options": [
+                "sum",
+                "mean"
+              ]
+            },
+            {
+              "key": "min_peptides",
+              "label": "Min Peptides",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "peptide_dim": "peptide",
+            "sample_dim": "sample",
+            "protein_dim": "protein",
+            "method": "sum",
+            "min_peptides": 1
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "pseudobulk",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.pseudobulk:PseudobulkStep",
+          "title": "Pseudobulk aggregation",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "cell_dim": {
+                "type": "string",
+                "default": "cell",
+                "title": "Cell Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "gene_dim": {
+                "type": "string",
+                "default": "gene",
+                "title": "Gene Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "sum",
+                  "mean"
+                ],
+                "default": "sum",
+                "title": "方法",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "group_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "cell_dim",
+                    "default": "cell"
+                  },
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "cell_dim",
+                    "default": "cell"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2,
+                "labels_any": [
+                  {
+                    "param": "group_label",
+                    "default": null
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "pseudobulk",
+          "module": "src.task.step.steps.pseudobulk",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "cell_dim",
+              "label": "Cell Dim",
+              "type": "string",
+              "required": false,
+              "default": "cell"
+            },
+            {
+              "key": "gene_dim",
+              "label": "Gene Dim",
+              "type": "string",
+              "required": false,
+              "default": "gene"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "method",
+              "label": "方法",
+              "type": "choice",
+              "required": false,
+              "default": "sum",
+              "options": [
+                "sum",
+                "mean"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "cell_dim": "cell",
+            "gene_dim": "gene",
+            "method": "sum"
           },
           "legacy_parameters": false
         },
@@ -10530,6 +11657,197 @@
         },
         {
           "protocol_version": 1,
+          "id": "meta_analysis",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.meta_analysis:MetaAnalysisStep",
+          "title": "Meta-analysis",
+          "category": "Genetics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "variant_dim": {
+                "type": "string",
+                "default": "variant",
+                "title": "Variant Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "study_dim": {
+                "type": "string",
+                "default": "study",
+                "title": "Study Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "fixed",
+                  "random"
+                ],
+                "default": "random",
+                "title": "方法",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "correction": {
+                "type": "string",
+                "enum": [
+                  "fdr",
+                  "bonferroni",
+                  "holm",
+                  "hommel",
+                  "fdr_by"
+                ],
+                "default": "fdr",
+                "title": "Correction",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "variant_dim",
+                    "default": "variant"
+                  },
+                  {
+                    "param": "study_dim",
+                    "default": "study"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "variant_dim",
+                    "default": "variant"
+                  },
+                  {
+                    "param": "study_dim",
+                    "default": "study"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "meta_analysis",
+          "module": "src.task.step.steps.meta_analysis",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "variant_dim",
+              "label": "Variant Dim",
+              "type": "string",
+              "required": false,
+              "default": "variant"
+            },
+            {
+              "key": "study_dim",
+              "label": "Study Dim",
+              "type": "string",
+              "required": false,
+              "default": "study"
+            },
+            {
+              "key": "method",
+              "label": "方法",
+              "type": "choice",
+              "required": false,
+              "default": "random",
+              "options": [
+                "fixed",
+                "random"
+              ]
+            },
+            {
+              "key": "correction",
+              "label": "Correction",
+              "type": "choice",
+              "required": false,
+              "default": "fdr",
+              "options": [
+                "fdr",
+                "bonferroni",
+                "holm",
+                "hommel",
+                "fdr_by"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "variant_dim": "variant",
+            "study_dim": "study",
+            "method": "random",
+            "correction": "fdr"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "missing",
           "version": "1.0.0",
           "kind": "operator",
@@ -10731,6 +12049,178 @@
           ],
           "runtime_defaults": {
             "n_components": 10
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "prs",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.prs:PrsStep",
+          "title": "Polygenic risk score",
+          "category": "Genetics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "variant_dim": {
+                "type": "string",
+                "default": "variant",
+                "title": "Variant Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "stat_dim": {
+                "type": "string",
+                "default": "statistic",
+                "title": "统计维度",
+                "x-ui-group": "advanced",
+                "x-ui-order": 20
+              },
+              "weight_label": {
+                "type": "string",
+                "default": "beta",
+                "title": "Weight Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "weight_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "variant_dim",
+                    "default": "variant"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "variant_dim",
+                    "default": "variant"
+                  },
+                  {
+                    "param": "stat_dim",
+                    "default": "statistic"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "prs",
+          "module": "src.task.step.steps.prs",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "variant_dim",
+              "label": "Variant Dim",
+              "type": "string",
+              "required": false,
+              "default": "variant"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "stat_dim",
+              "label": "统计维度",
+              "type": "string",
+              "required": false,
+              "default": "statistic"
+            },
+            {
+              "key": "weight_label",
+              "label": "Weight Label",
+              "type": "string",
+              "required": true,
+              "default": "beta"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "variant_dim": "variant",
+            "sample_dim": "sample",
+            "stat_dim": "statistic",
+            "weight_label": "beta"
           },
           "legacy_parameters": false
         },
@@ -11427,6 +12917,287 @@
         },
         {
           "protocol_version": 1,
+          "id": "gsea",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.gsea:GseaStep",
+          "title": "Preranked GSEA",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "gene_dim": {
+                "type": "string",
+                "default": "gene",
+                "title": "Gene Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "stat_dim": {
+                "type": "string",
+                "default": "statistic",
+                "title": "统计维度",
+                "x-ui-group": "advanced",
+                "x-ui-order": 10
+              },
+              "gene_set_dim": {
+                "type": "string",
+                "default": "gene_set",
+                "title": "Gene Set Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "rank_label": {
+                "type": "string",
+                "default": "log2FC",
+                "title": "Rank Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "weight": {
+                "type": "number",
+                "minimum": 0,
+                "default": 1.0,
+                "title": "Weight",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "n_permutations": {
+                "type": "integer",
+                "minimum": 10,
+                "default": 1000,
+                "title": "置换次数",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "seed": {
+                "type": "integer",
+                "default": 0,
+                "title": "Seed",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "min_set_size": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 5,
+                "title": "Min Set Size",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              },
+              "max_set_size": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 500,
+                "title": "Max Set Size",
+                "x-ui-group": "basic",
+                "x-ui-order": 80
+              },
+              "correction": {
+                "type": "string",
+                "enum": [
+                  "fdr",
+                  "bonferroni",
+                  "holm",
+                  "hommel",
+                  "fdr_by"
+                ],
+                "default": "fdr",
+                "title": "Correction",
+                "x-ui-group": "basic",
+                "x-ui-order": 90
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 100
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  },
+                  {
+                    "param": "stat_dim",
+                    "default": "statistic"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  },
+                  {
+                    "param": "gene_set_dim",
+                    "default": "gene_set"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "gsea",
+          "module": "src.task.step.steps.gsea",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "gene_dim",
+              "label": "Gene Dim",
+              "type": "string",
+              "required": false,
+              "default": "gene"
+            },
+            {
+              "key": "stat_dim",
+              "label": "统计维度",
+              "type": "string",
+              "required": false,
+              "default": "statistic"
+            },
+            {
+              "key": "gene_set_dim",
+              "label": "Gene Set Dim",
+              "type": "string",
+              "required": false,
+              "default": "gene_set"
+            },
+            {
+              "key": "rank_label",
+              "label": "Rank Label",
+              "type": "string",
+              "required": false,
+              "default": "log2FC"
+            },
+            {
+              "key": "weight",
+              "label": "Weight",
+              "type": "number",
+              "required": false,
+              "default": 1.0,
+              "min": 0
+            },
+            {
+              "key": "n_permutations",
+              "label": "置换次数",
+              "type": "integer",
+              "required": false,
+              "default": 1000,
+              "min": 10
+            },
+            {
+              "key": "seed",
+              "label": "Seed",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "min_set_size",
+              "label": "Min Set Size",
+              "type": "integer",
+              "required": false,
+              "default": 5,
+              "min": 1
+            },
+            {
+              "key": "max_set_size",
+              "label": "Max Set Size",
+              "type": "integer",
+              "required": false,
+              "default": 500,
+              "min": 1
+            },
+            {
+              "key": "correction",
+              "label": "Correction",
+              "type": "choice",
+              "required": false,
+              "default": "fdr",
+              "options": [
+                "fdr",
+                "bonferroni",
+                "holm",
+                "hommel",
+                "fdr_by"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "gene_dim": "gene",
+            "stat_dim": "statistic",
+            "gene_set_dim": "gene_set",
+            "rank_label": "log2FC",
+            "weight": 1.0,
+            "n_permutations": 1000,
+            "seed": 0,
+            "min_set_size": 5,
+            "max_set_size": 500,
+            "correction": "fdr"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "impute",
           "version": "1.0.0",
           "kind": "operator",
@@ -11538,6 +13309,237 @@
           ],
           "runtime_defaults": {
             "min_scale": 1.0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "limma_de",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.limma_de:LimmaDeStep",
+          "title": "Moderated t differential analysis",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "feature_dim": {
+                "type": "string",
+                "default": "protein",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_a": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "title": "A 组",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "group_b": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "title": "B 组",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "prior_df": {
+                "type": "integer",
+                "minimum": 0,
+                "title": "Prior Df",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "correction": {
+                "type": "string",
+                "enum": [
+                  "fdr",
+                  "bonferroni",
+                  "holm",
+                  "hommel",
+                  "fdr_by"
+                ],
+                "default": "fdr",
+                "title": "Correction",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "group_label",
+              "group_a",
+              "group_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "feature_dim",
+                    "default": "protein"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2,
+                "labels_any": [
+                  {
+                    "param": "group_label",
+                    "default": null
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "limma_de",
+          "module": "src.task.step.steps.limma_de",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "protein"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "group_a",
+              "label": "A 组",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "group_b",
+              "label": "B 组",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "prior_df",
+              "label": "Prior Df",
+              "type": "integer",
+              "required": false,
+              "min": 0
+            },
+            {
+              "key": "correction",
+              "label": "Correction",
+              "type": "choice",
+              "required": false,
+              "default": "fdr",
+              "options": [
+                "fdr",
+                "bonferroni",
+                "holm",
+                "hommel",
+                "fdr_by"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "feature_dim": "protein",
+            "sample_dim": "sample",
+            "correction": "fdr"
           },
           "legacy_parameters": false
         },
@@ -11922,6 +13924,301 @@
           ],
           "runtime_defaults": {
             "target_sum": 1000000.0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "ora",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.ora:OraStep",
+          "title": "Gene-set ORA",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "gene_dim": {
+                "type": "string",
+                "default": "gene",
+                "title": "Gene Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "stat_dim": {
+                "type": "string",
+                "default": "statistic",
+                "title": "统计维度",
+                "x-ui-group": "advanced",
+                "x-ui-order": 10
+              },
+              "gene_set_dim": {
+                "type": "string",
+                "default": "gene_set",
+                "title": "Gene Set Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "p_label": {
+                "type": "string",
+                "default": "Q_VALUE",
+                "title": "P 值字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "lfc_label": {
+                "type": "string",
+                "default": "log2FC",
+                "title": "log2FC 字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "p_threshold": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "default": 0.05,
+                "title": "P 值阈值",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "lfc_threshold": {
+                "type": "number",
+                "minimum": 0,
+                "default": 0.0,
+                "title": "log2FC 阈值",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "direction": {
+                "type": "string",
+                "enum": [
+                  "up",
+                  "down",
+                  "both"
+                ],
+                "default": "both",
+                "title": "Direction",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              },
+              "correction": {
+                "type": "string",
+                "enum": [
+                  "fdr",
+                  "bonferroni",
+                  "holm",
+                  "hommel",
+                  "fdr_by"
+                ],
+                "default": "fdr",
+                "title": "Correction",
+                "x-ui-group": "basic",
+                "x-ui-order": 80
+              },
+              "min_set_size": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1,
+                "title": "Min Set Size",
+                "x-ui-group": "basic",
+                "x-ui-order": 90
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 100
+              }
+            },
+            "required": [
+              "p_label",
+              "lfc_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  },
+                  {
+                    "param": "stat_dim",
+                    "default": "statistic"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  },
+                  {
+                    "param": "gene_set_dim",
+                    "default": "gene_set"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "ora",
+          "module": "src.task.step.steps.ora",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "gene_dim",
+              "label": "Gene Dim",
+              "type": "string",
+              "required": false,
+              "default": "gene"
+            },
+            {
+              "key": "stat_dim",
+              "label": "统计维度",
+              "type": "string",
+              "required": false,
+              "default": "statistic"
+            },
+            {
+              "key": "gene_set_dim",
+              "label": "Gene Set Dim",
+              "type": "string",
+              "required": false,
+              "default": "gene_set"
+            },
+            {
+              "key": "p_label",
+              "label": "P 值字段",
+              "type": "string",
+              "required": true,
+              "default": "Q_VALUE"
+            },
+            {
+              "key": "lfc_label",
+              "label": "log2FC 字段",
+              "type": "string",
+              "required": true,
+              "default": "log2FC"
+            },
+            {
+              "key": "p_threshold",
+              "label": "P 值阈值",
+              "type": "number",
+              "required": false,
+              "default": 0.05,
+              "min": 0,
+              "max": 1
+            },
+            {
+              "key": "lfc_threshold",
+              "label": "log2FC 阈值",
+              "type": "number",
+              "required": false,
+              "default": 0.0,
+              "min": 0
+            },
+            {
+              "key": "direction",
+              "label": "Direction",
+              "type": "choice",
+              "required": false,
+              "default": "both",
+              "options": [
+                "up",
+                "down",
+                "both"
+              ]
+            },
+            {
+              "key": "correction",
+              "label": "Correction",
+              "type": "choice",
+              "required": false,
+              "default": "fdr",
+              "options": [
+                "fdr",
+                "bonferroni",
+                "holm",
+                "hommel",
+                "fdr_by"
+              ]
+            },
+            {
+              "key": "min_set_size",
+              "label": "Min Set Size",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "gene_dim": "gene",
+            "stat_dim": "statistic",
+            "gene_set_dim": "gene_set",
+            "p_label": "Q_VALUE",
+            "lfc_label": "log2FC",
+            "p_threshold": 0.05,
+            "lfc_threshold": 0.0,
+            "direction": "both",
+            "correction": "fdr",
+            "min_set_size": 1
           },
           "legacy_parameters": false
         }
@@ -15357,6 +17654,519 @@
           ],
           "runtime_defaults": {
             "method": "sum"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "aldex2",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.aldex2:Aldex2Step",
+          "title": "Compositional differential abundance",
+          "category": "Microbiome",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "taxon_dim": {
+                "type": "string",
+                "default": "taxon",
+                "title": "Taxon Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_a": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "title": "A 组",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "group_b": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "title": "B 组",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "n_mc": {
+                "type": "integer",
+                "minimum": 8,
+                "default": 128,
+                "title": "N Mc",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "seed": {
+                "type": "integer",
+                "default": 0,
+                "title": "Seed",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "pseudocount": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "default": 0.5,
+                "title": "伪计数",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              },
+              "monte_carlo": {
+                "type": "boolean",
+                "default": true,
+                "title": "Monte Carlo",
+                "x-ui-group": "basic",
+                "x-ui-order": 80
+              },
+              "correction": {
+                "type": "string",
+                "enum": [
+                  "fdr",
+                  "bonferroni",
+                  "holm",
+                  "hommel",
+                  "fdr_by"
+                ],
+                "default": "fdr",
+                "title": "Correction",
+                "x-ui-group": "basic",
+                "x-ui-order": 90
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 100
+              }
+            },
+            "required": [
+              "group_label",
+              "group_a",
+              "group_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "taxon_dim",
+                    "default": "taxon"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2,
+                "labels_any": [
+                  {
+                    "param": "group_label",
+                    "default": null
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "aldex2",
+          "module": "src.task.step.steps.aldex2",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "taxon_dim",
+              "label": "Taxon Dim",
+              "type": "string",
+              "required": false,
+              "default": "taxon"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "group_a",
+              "label": "A 组",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "group_b",
+              "label": "B 组",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "n_mc",
+              "label": "N Mc",
+              "type": "integer",
+              "required": false,
+              "default": 128,
+              "min": 8
+            },
+            {
+              "key": "seed",
+              "label": "Seed",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "pseudocount",
+              "label": "伪计数",
+              "type": "number",
+              "required": false,
+              "default": 0.5
+            },
+            {
+              "key": "monte_carlo",
+              "label": "Monte Carlo",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "correction",
+              "label": "Correction",
+              "type": "choice",
+              "required": false,
+              "default": "fdr",
+              "options": [
+                "fdr",
+                "bonferroni",
+                "holm",
+                "hommel",
+                "fdr_by"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "taxon_dim": "taxon",
+            "n_mc": 128,
+            "seed": 0,
+            "pseudocount": 0.5,
+            "monte_carlo": true,
+            "correction": "fdr"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "ancom_bc",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.ancom_bc:AncomBcStep",
+          "title": "Log-ratio differential abundance",
+          "category": "Microbiome",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "taxon_dim": {
+                "type": "string",
+                "default": "taxon",
+                "title": "Taxon Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_a": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "title": "A 组",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "group_b": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "title": "B 组",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "pseudocount": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "default": 1.0,
+                "title": "伪计数",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "correction": {
+                "type": "string",
+                "enum": [
+                  "fdr",
+                  "bonferroni",
+                  "holm",
+                  "hommel",
+                  "fdr_by"
+                ],
+                "default": "fdr",
+                "title": "Correction",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "group_label",
+              "group_a",
+              "group_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "taxon_dim",
+                    "default": "taxon"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2,
+                "labels_any": [
+                  {
+                    "param": "group_label",
+                    "default": null
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "ancom_bc",
+          "module": "src.task.step.steps.ancom_bc",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "taxon_dim",
+              "label": "Taxon Dim",
+              "type": "string",
+              "required": false,
+              "default": "taxon"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "group_a",
+              "label": "A 组",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "group_b",
+              "label": "B 组",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "pseudocount",
+              "label": "伪计数",
+              "type": "number",
+              "required": false,
+              "default": 1.0
+            },
+            {
+              "key": "correction",
+              "label": "Correction",
+              "type": "choice",
+              "required": false,
+              "default": "fdr",
+              "options": [
+                "fdr",
+                "bonferroni",
+                "holm",
+                "hommel",
+                "fdr_by"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "taxon_dim": "taxon",
+            "pseudocount": 1.0,
+            "correction": "fdr"
           },
           "legacy_parameters": false
         },

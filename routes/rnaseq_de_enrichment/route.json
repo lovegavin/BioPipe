@@ -1,0 +1,5 @@
+{
+  "key": "rnaseq_de_enrichment",
+  "name": "RNA-seq DE + enrichment",
+  "base_dir": "routes/rnaseq_de_enrichment"
+}
