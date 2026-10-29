@@ -39,6 +39,7 @@
 5. [SDK 快速开始](sdk_quickstart.md) / [SDK 参考](sdk_reference.md)
 6. [注册表维护](registry_maintenance.md) 与 [插件生命周期](plugins.md)
 7. [测试与证据矩阵](sop_matrix.md)
+8. [R oracle 设置](r_oracles.md)
 
 ### 我要新增 Reader / 算子
 
@@ -59,6 +60,7 @@
 | [route_sop.md](route_sop.md) | 当前流程 | 自定义任务的标准操作流程 |
 | [llm_guide.md](llm_guide.md) / [user_guide.md](user_guide.md) | 当前指南 | LLM/真人的操作手册 |
 | [sop_matrix.md](sop_matrix.md) | 证据快照 | 覆盖级别、oracle、缺口 |
+| [r_oracles.md](r_oracles.md) | 专题 | R 包安装与外部 oracle 测试 |
 | [installation.md](installation.md)、[desktop.md](desktop.md)、[portability.md](portability.md) | 专题 | 安装、桌面、迁移 |
 | [input_formats.md](input_formats.md) | 专题 | 输入格式/边界 |
 | [resource_runtime.md](resource_runtime.md) | 专题 | 预算、准入、spill |

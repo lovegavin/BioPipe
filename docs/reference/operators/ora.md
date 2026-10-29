@@ -4,7 +4,7 @@
 
 - Package: `biopipe-expression`
 - Source: [`src/task/step/steps/ora.py`](../../../src/task/step/steps/ora.py)
-- Tests: [`tests/test_extension_operators.py`](../../../tests/test_extension_operators.py)
+- Tests: [`tests/test_extension_operators.py`](../../../tests/test_extension_operators.py), [`tests/test_r_oracles.py`](../../../tests/test_r_oracles.py)
 - Demo tasks: none found
 - Inputs arity: `2`; output parameter: `output`
 

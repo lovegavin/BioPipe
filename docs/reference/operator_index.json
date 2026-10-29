@@ -298,7 +298,8 @@
     },
     "source": "src/task/step/steps/aldex2.py",
     "tests": [
-      "tests/test_extension_operators.py"
+      "tests/test_extension_operators.py",
+      "tests/test_r_oracles.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/aldex2.md",
@@ -449,7 +450,8 @@
     },
     "source": "src/task/step/steps/ancom_bc.py",
     "tests": [
-      "tests/test_extension_operators.py"
+      "tests/test_extension_operators.py",
+      "tests/test_r_oracles.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/ancom_bc.md",
@@ -4288,7 +4290,8 @@
     },
     "source": "src/task/step/steps/gsea.py",
     "tests": [
-      "tests/test_extension_operators.py"
+      "tests/test_extension_operators.py",
+      "tests/test_r_oracles.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/gsea.md",
@@ -5937,7 +5940,8 @@
     },
     "source": "src/task/step/steps/limma_de.py",
     "tests": [
-      "tests/test_extension_operators.py"
+      "tests/test_extension_operators.py",
+      "tests/test_r_oracles.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/limma_de.md",
@@ -7228,7 +7232,8 @@
     },
     "source": "src/task/step/steps/meta_analysis.py",
     "tests": [
-      "tests/test_extension_operators.py"
+      "tests/test_extension_operators.py",
+      "tests/test_r_oracles.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/meta_analysis.md",
@@ -7706,7 +7711,8 @@
     },
     "source": "src/task/step/steps/ora.py",
     "tests": [
-      "tests/test_extension_operators.py"
+      "tests/test_extension_operators.py",
+      "tests/test_r_oracles.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/ora.md",

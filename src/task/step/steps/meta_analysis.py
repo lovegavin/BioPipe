@@ -8,8 +8,8 @@ Inputs are two aligned matrices:
 
 For each variant, fixed-effect inverse-variance pooling and the
 DerSimonian-Laird random-effects estimator are computed. Cochran's Q
-and I^2 are reported. A single study is allowed; Q is undefined and is
-reported as NaN.
+and I^2 (percentage, 0-100) are reported. A single study is allowed;
+Q and I^2 are undefined and reported as NaN.
 """
 from __future__ import annotations
 
@@ -98,7 +98,7 @@ class MetaAnalysisStep(Step):
                 df = k - 1
                 denom = float(np.sum(w) - np.sum(w ** 2) / np.sum(w))
                 tau2 = max(0.0, (q - df) / denom) if denom > 0 else 0.0
-                i2 = max(0.0, (q - df) / q) if q > 0 else 0.0
+                i2 = 100.0 * max(0.0, (q - df) / q) if q > 0 else 0.0
             else:
                 q = np.nan
                 tau2 = 0.0

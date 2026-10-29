@@ -504,7 +504,7 @@ Reader 只负责把一种“分析就绪”的文件/文件组读成 Form。**MU
    - A（推荐）：外部必须 `lab.*` 命名空间；内置保留历史 ID。
    - B：所有新 ID 强制命名空间（包括内置新增）。
 7. **测试门禁**
-   - A（推荐）：14 verify + 49 demo + 460 pytest + registry check + ruff F 全过才算完成；frontend 构建纳入 CI。
+   - A（推荐）：14 verify + 49 demo + 466 pytest + registry check + ruff F 全过才算完成；frontend 构建纳入 CI。
    - B：pytest + registry check 为准，verify/demo 作为发布前检查。
 8. **BGEN/H5AD 是否纳入本轮**
    - A（推荐）：纳入 BGEN 的 `chrom/pos` 元数据与 H5AD/10x 的磁盘路径；不新增 Reader/算子。

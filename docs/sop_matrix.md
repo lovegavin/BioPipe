@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：全量 pytest **460 passed / 17 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：全量 pytest **466 passed / 17 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -145,13 +145,14 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 | 组件 | 级别 | 证据/边界 |
 |---|---|---|
 | GmtReader / LoomReader / BiomReader | B | 手写格式解析测试；尚未与 loompy/biom-format 逐值对拍 |
-| ora | B | 超几何 p 值手算 + 独立 SciPy；与 clusterProfiler 尚未对拍 |
-| gsea | B | 经典加权 KS 分数 + 固定 seed 的基因集置换；尚未与 fgsea 对拍 |
+| ora | B | 超几何 p 值手算 + 独立 SciPy；与 R base `phyper` 逐值对拍 |
+| gsea | B | 经典加权 KS 分数 + 固定 seed 的基因集置换；ES 与 `fgsea::calcGseaStat` 对拍，p 值零分布不同 |
 | doublet_detect / marker_score | B | 直接封装 Scanpy Scrublet / score_genes；测试验证封装与输出契约，不重复证明上游算法 |
-| meta_analysis | B | 固定效应/随机效应手算；尚未与 METAL/metafor 对拍 |
+| meta_analysis | B | 固定效应/随机效应手算；beta/se/z/p/Q/I2 与 `metafor::rma(FE/DL)` 对拍；I2 为百分比 |
+| R oracle（`tests/test_r_oracles.py`） | B | 6 个测试：limma 普通 t、fgsea ES、metafor FE/DL、phyper、独立 log-ratio/Welch；R 或包缺失时自动 skip |
 | prs | B | 剂量×权重手算；未处理 effect allele/strand 推断 |
 | protein_rollup | B | shared-peptide 手算；尚未与 MaxQuant proteinGroups 对拍 |
-| limma_de | B | 平衡两组手算 + 独立线性模型；不是 R limma eBayes 的逐位复刻 |
-| ancom_bc / aldex2 | C | 独立 log-ratio 实现；尚无 R ANCOMBC/ALDEx2 外部 oracle |
+| limma_de | B | 平衡两组手算 + 独立线性模型；`prior_df=0` 的 logFC/t/p 与 R `limma::lmFit` 对拍；默认 eBayes 先验未对拍 |
+| ancom_bc / aldex2 | C | 独立 log-ratio 实现；核心 diff/p 与 R base log-ratio+Welch 公式对拍；完整 R ANCOMBC/ALDEx2 未对拍 |
 
 因此这些组件暂不作为“科学结论已外部验证”的 stable 依据；route 用于可运行示例，后续需补 L2/L3 oracle。

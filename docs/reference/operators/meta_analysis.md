@@ -4,7 +4,7 @@
 
 - Package: `biopipe-genetics`
 - Source: [`src/task/step/steps/meta_analysis.py`](../../../src/task/step/steps/meta_analysis.py)
-- Tests: [`tests/test_extension_operators.py`](../../../tests/test_extension_operators.py)
+- Tests: [`tests/test_extension_operators.py`](../../../tests/test_extension_operators.py), [`tests/test_r_oracles.py`](../../../tests/test_r_oracles.py)
 - Demo tasks: none found
 - Inputs arity: `2`; output parameter: `output`
 
@@ -108,8 +108,8 @@ Inputs are two aligned matrices:
 
 For each variant, fixed-effect inverse-variance pooling and the
 DerSimonian-Laird random-effects estimator are computed. Cochran's Q
-and I^2 are reported. A single study is allowed; Q is undefined and is
-reported as NaN.
+and I^2 (percentage, 0-100) are reported. A single study is allowed;
+Q and I^2 are undefined and reported as NaN.
 ```
 
 ## Minimal YAML skeleton
