@@ -1,7 +1,13 @@
 # 更新记录
 
-BioPipe 使用语义化版本和 git tag。当前源码版本：**0.9.0（2026-10-29）**。
+BioPipe 使用语义化版本和 git tag。当前源码版本：**0.10.0（2026-10-29）**。
 更早版本从 git tag/history 查；本页只保留当前版本摘要。
+
+## 0.10.0 — 2026-10-29
+- 新增 31 个算子：线性/弹性网/贝叶斯岭/Huber/Theil-Sen 回归，Kernel PCA、Truncated SVD、因子分析、MDS、Isomap、BH FDR、Mann-Whitney，以及 11 个树模型/朴素贝叶斯/判别分析/随机梯度模型。
+- 新增 13 个 Reader：Excel、GCT、bedGraph、narrowPeak、NumPy、JSON 表、FAI、FASTQ、HDF5、PLINK MAP、PHYLIP、Newick、Stockholm。
+- 当前：122 算子 / 32 Reader / 21 route；全部严格 schema/contracts；未修改核心层。
+- 验证：**525 passed / 0 skipped**（2026-10-29）；参考页生成检查；registry clean；新增算子/Reader 测试 31 个，Excel/HDF5/Newick 等边界单独覆盖。
 
 ## 0.9.0 — 2026-10-29
 

@@ -4,7 +4,7 @@
 
 - Package: `biopipe-core`
 - Source: [`src/task/step/steps/linear_regression.py`](../../../src/task/step/steps/linear_regression.py)
-- Tests: [`tasks/ml_regression_route_demo/test_ml_regression.py`](../../../tasks/ml_regression_route_demo/test_ml_regression.py), [`tasks/verify_ml_regression.py`](../../../tasks/verify_ml_regression.py)
+- Tests: [`tasks/ml_regression_route_demo/test_ml_regression.py`](../../../tasks/ml_regression_route_demo/test_ml_regression.py), [`tasks/verify_ml_regression.py`](../../../tasks/verify_ml_regression.py), [`tests/test_extension3b.py`](../../../tests/test_extension3b.py)
 - Demo tasks: none found
 - Inputs arity: `2`; output parameter: `output`
 
@@ -21,6 +21,8 @@
 | `random_state` | 随机种子 | integer | 0 |  |  |  | advanced |
 | `scale` | 标准化 | boolean | True |  |  |  | basic |
 | `output` | 输出名称 | string |  |  |  |  | basic |
+| `fit_intercept` | Fit Intercept | boolean | True |  |  |  | basic |
+| `positive` | Positive | boolean | False |  |  |  | basic |
 
 ## Input contract
 
@@ -82,7 +84,7 @@
 ## Processing rules (source docstring)
 
 ```text
-Ordinary least squares linear regression.
+Ordinary least-squares linear regression.
 ```
 
 ## Minimal YAML skeleton
@@ -100,6 +102,8 @@ Ordinary least squares linear regression.
     random_state: <integer>
     scale: <boolean>
     output: <string>
+    fit_intercept: <boolean>
+    positive: <boolean>
     output: <output_name>
 ```
 

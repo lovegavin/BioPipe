@@ -131,6 +131,7 @@ YAML / JSON
 - 算子：QC、变换、统计、生存、遗传、单细胞、序列、注释、区间、微生物、ML、绘图、GO；
 - 0.8.0 新增：GSEA/ORA、单细胞 doublet/pseudobulk/marker score、GWAS meta/PRS、蛋白组 rollup/moderated t、微生物 ANCOM-style/ALDEx-style；
 - 0.9.0 新增：ComBat 批次校正、ssGSEA 基因集打分，以及单细胞去批次和 RNA-seq ssGSEA 两条 route；
+- 0.10.0 新增：31 个统计/机器学习算子、13 个格式 Reader；核心层不变，扩展通过声明、registry 和参考页完成；
 - 尚未支持：FASTQ、BAM/CRAM、BigWig/BigBed、mzML、FCS、空间转录组、影像等；
 - 大矩阵：heatmap 有 `max_cells/max_pixels` 保护；H5AD/10x full 模式仍可能 densify。
 

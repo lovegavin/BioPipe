@@ -468,8 +468,8 @@ Reader 只负责把一种“分析就绪”的文件/文件组读成 Form。**MU
 | 协议 | 现状 | 需要补齐 |
 |---|---|---|
 | P1 Form | 基本满足 | 统一 dtype 精度测试；更多算子输出精度审计 |
-| P2 Reader | 19 个已声明 schema；精度/FASTA/GFF/BED 已修 | 每个 Reader 的格式语义表与真实数据覆盖；BGEN 坐标 |
-| P3 Operator | 91 个严格 schema；30 个 legacy 已迁移；标题/UI 分组已归一化 | 仍需逐个审计未覆盖的数学分支 |
+| P2 Reader | 32 个已声明 schema；精度/FASTA/GFF/BED 已修 | 每个 Reader 的格式语义表与真实数据覆盖；BGEN 坐标 |
+| P3 Operator | 122 个严格 schema；30 个 legacy 已迁移；标题/UI 分组已归一化 | 仍需逐个审计未覆盖的数学分支 |
 | P4 Contract | 三态 + 运行时校验已实现；Step/Reader 基类强制严格参数 | 更多负例覆盖；输出 mode 逐项测试 |
 | P5 Registry | 生成物干净；source 为唯一参数真源；`operator_ui.json` 已只保留展示元数据（1485→258 行） | 无 |
 | P6 Route | 21 条；编译/展开/注册已实现 | 21 条 route 均有仓库 fixture 并实际执行；7 条 0.8/0.9 新 route 另有独立 smoke test |
@@ -504,7 +504,7 @@ Reader 只负责把一种“分析就绪”的文件/文件组读成 Form。**MU
    - A（推荐）：外部必须 `lab.*` 命名空间；内置保留历史 ID。
    - B：所有新 ID 强制命名空间（包括内置新增）。
 7. **测试门禁**
-   - A（推荐）：14 verify + 49 demo + 494 pytest（0 skip）+ registry check + ruff F 全过才算完成；frontend 构建纳入 CI。
+   - A（推荐）：14 verify + 49 demo + 525 pytest（0 skip）+ registry check + ruff F 全过才算完成；frontend 构建纳入 CI。
    - B：pytest + registry check 为准，verify/demo 作为发布前检查。
 8. **BGEN/H5AD 是否纳入本轮**
    - A（推荐）：纳入 BGEN 的 `chrom/pos` 元数据与 H5AD/10x 的磁盘路径；不新增 Reader/算子。

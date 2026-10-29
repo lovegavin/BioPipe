@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：全量 pytest **494 passed / 0 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：全量 pytest **525 passed / 0 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -11,7 +11,7 @@
 | B | 算子 demo 自测：手工可算的小例子 |
 | C | 仅契约/route/artifact 覆盖；没有独立数值 oracle |
 
-## 2. Reader（19）
+## 2. Reader（32）
 | Reader | 级别 | 证据/独立 oracle |
 |---|---|---|
 | `BedReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
@@ -35,7 +35,7 @@
 | `BiomReader` | B | test_new_readers.py（标准 BIOM：行=观测、列=样本；JSON 与 HDF5 布局一致） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（91）
+## 3. Operator（122）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -129,7 +129,7 @@ Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解�
 ## 5. 缺口
 - 10 个 C 级绘图算子由 route 的 PNG artifact 覆盖；line/enrichment 另有直接 artifact 测试；绘图无数值契约，不设数值 oracle。
 - C 级且非绘图：无。
-- 运行中的 skip：无；全量 pytest 为 **494 passed / 0 skipped**。桌面测试在 `frontend/dist` 存在时执行，route fixture 已全部接入。
+- 运行中的 skip：无；全量 pytest 为 **525 passed / 0 skipped**。桌面测试在 `frontend/dist` 存在时执行，route fixture 已全部接入。
 
 ## 6. 复现命令
 ```bash
@@ -166,3 +166,10 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 |---|---|---|
 | `combat` | B | `test_extension2_operators.py` 的 batch/mean-center 对齐测试；`single_cell_batch` route 实际运行 |
 | `ssgsea` | A | `test_ssgsea_matches_r_gsva` 与 R GSVA 1.28 `method="ssgsea"` 对拍；`rnaseq_ssgsea` route 实际运行 |
+
+## 9. 0.10.0 扩展证据
+
+- 新增 31 个算子全部通过 `tests/test_extension3.py` / `tests/test_extension3b.py` 的合成数据运行测试；覆盖分类、回归、投影、组间检验、BH 校正和 Mann-Whitney。
+- 新增 13 个 Reader 通过 `tests/test_extension3.py` / `tests/test_extension3b.py` 的临时文件解析测试；Excel、HDF5、Newick、FASTQ 等均验证 axis/dims/labels。
+- 扩展未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、测试、生成式 registry 和参考页。
+- 全量 pytest 基线更新为 **525 passed / 0 skipped**；参考页 122 算子 / 32 Reader；21 条 route fixture 仍全部执行。

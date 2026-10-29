@@ -1,5 +1,332 @@
 [
   {
+    "id": "ada_boost_classifier",
+    "kind": "operator",
+    "title": "AdaBoost classifier",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "valid_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "有效标签",
+          "x-ui-group": "advanced",
+          "x-ui-order": 90
+        },
+        "n_estimators": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 50,
+          "title": "树数量",
+          "x-ui-group": "advanced",
+          "x-ui-order": 100
+        },
+        "learning_rate": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1.0,
+          "title": "学习率",
+          "x-ui-group": "advanced",
+          "x-ui-order": 110
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/ada_boost_classifier.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/ada_boost_classifier.md",
+    "quality": "auto"
+  },
+  {
+    "id": "ada_boost_regressor",
+    "kind": "operator",
+    "title": "AdaBoost regressor",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "n_estimators": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 50,
+          "title": "树数量",
+          "x-ui-group": "advanced",
+          "x-ui-order": 90
+        },
+        "learning_rate": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1.0,
+          "title": "学习率",
+          "x-ui-group": "advanced",
+          "x-ui-order": 100
+        },
+        "loss": {
+          "type": "string",
+          "enum": [
+            "linear",
+            "square",
+            "exponential"
+          ],
+          "default": "linear",
+          "title": "Loss",
+          "x-ui-group": "basic",
+          "x-ui-order": 110
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/ada_boost_regressor.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/ada_boost_regressor.md",
+    "quality": "auto"
+  },
+  {
     "id": "aggregate",
     "kind": "operator",
     "title": "Aggregate",
@@ -659,6 +986,112 @@
     "quality": "reviewed"
   },
   {
+    "id": "anova",
+    "kind": "operator",
+    "title": "one-way ANOVA",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/anova.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/anova.md",
+    "quality": "auto"
+  },
+  {
     "id": "attach_info",
     "kind": "operator",
     "title": "attach_info",
@@ -889,6 +1322,247 @@
       "tasks/microbiome_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/barplot.md",
+    "quality": "auto"
+  },
+  {
+    "id": "bayesian_ridge_regressor",
+    "kind": "operator",
+    "title": "Bayesian ridge regressor",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "alpha_1": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1e-06,
+          "title": "Alpha 1",
+          "x-ui-group": "basic",
+          "x-ui-order": 90
+        },
+        "alpha_2": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1e-06,
+          "title": "Alpha 2",
+          "x-ui-group": "basic",
+          "x-ui-order": 100
+        },
+        "lambda_1": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1e-06,
+          "title": "Lambda 1",
+          "x-ui-group": "basic",
+          "x-ui-order": 110
+        },
+        "lambda_2": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1e-06,
+          "title": "Lambda 2",
+          "x-ui-group": "basic",
+          "x-ui-order": 120
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/bayesian_ridge_regressor.py",
+    "tests": [
+      "tests/test_extension3b.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/bayesian_ridge_regressor.md",
+    "quality": "auto"
+  },
+  {
+    "id": "bh_adjust",
+    "kind": "operator",
+    "title": "Benjamini-Hochberg FDR",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "value_dim",
+              "default": "statistic"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "value_dim": {
+          "type": "string",
+          "default": "pvalue",
+          "title": "Value Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/bh_adjust.py",
+    "tests": [
+      "tests/test_extension3b.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/bh_adjust.md",
     "quality": "auto"
   },
   {
@@ -1173,6 +1847,85 @@
       "tasks/rnaseq_de_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/boxplot.md",
+    "quality": "auto"
+  },
+  {
+    "id": "chi_square",
+    "kind": "operator",
+    "title": "Chi-square test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "row_dim",
+              "default": "row"
+            },
+            {
+              "param": "col_dim",
+              "default": "col"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "row_dim": {
+          "type": "string",
+          "default": "row",
+          "title": "Row Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "col_dim": {
+          "type": "string",
+          "default": "col",
+          "title": "Col Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "correction": {
+          "type": "boolean",
+          "default": true,
+          "title": "Correction",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/chi_square.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/chi_square.md",
     "quality": "auto"
   },
   {
@@ -1604,6 +2357,174 @@
     "quality": "auto"
   },
   {
+    "id": "complement_nb_classifier",
+    "kind": "operator",
+    "title": "Complement Naive Bayes classifier",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": false,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "valid_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "有效标签",
+          "x-ui-group": "advanced",
+          "x-ui-order": 90
+        },
+        "alpha": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1.0,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 100
+        },
+        "fit_prior": {
+          "type": "boolean",
+          "default": true,
+          "title": "Fit Prior",
+          "x-ui-group": "basic",
+          "x-ui-order": 110
+        },
+        "norm": {
+          "type": "boolean",
+          "default": false,
+          "title": "Norm",
+          "x-ui-group": "basic",
+          "x-ui-order": 120
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/complement_nb_classifier.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/complement_nb_classifier.md",
+    "quality": "auto"
+  },
+  {
     "id": "concat",
     "kind": "operator",
     "title": "concat",
@@ -1981,6 +2902,382 @@
       "tasks/survival_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/cox_regression.md",
+    "quality": "auto"
+  },
+  {
+    "id": "decision_tree_classifier",
+    "kind": "operator",
+    "title": "Decision Tree classifier",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "valid_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "有效标签",
+          "x-ui-group": "advanced",
+          "x-ui-order": 90
+        },
+        "criterion": {
+          "type": "string",
+          "enum": [
+            "gini",
+            "entropy",
+            "log_loss"
+          ],
+          "default": "gini",
+          "title": "Criterion",
+          "x-ui-group": "basic",
+          "x-ui-order": 100
+        },
+        "max_depth": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "default": null,
+          "title": "最大深度",
+          "x-ui-group": "advanced",
+          "x-ui-order": 110
+        },
+        "min_samples_split": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 2,
+          "title": "Min Samples Split",
+          "x-ui-group": "basic",
+          "x-ui-order": 120
+        },
+        "min_samples_leaf": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "title": "Min Samples Leaf",
+          "x-ui-group": "basic",
+          "x-ui-order": 130
+        },
+        "class_weight": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "balanced",
+            null
+          ],
+          "default": null,
+          "title": "类别权重",
+          "x-ui-group": "advanced",
+          "x-ui-order": 140
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/decision_tree_classifier.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/decision_tree_classifier.md",
+    "quality": "auto"
+  },
+  {
+    "id": "decision_tree_regressor",
+    "kind": "operator",
+    "title": "Decision Tree regressor",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "criterion": {
+          "type": "string",
+          "enum": [
+            "squared_error",
+            "absolute_error",
+            "friedman_mse",
+            "poisson"
+          ],
+          "default": "squared_error",
+          "title": "Criterion",
+          "x-ui-group": "basic",
+          "x-ui-order": 90
+        },
+        "max_depth": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "default": null,
+          "title": "最大深度",
+          "x-ui-group": "advanced",
+          "x-ui-order": 100
+        },
+        "min_samples_split": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 2,
+          "title": "Min Samples Split",
+          "x-ui-group": "basic",
+          "x-ui-order": 110
+        },
+        "min_samples_leaf": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "title": "Min Samples Leaf",
+          "x-ui-group": "basic",
+          "x-ui-order": 120
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/decision_tree_regressor.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/decision_tree_regressor.md",
     "quality": "auto"
   },
   {
@@ -2720,6 +4017,168 @@
     "quality": "auto"
   },
   {
+    "id": "elastic_net_regressor",
+    "kind": "operator",
+    "title": "Elastic net regressor",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "alpha": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1.0,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 90
+        },
+        "l1_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.5,
+          "title": "L1 Ratio",
+          "x-ui-group": "basic",
+          "x-ui-order": 100
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1000,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 110
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/elastic_net_regressor.py",
+    "tests": [
+      "tests/test_extension3b.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/elastic_net_regressor.md",
+    "quality": "auto"
+  },
+  {
     "id": "enrich_go",
     "kind": "operator",
     "title": "enrich_go",
@@ -3024,6 +4483,445 @@
       "tasks/explode_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/explode.md",
+    "quality": "auto"
+  },
+  {
+    "id": "extra_trees_classifier",
+    "kind": "operator",
+    "title": "Extra Trees classifier",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "valid_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "有效标签",
+          "x-ui-group": "advanced",
+          "x-ui-order": 90
+        },
+        "n_estimators": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100,
+          "title": "树数量",
+          "x-ui-group": "advanced",
+          "x-ui-order": 100
+        },
+        "max_depth": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "default": null,
+          "title": "最大深度",
+          "x-ui-group": "advanced",
+          "x-ui-order": 110
+        },
+        "min_samples_leaf": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "title": "Min Samples Leaf",
+          "x-ui-group": "basic",
+          "x-ui-order": 120
+        },
+        "class_weight": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "balanced",
+            null
+          ],
+          "default": null,
+          "title": "类别权重",
+          "x-ui-group": "advanced",
+          "x-ui-order": 130
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/extra_trees_classifier.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/extra_trees_classifier.md",
+    "quality": "auto"
+  },
+  {
+    "id": "extra_trees_regressor",
+    "kind": "operator",
+    "title": "Extra Trees regressor",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "n_estimators": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100,
+          "title": "树数量",
+          "x-ui-group": "advanced",
+          "x-ui-order": 90
+        },
+        "max_depth": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "default": null,
+          "title": "最大深度",
+          "x-ui-group": "advanced",
+          "x-ui-order": 100
+        },
+        "min_samples_leaf": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "title": "Min Samples Leaf",
+          "x-ui-group": "basic",
+          "x-ui-order": 110
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/extra_trees_regressor.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/extra_trees_regressor.md",
+    "quality": "auto"
+  },
+  {
+    "id": "factor_analysis",
+    "kind": "operator",
+    "title": "Factor analysis",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 10,
+          "default": 1000,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/factor_analysis.py",
+    "tests": [
+      "tests/test_extension3b.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/factor_analysis.md",
     "quality": "auto"
   },
   {
@@ -3347,6 +5245,90 @@
       "tasks/sequence_profiling_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/find_orfs.md",
+    "quality": "auto"
+  },
+  {
+    "id": "fisher_exact",
+    "kind": "operator",
+    "title": "Fisher exact test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "row_dim",
+              "default": "row"
+            },
+            {
+              "param": "col_dim",
+              "default": "col"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "row_dim": {
+          "type": "string",
+          "default": "row",
+          "title": "Row Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "col_dim": {
+          "type": "string",
+          "default": "col",
+          "title": "Col Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "less",
+            "greater"
+          ],
+          "default": "two-sided",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/fisher_exact.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/fisher_exact.md",
     "quality": "auto"
   },
   {
@@ -4732,6 +6714,167 @@
     "quality": "auto"
   },
   {
+    "id": "huber_regressor",
+    "kind": "operator",
+    "title": "Huber regressor",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "epsilon": {
+          "type": "number",
+          "exclusiveMinimum": 1,
+          "default": 1.35,
+          "title": "epsilon",
+          "x-ui-group": "advanced",
+          "x-ui-order": 90
+        },
+        "alpha": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 0.0001,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 100
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 110
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/huber_regressor.py",
+    "tests": [
+      "tests/test_extension3b.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/huber_regressor.md",
+    "quality": "auto"
+  },
+  {
     "id": "hwe",
     "kind": "operator",
     "title": "hwe",
@@ -4807,6 +6950,110 @@
       "tasks/hwe_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/hwe.md",
+    "quality": "auto"
+  },
+  {
+    "id": "ica",
+    "kind": "operator",
+    "title": "ICA",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "whiten": {
+          "type": "string",
+          "enum": [
+            "unit-variance",
+            "arbitrary"
+          ],
+          "default": "unit-variance",
+          "title": "Whiten",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 10,
+          "default": 500,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/ica.py",
+    "tests": [],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/ica.md",
     "quality": "auto"
   },
   {
@@ -5312,6 +7559,94 @@
     "quality": "auto"
   },
   {
+    "id": "isomap",
+    "kind": "operator",
+    "title": "Isomap",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "n_neighbors": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "邻居数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/isomap.py",
+    "tests": [
+      "tests/test_extension3b.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/isomap.md",
+    "quality": "auto"
+  },
+  {
     "id": "join",
     "kind": "operator",
     "title": "Join",
@@ -5582,6 +7917,111 @@
     "quality": "auto"
   },
   {
+    "id": "kernel_pca",
+    "kind": "operator",
+    "title": "Kernel PCA",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "kernel": {
+          "type": "string",
+          "enum": [
+            "rbf",
+            "linear",
+            "poly",
+            "sigmoid",
+            "cosine"
+          ],
+          "default": "rbf",
+          "title": "Kernel",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "gamma": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0,
+          "default": null,
+          "title": "Gamma",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/kernel_pca.py",
+    "tests": [
+      "tests/test_extension3b.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/kernel_pca.md",
+    "quality": "auto"
+  },
+  {
     "id": "kmer_count",
     "kind": "operator",
     "title": "kmer_count",
@@ -5688,6 +8128,112 @@
       "tasks/sequence_profiling_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/kmer_count.md",
+    "quality": "auto"
+  },
+  {
+    "id": "kruskal",
+    "kind": "operator",
+    "title": "Kruskal-Wallis test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/kruskal.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/kruskal.md",
     "quality": "auto"
   },
   {
@@ -5915,6 +8461,290 @@
     ],
     "doc": "docs/reference/operators/ld_prune.md",
     "quality": "reviewed"
+  },
+  {
+    "id": "lda_classifier",
+    "kind": "operator",
+    "title": "Linear Discriminant Analysis classifier",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "valid_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "有效标签",
+          "x-ui-group": "advanced",
+          "x-ui-order": 90
+        },
+        "solver": {
+          "type": "string",
+          "enum": [
+            "svd",
+            "lsqr",
+            "eigen"
+          ],
+          "default": "svd",
+          "title": "Solver",
+          "x-ui-group": "basic",
+          "x-ui-order": 100
+        },
+        "tol": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 0.0001,
+          "title": "Tol",
+          "x-ui-group": "basic",
+          "x-ui-order": 110
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/lda_classifier.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/lda_classifier.md",
+    "quality": "auto"
+  },
+  {
+    "id": "levene",
+    "kind": "operator",
+    "title": "Levene variance test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "center": {
+          "type": "string",
+          "enum": [
+            "mean",
+            "median",
+            "trimmed"
+          ],
+          "default": "median",
+          "title": "Center",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/levene.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/levene.md",
+    "quality": "auto"
   },
   {
     "id": "limma_de",
@@ -6303,6 +9133,20 @@
           "title": "输出名称",
           "x-ui-group": "basic",
           "x-ui-order": 80
+        },
+        "fit_intercept": {
+          "type": "boolean",
+          "default": true,
+          "title": "Fit Intercept",
+          "x-ui-group": "basic",
+          "x-ui-order": 90
+        },
+        "positive": {
+          "type": "boolean",
+          "default": false,
+          "title": "Positive",
+          "x-ui-group": "basic",
+          "x-ui-order": 100
         }
       },
       "required": [
@@ -6313,7 +9157,8 @@
     "source": "src/task/step/steps/linear_regression.py",
     "tests": [
       "tasks/ml_regression_route_demo/test_ml_regression.py",
-      "tasks/verify_ml_regression.py"
+      "tasks/verify_ml_regression.py",
+      "tests/test_extension3b.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/linear_regression.md",
@@ -7100,6 +9945,124 @@
     "quality": "auto"
   },
   {
+    "id": "mann_whitney",
+    "kind": "operator",
+    "title": "Mann-Whitney U test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "less",
+            "greater"
+          ],
+          "default": "two-sided",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/mann_whitney.py",
+    "tests": [
+      "tests/test_extension3b.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/mann_whitney.md",
+    "quality": "auto"
+  },
+  {
     "id": "marker_score",
     "kind": "operator",
     "title": "Signature score",
@@ -7233,6 +10196,94 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/marker_score.md",
+    "quality": "auto"
+  },
+  {
+    "id": "mds",
+    "kind": "operator",
+    "title": "Multidimensional scaling",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 3,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "metric": {
+          "type": "boolean",
+          "default": true,
+          "title": "距离/相关指标",
+          "x-ui-group": "advanced",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/mds.py",
+    "tests": [
+      "tests/test_extension3b.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/mds.md",
     "quality": "auto"
   },
   {
@@ -7553,6 +10604,274 @@
       "tasks/sequence_profiling_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/motif_scan.md",
+    "quality": "auto"
+  },
+  {
+    "id": "multinomial_nb_classifier",
+    "kind": "operator",
+    "title": "Multinomial Naive Bayes classifier",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": false,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "valid_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "有效标签",
+          "x-ui-group": "advanced",
+          "x-ui-order": 90
+        },
+        "alpha": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1.0,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 100
+        },
+        "fit_prior": {
+          "type": "boolean",
+          "default": true,
+          "title": "Fit Prior",
+          "x-ui-group": "basic",
+          "x-ui-order": 110
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/multinomial_nb_classifier.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/multinomial_nb_classifier.md",
+    "quality": "auto"
+  },
+  {
+    "id": "nmf",
+    "kind": "operator",
+    "title": "NMF",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 5,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "init": {
+          "type": "string",
+          "enum": [
+            "nndsvda",
+            "nndsvd",
+            "random"
+          ],
+          "default": "nndsvda",
+          "title": "Init",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 10,
+          "default": 500,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/nmf.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/nmf.md",
     "quality": "auto"
   },
   {
@@ -7987,7 +11306,8 @@
       "tasks/multi_omics_route_demo/test_multi_omics_route.py",
       "tasks/verify_bgen_qc.py",
       "tasks/verify_existing_operators.py",
-      "tasks/verify_multi_omics.py"
+      "tasks/verify_multi_omics.py",
+      "tests/test_extension3b.py"
     ],
     "demo_tasks": [
       "tasks/bgen_qc_demo/task.yaml",
@@ -10592,6 +13912,441 @@
     "quality": "auto"
   },
   {
+    "id": "sgd_classifier",
+    "kind": "operator",
+    "title": "SGD classifier",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "valid_labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "有效标签",
+          "x-ui-group": "advanced",
+          "x-ui-order": 90
+        },
+        "loss": {
+          "type": "string",
+          "enum": [
+            "hinge",
+            "log_loss",
+            "modified_huber"
+          ],
+          "default": "hinge",
+          "title": "Loss",
+          "x-ui-group": "basic",
+          "x-ui-order": 100
+        },
+        "penalty": {
+          "type": "string",
+          "enum": [
+            "l2",
+            "l1",
+            "elasticnet"
+          ],
+          "default": "l2",
+          "title": "惩罚项",
+          "x-ui-group": "advanced",
+          "x-ui-order": 110
+        },
+        "alpha": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 0.0001,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 120
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1000,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 130
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/sgd_classifier.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/sgd_classifier.md",
+    "quality": "auto"
+  },
+  {
+    "id": "sgd_regressor",
+    "kind": "operator",
+    "title": "SGD regressor",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "loss": {
+          "type": "string",
+          "enum": [
+            "squared_error",
+            "huber",
+            "epsilon_insensitive"
+          ],
+          "default": "squared_error",
+          "title": "Loss",
+          "x-ui-group": "basic",
+          "x-ui-order": 90
+        },
+        "penalty": {
+          "type": "string",
+          "enum": [
+            "l2",
+            "l1",
+            "elasticnet"
+          ],
+          "default": "l2",
+          "title": "惩罚项",
+          "x-ui-group": "advanced",
+          "x-ui-order": 100
+        },
+        "alpha": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 0.0001,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 110
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1000,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 120
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/sgd_regressor.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/sgd_regressor.md",
+    "quality": "auto"
+  },
+  {
+    "id": "shapiro",
+    "kind": "operator",
+    "title": "Shapiro-Wilk test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/shapiro.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/shapiro.md",
+    "quality": "auto"
+  },
+  {
     "id": "ssgsea",
     "kind": "operator",
     "title": "ssGSEA",
@@ -11050,6 +14805,159 @@
     "quality": "auto"
   },
   {
+    "id": "theil_sen_regressor",
+    "kind": "operator",
+    "title": "Theil-Sen regressor",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "max_subpopulation": {
+          "type": "integer",
+          "minimum": 10,
+          "default": 10000,
+          "title": "Max Subpopulation",
+          "x-ui-group": "basic",
+          "x-ui-order": 90
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 300,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 100
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/theil_sen_regressor.py",
+    "tests": [
+      "tests/test_extension3b.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/theil_sen_regressor.md",
+    "quality": "auto"
+  },
+  {
     "id": "transpose",
     "kind": "operator",
     "title": "transpose",
@@ -11119,6 +15027,200 @@
       "tasks/violin_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/transpose.md",
+    "quality": "auto"
+  },
+  {
+    "id": "truncated_svd",
+    "kind": "operator",
+    "title": "Truncated SVD",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/truncated_svd.py",
+    "tests": [
+      "tests/test_extension3b.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/truncated_svd.md",
+    "quality": "auto"
+  },
+  {
+    "id": "tsne",
+    "kind": "operator",
+    "title": "t-SNE",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 3,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "perplexity": {
+          "type": "number",
+          "exclusiveMinimum": 1,
+          "default": 30.0,
+          "title": "Perplexity",
+          "x-ui-group": "advanced",
+          "x-ui-order": 30
+        },
+        "learning_rate": {
+          "type": [
+            "number",
+            "string"
+          ],
+          "default": "auto",
+          "title": "学习率",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 250,
+          "default": 1000,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/tsne.py",
+    "tests": [
+      "tests/test_extension3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/tsne.md",
     "quality": "auto"
   },
   {
