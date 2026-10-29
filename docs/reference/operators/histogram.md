@@ -66,15 +66,15 @@
 ```text
 Draw a histogram.
 
-Params:
-    dim         : attribute dimension (default "feature")
-    value_label : column label for the values
-    bins        : number of bins (default 40)
-    filename    : output file name
-    title       : optional plot title
-    xlabel      : optional x-axis label (default: value_label)
-    ylabel      : optional y-axis label (default: "Count")
-    log_y       : use log scale on the y axis (default False)
+    Params:
+        dim         : attribute dimension (default "feature")
+        value_label : column label for the values
+        bins        : number of bins (default 40)
+        filename    : output file name
+        title       : optional plot title
+        xlabel      : optional x-axis label (default: value_label)
+        ylabel      : optional y-axis label (default: "Count")
+        log_y       : use log scale on the y axis (default False)
 
 --- module documentation ---
 

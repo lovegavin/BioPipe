@@ -1305,6 +1305,126 @@
     "quality": "auto"
   },
   {
+    "id": "combat",
+    "kind": "operator",
+    "title": "Batch correction",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2,
+          "labels_any": [
+            {
+              "param": "batch_label",
+              "default": null
+            }
+          ]
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "batch_label": {
+          "type": "string",
+          "title": "Batch Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "combat",
+            "mean_center"
+          ],
+          "default": "combat",
+          "title": "方法",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "batch_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/combat.py",
+    "tests": [
+      "tests/test_extension2_operators.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/combat.md",
+    "quality": "auto"
+  },
+  {
     "id": "compare_groups",
     "kind": "operator",
     "title": "Group comparison",
@@ -10469,6 +10589,142 @@
       "tasks/sequence_stats_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/sequence_stats.md",
+    "quality": "auto"
+  },
+  {
+    "id": "ssgsea",
+    "kind": "operator",
+    "title": "ssGSEA",
+    "package": "biopipe-expression",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "gene_dim",
+              "default": "gene"
+            },
+            {
+              "param": "gene_set_dim",
+              "default": "gene_set"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "gene_dim": {
+          "type": "string",
+          "default": "gene",
+          "title": "Gene Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "gene_set_dim": {
+          "type": "string",
+          "default": "gene_set",
+          "title": "Gene Set Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0.0,
+          "default": 0.25,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "min_size": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "title": "Min Size",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "normalize": {
+          "type": "boolean",
+          "default": true,
+          "title": "归一化",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/ssgsea.py",
+    "tests": [
+      "tests/test_extension2_operators.py",
+      "tests/test_r_oracles.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/ssgsea.md",
     "quality": "auto"
   },
   {

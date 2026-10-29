@@ -94,19 +94,6 @@
 ## Processing rules (source docstring)
 
 ```text
-Abstract step.
-
-Subclasses declare:
-
-* ``name`` — matched against the manifest's ``name`` field.
-* ``inputs_arity`` — number of input forms, or ``"*"`` for any.
-* ``outputs`` — context keys the step registers on exit.
-
-And implement ``run``. They may also implement ``export`` to
-return a JSON-serializable dict of the step's full results.
-
---- module documentation ---
-
 Compositional differential abundance (ALDEx-style Monte Carlo CLR test).
 
 This follows the ALDEx2 idea: counts are converted to a probability

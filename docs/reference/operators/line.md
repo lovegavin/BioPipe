@@ -72,15 +72,15 @@
 ```text
 Draw a line plot.
 
-Params:
-    dim      : attribute dimension (default "feature")
-    x_label  : column label for the x axis
-    y_label  : column label for the y axis
-    filename : output file name
-    title    : optional plot title
-    xlabel   : optional x-axis label (default: x_label)
-    ylabel   : optional y-axis label (default: y_label)
-    sort     : sort points by x before drawing (default True)
+    Params:
+        dim      : attribute dimension (default "feature")
+        x_label  : column label for the x axis
+        y_label  : column label for the y axis
+        filename : output file name
+        title    : optional plot title
+        xlabel   : optional x-axis label (default: x_label)
+        ylabel   : optional y-axis label (default: y_label)
+        sort     : sort points by x before drawing (default True)
 
 --- module documentation ---
 

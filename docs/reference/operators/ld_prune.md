@@ -56,11 +56,11 @@
 ```text
 Prune positions along one dimension by LD.
 
-Params:
-    dim    : dimension to prune along
-    window : window size in positions
-    r2     : r^2 threshold
-    output : context key for the result
+    Params:
+        dim    : dimension to prune along
+        window : window size in positions
+        r2     : r^2 threshold
+        output : context key for the result
 
 --- module documentation ---
 

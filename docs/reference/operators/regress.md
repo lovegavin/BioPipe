@@ -72,12 +72,12 @@
 ```text
 Regression of a response on each predictor, adjusting for covariates.
 
-Params:
-    dim        : dimension to iterate over
-    response   : label of the response column
-    covariates : labels of covariates (optional)
-    method     : "ols" | "logit" | "auto" (default)
-    output     : context key for the result
+    Params:
+        dim        : dimension to iterate over
+        response   : label of the response column
+        covariates : labels of covariates (optional)
+        method     : "ols" | "logit" | "auto" (default)
+        output     : context key for the result
 
 --- module documentation ---
 

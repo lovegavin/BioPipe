@@ -22,15 +22,15 @@ Rscript scripts/install_r_deps.R
 | `limma` | 必需 | `limma_de` 的普通线性模型对拍 |
 | `fgsea` | 必需 | `gsea` 的 enrichment score 对拍 |
 | `metafor` | 必需 | `meta_analysis` 的 fixed/random-effect 对拍 |
+| `GSVA` | 必需 | `ssgsea` 的 rank-sum 对拍 |
 | `edgeR` | 可选 | RNA-seq 计数模型参考 |
 | `DESeq2` | 可选 | RNA-seq 差异分析参考 |
 | `clusterProfiler` | 可选 | ORA/富集分析参考 |
 | `ANCOMBC` | 可选 | 微生物差异丰度参考 |
 | `ALDEx2` | 可选 | 成分数据差异丰度参考 |
-| `GSVA` | 可选 | 基因集变异参考 |
 | `BiocManager` | 必需 | Bioconductor 安装器 |
 
-可选包依赖系统库（libcurl、OpenSSL、fontconfig、GSL、HiGHS 等）；缺失时脚本会报告并继续，不会让三个必需 oracle 失败。当前 WSL 主机上 `clusterProfiler`、`ANCOMBC`、`ALDEx2`、`DESeq2`、`GSVA` 因这些系统库缺失未安装；`limma`、`fgsea`、`metafor` 已安装。
+可选包依赖系统库（libcurl、OpenSSL、fontconfig、GSL、HiGHS 等）；缺失时脚本会报告并继续，不会让四个必需 oracle 失败。当前 WSL 主机上 `limma` 3.58.1、`fgsea` 1.28.0、`metafor` 5.2.1、`GSVA` 1.50.5 已安装；`clusterProfiler`、`ANCOMBC`、`ALDEx2`、`DESeq2` 仍未安装。
 
 ## 3. 测试
 
@@ -38,12 +38,13 @@ Rscript scripts/install_r_deps.R
 python -m pytest -q tests/test_r_oracles.py
 ```
 
-覆盖 6 个测试：
+覆盖 7 个测试：
 
 - `limma_de`：平衡两组、`prior_df=0` 时与 R `limma::lmFit` 的 logFC/t/p 逐值对拍。
 - `ora`：与 R base `phyper` 的超几何尾概率逐值对拍。
 - `gsea`：与 `fgsea::calcGseaStat` 的 weighted enrichment score 对拍（p 值仍由 Python 的 gene-set permutation 产生）。
 - `meta_analysis`：与 `metafor::rma(method="FE"/"DL")` 的 beta/se/z/p/Q/I² 对拍；`I2` 输出为百分比（0–100）。
+- `ssgsea`：与 `GSVA::gsva(ssgseaParam(...))` 的 rank-sum 分数对拍；Python 沿用 GSVA 的 global-range 归一化。
 - `ancom_bc` / `aldex2`：与独立 R base log-ratio + Welch t 公式对拍；Monte Carlo 分支不逐随机数对拍。
 
 R 或某个必需包不存在时，对应测试自动 skip，不会阻止纯 Python 环境运行全量测试。

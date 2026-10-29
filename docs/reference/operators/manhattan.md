@@ -91,17 +91,17 @@
 ```text
 Draw a Manhattan plot.
 
-Params:
-    dim         : observation dim (one point per position)
-    chrom_label : chromosome field on ``dim``
-    pos_label   : position field on ``dim``
-    p_label     : P-value field
-    p_dim       : dim carrying ``p_label`` (default: ``dim``)
-    filename    : output file name
-    threshold   : optional P threshold for a horizontal line
-    title       : optional plot title
-    point_size  : marker size (default 6)
-    alpha       : marker transparency (default 0.85)
+    Params:
+        dim         : observation dim (one point per position)
+        chrom_label : chromosome field on ``dim``
+        pos_label   : position field on ``dim``
+        p_label     : P-value field
+        p_dim       : dim carrying ``p_label`` (default: ``dim``)
+        filename    : output file name
+        threshold   : optional P threshold for a horizontal line
+        title       : optional plot title
+        point_size  : marker size (default 6)
+        alpha       : marker transparency (default 0.85)
 
 --- module documentation ---
 

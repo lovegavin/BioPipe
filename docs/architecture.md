@@ -130,6 +130,7 @@ YAML / JSON
 - Reader：CSV/TSV/TXT/Parquet、BED/GFF3/GTF/GAF、FASTA、MTX、H5AD、10x H5、VCF、PLINK1/2、BGEN、GMT、Loom、BIOM；
 - 算子：QC、变换、统计、生存、遗传、单细胞、序列、注释、区间、微生物、ML、绘图、GO；
 - 0.8.0 新增：GSEA/ORA、单细胞 doublet/pseudobulk/marker score、GWAS meta/PRS、蛋白组 rollup/moderated t、微生物 ANCOM-style/ALDEx-style；
+- 0.9.0 新增：ComBat 批次校正、ssGSEA 基因集打分，以及单细胞去批次和 RNA-seq ssGSEA 两条 route；
 - 尚未支持：FASTQ、BAM/CRAM、BigWig/BigBed、mzML、FCS、空间转录组、影像等；
 - 大矩阵：heatmap 有 `max_cells/max_pixels` 保护；H5AD/10x full 模式仍可能 densify。
 
@@ -141,7 +142,7 @@ YAML / JSON
 
 下一批：
 1. **基础格式**：BAM/CRAM、BigWig/BigBed、narrowPeak/BEDPE；
-2. **核心算子**：TMM/RLE/voom、ComBat、GSEA 的 fgsea 对照、ambient RNA；
+2. **核心算子**：TMM/RLE/voom、GSEA 的 fgsea 对照、ambient RNA；
 3. **单细胞/空间**：Leiden、轨迹、Visium；
 4. **蛋白/代谢**：MSstats 对照、mzML；
 5. **遗传**：fine-mapping、VEP 注释；

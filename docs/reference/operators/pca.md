@@ -56,10 +56,10 @@
 ```text
 PCA along one dimension.
 
-Params:
-    dim          : dimension to compress
-    n_components : number of components to keep (default 10)
-    output       : context key for the result (default: step name)
+    Params:
+        dim          : dimension to compress
+        n_components : number of components to keep (default 10)
+        output       : context key for the result (default: step name)
 
 --- module documentation ---
 

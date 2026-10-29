@@ -67,10 +67,10 @@
 ```text
 Filter positions along one dimension by MAF.
 
-Params:
-    dim       : dimension to compute MAF along
-    threshold : minimum allowed MAF
-    output    : context key for the result
+    Params:
+        dim       : dimension to compute MAF along
+        threshold : minimum allowed MAF
+        output    : context key for the result
 
 --- module documentation ---
 

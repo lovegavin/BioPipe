@@ -45,9 +45,9 @@
 ```text
 Reorder the axes of a form.
 
-Params:
-    order  : list of dimension names, the desired new axis order
-    output : context key for the result
+    Params:
+        order  : list of dimension names, the desired new axis order
+        output : context key for the result
 
 --- module documentation ---
 

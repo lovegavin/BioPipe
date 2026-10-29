@@ -46,8 +46,12 @@ steps:
   - name: describe
     inputs: [joint_pcs]
 
-  - name: correlation
+  - name: rank_axis
     inputs: [protein_log]
+    params: {dim: cell, by: variance, top_n: 500, descending: true, keep_ties: false, output: protein_var}
+
+  - name: correlation
+    inputs: [protein_var]
     params: {dim: cell, metric: pearson, output: protein_corr}
   - name: heatmap
     inputs: [protein_corr]

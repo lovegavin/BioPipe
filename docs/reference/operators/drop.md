@@ -59,10 +59,10 @@
 ```text
 Remove a set of labels from one dimension.
 
-Params:
-    dim    : dimension from which to drop
-    labels : list of label names to remove
-    output : context key for the result
+    Params:
+        dim    : dimension from which to drop
+        labels : list of label names to remove
+        output : context key for the result
 
 --- module documentation ---
 

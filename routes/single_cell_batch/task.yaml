@@ -1,0 +1,57 @@
+name: single_cell_batch
+sources:
+  expr:
+    path: input/batch_cells.h5ad
+    dims: [cell, gene]
+    labels:
+      cell: builtin
+      gene: builtin
+  meta:
+    path: input/meta.csv
+    dims: [cell, feature]
+    labels:
+      cell: {feature: 0}
+      feature: builtin
+  markers:
+    path: input/markers.gmt
+    dims: [gene, gene_set]
+    labels:
+      gene: builtin
+      gene_set: builtin
+steps:
+  - name: normalize
+    inputs: [expr]
+    params: {method: cpm, dim: cell, output: cpm}
+  - name: log_transform
+    inputs: [cpm]
+    params: {output: logged}
+  - name: combat
+    inputs: [logged, meta]
+    params:
+      feature_dim: gene
+      sample_dim: cell
+      batch_label: batch
+      method: combat
+      output: corrected
+  - name: transpose
+    inputs: [corrected]
+    params: {order: [cell, gene], output: corrected_cells}
+  - name: marker_score
+    inputs: [corrected_cells, markers]
+    params:
+      cell_dim: cell
+      gene_dim: gene
+      gene_set_dim: gene_set
+      min_genes: 2
+      output: scores
+  - name: describe
+    inputs: [scores]
+    params: {}
+  - name: heatmap
+    inputs: [scores]
+    params:
+      dim: cell
+      other_dim: gene_set
+      select: all
+      cluster_cols: false
+      filename: marker_scores.png

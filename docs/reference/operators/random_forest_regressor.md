@@ -84,19 +84,6 @@
 ## Processing rules (source docstring)
 
 ```text
-Abstract step.
-
-Subclasses declare:
-
-* ``name`` — matched against the manifest's ``name`` field.
-* ``inputs_arity`` — number of input forms, or ``"*"`` for any.
-* ``outputs`` — context keys the step registers on exit.
-
-And implement ``run``. They may also implement ``export`` to
-return a JSON-serializable dict of the step's full results.
-
---- module documentation ---
-
 Random Forest regressor.
 ```
 

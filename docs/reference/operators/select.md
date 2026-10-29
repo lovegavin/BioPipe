@@ -59,10 +59,10 @@
 ```text
 Keep only the listed labels along one dimension.
 
-Params:
-    dim    : dimension to select along
-    labels : list of label names to keep, in output order
-    output : context key for the result
+    Params:
+        dim    : dimension to select along
+        labels : list of label names to keep, in output order
+        output : context key for the result
 
 --- module documentation ---
 

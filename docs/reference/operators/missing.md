@@ -55,10 +55,10 @@
 ```text
 Filter positions along one dimension by missing rate.
 
-Params:
-    dim       : dimension to filter on
-    threshold : maximum allowed missing rate
-    output    : context key for the result (default: step name)
+    Params:
+        dim       : dimension to filter on
+        threshold : maximum allowed missing rate
+        output    : context key for the result (default: step name)
 
 --- module documentation ---
 

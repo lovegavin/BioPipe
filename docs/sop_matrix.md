@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：全量 pytest **466 passed / 17 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：全量 pytest **494 passed / 0 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -35,7 +35,7 @@
 | `BiomReader` | B | test_new_readers.py（标准 BIOM：行=观测、列=样本；JSON 与 HDF5 布局一致） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（89）
+## 3. Operator（91）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -46,6 +46,7 @@ Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解�
 | `bin` | biopipe-core | A | verify_transform_operators.py |
 | `boxplot` | biopipe-plots | C | test_builtin_routes.py route artifact |
 | `cluster_axis` | biopipe-core | A | verify_single_cell.py, verify_stats_operators.py |
+| `combat` | biopipe-core | B | test_extension2_operators.py, single_cell_batch route |
 | `compare_groups` | biopipe-expression | A | verify_existing_operators.py |
 | `concat` | biopipe-core | S | tests/sop + verify_transform_operators.py, test_core_operators_sop.py |
 | `correction` | biopipe-genetics | A | verify_existing_operators.py |
@@ -113,20 +114,22 @@ Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解�
 | `sequence_stats` | biopipe-core | A | verify_operators.py, verify_sequence_features.py |
 | `svm_classifier` | biopipe-core | A | verify_ml_classification.py |
 | `svm_regressor` | biopipe-core | B | test_ml_regression.py |
+| `ssgsea` | biopipe-expression | A | test_ssgsea_matches_r_gsva (R GSVA 1.28), rnaseq_ssgsea route |
+| R oracle（GSVA） | A | `test_ssgsea_matches_r_gsva` 与 `GSVA::gsva(ssgseaParam(...))` 逐值对拍；R/GSVA 缺失时 skip |
 | `transpose` | biopipe-core | S | tests/sop + test_ml_classification.py, test_ml_regression.py, verify_ml_classification.py, verify_ml_regression.py, verify_transform_operators.py, test_core_operators_sop.py |
 | `violin` | biopipe-plots | B | test_violin.py |
 | `volcano` | biopipe-plots | C | test_builtin_routes.py route artifact |
 
 ## 4. Route 端到端
-- 19/19 route graph 通过 `test_all_shipped_route_graphs_compile` 编译。
-- 14 条原有 route 由 `test_builtin_routes.py` 的合成输入执行到全部输出与 PNG；5 条 0.8.0 新 route 由 `test_extension_routes.py` 执行 smoke test。
-- 9 条旧 route 由真实数据 demo 自测覆盖；49/49 demo 测试通过。
-- 9 条旧 route 仍无 pytest 合成 fixture；这是测试覆盖缺口，不是 demo 功能缺口。
+- 21/21 route graph 通过 `test_all_shipped_route_graphs_compile` 编译。
+- 21/21 route 由 `test_each_shipped_route_executes_repository_fixture` 用仓库内 fixture 实际执行到全部输出；5 条 0.8.0 route 另有 `test_extension_routes.py` smoke test，2 条 0.9.0 route 由同一 fixture 测试覆盖。
+- 49/49 demo 测试通过。
+- 原“9 条旧 route 无 pytest fixture”的缺口已关闭；Multi-omics 在相关矩阵前增加 `rank_axis(top_n=500)`，避免 5247×5247 超限。
 
 ## 5. 缺口
 - 10 个 C 级绘图算子由 route 的 PNG artifact 覆盖；line/enrichment 另有直接 artifact 测试；绘图无数值契约，不设数值 oracle。
 - C 级且非绘图：无。
-- 运行中的 skip：9 条内置 route 无合成 fixture；桌面 3 项因无 `frontend/dist`。
+- 运行中的 skip：无；全量 pytest 为 **494 passed / 0 skipped**。桌面测试在 `frontend/dist` 存在时执行，route fixture 已全部接入。
 
 ## 6. 复现命令
 ```bash
@@ -156,3 +159,10 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 | ancom_bc / aldex2 | C | 独立 log-ratio 实现；核心 diff/p 与 R base log-ratio+Welch 公式对拍；完整 R ANCOMBC/ALDEx2 未对拍 |
 
 因此这些组件暂不作为“科学结论已外部验证”的 stable 依据；route 用于可运行示例，后续需补 L2/L3 oracle。
+
+## 8. 0.9.0 扩展证据
+
+| 算子 | 级别 | 证据 |
+|---|---|---|
+| `combat` | B | `test_extension2_operators.py` 的 batch/mean-center 对齐测试；`single_cell_batch` route 实际运行 |
+| `ssgsea` | A | `test_ssgsea_matches_r_gsva` 与 R GSVA 1.28 `method="ssgsea"` 对拍；`rnaseq_ssgsea` route 实际运行 |

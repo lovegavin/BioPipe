@@ -313,6 +313,49 @@ write.csv(data.frame(taxon = colnames(x), diff = diff, p = p), "ancom.csv", row.
     np.testing.assert_allclose(out.data[:, 2], reference["p"], rtol=1e-5, atol=1e-8)
 
 
+@_requires_r("GSVA")
+def test_ssgsea_matches_r_gsva(tmp_path):
+    from src.task.step.steps.ssgsea import SsgseaStep
+
+    counts = np.array([
+        [1.0, 2.0, 3.0, 4.0],
+        [2.0, 1.0, 4.0, 3.0],
+        [5.0, 4.0, 2.0, 1.0],
+        [3.0, 6.0, 1.0, 5.0],
+        [4.0, 3.0, 6.0, 2.0],
+        [6.0, 5.0, 4.0, 7.0],
+    ], dtype=np.float32)
+    genes = [f"g{i}" for i in range(6)]
+    samples = [f"s{i}" for i in range(4)]
+    pd.DataFrame(counts, index=genes, columns=samples).to_csv(tmp_path / "expr.csv")
+    script = r'''
+suppressPackageStartupMessages(library(GSVA))
+x <- as.matrix(read.csv("expr.csv", row.names = 1, check.names = FALSE))
+sets <- list(A = c("g0", "g1", "g2"), B = c("g3", "g4", "g5"))
+res <- gsva(ssgseaParam(x, sets, minSize = 1, alpha = 0.25, normalize = TRUE), verbose = FALSE)
+write.csv(as.data.frame(res), "ssgsea.csv")
+'''
+    _run_r(tmp_path, script)
+    reference = pd.read_csv(tmp_path / "ssgsea.csv", index_col=0)
+    sets = np.zeros((6, 2), dtype=np.float32)
+    sets[:3, 0] = 1
+    sets[3:, 1] = 1
+    expr = _form(counts, ["gene", "sample"],
+                 {"gene": {g: i for i, g in enumerate(genes)},
+                  "sample": {s: i for i, s in enumerate(samples)}})
+    sets_form = _form(sets, ["gene", "gene_set"],
+                      {"gene": {g: i for i, g in enumerate(genes)},
+                       "gene_set": {"A": 0, "B": 1}})
+    out, _ = _run_step(
+        SsgseaStep(),
+        {"feature_dim": "gene", "sample_dim": "sample", "gene_dim": "gene",
+         "gene_set_dim": "gene_set", "alpha": 0.25, "min_size": 1,
+         "normalize": True},
+        [expr, sets_form],
+    )
+    np.testing.assert_allclose(out.data, reference.T.to_numpy(), rtol=1e-5, atol=1e-6)
+
+
 @_requires_r()
 def test_aldex_clr_non_mc_matches_independent_r(tmp_path):
     from src.task.step.steps.aldex2 import Aldex2Step

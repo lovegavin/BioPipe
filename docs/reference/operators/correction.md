@@ -63,13 +63,13 @@
 ```text
 Multiple-testing correction on a result table.
 
-Params:
-    method : "bonferroni" or "fdr"
-    alpha  : significance level (default 0.05)
-    pfield : name of the p-value column (default "P")
-    dim    : dimension carrying the statistic labels (default
-             "statistic")
-    output : context key for the result
+    Params:
+        method : "bonferroni" or "fdr"
+        alpha  : significance level (default 0.05)
+        pfield : name of the p-value column (default "P")
+        dim    : dimension carrying the statistic labels (default
+                 "statistic")
+        output : context key for the result
 
 --- module documentation ---
 

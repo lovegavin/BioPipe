@@ -45,7 +45,7 @@
     },
     "route_3dedbe0d6655": {
       "path": "routes/multi_omics/task.yaml",
-      "sha256": "774b016644dcf607a091a49f2137d49f6e9483526c5cdb6f086cca8455bb8c2f"
+      "sha256": "0f038c26f644fab01f06f6a61588a2965dd13b4ea266b0d60b4c2a4f76a4f9b5"
     },
     "route_88fb083f4238": {
       "path": "routes/proteomics_de/task.yaml",
@@ -65,6 +65,10 @@
       "path": "routes/rnaseq_de_enrichment/task.yaml",
       "sha256": "c5f28cc4b662525524b22c443c439383fd0ea20c9d6f252a59ebb0cd179b5e26"
     },
+    "route_6a8fea4df90c": {
+      "path": "routes/rnaseq_ssgsea/task.yaml",
+      "sha256": "c8877266873dd145d9ca848b3b7747e83648e9d080ccbaaa381c0b5dff180df0"
+    },
     "route_27299bdee8dc": {
       "path": "routes/sequence_features/task.yaml",
       "sha256": "20f19f5e0857812781ed02258b33316be6b4193ff24001c114a476b38ae18d8c"
@@ -72,6 +76,10 @@
     "route_d6c3db6fe153": {
       "path": "routes/single_cell/task.yaml",
       "sha256": "8ac17bee4e16660a07a6e68434199e0ab66f1d6ae484e55710648734494db1be"
+    },
+    "route_2eabc2569192": {
+      "path": "routes/single_cell_batch/task.yaml",
+      "sha256": "48024823881520d7c2f37998531b76cb3f08df1c2196d74ae6190446c2cea8af"
     },
     "route_765bf596a9a5": {
       "path": "routes/single_cell_loom/task.yaml",
@@ -1426,6 +1434,437 @@
       }
     },
     {
+      "id": "route_2eabc2569192",
+      "version": 1,
+      "name": "Single-cell batch correction",
+      "graph": {
+        "schema_version": 2,
+        "name": "Single-cell batch correction",
+        "base_dir": "routes/single_cell_batch",
+        "nodes": [
+          {
+            "id": "expr",
+            "kind": "source",
+            "operator": null,
+            "title": "expr",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/batch_cells.h5ad",
+              "dims": [
+                "cell",
+                "gene"
+              ],
+              "labels": {
+                "cell": "builtin",
+                "gene": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "markers",
+            "kind": "source",
+            "operator": null,
+            "title": "markers",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/markers.gmt",
+              "dims": [
+                "gene",
+                "gene_set"
+              ],
+              "labels": {
+                "gene": "builtin",
+                "gene_set": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "meta",
+            "kind": "source",
+            "operator": null,
+            "title": "meta",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/meta.csv",
+              "dims": [
+                "cell",
+                "feature"
+              ],
+              "labels": {
+                "cell": {
+                  "feature": 0
+                },
+                "feature": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "normalize_1",
+            "kind": "operator",
+            "operator": "normalize",
+            "title": "归一化",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "target_sum": 1000000.0,
+              "dim": "cell",
+              "method": "cpm",
+              "output": "cpm"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "log_transform_2",
+            "kind": "operator",
+            "operator": "log_transform",
+            "title": "Log",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "base": 2,
+              "pseudocount": 1,
+              "output": "logged"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "combat_3",
+            "kind": "operator",
+            "operator": "combat",
+            "title": "Batch correction",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "feature_dim": "gene",
+              "sample_dim": "cell",
+              "method": "combat",
+              "batch_label": "batch",
+              "output": "corrected"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "transpose_4",
+            "kind": "operator",
+            "operator": "transpose",
+            "title": "维度转置",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "order": [
+                "cell",
+                "gene"
+              ],
+              "output": "corrected_cells"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "marker_score_5",
+            "kind": "operator",
+            "operator": "marker_score",
+            "title": "Signature score",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {
+              "cell_dim": "cell",
+              "gene_dim": "gene",
+              "gene_set_dim": "gene_set",
+              "min_genes": 2,
+              "ctrl_size": 50,
+              "n_bins": 25,
+              "random_state": 0,
+              "output": "scores"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "describe_6",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1810.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "heatmap_7",
+            "kind": "operator",
+            "operator": "heatmap",
+            "title": "Heatmap",
+            "position": {
+              "x": 1810.0,
+              "y": 310.0
+            },
+            "params": {
+              "cluster_cols": false,
+              "cluster_rows": true,
+              "cmap": "RdBu_r",
+              "dim": "cell",
+              "nan_color": "#DDDDDD",
+              "other_dim": "gene_set",
+              "select": "all",
+              "show_col_labels": true,
+              "show_row_labels": false,
+              "standardize": "none",
+              "max_cells": 4000000,
+              "max_pixels": 40000000,
+              "top_n": 50,
+              "filename": "marker_scores.png"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "expr-normalize_1-0",
+            "source": "expr",
+            "target": "normalize_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_1-log_transform_2-0",
+            "source": "normalize_1",
+            "target": "log_transform_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_2-combat_3-0",
+            "source": "log_transform_2",
+            "target": "combat_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "meta-combat_3-1",
+            "source": "meta",
+            "target": "combat_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "combat_3-transpose_4-0",
+            "source": "combat_3",
+            "target": "transpose_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "transpose_4-marker_score_5-0",
+            "source": "transpose_4",
+            "target": "marker_score_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "markers-marker_score_5-1",
+            "source": "markers",
+            "target": "marker_score_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "marker_score_5-describe_6-0",
+            "source": "marker_score_5",
+            "target": "describe_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "marker_score_5-heatmap_7-0",
+            "source": "marker_score_5",
+            "target": "heatmap_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "expr",
+              "label": "expr",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "cell",
+                  "gene"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "markers",
+              "label": "markers",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "gene",
+                  "gene_set"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "meta",
+              "label": "meta",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "cell",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "marker_score_5",
+              "handle": "out",
+              "label": "Signature score",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "axis_info": {},
+                "info_open": false,
+                "axis_info_open": false,
+                "ndim": 2,
+                "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
       "id": "route_34254db160bf",
       "version": 1,
       "name": "Genomic interval analysis",
@@ -1850,7 +2289,7 @@
     },
     {
       "id": "route_3dedbe0d6655",
-      "version": 2,
+      "version": 3,
       "name": "Multi-omics integration",
       "graph": {
         "schema_version": 2,
@@ -2124,12 +2563,34 @@
             "route": null
           },
           {
-            "id": "correlation_12",
+            "id": "rank_axis_12",
+            "kind": "operator",
+            "operator": "rank_axis",
+            "title": "Rank features",
+            "position": {
+              "x": 940.0,
+              "y": 520.0
+            },
+            "params": {
+              "keep_ties": false,
+              "descending": true,
+              "by": "variance",
+              "dim": "cell",
+              "output": "protein_var",
+              "top_n": 500
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "correlation_13",
             "kind": "operator",
             "operator": "correlation",
             "title": "Correlation",
             "position": {
-              "x": 940.0,
+              "x": 1230.0,
               "y": 520.0
             },
             "params": {
@@ -2145,12 +2606,12 @@
             "route": null
           },
           {
-            "id": "heatmap_13",
+            "id": "heatmap_14",
             "kind": "operator",
             "operator": "heatmap",
             "title": "Heatmap",
             "position": {
-              "x": 1230.0,
+              "x": 1520.0,
               "y": 520.0
             },
             "params": {
@@ -2262,16 +2723,23 @@
             "targetHandle": "in-0"
           },
           {
-            "id": "log_transform_7-correlation_12-0",
+            "id": "log_transform_7-rank_axis_12-0",
             "source": "log_transform_7",
-            "target": "correlation_12",
+            "target": "rank_axis_12",
             "sourceHandle": "out",
             "targetHandle": "in-0"
           },
           {
-            "id": "correlation_12-heatmap_13-0",
-            "source": "correlation_12",
-            "target": "heatmap_13",
+            "id": "rank_axis_12-correlation_13-0",
+            "source": "rank_axis_12",
+            "target": "correlation_13",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "correlation_13-heatmap_14-0",
+            "source": "correlation_13",
+            "target": "heatmap_14",
             "sourceHandle": "out",
             "targetHandle": "in-0"
           }
@@ -2411,7 +2879,7 @@
               }
             },
             {
-              "node_id": "correlation_12",
+              "node_id": "correlation_13",
               "handle": "out",
               "label": "Correlation",
               "contract": {
@@ -4348,6 +4816,346 @@
                 "axis_info": {},
                 "info_open": true,
                 "axis_info_open": true,
+                "ndim": 2,
+                "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_6a8fea4df90c",
+      "version": 1,
+      "name": "RNA-seq ssGSEA",
+      "graph": {
+        "schema_version": 2,
+        "name": "RNA-seq ssGSEA",
+        "base_dir": "routes/rnaseq_ssgsea",
+        "nodes": [
+          {
+            "id": "counts",
+            "kind": "source",
+            "operator": null,
+            "title": "counts",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/counts.csv",
+              "dims": [
+                "gene",
+                "sample"
+              ],
+              "labels": {
+                "gene": {
+                  "sample": 0
+                },
+                "sample": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "sets",
+            "kind": "source",
+            "operator": null,
+            "title": "sets",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "path": "input/sets.gmt",
+              "dims": [
+                "gene",
+                "gene_set"
+              ],
+              "labels": {
+                "gene": "builtin",
+                "gene_set": "builtin"
+              },
+              "args": {}
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "filter_min_1",
+            "kind": "operator",
+            "operator": "filter_min",
+            "title": "低表达过滤",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_samples": 3,
+              "min_value": 10,
+              "dim": "gene",
+              "output": "filtered"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "normalize_2",
+            "kind": "operator",
+            "operator": "normalize",
+            "title": "归一化",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "target_sum": 1000000.0,
+              "dim": "sample",
+              "method": "cpm",
+              "output": "cpm"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "log_transform_3",
+            "kind": "operator",
+            "operator": "log_transform",
+            "title": "Log",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "base": 2,
+              "pseudocount": 1,
+              "output": "logged"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ssgsea_4",
+            "kind": "operator",
+            "operator": "ssgsea",
+            "title": "ssGSEA",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "feature_dim": "gene",
+              "sample_dim": "sample",
+              "gene_dim": "gene",
+              "gene_set_dim": "gene_set",
+              "alpha": 0.25,
+              "min_size": 3,
+              "normalize": true,
+              "output": "scores"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "heatmap_5",
+            "kind": "operator",
+            "operator": "heatmap",
+            "title": "Heatmap",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {
+              "cluster_cols": false,
+              "cluster_rows": true,
+              "cmap": "RdBu_r",
+              "dim": "sample",
+              "nan_color": "#DDDDDD",
+              "other_dim": "gene_set",
+              "select": "all",
+              "show_col_labels": true,
+              "show_row_labels": false,
+              "standardize": "none",
+              "max_cells": 4000000,
+              "max_pixels": 40000000,
+              "top_n": 50,
+              "filename": "ssgsea_heatmap.png"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "describe_6",
+            "kind": "operator",
+            "operator": "describe",
+            "title": "数据概览",
+            "position": {
+              "x": 1520.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "counts-filter_min_1-0",
+            "source": "counts",
+            "target": "filter_min_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "filter_min_1-normalize_2-0",
+            "source": "filter_min_1",
+            "target": "normalize_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "normalize_2-log_transform_3-0",
+            "source": "normalize_2",
+            "target": "log_transform_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "log_transform_3-ssgsea_4-0",
+            "source": "log_transform_3",
+            "target": "ssgsea_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "sets-ssgsea_4-1",
+            "source": "sets",
+            "target": "ssgsea_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "ssgsea_4-heatmap_5-0",
+            "source": "ssgsea_4",
+            "target": "heatmap_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ssgsea_4-describe_6-0",
+            "source": "ssgsea_4",
+            "target": "describe_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "counts",
+              "label": "counts",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "gene",
+                  "sample"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "sets",
+              "label": "sets",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "gene",
+                  "gene_set"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "ssgsea_4",
+              "handle": "out",
+              "label": "ssGSEA",
+              "contract": {
+                "version": 1,
+                "dims": null,
+                "labels": {},
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "axis_info": {},
+                "info_open": false,
+                "axis_info_open": false,
                 "ndim": 2,
                 "numeric": true
               }

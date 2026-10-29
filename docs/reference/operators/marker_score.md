@@ -89,19 +89,6 @@
 ## Processing rules (source docstring)
 
 ```text
-Abstract step.
-
-Subclasses declare:
-
-* ``name`` — matched against the manifest's ``name`` field.
-* ``inputs_arity`` — number of input forms, or ``"*"`` for any.
-* ``outputs`` — context keys the step registers on exit.
-
-And implement ``run``. They may also implement ``export`` to
-return a JSON-serializable dict of the step's full results.
-
---- module documentation ---
-
 Per-cell signature scores using Scanpy's score_genes.
 
 The input gene sets are a binary [gene, gene_set] matrix, normally

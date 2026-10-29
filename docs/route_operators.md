@@ -78,23 +78,30 @@ No installation drive or username is hard-coded.
 
 ## Bundled routes and library management
 
-First launch registers the 14 templates in `src/web/builtin_routes.json`:
+First launch registers the 21 templates in `src/web/builtin_routes.json`:
 
 | Route | Inputs | Outputs | Internal nodes |
 | --- | ---: | ---: | ---: |
 | BGEN Dosage QC | 1 | 1 | 9 |
 | Sequence feature analysis | 1 | 3 | 10 |
 | RNA-seq DE | 2 | 3 | 14 |
+| Single-cell batch correction | 3 | 1 | 10 |
 | Genomic interval analysis | 2 | 3 | 11 |
-| Multi-omics integration | 2 | 2 | 15 |
+| Multi-omics integration | 2 | 2 | 16 |
 | ML regression (multi-model) | 2 | 3 | 13 |
 | 16S Microbiome | 2 | 9 | 24 |
 | GO enrichment | 1 | 1 | 6 |
+| RNA-seq ssGSEA | 2 | 1 | 8 |
+| Single-cell Loom workflow | 3 | 4 | 14 |
+| Proteomics rollup and moderated t | 3 | 1 | 10 |
 | ML classification (multi-model) | 2 | 3 | 13 |
 | Proteomics DE | 2 | 2 | 12 |
+| Microbiome differential abundance | 2 | 3 | 10 |
+| GWAS meta-analysis and PRS | 4 | 2 | 8 |
 | Survival analysis | 1 | 2 | 6 |
 | GTF Annotation Analysis | 1 | 3 | 9 |
 | Single-cell QC and clustering | 1 | 2 | 15 |
+| RNA-seq DE + enrichment | 3 | 1 | 10 |
 | GWAS | 3 | 2 | 19 |
 
 Node counts include input nodes.

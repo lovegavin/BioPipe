@@ -6,7 +6,7 @@
 
 1. [架构总览](architecture.md) — 模块、执行流、数据流、目录地图、改哪里。
 2. [协议总集](protocol_suite.md) — Form、Reader、算子、契约、注册表、路线、扩展、测试的规范。
-3. [参考索引](reference/README.md) — 89 个算子、19 个 Reader 的逐项页面和机器索引。
+3. [参考索引](reference/README.md) — 91 个算子、19 个 Reader 的逐项页面和机器索引。
 4. [任务 SOP](route_sop.md) — 从数据到自定义路线、验证、运行、解释结果。
 
 一句话：**`task.yaml`/Studio Graph → Reader → Form → Step 链 → 输出/图片/report**。Reader 负责忠实解析，算子负责数学处理，契约负责连接，测试负责证明。
@@ -77,8 +77,8 @@
 
 ## 4. 当前版本与能力
 
-- 版本：**0.8.0**（见 [changelog](changelog.md)）
-- 89 个算子、19 个 Reader、6 个 provider 包、19 条内置路线
+- 版本：**0.9.0**（见 [changelog](changelog.md)）
+- 91 个算子、19 个 Reader、6 个 provider 包、21 条内置路线
 - 所有内置 Reader/算子参数严格（`additionalProperties: false`）
 - Reader 覆盖：CSV/TSV/TXT/Parquet、BED/GFF3/GTF/GAF、FASTA、MTX、H5AD、10x H5、VCF、PLINK1/2、BGEN、GMT、Loom、BIOM
 - 已知边界：尚未支持 FASTQ/BAM/CRAM/BigWig/mzML/FCS/空间转录组等；扩展计划见 [架构总览](architecture.md) 的“扩展方向”

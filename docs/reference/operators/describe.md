@@ -40,7 +40,7 @@ This operator has no parameters.
 ```text
 Print a summary of one input form.
 
-Params: none.
+    Params: none.
 
 --- module documentation ---
 

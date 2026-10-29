@@ -3172,6 +3172,193 @@
         },
         {
           "protocol_version": 1,
+          "id": "combat",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.combat:CombatStep",
+          "title": "Batch correction",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "batch_label": {
+                "type": "string",
+                "title": "Batch Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "combat",
+                  "mean_center"
+                ],
+                "default": "combat",
+                "title": "方法",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "batch_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2,
+                "labels_any": [
+                  {
+                    "param": "batch_label",
+                    "default": null
+                  }
+                ]
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "anndata>=0.10",
+            "scanpy>=1.10"
+          ],
+          "dependency_imports": [
+            "anndata",
+            "scanpy"
+          ],
+          "name": "combat",
+          "module": "src.task.step.steps.combat",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "batch_label",
+              "label": "Batch Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "method",
+              "label": "方法",
+              "type": "choice",
+              "required": false,
+              "default": "combat",
+              "options": [
+                "combat",
+                "mean_center"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "feature_dim": "feature",
+            "sample_dim": "sample",
+            "method": "combat"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "concat",
           "version": "1.0.0",
           "kind": "operator",
@@ -14219,6 +14406,224 @@
             "direction": "both",
             "correction": "fdr",
             "min_set_size": 1
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "ssgsea",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.ssgsea:SsgseaStep",
+          "title": "ssGSEA",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "gene_dim": {
+                "type": "string",
+                "default": "gene",
+                "title": "Gene Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "gene_set_dim": {
+                "type": "string",
+                "default": "gene_set",
+                "title": "Gene Set Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "alpha": {
+                "type": "number",
+                "minimum": 0.0,
+                "default": 0.25,
+                "title": "显著性水平",
+                "x-ui-group": "advanced",
+                "x-ui-order": 40
+              },
+              "min_size": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1,
+                "title": "Min Size",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "normalize": {
+                "type": "boolean",
+                "default": true,
+                "title": "归一化",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  },
+                  {
+                    "param": "gene_set_dim",
+                    "default": "gene_set"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "ssgsea",
+          "module": "src.task.step.steps.ssgsea",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "gene_dim",
+              "label": "Gene Dim",
+              "type": "string",
+              "required": false,
+              "default": "gene"
+            },
+            {
+              "key": "gene_set_dim",
+              "label": "Gene Set Dim",
+              "type": "string",
+              "required": false,
+              "default": "gene_set"
+            },
+            {
+              "key": "alpha",
+              "label": "显著性水平",
+              "type": "number",
+              "required": false,
+              "default": 0.25,
+              "min": 0.0
+            },
+            {
+              "key": "min_size",
+              "label": "Min Size",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1
+            },
+            {
+              "key": "normalize",
+              "label": "归一化",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "feature_dim": "feature",
+            "sample_dim": "sample",
+            "gene_dim": "gene",
+            "gene_set_dim": "gene_set",
+            "alpha": 0.25,
+            "min_size": 1,
+            "normalize": true
           },
           "legacy_parameters": false
         }

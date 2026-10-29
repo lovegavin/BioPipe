@@ -64,10 +64,10 @@
 ```text
 Filter positions along one dimension by HWE p-value.
 
-Params:
-    dim       : dimension to test along
-    threshold : minimum allowed p-value
-    output    : context key for the result
+    Params:
+        dim       : dimension to test along
+        threshold : minimum allowed p-value
+        output    : context key for the result
 
 --- module documentation ---
 

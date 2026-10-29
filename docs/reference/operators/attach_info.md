@@ -63,14 +63,14 @@
 ```text
 Attach source info arrays to a target dimension.
 
-Inputs:
-    target : form to attach onto
-    source : form whose info holds the arrays
+    Inputs:
+        target : form to attach onto
+        source : form whose info holds the arrays
 
-Params:
-    fields     : list of info keys to attach
-    target_dim : dimension of the target to align against
-    output     : context key for the result
+    Params:
+        fields     : list of info keys to attach
+        target_dim : dimension of the target to align against
+        output     : context key for the result
 
 --- module documentation ---
 

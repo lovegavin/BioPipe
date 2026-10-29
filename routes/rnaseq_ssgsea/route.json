@@ -1,0 +1,5 @@
+{
+  "key": "rnaseq_ssgsea",
+  "name": "RNA-seq ssGSEA",
+  "base_dir": "routes/rnaseq_ssgsea"
+}

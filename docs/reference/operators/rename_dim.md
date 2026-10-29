@@ -48,10 +48,10 @@
 ```text
 Rename a single dimension.
 
-Params:
-    from   : current dim name
-    to     : new dim name
-    output : context key for the result
+    Params:
+        from   : current dim name
+        to     : new dim name
+        output : context key for the result
 
 --- module documentation ---
 

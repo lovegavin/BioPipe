@@ -5,7 +5,7 @@
 # mirror for this R release, so its official HTTPS endpoint is the fallback.
 # Packages are installed into the user library, so no sudo password is needed.
 #
-# `limma`, `fgsea` and `metafor` are required by tests/test_r_oracles.py.
+# `limma`, `fgsea`, `metafor` and `GSVA` are required by tests/test_r_oracles.py.
 # The other packages are optional references and may fail when system libraries
 # (libcurl, OpenSSL, fontconfig, GSL, HiGHS, ...) are unavailable.
 
@@ -67,13 +67,13 @@ if (!requireNamespace("fgsea", quietly = TRUE)) {
   }
 }
 
-required <- c("limma", "fgsea", "metafor", "BiocManager")
+required <- c("limma", "fgsea", "metafor", "GSVA", "BiocManager")
 missing <- required[!vapply(required, requireNamespace, logical(1), quietly = TRUE)]
 if (length(missing)) {
   stop("Required R oracle packages still missing: ", paste(missing, collapse = ", "))
 }
 
-optional <- c("edgeR", "clusterProfiler", "ANCOMBC", "ALDEx2", "DESeq2", "GSVA")
+optional <- c("edgeR", "clusterProfiler", "ANCOMBC", "ALDEx2", "DESeq2")
 missing_optional <- optional[
   !vapply(optional, requireNamespace, logical(1), quietly = TRUE)
 ]

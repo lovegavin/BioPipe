@@ -63,6 +63,11 @@ def _type_label(field: dict) -> str:
     return str(kind)
 
 
+def _class_doc(cls) -> str:
+    """Return the docstring declared on this class, not an inherited one."""
+    return textwrap.dedent(cls.__dict__.get("__doc__") or "").strip()
+
+
 def _table(rows: list[list[str]], headers: list[str]) -> str:
     lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
     for row in rows:
@@ -81,11 +86,11 @@ def _operator_page(name: str, cls, package: str, tests: list[str], demos: list[s
             str(field.get("maximum", "")), "yes" if key in required else "",
             field.get("x-ui-group", "basic"),
         ])
-    class_doc = textwrap.dedent(inspect.getdoc(cls) or "").strip()
+    class_doc = _class_doc(cls)
     module = inspect.getmodule(cls)
     module_doc = textwrap.dedent(inspect.getdoc(module) or "").strip() if module else ""
-    doc = class_doc
-    if module_doc and module_doc != class_doc:
+    doc = class_doc or module_doc
+    if class_doc and module_doc and module_doc != class_doc:
         doc = f"{class_doc}\n\n--- module documentation ---\n\n{module_doc}".strip()
     inputs = json.dumps(cls.input_contracts or [], ensure_ascii=False, indent=2)
     output = json.dumps(cls.output_contract or {}, ensure_ascii=False, indent=2)
@@ -159,6 +164,9 @@ def _operator_page(name: str, cls, package: str, tests: list[str], demos: list[s
 
 def _reader_page(reader) -> str:
     cls = type(reader)
+    class_doc = _class_doc(cls)
+    module = inspect.getmodule(cls)
+    module_doc = textwrap.dedent(inspect.getdoc(module) or "").strip() if module else ""
     schema = normalize_schema_titles(cls.parameters_schema or {"type": "object", "properties": {}})
     required = set(schema.get("required", []))
     rows = []
@@ -202,13 +210,11 @@ def _reader_page(reader) -> str:
         "## Processing rules (source docstring)",
         "",
         "```text",
-        (textwrap.dedent(inspect.getdoc(cls) or "").strip() or "No docstring."),
+        (class_doc or module_doc or "No docstring."),
         "```",
         "",
     ]
-    module = inspect.getmodule(cls)
-    module_doc = textwrap.dedent(inspect.getdoc(module) or "").strip() if module else ""
-    if module_doc and module_doc != (textwrap.dedent(inspect.getdoc(cls) or "").strip()):
+    if class_doc and module_doc and module_doc != class_doc:
         parts.extend(["### Module documentation", "", "```text", module_doc, "```", ""])
     if reviewed:
         parts.extend(["## Curated notes", "", note.read_text(encoding="utf-8").strip(), ""])

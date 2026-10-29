@@ -85,17 +85,17 @@
 ```text
 Draw a scatter plot.
 
-Params:
-    dim         : attribute dimension (default "feature")
-    x_label     : column label for the x axis
-    y_label     : column label for the y axis
-    color_label : optional column label for grouping
-    filename    : output file name (e.g. "pca.png")
-    title       : optional plot title
-    xlabel      : optional x-axis label (default: x_label)
-    ylabel      : optional y-axis label (default: y_label)
-    point_size  : marker size (default 8)
-    alpha       : marker transparency (default 0.7)
+    Params:
+        dim         : attribute dimension (default "feature")
+        x_label     : column label for the x axis
+        y_label     : column label for the y axis
+        color_label : optional column label for grouping
+        filename    : output file name (e.g. "pca.png")
+        title       : optional plot title
+        xlabel      : optional x-axis label (default: x_label)
+        ylabel      : optional y-axis label (default: y_label)
+        point_size  : marker size (default 8)
+        alpha       : marker transparency (default 0.7)
 
 --- module documentation ---
 

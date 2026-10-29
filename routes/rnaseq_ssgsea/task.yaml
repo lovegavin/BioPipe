@@ -1,0 +1,46 @@
+name: rnaseq_ssgsea
+sources:
+  counts:
+    path: input/counts.csv
+    dims: [gene, sample]
+    labels:
+      gene: {sample: 0}
+      sample: builtin
+  sets:
+    path: input/sets.gmt
+    dims: [gene, gene_set]
+    labels:
+      gene: builtin
+      gene_set: builtin
+steps:
+  - name: filter_min
+    inputs: [counts]
+    params: {dim: gene, min_value: 10, min_samples: 3, output: filtered}
+  - name: normalize
+    inputs: [filtered]
+    params: {method: cpm, dim: sample, output: cpm}
+  - name: log_transform
+    inputs: [cpm]
+    params: {output: logged}
+  - name: ssgsea
+    inputs: [logged, sets]
+    params:
+      feature_dim: gene
+      sample_dim: sample
+      gene_dim: gene
+      gene_set_dim: gene_set
+      alpha: 0.25
+      min_size: 3
+      normalize: true
+      output: scores
+  - name: heatmap
+    inputs: [scores]
+    params:
+      dim: sample
+      other_dim: gene_set
+      select: all
+      cluster_cols: false
+      filename: ssgsea_heatmap.png
+  - name: describe
+    inputs: [scores]
+    params: {}

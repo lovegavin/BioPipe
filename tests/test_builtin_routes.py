@@ -20,6 +20,33 @@ from src.web.service import Settings
 ROOT = Path(__file__).resolve().parents[1]
 BUNDLE = json.loads((ROOT / "src/web/builtin_routes.json").read_text(encoding="utf-8"))["routes"]
 SYNTHETIC_ROUTES = {"GWAS", "RNA-seq DE", "Proteomics DE", "生存分析", "16S Microbiome"}
+SYNTHETIC_DEFINITIONS = [r for r in BUNDLE if r["name"] in SYNTHETIC_ROUTES]
+
+# Every shipped route has a repository fixture (the five 0.8.0 routes carry
+# their own input/ directory; older routes use the matching tasks/*_demo).
+REAL_FIXTURES = {
+    "BGEN Dosage QC": "tasks/bgen_qc_demo",
+    "Sequence feature analysis": "tasks/sequence_features_route_demo",
+    "RNA-seq DE": "tasks/rnaseq_de_demo",
+    "Genomic interval analysis": "tasks/interval_route_demo",
+    "Multi-omics integration": "tasks/multi_omics_route_demo",
+    "ML regression (multi-model)": "tasks/ml_regression_route_demo",
+    "16S Microbiome": "tasks/microbiome_demo",
+    "GO enrichment": "tasks/go_enrichment_route_demo",
+    "Single-cell Loom workflow": "routes/single_cell_loom",
+    "Proteomics rollup and moderated t": "routes/proteomics_limma",
+    "ML classification (multi-model)": "tasks/ml_classification_route_demo",
+    "Proteomics DE": "tasks/proteomics_de_demo",
+    "Microbiome differential abundance": "routes/microbiome_diff",
+    "GWAS meta-analysis and PRS": "routes/gwas_meta_prs",
+    "生存分析": "tasks/survival_demo",
+    "GTF Annotation Analysis": "tasks/gtf_annotation_demo",
+    "Single-cell QC and clustering": "tasks/single_cell_route_demo",
+    "RNA-seq DE + enrichment": "routes/rnaseq_de_enrichment",
+    "GWAS": "tasks/gwas_demo",
+    "Single-cell batch correction": "routes/single_cell_batch",
+    "RNA-seq ssGSEA": "routes/rnaseq_ssgsea",
+}
 
 
 def test_builtin_install_library_controls_and_persisted_removal(tmp_path):
@@ -107,14 +134,12 @@ def test_all_shipped_route_graphs_compile(tmp_path):
         assert len(order) == len(route.graph.nodes) - len(sources), route.name
 
 
-@pytest.mark.parametrize("definition", BUNDLE, ids=[r["name"] for r in BUNDLE])
+@pytest.mark.parametrize("definition", SYNTHETIC_DEFINITIONS, ids=[r["name"] for r in SYNTHETIC_DEFINITIONS])
 def test_each_shipped_route_expands_and_executes_all_branches(tmp_path, definition):
     if definition["name"] == "RNA-seq DE":
         pytest.importorskip("pydeseq2")
     if definition["name"] == "生存分析":
         pytest.importorskip("lifelines")
-    if definition["name"] not in SYNTHETIC_ROUTES:
-        pytest.skip("no synthetic fixture; real-data execution is covered by the route demo")
     route = RouteDefinition.model_validate(definition)
     sources = [node.model_copy(deep=True) for node in route.graph.nodes if node.kind == "source"]
     outer = Graph(name=route.name, nodes=sources + [GraphNode(id="route", kind="route", title=route.name,
@@ -133,5 +158,38 @@ def test_each_shipped_route_expands_and_executes_all_branches(tmp_path, definiti
         assert len(ctx.artifacts["exports"]) == len(order)
         expected_figures = {"GWAS": 3, "RNA-seq DE": 5, "Proteomics DE": 3, "生存分析": 2, "16S Microbiome": 5}[route.name]
         assert len(list((ctx.memory.run_dir / "figures").glob("*.png"))) == expected_figures
+    finally:
+        ctx.memory.close("complete" if ctx._run_status == "complete" else "failed")
+
+
+@pytest.mark.parametrize("definition", BUNDLE, ids=[r["name"] for r in BUNDLE])
+def test_each_shipped_route_executes_repository_fixture(tmp_path, definition):
+    """Execute all 21 shipped routes against their checked-in input folders.
+
+    The five 0.8.0 routes and the two 0.9.0 routes own ``routes/<slug>/input``;
+    older routes use the matching ``tasks/<demo>/input``.  This closes the
+    previous gap where only five routes had synthetic forms and the rest were
+    skipped.
+    """
+    name = definition["name"]
+    fixture = REAL_FIXTURES.get(name)
+    assert fixture is not None, name
+    assert (ROOT / fixture / "input").is_dir(), fixture
+    route = RouteDefinition.model_validate(definition)
+    sources = [node.model_copy(deep=True) for node in route.graph.nodes if node.kind == "source"]
+    outer = Graph(name=name, base_dir=fixture, nodes=sources + [
+        GraphNode(id="route", kind="route", title=name, position=Position(x=300, y=100), route=route)
+    ], edges=[GraphEdge(id=f"e{i}", source=port.node_id, target="route", targetHandle=f"in-{i}")
+              for i, port in enumerate(route.graph.interface.inputs)],
+        memory={"enabled": True, "budget_mb": 32768,
+                "keep": [f"route__out_{i+1}" for i in range(len(route.graph.interface.outputs))]})
+    manifest, order = compile_graph(outer, build_catalog(STEPS), ROOT, require_files=True)
+    assert len(order) == len(route.graph.nodes) - len(sources)
+    ctx = Context(tmp_path, manifest)
+    try:
+        for key, spec in manifest["sources"].items():
+            ctx[key] = read_source(Path(spec["path"]), spec["dims"], spec["labels"], **spec.get("args", {}))
+        run(ctx, manifest["steps"])
+        assert len(ctx.artifacts["exports"]) == len(order)
     finally:
         ctx.memory.close("complete" if ctx._run_status == "complete" else "failed")
