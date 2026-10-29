@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：全量 pytest **525 passed / 0 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：全量 pytest **534 passed / 0 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -11,7 +11,7 @@
 | B | 算子 demo 自测：手工可算的小例子 |
 | C | 仅契约/route/artifact 覆盖；没有独立数值 oracle |
 
-## 2. Reader（32）
+## 2. Reader（38）
 | Reader | 级别 | 证据/独立 oracle |
 |---|---|---|
 | `BedReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
@@ -33,9 +33,28 @@
 | `GmtReader` | B | test_new_readers.py（GMT 手写解析、集合成员/重复集合） |
 | `LoomReader` | B | test_new_readers.py（HDF5 matrix/row_attrs/col_attrs） |
 | `BiomReader` | B | test_new_readers.py（标准 BIOM：行=观测、列=样本；JSON 与 HDF5 布局一致） |
+| `ExcelReader` | B | test_extension3.py（openpyxl 往返） |
+| `GctReader` | B | test_extension3.py（GCT 1.2/1.3 方向） |
+| `BedGraphReader` | B | test_extension3.py（4 列区域） |
+| `NarrowPeakReader` | B | test_extension3.py（10 列 peak） |
+| `NpyReader` | B | test_extension3.py（NPZ 数组） |
+| `JsonTableReader` | B | test_extension3.py（records/columns） |
+| `FaiReader` | B | test_extension3.py（FAI 5 列） |
+| `FastqReader` | B | test_extension3b.py（FASTQ 质量） |
+| `H5Reader` | B | test_extension3b.py（2D HDF5） |
+| `MapReader` | B | test_extension3b.py（PLINK MAP） |
+| `PhylipReader` | B | test_extension3b.py（PHYLIP） |
+| `NewickReader` | B | test_extension3b.py（Newick 树） |
+| `StockholmReader` | B | test_extension3b.py（Stockholm） |
+| `PafReader` | B | test_extension4.py（12 列 PAF） |
+| `SamReader` | B | test_extension4.py（11 列 SAM） |
+| `BedpeReader` | B | test_extension4.py（10 列 BEDPE） |
+| `CytobandReader` | B | test_extension4.py（5 列 cytoband） |
+| `ClustalReader` | B | test_extension4.py（Clustal 对齐） |
+| `NexusReader` | B | test_extension4.py（NEXUS MATRIX） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（122）
+## 3. Operator（132；下表为 89 个早期算子，0.8–0.11 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -129,7 +148,7 @@ Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解�
 ## 5. 缺口
 - 10 个 C 级绘图算子由 route 的 PNG artifact 覆盖；line/enrichment 另有直接 artifact 测试；绘图无数值契约，不设数值 oracle。
 - C 级且非绘图：无。
-- 运行中的 skip：无；全量 pytest 为 **525 passed / 0 skipped**。桌面测试在 `frontend/dist` 存在时执行，route fixture 已全部接入。
+- 运行中的 skip：无；全量 pytest 为 **534 passed / 0 skipped**。桌面测试在 `frontend/dist` 存在时执行，route fixture 已全部接入。
 
 ## 6. 复现命令
 ```bash
@@ -173,3 +192,10 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - 新增 13 个 Reader 通过 `tests/test_extension3.py` / `tests/test_extension3b.py` 的临时文件解析测试；Excel、HDF5、Newick、FASTQ 等均验证 axis/dims/labels。
 - 扩展未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、测试、生成式 registry 和参考页。
 - 全量 pytest 基线更新为 **525 passed / 0 skipped**；参考页 122 算子 / 32 Reader；21 条 route fixture 仍全部执行。
+
+## 10. 0.11.0 扩展证据
+
+- 新增 10 个算子：SpectralEmbedding、LocallyLinearEmbedding、GaussianRandomProjection、TopicLDA、Wilcoxon、Friedman、Bartlett、Normaltest、Bonferroni、FisherCombined；`tests/test_extension4.py` 9 项通过。
+- 新增 6 个 Reader：PAF、SAM、BEDPE、cytoband、Clustal、NEXUS；`tests/test_extension4.py` 全部临时文件解析通过。
+- 未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、registry 生成物、测试和参考页。
+- 全量 pytest 基线更新为 **534 passed / 0 skipped**；参考页 132 算子 / 38 Reader；21 条 route fixture 保持不变。

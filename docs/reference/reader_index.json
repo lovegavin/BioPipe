@@ -118,6 +118,64 @@
     "quality": "reviewed"
   },
   {
+    "id": "BedpeReader",
+    "kind": "reader",
+    "extensions": [
+      ".bedpe"
+    ],
+    "file_input": {
+      "dims": [
+        "region",
+        "field"
+      ],
+      "labels": {
+        "region": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/bedpe_reader.py",
+    "tests": [
+      "tests/test_extension4.py"
+    ],
+    "doc": "docs/reference/readers/BedpeReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "BgenReader",
     "kind": "reader",
     "extensions": [
@@ -236,6 +294,57 @@
     "quality": "auto"
   },
   {
+    "id": "ClustalReader",
+    "kind": "reader",
+    "extensions": [
+      ".aln",
+      ".clustal"
+    ],
+    "file_input": {
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {
+        "sequence": "builtin",
+        "position": "auto"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/clustal_reader.py",
+    "tests": [
+      "tests/test_extension4.py"
+    ],
+    "doc": "docs/reference/readers/ClustalReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "CsvReader",
     "kind": "reader",
     "extensions": [
@@ -332,6 +441,64 @@
     ],
     "doc": "docs/reference/readers/CsvReader.md",
     "quality": "reviewed"
+  },
+  {
+    "id": "CytobandReader",
+    "kind": "reader",
+    "extensions": [
+      ".cytoband"
+    ],
+    "file_input": {
+      "dims": [
+        "region",
+        "field"
+      ],
+      "labels": {
+        "region": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/cytoband_reader.py",
+    "tests": [
+      "tests/test_extension4.py"
+    ],
+    "doc": "docs/reference/readers/CytobandReader.md",
+    "quality": "auto"
   },
   {
     "id": "ExcelReader",
@@ -1386,6 +1553,57 @@
     "quality": "auto"
   },
   {
+    "id": "NexusReader",
+    "kind": "reader",
+    "extensions": [
+      ".nex",
+      ".nexus"
+    ],
+    "file_input": {
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {
+        "sequence": "builtin",
+        "position": "auto"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/nexus_reader.py",
+    "tests": [
+      "tests/test_extension4.py"
+    ],
+    "doc": "docs/reference/readers/NexusReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "NpyReader",
     "kind": "reader",
     "extensions": [
@@ -1443,6 +1661,64 @@
       "tests/test_plugin_refresh.py"
     ],
     "doc": "docs/reference/readers/NpyReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "PafReader",
+    "kind": "reader",
+    "extensions": [
+      ".paf"
+    ],
+    "file_input": {
+      "dims": [
+        "region",
+        "field"
+      ],
+      "labels": {
+        "region": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/paf_reader.py",
+    "tests": [
+      "tests/test_extension4.py"
+    ],
+    "doc": "docs/reference/readers/PafReader.md",
     "quality": "auto"
   },
   {
@@ -1707,6 +1983,64 @@
     ],
     "doc": "docs/reference/readers/Plink2Reader.md",
     "quality": "reviewed"
+  },
+  {
+    "id": "SamReader",
+    "kind": "reader",
+    "extensions": [
+      ".sam"
+    ],
+    "file_input": {
+      "dims": [
+        "region",
+        "field"
+      ],
+      "labels": {
+        "region": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/sam_reader.py",
+    "tests": [
+      "tests/test_extension4.py"
+    ],
+    "doc": "docs/reference/readers/SamReader.md",
+    "quality": "auto"
   },
   {
     "id": "StockholmReader",

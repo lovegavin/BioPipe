@@ -1,7 +1,13 @@
 # 更新记录
 
-BioPipe 使用语义化版本和 git tag。当前源码版本：**0.10.0（2026-10-29）**。
+BioPipe 使用语义化版本和 git tag。当前源码版本：**0.11.0（2026-10-30）**。
 更早版本从 git tag/history 查；本页只保留当前版本摘要。
+
+## 0.11.0 — 2026-10-30
+- 新增 10 个算子：谱嵌入、LLE、Gaussian 随机投影、主题 LDA、Wilcoxon、Friedman、Bartlett、Normaltest、Bonferroni、Fisher 合并 p 值。
+- 新增 6 个 Reader：PAF、SAM、BEDPE、cytoband、Clustal、NEXUS。
+- 当前：132 算子 / 38 Reader / 21 route；未修改核心层，扩展仍通过声明和生成式 registry 完成。
+- 验证：**534 passed / 0 skipped**（2026-10-30）；registry clean；参考页 132/38；新增测试 `tests/test_extension4.py` 9 项；Studio 前端 **78 passed**。
 
 ## 0.10.0 — 2026-10-29
 - 新增 31 个算子：线性/弹性网/贝叶斯岭/Huber/Theil-Sen 回归，Kernel PCA、Truncated SVD、因子分析、MDS、Isomap、BH FDR、Mann-Whitney，以及 11 个树模型/朴素贝叶斯/判别分析/随机梯度模型。
