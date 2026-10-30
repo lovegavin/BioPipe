@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_reference_indexes_cover_catalog():
     operators = json.loads((ROOT / "docs/reference/operator_index.json").read_text(encoding="utf-8"))
     readers = json.loads((ROOT / "docs/reference/reader_index.json").read_text(encoding="utf-8"))
-    assert len(operators) == 132
-    assert len(readers) == 38
+    assert len(operators) == 138
+    assert len(readers) == 40
     for entry in operators + readers:
         page = ROOT / entry["doc"]
         assert page.is_file(), entry["doc"]

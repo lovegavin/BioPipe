@@ -294,6 +294,64 @@
     "quality": "auto"
   },
   {
+    "id": "ChainReader",
+    "kind": "reader",
+    "extensions": [
+      ".chain"
+    ],
+    "file_input": {
+      "dims": [
+        "alignment",
+        "field"
+      ],
+      "labels": {
+        "alignment": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/chain_reader.py",
+    "tests": [
+      "tests/test_extension5.py"
+    ],
+    "doc": "docs/reference/readers/ChainReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "ClustalReader",
     "kind": "reader",
     "extensions": [
@@ -1315,6 +1373,64 @@
       "tests/test_new_readers.py"
     ],
     "doc": "docs/reference/readers/LoomReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "MafReader",
+    "kind": "reader",
+    "extensions": [
+      ".maf"
+    ],
+    "file_input": {
+      "dims": [
+        "variant",
+        "field"
+      ],
+      "labels": {
+        "variant": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/maf_reader.py",
+    "tests": [
+      "tests/test_extension5.py"
+    ],
+    "doc": "docs/reference/readers/MafReader.md",
     "quality": "auto"
   },
   {

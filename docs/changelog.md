@@ -1,7 +1,14 @@
 # 更新记录
 
-BioPipe 使用语义化版本和 git tag。当前源码版本：**0.11.0（2026-10-30）**。
+BioPipe 使用语义化版本和 git tag。当前源码版本：**0.12.0（2026-10-30）**。
 更早版本从 git tag/history 查；本页只保留当前版本摘要。
+
+## 0.12.0 — 2026-10-30
+- 新增 6 个算子：UMAP、配对 t 检验、单样本 t 检验、z-score、min-max 缩放、softmax。
+- 新增 2 个 Reader：MAF、UCSC chain。
+- 当前：138 算子 / 40 Reader / 21 route；未修改核心层。
+- 验证：**540 passed / 0 skipped**（2026-10-30）；registry clean；参考页 138/40；新增测试 `tests/test_extension5.py` 6 项；Studio 前端 **84 passed**。
+- 边界：UMAP 依赖 umap-learn；z-score 是 axis-wise 便捷算子，与既有 `scale_features` 有功能重叠；MAF/chain 只校验固定列/头，不验证完整规范。
 
 ## 0.11.0 — 2026-10-30
 - 新增 10 个算子：谱嵌入、LLE、Gaussian 随机投影、主题 LDA、Wilcoxon、Friedman、Bartlett、Normaltest、Bonferroni、Fisher 合并 p 值。

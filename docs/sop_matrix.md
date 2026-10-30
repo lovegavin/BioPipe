@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：全量 pytest **534 passed / 0 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：全量 pytest **540 passed / 0 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -11,7 +11,7 @@
 | B | 算子 demo 自测：手工可算的小例子 |
 | C | 仅契约/route/artifact 覆盖；没有独立数值 oracle |
 
-## 2. Reader（38）
+## 2. Reader（40）
 | Reader | 级别 | 证据/独立 oracle |
 |---|---|---|
 | `BedReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
@@ -52,9 +52,11 @@
 | `CytobandReader` | B | test_extension4.py（5 列 cytoband） |
 | `ClustalReader` | B | test_extension4.py（Clustal 对齐） |
 | `NexusReader` | B | test_extension4.py（NEXUS MATRIX） |
+| `MafReader` | B | test_extension5.py（MAF 注释表、variant×field） |
+| `ChainReader` | B | test_extension5.py（UCSC chain header、alignment×field） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（132；下表为 89 个早期算子，0.8–0.11 新增见末尾证据）
+## 3. Operator（138；下表为 89 个早期算子，0.8–0.12 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -148,7 +150,7 @@ Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解�
 ## 5. 缺口
 - 10 个 C 级绘图算子由 route 的 PNG artifact 覆盖；line/enrichment 另有直接 artifact 测试；绘图无数值契约，不设数值 oracle。
 - C 级且非绘图：无。
-- 运行中的 skip：无；全量 pytest 为 **534 passed / 0 skipped**。桌面测试在 `frontend/dist` 存在时执行，route fixture 已全部接入。
+- 运行中的 skip：无；全量 pytest 为 **540 passed / 0 skipped**。桌面测试在 `frontend/dist` 存在时执行，route fixture 已全部接入。
 
 ## 6. 复现命令
 ```bash
@@ -199,3 +201,10 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - 新增 6 个 Reader：PAF、SAM、BEDPE、cytoband、Clustal、NEXUS；`tests/test_extension4.py` 全部临时文件解析通过。
 - 未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、registry 生成物、测试和参考页。
 - 全量 pytest 基线更新为 **534 passed / 0 skipped**；参考页 132 算子 / 38 Reader；21 条 route fixture 保持不变。
+
+## 11. 0.12.0 扩展证据
+
+- 新增 6 个算子：UMAP、配对 t 检验、单样本 t 检验、z-score、min-max 缩放、softmax；`tests/test_extension5.py` 6 项通过。
+- 新增 2 个 Reader：MAF、UCSC chain；`tests/test_extension5.py` 临时文件解析和 `pick_reader` 分派通过。
+- 未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、registry 生成物、测试、图标和参考页。
+- 全量 pytest 基线更新为 **540 passed / 0 skipped**；参考页 138 算子 / 40 Reader；21 条 route fixture 保持不变。

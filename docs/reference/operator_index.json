@@ -10981,6 +10981,89 @@
     "quality": "auto"
   },
   {
+    "id": "min_max_scale",
+    "kind": "operator",
+    "title": "Min-max scaling",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "dim": {
+          "type": "string",
+          "enum": [
+            "sample",
+            "feature"
+          ],
+          "default": "sample",
+          "title": "分析维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/min_max_scale.py",
+    "tests": [
+      "tests/test_extension5.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/min_max_scale.md",
+    "quality": "auto"
+  },
+  {
     "id": "missing",
     "kind": "operator",
     "title": "missing",
@@ -14989,6 +15072,89 @@
     "quality": "auto"
   },
   {
+    "id": "softmax",
+    "kind": "operator",
+    "title": "Softmax",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "dim": {
+          "type": "string",
+          "enum": [
+            "sample",
+            "feature"
+          ],
+          "default": "feature",
+          "title": "分析维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/softmax.py",
+    "tests": [
+      "tests/test_extension5.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/softmax.md",
+    "quality": "auto"
+  },
+  {
     "id": "spectral_embedding",
     "kind": "operator",
     "title": "Spectral embedding",
@@ -16080,6 +16246,330 @@
     "quality": "auto"
   },
   {
+    "id": "ttest_one_sample",
+    "kind": "operator",
+    "title": "One-sample t-test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "popmean": {
+          "type": "number",
+          "default": 0.0,
+          "title": "Popmean",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "less",
+            "greater"
+          ],
+          "default": "two-sided",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/ttest_one_sample.py",
+    "tests": [
+      "tests/test_extension5.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/ttest_one_sample.md",
+    "quality": "auto"
+  },
+  {
+    "id": "ttest_paired",
+    "kind": "operator",
+    "title": "Paired t-test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "less",
+            "greater"
+          ],
+          "default": "two-sided",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/ttest_paired.py",
+    "tests": [
+      "tests/test_extension5.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/ttest_paired.md",
+    "quality": "auto"
+  },
+  {
+    "id": "umap",
+    "kind": "operator",
+    "title": "UMAP",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 3,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "n_neighbors": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 15,
+          "title": "邻居数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 30
+        },
+        "min_dist": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.1,
+          "title": "Min Dist",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "metric": {
+          "type": "string",
+          "enum": [
+            "euclidean",
+            "cosine",
+            "correlation",
+            "manhattan"
+          ],
+          "default": "euclidean",
+          "title": "距离/相关指标",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/umap.py",
+    "tests": [
+      "tests/test_extension5.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/umap.md",
+    "quality": "auto"
+  },
+  {
     "id": "violin",
     "kind": "operator",
     "title": "Violin plot",
@@ -16558,6 +17048,89 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/wilcoxon.md",
+    "quality": "auto"
+  },
+  {
+    "id": "zscore",
+    "kind": "operator",
+    "title": "Z-score scaling",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "dim": {
+          "type": "string",
+          "enum": [
+            "sample",
+            "feature"
+          ],
+          "default": "sample",
+          "title": "分析维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/zscore.py",
+    "tests": [
+      "tests/test_extension5.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/zscore.md",
     "quality": "auto"
   }
 ]
