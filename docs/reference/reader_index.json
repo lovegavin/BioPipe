@@ -2182,7 +2182,7 @@
         "id_column": {
           "type": "integer",
           "minimum": 0,
-          "default": 1,
+          "default": 0,
           "title": "Id Column",
           "x-ui-group": "basic",
           "x-ui-order": 10
@@ -2190,7 +2190,7 @@
         "first_sample_column": {
           "type": "integer",
           "minimum": 0,
-          "default": 5,
+          "default": 10,
           "title": "First Sample Column",
           "x-ui-group": "basic",
           "x-ui-order": 20
@@ -2782,7 +2782,8 @@
     },
     "source": "src/reader/readers/mgf_reader.py",
     "tests": [
-      "tests/test_extension11.py"
+      "tests/test_extension11.py",
+      "tests/test_extension12.py"
     ],
     "doc": "docs/reference/readers/MgfReader.md",
     "quality": "auto"
@@ -3043,6 +3044,218 @@
     ],
     "doc": "docs/reference/readers/MtxReader.md",
     "quality": "reviewed"
+  },
+  {
+    "id": "MzmlReader",
+    "kind": "reader",
+    "extensions": [
+      ".mzml"
+    ],
+    "file_input": {
+      "dims": [
+        "spectrum",
+        "feature"
+      ],
+      "labels": {
+        "spectrum": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "max_spectra": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100000,
+          "title": "Max Spectra",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/mzml_reader.py",
+    "tests": [
+      "tests/test_extension12_readers.py"
+    ],
+    "doc": "docs/reference/readers/MzmlReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "MztabReader",
+    "kind": "reader",
+    "extensions": [
+      ".mztab"
+    ],
+    "file_input": {
+      "dims": [
+        "record",
+        "feature"
+      ],
+      "labels": {
+        "record": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "section": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "PSM",
+            "PEP",
+            "PRT",
+            "SML"
+          ],
+          "default": "auto",
+          "title": "Section",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "max_records": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1000000,
+          "title": "Max Records",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/mztab_reader.py",
+    "tests": [
+      "tests/test_extension12_readers.py"
+    ],
+    "doc": "docs/reference/readers/MztabReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "MzxmlReader",
+    "kind": "reader",
+    "extensions": [
+      ".mzxml"
+    ],
+    "file_input": {
+      "dims": [
+        "scan",
+        "feature"
+      ],
+      "labels": {
+        "scan": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "max_scans": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100000,
+          "title": "Max Scans",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/mzxml_reader.py",
+    "tests": [
+      "tests/test_extension12_readers.py"
+    ],
+    "doc": "docs/reference/readers/MzxmlReader.md",
+    "quality": "auto"
   },
   {
     "id": "NarrowPeakReader",

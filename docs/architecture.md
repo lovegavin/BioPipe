@@ -138,10 +138,11 @@ YAML / JSON
 - 0.15.0 新增：Mantel、PLS 回归、分位数回归、bootstrap CI、silhouette、互信息；GenBank/PDB/Zarr/BCF Reader；核心层不变；
 - 0.16.0 新增：DBSCAN、层次聚类、GMM、孤立森林、Cramér–von Mises、Welch ANOVA、Tukey HSD、C-index、分类指标；WIG/broadPeak/GFF2/mmCIF/OBO/SDF Reader；核心层不变；
 - 0.18.0 新增：反向互补、翻译、密码子使用、限制性酶切位点、蛋白性质；PCA loadings、HVG、细胞周期评分、Hudson Fst、GRM 亲缘矩阵、RMST、peptide q-value、McNemar、Kendall tau；FAM/BIM/HapMap/MOL/XYZ/GRO/PSL/genePred/MGF/HMMER domtbl Reader；核心层不变；
+- 0.19.0 新增：TMM 归一化、limma 风格批次效应移除、Mantel-Haenszel、Cochran-Armitage、TOST 等价检验、Bland-Altman、竞争风险累积发生率；mzML/mzXML/mzTab Reader；MGF 空峰谱 precursor 修复；核心层不变；
 - 0.17.0 新增：Holm/BY 校正、Cohen's d/Hedges g、Cliff's delta、η²、rank-biserial、Davies–Bouldin、Calinski–Harabasz、ARI、混淆矩阵、ROC 曲线、Mann–Kendall；BLAST tabular/HMMER tblout/InterProScan/EMBL/HMM/MOL2/SMI/bedMethyl Reader；核心层不变；
 - 0.13.0 新增：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera；核心层不变；
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)；
-- 尚未支持：mzML、FCS、空间转录组、影像等；
+- 尚未支持：原始峰列表解析、FCS、空间转录组、影像等；
 - 大矩阵：heatmap 有 `max_cells/max_pixels` 保护；H5AD/10x full 模式仍可能 densify。
 
 ## 8. 扩展方向
@@ -154,7 +155,7 @@ YAML / JSON
 1. **基础格式**：BAM/CRAM、BigWig/BigBed、narrowPeak/BEDPE；
 2. **核心算子**：TMM/RLE/voom、GSEA 的 fgsea 对照、ambient RNA；
 3. **单细胞/空间**：Leiden、轨迹、Visium；
-4. **蛋白/代谢**：MSstats 对照、mzML；
+4. **蛋白/代谢**：MSstats 对照、峰列表细节（mzML/mzXML/mzTab 已支持摘要）；
 5. **遗传**：fine-mapping、VEP 注释；
 6. **专用格式**：FCS、h5Seurat、GenBank/Newick/PDB、影像。
 

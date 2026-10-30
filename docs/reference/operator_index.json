@@ -1988,6 +1988,111 @@
     "quality": "auto"
   },
   {
+    "id": "bland_altman",
+    "kind": "operator",
+    "title": "Bland-Altman agreement",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "method_a": {
+          "type": "string",
+          "title": "Method A",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "method_b": {
+          "type": "string",
+          "title": "Method B",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "confidence": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "default": 0.95,
+          "title": "Confidence",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "method_a",
+        "method_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/bland_altman.py",
+    "tests": [
+      "tests/test_extension12.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/bland_altman.md",
+    "quality": "auto"
+  },
+  {
     "id": "bonferroni",
     "kind": "operator",
     "title": "Bonferroni correction",
@@ -3204,6 +3309,110 @@
       "tasks/violin_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/cluster_axis.md",
+    "quality": "auto"
+  },
+  {
+    "id": "cochran_armitage",
+    "kind": "operator",
+    "title": "Cochran-Armitage trend test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "group_dim",
+              "default": "group"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "group_dim": {
+          "type": "string",
+          "default": "group",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "cases_column": {
+          "type": "string",
+          "default": "cases",
+          "title": "Cases Column",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "total_column": {
+          "type": "string",
+          "default": "total",
+          "title": "Total Column",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_scores": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "title": "Group Scores",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/cochran_armitage.py",
+    "tests": [
+      "tests/test_extension12.py",
+      "tests/test_r_oracles4.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/cochran_armitage.md",
     "quality": "auto"
   },
   {
@@ -4548,6 +4757,130 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/cramer_von_mises.md",
+    "quality": "auto"
+  },
+  {
+    "id": "cumulative_incidence",
+    "kind": "operator",
+    "title": "Cumulative incidence",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "time_label": {
+          "type": "string",
+          "title": "随访时间字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "event_label": {
+          "type": "string",
+          "title": "事件字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "event_of_interest": {
+          "type": "integer",
+          "default": 1,
+          "title": "Event Of Interest",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "competing_event": {
+          "type": "integer",
+          "default": 2,
+          "title": "Competing Event",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "分组顺序",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "horizon": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "title": "Horizon",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 90
+        }
+      },
+      "required": [
+        "time_label",
+        "event_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/cumulative_incidence.py",
+    "tests": [
+      "tests/test_extension12.py",
+      "tests/test_r_oracles4.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/cumulative_incidence.md",
     "quality": "auto"
   },
   {
@@ -9701,8 +10034,7 @@
         },
         "min_mean": {
           "type": "number",
-          "minimum": 0,
-          "default": 0.0,
+          "default": -1000000000000.0,
           "title": "Min Mean",
           "x-ui-group": "basic",
           "x-ui-order": 30
@@ -13637,6 +13969,124 @@
     "quality": "auto"
   },
   {
+    "id": "mantel_haenszel",
+    "kind": "operator",
+    "title": "Mantel-Haenszel test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "stratum_dim",
+              "default": "stratum"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "stratum_dim": {
+          "type": "string",
+          "default": "stratum",
+          "title": "Stratum Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "case_exposed": {
+          "type": "string",
+          "default": "case_exposed",
+          "title": "Case Exposed",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "case_unexposed": {
+          "type": "string",
+          "default": "case_unexposed",
+          "title": "Case Unexposed",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "control_exposed": {
+          "type": "string",
+          "default": "control_exposed",
+          "title": "Control Exposed",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "control_unexposed": {
+          "type": "string",
+          "default": "control_unexposed",
+          "title": "Control Unexposed",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "confidence": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "default": 0.95,
+          "title": "Confidence",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/mantel_haenszel.py",
+    "tests": [
+      "tests/test_extension12.py",
+      "tests/test_r_oracles4.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/mantel_haenszel.md",
+    "quality": "auto"
+  },
+  {
     "id": "marker_score",
     "kind": "operator",
     "title": "Signature score",
@@ -14841,7 +15291,9 @@
       "tasks/verify_ml_regression.py",
       "tasks/verify_multi_omics.py",
       "tasks/verify_single_cell.py",
-      "tests/sop/test_core_operators_sop.py"
+      "tests/sop/test_core_operators_sop.py",
+      "tests/test_extension12.py",
+      "tests/test_r_oracles4.py"
     ],
     "demo_tasks": [
       "tasks/aggregate_demo/task.yaml",
@@ -18620,6 +19072,126 @@
     "quality": "auto"
   },
   {
+    "id": "remove_batch_effect",
+    "kind": "operator",
+    "title": "Remove batch effect",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2,
+          "labels_any": [
+            {
+              "param": "batch_label",
+              "default": null
+            }
+          ]
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "batch_label": {
+          "type": "string",
+          "title": "Batch Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "covariates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "title": "协变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "batch_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/remove_batch_effect.py",
+    "tests": [
+      "tests/test_extension12.py",
+      "tests/test_r_oracles4.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/remove_batch_effect.md",
+    "quality": "auto"
+  },
+  {
     "id": "rename_dim",
     "kind": "operator",
     "title": "rename_dim",
@@ -21236,6 +21808,107 @@
     "quality": "auto"
   },
   {
+    "id": "tmm_normalize",
+    "kind": "operator",
+    "title": "TMM normalization",
+    "package": "biopipe-expression",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "transform",
+        "representation": "tmm_normalize"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "target_sum": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1000000.0,
+          "title": "目标总量",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "logratio_trim": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 0.5,
+          "default": 0.3,
+          "title": "Logratio Trim",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "sum_trim": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 0.5,
+          "default": 0.05,
+          "title": "Sum Trim",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "do_weighting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Do Weighting",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/tmm_normalize.py",
+    "tests": [
+      "tests/test_extension12.py",
+      "tests/test_r_oracles4.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/tmm_normalize.md",
+    "quality": "auto"
+  },
+  {
     "id": "topic_lda",
     "kind": "operator",
     "title": "Topic LDA",
@@ -21340,6 +22013,159 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/topic_lda.md",
+    "quality": "auto"
+  },
+  {
+    "id": "tost_equivalence",
+    "kind": "operator",
+    "title": "TOST equivalence test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_a": {
+          "type": "string",
+          "title": "A 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "group_b": {
+          "type": "string",
+          "title": "B 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "margin": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "title": "Margin",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "alpha": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 0.5,
+          "default": 0.05,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 70
+        },
+        "equal_var": {
+          "type": "boolean",
+          "default": false,
+          "title": "Equal Var",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 90
+        }
+      },
+      "required": [
+        "group_label",
+        "group_a",
+        "group_b",
+        "margin"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/tost_equivalence.py",
+    "tests": [
+      "tests/test_extension12.py",
+      "tests/test_r_oracles4.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/tost_equivalence.md",
     "quality": "auto"
   },
   {

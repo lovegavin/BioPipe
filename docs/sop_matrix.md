@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.16/0.17/0.18 增量分别为 **12 / 11 / 14 passed**。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项），未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -11,7 +11,7 @@
 | B | 算子 demo 自测：手工可算的小例子 |
 | C | 仅契约/route/artifact 覆盖；没有独立数值 oracle |
 
-## 2. Reader（73）
+## 2. Reader（76）
 | Reader | 级别 | 证据/独立 oracle |
 |---|---|---|
 | `BedReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
@@ -89,9 +89,12 @@
 | `GenePredReader` | B | test_extension11.py（genePred 10 列，空白分隔） |
 | `MgfReader` | B | test_extension11.py（MGF BEGIN/END IONS 块） |
 | `HmmerDomtblReader` | B | test_extension11.py（HMMER domtblout 22 列 + description） |
+| `MzmlReader` | B | test_extension12_readers.py（mzML 扫描元数据、分钟/秒换算、selected ion m/z） |
+| `MzxmlReader` | B | test_extension12_readers.py（mzXML scan、PT 时长、zlib 峰计数） |
+| `MztabReader` | B | test_extension12_readers.py（mzTab PSM 段、MTD 元数据、section 选择） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（193；下表为 89 个早期算子，0.8–0.18 新增见末尾证据）
+## 3. Operator（200；下表为 89 个早期算子，0.8–0.19 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -296,3 +299,12 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - 未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、registry 生成物、测试、图标和参考页。
 - 0.18 增量 **14 passed**（8 原算子/Reader 测试 + 6 R oracle）；全量 **606 passed / 1 skipped**（1 个 full-suite 模式有意 skip）；registry 193/73/21；参考页 193 算子 / 73 Reader；Studio 前端 139 passed 且构建通过。
 - 边界：翻译使用标准遗传密码；限制性酶切为精确 motif 计数（含反向互补）；pI/MW 为常用近似；HVG 基于均值-离散度；Fst 为 Hudson 估计；GRM 使用 2p 缺失填补；RMST 为 KM 曲线下面积；q-value 为 target-decoy 单调校正；McNemar 默认连续性校正；Kendall tau 只统计成对完整观测；HapMap 以首个非缺失等位基因为参照；MOL2 不重建键级。
+
+
+## 19. 0.19.0 扩展证据
+
+- 新增 7 个算子：`tmm_normalize`（edgeR TMM）、`remove_batch_effect`（limma sum-to-zero 编码）、`mantel_haenszel`、`cochran_armitage`、`tost_equivalence`、`bland_altman`、`cumulative_incidence`（Aalen-Johansen）。
+- 新增 3 个 Reader：`MzmlReader`、`MzxmlReader`、`MztabReader`；`MgfReader` 修复空峰谱的 `precursor_mz`。
+- `tests/test_extension12.py` 7 项、`tests/test_extension12_readers.py` 4 项、`tests/test_r_oracles4.py` 6 项，合计 17 项通过；增量门 42 passed；R 对照为 edgeR `calcNormFactors`、limma `removeBatchEffect`、`mantelhaen.test`、`prop.trend.test`、Welch TOST 公式、`survfit`。
+- 0.19 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 200/76/21；参考页 200 算子 / 76 Reader；Studio 前端 146 passed。
+- 边界：TMM 使用 f75 参考和 trimmed weighted mean；批次校正仅移除 batch 设计列；MH 不默认连续性校正；CA 使用等距 scores；TOST 支持 Welch/pooled；CIF 事件码 0/1/2；质谱 Reader 只汇总扫描/记录，不展开原始峰列表。

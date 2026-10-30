@@ -18,7 +18,7 @@ class MgfReader(Reader):
     output_contract = reader_contract()
     file_input = {"dims": ["spectrum", "feature"], "labels": {"spectrum": "auto", "feature": "builtin"}}
     extensions = [".mgf"]
-    handles_compression = True
+    handles_compression = False
     parameters_schema = {
         "type": "object",
         "properties": {
@@ -40,18 +40,20 @@ class MgfReader(Reader):
             text = line.strip()
             upper = text.upper()
             if upper == "BEGIN IONS":
-                current = {"pepmass": np.nan, "charge": np.nan, "rt": np.nan, "title": ""}
+                current = {"pepmass": np.nan, "charge": np.nan, "rt": np.nan, "title": "", "precursor_mz": np.nan}
                 peaks = []
             elif upper == "END IONS":
                 if current is None:
                     raise ReaderError("MGF reader: END IONS without BEGIN IONS")
                 if not peaks:
                     current["n_peaks"] = 0; current["base_peak"] = 0.0
+                    current["precursor_mz"] = current["pepmass"]
                 else:
                     mz, intensity = zip(*peaks)
                     current["n_peaks"] = len(peaks)
                     current["base_peak"] = float(max(intensity))
-                    current["precursor_mz"] = float(mz[0])
+                    if not np.isfinite(current["precursor_mz"]):
+                        current["precursor_mz"] = float(mz[0])
                 rows.append([current["pepmass"], current["charge"], current["rt"],
                              current["n_peaks"], current["base_peak"], current["precursor_mz"]])
                 titles.append(current["title"] or f"spectrum:{len(rows)}")

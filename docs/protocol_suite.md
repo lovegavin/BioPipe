@@ -468,14 +468,14 @@ Reader 只负责把一种“分析就绪”的文件/文件组读成 Form。**MU
 | 协议 | 现状 | 需要补齐 |
 |---|---|---|
 | P1 Form | 基本满足 | 统一 dtype 精度测试；更多算子输出精度审计 |
-| P2 Reader | 73 个已声明 schema；精度/FASTA/GFF/BED 已修 | 每个 Reader 的格式语义表与真实数据覆盖；BGEN 坐标 |
-| P3 Operator | 193 个严格 schema；30 个 legacy 已迁移；标题/UI 分组已归一化 | 仍需逐个审计未覆盖的数学分支 |
+| P2 Reader | 76 个已声明 schema；精度/FASTA/GFF/BED 已修 | 每个 Reader 的格式语义表与真实数据覆盖；BGEN 坐标 |
+| P3 Operator | 200 个严格 schema；30 个 legacy 已迁移；标题/UI 分组已归一化 | 仍需逐个审计未覆盖的数学分支 |
 | P4 Contract | 三态 + 运行时校验已实现；Step/Reader 基类强制严格参数 | 更多负例覆盖；输出 mode 逐项测试 |
 | P5 Registry | 生成物干净；source 为唯一参数真源；`operator_ui.json` 已只保留展示元数据（1485→258 行） | 无 |
 | P6 Route | 21 条；编译/展开/注册已实现 | 21 条 route 均有仓库 fixture 并实际执行；7 条 0.8/0.9 新 route 另有独立 smoke test |
 | P7 Desktop | 参数 title/group/unit 由 schema 提供；前端未改 | 前端接入 `x-ui-*`、输入预览、错误定位 |
 | P8 Extension | SDK/wheel/drop-in/route 已实现 | 外部插件测试矩阵与私有 import 扫描 |
-| P9 Testing | 29 个独立 SOP + 606 pytest + 251 verify + 49 demo；frontend 139；见 [SOP 矩阵](sop_matrix.md) | 10 个 plot 为 route artifact，4 个有 demo 逐值 |
+| P9 Testing | 29 个独立 SOP + 0.18 全量 606 pytest + 0.19 增量 42 + 251 verify + 49 demo；frontend 146；见 [SOP 矩阵](sop_matrix.md) | 10 个 plot 为 route artifact，4 个有 demo 逐值 |
 | P10 Docs | 计数已同步 | 历史 release 保持；扩展页去重 |
 | P11 Errors | 类型/事件已有 | 用户消息模板统一 |
 | P12 Resource | 预算/准入/spill 已实现 | H5AD/10x full 模式 densify |
@@ -525,7 +525,7 @@ Reader 只负责把一种“分析就绪”的文件/文件组读成 Form。**MU
 ## 附录 B — 输入格式边界（摘要）
 
 支持：CSV/TSV/TXT/Parquet、FASTA、GFF3/GTF、VCF/PLINK1/PLINK2/BGEN（双等位二倍体）、BED、H5AD/MTX、10x H5、GAF。  
-不支持：FASTQ、BAM/CRAM、mzML、CZI/LIF/ND2/OME-TIFF、MRC、IDAT、FCS、ABF、FID、CBF。  
+不支持：FASTQ、BAM/CRAM、CZI/LIF/ND2/OME-TIFF、MRC、IDAT、FCS、ABF、FID、CBF。
 新增 Reader 四条准入：真实公开数据、外部数值参考、至少一条 route 使用、不是流程图中间格式。
 
 ## 附录 C — 输出 mode 速查

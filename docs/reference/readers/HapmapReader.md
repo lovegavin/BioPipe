@@ -27,8 +27,8 @@
 | key | title | type | default | required |
 |---|---|---|---|---|
 | `has_header` | Has Header | boolean | True |  |
-| `id_column` | Id Column | integer | 1 |  |
-| `first_sample_column` | First Sample Column | integer | 5 |  |
+| `id_column` | Id Column | integer | 0 |  |
+| `first_sample_column` | First Sample Column | integer | 10 |  |
 | `encoders` | Encoders | object |  |  |
 
 ## Output contract

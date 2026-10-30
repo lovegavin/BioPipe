@@ -4,8 +4,8 @@
 
 - Source: [`src/reader/readers/mgf_reader.py`](../../../src/reader/readers/mgf_reader.py)
 - Extensions: `.mgf`
-- Compression handled natively: `True`
-- Tests: [`tests/test_extension11.py`](../../../tests/test_extension11.py)
+- Compression handled natively: `False`
+- Tests: [`tests/test_extension11.py`](../../../tests/test_extension11.py), [`tests/test_extension12.py`](../../../tests/test_extension12.py)
 
 ## File input hints
 

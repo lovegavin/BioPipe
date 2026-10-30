@@ -15,7 +15,7 @@
 | `sample_dim` | 样本维度 | string | sample |  |  |  | basic |
 | `feature_dim` | 特征维度 | string | gene |  |  |  | basic |
 | `n_top` | N Top | integer | 2000 | 1 |  |  | basic |
-| `min_mean` | Min Mean | number | 0.0 | 0 |  |  | basic |
+| `min_mean` | Min Mean | number | -1000000000000.0 |  |  |  | basic |
 | `max_mean` | Max Mean | number | 1000000000000.0 | 0 |  |  | basic |
 | `output` | 输出名称 | string |  |  |  |  | basic |
 
