@@ -7177,6 +7177,141 @@
     "quality": "auto"
   },
   {
+    "id": "cuzick_test",
+    "kind": "operator",
+    "title": "Cuzick trend test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_scores": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "title": "Group Scores",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two.sided",
+            "greater",
+            "less"
+          ],
+          "default": "two.sided",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "continuity": {
+          "type": "boolean",
+          "default": false,
+          "title": "Continuity",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/cuzick_test.py",
+    "tests": [
+      "tests/test_extension42.py",
+      "tests/test_r_oracles33.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/cuzick_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "davies_bouldin",
     "kind": "operator",
     "title": "Davies-Bouldin index",
@@ -9039,6 +9174,79 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/dunn_test.md",
+    "quality": "auto"
+  },
+  {
+    "id": "durbin_test",
+    "kind": "operator",
+    "title": "Durbin test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "block_dim",
+              "default": "block"
+            },
+            {
+              "param": "treatment_dim",
+              "default": "treatment"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "block_dim": {
+          "type": "string",
+          "default": "block",
+          "title": "Block Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "treatment_dim": {
+          "type": "string",
+          "default": "treatment",
+          "title": "Treatment Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/durbin_test.py",
+    "tests": [
+      "tests/test_extension42.py",
+      "tests/test_r_oracles33.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/durbin_test.md",
     "quality": "auto"
   },
   {
@@ -28630,6 +28838,79 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/silhouette.md",
+    "quality": "auto"
+  },
+  {
+    "id": "skillings_mack",
+    "kind": "operator",
+    "title": "Skillings-Mack test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "block_dim",
+              "default": "block"
+            },
+            {
+              "param": "treatment_dim",
+              "default": "treatment"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "block_dim": {
+          "type": "string",
+          "default": "block",
+          "title": "Block Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "treatment_dim": {
+          "type": "string",
+          "default": "treatment",
+          "title": "Treatment Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/skillings_mack.py",
+    "tests": [
+      "tests/test_extension42.py",
+      "tests/test_r_oracles33.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/skillings_mack.md",
     "quality": "auto"
   },
   {

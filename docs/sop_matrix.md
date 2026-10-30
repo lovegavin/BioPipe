@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**；0.41 新增 **5 passed**、增量门 **21 passed**；0.42 新增 **5 passed**、增量门 **21 passed**；0.43 新增 **6 passed**、增量门 **22 passed**；0.44 新增 **6 passed**、增量门 **22 passed**；0.45 新增 **4 passed**、增量门 **20 passed**；0.46 新增 **5 passed**、增量门 **26 passed**；0.47 新增 **5 passed**、增量门 **21 passed**；0.48 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**；0.41 新增 **5 passed**、增量门 **21 passed**；0.42 新增 **5 passed**、增量门 **21 passed**；0.43 新增 **6 passed**、增量门 **22 passed**；0.44 新增 **6 passed**、增量门 **22 passed**；0.45 新增 **4 passed**、增量门 **20 passed**；0.46 新增 **5 passed**、增量门 **26 passed**；0.47 新增 **5 passed**、增量门 **21 passed**；0.48 新增 **5 passed**、增量门 **21 passed**；0.49 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（289；下表为 89 个早期算子，0.8–0.48 新增见末尾证据）
+## 3. Operator（292；下表为 89 个早期算子，0.8–0.49 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -551,3 +551,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - R 参考值（18 个样本、A/B/C 各 6）：Conover B-A rank diff **4.8333333333333339**、Holm p **0.010462063490453718**；C-A p **2.5080247917311833e-05**；C-B p **0.0044497715042364737**。Games-Howell B-A q **3.9279220242478630**、p **0.047125923759940624**；C-A q **9.1651513899116797**、p **0.00018923503262868735**；C-B q **5.2372293656638176**、p **0.010381720683943052**。Quade 5 块×3 处理：F **18**、df **2/8**、p **0.0010928215285841132**。
 - 0.48 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 289/82/21；参考页 289 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 235 passed。
 - 边界：Conover 要求至少两组、有限值，默认 Holm 校正并支持 bonferroni/BH/BY/none；Games-Howell 使用组内方差与 Welch 自由度，要求每组至少两个值；Quade 要求完整、无缺失的随机区组设计，区组内允许并列秩。
+
+## 49. 0.49.0 扩展证据
+
+- 新增 3 个区组/趋势算子：`durbin_test`（Durbin 平衡不完全区组检验）、`skillings_mack`（Skillings-Mack 缺失区组检验）、`cuzick_test`（Cuzick 有序组趋势检验）；未新增 Reader。
+- `tests/test_extension42.py` 4 项、`tests/test_r_oracles33.py` 1 项，合计 **5 passed**；三者均对照 R `PMCMRplus`（`durbinTest`、`skillingsMackTest`、`cuzickTest`）。
+- R 参考值：Durbin 4 块×4 处理、k=3、r=3，chi2 **7.5**、df **3**、p **0.057558451972636406**；Skillings-Mack 5 块×4 处理、15 个观测，chi2 **9.4090909090909083**、df **3**、p **0.02431840851015896**；Cuzick A/B/C 各 6，z **3.5418343613549821**、p **0.00039735490558644653**、T **407.5**。
+- 0.49 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 292/82/21；参考页 292 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 238 passed。
+- 边界：Durbin 要求平衡不完全区组（每块 k 个处理、每处理 r 次、k<t）；Skillings-Mack 允许缺失但要求每个区组至少两个观测、所有处理由共现图连通且协方差非奇异；Cuzick 要求有序组，默认得分 1..k，支持 `group_scores`、单双侧与连续性校正，不做并列校正。

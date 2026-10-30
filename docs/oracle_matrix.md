@@ -1,5 +1,16 @@
 # 权威实现对照矩阵
 
+## 0.49.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `durbin_test` | R `PMCMRplus::durbinTest(m)` | `tests/test_r_oracles33.py` | 4 块×4 处理、k=3、r=3：chi2 7.5，df 3，p 0.057558451972636406；平衡不完全区组 |
+| `skillings_mack` | R `PMCMRplus::skillingsMackTest(m)` | `tests/test_r_oracles33.py` | 5 块×4 处理、15 个观测：chi2 9.4090909090909083，df 3，p 0.02431840851015896；要求共现图连通 |
+| `cuzick_test` | R `PMCMRplus::cuzickTest(x, g)` | `tests/test_r_oracles33.py` | A/B/C 各 6：z 3.5418343613549821，p 0.00039735490558644653，T 407.5；不做并列校正 |
+
+- R 4.3.3；`PMCMRplus` 来自 USTC CRAN，依赖 `multcompView/Rmpfr/SuppDists/kSamples/BWStest` 已安装。
+- 复现：`python -m pytest -q tests/test_extension42.py tests/test_r_oracles33.py`。
+
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
 ## 0.48.0

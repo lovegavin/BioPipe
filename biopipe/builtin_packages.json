@@ -19192,6 +19192,228 @@
         },
         {
           "protocol_version": 1,
+          "id": "cuzick_test",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.cuzick_test:CuzickTestStep",
+          "title": "Cuzick trend test",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "分组维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "group_scores": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "title": "Group Scores",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "alternative": {
+                "type": "string",
+                "enum": [
+                  "two.sided",
+                  "greater",
+                  "less"
+                ],
+                "default": "two.sided",
+                "title": "Alternative",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "continuity": {
+                "type": "boolean",
+                "default": false,
+                "title": "Continuity",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "group_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "group_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "cuzick_test",
+          "module": "src.task.step.steps.cuzick_test",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Cuzick's rank-based trend test across ordered groups.",
+          "parameters": [
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_dim",
+              "label": "分组维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "group_scores",
+              "label": "Group Scores",
+              "type": "json",
+              "required": false
+            },
+            {
+              "key": "alternative",
+              "label": "Alternative",
+              "type": "choice",
+              "required": false,
+              "default": "two.sided",
+              "options": [
+                "two.sided",
+                "greater",
+                "less"
+              ]
+            },
+            {
+              "key": "continuity",
+              "label": "Continuity",
+              "type": "boolean",
+              "required": false,
+              "default": false
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "feature_dim": "feature",
+            "sample_dim": "sample",
+            "group_dim": "sample",
+            "alternative": "two.sided",
+            "continuity": false
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "davies_bouldin",
           "version": "1.0.0",
           "kind": "operator",
@@ -21447,6 +21669,125 @@
             "sample_dim": "sample",
             "group_dim": "sample",
             "method": "holm"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "durbin_test",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.durbin_test:DurbinTestStep",
+          "title": "Durbin test",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "block_dim": {
+                "type": "string",
+                "default": "block",
+                "title": "Block Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "treatment_dim": {
+                "type": "string",
+                "default": "treatment",
+                "title": "Treatment Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "block_dim",
+                    "default": "block"
+                  },
+                  {
+                    "param": "treatment_dim",
+                    "default": "treatment"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "durbin_test",
+          "module": "src.task.step.steps.durbin_test",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Durbin's rank sum test for a balanced incomplete block design.",
+          "parameters": [
+            {
+              "key": "block_dim",
+              "label": "Block Dim",
+              "type": "string",
+              "required": false,
+              "default": "block"
+            },
+            {
+              "key": "treatment_dim",
+              "label": "Treatment Dim",
+              "type": "string",
+              "required": false,
+              "default": "treatment"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "block_dim": "block",
+            "treatment_dim": "treatment"
           },
           "legacy_parameters": false
         },
@@ -46757,6 +47098,125 @@
             "feature_dim": "feature",
             "label_dim": "label",
             "metric": "euclidean"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "skillings_mack",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.skillings_mack:SkillingsMackTestStep",
+          "title": "Skillings-Mack test",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "block_dim": {
+                "type": "string",
+                "default": "block",
+                "title": "Block Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "treatment_dim": {
+                "type": "string",
+                "default": "treatment",
+                "title": "Treatment Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "block_dim",
+                    "default": "block"
+                  },
+                  {
+                    "param": "treatment_dim",
+                    "default": "treatment"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "skillings_mack",
+          "module": "src.task.step.steps.skillings_mack",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Skillings-Mack test for an arbitrary incomplete block design.",
+          "parameters": [
+            {
+              "key": "block_dim",
+              "label": "Block Dim",
+              "type": "string",
+              "required": false,
+              "default": "block"
+            },
+            {
+              "key": "treatment_dim",
+              "label": "Treatment Dim",
+              "type": "string",
+              "required": false,
+              "default": "treatment"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "block_dim": "block",
+            "treatment_dim": "treatment"
           },
           "legacy_parameters": false
         },
