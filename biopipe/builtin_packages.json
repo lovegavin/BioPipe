@@ -10788,6 +10788,165 @@
         },
         {
           "protocol_version": 1,
+          "id": "agostino_skewness",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.agostino_skewness:AgostinoSkewnessStep",
+          "title": "D'Agostino skewness test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "value_label": {
+                "type": "string",
+                "title": "数值字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "alternative": {
+                "type": "string",
+                "enum": [
+                  "two-sided",
+                  "positive",
+                  "negative"
+                ],
+                "default": "two-sided",
+                "title": "Alternative",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "value_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "agostino_skewness",
+          "module": "src.task.step.steps.agostino_skewness",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "D'Agostino test for sample skewness.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "value_label",
+              "label": "数值字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "alternative",
+              "label": "Alternative",
+              "type": "choice",
+              "required": false,
+              "default": "two-sided",
+              "options": [
+                "two-sided",
+                "positive",
+                "negative"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "alternative": "two-sided"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "anderson_darling",
           "version": "1.0.0",
           "kind": "operator",
@@ -15757,6 +15916,158 @@
         },
         {
           "protocol_version": 1,
+          "id": "chi_square_gof",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.chi_square_gof:ChiSquareGofStep",
+          "title": "Pearson chi-square goodness-of-fit test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "category_dim": {
+                "type": "string",
+                "default": "category",
+                "title": "Category Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "count_label": {
+                "type": "string",
+                "title": "计数列",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "expected": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "default": [],
+                "title": "期望相对频数（留空为均匀分布）",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "count_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "category_dim",
+                    "default": "category"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "chi_square_gof",
+          "module": "src.task.step.steps.chi_square_gof",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "One-sample chi-square test against expected relative frequencies.",
+          "parameters": [
+            {
+              "key": "category_dim",
+              "label": "Category Dim",
+              "type": "string",
+              "required": false,
+              "default": "category"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "count_label",
+              "label": "计数列",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "expected",
+              "label": "期望相对频数（留空为均匀分布）",
+              "type": "json",
+              "required": false,
+              "default": []
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "category_dim": "category",
+            "feature_dim": "feature",
+            "expected": []
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "chow_test",
           "version": "1.0.0",
           "kind": "operator",
@@ -16655,6 +16966,186 @@
             "feature_dim": "feature",
             "cases_column": "cases",
             "total_column": "total"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "cochran_c_test",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.cochran_c_test:CochranCTestStep",
+          "title": "Cochran's C outlying variance test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "分组维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "value_label": {
+                "type": "string",
+                "title": "数值字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "group_label",
+              "value_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "group_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "cochran_c_test",
+          "module": "src.task.step.steps.cochran_c_test",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Cochran's C test for homogeneity of variances with equal group sizes.",
+          "parameters": [
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_dim",
+              "label": "分组维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "value_label",
+              "label": "数值字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "feature_dim": "feature",
+            "sample_dim": "sample",
+            "group_dim": "sample"
           },
           "legacy_parameters": false
         },

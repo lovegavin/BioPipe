@@ -757,6 +757,100 @@
     "quality": "auto"
   },
   {
+    "id": "agostino_skewness",
+    "kind": "operator",
+    "title": "D'Agostino skewness test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "positive",
+            "negative"
+          ],
+          "default": "two-sided",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/agostino_skewness.py",
+    "tests": [
+      "tests/test_extension45.py",
+      "tests/test_r_oracles36.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/agostino_skewness.md",
+    "quality": "auto"
+  },
+  {
     "id": "aldex2",
     "kind": "operator",
     "title": "Compositional differential abundance",
@@ -4577,6 +4671,98 @@
     "quality": "auto"
   },
   {
+    "id": "chi_square_gof",
+    "kind": "operator",
+    "title": "Pearson chi-square goodness-of-fit test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "category_dim",
+              "default": "category"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "category_dim": {
+          "type": "string",
+          "default": "category",
+          "title": "Category Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "count_label": {
+          "type": "string",
+          "title": "计数列",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "expected": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "default": [],
+          "title": "期望相对频数（留空为均匀分布）",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "count_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/chi_square_gof.py",
+    "tests": [
+      "tests/test_extension45.py",
+      "tests/test_r_oracles36.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/chi_square_gof.md",
+    "quality": "auto"
+  },
+  {
     "id": "chow_test",
     "kind": "operator",
     "title": "Chow structural-break test",
@@ -5142,6 +5328,120 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/cochran_armitage.md",
+    "quality": "auto"
+  },
+  {
+    "id": "cochran_c_test",
+    "kind": "operator",
+    "title": "Cochran's C outlying variance test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "group_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "group_label",
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/cochran_c_test.py",
+    "tests": [
+      "tests/test_extension45.py",
+      "tests/test_r_oracles36.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/cochran_c_test.md",
     "quality": "auto"
   },
   {

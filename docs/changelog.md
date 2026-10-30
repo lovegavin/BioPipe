@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.52.0 — 2026-10-31
+
+- 新增：301 算子 / 82 Reader / 21 route；新增 D'Agostino 偏度、Pearson χ² 拟合优度、Cochran C 方差离群三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension45.py` 4 项、`tests/test_r_oracles36.py` 1 项，合计 **5 passed**；三算子分别对照 R `moments::agostino.test`、base R `chisq.test`、`outliers::cochran.test`；registry clean；参考页 301/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 247 passed。
+- 边界：D'Agostino 要求 8–46340 个观测且方差非零；χ² 拟合优度要求计数非负、总计数为正，期望可为相对频数并归一化；Cochran C 要求每组至少两个有限值、组样本量相等、组方差为正。
+
 ## 0.51.0 — 2026-10-31
 
 - 新增：298 算子 / 82 Reader / 21 route；新增 Fligner-Killeen 方差齐性、Mood 两样本尺度、Siegel-Tukey 秩离散度检验三个算子；未修改核心层。

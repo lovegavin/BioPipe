@@ -1,5 +1,16 @@
 # 权威实现对照矩阵
 
+## 0.52.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `agostino_skewness` | R `moments::agostino.test` | `tests/test_r_oracles36.py` | x=[1..9,20]：skew 1.6060526914810145，z 2.6471420773508192，p 0.0081175240201695822 |
+| `chi_square_gof` | R `stats::chisq.test` | `tests/test_r_oracles36.py` | counts [10,20,30,40]：χ² 20，df 3，p 0.00016974243555282649 |
+| `cochran_c_test` | R `outliers::cochran.test` | `tests/test_r_oracles36.py` | 3 组各 5：C 0.95238095238095233，df1 8，df2 4，p 7.4190133887430676e-05 |
+
+- R 4.3.3；`moments`、`outliers` 已安装；Cochran C 要求等组样本量，p 采用 R `pcochran` 右尾。
+- 复现：`python -m pytest -q tests/test_extension45.py tests/test_r_oracles36.py`。
+
 ## 0.51.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
