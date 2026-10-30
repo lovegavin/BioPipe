@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.30.0 — 2026-10-31
+- 新增 3 个回归模型算子：`multinomial_logit`（多项 logit）、`conditional_logit`（条件 logit）、`robust_regression`（Huber M 稳健回归）；未新增 Reader。
+- 当前：240 算子 / 82 Reader / 21 route；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension23.py` 4 项、`tests/test_r_oracles15.py` 1 项，合计 **5 passed**；R 对照 `nnet::multinom`、`survival::clogit`、`MASS::rlm(psi=psi.huber)`；registry clean；参考页 240/82；增量门 21 passed；Studio 前端 186 passed。
+- 边界：多项 logit 使用第一水平为 reference；条件 logit 按 stratum 匹配；稳健回归使用 Huber M 估计，不提供 MM/自适应估计或稳健标准误。
+
 ## 0.29.0 — 2026-10-31
 - 新增 3 个回归诊断算子：`breusch_godfrey`（Breusch-Godfrey 序列相关）、`reset_test`（RESET 函数形式）、`harvey_collier`（Harvey-Collier 线性性）；未新增 Reader。
 - 当前：237 算子 / 82 Reader / 21 route；未修改核心层。

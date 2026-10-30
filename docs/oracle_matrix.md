@@ -140,6 +140,19 @@
 - 复现：`python -m pytest -q tests/test_extension22.py tests/test_r_oracles14.py`。
 - 边界：三者共用同一 OLS 设计矩阵；BG 是序列相关检验，RESET 是函数形式检验，Harvey-Collier 是线性性检验；不要把它们当作因果识别或稳健推断。
 
+## 0.30.0
+
+| Operator | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `multinomial_logit` | R `nnet::multinom(factor(y) ~ x1 + x2)` | `tests/test_r_oracles15.py` | 系数/SE 对齐；第一水平为 reference |
+| `conditional_logit` | R `survival::clogit(y ~ x1 + x2 + strata(stratum))` | `tests/test_r_oracles15.py` | 系数/SE 对齐；每个 stratum 恰好一个事件 |
+| `robust_regression` | R `MASS::rlm(y ~ x1 + x2, psi=psi.huber)` | `tests/test_r_oracles15.py` | 系数/SE/scale 对齐；Huber M 估计 |
+
+- 使用已安装的 `nnet`、`survival`、`MASS`，无需新增 R 包。
+- 参考值：多项 logit 系数 `-0.0785675 / 0.6947102 / 0.4630492`（outcome 2）与 `-0.0353596 / -0.3482974 / 1.1293976`（outcome 3）；条件 logit 系数 `1.0291703 / -0.9972766`，SE `0.5022442 / 0.4568622`；稳健回归系数 `0.9672461 / 1.8805607 / -0.5415845`，scale `0.3079868`。
+- 复现：`python -m pytest -q tests/test_extension23.py tests/test_r_oracles15.py`。
+- 边界：多项 logit 使用 softmax 参数化，不输出个体预测；条件 logit 不做分层随机效应；稳健回归不输出权重诊断图。
+
 ## 环境与缺口
 
 - R 4.3.3；已装 `vegan`、`survival`、`metafor`、`edgeR`、`limma`、`DESeq2`、`fgsea`、`GSVA`、`sva`、`Kendall`、`ALDEx2` 等。

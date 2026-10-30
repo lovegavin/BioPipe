@@ -5169,6 +5169,124 @@
     "quality": "auto"
   },
   {
+    "id": "conditional_logit",
+    "kind": "operator",
+    "title": "Conditional logistic regression",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "stratum_label": {
+          "type": "string",
+          "title": "Stratum Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "event_label": {
+          "type": "string",
+          "title": "事件字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "predictors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Predictors",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "categorical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "title": "分类协变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "maxiter": {
+          "type": "integer",
+          "minimum": 20,
+          "default": 200,
+          "title": "Maxiter",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "stratum_label",
+        "event_label",
+        "predictors"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/conditional_logit.py",
+    "tests": [
+      "tests/test_extension23.py",
+      "tests/test_r_oracles15.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/conditional_logit.md",
+    "quality": "auto"
+  },
+  {
     "id": "confusion_matrix",
     "kind": "operator",
     "title": "Confusion matrix",
@@ -17500,6 +17618,117 @@
     "quality": "auto"
   },
   {
+    "id": "multinomial_logit",
+    "kind": "operator",
+    "title": "Multinomial logistic regression",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "response_label": {
+          "type": "string",
+          "title": "Response Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "predictors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Predictors",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "categorical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "title": "分类协变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "maxiter": {
+          "type": "integer",
+          "minimum": 20,
+          "default": 200,
+          "title": "Maxiter",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "response_label",
+        "predictors"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/multinomial_logit.py",
+    "tests": [
+      "tests/test_extension23.py",
+      "tests/test_r_oracles15.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/multinomial_logit.md",
+    "quality": "auto"
+  },
+  {
     "id": "multinomial_nb_classifier",
     "kind": "operator",
     "title": "Multinomial Naive Bayes classifier",
@@ -23200,6 +23429,117 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/rmst.md",
+    "quality": "auto"
+  },
+  {
+    "id": "robust_regression",
+    "kind": "operator",
+    "title": "Robust linear regression",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "response_label": {
+          "type": "string",
+          "title": "Response Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "predictors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Predictors",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "categorical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "title": "分类协变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "maxiter": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100,
+          "title": "Maxiter",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "response_label",
+        "predictors"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/robust_regression.py",
+    "tests": [
+      "tests/test_extension23.py",
+      "tests/test_r_oracles15.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/robust_regression.md",
     "quality": "auto"
   },
   {
