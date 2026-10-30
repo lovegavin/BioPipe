@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：全量 pytest **560 passed / 0 skipped**（0.16 增量 **12 passed**，未重跑全量）；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.16 全量 pytest **560 passed / 0 skipped**；0.17 按用户要求只跑增量 **11 passed**，未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -11,7 +11,7 @@
 | B | 算子 demo 自测：手工可算的小例子 |
 | C | 仅契约/route/artifact 覆盖；没有独立数值 oracle |
 
-## 2. Reader（55）
+## 2. Reader（63）
 | Reader | 级别 | 证据/独立 oracle |
 |---|---|---|
 | `BedReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
@@ -63,6 +63,14 @@
 | `PdbReader` | B | test_extension8.py（ATOM/HETATM 固定列） |
 | `ZarrReader` | B | test_extension8.py（2D 数值数组、labels） |
 | `BcfReader` | B | test_extension8.py（pysam BCF；Windows 原生不可用） |
+| `BlastTabularReader` | B | test_extension10.py（BLAST outfmt6 12 列） |
+| `HmmerTbloutReader` | B | test_extension10.py（HMMER tblout 常用列） |
+| `InterProScanReader` | B | test_extension10.py（InterProScan TSV） |
+| `EmblReader` | B | test_extension10.py（EMBL 记录/长度/GC） |
+| `HmmReader` | B | test_extension10.py（HMMER3 profile 头） |
+| `Mol2Reader` | B | test_extension10.py（MOL2 原子/键计数） |
+| `SmiReader` | B | test_extension10.py（SMILES 近似重原子计数） |
+| `BedMethylReader` | B | test_extension10.py（ENCODE bedMethyl 15 列） |
 
 | `WigReader` | B | test_extension9.py（fixedStep/variableStep、0-based region） |
 | `BroadPeakReader` | B | test_extension9.py（9 列 broadPeak） |
@@ -72,7 +80,7 @@
 | `SdfReader` | B | test_extension9.py（SDF 原子/键计数与分子量） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（167；下表为 89 个早期算子，0.8–0.16 新增见末尾证据）
+## 3. Operator（179；下表为 89 个早期算子，0.8–0.17 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -166,7 +174,7 @@ Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解�
 ## 5. 缺口
 - 10 个 C 级绘图算子由 route 的 PNG artifact 覆盖；line/enrichment 另有直接 artifact 测试；绘图无数值契约，不设数值 oracle。
 - C 级且非绘图：无。
-- 运行中的 skip：无；全量 pytest 为 **560 passed / 0 skipped**。桌面测试在 `frontend/dist` 存在时执行，route fixture 已全部接入。
+- 运行中的 skip：无；0.16 全量 pytest 基线为 **560 passed / 0 skipped**；0.17 未重跑全量，只跑增量。桌面测试在 `frontend/dist` 存在时执行，route fixture 已全部接入。
 
 ## 6. 复现命令
 ```bash
@@ -252,3 +260,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - 未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、registry 生成物、测试、图标和参考页。
 - 按用户要求只跑增量测试，未重跑全量：0.16 增量 **12 passed**；registry 167/55/21；参考页 167 算子 / 55 Reader；前端 113 passed。
 - 边界：聚类标签编号不稳定（受随机种子/样本顺序影响）；Cramér–von Mises 仅两组；Welch ANOVA/Tukey HSD 至少三组；C-index 把 risk 方向定义为越高风险越大；分类指标只支持二分类且正类默认按标签排序后的最后一个；GFF 使用 `.gff2` 以避免与 Gff3Reader 冲突；WIG/broadPeak 为 0-based 区间；mmCIF 只解析 atom_site；OBO 只读取 Term 常用字段；SDF 不重建键连接图。
+
+## 16. 0.17.0 扩展证据
+
+- 新增 12 个算子：Holm、Benjamini-Yekutieli、Cohen's d/Hedges g、Cliff's delta、η²、rank-biserial、Davies-Bouldin、Calinski-Harabasz、ARI、混淆矩阵、ROC 曲线、Mann-Kendall；`tests/test_extension10.py` 10 项通过，R `p.adjust` oracle 1 项通过。
+- 新增 8 个 Reader：BLAST tabular、HMMER tblout、InterProScan、EMBL、HMM、MOL2、SMI、bedMethyl；`tests/test_extension10.py` 临时文件解析和 `pick_reader` 分派通过。
+- 未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、registry 生成物、测试、图标和参考页。
+- 按用户要求只跑增量测试，未重跑全量：0.17 增量 **11 passed**（`tests/test_extension10.py` 10 项 + R oracle 1 项）；参考页 179 算子 / 63 Reader；21 条 route fixture 保持不变；Studio 前端 125 passed。
+- 边界：Holm/BY 对 NaN p 保留 NaN；效应量只支持连续特征；Mann-Kendall 使用 tie-corrected 正态近似；聚类标签编号不稳定；SMI 的重原子计数为近似值；MOL2 不重建键级；bedMethyl 仅解析 15 列常用字段。

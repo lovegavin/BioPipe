@@ -191,6 +191,64 @@
     "quality": "auto"
   },
   {
+    "id": "BedMethylReader",
+    "kind": "reader",
+    "extensions": [
+      ".bedmethyl"
+    ],
+    "file_input": {
+      "dims": [
+        "region",
+        "field"
+      ],
+      "labels": {
+        "region": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/bedmethyl_reader.py",
+    "tests": [
+      "tests/test_extension10.py"
+    ],
+    "doc": "docs/reference/readers/BedMethylReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "BedReader",
     "kind": "reader",
     "extensions": [
@@ -496,6 +554,66 @@
       "tests/test_new_readers.py"
     ],
     "doc": "docs/reference/readers/BiomReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "BlastTabularReader",
+    "kind": "reader",
+    "extensions": [
+      ".blast6",
+      ".b6",
+      ".blasttab"
+    ],
+    "file_input": {
+      "dims": [
+        "hit",
+        "field"
+      ],
+      "labels": {
+        "hit": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/blast_tabular_reader.py",
+    "tests": [
+      "tests/test_extension10.py"
+    ],
+    "doc": "docs/reference/readers/BlastTabularReader.md",
     "quality": "auto"
   },
   {
@@ -890,6 +1008,64 @@
       "tests/test_extension4.py"
     ],
     "doc": "docs/reference/readers/CytobandReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "EmblReader",
+    "kind": "reader",
+    "extensions": [
+      ".embl"
+    ],
+    "file_input": {
+      "dims": [
+        "record",
+        "field"
+      ],
+      "labels": {
+        "record": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/embl_reader.py",
+    "tests": [
+      "tests/test_extension10.py"
+    ],
+    "doc": "docs/reference/readers/EmblReader.md",
     "quality": "auto"
   },
   {
@@ -1747,6 +1923,180 @@
     "quality": "reviewed"
   },
   {
+    "id": "HmmReader",
+    "kind": "reader",
+    "extensions": [
+      ".hmm"
+    ],
+    "file_input": {
+      "dims": [
+        "model",
+        "field"
+      ],
+      "labels": {
+        "model": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/hmm_reader.py",
+    "tests": [
+      "tests/test_extension10.py"
+    ],
+    "doc": "docs/reference/readers/HmmReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "HmmerTbloutReader",
+    "kind": "reader",
+    "extensions": [
+      ".tblout"
+    ],
+    "file_input": {
+      "dims": [
+        "hit",
+        "field"
+      ],
+      "labels": {
+        "hit": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/hmmer_tblout_reader.py",
+    "tests": [
+      "tests/test_extension10.py"
+    ],
+    "doc": "docs/reference/readers/HmmerTbloutReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "InterProScanReader",
+    "kind": "reader",
+    "extensions": [
+      ".iprscan"
+    ],
+    "file_input": {
+      "dims": [
+        "match",
+        "field"
+      ],
+      "labels": {
+        "match": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/interproscan_reader.py",
+    "tests": [
+      "tests/test_extension10.py"
+    ],
+    "doc": "docs/reference/readers/InterProScanReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "JsonTableReader",
     "kind": "reader",
     "extensions": [
@@ -2073,6 +2423,64 @@
       "tests/test_extension9.py"
     ],
     "doc": "docs/reference/readers/MmcifReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "Mol2Reader",
+    "kind": "reader",
+    "extensions": [
+      ".mol2"
+    ],
+    "file_input": {
+      "dims": [
+        "molecule",
+        "field"
+      ],
+      "labels": {
+        "molecule": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/mol2_reader.py",
+    "tests": [
+      "tests/test_extension10.py"
+    ],
+    "doc": "docs/reference/readers/Mol2Reader.md",
     "quality": "auto"
   },
   {
@@ -2989,6 +3397,64 @@
       "tests/test_extension9.py"
     ],
     "doc": "docs/reference/readers/SdfReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "SmiReader",
+    "kind": "reader",
+    "extensions": [
+      ".smi"
+    ],
+    "file_input": {
+      "dims": [
+        "molecule",
+        "field"
+      ],
+      "labels": {
+        "molecule": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/smi_reader.py",
+    "tests": [
+      "tests/test_extension10.py"
+    ],
+    "doc": "docs/reference/readers/SmiReader.md",
     "quality": "auto"
   },
   {

@@ -1,7 +1,14 @@
 # 更新记录
 
-BioPipe 使用语义化版本和 git tag。当前源码版本：**0.16.0（2026-10-30）**。
+BioPipe 使用语义化版本和 git tag。当前源码版本：**0.17.0（2026-10-30）**。
 更早版本从 git tag/history 查；本页只保留当前版本摘要。
+
+## 0.17.0 — 2026-10-30
+- 新增 12 个算子：Holm、Benjamini-Yekutieli、Cohen's d/Hedges g、Cliff's delta、η²、rank-biserial、Davies-Bouldin、Calinski-Harabasz、ARI、混淆矩阵、ROC 曲线、Mann-Kendall。
+- 新增 8 个 Reader：BLAST tabular、HMMER tblout、InterProScan、EMBL、HMM、MOL2、SMI、bedMethyl。
+- 当前：179 算子 / 63 Reader / 21 route；未修改核心层。
+- 验证：按用户要求只跑增量 **11 passed**（`tests/test_extension10.py` 10 项 + R `p.adjust` oracle 1 项），未重跑全量；registry clean；参考页 179/63；Studio 前端 **125 passed**。
+- 边界：Holm/BY 对 NaN p 保留 NaN；效应量只支持连续特征；Mann-Kendall 使用 tie-corrected 正态近似；聚类标签编号不稳定；SMI 的重原子计数为近似值；MOL2 不重建键级；bedMethyl 仅解析 15 列常用字段。
 
 ## 0.16.0 — 2026-10-30
 - 新增 9 个算子：DBSCAN、层次聚类、GMM、孤立森林、Cramér–von Mises、Welch ANOVA、Tukey HSD、C-index、二分类指标。
