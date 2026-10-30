@@ -13690,6 +13690,122 @@
     "quality": "reviewed"
   },
   {
+    "id": "goldfeld_quandt",
+    "kind": "operator",
+    "title": "Goldfeld-Quandt test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "variable_dim",
+              "default": "variable"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "variable_dim": {
+          "type": "string",
+          "default": "variable",
+          "title": "Variable Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "response": {
+          "type": "string",
+          "title": "因变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "regressor": {
+          "type": "string",
+          "title": "自变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "order_by": {
+          "type": "string",
+          "title": "排序变量（默认自变量）",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "fraction": {
+          "type": "number",
+          "default": 0.0,
+          "minimum": 0.0,
+          "exclusiveMaximum": 0.5,
+          "title": "Fraction",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "greater",
+            "less"
+          ],
+          "default": "greater",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "response",
+        "regressor"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/goldfeld_quandt.py",
+    "tests": [
+      "tests/test_extension47.py",
+      "tests/test_r_oracles38.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/goldfeld_quandt.md",
+    "quality": "auto"
+  },
+  {
     "id": "goodman_kruskal_gamma",
     "kind": "operator",
     "title": "Goodman-Kruskal gamma",
@@ -26064,6 +26180,119 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/quantile_transform.md",
+    "quality": "auto"
+  },
+  {
+    "id": "rainbow_test",
+    "kind": "operator",
+    "title": "Rainbow test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "variable_dim",
+              "default": "variable"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "variable_dim": {
+          "type": "string",
+          "default": "variable",
+          "title": "Variable Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "response": {
+          "type": "string",
+          "title": "因变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "regressor": {
+          "type": "string",
+          "title": "自变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "order_by": {
+          "type": "string",
+          "title": "排序变量（默认自变量）",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "fraction": {
+          "type": "number",
+          "default": 0.5,
+          "minimum": 0.0,
+          "exclusiveMaximum": 1.0,
+          "title": "Fraction",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "center": {
+          "type": "number",
+          "default": 0.5,
+          "minimum": 0.0,
+          "exclusiveMaximum": 1.0,
+          "title": "Center",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "response",
+        "regressor"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/rainbow_test.py",
+    "tests": [
+      "tests/test_extension47.py",
+      "tests/test_r_oracles38.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/rainbow_test.md",
     "quality": "auto"
   },
   {

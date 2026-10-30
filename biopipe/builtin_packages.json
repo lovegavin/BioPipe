@@ -27678,6 +27678,208 @@
         },
         {
           "protocol_version": 1,
+          "id": "goldfeld_quandt",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.goldfeld_quandt:GoldfeldQuandtStep",
+          "title": "Goldfeld-Quandt test",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "variable_dim": {
+                "type": "string",
+                "default": "variable",
+                "title": "Variable Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response": {
+                "type": "string",
+                "title": "因变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "regressor": {
+                "type": "string",
+                "title": "自变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "order_by": {
+                "type": "string",
+                "title": "排序变量（默认自变量）",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "fraction": {
+                "type": "number",
+                "default": 0.0,
+                "minimum": 0.0,
+                "exclusiveMaximum": 0.5,
+                "title": "Fraction",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "alternative": {
+                "type": "string",
+                "enum": [
+                  "two-sided",
+                  "greater",
+                  "less"
+                ],
+                "default": "greater",
+                "title": "Alternative",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "response",
+              "regressor"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "variable_dim",
+                    "default": "variable"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "goldfeld_quandt",
+          "module": "src.task.step.steps.goldfeld_quandt",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "variable_dim",
+              "label": "Variable Dim",
+              "type": "string",
+              "required": false,
+              "default": "variable"
+            },
+            {
+              "key": "response",
+              "label": "因变量",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "regressor",
+              "label": "自变量",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "order_by",
+              "label": "排序变量（默认自变量）",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "fraction",
+              "label": "Fraction",
+              "type": "number",
+              "required": false,
+              "default": 0.0,
+              "min": 0.0
+            },
+            {
+              "key": "alternative",
+              "label": "Alternative",
+              "type": "choice",
+              "required": false,
+              "default": "greater",
+              "options": [
+                "two-sided",
+                "greater",
+                "less"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "variable_dim": "variable",
+            "fraction": 0.0,
+            "alternative": "greater"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "goodman_kruskal_gamma",
           "version": "1.0.0",
           "kind": "operator",
@@ -43585,6 +43787,201 @@
             "n_quantiles": 1000,
             "output_distribution": "normal",
             "random_state": 0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "rainbow_test",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.rainbow_test:RainbowTestStep",
+          "title": "Rainbow test",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "variable_dim": {
+                "type": "string",
+                "default": "variable",
+                "title": "Variable Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response": {
+                "type": "string",
+                "title": "因变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "regressor": {
+                "type": "string",
+                "title": "自变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "order_by": {
+                "type": "string",
+                "title": "排序变量（默认自变量）",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "fraction": {
+                "type": "number",
+                "default": 0.5,
+                "minimum": 0.0,
+                "exclusiveMaximum": 1.0,
+                "title": "Fraction",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "center": {
+                "type": "number",
+                "default": 0.5,
+                "minimum": 0.0,
+                "exclusiveMaximum": 1.0,
+                "title": "Center",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "response",
+              "regressor"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "variable_dim",
+                    "default": "variable"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "rainbow_test",
+          "module": "src.task.step.steps.rainbow_test",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "variable_dim",
+              "label": "Variable Dim",
+              "type": "string",
+              "required": false,
+              "default": "variable"
+            },
+            {
+              "key": "response",
+              "label": "因变量",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "regressor",
+              "label": "自变量",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "order_by",
+              "label": "排序变量（默认自变量）",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "fraction",
+              "label": "Fraction",
+              "type": "number",
+              "required": false,
+              "default": 0.5,
+              "min": 0.0
+            },
+            {
+              "key": "center",
+              "label": "Center",
+              "type": "number",
+              "required": false,
+              "default": 0.5,
+              "min": 0.0
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "variable_dim": "variable",
+            "fraction": 0.5,
+            "center": 0.5
           },
           "legacy_parameters": false
         },

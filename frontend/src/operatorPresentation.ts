@@ -238,6 +238,8 @@ export const builtinPresentation = {
   ansari_bradley: { category: "统计分析", icon: "ChartLine" },
   chisq_out_test: { category: "统计分析", icon: "ChartScatter" },
   calibration_curve: artwork("可视化", "ChartLine", "line", "分箱校准曲线"),
+  goldfeld_quandt: { category: "统计分析", icon: "ChartLine" },
+  rainbow_test: { category: "统计分析", icon: "ChartScatter" },
   dotplot: artwork("可视化", "ChartScatter", "dotplot", "点大小与强度"),
   violin: artwork("可视化", "ChartLine", "violin", "分组密度与分布"),
   barplot: artwork("可视化", "ChartBar", "composition", "各组组成比例"),

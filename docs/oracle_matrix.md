@@ -1,5 +1,15 @@
 # 权威实现对照矩阵
 
+## 0.54.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `goldfeld_quandt` | R `lmtest::gqtest` | `tests/test_r_oracles38.py` | 20 样本、fraction=0：GQ 7.8091706001348626，df 8/8，p 0.0043735156064267696；单响应单自变量 |
+| `rainbow_test` | R `lmtest::raintest` | `tests/test_r_oracles38.py` | 20 样本、fraction=0.5：Rain 37.09507275139439，df 10/8，p 1.298882331413825e-05；中心子样本 6..15 |
+
+- R 4.3.3；`lmtest` 已安装；两个算子均按 x 排序，保留截距；GQ 的 `fraction` 只支持比例，Rainbow 的 `center` ± `fraction/2` 必须在 [0,1]。
+- 复现：`python -m pytest -q tests/test_extension47.py tests/test_r_oracles38.py`。
+
 ## 0.53.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

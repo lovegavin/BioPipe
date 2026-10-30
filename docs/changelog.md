@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.54.0 — 2026-10-31
+
+- 新增：306 算子 / 82 Reader / 21 route；新增 Goldfeld-Quandt 异方差、Rainbow 线性偏离两个回归诊断算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension47.py` 4 项、`tests/test_r_oracles38.py` 1 项，合计 **5 passed**；两个算子对照 R `lmtest::gqtest`、`lmtest::raintest`；registry clean；参考页 306/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 252 passed。
+- 边界：两个算子都只支持单个响应 + 单个自变量 + 截距；Goldfeld-Quandt 的 `fraction` 为 [0,0.5)，Rainbow 的 `fraction` 为 (0,1)，中心子样本必须落在 [0,1] 内。
+
 ## 0.53.0 — 2026-10-31
 
 - 新增：304 算子 / 82 Reader / 21 route；新增 Ansari-Bradley 秩尺度、χ² 方差离群、分箱校准曲线三个算子；未修改核心层。
