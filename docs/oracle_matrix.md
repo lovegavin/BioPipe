@@ -87,6 +87,18 @@
 - 参考值：White LM 5.6138306138、p 0.3456253123、F 1.0926275992；Chow F 25.2160566352、p 1.13223e-05；Ljung-Box Q 37.7313478225、p 4.272e-07。
 - 复现：`python -m pytest -q tests/test_extension18.py tests/test_r_oracles10.py`。
 
+## 0.26.0
+
+| Operator | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `flow_transform` | R `flowCore::arcsinhTransform(a=0,b=1,c=5)` + `transform` | `tests/test_r_oracles11.py` | 前两行 FSC-H/FL1-H 完全一致；未选通道不变 |
+| `flow_gate` | R `flowCore::rectangleGate` + `filter` | `tests/test_r_oracles11.py` | FSC-H 100..500、SSC-H 50..400：6959/10000，比例 0.6959 |
+
+- 本轮使用已安装的 `flowCore 2.14.2`，无需新增 R 包。
+- 参考值：变换 `[11.6385695024, 12.1196362926]`、`[12.1356879809, 11.1944095560]`；门控 `6959/10000`、`p=0.6959`。
+- 边界：arcsinh 公式为 `asinh(a + b*x) + c`；矩形门控为闭区间、仅二维轴对齐；不实现多边形/布尔门。
+- 复现：`python -m pytest -q tests/test_extension19.py tests/test_r_oracles11.py`。
+
 ## 环境与缺口
 
 - R 4.3.3；已装 `vegan`、`survival`、`metafor`、`edgeR`、`limma`、`DESeq2`、`fgsea`、`GSVA`、`sva`、`Kendall`、`ALDEx2` 等。

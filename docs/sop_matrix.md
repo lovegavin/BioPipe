@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（225；下表为 89 个早期算子，0.8–0.25 新增见末尾证据）
+## 3. Operator（227；下表为 89 个早期算子，0.8–0.26 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -363,3 +363,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - R 参考值：White LM **5.6138306138**、p **0.3456253123**、F **1.0926275992**；Chow F **25.2160566352**、p **1.13223e-05**；Ljung-Box Q **37.7313478225**、p **4.272e-07**。
 - 0.25 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 225/82/21；参考页 225 算子 / 82 Reader；增量门 22 passed；Studio 前端 171 passed。
 - 边界：White 辅助回归含平方项和交叉项；Chow 按样本行顺序在 `break_fraction` 处分段；Ljung-Box 对原始去均值序列计算，不自动取回归残差。
+
+## 26. 0.26.0 扩展证据
+
+- 新增 2 个流式细胞术算子：`flow_transform`（arcsinh 变换）和 `flow_gate`（二维矩形门控）；未新增 Reader。
+- `tests/test_extension19.py` 4 项、`tests/test_r_oracles11.py` 1 项，合计 **5 项通过**；R 对照 `flowCore::arcsinhTransform` 与 `flowCore::rectangleGate` + `filter`。
+- R 参考值：变换前两行 FSC-H/FL1-H `[11.6385695024, 12.1196362926]`、`[12.1356879809, 11.1944095560]`；矩形门控 `FSC-H 100..500`、`SSC-H 50..400` 为 **6959/10000**，比例 **0.6959**。
+- 0.26 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 227/82/21；参考页 227 算子 / 82 Reader；增量门 21 passed；Studio 前端 173 passed。
+- 边界：arcsinh 公式为 `asinh(a + b*x) + c`，未选中的通道原样保留；矩形门控为闭区间，只支持二维轴对齐门，不实现多边形/布尔门。

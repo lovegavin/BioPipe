@@ -9128,6 +9128,222 @@
     "quality": "auto"
   },
   {
+    "id": "flow_gate",
+    "kind": "operator",
+    "title": "Flow cytometry rectangular gate",
+    "package": "biopipe-readers",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "event_dim",
+              "default": "event"
+            },
+            {
+              "param": "channel_dim",
+              "default": "channel"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "event_dim": {
+          "type": "string",
+          "default": "event",
+          "title": "Event Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "channel_dim": {
+          "type": "string",
+          "default": "channel",
+          "title": "Channel Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "x_channel": {
+          "type": "string",
+          "title": "X Channel",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "y_channel": {
+          "type": "string",
+          "title": "Y Channel",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "x_min": {
+          "type": "number",
+          "title": "X Min",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "x_max": {
+          "type": "number",
+          "title": "X Max",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "y_min": {
+          "type": "number",
+          "title": "Y Min",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "y_max": {
+          "type": "number",
+          "title": "Y Max",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        }
+      },
+      "required": [
+        "x_channel",
+        "y_channel",
+        "x_min",
+        "x_max",
+        "y_min",
+        "y_max"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/flow_gate.py",
+    "tests": [
+      "tests/test_extension19.py",
+      "tests/test_r_oracles11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/flow_gate.md",
+    "quality": "auto"
+  },
+  {
+    "id": "flow_transform",
+    "kind": "operator",
+    "title": "Flow cytometry arcsinh transform",
+    "package": "biopipe-readers",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "event_dim",
+              "default": "event"
+            },
+            {
+              "param": "channel_dim",
+              "default": "channel"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "transform",
+        "representation": "flow_arcsinh"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "event_dim": {
+          "type": "string",
+          "default": "event",
+          "title": "Event Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "channel_dim": {
+          "type": "string",
+          "default": "channel",
+          "title": "Channel Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Channels",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "a": {
+          "type": "number",
+          "default": 1.0,
+          "title": "A",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "b": {
+          "type": "number",
+          "default": 1.0,
+          "title": "B",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "c": {
+          "type": "number",
+          "default": 0.0,
+          "title": "C",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/flow_transform.py",
+    "tests": [
+      "tests/test_extension19.py",
+      "tests/test_r_oracles11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/flow_transform.md",
+    "quality": "auto"
+  },
+  {
     "id": "forest_plot",
     "kind": "operator",
     "title": "forest_plot",

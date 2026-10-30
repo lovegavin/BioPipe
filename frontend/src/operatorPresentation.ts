@@ -159,6 +159,8 @@ export const builtinPresentation = {
   white_test: { category: "统计分析", icon: "ChartScatter" },
   chow_test: { category: "统计分析", icon: "ChartLine" },
   ljung_box: { category: "统计分析", icon: "TrendUp" },
+  flow_transform: { category: "数据整理", icon: "Shuffle" },
+  flow_gate: { category: "统计分析", icon: "Selection" },
   dotplot: artwork("可视化", "ChartScatter", "dotplot", "点大小与强度"),
   violin: artwork("可视化", "ChartLine", "violin", "分组密度与分布"),
   barplot: artwork("可视化", "ChartBar", "composition", "各组组成比例"),

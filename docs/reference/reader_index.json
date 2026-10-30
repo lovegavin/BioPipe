@@ -1557,6 +1557,8 @@
     "source": "src/reader/readers/fcs_reader.py",
     "tests": [
       "tests/test_extension15_readers.py",
+      "tests/test_extension19.py",
+      "tests/test_r_oracles11.py",
       "tests/test_r_oracles7.py"
     ],
     "doc": "docs/reference/readers/FcsReader.md",

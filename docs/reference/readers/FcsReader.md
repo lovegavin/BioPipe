@@ -5,7 +5,7 @@
 - Source: [`src/reader/readers/fcs_reader.py`](../../../src/reader/readers/fcs_reader.py)
 - Extensions: `.fcs`
 - Compression handled natively: `False`
-- Tests: [`tests/test_extension15_readers.py`](../../../tests/test_extension15_readers.py), [`tests/test_r_oracles7.py`](../../../tests/test_r_oracles7.py)
+- Tests: [`tests/test_extension15_readers.py`](../../../tests/test_extension15_readers.py), [`tests/test_extension19.py`](../../../tests/test_extension19.py), [`tests/test_r_oracles11.py`](../../../tests/test_r_oracles11.py), [`tests/test_r_oracles7.py`](../../../tests/test_r_oracles7.py)
 
 ## File input hints
 
