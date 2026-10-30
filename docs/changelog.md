@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.60.0 — 2026-10-31
+
+- 新增：324 算子 / 82 Reader / 21 route；新增 Box-Pierce 自相关检验、Stuart-Maxwell 边际齐性检验、变异信息三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension53.py` 4 项、`tests/test_r_oracles44.py` 1 项，合计 **5 passed**；对照 R `stats::Box.test(type="Box-Pierce")`、`DescTools::StuartMaxwellTest`、`aricode::NVI`；registry clean；参考页 324/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 270 passed。
+- 边界：Box-Pierce 使用 `n*sum(rho^2)`，要求 `lags < n` 且 `fitdf < lags`；Stuart-Maxwell 使用前 k-1 个边际差与协方差矩阵，剔除对角线同时等于行列边际的类别；变异信息用自然对数，NVI=VI/H(A,B)，两表按共享样本对齐。
+
 ## 0.59.0 — 2026-10-31
 
 - 新增：321 算子 / 82 Reader / 21 route；新增 Dunn 指数、调整互信息、逐样本轮廓系数三个聚类验证/一致性算子；未修改核心层。

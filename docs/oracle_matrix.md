@@ -1,5 +1,13 @@
 # 权威实现对照矩阵
 
+## 0.60.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `box_pierce` | R `stats::Box.test(type="Box-Pierce")` | `tests/test_r_oracles44.py` | Q 7.5205292512163302、df 3、p 0.057033307356141538；`n*sum(rho^2)`，lags<n，fitdf<lags |
+| `stuart_maxwell_test` | R `DescTools::StuartMaxwellTest` | `tests/test_r_oracles44.py` | 3×3 表 statistic 0.53474320241691853、df 2、p 0.76538859928510916、N 120 |
+| `variation_of_information` | R `aricode::NVI` + 熵定义 | `tests/test_r_oracles44.py` | VI 1.5810937501718234、NVI 0.83692987891500414；自然对数，按联合熵归一化 |
+
 ## 0.59.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
