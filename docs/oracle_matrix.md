@@ -165,6 +165,17 @@
 - 复现：`python -m pytest -q tests/test_extension24.py tests/test_r_oracles16.py`。
 - 边界：Gamma 为 log link、固定 shape 的 MLE；ZIP 的零模型可加 `zero_predictors`，计数模型支持分类预测；不输出个体拟合值/残差。
 
+## 0.32.0
+
+| Operator | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `intraclass_correlation` | R `irr::icc` | `tests/test_r_oracles17.py` | ICC(A,1) 0.6282403440；F 16.0425178877；p 5.9546426626e-08；CI -0.0850675490..0.8923981941；r0=0 |
+| `concordance_correlation` | R `DescTools::CCC` | `tests/test_r_oracles17.py` | CCC 0.6161839；CI 0.4425713..0.7452724；s.shift 1.665079；l.shift 0.9898274；C.b 0.616255 |
+
+- 使用已安装的 `irr 0.85`、`DescTools`；`mcr 1.3.3.1` 已安装，留给后续 Passing-Bablok/Deming。
+- 复现：`python -m pytest -q tests/test_extension25.py tests/test_r_oracles17.py`。
+- 边界：ICC 仅支持完整样本与 r0=0；不做缺失插补；CCC 使用 z-transform CI，不做 bootstrap；两者都不输出个体预测。
+
 ## 环境与缺口
 
 - R 4.3.3；已装 `vegan`、`survival`、`metafor`、`edgeR`、`limma`、`DESeq2`、`fgsea`、`GSVA`、`sva`、`Kendall`、`ALDEx2` 等。

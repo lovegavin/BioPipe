@@ -173,6 +173,8 @@ export const builtinPresentation = {
   harvey_collier: { category: "统计分析", icon: "ChartLine" },
   gamma_regression: { category: "统计分析", icon: "ChartLine" },
   zero_inflated_poisson: { category: "统计分析", icon: "ChartBar" },
+  intraclass_correlation: { category: "统计分析", icon: "Intersect" },
+  concordance_correlation: { category: "统计分析", icon: "ChartScatter" },
   multinomial_logit: { category: "统计分析", icon: "ChartBar" },
   conditional_logit: { category: "统计分析", icon: "Intersect" },
   robust_regression: { category: "统计分析", icon: "ChartLine" },

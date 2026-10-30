@@ -5083,6 +5083,102 @@
     "quality": "reviewed"
   },
   {
+    "id": "concordance_correlation",
+    "kind": "operator",
+    "title": "Lin's concordance correlation",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "method_a": {
+          "type": "string",
+          "default": "method_a",
+          "title": "Method A",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "method_b": {
+          "type": "string",
+          "default": "method_b",
+          "title": "Method B",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "confidence": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "default": 0.95,
+          "title": "Confidence",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/concordance_correlation.py",
+    "tests": [
+      "tests/test_extension25.py",
+      "tests/test_r_oracles17.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/concordance_correlation.md",
+    "quality": "auto"
+  },
+  {
     "id": "concordance_index",
     "kind": "operator",
     "title": "Concordance index",
@@ -13341,6 +13437,130 @@
       "tasks/interval_stats_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/interval_stats.md",
+    "quality": "auto"
+  },
+  {
+    "id": "intraclass_correlation",
+    "kind": "operator",
+    "title": "Intraclass correlation",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "raters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Raters",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "model": {
+          "type": "string",
+          "enum": [
+            "oneway",
+            "twoway"
+          ],
+          "default": "twoway",
+          "title": "Model",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "consistency",
+            "agreement"
+          ],
+          "default": "agreement",
+          "title": "Type",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "single",
+            "average"
+          ],
+          "default": "single",
+          "title": "Unit",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "confidence": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "default": 0.95,
+          "title": "Confidence",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/intraclass_correlation.py",
+    "tests": [
+      "tests/test_extension25.py",
+      "tests/test_r_oracles17.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/intraclass_correlation.md",
     "quality": "auto"
   },
   {

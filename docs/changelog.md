@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.32.0 — 2026-10-31
+
+- 新增：244 算子 / 82 Reader / 21 route；新增 ICC（组内相关）、Lin's CCC（一致性相关系数）两个可靠性算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension25.py` 4 项、`tests/test_r_oracles17.py` 1 项，合计 **5 passed**；R 对照 `irr::icc`、`DescTools::CCC`；registry clean；参考页 244/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 190 passed。
+- 边界：ICC 的 r0 固定为 0；CCC 使用 z-transform CI；两者均不做缺失插补。
+
 ## 0.31.0 — 2026-10-31
 - 新增 2 个回归模型算子：`gamma_regression`（Gamma GLM，log link）、`zero_inflated_poisson`（零膨胀 Poisson）；未新增 Reader。
 - 恢复并保留 0.15 既有 `quantile_regression`（ML 算子）；本批不重复注册同名算子。

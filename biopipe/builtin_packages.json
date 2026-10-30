@@ -16225,6 +16225,172 @@
         },
         {
           "protocol_version": 1,
+          "id": "concordance_correlation",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.concordance_correlation:ConcordanceCorrelationStep",
+          "title": "Lin's concordance correlation",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "method_a": {
+                "type": "string",
+                "default": "method_a",
+                "title": "Method A",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "method_b": {
+                "type": "string",
+                "default": "method_b",
+                "title": "Method B",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "confidence": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.10"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "concordance_correlation",
+          "module": "src.task.step.steps.concordance_correlation",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "method_a",
+              "label": "Method A",
+              "type": "string",
+              "required": false,
+              "default": "method_a"
+            },
+            {
+              "key": "method_b",
+              "label": "Method B",
+              "type": "string",
+              "required": false,
+              "default": "method_b"
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "method_a": "method_a",
+            "method_b": "method_b",
+            "confidence": 0.95
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "concordance_index",
           "version": "1.0.0",
           "kind": "operator",
@@ -26060,6 +26226,226 @@
             "chrom_field": "chrom",
             "start_field": "chromStart",
             "end_field": "chromEnd"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "intraclass_correlation",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.intraclass_correlation:IntraclassCorrelationStep",
+          "title": "Intraclass correlation",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "raters": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Raters",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "model": {
+                "type": "string",
+                "enum": [
+                  "oneway",
+                  "twoway"
+                ],
+                "default": "twoway",
+                "title": "Model",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "consistency",
+                  "agreement"
+                ],
+                "default": "agreement",
+                "title": "Type",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "single",
+                  "average"
+                ],
+                "default": "single",
+                "title": "Unit",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "confidence": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.10"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "intraclass_correlation",
+          "module": "src.task.step.steps.intraclass_correlation",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "raters",
+              "label": "Raters",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "model",
+              "label": "Model",
+              "type": "choice",
+              "required": false,
+              "default": "twoway",
+              "options": [
+                "oneway",
+                "twoway"
+              ]
+            },
+            {
+              "key": "type",
+              "label": "Type",
+              "type": "choice",
+              "required": false,
+              "default": "agreement",
+              "options": [
+                "consistency",
+                "agreement"
+              ]
+            },
+            {
+              "key": "unit",
+              "label": "Unit",
+              "type": "choice",
+              "required": false,
+              "default": "single",
+              "options": [
+                "single",
+                "average"
+              ]
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "model": "twoway",
+            "type": "agreement",
+            "unit": "single",
+            "confidence": 0.95
           },
           "legacy_parameters": false
         },
