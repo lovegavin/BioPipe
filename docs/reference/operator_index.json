@@ -31140,6 +31140,113 @@
     "quality": "auto"
   },
   {
+    "id": "snk_test",
+    "kind": "operator",
+    "title": "Student-Newman-Keuls test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/snk_test.py",
+    "tests": [
+      "tests/test_extension50.py",
+      "tests/test_r_oracles41.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/snk_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "softmax",
     "kind": "operator",
     "title": "Softmax",
@@ -32048,6 +32155,113 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/svm_regressor.md",
+    "quality": "auto"
+  },
+  {
+    "id": "tamhane_t2",
+    "kind": "operator",
+    "title": "Tamhane T2 test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/tamhane_t2.py",
+    "tests": [
+      "tests/test_extension50.py",
+      "tests/test_r_oracles41.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/tamhane_t2.md",
     "quality": "auto"
   },
   {
@@ -33353,6 +33567,113 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/tukey_hsd.md",
+    "quality": "auto"
+  },
+  {
+    "id": "tukey_test",
+    "kind": "operator",
+    "title": "Tukey HSD test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/tukey_test.py",
+    "tests": [
+      "tests/test_extension50.py",
+      "tests/test_r_oracles41.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/tukey_test.md",
     "quality": "auto"
   },
   {

@@ -1,5 +1,13 @@
 # 权威实现对照矩阵
 
+## 0.57.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `tukey_test` | R `PMCMRplus::tukeyTest` | `tests/test_r_oracles41.py` | 4 组 n=5/6/5/7：B-A p 0.26502273475490234，C-A p 0.00044739595759790696，D-A p 6.5625131024704686e-05；合并 MSE、studentized range |
+| `tamhane_t2` | R `PMCMRplus::tamhaneT2Test` | `tests/test_r_oracles41.py` | B-A p 0.26157925285918715，C-A p 0.0028593777811823928；Welch df + Sidak |
+| `snk_test` | R `PMCMRplus::snkTest` | `tests/test_r_oracles41.py` | B-A p 0.074054575763289443，C-A p 0.00023621084901115363；step-down range |
+
 ## 0.56.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

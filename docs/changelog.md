@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.57.0 — 2026-10-31
+
+- 新增：315 算子 / 82 Reader / 21 route；新增 Tukey HSD、Tamhane T2、Student-Newman-Keuls 三个全成对均值比较算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension50.py` 4 项、`tests/test_r_oracles41.py` 1 项，合计 **5 passed**；对照 R `PMCMRplus`；registry clean；参考页 315/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 261 passed。
+- 边界：每组至少 2 个有限值；Tukey 合并方差、Tamhane Welch df + Sidak、SNK step-down；均为近似分布，不声称精确；SNK 未做单调化。
+
 ## 0.56.0 — 2026-10-31
 
 - 新增：312 算子 / 82 Reader / 21 route；新增 Chacko 有序备择、Fligner-Wolfe 对照比较、Mack-Wolfe 伞形检验三个算子；未修改核心层。
