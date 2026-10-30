@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项），未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -11,7 +11,7 @@
 | B | 算子 demo 自测：手工可算的小例子 |
 | C | 仅契约/route/artifact 覆盖；没有独立数值 oracle |
 
-## 2. Reader（76）
+## 2. Reader（80）
 | Reader | 级别 | 证据/独立 oracle |
 |---|---|---|
 | `BedReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
@@ -92,9 +92,13 @@
 | `MzmlReader` | B | test_extension12_readers.py（mzML 扫描元数据、分钟/秒换算、selected ion m/z） |
 | `MzxmlReader` | B | test_extension12_readers.py（mzXML scan、PT 时长、zlib 峰计数） |
 | `MztabReader` | B | test_extension12_readers.py（mzTab PSM 段、MTD 元数据、section 选择） |
+| `MzidentmlReader` | B | test_extension13_readers.py（mzIdentML PSM/肽段/蛋白） |
+| `PepxmlReader` | B | test_extension13_readers.py（pepXML spectrum_query/search_hit） |
+| `MzdataReader` | B | test_extension13_readers.py（mzDATA 谱图/cvParam） |
+| `ProtXMLReader` | B | test_extension13_readers.py（protXML protein_group/protein） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（200；下表为 89 个早期算子，0.8–0.19 新增见末尾证据）
+## 3. Operator（208；下表为 89 个早期算子，0.8–0.20 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -249,7 +253,7 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 
 ## 12. 0.13.0 扩展证据
 
-- 新增 6 个算子：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera；`tests/test_extension6.py` 4 项通过。
+- 新增 6 个算子：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera；`tests/test_extension6.py` 5 项通过。
 - 未新增 Reader；未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、registry 生成物、测试、图标和参考页。
 - 全量 pytest 基线更新为 **544 passed / 0 skipped**；参考页 144 算子 / 40 Reader；21 条 route fixture 保持不变。
 
@@ -308,3 +312,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - `tests/test_extension12.py` 7 项、`tests/test_extension12_readers.py` 4 项、`tests/test_r_oracles4.py` 6 项，合计 17 项通过；增量门 42 passed；R 对照为 edgeR `calcNormFactors`、limma `removeBatchEffect`、`mantelhaen.test`、`prop.trend.test`、Welch TOST 公式、`survfit`。
 - 0.19 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 200/76/21；参考页 200 算子 / 76 Reader；Studio 前端 146 passed。
 - 边界：TMM 使用 f75 参考和 trimmed weighted mean；批次校正仅移除 batch 设计列；MH 不默认连续性校正；CA 使用等距 scores；TOST 支持 Welch/pooled；CIF 事件码 0/1/2；质谱 Reader 只汇总扫描/记录，不展开原始峰列表。
+
+## 20. 0.20.0 扩展证据
+
+- 新增 8 个算子：Cohen's kappa、Fleiss' kappa、Breusch-Pagan、Durbin-Watson、Egger 回归检验、ANOSIM、Procrustes、偏 Mantel。
+- 新增 4 个 Reader：mzIdentML、pepXML、mzDATA、protXML；均为 stdlib XML 摘要解析，不展开原始峰/谱图数组。
+- `tests/test_extension13.py` 6 项、`tests/test_extension13_readers.py` 5 项、`tests/test_r_oracles5.py` 1 项，合计 12 项通过；R 对照使用 `vegan::anosim/procrustes/mantel.partial` 与 `lm`，Python 对照使用 statsmodels。
+- 0.20 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 208/80/21；参考页 208 算子 / 80 Reader；增量门 28 passed，`-W error` 下 14 passed；Studio 前端 154 passed。
+- 边界：kappa 支持无权重/线性/二次权重；Fleiss 支持 fleiss/randolph；Breusch-Pagan 使用 statsmodels 的 LM/F 版本；Durbin-Watson 只做残差自相关；Egger 为未加权 OLS；ANOSIM 使用秩和置换；Procrustes 仅旋转/平移/缩放，不做反射；偏 Mantel 对距离矩阵下三角残差化；质谱 Reader 只输出摘要字段。

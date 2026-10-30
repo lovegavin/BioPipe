@@ -40,7 +40,7 @@ def _tests_for(class_name: str) -> list[str]:
     for folder in ("tests", "tasks"):
         for path in (ROOT / folder).rglob("*.py"):
             text = path.read_text(encoding="utf-8", errors="replace")
-            if class_name in text:
+            if re.search(rf"\b{re.escape(class_name)}\b", text):
                 paths.append(path.relative_to(ROOT).as_posix())
     return sorted(paths)
 

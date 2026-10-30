@@ -1,5 +1,12 @@
 # 更新记录
 
+## 0.20.0 — 2026-10-31
+- 新增 8 个算子：Cohen's kappa、Fleiss' kappa、Breusch-Pagan、Durbin-Watson、Egger 回归检验、ANOSIM、Procrustes、偏 Mantel。
+- 新增 4 个 Reader：mzIdentML、pepXML、mzDATA、protXML；MGF 空峰谱修复沿用 0.19。
+- 当前：208 算子 / 80 Reader / 21 route；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension13.py` 6 项、`tests/test_extension13_readers.py` 5 项、`tests/test_r_oracles5.py` 1 项，新增 **12 passed**；R 对照 vegan/lm，Python 对照 statsmodels；registry clean；参考页 208/80；增量门 **28 passed**，`-W error` 下 **14 passed**；Studio 前端 **154 passed**。
+- 边界：kappa 支持无权重/线性/二次；Fleiss 支持 fleiss/randolph；ANOSIM/Procrustes/偏 Mantel 采用 vegan 语义；质谱 Reader 只输出摘要字段，不展开原始峰。
+
 ## 0.19.0 — 2026-10-30
 - 新增 7 个算子：TMM 归一化、limma 风格批次效应移除、Mantel-Haenszel、Cochran-Armitage 趋势、TOST 等价检验、Bland-Altman、竞争风险累积发生率。
 - 新增 3 个 Reader：mzML、mzXML、mzTab；修复 MGF 空峰谱 precursor 丢失。
@@ -14,7 +21,7 @@
 - 验证：增量 `tests/test_extension11.py` 9 项 + R `cor.test(kendall)` oracle 6 项全部通过；全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门 full-suite 模式分支）；registry clean；参考页 193/73；Studio 前端 **139 passed**，构建通过。
 - 边界：翻译使用标准遗传密码、不支持线粒体/非标准密码表；限制性酶切位点只做精确 motif 计数；蛋白 pI/MW 为常用近似；HVG 基于均值-离散度；Fst 使用 Hudson 估计；RMST 需组列且基于 KM；peptide q-value 使用 target-decoy；McNemar 默认连续性校正；Kendall 为成对完整观测；HapMap 以首个非缺失等位基因为参考；MOL2/PDB 不重建键级；PSL/genePred 只解析常用字段。
 
-BioPipe 使用语义化版本和 git tag。当前源码版本：**0.19.0（2026-10-30）**。
+BioPipe 使用语义化版本和 git tag。当前源码版本：**0.20.0（2026-10-31）**。
 更早版本从 git tag/history 查；本页只保留当前版本摘要。
 
 ## 0.17.0 — 2026-10-30

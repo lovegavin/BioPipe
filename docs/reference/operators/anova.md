@@ -4,7 +4,7 @@
 
 - Package: `biopipe-core`
 - Source: [`src/task/step/steps/anova.py`](../../../src/task/step/steps/anova.py)
-- Tests: [`tests/test_extension3.py`](../../../tests/test_extension3.py), [`tests/test_extension9.py`](../../../tests/test_extension9.py)
+- Tests: [`tests/test_extension3.py`](../../../tests/test_extension3.py)
 - Demo tasks: none found
 - Inputs arity: `2`; output parameter: `output`
 

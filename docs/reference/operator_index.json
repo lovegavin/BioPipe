@@ -1179,6 +1179,129 @@
     "quality": "reviewed"
   },
   {
+    "id": "anosim",
+    "kind": "operator",
+    "title": "ANOSIM",
+    "package": "biopipe-microbiome",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "sample_b_dim",
+              "default": "sample_b"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_b_dim": {
+          "type": "string",
+          "default": "sample_b",
+          "title": "Sample B Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "n_perm": {
+          "type": "integer",
+          "minimum": 9,
+          "maximum": 99999,
+          "default": 999,
+          "title": "N Perm",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/anosim.py",
+    "tests": [
+      "tests/test_extension13.py",
+      "tests/test_r_oracles5.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/anosim.md",
+    "quality": "auto"
+  },
+  {
     "id": "anova",
     "kind": "operator",
     "title": "one-way ANOVA",
@@ -1278,8 +1401,7 @@
     },
     "source": "src/task/step/steps/anova.py",
     "tests": [
-      "tests/test_extension3.py",
-      "tests/test_extension9.py"
+      "tests/test_extension3.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/anova.md",
@@ -2440,6 +2562,96 @@
       "tasks/rnaseq_de_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/boxplot.md",
+    "quality": "auto"
+  },
+  {
+    "id": "breusch_pagan",
+    "kind": "operator",
+    "title": "Breusch-Pagan test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "variable_dim",
+              "default": "variable"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "variable_dim": {
+          "type": "string",
+          "default": "variable",
+          "title": "Variable Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "response": {
+          "type": "string",
+          "title": "响应变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "regressors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Regressors",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "response"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/breusch_pagan.py",
+    "tests": [
+      "tests/test_extension13.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/breusch_pagan.md",
     "quality": "auto"
   },
   {
@@ -3632,6 +3844,90 @@
     "quality": "auto"
   },
   {
+    "id": "cohens_kappa",
+    "kind": "operator",
+    "title": "Cohen's kappa",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "row_dim",
+              "default": "rater_a"
+            },
+            {
+              "param": "col_dim",
+              "default": "rater_b"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "row_dim": {
+          "type": "string",
+          "default": "rater_a",
+          "title": "Row Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "col_dim": {
+          "type": "string",
+          "default": "rater_b",
+          "title": "Col Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "weights": {
+          "type": "string",
+          "enum": [
+            "none",
+            "linear",
+            "quadratic"
+          ],
+          "default": "none",
+          "title": "Weights",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/cohens_kappa.py",
+    "tests": [
+      "tests/test_extension13.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/cohens_kappa.md",
+    "quality": "auto"
+  },
+  {
     "id": "combat",
     "kind": "operator",
     "title": "Batch correction",
@@ -4544,8 +4840,7 @@
     "source": "src/task/step/steps/correlation.py",
     "tests": [
       "tasks/correlation_demo/test_correlation.py",
-      "tasks/verify_existing_operators.py",
-      "tests/test_extension7.py"
+      "tasks/verify_existing_operators.py"
     ],
     "demo_tasks": [
       "tasks/correlation_demo/task.yaml",
@@ -6299,6 +6594,183 @@
     "quality": "auto"
   },
   {
+    "id": "durbin_watson",
+    "kind": "operator",
+    "title": "Durbin-Watson statistic",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "variable_dim",
+              "default": "variable"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "variable_dim": {
+          "type": "string",
+          "default": "variable",
+          "title": "Variable Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "response": {
+          "type": "string",
+          "title": "响应变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "regressors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Regressors",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "response"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/durbin_watson.py",
+    "tests": [
+      "tests/test_extension13.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/durbin_watson.md",
+    "quality": "auto"
+  },
+  {
+    "id": "egger_test",
+    "kind": "operator",
+    "title": "Egger's test",
+    "package": "biopipe-genetics",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "study_dim",
+              "default": "study"
+            },
+            {
+              "param": "statistic_dim",
+              "default": "statistic"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "study_dim": {
+          "type": "string",
+          "default": "study",
+          "title": "Study Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "statistic_dim": {
+          "type": "string",
+          "default": "statistic",
+          "title": "Statistic Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "effect_label": {
+          "type": "string",
+          "default": "effect",
+          "title": "Effect Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "se_label": {
+          "type": "string",
+          "default": "se",
+          "title": "Se Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/egger_test.py",
+    "tests": [
+      "tests/test_extension13.py",
+      "tests/test_r_oracles5.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/egger_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "elastic_net_regressor",
     "kind": "operator",
     "title": "Elastic net regressor",
@@ -7799,6 +8271,89 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/fisher_exact.md",
+    "quality": "auto"
+  },
+  {
+    "id": "fleiss_kappa",
+    "kind": "operator",
+    "title": "Fleiss' kappa",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "subject_dim",
+              "default": "subject"
+            },
+            {
+              "param": "category_dim",
+              "default": "category"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "subject_dim": {
+          "type": "string",
+          "default": "subject",
+          "title": "Subject Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "category_dim": {
+          "type": "string",
+          "default": "category",
+          "title": "Category Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "fleiss",
+            "randolph"
+          ],
+          "default": "fleiss",
+          "title": "方法",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/fleiss_kappa.py",
+    "tests": [
+      "tests/test_extension13.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/fleiss_kappa.md",
     "quality": "auto"
   },
   {
@@ -11704,8 +12259,7 @@
     },
     "source": "src/task/step/steps/kruskal.py",
     "tests": [
-      "tests/test_extension3.py",
-      "tests/test_extension6.py"
+      "tests/test_extension3.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/kruskal.md",
@@ -15291,9 +15845,7 @@
       "tasks/verify_ml_regression.py",
       "tasks/verify_multi_omics.py",
       "tasks/verify_single_cell.py",
-      "tests/sop/test_core_operators_sop.py",
-      "tests/test_extension12.py",
-      "tests/test_r_oracles4.py"
+      "tests/sop/test_core_operators_sop.py"
     ],
     "demo_tasks": [
       "tasks/aggregate_demo/task.yaml",
@@ -15781,6 +16333,131 @@
     "quality": "auto"
   },
   {
+    "id": "partial_mantel",
+    "kind": "operator",
+    "title": "Partial Mantel test",
+    "package": "biopipe-core",
+    "inputs_arity": 3,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "sample_b_dim",
+              "default": "sample_b"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "sample_b_dim",
+              "default": "sample_b"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "sample_b_dim",
+              "default": "sample_b"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_b_dim": {
+          "type": "string",
+          "default": "sample_b",
+          "title": "Sample B Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_perm": {
+          "type": "integer",
+          "minimum": 9,
+          "maximum": 99999,
+          "default": 999,
+          "title": "N Perm",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/partial_mantel.py",
+    "tests": [
+      "tests/test_extension13.py",
+      "tests/test_r_oracles5.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/partial_mantel.md",
+    "quality": "auto"
+  },
+  {
     "id": "pca",
     "kind": "operator",
     "title": "pca",
@@ -15844,8 +16521,7 @@
       "tasks/multi_omics_route_demo/test_multi_omics_route.py",
       "tasks/verify_bgen_qc.py",
       "tasks/verify_existing_operators.py",
-      "tasks/verify_multi_omics.py",
-      "tests/test_extension3b.py"
+      "tasks/verify_multi_omics.py"
     ],
     "demo_tasks": [
       "tasks/bgen_qc_demo/task.yaml",
@@ -17028,6 +17704,104 @@
       "tasks/prioritize_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/prioritize.md",
+    "quality": "auto"
+  },
+  {
+    "id": "procrustes",
+    "kind": "operator",
+    "title": "Procrustes analysis",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "axis_dim",
+              "default": "axis"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "axis_dim",
+              "default": "axis"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "axis_dim": {
+          "type": "string",
+          "default": "axis",
+          "title": "Axis Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/procrustes.py",
+    "tests": [
+      "tests/test_extension13.py",
+      "tests/test_r_oracles5.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/procrustes.md",
     "quality": "auto"
   },
   {

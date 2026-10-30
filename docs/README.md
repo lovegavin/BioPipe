@@ -6,7 +6,7 @@
 
 1. [架构总览](architecture.md) — 模块、执行流、数据流、目录地图、改哪里。
 2. [协议总集](protocol_suite.md) — Form、Reader、算子、契约、注册表、路线、扩展、测试的规范。
-3. [参考索引](reference/README.md) — 200 个算子、76 个 Reader 的逐项页面和机器索引。
+3. [参考索引](reference/README.md) — 208 个算子、80 个 Reader 的逐项页面和机器索引。
 4. [任务 SOP](route_sop.md) — 从数据到自定义路线、验证、运行、解释结果。
 
 一句话：**`task.yaml`/Studio Graph → Reader → Form → Step 链 → 输出/图片/report**。Reader 负责忠实解析，算子负责数学处理，契约负责连接，测试负责证明。
@@ -40,7 +40,8 @@
 6. [注册表维护](registry_maintenance.md) 与 [插件生命周期](plugins.md)
 7. [测试范式](testing.md) — 严格增量 + 周期全量
 8. [测试与证据矩阵](sop_matrix.md)
-9. [R oracle 设置](r_oracles.md)
+9. [权威实现对照矩阵](oracle_matrix.md)
+10. [R oracle 设置](r_oracles.md)
 
 ### 我要新增 Reader / 算子
 
@@ -81,10 +82,10 @@
 
 ## 4. 当前版本与能力
 
-- 版本：**0.19.0**（见 [changelog](changelog.md)）
-- 200 个算子、76 个 Reader、6 个 provider 包、21 条内置路线
+- 版本：**0.20.0**（见 [changelog](changelog.md)）
+- 208 个算子、80 个 Reader、6 个 provider 包、21 条内置路线
 - 所有内置 Reader/算子参数严格（`additionalProperties: false`）
-- Reader 覆盖：CSV/TSV/TXT/Parquet、BED/GFF3/GTF/GAF、FASTA、MTX、H5AD、10x H5、VCF、PLINK1/2、BGEN、GMT、Loom、BIOM、FAM/BIM/HapMap、MOL/XYZ/GRO、PSL/genePred、MGF、HMMER domtblout、mzML/mzXML/mzTab 摘要
+- Reader 覆盖：CSV/TSV/TXT/Parquet、BED/GFF3/GTF/GAF、FASTA、MTX、H5AD、10x H5、VCF、PLINK1/2、BGEN、GMT、Loom、BIOM、FAM/BIM/HapMap、MOL/XYZ/GRO、PSL/genePred、MGF、HMMER domtblout、mzML/mzXML/mzTab、mzIdentML/pepXML/mzDATA/protXML 摘要
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)
 - 已知边界：mzML/mzXML/mzTab 只输出扫描/记录摘要，不展开原始峰列表；FCS/空间转录组/影像等尚未支持
 - Windows 环境快照：[conda](../windows-biopipe-conda.yml) / [pip](../windows-biopipe-pip-freeze.txt)

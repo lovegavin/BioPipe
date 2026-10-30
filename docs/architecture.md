@@ -139,6 +139,7 @@ YAML / JSON
 - 0.16.0 新增：DBSCAN、层次聚类、GMM、孤立森林、Cramér–von Mises、Welch ANOVA、Tukey HSD、C-index、分类指标；WIG/broadPeak/GFF2/mmCIF/OBO/SDF Reader；核心层不变；
 - 0.18.0 新增：反向互补、翻译、密码子使用、限制性酶切位点、蛋白性质；PCA loadings、HVG、细胞周期评分、Hudson Fst、GRM 亲缘矩阵、RMST、peptide q-value、McNemar、Kendall tau；FAM/BIM/HapMap/MOL/XYZ/GRO/PSL/genePred/MGF/HMMER domtbl Reader；核心层不变；
 - 0.19.0 新增：TMM 归一化、limma 风格批次效应移除、Mantel-Haenszel、Cochran-Armitage、TOST 等价检验、Bland-Altman、竞争风险累积发生率；mzML/mzXML/mzTab Reader；MGF 空峰谱 precursor 修复；核心层不变；
+- 0.20.0 新增：Cohen/Fleiss kappa、Breusch-Pagan、Durbin-Watson、Egger 检验、ANOSIM、Procrustes、偏 Mantel；mzIdentML/pepXML/mzDATA/protXML Reader；核心层不变；
 - 0.17.0 新增：Holm/BY 校正、Cohen's d/Hedges g、Cliff's delta、η²、rank-biserial、Davies–Bouldin、Calinski–Harabasz、ARI、混淆矩阵、ROC 曲线、Mann–Kendall；BLAST tabular/HMMER tblout/InterProScan/EMBL/HMM/MOL2/SMI/bedMethyl Reader；核心层不变；
 - 0.13.0 新增：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera；核心层不变；
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)；

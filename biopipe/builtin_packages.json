@@ -5370,6 +5370,241 @@
         },
         {
           "protocol_version": 1,
+          "id": "MzdataReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.mzdata_reader:MzdataReader",
+          "title": "MzdataReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "max_spectra": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 100000,
+                "title": "Max Spectra",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            },
+            {
+              "key": "max_spectra",
+              "label": "Max Spectra",
+              "type": "integer",
+              "required": false,
+              "default": 100000,
+              "min": 1
+            }
+          ],
+          "name": "MzdataReader",
+          "module": "src.reader.readers.mzdata_reader",
+          "extensions": [
+            ".mzdata"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "spectrum",
+              "feature"
+            ],
+            "labels": {
+              "spectrum": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "MzidentmlReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.mzidentml_reader:MzidentmlReader",
+          "title": "MzidentmlReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "max_psms": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1000000,
+                "title": "Max Psms",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            },
+            {
+              "key": "max_psms",
+              "label": "Max Psms",
+              "type": "integer",
+              "required": false,
+              "default": 1000000,
+              "min": 1
+            }
+          ],
+          "name": "MzidentmlReader",
+          "module": "src.reader.readers.mzidentml_reader",
+          "extensions": [
+            ".mzid",
+            ".mzidentml"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "psm",
+              "feature"
+            ],
+            "labels": {
+              "psm": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "MzmlReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -6655,6 +6890,123 @@
         },
         {
           "protocol_version": 1,
+          "id": "PepxmlReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.pepxml_reader:PepxmlReader",
+          "title": "PepxmlReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "max_hits": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1000000,
+                "title": "Max Hits",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            },
+            {
+              "key": "max_hits",
+              "label": "Max Hits",
+              "type": "integer",
+              "required": false,
+              "default": 1000000,
+              "min": 1
+            }
+          ],
+          "name": "PepxmlReader",
+          "module": "src.reader.readers.pepxml_reader",
+          "extensions": [
+            ".pepxml"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "spectrum",
+              "feature"
+            ],
+            "labels": {
+              "spectrum": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "PhylipReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -7031,6 +7383,123 @@
                 ]
               }
             ],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "ProtxmlReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.protxml_reader:ProtxmlReader",
+          "title": "ProtxmlReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "max_proteins": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 200000,
+                "title": "Max Proteins",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            },
+            {
+              "key": "max_proteins",
+              "label": "Max Proteins",
+              "type": "integer",
+              "required": false,
+              "default": 200000,
+              "min": 1
+            }
+          ],
+          "name": "ProtxmlReader",
+          "module": "src.reader.readers.protxml_reader",
+          "extensions": [
+            ".protxml"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "protein",
+              "feature"
+            ],
+            "labels": {
+              "protein": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
             "info_open": false
           }
         },
@@ -11229,6 +11698,155 @@
         },
         {
           "protocol_version": 1,
+          "id": "breusch_pagan",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.breusch_pagan:BreuschPaganStep",
+          "title": "Breusch-Pagan test",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "variable_dim": {
+                "type": "string",
+                "default": "variable",
+                "title": "Variable Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response": {
+                "type": "string",
+                "title": "响应变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "regressors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Regressors",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "response"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "variable_dim",
+                    "default": "variable"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "breusch_pagan",
+          "module": "src.task.step.steps.breusch_pagan",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "variable_dim",
+              "label": "Variable Dim",
+              "type": "string",
+              "required": false,
+              "default": "variable"
+            },
+            {
+              "key": "response",
+              "label": "响应变量",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "regressors",
+              "label": "Regressors",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "variable_dim": "variable"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "brunner_munzel",
           "version": "1.0.0",
           "kind": "operator",
@@ -13132,6 +13750,150 @@
             "feature_dim": "feature",
             "sample_dim": "sample",
             "group_dim": "sample"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "cohens_kappa",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.cohens_kappa:CohensKappaStep",
+          "title": "Cohen's kappa",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "row_dim": {
+                "type": "string",
+                "default": "rater_a",
+                "title": "Row Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "col_dim": {
+                "type": "string",
+                "default": "rater_b",
+                "title": "Col Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "weights": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "linear",
+                  "quadratic"
+                ],
+                "default": "none",
+                "title": "Weights",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "row_dim",
+                    "default": "rater_a"
+                  },
+                  {
+                    "param": "col_dim",
+                    "default": "rater_b"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "cohens_kappa",
+          "module": "src.task.step.steps.cohens_kappa",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "row_dim",
+              "label": "Row Dim",
+              "type": "string",
+              "required": false,
+              "default": "rater_a"
+            },
+            {
+              "key": "col_dim",
+              "label": "Col Dim",
+              "type": "string",
+              "required": false,
+              "default": "rater_b"
+            },
+            {
+              "key": "weights",
+              "label": "Weights",
+              "type": "choice",
+              "required": false,
+              "default": "none",
+              "options": [
+                "none",
+                "linear",
+                "quadratic"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "row_dim": "rater_a",
+            "col_dim": "rater_b",
+            "weights": "none"
           },
           "legacy_parameters": false
         },
@@ -15914,6 +16676,155 @@
         },
         {
           "protocol_version": 1,
+          "id": "durbin_watson",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.durbin_watson:DurbinWatsonStep",
+          "title": "Durbin-Watson statistic",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "variable_dim": {
+                "type": "string",
+                "default": "variable",
+                "title": "Variable Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response": {
+                "type": "string",
+                "title": "响应变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "regressors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Regressors",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "response"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "variable_dim",
+                    "default": "variable"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "durbin_watson",
+          "module": "src.task.step.steps.durbin_watson",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "variable_dim",
+              "label": "Variable Dim",
+              "type": "string",
+              "required": false,
+              "default": "variable"
+            },
+            {
+              "key": "response",
+              "label": "响应变量",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "regressors",
+              "label": "Regressors",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "variable_dim": "variable"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "elastic_net_regressor",
           "version": "1.0.0",
           "kind": "operator",
@@ -18192,6 +19103,148 @@
             "row_dim": "row",
             "col_dim": "col",
             "alternative": "two-sided"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "fleiss_kappa",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.fleiss_kappa:FleissKappaStep",
+          "title": "Fleiss' kappa",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "subject_dim": {
+                "type": "string",
+                "default": "subject",
+                "title": "Subject Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "category_dim": {
+                "type": "string",
+                "default": "category",
+                "title": "Category Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "fleiss",
+                  "randolph"
+                ],
+                "default": "fleiss",
+                "title": "方法",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "subject_dim",
+                    "default": "subject"
+                  },
+                  {
+                    "param": "category_dim",
+                    "default": "category"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "fleiss_kappa",
+          "module": "src.task.step.steps.fleiss_kappa",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "subject_dim",
+              "label": "Subject Dim",
+              "type": "string",
+              "required": false,
+              "default": "subject"
+            },
+            {
+              "key": "category_dim",
+              "label": "Category Dim",
+              "type": "string",
+              "required": false,
+              "default": "category"
+            },
+            {
+              "key": "method",
+              "label": "方法",
+              "type": "choice",
+              "required": false,
+              "default": "fleiss",
+              "options": [
+                "fleiss",
+                "randolph"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "subject_dim": "subject",
+            "category_dim": "category",
+            "method": "fleiss"
           },
           "legacy_parameters": false
         },
@@ -26975,6 +28028,195 @@
         },
         {
           "protocol_version": 1,
+          "id": "partial_mantel",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.partial_mantel:PartialMantelStep",
+          "title": "Partial Mantel test",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_b_dim": {
+                "type": "string",
+                "default": "sample_b",
+                "title": "Sample B Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "n_perm": {
+                "type": "integer",
+                "minimum": 9,
+                "maximum": 99999,
+                "default": 999,
+                "title": "N Perm",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0,
+                "title": "随机种子",
+                "x-ui-group": "advanced",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "sample_b_dim",
+                    "default": "sample_b"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "sample_b_dim",
+                    "default": "sample_b"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "sample_b_dim",
+                    "default": "sample_b"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.26"
+          ],
+          "dependency_imports": [
+            "numpy"
+          ],
+          "name": "partial_mantel",
+          "module": "src.task.step.steps.partial_mantel",
+          "inputs_arity": 3,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "sample_b_dim",
+              "label": "Sample B Dim",
+              "type": "string",
+              "required": false,
+              "default": "sample_b"
+            },
+            {
+              "key": "n_perm",
+              "label": "N Perm",
+              "type": "integer",
+              "required": false,
+              "default": 999,
+              "min": 9,
+              "max": 99999
+            },
+            {
+              "key": "random_state",
+              "label": "随机种子",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "sample_b_dim": "sample_b",
+            "n_perm": 999,
+            "random_state": 0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "pca_loadings",
           "version": "1.0.0",
           "kind": "operator",
@@ -28643,6 +29885,158 @@
           ],
           "runtime_defaults": {
             "ascending": false
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "procrustes",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.procrustes:ProcrustesStep",
+          "title": "Procrustes analysis",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "axis_dim": {
+                "type": "string",
+                "default": "axis",
+                "title": "Axis Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "scale": {
+                "type": "boolean",
+                "default": true,
+                "title": "标准化",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "axis_dim",
+                    "default": "axis"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "axis_dim",
+                    "default": "axis"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.26"
+          ],
+          "dependency_imports": [
+            "numpy"
+          ],
+          "name": "procrustes",
+          "module": "src.task.step.steps.procrustes",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "axis_dim",
+              "label": "Axis Dim",
+              "type": "string",
+              "required": false,
+              "default": "axis"
+            },
+            {
+              "key": "scale",
+              "label": "标准化",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "axis_dim": "axis",
+            "scale": true
           },
           "legacy_parameters": false
         },
@@ -37771,6 +39165,157 @@
         },
         {
           "protocol_version": 1,
+          "id": "egger_test",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.egger_test:EggerTestStep",
+          "title": "Egger's test",
+          "category": "Genetics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "study_dim": {
+                "type": "string",
+                "default": "study",
+                "title": "Study Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "statistic_dim": {
+                "type": "string",
+                "default": "statistic",
+                "title": "Statistic Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "effect_label": {
+                "type": "string",
+                "default": "effect",
+                "title": "Effect Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "se_label": {
+                "type": "string",
+                "default": "se",
+                "title": "Se Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "study_dim",
+                    "default": "study"
+                  },
+                  {
+                    "param": "statistic_dim",
+                    "default": "statistic"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.26",
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "scipy"
+          ],
+          "name": "egger_test",
+          "module": "src.task.step.steps.egger_test",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "study_dim",
+              "label": "Study Dim",
+              "type": "string",
+              "required": false,
+              "default": "study"
+            },
+            {
+              "key": "statistic_dim",
+              "label": "Statistic Dim",
+              "type": "string",
+              "required": false,
+              "default": "statistic"
+            },
+            {
+              "key": "effect_label",
+              "label": "Effect Label",
+              "type": "string",
+              "required": false,
+              "default": "effect"
+            },
+            {
+              "key": "se_label",
+              "label": "Se Label",
+              "type": "string",
+              "required": false,
+              "default": "se"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "study_dim": "study",
+            "statistic_dim": "statistic",
+            "effect_label": "effect",
+            "se_label": "se"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "fst",
           "version": "1.0.0",
           "kind": "operator",
@@ -45349,6 +46894,209 @@
             "taxon_dim": "taxon",
             "pseudocount": 1.0,
             "correction": "fdr"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "anosim",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.anosim:AnosimStep",
+          "title": "ANOSIM",
+          "category": "Microbiome",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_b_dim": {
+                "type": "string",
+                "default": "sample_b",
+                "title": "Sample B Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "分组维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "n_perm": {
+                "type": "integer",
+                "minimum": 9,
+                "maximum": 99999,
+                "default": 999,
+                "title": "N Perm",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0,
+                "title": "随机种子",
+                "x-ui-group": "advanced",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "group_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "sample_b_dim",
+                    "default": "sample_b"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "group_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.26",
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "scipy"
+          ],
+          "name": "anosim",
+          "module": "src.task.step.steps.anosim",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "sample_b_dim",
+              "label": "Sample B Dim",
+              "type": "string",
+              "required": false,
+              "default": "sample_b"
+            },
+            {
+              "key": "group_dim",
+              "label": "分组维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "n_perm",
+              "label": "N Perm",
+              "type": "integer",
+              "required": false,
+              "default": 999,
+              "min": 9,
+              "max": 99999
+            },
+            {
+              "key": "random_state",
+              "label": "随机种子",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "sample_b_dim": "sample_b",
+            "group_dim": "sample",
+            "n_perm": 999,
+            "random_state": 0
           },
           "legacy_parameters": false
         },

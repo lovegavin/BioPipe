@@ -4,7 +4,7 @@
 
 - Package: `biopipe-genetics`
 - Source: [`src/task/step/steps/pca.py`](../../../src/task/step/steps/pca.py)
-- Tests: [`tasks/bgen_qc_demo/test_bgen_qc.py`](../../../tasks/bgen_qc_demo/test_bgen_qc.py), [`tasks/multi_omics_route_demo/test_multi_omics_route.py`](../../../tasks/multi_omics_route_demo/test_multi_omics_route.py), [`tasks/verify_bgen_qc.py`](../../../tasks/verify_bgen_qc.py), [`tasks/verify_existing_operators.py`](../../../tasks/verify_existing_operators.py), [`tasks/verify_multi_omics.py`](../../../tasks/verify_multi_omics.py), [`tests/test_extension3b.py`](../../../tests/test_extension3b.py)
+- Tests: [`tasks/bgen_qc_demo/test_bgen_qc.py`](../../../tasks/bgen_qc_demo/test_bgen_qc.py), [`tasks/multi_omics_route_demo/test_multi_omics_route.py`](../../../tasks/multi_omics_route_demo/test_multi_omics_route.py), [`tasks/verify_bgen_qc.py`](../../../tasks/verify_bgen_qc.py), [`tasks/verify_existing_operators.py`](../../../tasks/verify_existing_operators.py), [`tasks/verify_multi_omics.py`](../../../tasks/verify_multi_omics.py)
 - Demo tasks: [`tasks/bgen_qc_demo/task.yaml`](../../../tasks/bgen_qc_demo/task.yaml), [`tasks/gwas_demo/task.yaml`](../../../tasks/gwas_demo/task.yaml), [`tasks/pca_demo/task.yaml`](../../../tasks/pca_demo/task.yaml), [`tasks/rnaseq_de_demo/task.yaml`](../../../tasks/rnaseq_de_demo/task.yaml), [`tasks/sop_demo/task.yaml`](../../../tasks/sop_demo/task.yaml)
 - Inputs arity: `1`; output parameter: `output`
 

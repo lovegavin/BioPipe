@@ -3046,6 +3046,139 @@
     "quality": "reviewed"
   },
   {
+    "id": "MzdataReader",
+    "kind": "reader",
+    "extensions": [
+      ".mzdata"
+    ],
+    "file_input": {
+      "dims": [
+        "spectrum",
+        "feature"
+      ],
+      "labels": {
+        "spectrum": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "max_spectra": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100000,
+          "title": "Max Spectra",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/mzdata_reader.py",
+    "tests": [
+      "tests/test_extension13_readers.py"
+    ],
+    "doc": "docs/reference/readers/MzdataReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "MzidentmlReader",
+    "kind": "reader",
+    "extensions": [
+      ".mzid",
+      ".mzidentml"
+    ],
+    "file_input": {
+      "dims": [
+        "psm",
+        "feature"
+      ],
+      "labels": {
+        "psm": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "max_psms": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1000000,
+          "title": "Max Psms",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/mzidentml_reader.py",
+    "tests": [
+      "tests/test_extension13_readers.py"
+    ],
+    "doc": "docs/reference/readers/MzidentmlReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "MzmlReader",
     "kind": "reader",
     "extensions": [
@@ -3779,6 +3912,72 @@
     "quality": "auto"
   },
   {
+    "id": "PepxmlReader",
+    "kind": "reader",
+    "extensions": [
+      ".pepxml"
+    ],
+    "file_input": {
+      "dims": [
+        "spectrum",
+        "feature"
+      ],
+      "labels": {
+        "spectrum": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "max_hits": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1000000,
+          "title": "Max Hits",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/pepxml_reader.py",
+    "tests": [
+      "tests/test_extension13_readers.py"
+    ],
+    "doc": "docs/reference/readers/PepxmlReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "PhylipReader",
     "kind": "reader",
     "extensions": [
@@ -3981,6 +4180,72 @@
     ],
     "doc": "docs/reference/readers/Plink2Reader.md",
     "quality": "reviewed"
+  },
+  {
+    "id": "ProtxmlReader",
+    "kind": "reader",
+    "extensions": [
+      ".protxml"
+    ],
+    "file_input": {
+      "dims": [
+        "protein",
+        "feature"
+      ],
+      "labels": {
+        "protein": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "max_proteins": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 200000,
+          "title": "Max Proteins",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/protxml_reader.py",
+    "tests": [
+      "tests/test_extension13_readers.py"
+    ],
+    "doc": "docs/reference/readers/ProtxmlReader.md",
+    "quality": "auto"
   },
   {
     "id": "PslReader",
@@ -4690,7 +4955,6 @@
     },
     "source": "src/reader/readers/wig_reader.py",
     "tests": [
-      "tests/test_extension7.py",
       "tests/test_extension9.py"
     ],
     "doc": "docs/reference/readers/WigReader.md",

@@ -5,7 +5,7 @@
 - Source: [`src/reader/readers/wig_reader.py`](../../../src/reader/readers/wig_reader.py)
 - Extensions: `.wig`
 - Compression handled natively: `False`
-- Tests: [`tests/test_extension7.py`](../../../tests/test_extension7.py), [`tests/test_extension9.py`](../../../tests/test_extension9.py)
+- Tests: [`tests/test_extension9.py`](../../../tests/test_extension9.py)
 
 ## File input hints
 
