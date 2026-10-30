@@ -1,5 +1,16 @@
 # 权威实现对照矩阵
 
+## 0.50.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `levene_test` | R `DescTools::LeveneTest(center="mean")` | `tests/test_r_oracles34.py` | 15 样本、3 组：F 3.5958295790964074，p 0.059760241554658484；每组至少 2 个有限值 |
+| `brown_forsythe` | R `DescTools::LeveneTest(center="median")` | `tests/test_r_oracles34.py` | 同数据：F 0.48166623810748233，p 0.6291982673370824；中位数中心 |
+| `barnard_test` | SciPy 1.17.1 `stats.barnard_exact` | `tests/test_extension43.py` | `[[8,2],[1,9]]`：statistic 3.1462660248284626，p 0.0018215179443359397，OR 36，n 20 |
+
+- R 4.3.3；`DescTools` 已安装；Barnard 为 SciPy 无条件精确算法，不声称与 R `DescTools::BarnardTest` 的 CSM 数值完全一致。
+- 复现：`python -m pytest -q tests/test_extension43.py tests/test_r_oracles34.py`。
+
 ## 0.49.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

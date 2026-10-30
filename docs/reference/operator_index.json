@@ -1766,6 +1766,105 @@
     "quality": "auto"
   },
   {
+    "id": "barnard_test",
+    "kind": "operator",
+    "title": "Barnard exact test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "row_dim",
+              "default": "row"
+            },
+            {
+              "param": "column_dim",
+              "default": "column"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 1,
+          "numeric": true,
+          "info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "row_dim": {
+          "type": "string",
+          "default": "row",
+          "title": "Row Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "column_dim": {
+          "type": "string",
+          "default": "column",
+          "title": "Column Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "less",
+            "greater"
+          ],
+          "default": "two-sided",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "pooled": {
+          "type": "boolean",
+          "default": true,
+          "title": "Pooled",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "integration_points": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4096,
+          "default": 32,
+          "title": "Integration Points",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/barnard_test.py",
+    "tests": [
+      "tests/test_extension43.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/barnard_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "barplot",
     "kind": "operator",
     "title": "Composition barplot",
@@ -3666,6 +3765,113 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/brier_score.md",
+    "quality": "auto"
+  },
+  {
+    "id": "brown_forsythe",
+    "kind": "operator",
+    "title": "Brown-Forsythe variance test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "group_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/brown_forsythe.py",
+    "tests": [
+      "tests/test_extension43.py",
+      "tests/test_r_oracles34.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/brown_forsythe.md",
     "quality": "auto"
   },
   {
@@ -17464,6 +17670,124 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/levene.md",
+    "quality": "auto"
+  },
+  {
+    "id": "levene_test",
+    "kind": "operator",
+    "title": "Levene variance homogeneity test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "group_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "center": {
+          "type": "string",
+          "enum": [
+            "mean",
+            "median"
+          ],
+          "default": "mean",
+          "title": "Center",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/levene_test.py",
+    "tests": [
+      "tests/test_extension43.py",
+      "tests/test_r_oracles34.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/levene_test.md",
     "quality": "auto"
   },
   {

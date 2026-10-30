@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.50.0 — 2026-10-31
+
+- 新增：295 算子 / 82 Reader / 21 route；新增 Levene 方差齐性、Brown-Forsythe 稳健方差齐性、Barnard 精确独立性检验三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension43.py` 4 项、`tests/test_r_oracles34.py` 1 项，合计 **5 passed**；Levene/Brown-Forsythe 对照 R `DescTools::LeveneTest`，Barnard 对照 SciPy 1.17.1；registry clean；参考页 295/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 241 passed。
+- 边界：Levene/Brown-Forsythe 要求至少两组、每组至少两个有限值；Barnard 要求 2×2 非负整数计数、边际非零，p 使用 SciPy 无条件精确算法。
+
 ## 0.49.0 — 2026-10-31
 
 - 新增：292 算子 / 82 Reader / 21 route；新增 Durbin 平衡不完全区组检验、Skillings-Mack 缺失区组检验、Cuzick 有序趋势检验三个算子；未修改核心层。
