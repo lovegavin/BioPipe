@@ -156,6 +156,7 @@ YAML / JSON
 - 0.32.0 新增：ICC（组内相关）、Lin's CCC（一致性相关系数）两个可靠性算子；核心层不变；
 - 0.33.0 新增：Passing-Bablok 与 Deming 方法学一致性回归两个算子；核心层不变；
 - 0.34.0 新增：配对 ROC 比较（DeLong）与 Cochran Q 两个配对/匹配检验算子；核心层不变；
+- 0.35.0 新增：Cronbach's alpha、典型相关、Wald–Wolfowitz runs test 三个可靠性/多变量算子；核心层不变；
 - 0.17.0 新增：Holm/BY 校正、Cohen's d/Hedges g、Cliff's delta、η²、rank-biserial、Davies–Bouldin、Calinski–Harabasz、ARI、混淆矩阵、ROC 曲线、Mann–Kendall；BLAST tabular/HMMER tblout/InterProScan/EMBL/HMM/MOL2/SMI/bedMethyl Reader；核心层不变；
 - 0.13.0 新增：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera；核心层不变；
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)；

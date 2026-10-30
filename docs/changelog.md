@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.35.0 — 2026-10-31
+
+- 新增：251 算子 / 82 Reader / 21 route；新增 Cronbach's alpha、典型相关、Wald–Wolfowitz runs test 三个可靠性/多变量算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension28.py` 4 项、`tests/test_r_oracles20.py` 1 项，合计 **5 passed**；R 对照 `psych::alpha`、`stats::cancor`、`randtests::runs.test`；registry clean；参考页 251/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 197 passed。
+- 边界：alpha 使用完整样本与样本方差；canonical 使用 QR+SVD 且只输出相关系数/平方；runs 默认中位数、丢弃并列值、正态近似。
+
 ## 0.34.0 — 2026-10-31
 
 - 新增：248 算子 / 82 Reader / 21 route；新增配对 ROC 比较（DeLong）与 Cochran Q 两个配对/匹配检验算子；未修改核心层。

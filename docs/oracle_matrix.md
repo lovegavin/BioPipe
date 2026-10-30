@@ -2,6 +2,18 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.35.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `cronbach_alpha` | R `psych::alpha(check.keys=FALSE)` | `tests/test_r_oracles20.py` | raw 0.980952380952381，std 0.981872040600713，average_r 0.931228237555108；完整样本，不输出 CI |
+| `canonical_correlation` | R `stats::cancor` | `tests/test_r_oracles20.py` | 相关系数 0.999512503815628 / 0.063233134692047；QR+SVD，完整样本 |
+| `runs_test` | R `randtests::runs.test` | `tests/test_r_oracles20.py` | z 0.654653670708，p 0.512690760262，runs 6，n1/n2 7/3；中位数阈值、正态近似、无 exact p |
+
+- 使用已安装的 `psych 2.6.9`、`randtests 1.0.2`。
+- 复现：`python -m pytest -q tests/test_extension28.py tests/test_r_oracles20.py`。
+- 边界：alpha 不提供 bootstrap/Feldt CI；canonical 不输出系数/结构载荷；runs 不做连续性校正或 exact p。
+
 ## 0.34.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
