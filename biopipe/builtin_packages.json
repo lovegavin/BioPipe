@@ -10,6 +10,129 @@
       "descriptors": [
         {
           "protocol_version": 1,
+          "id": "BamReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.bam_reader:BamReader",
+          "title": "BamReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "max_records": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 100000,
+                "title": "Max Records",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "dependencies": [
+            "pysam"
+          ],
+          "dependency_imports": [
+            "pysam"
+          ],
+          "parameters": [
+            {
+              "key": "max_records",
+              "label": "Max Records",
+              "type": "integer",
+              "required": false,
+              "default": 100000,
+              "min": 1
+            },
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "BamReader",
+          "module": "src.reader.readers.bam_reader",
+          "extensions": [
+            ".bam"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "read",
+              "field"
+            ],
+            "labels": {
+              "read": "auto",
+              "field": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "BedGraphReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -432,6 +555,142 @@
         },
         {
           "protocol_version": 1,
+          "id": "BigWigReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.bigwig_reader:BigWigReader",
+          "title": "BigWigReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "max_records": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 100000,
+                "title": "Max Records",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "chrom": {
+                "type": "string",
+                "title": "Chrom",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "dependencies": [
+            "pyBigWig"
+          ],
+          "dependency_imports": [
+            "pyBigWig"
+          ],
+          "parameters": [
+            {
+              "key": "max_records",
+              "label": "Max Records",
+              "type": "integer",
+              "required": false,
+              "default": 100000,
+              "min": 1
+            },
+            {
+              "key": "chrom",
+              "label": "Chrom",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "BigWigReader",
+          "module": "src.reader.readers.bigwig_reader",
+          "extensions": [
+            ".bw",
+            ".bigwig"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "region",
+              "field"
+            ],
+            "labels": {
+              "region": "auto",
+              "field": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "BiomReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -702,6 +961,141 @@
             "labels": {
               "sequence": "builtin",
               "position": "auto"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "CramReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.cram_reader:CramReader",
+          "title": "CramReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "reference": {
+                "type": "string",
+                "title": "Reference",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "max_records": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 100000,
+                "title": "Max Records",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "dependencies": [
+            "pysam"
+          ],
+          "dependency_imports": [
+            "pysam"
+          ],
+          "parameters": [
+            {
+              "key": "reference",
+              "label": "Reference",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "max_records",
+              "label": "Max Records",
+              "type": "integer",
+              "required": false,
+              "default": 100000,
+              "min": 1
+            },
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "CramReader",
+          "module": "src.reader.readers.cram_reader",
+          "extensions": [
+            ".cram"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "read",
+              "field"
+            ],
+            "labels": {
+              "read": "auto",
+              "field": "builtin"
             }
           },
           "output_contract": {
@@ -1607,6 +2001,107 @@
             "labels": {
               "sample": "builtin",
               "gene": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "GfaReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.gfa_reader:GfaReader",
+          "title": "GfaReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "GfaReader",
+          "module": "src.reader.readers.gfa_reader",
+          "extensions": [
+            ".gfa"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "segment",
+              "field"
+            ],
+            "labels": {
+              "segment": "auto",
+              "field": "builtin"
             }
           },
           "output_contract": {
@@ -3283,6 +3778,107 @@
           "module": "src.reader.readers.parquet_reader",
           "extensions": [
             ".parquet"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "sample",
+              "feature"
+            ],
+            "labels": {
+              "sample": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "PedReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.ped_reader:PedReader",
+          "title": "PedReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "PedReader",
+          "module": "src.reader.readers.ped_reader",
+          "extensions": [
+            ".ped"
           ],
           "requires_siblings": [],
           "excludes_siblings": [],
@@ -8422,6 +9018,154 @@
           "description": "查看形状、标签、缺失情况与全局统计。支持分块读取。",
           "parameters": [],
           "runtime_defaults": {},
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "distance_correlation",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.distance_correlation:DistanceCorrelationStep",
+          "title": "Distance correlation",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "x_feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "X Feature Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "y_feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "Y Feature Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "x_feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "y_feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [],
+          "dependency_imports": [],
+          "name": "distance_correlation",
+          "module": "src.task.step.steps.distance_correlation",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "x_feature_dim",
+              "label": "X Feature Dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "y_feature_dim",
+              "label": "Y Feature Dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "x_feature_dim": "feature",
+            "y_feature_dim": "feature"
+          },
           "legacy_parameters": false
         },
         {
@@ -17726,6 +18470,187 @@
         },
         {
           "protocol_version": 1,
+          "id": "partial_correlation",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.partial_correlation:PartialCorrelationStep",
+          "title": "Partial correlation",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "x_feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "X Feature Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "y_feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "Y Feature Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "covariate_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "Covariate Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "x_feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "y_feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "covariate_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [],
+          "dependency_imports": [],
+          "name": "partial_correlation",
+          "module": "src.task.step.steps.partial_correlation",
+          "inputs_arity": 3,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "x_feature_dim",
+              "label": "X Feature Dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "y_feature_dim",
+              "label": "Y Feature Dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "covariate_dim",
+              "label": "Covariate Dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "x_feature_dim": "feature",
+            "y_feature_dim": "feature",
+            "covariate_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "peak_nearest_gene",
           "version": "1.0.0",
           "kind": "operator",
@@ -18479,6 +19404,163 @@
         },
         {
           "protocol_version": 1,
+          "id": "power_transform",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.power_transform:PowerTransformStep",
+          "title": "Power transform",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "yeo-johnson",
+                  "box-cox"
+                ],
+                "default": "yeo-johnson",
+                "title": "方法",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "standardize": {
+                "type": "boolean",
+                "default": true,
+                "title": "标准化",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "power_transform",
+          "module": "src.task.step.steps.power_transform",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "method",
+              "label": "方法",
+              "type": "choice",
+              "required": false,
+              "default": "yeo-johnson",
+              "options": [
+                "yeo-johnson",
+                "box-cox"
+              ]
+            },
+            {
+              "key": "standardize",
+              "label": "标准化",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "method": "yeo-johnson",
+            "standardize": true
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "prioritize",
           "version": "1.0.0",
           "kind": "operator",
@@ -19167,6 +20249,180 @@
           "runtime_defaults": {
             "feature_dim": "feature",
             "sample_dim": "sample"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "quantile_transform",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.quantile_transform:QuantileTransformStep",
+          "title": "Quantile transform",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "n_quantiles": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 1000,
+                "title": "N Quantiles",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output_distribution": {
+                "type": "string",
+                "enum": [
+                  "normal",
+                  "uniform"
+                ],
+                "default": "normal",
+                "title": "Output Distribution",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0,
+                "title": "随机种子",
+                "x-ui-group": "advanced",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "quantile_transform",
+          "module": "src.task.step.steps.quantile_transform",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "n_quantiles",
+              "label": "N Quantiles",
+              "type": "integer",
+              "required": false,
+              "default": 1000,
+              "min": 2
+            },
+            {
+              "key": "output_distribution",
+              "label": "Output Distribution",
+              "type": "choice",
+              "required": false,
+              "default": "normal",
+              "options": [
+                "normal",
+                "uniform"
+              ]
+            },
+            {
+              "key": "random_state",
+              "label": "随机种子",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "n_quantiles": 1000,
+            "output_distribution": "normal",
+            "random_state": 0
           },
           "legacy_parameters": false
         },
@@ -19930,6 +21186,169 @@
         },
         {
           "protocol_version": 1,
+          "id": "rank_transform",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.rank_transform:RankTransformStep",
+          "title": "Rank transform",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "average",
+                  "min",
+                  "max",
+                  "dense",
+                  "ordinal"
+                ],
+                "default": "average",
+                "title": "方法",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "normal_score": {
+                "type": "boolean",
+                "default": false,
+                "title": "Normal Score",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "rank_transform",
+          "module": "src.task.step.steps.rank_transform",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "method",
+              "label": "方法",
+              "type": "choice",
+              "required": false,
+              "default": "average",
+              "options": [
+                "average",
+                "min",
+                "max",
+                "dense",
+                "ordinal"
+              ]
+            },
+            {
+              "key": "normal_score",
+              "label": "Normal Score",
+              "type": "boolean",
+              "required": false,
+              "default": false
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "method": "average",
+            "normal_score": false
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "reduce_axis",
           "version": "1.0.0",
           "kind": "operator",
@@ -20413,6 +21832,144 @@
             "random_state": 0,
             "scale": true,
             "alpha": 1.0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "robust_scale",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.robust_scale:RobustScaleStep",
+          "title": "Robust scaling",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "dim": {
+                "type": "string",
+                "enum": [
+                  "sample",
+                  "feature"
+                ],
+                "default": "sample",
+                "title": "分析维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [],
+          "dependency_imports": [],
+          "name": "robust_scale",
+          "module": "src.task.step.steps.robust_scale",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "dim",
+              "label": "分析维度",
+              "type": "choice",
+              "required": false,
+              "default": "sample",
+              "options": [
+                "sample",
+                "feature"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "dim": "sample"
           },
           "legacy_parameters": false
         },
@@ -24055,6 +25612,121 @@
         },
         {
           "protocol_version": 1,
+          "id": "vif",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.vif:VifStep",
+          "title": "Variance inflation factor",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [],
+          "dependency_imports": [],
+          "name": "vif",
+          "module": "src.task.step.steps.vif",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "wilcoxon",
           "version": "1.0.0",
           "kind": "operator",
@@ -24267,6 +25939,159 @@
             "group_dim": "sample",
             "zero_method": "wilcox",
             "alternative": "two-sided"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "winsorize",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.winsorize:WinsorizeStep",
+          "title": "Winsorise",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "lower": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "default": 5.0,
+                "title": "Lower",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "upper": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "default": 95.0,
+                "title": "Upper",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [],
+          "dependency_imports": [],
+          "name": "winsorize",
+          "module": "src.task.step.steps.winsorize",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "lower",
+              "label": "Lower",
+              "type": "number",
+              "required": false,
+              "default": 5.0,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "key": "upper",
+              "label": "Upper",
+              "type": "number",
+              "required": false,
+              "default": 95.0,
+              "min": 0,
+              "max": 100
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "lower": 5.0,
+            "upper": 95.0
           },
           "legacy_parameters": false
         },

@@ -134,6 +134,7 @@ YAML / JSON
 - 0.10.0 新增：31 个统计/机器学习算子、13 个格式 Reader；核心层不变，扩展通过声明、registry 和参考页完成；
 - 0.11.0 新增：10 个投影/统计算子、6 个格式 Reader（PAF/SAM/BEDPE/cytoband/Clustal/NEXUS）；核心层不变；
 - 0.12.0 新增：UMAP、配对/单样本 t 检验、z-score/min-max/softmax，以及 MAF/UCSC chain Reader；核心层不变；
+- 0.14.0 新增：距离相关、偏相关、VIF、分位数/幂变换、稳健缩放、缩尾、秩变换；BAM/CRAM/BigWig/PED/GFA Reader；核心层不变；
 - 0.13.0 新增：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera；核心层不变；
 - 尚未支持：BAM/CRAM、BigWig/BigBed、mzML、FCS、空间转录组、影像等；
 - 大矩阵：heatmap 有 `max_cells/max_pixels` 保护；H5AD/10x full 模式仍可能 densify。

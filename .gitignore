@@ -72,3 +72,6 @@ tree_snapshot.txt
 !routes/*/input/*.csv
 !routes/*/input/*.tsv
 !routes/*/input/*.vcf
+
+# Root-level vitest cache (frontend deps live in frontend/node_modules)
+node_modules/

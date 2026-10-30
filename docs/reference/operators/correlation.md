@@ -4,7 +4,7 @@
 
 - Package: `biopipe-microbiome`
 - Source: [`src/task/step/steps/correlation.py`](../../../src/task/step/steps/correlation.py)
-- Tests: [`tasks/correlation_demo/test_correlation.py`](../../../tasks/correlation_demo/test_correlation.py), [`tasks/verify_existing_operators.py`](../../../tasks/verify_existing_operators.py)
+- Tests: [`tasks/correlation_demo/test_correlation.py`](../../../tasks/correlation_demo/test_correlation.py), [`tasks/verify_existing_operators.py`](../../../tasks/verify_existing_operators.py), [`tests/test_extension7.py`](../../../tests/test_extension7.py)
 - Demo tasks: [`tasks/correlation_demo/task.yaml`](../../../tasks/correlation_demo/task.yaml), [`tasks/microbiome_demo/task.yaml`](../../../tasks/microbiome_demo/task.yaml)
 - Inputs arity: `1`; output parameter: `output`
 

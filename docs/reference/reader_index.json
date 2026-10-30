@@ -1,5 +1,71 @@
 [
   {
+    "id": "BamReader",
+    "kind": "reader",
+    "extensions": [
+      ".bam"
+    ],
+    "file_input": {
+      "dims": [
+        "read",
+        "field"
+      ],
+      "labels": {
+        "read": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "max_records": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100000,
+          "title": "Max Records",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/bam_reader.py",
+    "tests": [
+      "tests/test_extension7.py"
+    ],
+    "doc": "docs/reference/readers/BamReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "BedGraphReader",
     "kind": "reader",
     "extensions": [
@@ -236,6 +302,79 @@
     "quality": "reviewed"
   },
   {
+    "id": "BigWigReader",
+    "kind": "reader",
+    "extensions": [
+      ".bw",
+      ".bigwig"
+    ],
+    "file_input": {
+      "dims": [
+        "region",
+        "field"
+      ],
+      "labels": {
+        "region": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "max_records": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100000,
+          "title": "Max Records",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "chrom": {
+          "type": "string",
+          "title": "Chrom",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/bigwig_reader.py",
+    "tests": [
+      "tests/test_extension7.py"
+    ],
+    "doc": "docs/reference/readers/BigWigReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "BiomReader",
     "kind": "reader",
     "extensions": [
@@ -400,6 +539,76 @@
       "tests/test_extension4.py"
     ],
     "doc": "docs/reference/readers/ClustalReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "CramReader",
+    "kind": "reader",
+    "extensions": [
+      ".cram"
+    ],
+    "file_input": {
+      "dims": [
+        "read",
+        "field"
+      ],
+      "labels": {
+        "read": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "reference": {
+          "type": "string",
+          "title": "Reference",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "max_records": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100000,
+          "title": "Max Records",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/cram_reader.py",
+    "tests": [],
+    "doc": "docs/reference/readers/CramReader.md",
     "quality": "auto"
   },
   {
@@ -926,6 +1135,64 @@
       "tests/test_extension3.py"
     ],
     "doc": "docs/reference/readers/GctReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "GfaReader",
+    "kind": "reader",
+    "extensions": [
+      ".gfa"
+    ],
+    "file_input": {
+      "dims": [
+        "segment",
+        "field"
+      ],
+      "labels": {
+        "segment": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/gfa_reader.py",
+    "tests": [
+      "tests/test_extension7.py"
+    ],
+    "doc": "docs/reference/readers/GfaReader.md",
     "quality": "auto"
   },
   {
@@ -1895,6 +2162,64 @@
     ],
     "doc": "docs/reference/readers/ParquetReader.md",
     "quality": "reviewed"
+  },
+  {
+    "id": "PedReader",
+    "kind": "reader",
+    "extensions": [
+      ".ped"
+    ],
+    "file_input": {
+      "dims": [
+        "sample",
+        "feature"
+      ],
+      "labels": {
+        "sample": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/ped_reader.py",
+    "tests": [
+      "tests/test_extension7.py"
+    ],
+    "doc": "docs/reference/readers/PedReader.md",
+    "quality": "auto"
   },
   {
     "id": "PhylipReader",

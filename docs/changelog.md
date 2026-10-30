@@ -1,7 +1,13 @@
 # 更新记录
 
-BioPipe 使用语义化版本和 git tag。当前源码版本：**0.13.0（2026-10-30）**。
+BioPipe 使用语义化版本和 git tag。当前源码版本：**0.14.0（2026-10-30）**。
 更早版本从 git tag/history 查；本页只保留当前版本摘要。
+
+## 0.14.0 — 2026-10-30
+- 新增 8 个算子和 5 个 Reader：距离相关、偏相关、VIF、分位数/幂变换、稳健缩放、缩尾、秩变换；BAM、CRAM、BigWig、PED、GFA。
+- 当前：152 算子 / 45 Reader / 21 route；未修改核心层。
+- 验证：**552 passed / 0 skipped**（2026-10-30）；registry clean；参考页 152/45；新增测试 `tests/test_extension7.py` 8 项；Studio 前端 **98 passed**。
+- 边界：BAM/CRAM 只暴露常用字段；CRAM 必须提供 reference；PED dosage 不含参考等位基因；BigWig 只读取区间值；GFA 只读取 S 段；距离相关不提供 p 值；VIF 对完全共线特征返回 inf。
 
 ## 0.13.0 — 2026-10-30
 - 新增 6 个统计算子：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera。
