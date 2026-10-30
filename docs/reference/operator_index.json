@@ -6829,6 +6829,101 @@
     "quality": "auto"
   },
   {
+    "id": "deming_regression",
+    "kind": "operator",
+    "title": "Deming regression",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "method_a": {
+          "type": "string",
+          "default": "method_a",
+          "title": "Method A",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "method_b": {
+          "type": "string",
+          "default": "method_b",
+          "title": "Method B",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "error_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1.0,
+          "title": "Error Ratio",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/deming_regression.py",
+    "tests": [
+      "tests/test_extension26.py",
+      "tests/test_r_oracles18.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/deming_regression.md",
+    "quality": "auto"
+  },
+  {
     "id": "describe",
     "kind": "operator",
     "title": "describe",
@@ -19480,6 +19575,93 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/partial_mantel.md",
+    "quality": "auto"
+  },
+  {
+    "id": "passing_bablok",
+    "kind": "operator",
+    "title": "Passing-Bablok regression",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "method_a": {
+          "type": "string",
+          "default": "method_a",
+          "title": "Method A",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "method_b": {
+          "type": "string",
+          "default": "method_b",
+          "title": "Method B",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/passing_bablok.py",
+    "tests": [
+      "tests/test_extension26.py",
+      "tests/test_r_oracles18.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/passing_bablok.md",
     "quality": "auto"
   },
   {

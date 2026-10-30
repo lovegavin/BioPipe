@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.33.0 — 2026-10-31
+
+- 新增：246 算子 / 82 Reader / 21 route；新增 Passing-Bablok 与 Deming 回归两个方法学一致性算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension26.py` 3 项、`tests/test_r_oracles18.py` 1 项，合计 **4 passed**；R 对照 `mcr::mcreg`；registry clean；参考页 246/82；增量门 20 passed；`-W error` 6 passed；Studio 前端 192 passed。
+- 边界：仅输出斜率/截距点估计，不输出 CI；Passing-Bablok 拒绝负值，Deming 要求正 `error_ratio` 与非零协方差；不做加权或重复测量模型。
+
 ## 0.32.0 — 2026-10-31
 
 - 新增：244 算子 / 82 Reader / 21 route；新增 ICC（组内相关）、Lin's CCC（一致性相关系数）两个可靠性算子；未修改核心层。

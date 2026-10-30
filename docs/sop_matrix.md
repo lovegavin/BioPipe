@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（244；下表为 89 个早期算子，0.8–0.32 新增见末尾证据）
+## 3. Operator（246；下表为 89 个早期算子，0.8–0.33 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -421,3 +421,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - R 参考值：ICC(A,1) **0.6282403440**，F(19,19) **16.0425178877**，p **5.9546426626e-08**，95% CI **-0.0850675490..0.8923981941**；Lin's CCC **0.6161839**，95% CI **0.4425713..0.7452724**，s.shift **1.665079**，l.shift **0.9898274**，C.b **0.616255**。
 - 0.32 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 244/82/21；参考页 244 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 190 passed。
 - 边界：ICC 支持 oneway/twoway、consistency/agreement、single/average；r0 固定为 0，按完整样本分析，不插补缺失；CCC 使用 pairwise complete 与 z-transform CI，不提供 bootstrap CI。
+
+## 33. 0.33.0 扩展证据
+
+- 新增 2 个方法学一致性算子：`passing_bablok`（Passing-Bablok 回归）、`deming_regression`（Deming 回归）；未新增 Reader。
+- `tests/test_extension26.py` 3 项、`tests/test_r_oracles18.py` 1 项，合计 **4 项通过**；R 对照 `mcr::mcreg(method.reg="PaBa")`、`mcr::mcreg(method.reg="Deming", error.ratio=1)`。
+- R 参考值：Passing-Bablok slope **1.0**、intercept **0.1**；Deming slope **1.0090793076**、intercept **0.0100638082**（x=1..10，n=10）。
+- 0.33 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 246/82/21；参考页 246 算子 / 82 Reader；增量门 20 passed；`-W error` 6 passed；Studio 前端 192 passed。
+- 边界：仅点估计，不输出 CI；Passing-Bablok 不做负值/重复测量校正，Deming 使用固定误差比与完整样本；不对标 R 的 CI（PaBa CI 在 C 层、Deming 有限样本约定不同）。

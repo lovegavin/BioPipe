@@ -18659,6 +18659,171 @@
         },
         {
           "protocol_version": 1,
+          "id": "deming_regression",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.deming_regression:DemingRegressionStep",
+          "title": "Deming regression",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "method_a": {
+                "type": "string",
+                "default": "method_a",
+                "title": "Method A",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "method_b": {
+                "type": "string",
+                "default": "method_b",
+                "title": "Method B",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "error_ratio": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "default": 1.0,
+                "title": "Error Ratio",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.24"
+          ],
+          "dependency_imports": [
+            "numpy"
+          ],
+          "name": "deming_regression",
+          "module": "src.task.step.steps.deming_regression",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "method_a",
+              "label": "Method A",
+              "type": "string",
+              "required": false,
+              "default": "method_a"
+            },
+            {
+              "key": "method_b",
+              "label": "Method B",
+              "type": "string",
+              "required": false,
+              "default": "method_b"
+            },
+            {
+              "key": "error_ratio",
+              "label": "Error Ratio",
+              "type": "number",
+              "required": false,
+              "default": 1.0
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "method_a": "method_a",
+            "method_b": "method_b",
+            "error_ratio": 1.0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "describe",
           "version": "1.0.0",
           "kind": "operator",
@@ -33397,6 +33562,155 @@
             "sample_b_dim": "sample_b",
             "n_perm": 999,
             "random_state": 0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "passing_bablok",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.passing_bablok:PassingBablokStep",
+          "title": "Passing-Bablok regression",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "method_a": {
+                "type": "string",
+                "default": "method_a",
+                "title": "Method A",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "method_b": {
+                "type": "string",
+                "default": "method_b",
+                "title": "Method B",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.24"
+          ],
+          "dependency_imports": [
+            "numpy"
+          ],
+          "name": "passing_bablok",
+          "module": "src.task.step.steps.passing_bablok",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "method_a",
+              "label": "Method A",
+              "type": "string",
+              "required": false,
+              "default": "method_a"
+            },
+            {
+              "key": "method_b",
+              "label": "Method B",
+              "type": "string",
+              "required": false,
+              "default": "method_b"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "method_a": "method_a",
+            "method_b": "method_b"
           },
           "legacy_parameters": false
         },
