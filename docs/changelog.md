@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.43.0 — 2026-10-31
+
+- 新增：274 算子 / 82 Reader / 21 route；新增 Page 有序备择检验、Mardia 多元正态性检验、Turning Point 序列随机性检验三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension36.py` 5 项、`tests/test_r_oracles28.py` 1 项，合计 **6 passed**；R 对照 `DescTools::PageTest`、`psych::mardia`、`randtests::turning.point.test`；registry clean；参考页 274/82；增量门 22 passed；`-W error` 8 passed；Studio 前端 220 passed。
+- 边界：Page 仅完整区组、无并列值，小设计精确分布/大设计正态近似；Mardia 要求协方差可逆，给出两种偏度 p；Turning Point 不支持相邻并列值。
+
 ## 0.42.0 — 2026-10-31
 
 - 新增：271 算子 / 82 Reader / 21 route；新增 Shapiro-Wilk 正态性检验、Lilliefors 正态性检验、Moses 极端反应检验三个算子；未修改核心层。

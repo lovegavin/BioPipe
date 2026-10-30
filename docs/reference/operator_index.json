@@ -18499,6 +18499,79 @@
     "quality": "auto"
   },
   {
+    "id": "mardia_test",
+    "kind": "operator",
+    "title": "Mardia multivariate normality test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/mardia_test.py",
+    "tests": [
+      "tests/test_extension36.py",
+      "tests/test_r_oracles28.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/mardia_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "marker_score",
     "kind": "operator",
     "title": "Signature score",
@@ -20623,6 +20696,79 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/ordinal_logistic.md",
+    "quality": "auto"
+  },
+  {
+    "id": "page_test",
+    "kind": "operator",
+    "title": "Page test for ordered alternatives",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "block_dim",
+              "default": "block"
+            },
+            {
+              "param": "treatment_dim",
+              "default": "treatment"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "block_dim": {
+          "type": "string",
+          "default": "block",
+          "title": "Block Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "treatment_dim": {
+          "type": "string",
+          "default": "treatment",
+          "title": "Treatment Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/page_test.py",
+    "tests": [
+      "tests/test_extension36.py",
+      "tests/test_r_oracles28.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/page_test.md",
     "quality": "auto"
   },
   {
@@ -29255,6 +29401,88 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/tukey_hsd.md",
+    "quality": "auto"
+  },
+  {
+    "id": "turning_point_test",
+    "kind": "operator",
+    "title": "Turning point randomness test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/turning_point_test.py",
+    "tests": [
+      "tests/test_extension36.py",
+      "tests/test_r_oracles28.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/turning_point_test.md",
     "quality": "auto"
   },
   {

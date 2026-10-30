@@ -2,6 +2,18 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.43.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `page_test` | R `DescTools::PageTest` | `tests/test_r_oracles28.py` | L 232，p 8.0199816518308664e-06，8 块 × 4 处理；精确分布；正态分支 L 7480，p 2.3535702950702129e-18 |
+| `mardia_test` | R `psych::mardia` | `tests/test_r_oracles28.py` | n=60，p=3；b1p 0.12217681576367496，b2p 10.404188899192361；p.skew 0.99957224997298111，p.kurt 0.0011551495235322395 |
+| `turning_point_test` | R `randtests::turning.point.test` | `tests/test_r_oracles28.py` | turns 8，z 2.2103158559821505，p 0.027083248944000271，n=10 |
+
+- 使用已安装的 `DescTools`、`psych`、`randtests`。
+- 复现：`python -m pytest -q tests/test_extension36.py tests/test_r_oracles28.py`。
+- 边界：Page 完整区组/无并列值；Mardia 协方差可逆；Turning Point 无相邻并列值。
+
 ## 0.42.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
