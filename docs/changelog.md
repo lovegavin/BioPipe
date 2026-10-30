@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.29.0 — 2026-10-31
+- 新增 3 个回归诊断算子：`breusch_godfrey`（Breusch-Godfrey 序列相关）、`reset_test`（RESET 函数形式）、`harvey_collier`（Harvey-Collier 线性性）；未新增 Reader。
+- 当前：237 算子 / 82 Reader / 21 route；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension22.py` 4 项、`tests/test_r_oracles14.py` 1 项，合计 **5 passed**；R 对照 `lmtest`；registry clean；参考页 237/82；增量门 22 passed；Studio 前端 183 passed。
+- 边界：BG 为 LM/F 渐近检验；RESET 使用拟合值幂次增广；Harvey-Collier 使用递归残差；均不替代稳健标准误或因果识别。
+
 ## 0.28.0 — 2026-10-31
 - 新增 3 个算子：`granger_causality`（Granger 因果 F 检验）、`arch_test`（ARCH LM 检验）、`flow_compensate`（流式溢漏补偿）；未新增 Reader。
 - 当前：234 算子 / 82 Reader / 21 route；未修改核心层。

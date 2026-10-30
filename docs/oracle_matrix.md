@@ -127,6 +127,19 @@
 - 复现：`python -m pytest -q tests/test_extension21.py tests/test_r_oracles13.py`。
 - 边界：Granger 只做双变量、指定滞后阶数的 F 检验；ARCH 不做 GARCH 拟合；flow_compensate 只支持方阵线性溢漏矩阵。
 
+## 0.29.0
+
+| Operator | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `breusch_godfrey` | R `lmtest::bgtest(fit, order=1, type="Chisq")` | `tests/test_r_oracles14.py` | LM/p/df 一致；同时输出 statsmodels F 统计量 |
+| `reset_test` | R `lmtest::resettest(fit, power=2, type="fitted")` | `tests/test_r_oracles14.py` | F/p/df 一致；拟合值幂次增广 |
+| `harvey_collier` | R `lmtest::harvtest(fit)` | `tests/test_r_oracles14.py` | t/p/df 一致；递归残差 |
+
+- 使用已安装的 `lmtest 0.9.40`，无需新增 R 包。
+- 参考值：BG LM `2.1242989892`、p `0.1449790984`、F `2.0410720144`；RESET F `14.0018972885`、p `0.0005056802`、df 1/46；Harvey-Collier t `0.4877593042`、p `0.6280371065`、df 46。
+- 复现：`python -m pytest -q tests/test_extension22.py tests/test_r_oracles14.py`。
+- 边界：三者共用同一 OLS 设计矩阵；BG 是序列相关检验，RESET 是函数形式检验，Harvey-Collier 是线性性检验；不要把它们当作因果识别或稳健推断。
+
 ## 环境与缺口
 
 - R 4.3.3；已装 `vegan`、`survival`、`metafor`、`edgeR`、`limma`、`DESeq2`、`fgsea`、`GSVA`、`sva`、`Kendall`、`ALDEx2` 等。

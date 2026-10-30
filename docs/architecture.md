@@ -150,6 +150,7 @@ YAML / JSON
 - 0.26.0 新增：流式细胞术 arcsinh 变换与二维矩形门控两个算子；核心层不变；
 - 0.27.0 新增：ADF/KPSS 平稳性检验、Poisson 回归、负二项回归四个统计算子；核心层不变；
 - 0.28.0 新增：Granger 因果、ARCH 检验、流式溢漏补偿三个算子；核心层不变；
+- 0.29.0 新增：Breusch-Godfrey、RESET、Harvey-Collier 三个回归诊断算子；核心层不变；
 - 0.17.0 新增：Holm/BY 校正、Cohen's d/Hedges g、Cliff's delta、η²、rank-biserial、Davies–Bouldin、Calinski–Harabasz、ARI、混淆矩阵、ROC 曲线、Mann–Kendall；BLAST tabular/HMMER tblout/InterProScan/EMBL/HMM/MOL2/SMI/bedMethyl Reader；核心层不变；
 - 0.13.0 新增：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera；核心层不变；
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)；

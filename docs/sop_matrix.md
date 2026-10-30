@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（234；下表为 89 个早期算子，0.8–0.28 新增见末尾证据）
+## 3. Operator（237；下表为 89 个早期算子，0.8–0.29 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -387,3 +387,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - R 参考值：Granger F `395.9681448 / 211.8084391 / 146.0148720`（lag 1/2/3）；ARCH LM `11.4217771216`、p `0.0436298086`；补偿首行 `[1, 0, 5]`、第二行 `[1.9897959, 0.1020408, 6]`。
 - 0.28 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 234/82/21；参考页 234 算子 / 82 Reader；增量门 22 passed；Studio 前端 180 passed。
 - 边界：Granger 仅做双变量、指定 `max_lag` 的 F 检验，不做协整/VAR 全模型；ARCH 使用平方序列 LM，`demean=False` 默认；flow_compensate 只做方阵溢漏矩阵的线性补偿，不做光谱拆分或自动求逆。
+
+## 29. 0.29.0 扩展证据
+
+- 新增 3 个回归诊断算子：`breusch_godfrey`（Breusch-Godfrey 序列相关）、`reset_test`（RESET 函数形式）、`harvey_collier`（Harvey-Collier 线性性）；未新增 Reader。
+- `tests/test_extension22.py` 4 项、`tests/test_r_oracles14.py` 1 项，合计 **5 项通过**；R 对照 `lmtest::bgtest`、`lmtest::resettest`、`lmtest::harvtest`。
+- R 参考值：BG LM `2.1242989892`、p `0.1449790984`、F `2.0410720144`；RESET F `14.0018972885`、p `0.0005056802`、df 1/46；Harvey-Collier t `0.4877593042`、p `0.6280371065`、df 46。
+- 0.29 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 237/82/21；参考页 237 算子 / 82 Reader；增量门 22 passed；Studio 前端 183 passed。
+- 边界：三者都基于同一个 OLS 设计矩阵；BG 用 LM/F 渐近结果，RESET 用拟合值幂次增广，Harvey-Collier 用递归残差 t 检验；不替代因果识别或稳健标准误。
