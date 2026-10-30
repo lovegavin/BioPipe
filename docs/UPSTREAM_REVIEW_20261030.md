@@ -3,7 +3,7 @@
 Checked upstream `lovegavin/BioPipe` main at
 `9fccadb24624f9fffb8ab756fa730adbb9857fb2` on 2026-10-30.
 The comparison uses common ancestor `3d57139167ee07428bf41276b84999feb84a06c0`.
-No upstream merge or GitHub publication was performed.
+At review time, no upstream merge or GitHub publication had been performed.
 
 ## Frontend changes made upstream
 

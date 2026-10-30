@@ -5,7 +5,7 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Local **v0.8.3** adds [independent operator-library updates](docs/plugins.md#independent-library-releases):
+Source update **v0.8.3** adds [independent operator-library updates](docs/plugins.md#independent-library-releases):
 editable sources live in the persistent profile and complete libraries install
 atomically without replacing the application. Version 0.8.2 added unified figure
 artifacts, multi-figure viewing and managed R dependencies. These build on
@@ -96,8 +96,15 @@ dependencies, optional analyses and troubleshooting resolver backtracking.
 Choose the archive without `Lite` for the bundled environment. The smaller
 `Windows-x64-Lite.zip` uses an existing Python environment instead.
 
-Release v0.8.1 is maintained on `release/v0.8.1`; `main` and the author's `v0.8.0`
-tag retain separate upstream development. See the [release notes](docs/releases/v0.8.1.md) for scope.
+Application source is maintained on [`release/v0.8.3`](https://github.com/lovegavin/BioPipe/tree/release/v0.8.3).
+The standalone operator/Reader authoring project is on
+[`library/v1.0.0`](https://github.com/lovegavin/BioPipe/tree/library/v1.0.0),
+with its own builder and parameter JSON files. Clone that branch into a separate
+directory to maintain or distribute the library without editing the application.
+These branches have independent histories; use library bundles to install providers.
+`main` retains the author's separate upstream development. See the
+[upstream review and adaptation inventory](docs/UPSTREAM_REVIEW_20261030.md).
+Packaged desktop releases are listed separately on the repository's Releases page.
 Upgrading from v0.4.1 uses a one-time backed-up
 [migration](docs/migration_v2.md), automatic for supported built-in desktop profiles;
 old external extensions must be converted explicitly. The runtime
@@ -326,7 +333,7 @@ Python 3.11+ is required. Conda is recommended for environment management.
 **Option 1: Conda (recommended)**
 
 ```bash
-git clone https://github.com/lovegavin/BioPipe.git
+git clone --branch release/v0.8.3 --single-branch https://github.com/lovegavin/BioPipe.git
 cd BioPipe
 conda env create -f environment.yml
 conda activate biopipe
@@ -337,7 +344,7 @@ conda activate biopipe
 **Option 2: pip**
 
 ```bash
-git clone https://github.com/lovegavin/BioPipe.git
+git clone --branch release/v0.8.3 --single-branch https://github.com/lovegavin/BioPipe.git
 cd BioPipe
 pip install -r requirements.txt
 ```
