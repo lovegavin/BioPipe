@@ -12347,6 +12347,125 @@
         },
         {
           "protocol_version": 1,
+          "id": "bhapkar_test",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.bhapkar_test:BhapkarTestStep",
+          "title": "Bhapkar test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "row_dim": {
+                "type": "string",
+                "default": "row",
+                "title": "Row Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "column_dim": {
+                "type": "string",
+                "default": "column",
+                "title": "Column Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "row_dim",
+                    "default": "row"
+                  },
+                  {
+                    "param": "column_dim",
+                    "default": "column"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "bhapkar_test",
+          "module": "src.task.step.steps.bhapkar_test",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Bhapkar test, the Stuart-Maxwell statistic with a finite-sample correction.",
+          "parameters": [
+            {
+              "key": "row_dim",
+              "label": "Row Dim",
+              "type": "string",
+              "required": false,
+              "default": "row"
+            },
+            {
+              "key": "column_dim",
+              "label": "Column Dim",
+              "type": "string",
+              "required": false,
+              "default": "column"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "row_dim": "row",
+            "column_dim": "column"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "bin",
           "version": "1.0.0",
           "kind": "operator",
@@ -43038,6 +43157,140 @@
         },
         {
           "protocol_version": 1,
+          "id": "shapiro_francia",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.shapiro_francia:ShapiroFranciaStep",
+          "title": "Shapiro-Francia normality test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "value_label": {
+                "type": "string",
+                "title": "数值字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "required": [
+              "value_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "shapiro_francia",
+          "module": "src.task.step.steps.shapiro_francia",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Shapiro-Francia W test with the standard normalizing approximation.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "value_label",
+              "label": "数值字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "sign_test",
           "version": "1.0.0",
           "kind": "operator",
@@ -47365,6 +47618,180 @@
           "runtime_defaults": {
             "sample_dim": "sample",
             "feature_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "von_neumann",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.von_neumann:VonNeumannStep",
+          "title": "Von Neumann randomness test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "value_label": {
+                "type": "string",
+                "title": "数值字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "alternative": {
+                "type": "string",
+                "enum": [
+                  "two.sided",
+                  "less",
+                  "greater"
+                ],
+                "default": "two.sided",
+                "title": "Alternative",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "unbiased": {
+                "type": "boolean",
+                "default": true,
+                "title": "Unbiased",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "value_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "von_neumann",
+          "module": "src.task.step.steps.von_neumann",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Von Neumann ratio test for serial randomness.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "value_label",
+              "label": "数值字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "alternative",
+              "label": "Alternative",
+              "type": "choice",
+              "required": false,
+              "default": "two.sided",
+              "options": [
+                "two.sided",
+                "less",
+                "greater"
+              ]
+            },
+            {
+              "key": "unbiased",
+              "label": "Unbiased",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "alternative": "two.sided",
+            "unbiased": true
           },
           "legacy_parameters": false
         },

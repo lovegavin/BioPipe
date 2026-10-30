@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.41.0 — 2026-10-31
+
+- 新增：268 算子 / 82 Reader / 21 route；新增 Bhapkar 边际齐性检验、Von Neumann 随机性检验、Shapiro-Francia 正态性检验三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension34.py` 4 项、`tests/test_r_oracles26.py` 1 项，合计 **5 passed**；R 对照 `DescTools::BhapkarTest`、`DescTools::VonNeumannTest`、`DescTools::ShapiroFranciaTest`；registry clean；参考页 268/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 214 passed。
+- 边界：Bhapkar 仅方表且要求正定协方差；Von Neumann 使用正态近似；Shapiro-Francia 使用正态化近似、仅 5–5000 个样本。
+
 ## 0.40.0 — 2026-10-31
 
 - 新增：265 算子 / 82 Reader / 21 route；新增 Van der Waerden 正态得分检验、Bartels 秩检验、Woolf 同质 OR 检验三个非参数/随机性算子；未修改核心层。

@@ -2,6 +2,18 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.41.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `bhapkar_test` | R `DescTools::BhapkarTest` | `tests/test_r_oracles26.py` | Bhapkar chi2 0.68890103881902676，df 2，p 0.70860961374150644，n 60；3x3 方表、S/(1-S/N) 校正 |
+| `von_neumann` | R `DescTools::VonNeumannTest` | `tests/test_r_oracles26.py` | VN 0.1212121212121212，z -3.3259311751475229，p 0.00088123685283041943；正态近似、默认 unbiased |
+| `shapiro_francia` | R `DescTools::ShapiroFranciaTest` | `tests/test_r_oracles26.py` | W 0.97684303482122625，p 0.81248335763278823，n 20；正态化近似、仅 5–5000 个样本 |
+
+- 使用已安装的 `DescTools`。
+- 复现：`python -m pytest -q tests/test_extension34.py tests/test_r_oracles26.py`。
+- 边界：Bhapkar 不提供 CI；Von Neumann 不提供 exact p；Shapiro-Francia 不提供 exact p。
+
 ## 0.40.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
