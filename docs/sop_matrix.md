@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（227；下表为 89 个早期算子，0.8–0.26 新增见末尾证据）
+## 3. Operator（231；下表为 89 个早期算子，0.8–0.27 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -371,3 +371,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - R 参考值：变换前两行 FSC-H/FL1-H `[11.6385695024, 12.1196362926]`、`[12.1356879809, 11.1944095560]`；矩形门控 `FSC-H 100..500`、`SSC-H 50..400` 为 **6959/10000**，比例 **0.6959**。
 - 0.26 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 227/82/21；参考页 227 算子 / 82 Reader；增量门 21 passed；Studio 前端 173 passed。
 - 边界：arcsinh 公式为 `asinh(a + b*x) + c`，未选中的通道原样保留；矩形门控为闭区间，只支持二维轴对齐门，不实现多边形/布尔门。
+
+## 27. 0.27.0 扩展证据
+
+- 新增 4 个统计算子：`adf_test`（增广 Dickey-Fuller 单位根）、`kpss_test`（KPSS 平稳性）、`poisson_regression`、`negative_binomial_regression`；未新增 Reader。
+- `tests/test_extension20.py` 5 项、`tests/test_r_oracles12.py` 1 项，合计 **6 项通过**；R 对照 `tseries` 0.10-63 的 `adf.test`/`kpss.test`、base `glm(poisson)`、`MASS::glm.nb`。
+- R/数值参考：ADF 统计量 **-3.3953961017**（k=2，R p 表为 0.06510808，statsmodels p 0.0520060831；统计量一致，p 查表差异已记录）；KPSS 统计量 **0.1696735045**、lags 3、p 0.1；Poisson 系数 **0.8213881 / 1.0349290**；NB 系数 **0.8028424 / 1.1345920**、theta **2.261968**。
+- 0.27 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 231/82/21；参考页 231 算子 / 82 Reader；增量门 22 passed；Studio 前端 177 passed。
+- 边界：ADF 默认含常数和线性趋势，`regression` 可选 c/ct/n；p 值来自 statsmodels 查表，R `adf.test` 的 p 表在边界处更粗；KPSS 的渐近 p 在统计量超出表范围时截断为 0.1；Poisson/NB 均为 GLM/NB2，NB 标准误与 `glm.nb` 的信息矩阵略有差异。

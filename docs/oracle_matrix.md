@@ -99,6 +99,21 @@
 - 边界：arcsinh 公式为 `asinh(a + b*x) + c`；矩形门控为闭区间、仅二维轴对齐；不实现多边形/布尔门。
 - 复现：`python -m pytest -q tests/test_extension19.py tests/test_r_oracles11.py`。
 
+
+## 0.27.0
+
+| Operator | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `adf_test` | R `tseries::adf.test(x, k=2)` | `tests/test_r_oracles12.py` | 统计量、lag 对齐；R p 表更粗，边界 p 记录差异 |
+| `kpss_test` | R `tseries::kpss.test(x, null="Level", lshort=TRUE)` | `tests/test_r_oracles12.py` | 统计量、lags 对齐；p 超出表范围时截断 0.1 |
+| `poisson_regression` | R base `glm(y ~ x, family=poisson)` | `tests/test_r_oracles12.py` | 系数、标准误、rate ratio 对齐 |
+| `negative_binomial_regression` | R `MASS::glm.nb(y ~ x)` | `tests/test_r_oracles12.py` | 系数、alpha/theta 对齐；标准误因信息矩阵略有差异 |
+
+- 新增 R 包 `tseries 0.10-63`（含 xts/TTR/quadprog/quantmod）；使用 base `glm` 与 `MASS`。
+- 关键值：ADF 统计量 `-3.3953961017`；KPSS `0.1696735045`、lags 3；Poisson 系数 `0.8213881/1.0349290`；NB 系数 `0.8028424/1.1345920`、theta `2.261968`。
+- 复现：`python -m pytest -q tests/test_extension20.py tests/test_r_oracles12.py`。
+- 边界：ADF 默认 `regression="ct"`；KPSS 的 `lags` 可固定；Poisson/NB 响应必须为非负计数；NB 为 NB2。
+
 ## 环境与缺口
 
 - R 4.3.3；已装 `vegan`、`survival`、`metafor`、`edgeR`、`limma`、`DESeq2`、`fgsea`、`GSVA`、`sva`、`Kendall`、`ALDEx2` 等。

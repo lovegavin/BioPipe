@@ -327,6 +327,111 @@
     "quality": "auto"
   },
   {
+    "id": "adf_test",
+    "kind": "operator",
+    "title": "Augmented Dickey-Fuller test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "lags": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "default": null,
+          "title": "Lags",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "regression": {
+          "type": "string",
+          "enum": [
+            "c",
+            "ct",
+            "n"
+          ],
+          "default": "ct",
+          "title": "Regression",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/adf_test.py",
+    "tests": [
+      "tests/test_extension20.py",
+      "tests/test_r_oracles12.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/adf_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "adjusted_rand",
     "kind": "operator",
     "title": "Adjusted Rand index",
@@ -13337,6 +13442,110 @@
     "quality": "auto"
   },
   {
+    "id": "kpss_test",
+    "kind": "operator",
+    "title": "KPSS stationarity test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "regression": {
+          "type": "string",
+          "enum": [
+            "c",
+            "ct"
+          ],
+          "default": "c",
+          "title": "Regression",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "lags": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "default": null,
+          "title": "Lags",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/kpss_test.py",
+    "tests": [
+      "tests/test_extension20.py",
+      "tests/test_r_oracles12.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/kpss_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "kruskal",
     "kind": "operator",
     "title": "Kruskal-Wallis test",
@@ -17055,6 +17264,117 @@
     "quality": "auto"
   },
   {
+    "id": "negative_binomial_regression",
+    "kind": "operator",
+    "title": "Negative-binomial regression",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "response_label": {
+          "type": "string",
+          "title": "Response Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "predictors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Predictors",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "categorical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "title": "分类协变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "maxiter": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 200,
+          "title": "Maxiter",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "response_label",
+        "predictors"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/negative_binomial_regression.py",
+    "tests": [
+      "tests/test_extension20.py",
+      "tests/test_r_oracles12.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/negative_binomial_regression.md",
+    "quality": "auto"
+  },
+  {
     "id": "net_reclassification_improvement",
     "kind": "operator",
     "title": "Continuous net reclassification improvement",
@@ -19135,6 +19455,117 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/pls_regression.md",
+    "quality": "auto"
+  },
+  {
+    "id": "poisson_regression",
+    "kind": "operator",
+    "title": "Poisson regression",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "response_label": {
+          "type": "string",
+          "title": "Response Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "predictors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Predictors",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "categorical": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "title": "分类协变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "maxiter": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 200,
+          "title": "Maxiter",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "response_label",
+        "predictors"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/poisson_regression.py",
+    "tests": [
+      "tests/test_extension20.py",
+      "tests/test_r_oracles12.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/poisson_regression.md",
     "quality": "auto"
   },
   {

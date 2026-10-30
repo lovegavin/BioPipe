@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.27.0 — 2026-10-31
+- 新增 4 个统计算子：`adf_test`（ADF 单位根）、`kpss_test`（KPSS 平稳性）、`poisson_regression`（Poisson GLM）、`negative_binomial_regression`（NB2 回归）。
+- 当前：231 算子 / 82 Reader / 21 route；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension20.py` 5 项、`tests/test_r_oracles12.py` 1 项，合计 **6 passed**；R 对照 `tseries`、base `glm`、`MASS::glm.nb`；registry clean；参考页 231/82；增量门 22 passed；Studio 前端 177 passed。
+- 边界：ADF 默认含常数和线性趋势，R p 表与 statsmodels 查表在边界处不同；KPSS p 超出表范围时截断为 0.1；Poisson/NB 回归输出 rate ratio；NB 标准误使用 statsmodels 信息矩阵。
+
 ## 0.26.0 — 2026-10-31
 - 新增 2 个流式细胞术算子：`flow_transform`（arcsinh 变换，兼容 `flowCore::arcsinhTransform`）和 `flow_gate`（二维矩形门控，闭区间）。
 - 当前：227 算子 / 82 Reader / 21 route；未修改核心层。
