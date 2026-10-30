@@ -2,6 +2,18 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.37.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `cramer_v` | R `DescTools::CramerV` | `tests/test_r_oracles22.py` | V 0.36324157862838946，chisq 13.194444444444445，df 2，n=100；二维列联表 |
+| `jonckheere_terpstra` | R `DescTools::JonckheereTerpstraTest(exact=FALSE)` | `tests/test_r_oracles22.py` | statistic 49.5，z 3.1980107453341566，p 0.0013837912401648556；正态近似，无 exact p |
+| `varimax_rotation` | R `stats::varimax` | `tests/test_r_oracles22.py` | 旋转矩阵、旋转后载荷与 SS loadings 对齐；算法迭代容差导致约 3e-8 相对差异 |
+
+- 使用已安装的 `DescTools` 与 R `stats`。
+- 复现：`python -m pytest -q tests/test_extension30.py tests/test_r_oracles22.py`。
+- 边界：Cramér's V 不做事后比较；JT 使用正态近似；varimax 仅正交旋转，不做因子数选择。
+
 ## 0.36.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

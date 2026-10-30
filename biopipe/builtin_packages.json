@@ -17301,6 +17301,125 @@
         },
         {
           "protocol_version": 1,
+          "id": "cramer_v",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.cramer_v:CramerVStep",
+          "title": "Cramer's V",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "row_dim": {
+                "type": "string",
+                "default": "row",
+                "title": "Row Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "column_dim": {
+                "type": "string",
+                "default": "column",
+                "title": "Column Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "row_dim",
+                    "default": "row"
+                  },
+                  {
+                    "param": "column_dim",
+                    "default": "column"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "cramer_v",
+          "module": "src.task.step.steps.cramer_v",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Cramer's V with the Pearson chi-square statistic (no continuity correction).",
+          "parameters": [
+            {
+              "key": "row_dim",
+              "label": "Row Dim",
+              "type": "string",
+              "required": false,
+              "default": "row"
+            },
+            {
+              "key": "column_dim",
+              "label": "Column Dim",
+              "type": "string",
+              "required": false,
+              "default": "column"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "row_dim": "row",
+            "column_dim": "column"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "cramer_von_mises",
           "version": "1.0.0",
           "kind": "operator",
@@ -27608,6 +27727,193 @@
           "runtime_defaults": {
             "feature_dim": "feature",
             "sample_dim": "sample"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "jonckheere_terpstra",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.jonckheere_terpstra:JonckheereTerpstraStep",
+          "title": "Jonckheere-Terpstra test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "value_label": {
+                "type": "string",
+                "title": "数值字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "group_order": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "分组顺序",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "alternative": {
+                "type": "string",
+                "enum": [
+                  "two-sided",
+                  "increasing",
+                  "decreasing"
+                ],
+                "default": "two-sided",
+                "title": "备择假设",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "value_label",
+              "group_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "jonckheere_terpstra",
+          "module": "src.task.step.steps.jonckheere_terpstra",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Rank-based test for a monotone trend across ordered groups.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "value_label",
+              "label": "数值字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "group_order",
+              "label": "分组顺序",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "alternative",
+              "label": "备择假设",
+              "type": "choice",
+              "required": false,
+              "default": "two-sided",
+              "options": [
+                "two-sided",
+                "increasing",
+                "decreasing"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "alternative": "two-sided"
           },
           "legacy_parameters": false
         },
@@ -45776,6 +46082,156 @@
             "min_dist": 0.1,
             "metric": "euclidean",
             "random_state": 0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "varimax_rotation",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.varimax_rotation:VarimaxRotationStep",
+          "title": "Varimax rotation",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "variable_dim": {
+                "type": "string",
+                "default": "variable",
+                "title": "Variable Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "factor_dim": {
+                "type": "string",
+                "default": "factor",
+                "title": "Factor Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "normalize": {
+                "type": "boolean",
+                "default": true,
+                "title": "行标准化",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "eps": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "default": 1e-05,
+                "title": "Eps",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "variable_dim",
+                    "default": "variable"
+                  },
+                  {
+                    "param": "factor_dim",
+                    "default": "factor"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.26"
+          ],
+          "dependency_imports": [
+            "numpy"
+          ],
+          "name": "varimax_rotation",
+          "module": "src.task.step.steps.varimax_rotation",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Orthogonal varimax rotation, matching ``stats::varimax``.",
+          "parameters": [
+            {
+              "key": "variable_dim",
+              "label": "Variable Dim",
+              "type": "string",
+              "required": false,
+              "default": "variable"
+            },
+            {
+              "key": "factor_dim",
+              "label": "Factor Dim",
+              "type": "string",
+              "required": false,
+              "default": "factor"
+            },
+            {
+              "key": "normalize",
+              "label": "行标准化",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "eps",
+              "label": "Eps",
+              "type": "number",
+              "required": false,
+              "default": 1e-05
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "variable_dim": "variable",
+            "factor_dim": "factor",
+            "normalize": true,
+            "eps": 1e-05
           },
           "legacy_parameters": false
         },

@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.37.0 — 2026-10-31
+
+- 新增：256 算子 / 82 Reader / 21 route；新增 Cramér's V、Jonckheere-Terpstra 有序秩检验、varimax 正交旋转三个效应量/多变量算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension30.py` 4 项、`tests/test_r_oracles22.py` 1 项，合计 **5 passed**；R 对照 `DescTools::CramerV`、`DescTools::JonckheereTerpstraTest(exact=FALSE)`、`stats::varimax`；registry clean；参考页 256/82；增量门 33 passed；Studio 前端 202 passed。
+- 边界：Cramér's V 仅二维列联表；Jonckheere-Terpstra 使用正态近似，不提供 exact p；varimax 仅正交旋转，不做斜交旋转/因子数选择。
+
 ## 0.36.0 — 2026-10-31
 
 - 新增：253 算子 / 82 Reader / 21 route；新增 KMO 取样适切性、Bartlett 球形检验两个因子可分析性诊断算子；未修改核心层。

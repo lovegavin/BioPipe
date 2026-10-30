@@ -6043,6 +6043,79 @@
     "quality": "auto"
   },
   {
+    "id": "cramer_v",
+    "kind": "operator",
+    "title": "Cramer's V",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "row_dim",
+              "default": "row"
+            },
+            {
+              "param": "column_dim",
+              "default": "column"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "row_dim": {
+          "type": "string",
+          "default": "row",
+          "title": "Row Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "column_dim": {
+          "type": "string",
+          "default": "column",
+          "title": "Column Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/cramer_v.py",
+    "tests": [
+      "tests/test_extension30.py",
+      "tests/test_r_oracles22.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/cramer_v.md",
+    "quality": "auto"
+  },
+  {
     "id": "cramer_von_mises",
     "kind": "operator",
     "title": "Cramer-von Mises test",
@@ -14390,6 +14463,116 @@
       "tasks/multi_omics_route_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/join.md",
+    "quality": "auto"
+  },
+  {
+    "id": "jonckheere_terpstra",
+    "kind": "operator",
+    "title": "Jonckheere-Terpstra test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_order": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "分组顺序",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "increasing",
+            "decreasing"
+          ],
+          "default": "two-sided",
+          "title": "备择假设",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "value_label",
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/jonckheere_terpstra.py",
+    "tests": [
+      "tests/test_extension30.py",
+      "tests/test_r_oracles22.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/jonckheere_terpstra.md",
     "quality": "auto"
   },
   {
@@ -28246,6 +28429,94 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/umap.md",
+    "quality": "auto"
+  },
+  {
+    "id": "varimax_rotation",
+    "kind": "operator",
+    "title": "Varimax rotation",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "variable_dim",
+              "default": "variable"
+            },
+            {
+              "param": "factor_dim",
+              "default": "factor"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "variable_dim": {
+          "type": "string",
+          "default": "variable",
+          "title": "Variable Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "factor_dim": {
+          "type": "string",
+          "default": "factor",
+          "title": "Factor Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "normalize": {
+          "type": "boolean",
+          "default": true,
+          "title": "行标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "eps": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1e-05,
+          "title": "Eps",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/varimax_rotation.py",
+    "tests": [
+      "tests/test_extension30.py",
+      "tests/test_r_oracles22.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/varimax_rotation.md",
     "quality": "auto"
   },
   {
