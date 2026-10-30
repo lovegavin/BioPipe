@@ -15166,6 +15166,148 @@
         },
         {
           "protocol_version": 1,
+          "id": "cochran_q",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.cochran_q:CochranQStep",
+          "title": "Cochran's Q test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "conditions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Conditions",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "cochran_q",
+          "module": "src.task.step.steps.cochran_q",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Test equality of binary responses across three or more conditions.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "conditions",
+              "label": "Conditions",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "codon_usage",
           "version": "1.0.0",
           "kind": "operator",
@@ -39649,6 +39791,248 @@
             "sample_dim": "sample",
             "feature_dim": "feature",
             "dim": "sample"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "roc_comparison",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.roc_comparison:RocComparisonStep",
+          "title": "Paired ROC comparison",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label",
+                "title": "标签维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "score_dim": {
+                "type": "string",
+                "default": "score",
+                "title": "Score Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "target_label": {
+                "type": "string",
+                "title": "目标字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "score_a": {
+                "type": "string",
+                "title": "Score A",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "score_b": {
+                "type": "string",
+                "title": "Score B",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "positive_label": {
+                "type": "string",
+                "title": "Positive Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 0.999,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 80
+              }
+            },
+            "required": [
+              "target_label",
+              "score_a",
+              "score_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "score_dim",
+                    "default": "score"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "score_dim",
+                    "default": "score"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "roc_comparison",
+          "module": "src.task.step.steps.roc_comparison",
+          "inputs_arity": 3,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Compare two AUCs measured on the same samples (DeLong).",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "label_dim",
+              "label": "标签维度",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "score_dim",
+              "label": "Score Dim",
+              "type": "string",
+              "required": false,
+              "default": "score"
+            },
+            {
+              "key": "target_label",
+              "label": "目标字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "score_a",
+              "label": "Score A",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "score_b",
+              "label": "Score B",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "positive_label",
+              "label": "Positive Label",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95,
+              "min": 0.5,
+              "max": 0.999
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "label_dim": "label",
+            "score_dim": "score",
+            "confidence": 0.95
           },
           "legacy_parameters": false
         },

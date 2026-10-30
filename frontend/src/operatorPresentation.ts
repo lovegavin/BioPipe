@@ -177,6 +177,8 @@ export const builtinPresentation = {
   concordance_correlation: { category: "统计分析", icon: "ChartScatter" },
   passing_bablok: { category: "统计分析", icon: "TrendUp" },
   deming_regression: { category: "统计分析", icon: "ChartLine" },
+  roc_comparison: { category: "统计分析", icon: "ChartLine" },
+  cochran_q: { category: "统计分析", icon: "ChartBar" },
   multinomial_logit: { category: "统计分析", icon: "ChartBar" },
   conditional_logit: { category: "统计分析", icon: "Intersect" },
   robust_regression: { category: "统计分析", icon: "ChartLine" },

@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.34.0 — 2026-10-31
+
+- 新增：248 算子 / 82 Reader / 21 route；新增配对 ROC 比较（DeLong）与 Cochran Q 两个配对/匹配检验算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension27.py` 3 项、`tests/test_r_oracles19.py` 1 项，合计 **4 passed**；R 对照 `pROC::roc.test(method="delong")`、`DescTools::CochranQTest`；registry clean；参考页 248/82；增量门 20 passed；`-W error` 6 passed；Studio 前端 194 passed。
+- 边界：`roc_comparison` 要求同一样本、较高分数为阳性，不自动翻转方向；`cochran_q` 仅接受宽表二分类完整样本，不做事后两两比较。
+
 ## 0.33.0 — 2026-10-31
 
 - 新增：246 算子 / 82 Reader / 21 route；新增 Passing-Bablok 与 Deming 回归两个方法学一致性算子；未修改核心层。
