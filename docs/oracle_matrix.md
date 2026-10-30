@@ -1,5 +1,13 @@
 # 权威实现对照矩阵
 
+## 0.59.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `dunn_index` | R `clusterCrit::intCriteria(X, labels, "Dunn")` | `tests/test_r_oracles43.py` | 6 样本 2 簇 Dunn 30.67572330035593；最小簇间距离/最大簇内直径 |
+| `adjusted_mutual_info` | R `aricode::AMI` | `tests/test_r_oracles43.py` | max 归一化 0.33746780635745904；默认 max，可选 arithmetic/geometric/min |
+| `silhouette_samples` | R `cluster::silhouette` | `tests/test_r_oracles43.py` | 逐样本 0.9689982614384166、0.9739300984276602、0.9739300984276602、0.9677329920415768、0.9744462659328769、0.9744462659328769 |
+
 ## 0.58.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

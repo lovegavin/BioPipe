@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.59.0 — 2026-10-31
+
+- 新增：321 算子 / 82 Reader / 21 route；新增 Dunn 指数、调整互信息、逐样本轮廓系数三个聚类验证/一致性算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension52.py` 4 项、`tests/test_r_oracles43.py` 1 项，合计 **5 passed**；对照 R `clusterCrit::intCriteria(..., "Dunn")`、`aricode::AMI`、`cluster::silhouette`；registry clean；参考页 321/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 267 passed。
+- 边界：Dunn 要求至少 2 簇且每簇至少 2 个样本，簇内直径为零时报错；调整互信息默认 `average_method=max` 以对齐 `aricode::AMI`，也支持 arithmetic/geometric/min；逐样本轮廓与 `silhouette_score` 使用同一欧氏距离和簇约束。
+
 ## 0.58.0 — 2026-10-31
 
 - 新增：318 算子 / 82 Reader / 21 route；新增轮廓系数、调整兰德指数、归一化互信息三个聚类验证/一致性算子；未修改核心层。
