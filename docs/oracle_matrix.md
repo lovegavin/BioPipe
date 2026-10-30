@@ -2,6 +2,17 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.45.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `binomial_test` | SciPy 1.17.1 `stats.binomtest` | `tests/test_extension38.py` | k=7,n=10,p0=0.5：p 0.34375；Clopper-Pearson 95% CI 0.3475471499399921..0.9332604888222655 |
+| `mood_median_test` | SciPy 1.17.1 `stats.median_test` | `tests/test_extension38.py` | 三组 [1..5]/[2..6]/[5..9]：statistic 7.8，p 0.020241911445804395，median 5；默认 ties=below、Yates 校正 |
+| `boschloo_exact` | SciPy 1.17.1 `stats.boschloo_exact` | `tests/test_extension38.py` | [[8,2],[1,9]]：p 0.0018352604919337544，Fisher p 0.002738747320790664，OR 36 |
+
+- 0.45 无 R oracle；三个算子直接对照 SciPy 1.17.1 的权威实现。
+- 复现：`python -m pytest -q tests/test_extension38.py`。
+
 ## 0.44.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

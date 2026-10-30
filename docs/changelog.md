@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.45.0 — 2026-10-31
+
+- 新增：280 算子 / 82 Reader / 21 route；新增精确二项检验、Mood 中位数检验、Boschloo 精确检验三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension38.py` 4 项，合计 **4 passed**；权威实现为 SciPy 1.17.1（`stats.binomtest`、`stats.median_test`、`stats.boschloo_exact`）；registry clean；参考页 280/82；增量门 20 passed；`-W error` 6 passed；Studio 前端 226 passed。
+- 边界：二项检验为单样本、CI 为 Clopper-Pearson；Mood 至少两组且每组有有限值、非常量，ties 支持 below/above/ignore；Boschloo 严格 2×2 非负整数，行列边际非零。
+
 ## 0.44.0 — 2026-10-31
 
 - 新增：277 算子 / 82 Reader / 21 route；新增 Cox-Stuart 趋势检验、Grubbs 单离群值检验、Anderson-Darling 正态性检验三个算子；未修改核心层。
