@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.44.0 — 2026-10-31
+
+- 新增：277 算子 / 82 Reader / 21 route；新增 Cox-Stuart 趋势检验、Grubbs 单离群值检验、Anderson-Darling 正态性检验三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension37.py` 5 项、`tests/test_r_oracles29.py` 1 项，合计 **6 passed**；R 对照 `randtests::cox.stuart.test`、`outliers::grubbs.test`、`nortest::ad.test`；registry clean；参考页 277/82；增量门 22 passed；`-W error` 8 passed；Studio 前端 223 passed。
+- 边界：Cox-Stuart 奇数长度丢弃中间值、并列对剔除；Grubbs 只检验一个离群值；Anderson-Darling 要求 n>=8，使用估计参数与分段 p 近似。
+
 ## 0.43.0 — 2026-10-31
 
 - 新增：274 算子 / 82 Reader / 21 route；新增 Page 有序备择检验、Mardia 多元正态性检验、Turning Point 序列随机性检验三个算子；未修改核心层。

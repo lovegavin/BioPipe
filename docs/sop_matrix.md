@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**；0.41 新增 **5 passed**、增量门 **21 passed**；0.42 新增 **5 passed**、增量门 **21 passed**；0.43 新增 **6 passed**、增量门 **22 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**；0.41 新增 **5 passed**、增量门 **21 passed**；0.42 新增 **5 passed**、增量门 **21 passed**；0.43 新增 **6 passed**、增量门 **22 passed**；0.44 新增 **6 passed**、增量门 **22 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（274；下表为 89 个早期算子，0.8–0.38 新增见末尾证据）
+## 3. Operator（277；下表为 89 个早期算子，0.8–0.38 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -511,3 +511,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - R 参考值：Page L **232**、p **8.0199816518308664e-06**（8 块 × 4 处理，精确分布）；Page 正态分支 L **7480**、p **2.3535702950702129e-18**；Mardia b1p **0.12217681576367496**、b2p **10.404188899192361**、skew **1.2217681576367496**、small_skew **1.3151974873383832**、p.skew **0.99957224997298111**、p.small **0.99940493624954152**、kurtosis **-3.2497291944334936**、p.kurt **0.0011551495235322395**（n=60，p=3）；Turning Point turns **8**、z **2.2103158559821505**、p **0.027083248944000271**（n=10）。
 - 0.43 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 274/82/21；参考页 274 算子 / 82 Reader；增量门 22 passed；`-W error` 8 passed；Studio 前端 220 passed。
 - 边界：Page 仅支持完整区组、区组内无并列值；k<=8 且 n<=1000 用精确置换分布，否则用 Page 正态近似。Mardia 使用完整样本、协方差必须可逆，提供偏差校正前后两种偏度 p。Turning Point 仅支持无相邻并列值的单序列。
+
+## 44. 0.44.0 扩展证据
+
+- 新增 3 个趋势/离群/正态性检验算子：`cox_stuart_test`（Cox-Stuart 趋势检验）、`grubbs_test`（Grubbs 单离群值检验）、`anderson_darling`（Anderson-Darling 正态性检验）；未新增 Reader。
+- `tests/test_extension37.py` 5 项、`tests/test_r_oracles29.py` 1 项，合计 **6 项通过**；R 对照 `randtests::cox.stuart.test`、`outliers::grubbs.test`、`nortest::ad.test`。
+- R 参考值：Cox-Stuart t **10**、n **10**、p **0.001953125**；Grubbs G **2.709117334893635**、U **0.19267515923566875**、p **0.00093820829159652064**（离群值 25，n=11）；Anderson-Darling A **0.18980837048798804**、p **0.88712429103709245**（n=20）。
+- 0.44 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 277/82/21；参考页 277 算子 / 82 Reader；增量门 22 passed；`-W error` 8 passed；Studio 前端 223 passed。
+- 边界：Cox-Stuart 奇数长度丢弃中间值，并列对从二项样本量中剔除；Grubbs 只检验一个离群值，默认单侧 p，`two_sided=true` 时按 R 实现加倍；Anderson-Darling 要求 n>=8，使用估计均值/标准差和 `nortest` 的分段 p 近似。

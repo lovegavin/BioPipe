@@ -160,6 +160,7 @@ YAML / JSON
 - 0.36.0 新增：KMO 取样适切性与 Bartlett 球形检验两个因子可分析性诊断算子；核心层不变；
 - 0.37.0 新增：Cramér's V、Jonckheere-Terpstra 有序秩检验、varimax 正交旋转三个效应量/多变量算子；核心层不变；
 - 0.43.0 新增：Page 有序备择检验、Mardia 多元正态性检验、Turning Point 序列随机性检验三个算子；核心层不变；
+- 0.44.0 新增：Cox-Stuart 趋势检验、Grubbs 单离群值检验、Anderson-Darling 正态性检验三个算子；核心层不变；
 - 0.42.0 新增：Shapiro-Wilk 正态性检验、Lilliefors 正态性检验、Moses 极端反应检验三个算子；核心层不变；
 - 0.41.0 新增：Bhapkar 边际齐性检验、Von Neumann 随机性检验、Shapiro-Francia 正态性检验三个算子；核心层不变；
 - 0.40.0 新增：Van der Waerden 正态得分检验、Bartels 秩检验、Woolf 同质 OR 检验三个非参数/随机性算子；核心层不变；

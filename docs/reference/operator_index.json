@@ -1083,6 +1083,88 @@
     "quality": "auto"
   },
   {
+    "id": "anderson_darling",
+    "kind": "operator",
+    "title": "Anderson-Darling normality test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/anderson_darling.py",
+    "tests": [
+      "tests/test_extension37.py",
+      "tests/test_r_oracles29.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/anderson_darling.md",
+    "quality": "auto"
+  },
+  {
     "id": "annotate",
     "kind": "operator",
     "title": "annotate",
@@ -6195,6 +6277,100 @@
       "tasks/survival_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/cox_regression.md",
+    "quality": "auto"
+  },
+  {
+    "id": "cox_stuart_test",
+    "kind": "operator",
+    "title": "Cox-Stuart trend test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "increasing",
+            "decreasing"
+          ],
+          "default": "two-sided",
+          "title": "备择假设",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/cox_stuart_test.py",
+    "tests": [
+      "tests/test_extension37.py",
+      "tests/test_r_oracles29.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/cox_stuart_test.md",
     "quality": "auto"
   },
   {
@@ -12329,6 +12505,95 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/granger_causality.md",
+    "quality": "auto"
+  },
+  {
+    "id": "grubbs_test",
+    "kind": "operator",
+    "title": "Grubbs outlier test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "two_sided": {
+          "type": "boolean",
+          "default": false,
+          "title": "双侧 p 值",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/grubbs_test.py",
+    "tests": [
+      "tests/test_extension37.py",
+      "tests/test_r_oracles29.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/grubbs_test.md",
     "quality": "auto"
   },
   {

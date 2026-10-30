@@ -2,6 +2,17 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.44.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `cox_stuart_test` | R `randtests::cox.stuart.test` | `tests/test_r_oracles29.py` | t 10，n 10，p 0.001953125；奇数长度丢中间值，并列对剔除 |
+| `grubbs_test` | R `outliers::grubbs.test` | `tests/test_r_oracles29.py` | G 2.709117334893635，U 0.19267515923566875，p 0.00093820829159652064；离群值 25，n=11 |
+| `anderson_darling` | R `nortest::ad.test` | `tests/test_r_oracles29.py` | A 0.18980837048798804，p 0.88712429103709245，n=20；估计均值/标准差，n>=8 |
+
+- 使用已安装的 `randtests`、`outliers`、`nortest`。
+- 复现：`python -m pytest -q tests/test_extension37.py tests/test_r_oracles29.py`。
+
 ## 0.43.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
