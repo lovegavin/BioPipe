@@ -75,6 +75,18 @@
 - 参考值：截距 -0.4063779、斜率 3.621762、斜率 SE 2.577094；NRI 1.0；IDI 0.1083333。
 - 复现：`python -m pytest -q tests/test_extension17.py tests/test_r_oracles9.py`。
 
+## 0.25.0
+
+| Operator | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `white_test` | R base `lm` 辅助回归（平方项/交叉项） | `tests/test_r_oracles10.py` | LM/F 与 R 一致；辅助回归 5 个自由度 |
+| `chow_test` | R base `lm` + F 检验 | `tests/test_r_oracles10.py` | F/RSS 一致；按行顺序分段 |
+| `ljung_box` | R base `Box.test(type="Ljung-Box")` | `tests/test_r_oracles10.py` | Q/p 一致；原始序列去均值 |
+
+- 本轮不新增 R 包；使用 base `stats::lm` 与 `stats::Box.test`。
+- 参考值：White LM 5.6138306138、p 0.3456253123、F 1.0926275992；Chow F 25.2160566352、p 1.13223e-05；Ljung-Box Q 37.7313478225、p 4.272e-07。
+- 复现：`python -m pytest -q tests/test_extension18.py tests/test_r_oracles10.py`。
+
 ## 环境与缺口
 
 - R 4.3.3；已装 `vegan`、`survival`、`metafor`、`edgeR`、`limma`、`DESeq2`、`fgsea`、`GSVA`、`sva`、`Kendall`、`ALDEx2` 等。

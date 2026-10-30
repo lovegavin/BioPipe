@@ -146,6 +146,7 @@ YAML / JSON
 - 0.22.0 新增：FCS 流式细胞术与 AB1 Sanger 测序 Reader；核心层不变；
 - 0.23.0 新增：时间依赖 AUC、Brier 与积分 Brier 三个生存预测算子；核心层不变；
 - 0.24.0 新增：校准截距/斜率、连续 NRI、IDI 三个临床预测评估算子；核心层不变；
+- 0.25.0 新增：White 异方差、Chow 结构突变、Ljung-Box 自相关三个回归/时间序列诊断算子；核心层不变；
 - 0.17.0 新增：Holm/BY 校正、Cohen's d/Hedges g、Cliff's delta、η²、rank-biserial、Davies–Bouldin、Calinski–Harabasz、ARI、混淆矩阵、ROC 曲线、Mann–Kendall；BLAST tabular/HMMER tblout/InterProScan/EMBL/HMM/MOL2/SMI/bedMethyl Reader；核心层不变；
 - 0.13.0 新增：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera；核心层不变；
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)；

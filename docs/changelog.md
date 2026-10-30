@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.25.0 — 2026-10-31
+- 新增 3 个回归/时间序列诊断算子：`white_test`（White 异方差）、`chow_test`（Chow 结构突变）、`ljung_box`（Ljung-Box 自相关）。
+- 当前：225 算子 / 82 Reader / 21 route；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension18.py` 5 项、`tests/test_r_oracles10.py` 1 项，合计 **6 passed**；R 对照 base `lm` 与 `Box.test`；registry clean；参考页 225/82；增量门 22 passed；Studio 前端 171 passed。
+- 边界：White 使用含平方项和交叉项的辅助回归；Chow 按样本行顺序在 `break_fraction` 处分段；Ljung-Box 为原始序列（去均值）而非回归残差。
+
 ## 0.24.0 — 2026-10-31
 - 新增 3 个临床预测评估算子：校准截距/斜率、连续 NRI、IDI。
 - 当前：222 算子 / 82 Reader / 21 route；未修改核心层。
@@ -48,7 +54,7 @@
 - 验证：增量 `tests/test_extension11.py` 9 项 + R `cor.test(kendall)` oracle 6 项全部通过；全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门 full-suite 模式分支）；registry clean；参考页 193/73；Studio 前端 **139 passed**，构建通过。
 - 边界：翻译使用标准遗传密码、不支持线粒体/非标准密码表；限制性酶切位点只做精确 motif 计数；蛋白 pI/MW 为常用近似；HVG 基于均值-离散度；Fst 使用 Hudson 估计；RMST 需组列且基于 KM；peptide q-value 使用 target-decoy；McNemar 默认连续性校正；Kendall 为成对完整观测；HapMap 以首个非缺失等位基因为参考；MOL2/PDB 不重建键级；PSL/genePred 只解析常用字段。
 
-BioPipe 使用语义化版本和 git tag。当前源码版本：**0.24.0（2026-10-31）**。
+BioPipe 使用语义化版本和 git tag。当前源码版本：**0.25.0（2026-10-31）**。
 更早版本从 git tag/history 查；本页只保留当前版本摘要。
 
 ## 0.17.0 — 2026-10-30

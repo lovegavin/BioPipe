@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（222；下表为 89 个早期算子，0.8–0.22 新增见末尾证据）
+## 3. Operator（225；下表为 89 个早期算子，0.8–0.25 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -355,3 +355,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - R 值：校准截距 **-0.4063779**、斜率 **3.621762**、斜率 SE **2.577094**；NRI **1.0**；IDI **0.1083333**。
 - 0.24 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 222/82/21；参考页 222 算子 / 82 Reader；增量门 21 passed；Studio 前端 168 passed。
 - 边界：校准截距用 `glm(y ~ 1, offset=logit(p))`；NRI 仅连续版本；IDI 只适用于二分类结局。
+
+## 25. 0.25.0 扩展证据
+
+- 新增 3 个回归/时间序列诊断算子：`white_test`、`chow_test`、`ljung_box`；未新增 Reader。
+- `tests/test_extension18.py` 5 项、`tests/test_r_oracles10.py` 1 项，合计 **6 项通过**；R 对照 base `lm` 与 `Box.test`。
+- R 参考值：White LM **5.6138306138**、p **0.3456253123**、F **1.0926275992**；Chow F **25.2160566352**、p **1.13223e-05**；Ljung-Box Q **37.7313478225**、p **4.272e-07**。
+- 0.25 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 225/82/21；参考页 225 算子 / 82 Reader；增量门 22 passed；Studio 前端 171 passed。
+- 边界：White 辅助回归含平方项和交叉项；Chow 按样本行顺序在 `break_fraction` 处分段；Ljung-Box 对原始去均值序列计算，不自动取回归残差。
