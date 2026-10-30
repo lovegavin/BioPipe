@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -11,7 +11,7 @@
 | B | 算子 demo 自测：手工可算的小例子 |
 | C | 仅契约/route/artifact 覆盖；没有独立数值 oracle |
 
-## 2. Reader（80）
+## 2. Reader（82）
 | Reader | 级别 | 证据/独立 oracle |
 |---|---|---|
 | `BedReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
@@ -96,9 +96,11 @@
 | `PepxmlReader` | B | test_extension13_readers.py（pepXML spectrum_query/search_hit） |
 | `MzdataReader` | B | test_extension13_readers.py（mzDATA 谱图/cvParam） |
 | `ProtXMLReader` | B | test_extension13_readers.py（protXML protein_group/protein） |
+| `FcsReader` | B | test_extension15_readers.py（FCS 2.0 事件矩阵、$PnN 通道、整数位宽/字节序） |
+| `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（216；下表为 89 个早期算子，0.8–0.21 新增见末尾证据）
+## 3. Operator（216；下表为 89 个早期算子，0.8–0.22 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -328,3 +330,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - `tests/test_extension14.py` 8 项、`tests/test_r_oracles6.py` 2 项，合计 **10 项通过**；R 对照使用 pROC、dunn.test、dcurves、MASS、lme4、ResourceSelection、DescTools。
 - 0.21 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 216/80/21；参考页 216 算子 / 80 Reader；增量门 26 passed，`-W error` 下 12 passed；Studio 前端 162 passed。
 - 边界：Storey q-value 采用固定 lambda 的 pi0 与 BH 单调校正；DeLong 使用正态近似 CI；Dunn 使用标准 Holm（与 dunn.test 的非单调 P.adjust 记录差异）；决策曲线阈值为 0.01–0.99；有序 logistic 使用 statsmodels OrderedModel 的 logit/probit；LMM 为随机截距、REML 可选；Hosmer-Lemeshow 用唯一分位数切点；Stuart-Maxwell 先移除对角等于双边边际的类别。
+
+## 22. 0.22.0 扩展证据
+
+- 新增 2 个 Reader：`FcsReader`（FCS 2.0/3.x 事件矩阵与通道元数据）和 `Ab1Reader`（ABIF basecall、质量、峰位置、四通道 trace）。
+- `tests/test_extension15_readers.py` 7 项、`tests/test_r_oracles7.py` 1 项，合计 **8 项通过**；增量门 **24 passed**，`-W error` 下 **10 passed**；R 对照为 `flowCore::read.FCS` 与 `sangerseqR::read.abif`。
+- 依赖修复：`cytolib`/`flowCore` 在 BH 1.90 下编译失败，改用 BH 1.84 用户库编译后复制到主 R 库；`sangerseqR` 从 Bioconductor 安装。
+- 0.22 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 216/82/21；参考页 216 算子 / 82 Reader；Studio 前端 162 passed。
+- 边界：FCS 只支持 list mode、`$DATATYPE` I/F/D；AB1 只解析 ABIF 常用 tag，不重做 basecalling；两者都不展开原始峰列表/电泳图。

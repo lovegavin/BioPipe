@@ -127,7 +127,7 @@ YAML / JSON
 
 ## 7. 当前能力与边界
 
-- Reader：CSV/TSV/TXT/Parquet、Excel、BED/GFF3/GTF/GAF、FASTA/FASTQ、MTX、H5AD/10x H5、VCF/BCF、PLINK1/2、BGEN、GMT/Loom/BIOM、HDF5/Zarr、SAM/PAF/BEDPE、Clustal/NEXUS/Newick/Phylip/Stockholm、GenBank/PDB、PED/GFA、MAF/chain、BigWig；
+- Reader：CSV/TSV/TXT/Parquet、Excel、BED/GFF3/GTF/GAF、FASTA/FASTQ、MTX、H5AD/10x H5、VCF/BCF、PLINK1/2、BGEN、GMT/Loom/BIOM、HDF5/Zarr、SAM/PAF/BEDPE、Clustal/NEXUS/Newick/Phylip/Stockholm、GenBank/PDB、PED/GFA、MAF/chain、BigWig、FCS/AB1；
 - 算子：QC、变换、统计、生存、遗传、单细胞、序列、注释、区间、微生物、ML、绘图、GO；
 - 0.8.0 新增：GSEA/ORA、单细胞 doublet/pseudobulk/marker score、GWAS meta/PRS、蛋白组 rollup/moderated t、微生物 ANCOM-style/ALDEx-style；
 - 0.9.0 新增：ComBat 批次校正、ssGSEA 基因集打分，以及单细胞去批次和 RNA-seq ssGSEA 两条 route；
@@ -141,10 +141,11 @@ YAML / JSON
 - 0.19.0 新增：TMM 归一化、limma 风格批次效应移除、Mantel-Haenszel、Cochran-Armitage、TOST 等价检验、Bland-Altman、竞争风险累积发生率；mzML/mzXML/mzTab Reader；MGF 空峰谱 precursor 修复；核心层不变；
 - 0.20.0 新增：Cohen/Fleiss kappa、Breusch-Pagan、Durbin-Watson、Egger 检验、ANOSIM、Procrustes、偏 Mantel；mzIdentML/pepXML/mzDATA/protXML Reader；核心层不变；
 - 0.21.0 新增：Storey q-value、DeLong AUC、Dunn 检验、决策曲线、有序 logistic、线性混合模型、Hosmer-Lemeshow、Stuart-Maxwell；核心层不变；
+- 0.22.0 新增：FCS 流式细胞术与 AB1 Sanger 测序 Reader；核心层不变；
 - 0.17.0 新增：Holm/BY 校正、Cohen's d/Hedges g、Cliff's delta、η²、rank-biserial、Davies–Bouldin、Calinski–Harabasz、ARI、混淆矩阵、ROC 曲线、Mann–Kendall；BLAST tabular/HMMER tblout/InterProScan/EMBL/HMM/MOL2/SMI/bedMethyl Reader；核心层不变；
 - 0.13.0 新增：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera；核心层不变；
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)；
-- 尚未支持：原始峰列表解析、FCS、空间转录组、影像等；
+- 尚未支持：原始峰列表解析、空间转录组、影像等；
 - 大矩阵：heatmap 有 `max_cells/max_pixels` 保护；H5AD/10x full 模式仍可能 densify。
 
 ## 8. 扩展方向
@@ -159,7 +160,7 @@ YAML / JSON
 3. **单细胞/空间**：Leiden、轨迹、Visium；
 4. **蛋白/代谢**：MSstats 对照、峰列表细节（mzML/mzXML/mzTab 已支持摘要）；
 5. **遗传**：fine-mapping、VEP 注释；
-6. **专用格式**：FCS、h5Seurat、GenBank/Newick/PDB、影像。
+6. **专用格式**：h5Seurat、GenBank/Newick/PDB、影像。
 
 每个新增必须走 RFC、契约、独立 oracle、公开数据、文档、注册表和全量回归；详见 [protocol_suite.md](protocol_suite.md) 与 [sop_matrix.md](sop_matrix.md)。
 

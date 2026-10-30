@@ -13,7 +13,7 @@ def test_reference_indexes_cover_catalog():
     operators = json.loads((ROOT / "docs/reference/operator_index.json").read_text(encoding="utf-8"))
     readers = json.loads((ROOT / "docs/reference/reader_index.json").read_text(encoding="utf-8"))
     assert len(operators) == 216
-    assert len(readers) == 80
+    assert len(readers) == 82
     for entry in operators + readers:
         page = ROOT / entry["doc"]
         assert page.is_file(), entry["doc"]

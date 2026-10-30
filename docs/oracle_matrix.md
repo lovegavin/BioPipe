@@ -40,6 +40,17 @@
 - Python 侧仍使用 `statsmodels 0.14.6`、`scipy 1.17.1`；未依赖未安装的 PyPI 包。
 - 复现：`python -m pytest -q tests/test_extension14.py tests/test_r_oracles6.py`。
 
+## 0.22.0
+
+| Reader | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `FcsReader` | R `flowCore::read.FCS(transformation=FALSE)` | `tests/test_r_oracles7.py` | 10000×8 事件/通道、前两行、通道名完全一致；fixture 为 FACSCalibur FCS 2.0 |
+| `Ab1Reader` | R `sangerseqR::read.abif` | `tests/test_r_oracles7.py` | PBAS 序列、PCON 前 10、PLOC 前 10、FWO 通道顺序一致 |
+
+- 本轮修复依赖：`cytolib` 2.14.1 与 BH 1.90 的 `boost::filesystem` 私有 API 冲突；安装 BH 1.84.0.0 到用户库后编译 `cytolib`/`flowCore`，再复制到主库。
+- 当前 R：`flowCore 2.14.2`、`sangerseqR 1.38.0`；已安装 `BH 1.84.0.0` 于 `<R 用户库>/boost184`。
+- 未安装 `ShortRead`；FCS/AB1 已不再属于缺口。
+
 ## 环境与缺口
 
 - R 4.3.3；已装 `vegan`、`survival`、`metafor`、`edgeR`、`limma`、`DESeq2`、`fgsea`、`GSVA`、`sva`、`Kendall`、`ALDEx2` 等。

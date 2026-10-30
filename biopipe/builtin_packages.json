@@ -10,6 +10,110 @@
       "descriptors": [
         {
           "protocol_version": 1,
+          "id": "Ab1Reader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.ab1_reader:Ab1Reader",
+          "title": "Ab1Reader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "max_bases": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1000000,
+                "title": "Max Bases",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "max_bases",
+              "label": "Max Bases",
+              "type": "integer",
+              "required": false,
+              "default": 1000000,
+              "min": 1
+            }
+          ],
+          "name": "Ab1Reader",
+          "module": "src.reader.readers.ab1_reader",
+          "extensions": [
+            ".ab1"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "base",
+              "feature"
+            ],
+            "labels": {
+              "base": "builtin",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "BamReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -2542,6 +2646,110 @@
             "labels": {
               "read": "auto",
               "field": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "FcsReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.fcs_reader:FcsReader",
+          "title": "FcsReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "max_events": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1000000,
+                "title": "Max Events",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "max_events",
+              "label": "Max Events",
+              "type": "integer",
+              "required": false,
+              "default": 1000000,
+              "min": 1
+            }
+          ],
+          "name": "FcsReader",
+          "module": "src.reader.readers.fcs_reader",
+          "extensions": [
+            ".fcs"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "event",
+              "channel"
+            ],
+            "labels": {
+              "event": "auto",
+              "channel": "builtin"
             }
           },
           "output_contract": {
