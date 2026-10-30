@@ -159,6 +159,7 @@ YAML / JSON
 - 0.35.0 新增：Cronbach's alpha、典型相关、Wald–Wolfowitz runs test 三个可靠性/多变量算子；核心层不变；
 - 0.36.0 新增：KMO 取样适切性与 Bartlett 球形检验两个因子可分析性诊断算子；核心层不变；
 - 0.37.0 新增：Cramér's V、Jonckheere-Terpstra 有序秩检验、varimax 正交旋转三个效应量/多变量算子；核心层不变；
+- 0.42.0 新增：Shapiro-Wilk 正态性检验、Lilliefors 正态性检验、Moses 极端反应检验三个算子；核心层不变；
 - 0.41.0 新增：Bhapkar 边际齐性检验、Von Neumann 随机性检验、Shapiro-Francia 正态性检验三个算子；核心层不变；
 - 0.40.0 新增：Van der Waerden 正态得分检验、Bartels 秩检验、Woolf 同质 OR 检验三个非参数/随机性算子；核心层不变；
 - 0.39.0 新增：Hotelling's T²、Yuen 截尾均值 t 检验、列联表 G 检验三个多元/稳健/分类数据检验算子；核心层不变；

@@ -2,6 +2,18 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.42.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `shapiro_wilk` | R `stats::shapiro.test` | `tests/test_r_oracles27.py` | W 0.96016416316107545，p 0.54713405582814623，n 20；AS R94 近似、3–5000 个样本 |
+| `lillie_test` | R `DescTools::LillieTest` | `tests/test_r_oracles27.py` | D 0.081749071087235753，p 0.97813612285642071，n 20；Dallal-Wilkinson p 近似、n>=5 |
+| `moses_test` | R `DescTools::MosesTest` | `tests/test_r_oracles27.py` | S 8，p 0.0015479876160990713，n_a=n_b=10，extreme=1；平均秩、精确组合 p |
+
+- 使用已安装的 `DescTools` 与 R `stats`。
+- 复现：`python -m pytest -q tests/test_extension35.py tests/test_r_oracles27.py`。
+- 边界：Shapiro-Wilk/Lilliefors 不提供 exact p；Moses 仅两组、不做置换/CI。
+
 ## 0.41.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

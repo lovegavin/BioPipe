@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.42.0 — 2026-10-31
+
+- 新增：271 算子 / 82 Reader / 21 route；新增 Shapiro-Wilk 正态性检验、Lilliefors 正态性检验、Moses 极端反应检验三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension35.py` 4 项、`tests/test_r_oracles27.py` 1 项，合计 **5 passed**；R 对照 `stats::shapiro.test`、`DescTools::LillieTest`、`DescTools::MosesTest`；registry clean；参考页 271/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 217 passed。
+- 边界：Shapiro-Wilk 使用 AS R94 近似、限制 3–5000 个样本；Lilliefors 使用 Dallal-Wilkinson p 近似；Moses 仅两组、精确组合 p，不提供置换/CI。
+
 ## 0.41.0 — 2026-10-31
 
 - 新增：268 算子 / 82 Reader / 21 route；新增 Bhapkar 边际齐性检验、Von Neumann 随机性检验、Shapiro-Francia 正态性检验三个算子；未修改核心层。

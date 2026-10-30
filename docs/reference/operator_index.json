@@ -16469,6 +16469,88 @@
     "quality": "auto"
   },
   {
+    "id": "lillie_test",
+    "kind": "operator",
+    "title": "Lilliefors normality test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/lillie_test.py",
+    "tests": [
+      "tests/test_extension35.py",
+      "tests/test_r_oracles27.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/lillie_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "limma_de",
     "kind": "operator",
     "title": "Moderated t differential analysis",
@@ -19028,6 +19110,116 @@
       "tasks/proteomics_de_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/missing.md",
+    "quality": "auto"
+  },
+  {
+    "id": "moses_test",
+    "kind": "operator",
+    "title": "Moses extreme reactions test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_a": {
+          "type": "string",
+          "title": "第一组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "group_b": {
+          "type": "string",
+          "title": "第二组",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "extreme": {
+          "type": "integer",
+          "minimum": 0,
+          "title": "每侧截尾个数",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "value_label",
+        "group_label",
+        "group_a",
+        "group_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/moses_test.py",
+    "tests": [
+      "tests/test_extension35.py",
+      "tests/test_r_oracles27.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/moses_test.md",
     "quality": "auto"
   },
   {
@@ -26534,6 +26726,88 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/shapiro_francia.md",
+    "quality": "auto"
+  },
+  {
+    "id": "shapiro_wilk",
+    "kind": "operator",
+    "title": "Shapiro-Wilk normality test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/shapiro_wilk.py",
+    "tests": [
+      "tests/test_extension35.py",
+      "tests/test_r_oracles27.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/shapiro_wilk.md",
     "quality": "auto"
   },
   {
