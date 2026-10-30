@@ -5027,6 +5027,133 @@
     "quality": "auto"
   },
   {
+    "id": "chacko_test",
+    "kind": "operator",
+    "title": "Chacko ordered alternatives test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_order": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "分组顺序",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "greater",
+            "less"
+          ],
+          "default": "greater",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/chacko_test.py",
+    "tests": [
+      "tests/test_extension49.py",
+      "tests/test_r_oracles40.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/chacko_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "chi_square",
     "kind": "operator",
     "title": "Chi-square test",
@@ -12272,6 +12399,140 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/fligner_kruskal.md",
+    "quality": "auto"
+  },
+  {
+    "id": "fligner_wolfe",
+    "kind": "operator",
+    "title": "Fligner-Wolfe test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "control": {
+          "type": "string",
+          "title": "对照组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "group_order": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "分组顺序",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "greater",
+            "less"
+          ],
+          "default": "greater",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "group_label",
+        "control"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/fligner_wolfe.py",
+    "tests": [
+      "tests/test_extension49.py",
+      "tests/test_r_oracles40.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/fligner_wolfe.md",
     "quality": "auto"
   },
   {
@@ -20213,6 +20474,129 @@
       "tasks/rnaseq_de_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/ma_plot.md",
+    "quality": "auto"
+  },
+  {
+    "id": "mack_wolfe",
+    "kind": "operator",
+    "title": "Mack-Wolfe umbrella test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "peak": {
+          "type": "string",
+          "title": "峰值组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "group_order": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "分组顺序",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "group_label",
+        "peak"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/mack_wolfe.py",
+    "tests": [
+      "tests/test_extension49.py",
+      "tests/test_r_oracles40.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/mack_wolfe.md",
     "quality": "auto"
   },
   {

@@ -4,7 +4,7 @@ BioPipe 是本地生信流水线引擎 + Studio 可视化工作区 + CLI/MCP Age
 Reader 读取标准格式，用带类型契约的算子处理 `Form`，并在本地生成表格、图片和报告。
 BioPipe 本身不提供 AI 服务。
 
-当前源码版本 **0.55.0**：**309 个算子、82 个 Reader、6 个 provider 包、21 条路线**。
+当前源码版本 **0.56.0**：**312 个算子、82 个 Reader、6 个 provider 包、21 条路线**。
 
 ## 价值主张
 
@@ -130,6 +130,7 @@ docs/reference/    自动生成 Reader/算子参考页
 - 秩尺度/离群/校准：Ansari-Bradley 秩尺度、χ² 方差离群、分箱校准曲线。
 - 回归诊断：Goldfeld-Quandt 异方差、Rainbow 线性偏离。
 - 峰度/球形：Anscombe-Glynn 峰度、Bonett-Seier 峰度、Mauchly 球形检验。
+- 有序备择/伞形：Chacko 有序备择、Fligner-Wolfe 对照组比较、Mack-Wolfe 伞形检验。
 - 稳健/多元：Sen 斜率、Mahalanobis 距离、Box's M 协方差齐性。
 - 事后比较/变点：Scheffe、Nemenyi、Pettitt 变点检验。
 - 非参数/随机性：Van der Waerden 正态得分检验、Bartels 秩检验、Woolf 同质 OR 检验。
@@ -146,7 +147,7 @@ docs/reference/    自动生成 Reader/算子参考页
 
 ## 版本与更新记录
 
-- 当前：**0.55.0**，见 [CHANGELOG](docs/changelog.md)。
+- 当前：**0.56.0**，见 [CHANGELOG](docs/changelog.md)。
 - Windows 测试环境快照：[conda](windows-biopipe-conda.yml) /
   [pip](windows-biopipe-pip-freeze.txt)。
 

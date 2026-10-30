@@ -1,5 +1,15 @@
 # 权威实现对照矩阵
 
+## 0.56.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `chacko_test` | R `PMCMRplus::chackoTest` | `tests/test_r_oracles40.py` | 4 组×6：H 5.6716666666666651，df 3，p 0.12872406680233608；每组≥2 |
+| `fligner_wolfe` | R `PMCMRplus::flignerWolfeTest(dist="Normal")` | `tests/test_r_oracles40.py` | 对照 A：z 1.9503674363248837，p 0.025566170105179833；正态近似 + 并列校正 |
+| `mack_wolfe` | R `PMCMRplus::mackWolfeTest(p=3)` | `tests/test_r_oracles40.py` | 峰值 C：Ap 98，z 1.6001893827313254，p 0.054778288391342869；有并列时精确方差不可用 |
+
+- R 4.3.3；`PMCMRplus` 已安装；复现：`python -m pytest -q tests/test_extension49.py tests/test_r_oracles40.py`。
+
 ## 0.55.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

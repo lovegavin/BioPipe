@@ -165,6 +165,7 @@ YAML / JSON
 - 0.52.0 新增：D'Agostino 偏度检验、Pearson χ² 拟合优度、Cochran C 方差离群检验三个算子；核心层不变；
 - 0.53.0 新增：Ansari-Bradley 秩尺度检验、χ² 方差离群检验、分箱校准曲线三个算子；核心层不变；
 - 0.54.0 新增：Goldfeld-Quandt 异方差检验、Rainbow 线性偏离检验两个算子；核心层不变；
+- 0.56.0 新增：Chacko 有序备择、Fligner-Wolfe 对照比较、Mack-Wolfe 伞形检验三个算子；核心层不变；
 - 0.55.0 新增：Anscombe-Glynn 峰度、Bonett-Seier 峰度、Mauchly 球形三个算子；核心层不变；
 - 0.51.0 新增：Fligner-Killeen、Mood 尺度检验、Siegel-Tukey 秩离散度检验三个算子；核心层不变；
 - 0.50.0 新增：Levene 方差齐性、Brown-Forsythe 稳健方差齐性、Barnard 精确独立性检验三个算子；核心层不变；

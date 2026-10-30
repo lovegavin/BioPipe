@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.56.0 — 2026-10-31
+
+- 新增：312 算子 / 82 Reader / 21 route；新增 Chacko 有序备择、Fligner-Wolfe 对照比较、Mack-Wolfe 伞形检验三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension49.py` 4 项、`tests/test_r_oracles40.py` 1 项，合计 **5 passed**；对照 R `PMCMRplus`；registry clean；参考页 312/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 258 passed。
+- 边界：每组至少 2 个有限值；Fligner-Wolfe 需要对照组，Mack-Wolfe 需要已知峰值组且只做单侧 greater；Chacko 只做 greater/less；秩/正态近似，Mack-Wolfe 有并列时精确方差不可用。
+
 ## 0.55.0 — 2026-10-31
 
 - 新增：309 算子 / 82 Reader / 21 route；新增 Anscombe-Glynn 峰度、Bonett-Seier 峰度、Mauchly 球形三个算子；未修改核心层。
