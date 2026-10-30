@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -98,7 +98,7 @@
 | `ProtXMLReader` | B | test_extension13_readers.py（protXML protein_group/protein） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（208；下表为 89 个早期算子，0.8–0.20 新增见末尾证据）
+## 3. Operator（216；下表为 89 个早期算子，0.8–0.21 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -320,3 +320,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - `tests/test_extension13.py` 6 项、`tests/test_extension13_readers.py` 5 项、`tests/test_r_oracles5.py` 1 项，合计 12 项通过；R 对照使用 `vegan::anosim/procrustes/mantel.partial` 与 `lm`，Python 对照使用 statsmodels。
 - 0.20 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 208/80/21；参考页 208 算子 / 80 Reader；增量门 28 passed，`-W error` 下 14 passed；Studio 前端 154 passed。
 - 边界：kappa 支持无权重/线性/二次权重；Fleiss 支持 fleiss/randolph；Breusch-Pagan 使用 statsmodels 的 LM/F 版本；Durbin-Watson 只做残差自相关；Egger 为未加权 OLS；ANOSIM 使用秩和置换；Procrustes 仅旋转/平移/缩放，不做反射；偏 Mantel 对距离矩阵下三角残差化；质谱 Reader 只输出摘要字段。
+
+## 21. 0.21.0 扩展证据
+
+- 新增 8 个统计/临床算子：`storey_qvalue`、`delong_auc`、`dunn_test`、`decision_curve`、`ordinal_logistic`、`linear_mixed_model`、`hosmer_lemeshow`、`stuart_maxwell`。
+- 未新增 Reader；尝试安装 `flowCore`（依赖 `cytolib` 编译失败）与 `sangerseqR`（未安装），FCS/AB1 Reader 暂缓，原因记录在 [权威矩阵](oracle_matrix.md)。
+- `tests/test_extension14.py` 8 项、`tests/test_r_oracles6.py` 2 项，合计 **10 项通过**；R 对照使用 pROC、dunn.test、dcurves、MASS、lme4、ResourceSelection、DescTools。
+- 0.21 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 216/80/21；参考页 216 算子 / 80 Reader；增量门 26 passed，`-W error` 下 12 passed；Studio 前端 162 passed。
+- 边界：Storey q-value 采用固定 lambda 的 pi0 与 BH 单调校正；DeLong 使用正态近似 CI；Dunn 使用标准 Holm（与 dunn.test 的非单调 P.adjust 记录差异）；决策曲线阈值为 0.01–0.99；有序 logistic 使用 statsmodels OrderedModel 的 logit/probit；LMM 为随机截距、REML 可选；Hosmer-Lemeshow 用唯一分位数切点；Stuart-Maxwell 先移除对角等于双边边际的类别。

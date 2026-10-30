@@ -1,5 +1,12 @@
 # 更新记录
 
+## 0.21.0 — 2026-10-31
+- 新增 8 个算子：Storey q-value、DeLong AUC、Dunn 检验、决策曲线、有序 logistic、线性混合模型、Hosmer-Lemeshow、Stuart-Maxwell。
+- 当前：216 算子 / 80 Reader / 21 route；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension14.py` 8 项、`tests/test_r_oracles6.py` 2 项，新增 **10 passed**；增量门 **26 passed**，`-W error` 下 **12 passed**；R 对照 pROC/dunn.test/dcurves/MASS/lme4/ResourceSelection/DescTools；registry clean；参考页 216/80；Studio 前端 **162 passed**。
+- 未新增 Reader：`flowCore` 因 `cytolib` 编译失败、`sangerseqR` 未安装，FCS/AB1 暂缓。
+- 边界：Storey 固定 lambda；DeLong 正态近似；Dunn 标准 Holm；决策曲线 0.01–0.99；有序 logistic/logit-probit；LMM 随机截距；HL 唯一分位数切点；Stuart-Maxwell 移除等边际类别。
+
 ## 0.20.0 — 2026-10-31
 - 新增 8 个算子：Cohen's kappa、Fleiss' kappa、Breusch-Pagan、Durbin-Watson、Egger 回归检验、ANOSIM、Procrustes、偏 Mantel。
 - 新增 4 个 Reader：mzIdentML、pepXML、mzDATA、protXML；MGF 空峰谱修复沿用 0.19。
@@ -21,7 +28,7 @@
 - 验证：增量 `tests/test_extension11.py` 9 项 + R `cor.test(kendall)` oracle 6 项全部通过；全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门 full-suite 模式分支）；registry clean；参考页 193/73；Studio 前端 **139 passed**，构建通过。
 - 边界：翻译使用标准遗传密码、不支持线粒体/非标准密码表；限制性酶切位点只做精确 motif 计数；蛋白 pI/MW 为常用近似；HVG 基于均值-离散度；Fst 使用 Hudson 估计；RMST 需组列且基于 KM；peptide q-value 使用 target-decoy；McNemar 默认连续性校正；Kendall 为成对完整观测；HapMap 以首个非缺失等位基因为参考；MOL2/PDB 不重建键级；PSL/genePred 只解析常用字段。
 
-BioPipe 使用语义化版本和 git tag。当前源码版本：**0.20.0（2026-10-31）**。
+BioPipe 使用语义化版本和 git tag。当前源码版本：**0.21.0（2026-10-31）**。
 更早版本从 git tag/history 查；本页只保留当前版本摘要。
 
 ## 0.17.0 — 2026-10-30

@@ -15502,6 +15502,177 @@
         },
         {
           "protocol_version": 1,
+          "id": "decision_curve",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.decision_curve:DecisionCurveStep",
+          "title": "Decision curve analysis",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "outcome_label": {
+                "type": "string",
+                "title": "Outcome Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "risk_label": {
+                "type": "string",
+                "title": "Risk Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "positive_label": {
+                "type": "string",
+                "title": "Positive Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "thresholds": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "exclusiveMaximum": 1
+                },
+                "minItems": 2,
+                "title": "Thresholds",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "outcome_label",
+              "risk_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "decision_curve",
+          "module": "src.task.step.steps.decision_curve",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Net benefit across risk thresholds (decision-curve analysis).",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "outcome_label",
+              "label": "Outcome Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "risk_label",
+              "label": "Risk Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "positive_label",
+              "label": "Positive Label",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "thresholds",
+              "label": "Thresholds",
+              "type": "json",
+              "required": false
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "decision_tree_classifier",
           "version": "1.0.0",
           "kind": "operator",
@@ -16171,6 +16342,216 @@
         },
         {
           "protocol_version": 1,
+          "id": "delong_auc",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.delong_auc:DeLongAucStep",
+          "title": "DeLong AUC",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label",
+                "title": "标签维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "score_dim": {
+                "type": "string",
+                "default": "score",
+                "title": "Score Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "target_label": {
+                "type": "string",
+                "title": "目标字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "score_label": {
+                "type": "string",
+                "title": "Score Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "positive_label": {
+                "type": "string",
+                "title": "Positive Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 0.999,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "score_dim",
+                    "default": "score"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "delong_auc",
+          "module": "src.task.step.steps.delong_auc",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "AUC with the DeLong variance and normal confidence interval.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "label_dim",
+              "label": "标签维度",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "score_dim",
+              "label": "Score Dim",
+              "type": "string",
+              "required": false,
+              "default": "score"
+            },
+            {
+              "key": "target_label",
+              "label": "目标字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "score_label",
+              "label": "Score Label",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "positive_label",
+              "label": "Positive Label",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95,
+              "min": 0.5,
+              "max": 0.999
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "label_dim": "label",
+            "score_dim": "score",
+            "confidence": 0.95
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "describe",
           "version": "1.0.0",
           "kind": "operator",
@@ -16672,6 +17053,202 @@
             }
           ],
           "runtime_defaults": {},
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "dunn_test",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.dunn_test:DunnTestStep",
+          "title": "Dunn post-hoc test",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "分组维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "holm",
+                  "fdr",
+                  "bonferroni",
+                  "none"
+                ],
+                "default": "holm",
+                "title": "方法",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "group_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "group_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11",
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "scipy",
+            "statsmodels"
+          ],
+          "name": "dunn_test",
+          "module": "src.task.step.steps.dunn_test",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Pairwise Dunn comparisons with tie correction.",
+          "parameters": [
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_dim",
+              "label": "分组维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "method",
+              "label": "方法",
+              "type": "choice",
+              "required": false,
+              "default": "holm",
+              "options": [
+                "holm",
+                "fdr",
+                "bonferroni",
+                "none"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "feature_dim": "feature",
+            "sample_dim": "sample",
+            "group_dim": "sample",
+            "method": "holm"
+          },
           "legacy_parameters": false
         },
         {
@@ -21218,6 +21795,172 @@
         },
         {
           "protocol_version": 1,
+          "id": "hosmer_lemeshow",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.hosmer_lemeshow:HosmerLemeshowStep",
+          "title": "Hosmer-Lemeshow test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "outcome_label": {
+                "type": "string",
+                "title": "Outcome Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "probability_label": {
+                "type": "string",
+                "title": "Probability Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "groups": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 10,
+                "title": "分组顺序",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "outcome_label",
+              "probability_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "hosmer_lemeshow",
+          "module": "src.task.step.steps.hosmer_lemeshow",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "outcome_label",
+              "label": "Outcome Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "probability_label",
+              "label": "Probability Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "groups",
+              "label": "分组顺序",
+              "type": "integer",
+              "required": false,
+              "default": 10,
+              "min": 2
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "groups": 10
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "huber_regressor",
           "version": "1.0.0",
           "kind": "operator",
@@ -24588,6 +25331,217 @@
         },
         {
           "protocol_version": 1,
+          "id": "linear_mixed_model",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.linear_mixed_model:LinearMixedModelStep",
+          "title": "Linear mixed model",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response_label": {
+                "type": "string",
+                "title": "Response Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "fixed_effects": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Fixed Effects",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "categorical": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "分类协变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "reml": {
+                "type": "boolean",
+                "default": true,
+                "title": "Reml",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "maxiter": {
+                "type": "integer",
+                "minimum": 20,
+                "default": 200,
+                "title": "Maxiter",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 80
+              }
+            },
+            "required": [
+              "response_label",
+              "fixed_effects",
+              "group_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "linear_mixed_model",
+          "module": "src.task.step.steps.linear_mixed_model",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Random-intercept linear mixed model via statsmodels MixedLM.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "response_label",
+              "label": "Response Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "fixed_effects",
+              "label": "Fixed Effects",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "categorical",
+              "label": "分类协变量",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "reml",
+              "label": "Reml",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "maxiter",
+              "label": "Maxiter",
+              "type": "integer",
+              "required": false,
+              "default": 200,
+              "min": 20
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "reml": true,
+            "maxiter": 200
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "linear_regression",
           "version": "1.0.0",
           "kind": "operator",
@@ -27842,6 +28796,212 @@
           ],
           "runtime_defaults": {
             "descending": false
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "ordinal_logistic",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.ordinal_logistic:OrdinalLogisticStep",
+          "title": "Ordinal logistic regression",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response_label": {
+                "type": "string",
+                "title": "Response Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "predictors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Predictors",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "categorical": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "分类协变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "distr": {
+                "type": "string",
+                "enum": [
+                  "logit",
+                  "probit"
+                ],
+                "default": "logit",
+                "title": "Distr",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "maxiter": {
+                "type": "integer",
+                "minimum": 20,
+                "default": 200,
+                "title": "Maxiter",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "response_label",
+              "predictors"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "ordinal_logistic",
+          "module": "src.task.step.steps.ordinal_logistic",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Proportional-odds ordinal regression via statsmodels OrderedModel.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "response_label",
+              "label": "Response Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "predictors",
+              "label": "Predictors",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "categorical",
+              "label": "分类协变量",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "distr",
+              "label": "Distr",
+              "type": "choice",
+              "required": false,
+              "default": "logit",
+              "options": [
+                "logit",
+                "probit"
+              ]
+            },
+            {
+              "key": "maxiter",
+              "label": "Maxiter",
+              "type": "integer",
+              "required": false,
+              "default": 200,
+              "min": 20
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "distr": "logit",
+            "maxiter": 200
           },
           "legacy_parameters": false
         },
@@ -35612,6 +36772,287 @@
             "affinity": "nearest_neighbors",
             "gamma": 1.0,
             "random_state": 0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "storey_qvalue",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.storey_qvalue:StoreyQvalueStep",
+          "title": "Storey q-values",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "value_dim": {
+                "type": "string",
+                "default": "pvalue",
+                "title": "Value Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "lambda": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.95,
+                "default": 0.5,
+                "title": "Lambda",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  },
+                  {
+                    "param": "value_dim",
+                    "default": "statistic"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "storey_qvalue",
+          "module": "src.task.step.steps.storey_qvalue",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Storey's q-value procedure for a column of p-values.",
+          "parameters": [
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "value_dim",
+              "label": "Value Dim",
+              "type": "string",
+              "required": false,
+              "default": "pvalue"
+            },
+            {
+              "key": "lambda",
+              "label": "Lambda",
+              "type": "number",
+              "required": false,
+              "default": 0.5,
+              "min": 0.05,
+              "max": 0.95
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "feature_dim": "feature",
+            "value_dim": "pvalue",
+            "lambda": 0.5
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "stuart_maxwell",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.stuart_maxwell:StuartMaxwellStep",
+          "title": "Stuart-Maxwell test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "rater_a": {
+                "type": "string",
+                "title": "Rater A",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "rater_b": {
+                "type": "string",
+                "title": "Rater B",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "rater_a",
+              "rater_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "stuart_maxwell",
+          "module": "src.task.step.steps.stuart_maxwell",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Test whether two raters have the same marginal distribution.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "rater_a",
+              "label": "Rater A",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "rater_b",
+              "label": "Rater B",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
           },
           "legacy_parameters": false
         },
