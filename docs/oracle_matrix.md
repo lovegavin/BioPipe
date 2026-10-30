@@ -2,6 +2,17 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.48.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `conover_test` | R `DescTools::ConoverTest(x, g)` | `tests/test_r_oracles32.py` | B-A rank diff 4.8333333333333339，Holm p 0.010462063490453718；C-A p 2.5080247917311833e-05；C-B p 0.0044497715042364737 |
+| `games_howell` | R `PMCMRplus::gamesHowellTest(x, g)` | `tests/test_r_oracles32.py` | B-A q 3.9279220242478630，p 0.047125923759940624；C-A p 0.00018923503262868735；C-B p 0.010381720683943052 |
+| `quade_test` | R `stats::quade.test(m)` | `tests/test_r_oracles32.py` | 5 块×3 处理：F 18，df 2/8，p 0.0010928215285841132 |
+
+- R 4.3.3；`DescTools`、`PMCMRplus` 来自 USTC CRAN；`PMCMRplus` 的依赖 `multcompView/Rmpfr/SuppDists/kSamples/BWStest` 已安装。
+- 复现：`python -m pytest -q tests/test_extension41.py tests/test_r_oracles32.py`。
+
 ## 0.47.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
