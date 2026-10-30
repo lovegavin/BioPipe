@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**；0.41 新增 **5 passed**、增量门 **21 passed**；0.42 新增 **5 passed**、增量门 **21 passed**；0.43 新增 **6 passed**、增量门 **22 passed**；0.44 新增 **6 passed**、增量门 **22 passed**；0.45 新增 **4 passed**、增量门 **20 passed**；0.46 新增 **5 passed**、增量门 **26 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**；0.41 新增 **5 passed**、增量门 **21 passed**；0.42 新增 **5 passed**、增量门 **21 passed**；0.43 新增 **6 passed**、增量门 **22 passed**；0.44 新增 **6 passed**、增量门 **22 passed**；0.45 新增 **4 passed**、增量门 **20 passed**；0.46 新增 **5 passed**、增量门 **26 passed**；0.47 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（283；下表为 89 个早期算子，0.8–0.46 新增见末尾证据）
+## 3. Operator（286；下表为 89 个早期算子，0.8–0.47 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -535,3 +535,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - 参考值：Sen x=1..10、y 指定序列 → slope **1.98**、intercept **0.26**、95% CI **1.9..2.025**；Mahalanobis 8×3 距离 **3.0759981851181237 / 2.040607985480989 / 4.244782214156089 / 1.5578493647912683 / 1.3736388384754896 / 1.481624319419268 / 4.041515426497227 / 3.1839836660619767**；Box's M 3 组×8、p=2 → M **0.8753278628690389**、chi2 **0.7549123896701234**、df **6**、p **0.9932284578587726**。
 - 0.46 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 283/82/21；参考页 283 算子 / 82 Reader；增量门 26 passed；`-W error` 7 passed；Studio 前端 229 passed。
 - 边界：Sen 斜率要求至少 3 个完整对且 x 非常量；Mahalanobis 要求完整数值行、样本数大于特征数、协方差可逆，输出平方距离与卡方 p；Box's M 要求每组样本数大于特征数、组内/合并协方差可逆，使用 `biotools::boxM` 的卡方近似。
+
+## 47. 0.47.0 扩展证据
+
+- 新增 3 个事后比较/变点算子：`scheffe_test`（Scheffe 全成对比较）、`nemenyi_test`（Nemenyi 全成对比较）、`pettitt_test`（Pettitt 单变点检验）；未新增 Reader。
+- `tests/test_extension40.py` 4 项、`tests/test_r_oracles31.py` 1 项，合计 **5 passed**；Scheffe/Nemenyi 对照 `DescTools::ScheffeTest` / `DescTools::NemenyiTest`，Pettitt 对照 `trend::pettitt.test`。
+- R 参考值（18 个样本、A/B/C 各 6）：Scheffe B-A diff **3.0**、95% CI **0.068774863320079316..5.9312251366799238**、p **0.044508331150382108**；C-A p **4.4835604069060167e-05**；C-B p **0.0076727193384942011**。Nemenyi B-A rank diff **4.8333333333333339**、p **0.2595187845582884734**；C-A rank diff **10.9166666666666661**、p **0.0011563817007307353**；C-B rank diff **6.0833333333333321**、p **0.1187327830527096229**。Pettitt y=1..10,9..18：U **98**、p **0.0020978278652555764**、并列变点 K **9/11**。
+- 0.47 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 286/82/21；参考页 286 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 232 passed。
+- 边界：Scheffe 使用单因素 ANOVA 残差均方与 F 分布，要求至少两组、每组至少一个完整值且残差自由度大于 0；Nemenyi 使用平均秩和 studentized range（df=Inf），要求至少两组；Pettitt 使用平均秩，返回首个最大变点并在 info 中保留全部并列变点。

@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.47.0 — 2026-10-31
+
+- 新增：286 算子 / 82 Reader / 21 route；新增 Scheffe 事后比较、Nemenyi 事后比较、Pettitt 变点检验三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension40.py` 4 项、`tests/test_r_oracles31.py` 1 项，合计 **5 passed**；Scheffe/Nemenyi 对照 R `DescTools`，Pettitt 对照 R `trend`；registry clean；参考页 286/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 232 passed。
+- 边界：Scheffe 使用 ANOVA 残差均方、F 分布和全族置信区间；Nemenyi 使用平均秩与 studentized range（df=Inf）；Pettitt 使用平均秩和渐近 p 值，并列最大变点全部记录。
+
 ## 0.46.0 — 2026-10-31
 
 - 新增：283 算子 / 82 Reader / 21 route；新增 Sen 斜率、Mahalanobis 距离、Box's M 协方差齐性检验三个算子；未修改核心层。

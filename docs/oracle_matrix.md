@@ -2,6 +2,17 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.47.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `scheffe_test` | R `DescTools::ScheffeTest(aov(x ~ g))` | `tests/test_r_oracles31.py` | B-A diff 3，95% CI 0.068774863320079316..5.9312251366799238，p 0.044508331150382108 |
+| `nemenyi_test` | R `DescTools::NemenyiTest(x, g)` | `tests/test_r_oracles31.py` | B-A rank diff 4.8333333333333339，p 0.2595187845582884734 |
+| `pettitt_test` | R `trend::pettitt.test` | `tests/test_r_oracles31.py` | U 98，p 0.0020978278652555764，变点 9/11 |
+
+- R 4.3.3；`DescTools`、`trend` 来自 USTC CRAN。
+- 复现：`python -m pytest -q tests/test_extension40.py tests/test_r_oracles31.py`。
+
 ## 0.46.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
