@@ -1,7 +1,14 @@
 # 更新记录
 
-BioPipe 使用语义化版本和 git tag。当前源码版本：**0.14.0（2026-10-30）**。
+BioPipe 使用语义化版本和 git tag。当前源码版本：**0.15.0（2026-10-30）**。
 更早版本从 git tag/history 查；本页只保留当前版本摘要。
+
+## 0.15.0 — 2026-10-30
+- 新增 6 个算子：Mantel 检验、PLS 回归、分位数回归、bootstrap 置信区间、silhouette、互信息。
+- 新增 4 个 Reader：GenBank、PDB、Zarr、BCF。
+- 当前：158 算子 / 49 Reader / 21 route；未修改核心层。
+- 验证：**560 passed / 0 skipped**（2026-10-30）；registry clean；参考页 158/49；新增测试 `tests/test_extension8.py` 8 项；Studio 前端 **104 passed**。
+- 边界：Mantel 使用 Pearson 相关 + 置换，p 的分辨率为 `1/(n_perm+1)`；PLS 对单目标暴露一维 `coef_` 适配器；分位数回归使用 sklearn `QuantileRegressor`（无 `max_iter`）；bootstrap 为 percentile CI；GenBank/PDB 为常用子集解析；Zarr 只接受 2D 数值数组；BCF 需 pysam，原生 Windows 不可用（见 [Windows 兼容性](windows_compatibility.md)）。
 
 ## 0.14.0 — 2026-10-30
 - 新增 8 个算子和 5 个 Reader：距离相关、偏相关、VIF、分位数/幂变换、稳健缩放、缩尾、秩变换；BAM、CRAM、BigWig、PED、GFA。

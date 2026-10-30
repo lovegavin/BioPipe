@@ -6,7 +6,7 @@
 
 1. [架构总览](architecture.md) — 模块、执行流、数据流、目录地图、改哪里。
 2. [协议总集](protocol_suite.md) — Form、Reader、算子、契约、注册表、路线、扩展、测试的规范。
-3. [参考索引](reference/README.md) — 152 个算子、45 个 Reader 的逐项页面和机器索引。
+3. [参考索引](reference/README.md) — 158 个算子、49 个 Reader 的逐项页面和机器索引。
 4. [任务 SOP](route_sop.md) — 从数据到自定义路线、验证、运行、解释结果。
 
 一句话：**`task.yaml`/Studio Graph → Reader → Form → Step 链 → 输出/图片/report**。Reader 负责忠实解析，算子负责数学处理，契约负责连接，测试负责证明。
@@ -61,6 +61,7 @@
 | [llm_guide.md](llm_guide.md) / [user_guide.md](user_guide.md) | 当前指南 | LLM/真人的操作手册 |
 | [sop_matrix.md](sop_matrix.md) | 证据快照 | 覆盖级别、oracle、缺口 |
 | [r_oracles.md](r_oracles.md) | 专题 | R 包安装与外部 oracle 测试 |
+| [windows_compatibility.md](windows_compatibility.md) | 专题 | 原生 Windows 不可用的 Reader/依赖与 WSL 建议 |
 | [installation.md](installation.md)、[desktop.md](desktop.md)、[portability.md](portability.md) | 专题 | 安装、桌面、迁移 |
 | [input_formats.md](input_formats.md) | 专题 | 输入格式/边界 |
 | [resource_runtime.md](resource_runtime.md) | 专题 | 预算、准入、spill |
@@ -77,11 +78,12 @@
 
 ## 4. 当前版本与能力
 
-- 版本：**0.14.0**（见 [changelog](changelog.md)）
-- 152 个算子、45 个 Reader、6 个 provider 包、21 条内置路线
+- 版本：**0.15.0**（见 [changelog](changelog.md)）
+- 158 个算子、49 个 Reader、6 个 provider 包、21 条内置路线
 - 所有内置 Reader/算子参数严格（`additionalProperties: false`）
 - Reader 覆盖：CSV/TSV/TXT/Parquet、BED/GFF3/GTF/GAF、FASTA、MTX、H5AD、10x H5、VCF、PLINK1/2、BGEN、GMT、Loom、BIOM
-- 已知边界：尚未支持 BAM/CRAM/BigWig/mzML/FCS/空间转录组等；扩展计划见 [架构总览](architecture.md) 的“扩展方向”
+- 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)
+- 已知边界：尚未支持 mzML/FCS/空间转录组/影像等；扩展计划见 [架构总览](architecture.md) 的“扩展方向”
 - Windows 环境快照：[conda](../windows-biopipe-conda.yml) / [pip](../windows-biopipe-pip-freeze.txt)
 
 ## 5. 最常用的五个命令

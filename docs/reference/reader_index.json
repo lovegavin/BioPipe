@@ -66,6 +66,72 @@
     "quality": "auto"
   },
   {
+    "id": "BcfReader",
+    "kind": "reader",
+    "extensions": [
+      ".bcf"
+    ],
+    "file_input": {
+      "dims": [
+        "variant",
+        "field"
+      ],
+      "labels": {
+        "variant": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "max_records": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100000,
+          "title": "Max Records",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/bcf_reader.py",
+    "tests": [
+      "tests/test_extension8.py"
+    ],
+    "doc": "docs/reference/readers/BcfReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "BedGraphReader",
     "kind": "reader",
     "extensions": [
@@ -1138,6 +1204,66 @@
     "quality": "auto"
   },
   {
+    "id": "GenBankReader",
+    "kind": "reader",
+    "extensions": [
+      ".gb",
+      ".gbk",
+      ".gbff"
+    ],
+    "file_input": {
+      "dims": [
+        "record",
+        "field"
+      ],
+      "labels": {
+        "record": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/genbank_reader.py",
+    "tests": [
+      "tests/test_extension8.py"
+    ],
+    "doc": "docs/reference/readers/GenBankReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "GfaReader",
     "kind": "reader",
     "extensions": [
@@ -2164,6 +2290,73 @@
     "quality": "reviewed"
   },
   {
+    "id": "PdbReader",
+    "kind": "reader",
+    "extensions": [
+      ".pdb",
+      ".ent"
+    ],
+    "file_input": {
+      "dims": [
+        "atom",
+        "field"
+      ],
+      "labels": {
+        "atom": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "title": "Model",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/pdb_reader.py",
+    "tests": [
+      "tests/test_extension8.py"
+    ],
+    "doc": "docs/reference/readers/PdbReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "PedReader",
     "kind": "reader",
     "extensions": [
@@ -2889,5 +3082,62 @@
     ],
     "doc": "docs/reference/readers/VcfReader.md",
     "quality": "reviewed"
+  },
+  {
+    "id": "ZarrReader",
+    "kind": "reader",
+    "extensions": [
+      ".zarr"
+    ],
+    "file_input": {
+      "dims": [
+        "sample",
+        "feature"
+      ],
+      "labels": {
+        "sample": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "array": {
+          "type": "string",
+          "title": "Array",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/zarr_reader.py",
+    "tests": [
+      "tests/test_extension8.py"
+    ],
+    "doc": "docs/reference/readers/ZarrReader.md",
+    "quality": "auto"
   }
 ]

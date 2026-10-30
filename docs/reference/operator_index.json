@@ -1872,6 +1872,114 @@
     "quality": "auto"
   },
   {
+    "id": "bootstrap_ci",
+    "kind": "operator",
+    "title": "Bootstrap confidence interval",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "statistic": {
+          "type": "string",
+          "enum": [
+            "mean",
+            "median"
+          ],
+          "default": "mean",
+          "title": "统计量",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "n_boot": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 100000,
+          "default": 2000,
+          "title": "N Boot",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "confidence": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "default": 0.95,
+          "title": "Confidence",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/bootstrap_ci.py",
+    "tests": [
+      "tests/test_extension8.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/bootstrap_ci.md",
+    "quality": "auto"
+  },
+  {
     "id": "boxplot",
     "kind": "operator",
     "title": "boxplot",
@@ -11181,6 +11289,117 @@
     "quality": "auto"
   },
   {
+    "id": "mantel",
+    "kind": "operator",
+    "title": "Mantel test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "sample_b_dim",
+              "default": "sample_b"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "sample_b_dim",
+              "default": "sample_b"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "n_perm": {
+          "type": "integer",
+          "minimum": 9,
+          "maximum": 99999,
+          "default": 999,
+          "title": "N Perm",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 20
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "greater",
+            "less",
+            "two-sided"
+          ],
+          "default": "greater",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/mantel.py",
+    "tests": [
+      "tests/test_extension8.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/mantel.md",
+    "quality": "auto"
+  },
+  {
     "id": "marker_score",
     "kind": "operator",
     "title": "Signature score",
@@ -11966,6 +12185,138 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/multinomial_nb_classifier.md",
+    "quality": "auto"
+  },
+  {
+    "id": "mutual_information",
+    "kind": "operator",
+    "title": "Mutual information",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "task": {
+          "type": "string",
+          "enum": [
+            "classification",
+            "regression"
+          ],
+          "default": "classification",
+          "title": "Task",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "n_neighbors": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 3,
+          "title": "邻居数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/mutual_information.py",
+    "tests": [
+      "tests/test_extension8.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/mutual_information.md",
     "quality": "auto"
   },
   {
@@ -13335,6 +13686,168 @@
     "quality": "auto"
   },
   {
+    "id": "pls_regression",
+    "kind": "operator",
+    "title": "PLS regression",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 90
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 500,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 100
+        },
+        "tol": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1e-06,
+          "title": "Tol",
+          "x-ui-group": "basic",
+          "x-ui-order": 110
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/pls_regression.py",
+    "tests": [
+      "tests/test_extension8.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/pls_regression.md",
+    "quality": "auto"
+  },
+  {
     "id": "power_transform",
     "kind": "operator",
     "title": "Power transform",
@@ -14008,6 +14521,180 @@
       "tasks/single_cell_route_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/qc_metrics.md",
+    "quality": "auto"
+  },
+  {
+    "id": "quantile_regression",
+    "kind": "operator",
+    "title": "Quantile regression",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "test_size": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.5,
+          "default": 0.25,
+          "title": "测试集比例",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "cv_folds": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "交叉验证折数",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 60
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        },
+        "quantile": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "default": 0.5,
+          "title": "Quantile",
+          "x-ui-group": "basic",
+          "x-ui-order": 90
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0.0,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 100
+        },
+        "solver": {
+          "type": "string",
+          "enum": [
+            "highs",
+            "highs-ds",
+            "highs-ipm"
+          ],
+          "default": "highs",
+          "title": "Solver",
+          "x-ui-group": "basic",
+          "x-ui-order": 110
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1000,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 120
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/quantile_regression.py",
+    "tests": [
+      "tests/test_extension8.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/quantile_regression.md",
     "quality": "auto"
   },
   {
@@ -16354,6 +17041,119 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/sign_test.md",
+    "quality": "auto"
+  },
+  {
+    "id": "silhouette",
+    "kind": "operator",
+    "title": "Silhouette score",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "metric": {
+          "type": "string",
+          "default": "euclidean",
+          "title": "距离/相关指标",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/silhouette.py",
+    "tests": [
+      "tests/test_extension8.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/silhouette.md",
     "quality": "auto"
   },
   {
