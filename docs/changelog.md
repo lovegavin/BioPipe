@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.40.0 — 2026-10-31
+
+- 新增：265 算子 / 82 Reader / 21 route；新增 Van der Waerden 正态得分检验、Bartels 秩检验、Woolf 同质 OR 检验三个非参数/随机性算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension33.py` 4 项、`tests/test_r_oracles25.py` 1 项，合计 **5 passed**；R 对照 `DescTools::VanWaerdenTest`、`DescTools::BartelsRankTest`、`DescTools::WoolfTest`；registry clean；参考页 265/82；增量门 21 passed；Studio 前端 211 passed。
+- 边界：Van der Waerden 仅两组；Bartels 要求 n>=10、使用正态近似；Woolf 零格自动 +0.5，不做三阶交互。
+
 ## 0.39.0 — 2026-10-31
 
 - 新增：262 算子 / 82 Reader / 21 route；新增 Hotelling's T²、Yuen 截尾均值 t 检验、列联表 G 检验三个多元/稳健/分类数据检验算子；未修改核心层。

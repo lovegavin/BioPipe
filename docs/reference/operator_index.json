@@ -1843,6 +1843,88 @@
     "quality": "auto"
   },
   {
+    "id": "bartels_rank",
+    "kind": "operator",
+    "title": "Bartels rank test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/bartels_rank.py",
+    "tests": [
+      "tests/test_extension33.py",
+      "tests/test_r_oracles25.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/bartels_rank.md",
+    "quality": "auto"
+  },
+  {
     "id": "bartlett",
     "kind": "operator",
     "title": "Bartlett variance test",
@@ -28865,6 +28947,127 @@
     "quality": "auto"
   },
   {
+    "id": "van_waerden",
+    "kind": "operator",
+    "title": "Van der Waerden test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_a": {
+          "type": "string",
+          "title": "A 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "group_b": {
+          "type": "string",
+          "title": "B 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "group_label",
+        "group_a",
+        "group_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/van_waerden.py",
+    "tests": [
+      "tests/test_extension33.py",
+      "tests/test_r_oracles25.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/van_waerden.md",
+    "quality": "auto"
+  },
+  {
     "id": "varimax_rotation",
     "kind": "operator",
     "title": "Varimax rotation",
@@ -29801,6 +30004,107 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/winsorize.md",
+    "quality": "auto"
+  },
+  {
+    "id": "woolf_test",
+    "kind": "operator",
+    "title": "Woolf test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "stratum_dim",
+              "default": "stratum"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "stratum_dim": {
+          "type": "string",
+          "default": "stratum",
+          "title": "Stratum Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "a_label": {
+          "type": "string",
+          "default": "a",
+          "title": "A：标签",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "b_label": {
+          "type": "string",
+          "default": "b",
+          "title": "B：标签",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "c_label": {
+          "type": "string",
+          "default": "c",
+          "title": "C Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "d_label": {
+          "type": "string",
+          "default": "d",
+          "title": "D Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/woolf_test.py",
+    "tests": [
+      "tests/test_extension33.py",
+      "tests/test_r_oracles25.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/woolf_test.md",
     "quality": "auto"
   },
   {

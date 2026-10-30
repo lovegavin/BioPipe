@@ -2,6 +2,18 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.40.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `van_waerden` | R `DescTools::VanWaerdenTest` | `tests/test_r_oracles25.py` | chi2 6.349304，df 1，p 0.01174273；仅两组、平均秩、正态得分 |
+| `bartels_rank` | R `DescTools::BartelsRankTest` | `tests/test_r_oracles25.py` | RVN 0.1090909，z -3.2509408，mu 2，var 0.3383165，p 0.001150238；n>=10、正态近似 |
+| `woolf_test` | R `DescTools::WoolfTest` | `tests/test_r_oracles25.py` | X2 0.1481616，df 2，p 0.9285967；2x2xk、零格 +0.5、无三阶交互 |
+
+- 使用已安装的 `DescTools`。
+- 复现：`python -m pytest -q tests/test_extension33.py tests/test_r_oracles25.py`。
+- 边界：Van der Waerden 仅接受两组；Bartels 无 exact p；Woolf 仅 2x2xk、不做三阶交互。
+
 ## 0.39.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

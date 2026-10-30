@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（262；下表为 89 个早期算子，0.8–0.38 新增见末尾证据）
+## 3. Operator（265；下表为 89 个早期算子，0.8–0.38 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -479,3 +479,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - R 参考值：Hotelling F **22.131694828469026**、df **3/4**、p **0.0059380028788470485**（T² **99.592610**）；Yuen t **-0.566987210046772**、df **10**、p **0.5832249832837027**、diff **-1.0**、95% CI **-4.9297867967823645 / 2.9297867967823645**、trimmed means **5.5/6.5**；G **12.750352918064657**、df **4**、p **0.012562279689834366**、n=100。
 - 0.39 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 262/82/21；参考页 262 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 208 passed。
 - 边界：Hotelling T² 使用合并协方差、F 近似，要求完整样本与满秩协方差；Yuen 使用 `trim=0.2` 默认、Winsorized 方差与 Welch 自由度，不提供 exact p；G-test 使用 `correct="none"`，不做 Yates/Williams 校正。
+
+## 40. 0.40.0 扩展证据
+
+- 新增 3 个非参数/随机性算子：`van_waerden`（Van der Waerden 正态得分检验）、`bartels_rank`（Bartels 秩检验）、`woolf_test`（Woolf 同质 OR 检验）；未新增 Reader。
+- `tests/test_extension33.py` 4 项、`tests/test_r_oracles25.py` 1 项，合计 **5 项通过**；R 对照 `DescTools::VanWaerdenTest`、`DescTools::BartelsRankTest`、`DescTools::WoolfTest`。
+- R 参考值：Van der Waerden chi2 **6.349304**、df **1**、p **0.01174273**；Bartels RVN **0.1090909**、z **-3.2509408**、mu **2**、var **0.3383165**、p **0.001150238**；Woolf X2 **0.1481616**、df **2**、p **0.9285967**。
+- 0.40 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 265/82/21；参考页 265 算子 / 82 Reader；增量门 21 passed；Studio 前端 211 passed。
+- 边界：Van der Waerden 仅两组、正态得分使用平均秩；Bartels 要求 n>=10、仅正态近似、无 exact p；Woolf 需要 2x2xk 的四个计数列，零格自动 +0.5，不做三阶交互。
