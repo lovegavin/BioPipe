@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.53.0 — 2026-10-31
+
+- 新增：304 算子 / 82 Reader / 21 route；新增 Ansari-Bradley 秩尺度、χ² 方差离群、分箱校准曲线三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension46.py` 4 项、`tests/test_r_oracles37.py` 1 项，合计 **5 passed**；Ansari/χ² 离群对照 R `stats::ansari.test(exact=FALSE)`、`outliers::chisq.out.test`；registry clean；参考页 304/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 250 passed。
+- 边界：Ansari 采用正态近似（含并列校正），不提供精确条件分布；χ² 离群要求方差为正、样本量至少 3；校准曲线要求二分类标签、概率在 [0,1]、每箱非空。
+
 ## 0.52.0 — 2026-10-31
 
 - 新增：301 算子 / 82 Reader / 21 route；新增 D'Agostino 偏度、Pearson χ² 拟合优度、Cochran C 方差离群三个算子；未修改核心层。
