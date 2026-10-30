@@ -1,0 +1,65 @@
+{
+  "type": "object",
+  "properties": {
+    "a_region_dim": {
+      "type": "string",
+      "default": "region"
+    },
+    "a_field_dim": {
+      "type": "string",
+      "default": "field"
+    },
+    "a_chrom_field": {
+      "type": "string",
+      "default": "chrom"
+    },
+    "a_start_field": {
+      "type": "string",
+      "default": "chromStart"
+    },
+    "a_end_field": {
+      "type": "string",
+      "default": "chromEnd"
+    },
+    "b_record_dim": {
+      "type": "string",
+      "default": "record"
+    },
+    "b_field_dim": {
+      "type": "string",
+      "default": "field"
+    },
+    "b_chrom_field": {
+      "type": "string",
+      "default": "seqid"
+    },
+    "b_start_field": {
+      "type": "string",
+      "default": "start"
+    },
+    "b_end_field": {
+      "type": "string",
+      "default": "end"
+    },
+    "b_strand_field": {
+      "type": "string",
+      "default": "strand"
+    },
+    "feature_type": {
+      "type": "string",
+      "default": "gene"
+    },
+    "max_distance": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "default": null
+    },
+    "output": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

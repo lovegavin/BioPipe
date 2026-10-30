@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "dim": {
+      "title": "选择维度",
+      "type": "string",
+      "x-ui-default": "feature"
+    },
+    "labels": {
+      "title": "保留的标签",
+      "type": "array",
+      "x-ui-default": [
+        "f0",
+        "f1"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "form",
+        "contact_matrix"
+      ],
+      "default": "form"
+    },
+    "region": {
+      "type": "string"
+    },
+    "region2": {
+      "type": "string"
+    },
+    "balanced": {
+      "type": "boolean",
+      "default": true
+    },
+    "weight_name": {
+      "type": "string",
+      "default": "weight"
+    }
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source_type": {
+            "const": "contact_matrix"
+          }
+        },
+        "required": [
+          "source_type"
+        ]
+      },
+      "then": {
+        "required": [
+          "region"
+        ]
+      },
+      "else": {
+        "required": [
+          "dim",
+          "labels"
+        ]
+      }
+    }
+  ]
+}

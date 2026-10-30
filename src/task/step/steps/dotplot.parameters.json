@@ -1,0 +1,108 @@
+{
+  "type": "object",
+  "properties": {
+    "feature_dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "group_dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "group_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "statistic": {
+      "type": "string",
+      "enum": [
+        "mean",
+        "median",
+        "sum"
+      ],
+      "default": "mean"
+    },
+    "proportion_mode": {
+      "type": "string",
+      "enum": [
+        "nonzero",
+        "threshold"
+      ],
+      "default": "nonzero"
+    },
+    "threshold": {
+      "type": "number",
+      "default": 0
+    },
+    "filename": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string"
+    },
+    "xlabel": {
+      "type": "string"
+    },
+    "ylabel": {
+      "type": "string"
+    },
+    "cmap": {
+      "type": "string",
+      "default": "viridis"
+    },
+    "dot_scale": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 200
+    },
+    "figure_width_mm": {
+      "title": "Figure width (mm)",
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Physical output width; height keeps its aspect ratio unless set separately."
+    },
+    "figure_height_mm": {
+      "title": "Figure height (mm)",
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "figure_dpi": {
+      "title": "Figure resolution (DPI)",
+      "type": "integer",
+      "minimum": 72,
+      "default": 300,
+      "description": "PNG and rasterized layers; PDF/SVG labels and axes remain vector."
+    },
+    "figure_font_size": {
+      "title": "Figure font size (pt)",
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 8
+    }
+  },
+  "required": [
+    "feature_dim",
+    "group_dim",
+    "features",
+    "group_label",
+    "filename"
+  ],
+  "additionalProperties": false
+}

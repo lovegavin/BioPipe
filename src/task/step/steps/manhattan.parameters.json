@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "dim": {
+      "title": "变异维度",
+      "type": "string",
+      "default": "feature"
+    },
+    "chrom_label": {
+      "title": "染色体字段",
+      "type": "string",
+      "x-ui-default": "chrom"
+    },
+    "pos_label": {
+      "title": "位置字段",
+      "type": "string",
+      "x-ui-default": "pos"
+    },
+    "p_dim": {
+      "title": "统计量维度",
+      "type": "string",
+      "x-ui-default": "statistic"
+    },
+    "p_label": {
+      "title": "P 值标签",
+      "type": "string",
+      "x-ui-default": "P"
+    },
+    "filename": {
+      "title": "文件名",
+      "type": "string",
+      "x-ui-default": "manhattan.png"
+    },
+    "alpha": {
+      "title": "Opacity",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.85,
+      "x-ui-step": 0.05
+    },
+    "point_size": {
+      "title": "Point size",
+      "type": "number",
+      "minimum": 0,
+      "default": 6
+    },
+    "threshold": {
+      "title": "Significance threshold",
+      "type": "number"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "figure_width_mm": {
+      "title": "Figure width (mm)",
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Physical output width; height keeps its aspect ratio unless set separately."
+    },
+    "figure_height_mm": {
+      "title": "Figure height (mm)",
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "figure_dpi": {
+      "title": "Figure resolution (DPI)",
+      "type": "integer",
+      "minimum": 72,
+      "default": 300,
+      "description": "PNG and rasterized layers; PDF/SVG labels and axes remain vector."
+    },
+    "figure_font_size": {
+      "title": "Figure font size (pt)",
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 8
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "chrom_label",
+    "pos_label",
+    "p_label",
+    "filename"
+  ]
+}

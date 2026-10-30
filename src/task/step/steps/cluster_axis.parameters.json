@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "properties": {
+    "dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "kmeans",
+        "hierarchical",
+        "louvain"
+      ]
+    },
+    "n_clusters": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "n_neighbors": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 15
+    },
+    "resolution": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 1.0
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0
+    }
+  },
+  "required": [
+    "dim",
+    "method"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "properties": {
+    "dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "columns": {
+      "oneOf": [
+        {
+          "const": "all"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      ],
+      "default": "all"
+    },
+    "how": {
+      "type": "string",
+      "enum": [
+        "inner",
+        "left"
+      ],
+      "default": "inner"
+    },
+    "prefix": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "dim"
+  ],
+  "additionalProperties": false
+}

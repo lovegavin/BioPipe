@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "resolution": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

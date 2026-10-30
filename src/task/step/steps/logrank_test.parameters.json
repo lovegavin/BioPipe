@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "time_label": {
+      "title": "随访时间字段",
+      "type": "string"
+    },
+    "event_label": {
+      "title": "事件字段",
+      "type": "string"
+    },
+    "group_label": {
+      "title": "分组字段",
+      "type": "string"
+    },
+    "group_map": {
+      "title": "分组映射",
+      "type": [
+        "object",
+        "array"
+      ]
+    },
+    "groups": {
+      "title": "显示分组顺序",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pairwise": {
+      "title": "两两比较",
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "time_label",
+    "event_label",
+    "group_label"
+  ]
+}

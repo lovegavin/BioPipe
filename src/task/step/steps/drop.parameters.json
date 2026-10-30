@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "dim": {
+      "title": "移除维度",
+      "type": "string",
+      "x-ui-default": "feature"
+    },
+    "labels": {
+      "title": "移除的标签",
+      "type": "array",
+      "x-ui-default": [
+        "f0"
+      ],
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "dim",
+    "labels"
+  ]
+}

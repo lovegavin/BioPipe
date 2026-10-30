@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "from": {
+      "title": "原维度",
+      "type": "string",
+      "x-ui-default": "feature"
+    },
+    "to": {
+      "title": "新维度",
+      "type": "string",
+      "x-ui-default": "variant"
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "from",
+    "to"
+  ]
+}

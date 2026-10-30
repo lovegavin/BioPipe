@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "dim": {
+      "title": "特征维度",
+      "type": "string",
+      "x-ui-default": "feature"
+    },
+    "response": {
+      "title": "响应变量标签",
+      "type": "string",
+      "x-ui-default": "trait"
+    },
+    "covariates": {
+      "title": "协变量标签",
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
+    "method": {
+      "title": "模型",
+      "enum": [
+        "auto",
+        "ols",
+        "logit"
+      ],
+      "default": "auto"
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "dim",
+    "response"
+  ]
+}

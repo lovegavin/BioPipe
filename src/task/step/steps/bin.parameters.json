@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "properties": {
+    "dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "bins": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 10
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "quantile",
+        "uniform"
+      ],
+      "default": "quantile"
+    },
+    "value_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stat": {
+      "type": "string",
+      "enum": [
+        "mean",
+        "median",
+        "min",
+        "max",
+        "first"
+      ],
+      "default": "mean"
+    }
+  },
+  "required": [
+    "dim"
+  ],
+  "additionalProperties": false
+}

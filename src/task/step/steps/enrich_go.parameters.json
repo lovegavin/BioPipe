@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "properties": {
+    "gene_dim": {
+      "type": "string",
+      "title": "Gene dimension",
+      "default": "gene"
+    },
+    "term_dim": {
+      "type": "string",
+      "title": "Term dimension",
+      "default": "go_term"
+    },
+    "correction": {
+      "type": "string",
+      "title": "Multiple-testing correction",
+      "enum": [
+        "fdr",
+        "bonferroni",
+        "holm",
+        "hommel",
+        "fdr_by"
+      ],
+      "default": "fdr"
+    },
+    "min_term_size": {
+      "type": "integer",
+      "title": "Minimum term size",
+      "minimum": 1,
+      "default": 1
+    },
+    "output": {
+      "type": "string",
+      "title": "Output key"
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "properties": {
+    "dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "by": {
+      "type": "string",
+      "enum": [
+        "variance",
+        "std",
+        "mean",
+        "sum",
+        "nonzero",
+        "abs_mean",
+        "max"
+      ]
+    },
+    "top_n": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "min_value": {
+      "type": "number"
+    },
+    "keep_ties": {
+      "type": "boolean",
+      "default": false
+    },
+    "descending": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "dim",
+    "by"
+  ],
+  "additionalProperties": false,
+  "anyOf": [
+    {
+      "required": [
+        "top_n"
+      ]
+    },
+    {
+      "required": [
+        "min_value"
+      ]
+    }
+  ]
+}

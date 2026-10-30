@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "fields": {
+      "title": "注释字段",
+      "type": "array",
+      "x-ui-default": [
+        "chrom",
+        "pos"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "target_dim": {
+      "title": "目标维度",
+      "type": "string",
+      "x-ui-default": "feature"
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "fields",
+    "target_dim"
+  ]
+}

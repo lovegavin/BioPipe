@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence"
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position"
+    },
+    "output": {
+      "type": "string"
+    },
+    "fastq_summary": {
+      "type": "boolean",
+      "default": false
+    },
+    "record_buffer_mb": {
+      "type": "number",
+      "default": 1,
+      "exclusiveMinimum": 0
+    }
+  },
+  "additionalProperties": false
+}

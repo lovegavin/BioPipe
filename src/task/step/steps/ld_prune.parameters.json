@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "dim": {
+      "title": "变异维度",
+      "type": "string",
+      "x-ui-default": "variant"
+    },
+    "window": {
+      "title": "窗口大小",
+      "type": "integer",
+      "minimum": 1,
+      "default": 50
+    },
+    "r2": {
+      "title": "R² 阈值",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.2,
+      "x-ui-step": 0.05
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "dim"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "properties": {
+    "dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "metrics": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "shannon",
+            "simpson",
+            "richness",
+            "evenness",
+            "gini"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "shannon",
+              "simpson",
+              "richness",
+              "evenness",
+              "gini"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      ]
+    }
+  },
+  "required": [
+    "dim",
+    "metrics"
+  ],
+  "additionalProperties": false
+}

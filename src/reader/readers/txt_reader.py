@@ -1,0 +1,112 @@
+# src/reader/readers/txt_reader.py
+"""Generic text reader that delegates to another reader.
+
+Handles .txt and .tab extensions that have no dedicated reader.
+Parsing is delegated to another registered reader, selected by name.
+
+Params:
+    reader : name of the reader to delegate to, matched against the
+             class name with "Reader" stripped and lowercased.
+             Examples: "csv" -> CsvReader, "bed" -> BedReader,
+             "gtf" -> GtfReader. Default "csv".
+    All other args are forwarded to the delegated reader.
+
+When the delegate is CsvReader and ``sep`` is not given, a tab
+separator is assumed for .txt and .tab files.
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+from src.core import Form, ReaderError
+from src.reader.base import Reader
+from src.core.contracts import validate_form, validate_output, source_schema
+
+
+class TxtReader(Reader):
+    """Read generic text files by delegating to another reader."""
+    provider = 'biopipe-readers'
+    parameters_file = 'txt_reader.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'TxtReader',
+     'version': '1.0.0',
+     'kind': 'reader',
+     'title': 'TxtReader',
+     'contracts': {'version': 1,
+                   'inputs': [],
+                   'output': {'version': 1,
+                              'numeric': True,
+                              'info': {'missing_code': {'type': ['number', 'null']},
+                                       'encoders': {'type': 'object', 'optional': True}},
+                              'dims': [],
+                              'labels': [],
+                              'parallel': [],
+                              'axis_fields': [],
+                              'info_open': True}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False},
+     'extensions': ['.txt', '.tab'],
+     'requires_siblings': [],
+     'excludes_siblings': [],
+     'handles_compression': False,
+     'file_input': {'dims': ['sample', 'feature'], 'labels': {'sample': 'auto', 'feature': 'builtin'}}}
+
+
+    # The delegate owns dimensionality and format-specific metadata guarantees.
+
+
+
+    def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
+        reader_name = args.pop("reader", "csv")
+        if not isinstance(reader_name, str):
+            raise ReaderError(
+                f"TxtReader: 'reader' must be a string, "
+                f"got {type(reader_name).__name__}"
+            )
+
+        delegate = _find_reader(reader_name, exclude=self)
+
+        # Sensible default separator for the CSV delegate.
+        if type(delegate).__name__ == "CsvReader" and "sep" not in args:
+            ext = path.suffix.lower()
+            if ext in (".tab", ".txt"):
+                args["sep"] = "\t"
+
+        form = delegate.read(path, dims, labels, **args)
+        validate_form(form, delegate.output_contract, f"TxtReader/{type(delegate).__name__} output")
+        validate_output(form, source_schema(delegate.output_contract, dims), f"TxtReader/{type(delegate).__name__} output")
+        return form
+
+
+def _find_reader(name: str, exclude: Reader | None = None) -> Reader:
+    from src.reader import READERS
+
+    key = name.lower().strip()
+    matches: list[Reader] = []
+    for r in READERS:
+        if r is exclude or (exclude is not None and type(r).__name__ == type(exclude).__name__):
+            continue
+        cls_name = type(r).__name__
+        stem = cls_name[:-len("Reader")] if cls_name.endswith("Reader") \
+            else cls_name
+        if stem.lower() == key:
+            matches.append(r)
+
+    if not matches:
+        available = sorted({
+            (lambda c: c[:-len("Reader")] if c.endswith("Reader") else c)(
+                type(r).__name__
+            ).lower()
+            for r in READERS
+            if r is not exclude and (exclude is None or type(r).__name__ != type(exclude).__name__)
+        })
+        raise ReaderError(
+            f"TxtReader: no reader named '{name}'. "
+            f"Available: {available}"
+        )
+    if len(matches) > 1:
+        raise ReaderError(
+            f"TxtReader: ambiguous reader name '{name}': "
+            f"{[type(r).__name__ for r in matches]}"
+        )
+    return matches[0]

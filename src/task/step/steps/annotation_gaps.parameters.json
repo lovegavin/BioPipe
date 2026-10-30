@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "record_dim": {
+      "type": "string",
+      "default": "record"
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field"
+    },
+    "min_gap": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "output": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

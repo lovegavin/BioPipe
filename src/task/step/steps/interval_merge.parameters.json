@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "properties": {
+    "region_dim": {
+      "type": "string",
+      "default": "region"
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field"
+    },
+    "chrom_field": {
+      "type": "string",
+      "default": "chrom"
+    },
+    "start_field": {
+      "type": "string",
+      "default": "chromStart"
+    },
+    "end_field": {
+      "type": "string",
+      "default": "chromEnd"
+    },
+    "min_overlap": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "output": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

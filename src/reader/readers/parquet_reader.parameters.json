@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "encoders": {
+      "type": "object",
+      "title": "Encoders",
+      "description": "Per-field encoder configuration.",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

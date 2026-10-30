@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "properties": {
+    "mate_path": {
+      "type": "string",
+      "description": "R2 path, absolute or relative to the R1 directory.",
+      "x-biopipe-path": "source"
+    },
+    "phred_offset": {
+      "type": "integer",
+      "default": 33,
+      "enum": [
+        33,
+        64
+      ]
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

@@ -1,0 +1,83 @@
+{
+  "type": "object",
+  "properties": {
+    "dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "group_dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "group_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "two_groups",
+        "one_vs_rest",
+        "pairwise"
+      ],
+      "default": "two_groups"
+    },
+    "group_a": {
+      "type": [
+        "string",
+        "number"
+      ],
+      "x-ui-type": "scalar"
+    },
+    "group_b": {
+      "type": [
+        "string",
+        "number"
+      ],
+      "x-ui-type": "scalar"
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 2,
+      "uniqueItems": true
+    },
+    "min_per_group": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "ttest",
+        "welch",
+        "mannwhitney",
+        "wilcoxon",
+        "deseq2"
+      ],
+      "default": "ttest"
+    }
+  },
+  "required": [
+    "dim",
+    "group_dim",
+    "group_label"
+  ],
+  "additionalProperties": false,
+  "if": {
+    "properties": {
+      "mode": {
+        "const": "two_groups"
+      }
+    }
+  },
+  "then": {
+    "required": [
+      "group_a",
+      "group_b"
+    ]
+  }
+}

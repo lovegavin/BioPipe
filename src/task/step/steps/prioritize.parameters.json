@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "properties": {
+    "dim": {
+      "type": "string",
+      "title": "Dimension to sort",
+      "description": "Axis along which positions are ranked."
+    },
+    "by": {
+      "type": "string",
+      "title": "Ranking field",
+      "description": "Numeric info field declared parallel to 'dim'. Cannot be an encoded field."
+    },
+    "top_n": {
+      "type": "integer",
+      "title": "Top N",
+      "minimum": 1
+    },
+    "ascending": {
+      "type": "boolean",
+      "title": "Ascending",
+      "default": false,
+      "description": "False ranks largest first; True ranks smallest first."
+    },
+    "output": {
+      "type": "string",
+      "title": "Output key"
+    }
+  },
+  "required": [
+    "dim",
+    "by",
+    "top_n"
+  ]
+}

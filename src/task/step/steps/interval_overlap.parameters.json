@@ -1,0 +1,59 @@
+{
+  "type": "object",
+  "properties": {
+    "a_region_dim": {
+      "type": "string",
+      "default": "region"
+    },
+    "a_field_dim": {
+      "type": "string",
+      "default": "field"
+    },
+    "a_chrom_field": {
+      "type": "string",
+      "default": "chrom"
+    },
+    "a_start_field": {
+      "type": "string",
+      "default": "chromStart"
+    },
+    "a_end_field": {
+      "type": "string",
+      "default": "chromEnd"
+    },
+    "b_region_dim": {
+      "type": "string",
+      "default": "region"
+    },
+    "b_field_dim": {
+      "type": "string",
+      "default": "field"
+    },
+    "b_chrom_field": {
+      "type": "string",
+      "default": "chrom"
+    },
+    "b_start_field": {
+      "type": "string",
+      "default": "chromStart"
+    },
+    "b_end_field": {
+      "type": "string",
+      "default": "chromEnd"
+    },
+    "min_overlap": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1
+    },
+    "max_output": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1000000
+    },
+    "output": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

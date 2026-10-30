@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "method": {
+      "title": "方法",
+      "enum": [
+        "min",
+        "median",
+        "mean"
+      ],
+      "x-ui-default": "median"
+    },
+    "dim": {
+      "title": "分析维度",
+      "type": "string",
+      "x-ui-default": "feature"
+    },
+    "min_scale": {
+      "title": "最小值倍率",
+      "type": "number",
+      "minimum": 0,
+      "default": 1.0
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "method",
+    "dim"
+  ]
+}

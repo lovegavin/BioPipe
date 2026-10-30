@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "dim": {
+      "type": "string",
+      "minLength": 1
+    },
+    "group_col": {
+      "type": "string",
+      "minLength": 1
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "sum",
+        "mean",
+        "median",
+        "min",
+        "max",
+        "count"
+      ],
+      "default": "sum"
+    }
+  },
+  "required": [
+    "dim",
+    "group_col"
+  ],
+  "additionalProperties": false
+}

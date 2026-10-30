@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "dim": {
+      "title": "压缩维度",
+      "type": "string",
+      "x-ui-default": "feature"
+    },
+    "n_components": {
+      "title": "主成分数量",
+      "type": "integer",
+      "minimum": 1,
+      "default": 10,
+      "x-ui-default": 2
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "dim"
+  ]
+}

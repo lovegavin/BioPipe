@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "dim": {
+      "title": "分析维度",
+      "type": "string",
+      "default": "feature"
+    },
+    "value_label": {
+      "title": "数值字段",
+      "type": "string"
+    },
+    "group_dim": {
+      "title": "样本维度",
+      "type": "string",
+      "x-ui-default": "sample"
+    },
+    "group_label": {
+      "title": "分组字段",
+      "type": "string"
+    },
+    "groups": {
+      "title": "显示分组顺序",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "filename": {
+      "title": "图片文件名",
+      "type": "string",
+      "x-ui-default": "boxplot.png"
+    },
+    "title": {
+      "title": "图标题",
+      "type": "string"
+    },
+    "xlabel": {
+      "title": "X 轴标题",
+      "type": "string"
+    },
+    "ylabel": {
+      "title": "Y 轴标题",
+      "type": "string"
+    },
+    "show_points": {
+      "title": "显示散点",
+      "type": "boolean",
+      "default": true
+    },
+    "point_size": {
+      "title": "点大小",
+      "type": "number",
+      "minimum": 1,
+      "default": 4
+    },
+    "point_alpha": {
+      "title": "点透明度",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.5
+    },
+    "figure_width_mm": {
+      "title": "Figure width (mm)",
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Physical output width; height keeps its aspect ratio unless set separately."
+    },
+    "figure_height_mm": {
+      "title": "Figure height (mm)",
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "figure_dpi": {
+      "title": "Figure resolution (DPI)",
+      "type": "integer",
+      "minimum": 72,
+      "default": 300,
+      "description": "PNG and rasterized layers; PDF/SVG labels and axes remain vector."
+    },
+    "figure_font_size": {
+      "title": "Figure font size (pt)",
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 8
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "value_label",
+    "group_dim",
+    "group_label",
+    "filename"
+  ]
+}

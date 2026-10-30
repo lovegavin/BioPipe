@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "dim": {
+      "title": "数值维度",
+      "type": "string",
+      "default": "feature",
+      "x-ui-default": "statistic"
+    },
+    "value_label": {
+      "title": "数值标签",
+      "type": "string",
+      "x-ui-default": "P"
+    },
+    "bins": {
+      "title": "分箱数量",
+      "type": "integer",
+      "minimum": 1,
+      "default": 40,
+      "x-ui-default": 20
+    },
+    "filename": {
+      "title": "文件名",
+      "type": "string",
+      "x-ui-default": "histogram.png"
+    },
+    "log_y": {
+      "title": "Log Y axis",
+      "type": "boolean",
+      "default": false
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "xlabel": {
+      "title": "X axis label",
+      "type": "string"
+    },
+    "ylabel": {
+      "title": "Y axis label",
+      "type": "string",
+      "default": "Count"
+    },
+    "figure_width_mm": {
+      "title": "Figure width (mm)",
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Physical output width; height keeps its aspect ratio unless set separately."
+    },
+    "figure_height_mm": {
+      "title": "Figure height (mm)",
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "figure_dpi": {
+      "title": "Figure resolution (DPI)",
+      "type": "integer",
+      "minimum": 72,
+      "default": 300,
+      "description": "PNG and rasterized layers; PDF/SVG labels and axes remain vector."
+    },
+    "figure_font_size": {
+      "title": "Figure font size (pt)",
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 8
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "value_label",
+    "filename"
+  ]
+}

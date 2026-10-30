@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "dim": {
+      "title": "变异维度",
+      "type": "string",
+      "x-ui-default": "variant"
+    },
+    "threshold": {
+      "title": "最低 MAF",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 0.5,
+      "default": 0.01,
+      "x-ui-default": 0.05,
+      "x-ui-step": 0.01
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "dim"
+  ]
+}

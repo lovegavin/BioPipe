@@ -1,0 +1,115 @@
+{
+  "type": "object",
+  "properties": {
+    "executor": {
+      "type": "string",
+      "default": "auto",
+      "enum": [
+        "auto",
+        "native",
+        "wsl"
+      ]
+    },
+    "wsl_distribution": {
+      "type": "string"
+    },
+    "threads": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 1
+    },
+    "memory_mb": {
+      "type": "number",
+      "default": 256,
+      "exclusiveMinimum": 0
+    },
+    "timeout_seconds": {
+      "type": "number",
+      "default": 0,
+      "minimum": 0
+    },
+    "tool_paths": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "output": {
+      "type": "string"
+    },
+    "method": {
+      "type": "string",
+      "default": "expected",
+      "enum": [
+        "expected",
+        "compartments",
+        "insulation",
+        "loops",
+        "pileup"
+      ]
+    },
+    "resolution": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "view": {
+      "type": "string",
+      "x-biopipe-path": "workflow"
+    },
+    "phasing_track": {
+      "type": "string",
+      "x-biopipe-path": "workflow"
+    },
+    "features": {
+      "type": "string",
+      "x-biopipe-path": "workflow"
+    },
+    "features_format": {
+      "type": "string",
+      "default": "BEDPE",
+      "enum": [
+        "BED",
+        "BEDPE"
+      ]
+    },
+    "windows": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "default": [
+        100000,
+        250000,
+        500000
+      ],
+      "minItems": 1
+    },
+    "weight_name": {
+      "type": "string",
+      "default": "weight"
+    },
+    "n_eigs": {
+      "type": "integer",
+      "default": 3,
+      "minimum": 1
+    },
+    "ignore_diags": {
+      "type": "integer",
+      "default": 2,
+      "minimum": 0
+    },
+    "max_loci_separation": {
+      "type": "integer",
+      "default": 2000000,
+      "minimum": 1
+    },
+    "flank": {
+      "type": "integer",
+      "default": 100000,
+      "minimum": 1
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

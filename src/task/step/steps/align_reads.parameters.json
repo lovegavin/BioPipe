@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "properties": {
+    "executor": {
+      "type": "string",
+      "default": "auto",
+      "enum": [
+        "auto",
+        "native",
+        "wsl"
+      ]
+    },
+    "wsl_distribution": {
+      "type": "string"
+    },
+    "threads": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 1
+    },
+    "memory_mb": {
+      "type": "number",
+      "default": 256,
+      "exclusiveMinimum": 0
+    },
+    "timeout_seconds": {
+      "type": "number",
+      "default": 0,
+      "minimum": 0
+    },
+    "tool_paths": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "output": {
+      "type": "string"
+    },
+    "reference_fasta": {
+      "type": "string",
+      "x-biopipe-path": "workflow"
+    },
+    "assembly": {
+      "type": "string",
+      "default": "unknown"
+    },
+    "record_buffer_mb": {
+      "type": "number",
+      "default": 1,
+      "exclusiveMinimum": 0
+    }
+  },
+  "required": [
+    "reference_fasta"
+  ],
+  "additionalProperties": false
+}

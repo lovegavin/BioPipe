@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "dim": {
+      "title": "分析维度",
+      "type": "string",
+      "x-ui-default": "feature"
+    },
+    "min_value": {
+      "title": "最低信号",
+      "type": "number",
+      "minimum": 0,
+      "default": 1
+    },
+    "min_samples": {
+      "title": "最少样本数",
+      "type": "integer",
+      "minimum": 1,
+      "default": 1
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "dim"
+  ]
+}

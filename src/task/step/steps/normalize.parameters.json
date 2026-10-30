@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "method": {
+      "title": "方法",
+      "enum": [
+        "cpm",
+        "total",
+        "median_of_ratios",
+        "quantile",
+        "zscore"
+      ],
+      "x-ui-default": "cpm"
+    },
+    "dim": {
+      "title": "分析维度",
+      "type": "string",
+      "x-ui-default": "sample"
+    },
+    "target_sum": {
+      "title": "目标总量",
+      "type": "number",
+      "minimum": 0,
+      "default": 1000000.0
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "method",
+    "dim"
+  ]
+}

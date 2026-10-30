@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "order": {
+      "title": "维度顺序",
+      "type": "array",
+      "x-ui-default": [
+        "feature",
+        "sample"
+      ],
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "order"
+  ]
+}

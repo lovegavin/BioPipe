@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence"
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position"
+    },
+    "min_aa": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1
+    },
+    "output": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

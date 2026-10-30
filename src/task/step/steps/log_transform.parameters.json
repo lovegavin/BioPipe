@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "base": {
+      "title": "底数",
+      "enum": [
+        2,
+        10,
+        "e"
+      ],
+      "default": 2
+    },
+    "pseudocount": {
+      "title": "伪计数",
+      "type": "number",
+      "minimum": 0,
+      "default": 1
+    }
+  },
+  "additionalProperties": true,
+  "required": []
+}
