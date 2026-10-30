@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（259；下表为 89 个早期算子，0.8–0.38 新增见末尾证据）
+## 3. Operator（262；下表为 89 个早期算子，0.8–0.38 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -471,3 +471,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - R 参考值：Somers' D(row) **0.44885945548197204**、D(column) **0.45218680504077097**、concordant/discordant **787/177**；gamma **0.63278008298755184**；Kendall W **0.84444444444444444**、chisq **10.133333333333333**、df **4**、p **0.038240605326664866**、S **76**、5 subjects × 3 raters。
 - 0.38 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 259/82/21；参考页 259 算子 / 82 Reader；增量门 21 passed；Studio 前端 205 passed。
 - 边界：Somers' D 依赖 `direction` 选择被解释变量，只对列联表计算；gamma 不提供 CI；Kendall's W 按列（rater）排名、`correct=FALSE` 语义，不做并列秩校正，也不输出事后两两比较。
+
+## 39. 0.39.0 扩展证据
+
+- 新增 3 个多元/稳健/分类数据检验算子：`hotelling_t2`（两样本 Hotelling's T²）、`yuen_test`（Yuen 截尾均值 t 检验）、`g_test`（列联表 G 检验）；未新增 Reader。
+- `tests/test_extension32.py` 4 项、`tests/test_r_oracles24.py` 1 项，合计 **5 项通过**；R 对照 `DescTools::HotellingsT2Test`、`DescTools::YuenTTest(trim=0.2)`、`DescTools::GTest(correct="none")`。
+- R 参考值：Hotelling F **22.131694828469026**、df **3/4**、p **0.0059380028788470485**（T² **99.592610**）；Yuen t **-0.566987210046772**、df **10**、p **0.5832249832837027**、diff **-1.0**、95% CI **-4.9297867967823645 / 2.9297867967823645**、trimmed means **5.5/6.5**；G **12.750352918064657**、df **4**、p **0.012562279689834366**、n=100。
+- 0.39 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 262/82/21；参考页 262 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 208 passed。
+- 边界：Hotelling T² 使用合并协方差、F 近似，要求完整样本与满秩协方差；Yuen 使用 `trim=0.2` 默认、Winsorized 方差与 Welch 自由度，不提供 exact p；G-test 使用 `correct="none"`，不做 Yates/Williams 校正。

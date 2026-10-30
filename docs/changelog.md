@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.39.0 — 2026-10-31
+
+- 新增：262 算子 / 82 Reader / 21 route；新增 Hotelling's T²、Yuen 截尾均值 t 检验、列联表 G 检验三个多元/稳健/分类数据检验算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension32.py` 4 项、`tests/test_r_oracles24.py` 1 项，合计 **5 passed**；R 对照 `DescTools::HotellingsT2Test`、`DescTools::YuenTTest`、`DescTools::GTest(correct="none")`；registry clean；参考页 262/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 208 passed。
+- 边界：Hotelling T² 使用合并协方差与 F 近似；Yuen 使用 `trim=0.2` 默认与 Welch 自由度，不提供 exact p；G-test 不做 Yates/Williams 校正。
+
 ## 0.38.0 — 2026-10-31
 
 - 新增：259 算子 / 82 Reader / 21 route；新增 Somers' D、Goodman-Kruskal gamma、Kendall's W 三个有序关联/一致性算子；未修改核心层。

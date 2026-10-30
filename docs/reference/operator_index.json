@@ -10902,6 +10902,79 @@
     "quality": "auto"
   },
   {
+    "id": "g_test",
+    "kind": "operator",
+    "title": "G-test of independence",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "row_dim",
+              "default": "row"
+            },
+            {
+              "param": "column_dim",
+              "default": "column"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "row_dim": {
+          "type": "string",
+          "default": "row",
+          "title": "Row Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "column_dim": {
+          "type": "string",
+          "default": "column",
+          "title": "Column Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/g_test.py",
+    "tests": [
+      "tests/test_extension32.py",
+      "tests/test_r_oracles24.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/g_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "gamma_regression",
     "kind": "operator",
     "title": "Gamma regression",
@@ -12870,6 +12943,127 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/hosmer_lemeshow.md",
+    "quality": "auto"
+  },
+  {
+    "id": "hotelling_t2",
+    "kind": "operator",
+    "title": "Hotelling's T-squared",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_a": {
+          "type": "string",
+          "title": "A 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "group_b": {
+          "type": "string",
+          "title": "B 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "group_label",
+        "group_a",
+        "group_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/hotelling_t2.py",
+    "tests": [
+      "tests/test_extension32.py",
+      "tests/test_r_oracles24.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/hotelling_t2.md",
     "quality": "auto"
   },
   {
@@ -29607,6 +29801,145 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/winsorize.md",
+    "quality": "auto"
+  },
+  {
+    "id": "yuen_test",
+    "kind": "operator",
+    "title": "Yuen trimmed-mean test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_a": {
+          "type": "string",
+          "title": "A 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "group_b": {
+          "type": "string",
+          "title": "B 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "trim": {
+          "type": "number",
+          "minimum": 0,
+          "exclusiveMaximum": 0.5,
+          "default": 0.2,
+          "title": "Trim",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "confidence": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "default": 0.95,
+          "title": "Confidence",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 80
+        }
+      },
+      "required": [
+        "group_label",
+        "group_a",
+        "group_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/yuen_test.py",
+    "tests": [
+      "tests/test_extension32.py",
+      "tests/test_r_oracles24.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/yuen_test.md",
     "quality": "auto"
   },
   {

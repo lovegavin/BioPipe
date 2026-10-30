@@ -2,6 +2,18 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.39.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `hotelling_t2` | R `DescTools::HotellingsT2Test` | `tests/test_r_oracles24.py` | F 22.131694828469026，df 3/4，p 0.0059380028788470485；T² 99.592610；合并协方差、F 近似 |
+| `yuen_test` | R `DescTools::YuenTTest(trim=0.2)` | `tests/test_r_oracles24.py` | t -0.566987210046772，df 10，p 0.5832249832837027，diff -1.0，95% CI -4.9297867967823645/2.9297867967823645；Winsorized 方差、Welch df |
+| `g_test` | R `DescTools::GTest(correct="none")` | `tests/test_r_oracles24.py` | G 12.750352918064657，df 4，p 0.012562279689834366，n=100；无 Yates/Williams 校正 |
+
+- 使用已安装的 `DescTools`。
+- 复现：`python -m pytest -q tests/test_extension32.py tests/test_r_oracles24.py`。
+- 边界：Hotelling 要求完整样本、满秩合并协方差、F 近似；Yuen 默认 `trim=0.2`，不提供 exact p；G-test 仅二维列联表、无校正。
+
 ## 0.38.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
