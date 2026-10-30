@@ -499,6 +499,64 @@
     "quality": "auto"
   },
   {
+    "id": "BimReader",
+    "kind": "reader",
+    "extensions": [
+      ".bim"
+    ],
+    "file_input": {
+      "dims": [
+        "variant",
+        "feature"
+      ],
+      "labels": {
+        "variant": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/bim_reader.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "doc": "docs/reference/readers/BimReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "BiomReader",
     "kind": "reader",
     "extensions": [
@@ -1202,6 +1260,64 @@
     "quality": "auto"
   },
   {
+    "id": "FamReader",
+    "kind": "reader",
+    "extensions": [
+      ".fam"
+    ],
+    "file_input": {
+      "dims": [
+        "sample",
+        "feature"
+      ],
+      "labels": {
+        "sample": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/fam_reader.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "doc": "docs/reference/readers/FamReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "FastaReader",
     "kind": "reader",
     "extensions": [
@@ -1498,6 +1614,64 @@
     "quality": "auto"
   },
   {
+    "id": "GenePredReader",
+    "kind": "reader",
+    "extensions": [
+      ".genepred"
+    ],
+    "file_input": {
+      "dims": [
+        "gene",
+        "feature"
+      ],
+      "labels": {
+        "gene": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/genepred_reader.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "doc": "docs/reference/readers/GenePredReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "GfaReader",
     "kind": "reader",
     "extensions": [
@@ -1724,6 +1898,64 @@
     "quality": "auto"
   },
   {
+    "id": "GroReader",
+    "kind": "reader",
+    "extensions": [
+      ".gro"
+    ],
+    "file_input": {
+      "dims": [
+        "atom",
+        "feature"
+      ],
+      "labels": {
+        "atom": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/gro_reader.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "doc": "docs/reference/readers/GroReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "GtfReader",
     "kind": "reader",
     "extensions": [
@@ -1922,6 +2154,87 @@
     "quality": "reviewed"
   },
   {
+    "id": "HapmapReader",
+    "kind": "reader",
+    "extensions": [
+      ".hapmap"
+    ],
+    "file_input": {
+      "dims": [
+        "variant",
+        "sample"
+      ],
+      "labels": {
+        "variant": "auto",
+        "sample": "auto"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "has_header": {
+          "type": "boolean",
+          "default": true,
+          "title": "Has Header",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "id_column": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 1,
+          "title": "Id Column",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "first_sample_column": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 5,
+          "title": "First Sample Column",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/hapmap_reader.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "doc": "docs/reference/readers/HapmapReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "HmmReader",
     "kind": "reader",
     "extensions": [
@@ -1977,6 +2290,64 @@
       "tests/test_extension10.py"
     ],
     "doc": "docs/reference/readers/HmmReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "HmmerDomtblReader",
+    "kind": "reader",
+    "extensions": [
+      ".domtblout"
+    ],
+    "file_input": {
+      "dims": [
+        "domain",
+        "feature"
+      ],
+      "labels": {
+        "domain": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/hmmer_domtbl_reader.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "doc": "docs/reference/readers/HmmerDomtblReader.md",
     "quality": "auto"
   },
   {
@@ -2351,6 +2722,72 @@
     "quality": "auto"
   },
   {
+    "id": "MgfReader",
+    "kind": "reader",
+    "extensions": [
+      ".mgf"
+    ],
+    "file_input": {
+      "dims": [
+        "spectrum",
+        "feature"
+      ],
+      "labels": {
+        "spectrum": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "max_spectra": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100000,
+          "title": "Max Spectra",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/mgf_reader.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "doc": "docs/reference/readers/MgfReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "MmcifReader",
     "kind": "reader",
     "extensions": [
@@ -2480,6 +2917,64 @@
       "tests/test_extension10.py"
     ],
     "doc": "docs/reference/readers/Mol2Reader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "MolReader",
+    "kind": "reader",
+    "extensions": [
+      ".mol"
+    ],
+    "file_input": {
+      "dims": [
+        "molecule",
+        "feature"
+      ],
+      "labels": {
+        "molecule": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/mol_reader.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "doc": "docs/reference/readers/MolReader.md",
     "quality": "auto"
   },
   {
@@ -3275,6 +3770,64 @@
     "quality": "reviewed"
   },
   {
+    "id": "PslReader",
+    "kind": "reader",
+    "extensions": [
+      ".psl"
+    ],
+    "file_input": {
+      "dims": [
+        "alignment",
+        "feature"
+      ],
+      "labels": {
+        "alignment": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/psl_reader.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "doc": "docs/reference/readers/PslReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "SamReader",
     "kind": "reader",
     "extensions": [
@@ -3928,6 +4481,64 @@
       "tests/test_extension9.py"
     ],
     "doc": "docs/reference/readers/WigReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "XyzReader",
+    "kind": "reader",
+    "extensions": [
+      ".xyz"
+    ],
+    "file_input": {
+      "dims": [
+        "atom",
+        "feature"
+      ],
+      "labels": {
+        "atom": "auto",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/xyz_reader.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "doc": "docs/reference/readers/XyzReader.md",
     "quality": "auto"
   },
   {

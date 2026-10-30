@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.16 全量 pytest **560 passed / 0 skipped**；0.17 按用户要求只跑增量 **11 passed**，未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.16/0.17/0.18 增量分别为 **12 / 11 / 14 passed**。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -11,7 +11,7 @@
 | B | 算子 demo 自测：手工可算的小例子 |
 | C | 仅契约/route/artifact 覆盖；没有独立数值 oracle |
 
-## 2. Reader（63）
+## 2. Reader（73）
 | Reader | 级别 | 证据/独立 oracle |
 |---|---|---|
 | `BedReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
@@ -79,8 +79,19 @@
 | `OboReader` | B | test_extension9.py（OBO [Term] 常用字段） |
 | `SdfReader` | B | test_extension9.py（SDF 原子/键计数与分子量） |
 
+| `FamReader` | B | test_extension11.py（FAM 6 列；IID 作行标签，性别/表型 <=0 转 NaN） |
+| `BimReader` | B | test_extension11.py（BIM 6 列；variant 行标签） |
+| `HapmapReader` | B | test_extension11.py（HapMap 剂量；首个非缺失等位基因为参照） |
+| `MolReader` | B | test_extension11.py（MOL V2000 原子/键计数） |
+| `XyzReader` | B | test_extension11.py（XYZ 原子坐标/原子序数） |
+| `GroReader` | B | test_extension11.py（GROMACS .gro 固定列） |
+| `PslReader` | B | test_extension11.py（PSL 21 列；block 字符串编码） |
+| `GenePredReader` | B | test_extension11.py（genePred 10 列，空白分隔） |
+| `MgfReader` | B | test_extension11.py（MGF BEGIN/END IONS 块） |
+| `HmmerDomtblReader` | B | test_extension11.py（HMMER domtblout 22 列 + description） |
+
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（179；下表为 89 个早期算子，0.8–0.17 新增见末尾证据）
+## 3. Operator（193；下表为 89 个早期算子，0.8–0.18 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -174,7 +185,7 @@ Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解�
 ## 5. 缺口
 - 10 个 C 级绘图算子由 route 的 PNG artifact 覆盖；line/enrichment 另有直接 artifact 测试；绘图无数值契约，不设数值 oracle。
 - C 级且非绘图：无。
-- 运行中的 skip：无；0.16 全量 pytest 基线为 **560 passed / 0 skipped**；0.17 未重跑全量，只跑增量。桌面测试在 `frontend/dist` 存在时执行，route fixture 已全部接入。
+- 运行中的 skip：0.18 全量 pytest 为 **606 passed / 1 skipped**；唯一 skip 是 `tests/test_incremental_gate.py` 在 full-suite 模式没有 `BIPIPE_CHANGED_MODULES` 的有意分支。桌面测试在 `frontend/dist` 存在时执行，route fixture 已全部接入。
 
 ## 6. 复现命令
 ```bash
@@ -277,3 +288,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - 新增 5 个 R oracle 测试：Wilcoxon、Friedman、Bartlett、KS、Mann-Kendall；R 包 `sva`、`Kendall`、`edgeR`、`DESeq2`、`ALDEx2` 已安装，`clusterProfiler`/`ANCOMBC` 仍受依赖链限制。
 - 0.17 增量验证：文档/reference/portability + read/write gate + R oracle 共 **36 passed**；新增测试在 `-W error` 下 **14 passed**；未重跑全量。
 - 日常命令：`python scripts/test_incremental.py`；周期命令：`python scripts/test_incremental.py --full`。详见 [测试范式](testing.md)。
+
+## 18. 0.18.0 扩展证据
+
+- 新增 14 个算子：反向互补、翻译、密码子使用、限制性酶切位点、蛋白性质、PCA loadings、HVG、细胞周期评分、Hudson Fst、GRM relatedness、RMST、target-decoy q-value、McNemar、Kendall tau。`tests/test_extension11.py` 9 项通过（8 个原测试 + `_sequence_common` 辅助测试）；Kendall tau 另有 R `cor.test(method="kendall")` oracle，R oracle 文件 6 项通过。
+- 新增 10 个 Reader：FAM、BIM、HapMap、MOL、XYZ、GRO、PSL、genePred、MGF、HMMER domtblout；`tests/test_extension11.py` 临时文件解析和 `pick_reader` 分派通过。
+- 未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、registry 生成物、测试、图标和参考页。
+- 0.18 增量 **14 passed**（8 原算子/Reader 测试 + 6 R oracle）；全量 **606 passed / 1 skipped**（1 个 full-suite 模式有意 skip）；registry 193/73/21；参考页 193 算子 / 73 Reader；Studio 前端 139 passed 且构建通过。
+- 边界：翻译使用标准遗传密码；限制性酶切为精确 motif 计数（含反向互补）；pI/MW 为常用近似；HVG 基于均值-离散度；Fst 为 Hudson 估计；GRM 使用 2p 缺失填补；RMST 为 KM 曲线下面积；q-value 为 target-decoy 单调校正；McNemar 默认连续性校正；Kendall tau 只统计成对完整观测；HapMap 以首个非缺失等位基因为参照；MOL2 不重建键级。

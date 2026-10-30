@@ -4,7 +4,7 @@
 
 - Package: `biopipe-core`
 - Source: [`src/task/step/steps/mann_kendall.py`](../../../src/task/step/steps/mann_kendall.py)
-- Tests: [`tests/test_extension10.py`](../../../tests/test_extension10.py)
+- Tests: [`tests/test_extension10.py`](../../../tests/test_extension10.py), [`tests/test_r_oracles3.py`](../../../tests/test_r_oracles3.py)
 - Demo tasks: none found
 - Inputs arity: `1`; output parameter: `output`
 

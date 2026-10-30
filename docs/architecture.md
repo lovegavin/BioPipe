@@ -137,6 +137,7 @@ YAML / JSON
 - 0.14.0 新增：距离相关、偏相关、VIF、分位数/幂变换、稳健缩放、缩尾、秩变换；BAM/CRAM/BigWig/PED/GFA Reader；核心层不变；
 - 0.15.0 新增：Mantel、PLS 回归、分位数回归、bootstrap CI、silhouette、互信息；GenBank/PDB/Zarr/BCF Reader；核心层不变；
 - 0.16.0 新增：DBSCAN、层次聚类、GMM、孤立森林、Cramér–von Mises、Welch ANOVA、Tukey HSD、C-index、分类指标；WIG/broadPeak/GFF2/mmCIF/OBO/SDF Reader；核心层不变；
+- 0.18.0 新增：反向互补、翻译、密码子使用、限制性酶切位点、蛋白性质；PCA loadings、HVG、细胞周期评分、Hudson Fst、GRM 亲缘矩阵、RMST、peptide q-value、McNemar、Kendall tau；FAM/BIM/HapMap/MOL/XYZ/GRO/PSL/genePred/MGF/HMMER domtbl Reader；核心层不变；
 - 0.17.0 新增：Holm/BY 校正、Cohen's d/Hedges g、Cliff's delta、η²、rank-biserial、Davies–Bouldin、Calinski–Harabasz、ARI、混淆矩阵、ROC 曲线、Mann–Kendall；BLAST tabular/HMMER tblout/InterProScan/EMBL/HMM/MOL2/SMI/bedMethyl Reader；核心层不变；
 - 0.13.0 新增：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera；核心层不变；
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)；

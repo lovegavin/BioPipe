@@ -16,6 +16,7 @@ import pytest
 from src.core import Form
 from src.task.step.steps.bartlett import BartlettStep
 from src.task.step.steps.friedman import FriedmanStep
+from src.task.step.steps.kendall_tau import KendallTauStep
 from src.task.step.steps.ks_2samp import Ks2SampStep
 from src.task.step.steps.mann_kendall import MannKendallStep
 from src.task.step.steps.wilcoxon import WilcoxonStep
@@ -227,3 +228,41 @@ def test_mann_kendall_matches_r_kendall(tmp_path):
     assert out.data[0, 0] == pytest.approx(expected["S"].iloc[0], rel=1e-6, abs=1e-6)
     assert out.data[0, 1] == pytest.approx(expected["tau"].iloc[0], rel=1e-6, abs=1e-6)
     assert out.data[0, 3] == pytest.approx(expected["P"].iloc[0], rel=1e-5, abs=1e-7)
+
+
+
+@_requires_r()
+def test_kendall_tau_matches_r_cor_test(tmp_path):
+    x = np.array(
+        [[1.0, 2.0], [2.4, 3.1], [3.1, 4.9], [4.8, 6.2], [5.2, 7.8], [6.9, 8.1], [7.3, 9.4], [8.8, 10.2]],
+        dtype=float,
+    )
+    y = np.array(
+        [[1.2, 9.0], [2.1, 8.4], [3.4, 7.1], [4.2, 6.8], [5.9, 5.2], [6.1, 4.4], [7.8, 3.1], [8.2, 2.2]],
+        dtype=float,
+    )
+    samples = [f"s{i}" for i in range(len(x))]
+    xform = _form(
+        x, ["sample", "feature_x"],
+        {"sample": {s: i for i, s in enumerate(samples)}, "feature_x": {"x0": 0, "x1": 1}},
+    )
+    yform = _form(
+        y, ["sample", "feature_y"],
+        {"sample": {s: i for i, s in enumerate(samples)}, "feature_y": {"y0": 0, "y1": 1}},
+    )
+    out, _ = _run(KendallTauStep(), {"feature_x": "feature_x", "feature_y": "feature_y"}, [xform, yform])
+    pd.DataFrame(x, columns=["x0", "x1"]).to_csv(tmp_path / "x.csv", index=False)
+    pd.DataFrame(y, columns=["y0", "y1"]).to_csv(tmp_path / "y.csv", index=False)
+    _run_r(
+        tmp_path,
+        """x <- as.matrix(read.csv('x.csv'))
+y <- as.matrix(read.csv('y.csv'))
+m <- matrix(0, nrow=ncol(x), ncol=ncol(y))
+for (i in seq_len(ncol(x))) for (j in seq_len(ncol(y))) {
+  m[i, j] <- cor.test(x[, i], y[, j], method='kendall')$estimate
+}
+write.csv(m, 'reference.csv', row.names=FALSE)
+""",
+    )
+    expected = pd.read_csv(tmp_path / "reference.csv").to_numpy()
+    assert out.data == pytest.approx(expected, rel=1e-6, abs=1e-6)

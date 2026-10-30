@@ -36,6 +36,16 @@ def test_frontend_and_docs_are_classified():
     assert "tests/test_portability.py" in selected
 
 
+def test_internal_helper_does_not_require_direct_test():
+    runner = _runner()
+    selected, modules, frontend, _docs = runner.classify(
+        ["src/task/step/steps/_sequence_common.py"]
+    )
+    assert modules == ["src/task/step/steps/_sequence_common.py"]
+    assert frontend is False
+    assert selected == {"tests/test_incremental_gate.py"}
+
+
 def test_reader_module_maps_to_pick_reader_test():
     runner = _runner()
     selected, modules, frontend, _docs = runner.classify(["src/reader/readers/wig_reader.py"])

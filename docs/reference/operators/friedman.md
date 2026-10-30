@@ -4,7 +4,7 @@
 
 - Package: `biopipe-core`
 - Source: [`src/task/step/steps/friedman.py`](../../../src/task/step/steps/friedman.py)
-- Tests: [`tests/test_extension4.py`](../../../tests/test_extension4.py)
+- Tests: [`tests/test_extension4.py`](../../../tests/test_extension4.py), [`tests/test_r_oracles3.py`](../../../tests/test_r_oracles3.py)
 - Demo tasks: none found
 - Inputs arity: `2`; output parameter: `output`
 

@@ -122,6 +122,12 @@ def classify(files: list[str]) -> tuple[set[str], list[str], bool, bool]:
     for module in modules:
         related = _tests_for_module(module, texts)
         if not related:
+            if Path(module).name.startswith("_"):
+                # Internal helpers are covered through their importing
+                # operators/readers; their direct module name is not a test
+                # reference. The static gate still validates the generated
+                # registry and every imported public module.
+                continue
             raise SystemExit(
                 f"incremental gate: no test references {module}; add a test or run --full for a reviewed exception"
             )

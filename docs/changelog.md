@@ -1,6 +1,13 @@
 # 更新记录
 
-BioPipe 使用语义化版本和 git tag。当前源码版本：**0.17.0（2026-10-30）**。
+## 0.18.0 — 2026-10-30
+- 新增 14 个算子：反向互补、翻译、密码子使用、限制性酶切位点、蛋白性质；PCA loadings、HVG、细胞周期评分、Hudson Fst、GRM 亲缘矩阵、RMST、peptide q-value、McNemar、Kendall tau。
+- 新增 10 个 Reader：FAM、BIM、HapMap、MOL、XYZ、GRO、PSL、genePred、MGF、HMMER domtbl。
+- 当前：193 算子 / 73 Reader / 21 route；未修改核心层。
+- 验证：增量 `tests/test_extension11.py` 9 项 + R `cor.test(kendall)` oracle 6 项全部通过；全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门 full-suite 模式分支）；registry clean；参考页 193/73；Studio 前端 **139 passed**，构建通过。
+- 边界：翻译使用标准遗传密码、不支持线粒体/非标准密码表；限制性酶切位点只做精确 motif 计数；蛋白 pI/MW 为常用近似；HVG 基于均值-离散度；Fst 使用 Hudson 估计；RMST 需组列且基于 KM；peptide q-value 使用 target-decoy；McNemar 默认连续性校正；Kendall 为成对完整观测；HapMap 以首个非缺失等位基因为参考；MOL2/PDB 不重建键级；PSL/genePred 只解析常用字段。
+
+BioPipe 使用语义化版本和 git tag。当前源码版本：**0.18.0（2026-10-30）**。
 更早版本从 git tag/history 查；本页只保留当前版本摘要。
 
 ## 0.17.0 — 2026-10-30

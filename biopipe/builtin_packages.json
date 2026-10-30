@@ -915,6 +915,107 @@
         },
         {
           "protocol_version": 1,
+          "id": "BimReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.bim_reader:BimReader",
+          "title": "BimReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "BimReader",
+          "module": "src.reader.readers.bim_reader",
+          "extensions": [
+            ".bim"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "variant",
+              "feature"
+            ],
+            "labels": {
+              "variant": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "BiomReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -2150,6 +2251,107 @@
         },
         {
           "protocol_version": 1,
+          "id": "FamReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.fam_reader:FamReader",
+          "title": "FamReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "FamReader",
+          "module": "src.reader.readers.fam_reader",
+          "extensions": [
+            ".fam"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "sample",
+              "feature"
+            ],
+            "labels": {
+              "sample": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "FastaReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -2660,6 +2862,107 @@
         },
         {
           "protocol_version": 1,
+          "id": "GenePredReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.genepred_reader:GenePredReader",
+          "title": "GenePredReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "GenePredReader",
+          "module": "src.reader.readers.genepred_reader",
+          "extensions": [
+            ".genepred"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "gene",
+              "feature"
+            ],
+            "labels": {
+              "gene": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "GfaReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -3052,6 +3355,107 @@
         },
         {
           "protocol_version": 1,
+          "id": "GroReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.gro_reader:GroReader",
+          "title": "GroReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "GroReader",
+          "module": "src.reader.readers.gro_reader",
+          "extensions": [
+            ".gro"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "atom",
+              "feature"
+            ],
+            "labels": {
+              "atom": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "GtfReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -3404,6 +3808,153 @@
         },
         {
           "protocol_version": 1,
+          "id": "HapmapReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.hapmap_reader:HapmapReader",
+          "title": "HapmapReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "has_header": {
+                "type": "boolean",
+                "default": true,
+                "title": "Has Header",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "id_column": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0,
+                "title": "Id Column",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "first_sample_column": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 10,
+                "title": "First Sample Column",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "has_header",
+              "label": "Has Header",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "id_column",
+              "label": "Id Column",
+              "type": "integer",
+              "required": false,
+              "default": 0,
+              "min": 0
+            },
+            {
+              "key": "first_sample_column",
+              "label": "First Sample Column",
+              "type": "integer",
+              "required": false,
+              "default": 10,
+              "min": 0
+            },
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "HapmapReader",
+          "module": "src.reader.readers.hapmap_reader",
+          "extensions": [
+            ".hapmap"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "variant",
+              "sample"
+            ],
+            "labels": {
+              "variant": "auto",
+              "sample": "auto"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "HmmReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -3478,6 +4029,107 @@
             "labels": {
               "model": "auto",
               "field": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "HmmerDomtblReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.hmmer_domtbl_reader:HmmerDomtblReader",
+          "title": "HmmerDomtblReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "HmmerDomtblReader",
+          "module": "src.reader.readers.hmmer_domtbl_reader",
+          "extensions": [
+            ".domtblout"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "domain",
+              "feature"
+            ],
+            "labels": {
+              "domain": "auto",
+              "feature": "builtin"
             }
           },
           "output_contract": {
@@ -4164,6 +4816,123 @@
         },
         {
           "protocol_version": 1,
+          "id": "MgfReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.mgf_reader:MgfReader",
+          "title": "MgfReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "max_spectra": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 100000,
+                "title": "Max Spectra",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            },
+            {
+              "key": "max_spectra",
+              "label": "Max Spectra",
+              "type": "integer",
+              "required": false,
+              "default": 100000,
+              "min": 1
+            }
+          ],
+          "name": "MgfReader",
+          "module": "src.reader.readers.mgf_reader",
+          "extensions": [
+            ".mgf"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": true,
+          "file_input": {
+            "dims": [
+              "spectrum",
+              "feature"
+            ],
+            "labels": {
+              "spectrum": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "MmcifReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -4370,6 +5139,107 @@
             "labels": {
               "molecule": "auto",
               "field": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "MolReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.mol_reader:MolReader",
+          "title": "MolReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "MolReader",
+          "module": "src.reader.readers.mol_reader",
+          "extensions": [
+            ".mol"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "molecule",
+              "feature"
+            ],
+            "labels": {
+              "molecule": "auto",
+              "feature": "builtin"
             }
           },
           "output_contract": {
@@ -5787,6 +6657,107 @@
         },
         {
           "protocol_version": 1,
+          "id": "PslReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.psl_reader:PslReader",
+          "title": "PslReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "PslReader",
+          "module": "src.reader.readers.psl_reader",
+          "extensions": [
+            ".psl"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "alignment",
+              "feature"
+            ],
+            "labels": {
+              "alignment": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "SamReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -6919,6 +7890,107 @@
             "labels": {
               "region": "auto",
               "field": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "XyzReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.xyz_reader:XyzReader",
+          "title": "XyzReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "additionalProperties": true,
+                "title": "Encoders",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            }
+          ],
+          "name": "XyzReader",
+          "module": "src.reader.readers.xyz_reader",
+          "extensions": [
+            ".xyz"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "atom",
+              "feature"
+            ],
+            "labels": {
+              "atom": "auto",
+              "feature": "builtin"
             }
           },
           "output_contract": {
@@ -10113,6 +11185,209 @@
         },
         {
           "protocol_version": 1,
+          "id": "cell_cycle_score",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.cell_cycle_score:CellCycleScoreStep",
+          "title": "Cell cycle score",
+          "category": "Single cell",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "cell_dim": {
+                "type": "string",
+                "default": "cell",
+                "title": "Cell Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "gene_dim": {
+                "type": "string",
+                "default": "gene",
+                "title": "Gene Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "gene_set_dim": {
+                "type": "string",
+                "default": "gene_set",
+                "title": "Gene Set Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "ctrl_size": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 50,
+                "title": "Ctrl Size",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "n_bins": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 25,
+                "title": "N Bins",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "random_state": {
+                "type": "integer",
+                "default": 0,
+                "title": "随机种子",
+                "x-ui-group": "advanced",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "cell_dim",
+                    "default": "cell"
+                  },
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "gene_dim",
+                    "default": "gene"
+                  },
+                  {
+                    "param": "gene_set_dim",
+                    "default": "gene_set"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": false
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "anndata>=0.10",
+            "scanpy>=1.10"
+          ],
+          "dependency_imports": [
+            "anndata",
+            "scanpy"
+          ],
+          "name": "cell_cycle_score",
+          "module": "src.task.step.steps.cell_cycle_score",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "cell_dim",
+              "label": "Cell Dim",
+              "type": "string",
+              "required": false,
+              "default": "cell"
+            },
+            {
+              "key": "gene_dim",
+              "label": "Gene Dim",
+              "type": "string",
+              "required": false,
+              "default": "gene"
+            },
+            {
+              "key": "gene_set_dim",
+              "label": "Gene Set Dim",
+              "type": "string",
+              "required": false,
+              "default": "gene_set"
+            },
+            {
+              "key": "ctrl_size",
+              "label": "Ctrl Size",
+              "type": "integer",
+              "required": false,
+              "default": 50,
+              "min": 1
+            },
+            {
+              "key": "n_bins",
+              "label": "N Bins",
+              "type": "integer",
+              "required": false,
+              "default": 25,
+              "min": 1
+            },
+            {
+              "key": "random_state",
+              "label": "随机种子",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "cell_dim": "cell",
+            "gene_dim": "gene",
+            "gene_set_dim": "gene_set",
+            "ctrl_size": 50,
+            "n_bins": 25,
+            "random_state": 0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "chi_square",
           "version": "1.0.0",
           "kind": "operator",
@@ -10815,6 +12090,170 @@
             "n_neighbors": 15,
             "resolution": 1.0,
             "random_state": 0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "codon_usage",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.codon_usage:CodonUsageStep",
+          "title": "Codon usage",
+          "category": "Sequence",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sequence_dim": {
+                "type": "string",
+                "default": "sequence",
+                "title": "序列维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "position_dim": {
+                "type": "string",
+                "default": "position",
+                "title": "位置维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "frame": {
+                "type": "integer",
+                "enum": [
+                  0,
+                  1,
+                  2
+                ],
+                "default": 0,
+                "title": "Frame",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet": {
+                    "type": "string",
+                    "enum": [
+                      "dna",
+                      "rna"
+                    ]
+                  },
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "sequence_dim",
+                    "default": "sequence"
+                  },
+                  {
+                    "param": "position_dim",
+                    "default": "position"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "codon_usage",
+          "module": "src.task.step.steps.codon_usage",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sequence_dim",
+              "label": "序列维度",
+              "type": "string",
+              "required": false,
+              "default": "sequence"
+            },
+            {
+              "key": "position_dim",
+              "label": "位置维度",
+              "type": "string",
+              "required": false,
+              "default": "position"
+            },
+            {
+              "key": "frame",
+              "label": "Frame",
+              "type": "choice",
+              "required": false,
+              "default": 0,
+              "options": [
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sequence_dim": "sequence",
+            "position_dim": "position",
+            "frame": 0
           },
           "legacy_parameters": false
         },
@@ -18088,6 +19527,176 @@
         },
         {
           "protocol_version": 1,
+          "id": "hvg",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.hvg:HvgStep",
+          "title": "Highly variable genes",
+          "category": "Single cell",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "gene",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "n_top": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 2000,
+                "title": "N Top",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "min_mean": {
+                "type": "number",
+                "default": -1000000000000.0,
+                "title": "Min Mean",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "max_mean": {
+                "type": "number",
+                "minimum": 0,
+                "default": 1000000000000.0,
+                "title": "Max Mean",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "gene"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "hvg",
+          "module": "src.task.step.steps.hvg",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "gene"
+            },
+            {
+              "key": "n_top",
+              "label": "N Top",
+              "type": "integer",
+              "required": false,
+              "default": 2000,
+              "min": 1
+            },
+            {
+              "key": "min_mean",
+              "label": "Min Mean",
+              "type": "number",
+              "required": false,
+              "default": -1000000000000.0
+            },
+            {
+              "key": "max_mean",
+              "label": "Max Mean",
+              "type": "number",
+              "required": false,
+              "default": 1000000000000.0,
+              "min": 0
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "gene",
+            "n_top": 2000,
+            "min_mean": -1000000000000.0,
+            "max_mean": 1000000000000.0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "ica",
           "version": "1.0.0",
           "kind": "operator",
@@ -19389,6 +20998,160 @@
           "runtime_defaults": {
             "feature_dim": "feature",
             "sample_dim": "sample"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "kendall_tau",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.kendall_tau:KendallTauStep",
+          "title": "Kendall tau",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_x": {
+                "type": "string",
+                "default": "feature",
+                "title": "Feature X",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "feature_y": {
+                "type": "string",
+                "default": "feature",
+                "title": "Feature Y",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_x",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_y",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "kendall_tau",
+          "module": "src.task.step.steps.kendall_tau",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_x",
+              "label": "Feature X",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "feature_y",
+              "label": "Feature Y",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_x": "feature",
+            "feature_y": "feature"
           },
           "legacy_parameters": false
         },
@@ -22356,6 +24119,170 @@
         },
         {
           "protocol_version": 1,
+          "id": "mcnemar",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.mcnemar:McnemarStep",
+          "title": "McNemar test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "label_a": {
+                "type": "string",
+                "title": "Label A",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "label_b": {
+                "type": "string",
+                "title": "Label B",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "exact": {
+                "type": "boolean",
+                "default": true,
+                "title": "Exact",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "label_a",
+              "label_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "mcnemar",
+          "module": "src.task.step.steps.mcnemar",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "label_a",
+              "label": "Label A",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "label_b",
+              "label": "Label B",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "exact",
+              "label": "Exact",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "exact": true
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "mds",
           "version": "1.0.0",
           "kind": "operator",
@@ -23929,6 +25856,159 @@
         },
         {
           "protocol_version": 1,
+          "id": "pca_loadings",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.pca_loadings:PcaLoadingsStep",
+          "title": "PCA loadings",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "n_components": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 10,
+                "title": "主成分数",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "scale": {
+                "type": "boolean",
+                "default": true,
+                "title": "标准化",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "pca_loadings",
+          "module": "src.task.step.steps.pca_loadings",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "n_components",
+              "label": "主成分数",
+              "type": "integer",
+              "required": false,
+              "default": 10,
+              "min": 1
+            },
+            {
+              "key": "scale",
+              "label": "标准化",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "n_components": 10,
+            "scale": true
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "peak_nearest_gene",
           "version": "1.0.0",
           "kind": "operator",
@@ -24279,6 +26359,182 @@
             "b_strand_field": "strand",
             "feature_type": "gene",
             "max_distance": null
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "peptide_qvalue",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.peptide_qvalue:PeptideQvalueStep",
+          "title": "Peptide q-values",
+          "category": "Proteomics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "psm_dim": {
+                "type": "string",
+                "default": "psm",
+                "title": "Psm Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "score_label": {
+                "type": "string",
+                "title": "Score Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "decoy_label": {
+                "type": "string",
+                "title": "Decoy Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "decoy_values": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                },
+                "default": [
+                  1
+                ],
+                "title": "Decoy Values",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "score_label",
+              "decoy_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "psm_dim",
+                    "default": "psm"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "peptide_qvalue",
+          "module": "src.task.step.steps.peptide_qvalue",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "psm_dim",
+              "label": "Psm Dim",
+              "type": "string",
+              "required": false,
+              "default": "psm"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "score_label",
+              "label": "Score Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "decoy_label",
+              "label": "Decoy Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "decoy_values",
+              "label": "Decoy Values",
+              "type": "json",
+              "required": false,
+              "default": [
+                1
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "psm_dim": "psm",
+            "feature_dim": "feature",
+            "decoy_values": [
+              1
+            ]
           },
           "legacy_parameters": false
         },
@@ -25268,6 +27524,142 @@
           ],
           "runtime_defaults": {
             "ascending": false
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "protein_properties",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.protein_properties:ProteinPropertiesStep",
+          "title": "Protein properties",
+          "category": "Sequence",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sequence_dim": {
+                "type": "string",
+                "default": "sequence",
+                "title": "序列维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "position_dim": {
+                "type": "string",
+                "default": "position",
+                "title": "位置维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet": {
+                    "type": "string",
+                    "const": "protein"
+                  },
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "sequence_dim",
+                    "default": "sequence"
+                  },
+                  {
+                    "param": "position_dim",
+                    "default": "position"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "protein_properties",
+          "module": "src.task.step.steps.protein_properties",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sequence_dim",
+              "label": "序列维度",
+              "type": "string",
+              "required": false,
+              "default": "sequence"
+            },
+            {
+              "key": "position_dim",
+              "label": "位置维度",
+              "type": "string",
+              "required": false,
+              "default": "position"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sequence_dim": "sequence",
+            "position_dim": "position"
           },
           "legacy_parameters": false
         },
@@ -27611,6 +30003,332 @@
         },
         {
           "protocol_version": 1,
+          "id": "restriction_sites",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.restriction_sites:RestrictionSitesStep",
+          "title": "Restriction sites",
+          "category": "Sequence",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sequence_dim": {
+                "type": "string",
+                "default": "sequence",
+                "title": "序列维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "position_dim": {
+                "type": "string",
+                "default": "position",
+                "title": "位置维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "enzymes": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "default": {
+                  "EcoRI": "GAATTC",
+                  "BamHI": "GGATCC",
+                  "HindIII": "AAGCTT",
+                  "NotI": "GCGGCCGC",
+                  "XhoI": "CTCGAG",
+                  "PstI": "CTGCAG",
+                  "SalI": "GTCGAC",
+                  "KpnI": "GGTACC",
+                  "SacI": "GAGCTC",
+                  "SmaI": "CCCGGG",
+                  "TaqI": "TCGA",
+                  "AluI": "AGCT"
+                },
+                "title": "Enzymes",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet": {
+                    "type": "string",
+                    "enum": [
+                      "dna"
+                    ]
+                  },
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "sequence_dim",
+                    "default": "sequence"
+                  },
+                  {
+                    "param": "position_dim",
+                    "default": "position"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "restriction_sites",
+          "module": "src.task.step.steps.restriction_sites",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sequence_dim",
+              "label": "序列维度",
+              "type": "string",
+              "required": false,
+              "default": "sequence"
+            },
+            {
+              "key": "position_dim",
+              "label": "位置维度",
+              "type": "string",
+              "required": false,
+              "default": "position"
+            },
+            {
+              "key": "enzymes",
+              "label": "Enzymes",
+              "type": "json",
+              "required": false,
+              "default": {
+                "EcoRI": "GAATTC",
+                "BamHI": "GGATCC",
+                "HindIII": "AAGCTT",
+                "NotI": "GCGGCCGC",
+                "XhoI": "CTCGAG",
+                "PstI": "CTGCAG",
+                "SalI": "GTCGAC",
+                "KpnI": "GGTACC",
+                "SacI": "GAGCTC",
+                "SmaI": "CCCGGG",
+                "TaqI": "TCGA",
+                "AluI": "AGCT"
+              }
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sequence_dim": "sequence",
+            "position_dim": "position",
+            "enzymes": {
+              "EcoRI": "GAATTC",
+              "BamHI": "GGATCC",
+              "HindIII": "AAGCTT",
+              "NotI": "GCGGCCGC",
+              "XhoI": "CTCGAG",
+              "PstI": "CTGCAG",
+              "SalI": "GTCGAC",
+              "KpnI": "GGTACC",
+              "SacI": "GAGCTC",
+              "SmaI": "CCCGGG",
+              "TaqI": "TCGA",
+              "AluI": "AGCT"
+            }
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "reverse_complement",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.reverse_complement:ReverseComplementStep",
+          "title": "Reverse complement",
+          "category": "Sequence",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sequence_dim": {
+                "type": "string",
+                "default": "sequence",
+                "title": "序列维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "position_dim": {
+                "type": "string",
+                "default": "position",
+                "title": "位置维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet": {
+                    "type": "string",
+                    "enum": [
+                      "dna",
+                      "rna"
+                    ]
+                  },
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "sequence_dim",
+                    "default": "sequence"
+                  },
+                  {
+                    "param": "position_dim",
+                    "default": "position"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "reverse_complement",
+          "module": "src.task.step.steps.reverse_complement",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sequence_dim",
+              "label": "序列维度",
+              "type": "string",
+              "required": false,
+              "default": "sequence"
+            },
+            {
+              "key": "position_dim",
+              "label": "位置维度",
+              "type": "string",
+              "required": false,
+              "default": "position"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sequence_dim": "sequence",
+            "position_dim": "position"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "ridge_regression",
           "version": "1.0.0",
           "kind": "operator",
@@ -27856,6 +30574,203 @@
             "random_state": 0,
             "scale": true,
             "alpha": 1.0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "rmst",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.rmst:RmstStep",
+          "title": "Restricted mean survival",
+          "category": "Survival",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "time_label": {
+                "type": "string",
+                "title": "随访时间字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "event_label": {
+                "type": "string",
+                "title": "事件字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "tau": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "exclusiveMinimum": 0,
+                "default": null,
+                "title": "Tau",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "confidence": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "time_label",
+              "event_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "rmst",
+          "module": "src.task.step.steps.rmst",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "time_label",
+              "label": "随访时间字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "event_label",
+              "label": "事件字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "tau",
+              "label": "Tau",
+              "type": "number",
+              "required": false,
+              "default": null
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "tau": null,
+            "confidence": 0.95
           },
           "legacy_parameters": false
         },
@@ -31032,6 +33947,177 @@
         },
         {
           "protocol_version": 1,
+          "id": "translate",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.translate:TranslateStep",
+          "title": "Translate sequences",
+          "category": "Sequence",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sequence_dim": {
+                "type": "string",
+                "default": "sequence",
+                "title": "序列维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "position_dim": {
+                "type": "string",
+                "default": "position",
+                "title": "位置维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "frame": {
+                "type": "integer",
+                "enum": [
+                  0,
+                  1,
+                  2
+                ],
+                "default": 0,
+                "title": "Frame",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "to_stop": {
+                "type": "boolean",
+                "default": true,
+                "title": "To Stop",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet": {
+                    "type": "string",
+                    "enum": [
+                      "dna",
+                      "rna"
+                    ]
+                  },
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "dims": [
+                  {
+                    "param": "sequence_dim",
+                    "default": "sequence"
+                  },
+                  {
+                    "param": "position_dim",
+                    "default": "position"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "translate",
+          "module": "src.task.step.steps.translate",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sequence_dim",
+              "label": "序列维度",
+              "type": "string",
+              "required": false,
+              "default": "sequence"
+            },
+            {
+              "key": "position_dim",
+              "label": "位置维度",
+              "type": "string",
+              "required": false,
+              "default": "position"
+            },
+            {
+              "key": "frame",
+              "label": "Frame",
+              "type": "choice",
+              "required": false,
+              "default": 0,
+              "options": [
+                0,
+                1,
+                2
+              ]
+            },
+            {
+              "key": "to_stop",
+              "label": "To Stop",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sequence_dim": "sequence",
+            "position_dim": "position",
+            "frame": 0,
+            "to_stop": true
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "transpose",
           "version": "1.0.0",
           "kind": "operator",
@@ -33151,6 +36237,188 @@
         },
         {
           "protocol_version": 1,
+          "id": "fst",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.fst:FstStep",
+          "title": "Fst",
+          "category": "Genetics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "variant_dim": {
+                "type": "string",
+                "default": "variant",
+                "title": "Variant Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_a": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "title": "A 组",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "group_b": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "title": "B 组",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "group_label",
+              "group_a",
+              "group_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "variant_dim",
+                    "default": "variant"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "fst",
+          "module": "src.task.step.steps.fst",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "variant_dim",
+              "label": "Variant Dim",
+              "type": "string",
+              "required": false,
+              "default": "variant"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "group_a",
+              "label": "A 组",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "group_b",
+              "label": "B 组",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "variant_dim": "variant",
+            "sample_dim": "sample"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "hwe",
           "version": "1.0.0",
           "kind": "operator",
@@ -34218,6 +37486,146 @@
           "runtime_defaults": {
             "covariates": [],
             "method": "auto"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "relatedness",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.relatedness:RelatednessStep",
+          "title": "Relatedness",
+          "category": "Genetics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "variant_dim": {
+                "type": "string",
+                "default": "variant",
+                "title": "Variant Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "min_maf": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 0.5,
+                "default": 0.05,
+                "title": "Min Maf",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "variant_dim",
+                    "default": "variant"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "relatedness",
+          "module": "src.task.step.steps.relatedness",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "variant_dim",
+              "label": "Variant Dim",
+              "type": "string",
+              "required": false,
+              "default": "variant"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "min_maf",
+              "label": "Min Maf",
+              "type": "number",
+              "required": false,
+              "default": 0.05,
+              "min": 0,
+              "max": 0.5
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "variant_dim": "variant",
+            "sample_dim": "sample",
+            "min_maf": 0.05
           },
           "legacy_parameters": false
         }

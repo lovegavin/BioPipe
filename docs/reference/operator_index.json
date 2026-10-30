@@ -1618,7 +1618,8 @@
     },
     "source": "src/task/step/steps/bartlett.py",
     "tests": [
-      "tests/test_extension4.py"
+      "tests/test_extension4.py",
+      "tests/test_r_oracles3.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/bartlett.md",
@@ -2645,6 +2646,126 @@
     "quality": "auto"
   },
   {
+    "id": "cell_cycle_score",
+    "kind": "operator",
+    "title": "Cell cycle score",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "cell_dim",
+              "default": "cell"
+            },
+            {
+              "param": "gene_dim",
+              "default": "gene"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "gene_dim",
+              "default": "gene"
+            },
+            {
+              "param": "gene_set_dim",
+              "default": "gene_set"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": false
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "cell_dim": {
+          "type": "string",
+          "default": "cell",
+          "title": "Cell Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "gene_dim": {
+          "type": "string",
+          "default": "gene",
+          "title": "Gene Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "gene_set_dim": {
+          "type": "string",
+          "default": "gene_set",
+          "title": "Gene Set Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "ctrl_size": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 50,
+          "title": "Ctrl Size",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "n_bins": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 25,
+          "title": "N Bins",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/cell_cycle_score.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/cell_cycle_score.md",
+    "quality": "auto"
+  },
+  {
     "id": "chi_square",
     "kind": "operator",
     "title": "Chi-square test",
@@ -3083,6 +3204,116 @@
       "tasks/violin_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/cluster_axis.md",
+    "quality": "auto"
+  },
+  {
+    "id": "codon_usage",
+    "kind": "operator",
+    "title": "Codon usage",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {
+            "representation": {
+              "type": "string",
+              "const": "sequence_codes"
+            },
+            "alphabet": {
+              "type": "string",
+              "enum": [
+                "dna",
+                "rna"
+              ]
+            },
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "dims": [
+            {
+              "param": "sequence_dim",
+              "default": "sequence"
+            },
+            {
+              "param": "position_dim",
+              "default": "position"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sequence_dim": {
+          "type": "string",
+          "default": "sequence",
+          "title": "序列维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "position_dim": {
+          "type": "string",
+          "default": "position",
+          "title": "位置维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "frame": {
+          "type": "integer",
+          "enum": [
+            0,
+            1,
+            2
+          ],
+          "default": 0,
+          "title": "Frame",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/codon_usage.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/codon_usage.md",
     "quality": "auto"
   },
   {
@@ -7632,10 +7863,134 @@
     },
     "source": "src/task/step/steps/friedman.py",
     "tests": [
-      "tests/test_extension4.py"
+      "tests/test_extension4.py",
+      "tests/test_r_oracles3.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/friedman.md",
+    "quality": "auto"
+  },
+  {
+    "id": "fst",
+    "kind": "operator",
+    "title": "Fst",
+    "package": "biopipe-genetics",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "variant_dim",
+              "default": "variant"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "variant_dim": {
+          "type": "string",
+          "default": "variant",
+          "title": "Variant Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_a": {
+          "type": [
+            "string",
+            "number"
+          ],
+          "title": "A 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_b": {
+          "type": [
+            "string",
+            "number"
+          ],
+          "title": "B 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "group_label",
+        "group_a",
+        "group_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/fst.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/fst.md",
     "quality": "auto"
   },
   {
@@ -9274,6 +9629,110 @@
     "quality": "auto"
   },
   {
+    "id": "hvg",
+    "kind": "operator",
+    "title": "Highly variable genes",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "gene"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "gene",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_top": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 2000,
+          "title": "N Top",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "min_mean": {
+          "type": "number",
+          "minimum": 0,
+          "default": 0.0,
+          "title": "Min Mean",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "max_mean": {
+          "type": "number",
+          "minimum": 0,
+          "default": 1000000000000.0,
+          "title": "Max Mean",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/hvg.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/hvg.md",
+    "quality": "auto"
+  },
+  {
     "id": "hwe",
     "kind": "operator",
     "title": "hwe",
@@ -10494,6 +10953,112 @@
     "quality": "auto"
   },
   {
+    "id": "kendall_tau",
+    "kind": "operator",
+    "title": "Kendall tau",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_x",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_y",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_x": {
+          "type": "string",
+          "default": "feature",
+          "title": "Feature X",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "feature_y": {
+          "type": "string",
+          "default": "feature",
+          "title": "Feature Y",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/kendall_tau.py",
+    "tests": [
+      "tests/test_extension11.py",
+      "tests/test_r_oracles3.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/kendall_tau.md",
+    "quality": "auto"
+  },
+  {
     "id": "kernel_pca",
     "kind": "operator",
     "title": "Kernel PCA",
@@ -10938,7 +11503,8 @@
     },
     "source": "src/task/step/steps/ks_2samp.py",
     "tests": [
-      "tests/test_extension6.py"
+      "tests/test_extension6.py",
+      "tests/test_r_oracles3.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/ks_2samp.md",
@@ -12827,7 +13393,8 @@
     },
     "source": "src/task/step/steps/mann_kendall.py",
     "tests": [
-      "tests/test_extension10.py"
+      "tests/test_extension10.py",
+      "tests/test_r_oracles3.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/mann_kendall.md",
@@ -13203,6 +13770,109 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/marker_score.md",
+    "quality": "auto"
+  },
+  {
+    "id": "mcnemar",
+    "kind": "operator",
+    "title": "McNemar test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_a": {
+          "type": "string",
+          "title": "Label A",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "label_b": {
+          "type": "string",
+          "title": "Label B",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "exact": {
+          "type": "boolean",
+          "default": true,
+          "title": "Exact",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "label_a",
+        "label_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/mcnemar.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/mcnemar.md",
     "quality": "auto"
   },
   {
@@ -14736,6 +15406,101 @@
     "quality": "auto"
   },
   {
+    "id": "pca_loadings",
+    "kind": "operator",
+    "title": "PCA loadings",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "scale": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/pca_loadings.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/pca_loadings.md",
+    "quality": "auto"
+  },
+  {
     "id": "peak_nearest_gene",
     "kind": "operator",
     "title": "peak_nearest_gene",
@@ -14945,6 +15710,117 @@
       "tasks/peak_nearest_gene_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/peak_nearest_gene.md",
+    "quality": "auto"
+  },
+  {
+    "id": "peptide_qvalue",
+    "kind": "operator",
+    "title": "Peptide q-values",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "psm_dim",
+              "default": "psm"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "psm_dim": {
+          "type": "string",
+          "default": "psm",
+          "title": "Psm Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "score_label": {
+          "type": "string",
+          "title": "Score Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "decoy_label": {
+          "type": "string",
+          "title": "Decoy Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "decoy_values": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "number"
+            ]
+          },
+          "default": [
+            1
+          ],
+          "title": "Decoy Values",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "score_label",
+        "decoy_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/peptide_qvalue.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/peptide_qvalue.md",
     "quality": "auto"
   },
   {
@@ -15700,6 +16576,101 @@
       "tasks/prioritize_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/prioritize.md",
+    "quality": "auto"
+  },
+  {
+    "id": "protein_properties",
+    "kind": "operator",
+    "title": "Protein properties",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {
+            "representation": {
+              "type": "string",
+              "const": "sequence_codes"
+            },
+            "alphabet": {
+              "type": "string",
+              "const": "protein"
+            },
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "dims": [
+            {
+              "param": "sequence_dim",
+              "default": "sequence"
+            },
+            {
+              "param": "position_dim",
+              "default": "position"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sequence_dim": {
+          "type": "string",
+          "default": "sequence",
+          "title": "序列维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "position_dim": {
+          "type": "string",
+          "default": "position",
+          "title": "位置维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/protein_properties.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/protein_properties.md",
     "quality": "auto"
   },
   {
@@ -17560,6 +18531,95 @@
     "quality": "auto"
   },
   {
+    "id": "relatedness",
+    "kind": "operator",
+    "title": "Relatedness",
+    "package": "biopipe-genetics",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "variant_dim",
+              "default": "variant"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "variant_dim": {
+          "type": "string",
+          "default": "variant",
+          "title": "Variant Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "min_maf": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.5,
+          "default": 0.05,
+          "title": "Min Maf",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/relatedness.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/relatedness.md",
+    "quality": "auto"
+  },
+  {
     "id": "rename_dim",
     "kind": "operator",
     "title": "rename_dim",
@@ -17620,6 +18680,216 @@
     ],
     "doc": "docs/reference/operators/rename_dim.md",
     "quality": "reviewed"
+  },
+  {
+    "id": "restriction_sites",
+    "kind": "operator",
+    "title": "Restriction sites",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {
+            "representation": {
+              "type": "string",
+              "const": "sequence_codes"
+            },
+            "alphabet": {
+              "type": "string",
+              "enum": [
+                "dna"
+              ]
+            },
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "dims": [
+            {
+              "param": "sequence_dim",
+              "default": "sequence"
+            },
+            {
+              "param": "position_dim",
+              "default": "position"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sequence_dim": {
+          "type": "string",
+          "default": "sequence",
+          "title": "序列维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "position_dim": {
+          "type": "string",
+          "default": "position",
+          "title": "位置维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "enzymes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {
+            "EcoRI": "GAATTC",
+            "BamHI": "GGATCC",
+            "HindIII": "AAGCTT",
+            "NotI": "GCGGCCGC",
+            "XhoI": "CTCGAG",
+            "PstI": "CTGCAG",
+            "SalI": "GTCGAC",
+            "KpnI": "GGTACC",
+            "SacI": "GAGCTC",
+            "SmaI": "CCCGGG",
+            "TaqI": "TCGA",
+            "AluI": "AGCT"
+          },
+          "title": "Enzymes",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/restriction_sites.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/restriction_sites.md",
+    "quality": "auto"
+  },
+  {
+    "id": "reverse_complement",
+    "kind": "operator",
+    "title": "Reverse complement",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {
+            "representation": {
+              "type": "string",
+              "const": "sequence_codes"
+            },
+            "alphabet": {
+              "type": "string",
+              "enum": [
+                "dna",
+                "rna"
+              ]
+            },
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "dims": [
+            {
+              "param": "sequence_dim",
+              "default": "sequence"
+            },
+            {
+              "param": "position_dim",
+              "default": "position"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sequence_dim": {
+          "type": "string",
+          "default": "sequence",
+          "title": "序列维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "position_dim": {
+          "type": "string",
+          "default": "position",
+          "title": "位置维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/reverse_complement.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/reverse_complement.md",
+    "quality": "auto"
   },
   {
     "id": "ridge_regression",
@@ -17767,6 +19037,128 @@
       "tasks/ml_regression_route_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/ridge_regression.md",
+    "quality": "auto"
+  },
+  {
+    "id": "rmst",
+    "kind": "operator",
+    "title": "Restricted mean survival",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "time_label": {
+          "type": "string",
+          "title": "随访时间字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "event_label": {
+          "type": "string",
+          "title": "事件字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "tau": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "exclusiveMinimum": 0,
+          "default": null,
+          "title": "Tau",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "confidence": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "default": 0.95,
+          "title": "Confidence",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "time_label",
+        "event_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/rmst.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/rmst.md",
     "quality": "auto"
   },
   {
@@ -19951,6 +21343,115 @@
     "quality": "auto"
   },
   {
+    "id": "translate",
+    "kind": "operator",
+    "title": "Translate sequences",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {
+            "representation": {
+              "type": "string",
+              "const": "sequence_codes"
+            },
+            "alphabet": {
+              "type": "string",
+              "enum": [
+                "dna",
+                "rna"
+              ]
+            },
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "dims": [
+            {
+              "param": "sequence_dim",
+              "default": "sequence"
+            },
+            {
+              "param": "position_dim",
+              "default": "position"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sequence_dim": {
+          "type": "string",
+          "default": "sequence",
+          "title": "序列维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "position_dim": {
+          "type": "string",
+          "default": "position",
+          "title": "位置维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "frame": {
+          "type": "integer",
+          "enum": [
+            0,
+            1,
+            2
+          ],
+          "default": 0,
+          "title": "Frame",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "to_stop": {
+          "type": "boolean",
+          "default": true,
+          "title": "To Stop",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/translate.py",
+    "tests": [
+      "tests/test_extension11.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/translate.md",
+    "quality": "auto"
+  },
+  {
     "id": "transpose",
     "kind": "operator",
     "title": "transpose",
@@ -21308,7 +22809,8 @@
     },
     "source": "src/task/step/steps/wilcoxon.py",
     "tests": [
-      "tests/test_extension4.py"
+      "tests/test_extension4.py",
+      "tests/test_r_oracles3.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/wilcoxon.md",
