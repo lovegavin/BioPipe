@@ -1,0 +1,189 @@
+{
+  "protocol_version": 3,
+  "name": "biopipe-plot-examples",
+  "version": "0.1.0",
+  "origin": "wheel",
+  "dependencies": [
+    "biopipe-studio>=0.8.1,<1"
+  ],
+  "descriptors": [
+    {
+      "protocol_version": 3,
+      "id": "example.volcano",
+      "version": "0.1.0",
+      "kind": "operator",
+      "entry_point": "biopipe_plot_examples.volcano:Volcano",
+      "code_sha": "547ae0655c8146f71f4be48c105d0ec46c2a5782d8f5affd36a89ecc73d3a330",
+      "declaration_sha": "1dd769dde85c4da657a1f1361e3e701e2f3af86c5157a11c7909f91716a00538",
+      "title": "Volcano + significance distribution",
+      "category": "可视化",
+      "icon": "ChartLine",
+      "parameters_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "default": "Differential expression"
+          },
+          "fdr": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1,
+            "default": 0.05
+          },
+          "effect_threshold": {
+            "type": "number",
+            "minimum": 0,
+            "default": 1
+          },
+          "highlight": {
+            "type": "string",
+            "default": "#D55E00"
+          },
+          "figure_width_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 120
+          },
+          "figure_height_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 90
+          },
+          "figure_dpi": {
+            "type": "integer",
+            "minimum": 72,
+            "default": 300
+          },
+          "figure_font_size": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 8
+          }
+        }
+      },
+      "contracts": {
+        "version": 1,
+        "inputs": [
+          {
+            "kind": "form",
+            "numeric": true,
+            "ndim": 2,
+            "dims": [
+              "feature",
+              "stat"
+            ]
+          }
+        ],
+        "output": {
+          "mode": "report"
+        }
+      },
+      "resources": {
+        "memory_modes": [
+          "full"
+        ],
+        "estimate": "estimate_memory"
+      },
+      "dependencies": [
+        "matplotlib>=3.8",
+        "numpy>=1.26"
+      ],
+      "inputs_arity": 1,
+      "outputs": [],
+      "output_parameter": null
+    },
+    {
+      "protocol_version": 3,
+      "id": "example.complex_heatmap",
+      "version": "0.1.0",
+      "kind": "operator",
+      "entry_point": "biopipe_plot_examples.complex_heatmap:ComplexHeatmap",
+      "code_sha": "547ae0655c8146f71f4be48c105d0ec46c2a5782d8f5affd36a89ecc73d3a330",
+      "declaration_sha": "7146aee2a6bbd4b09787197b06551d7f80bfae456ff1acd247060714569fc53b",
+      "title": "ComplexHeatmap",
+      "category": "可视化",
+      "icon": "ChartLine",
+      "parameters_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "default": "Expression heatmap"
+          },
+          "top_n": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 50,
+            "description": "First N rows in input order; zero means all rows. Subset/order upstream for biological selection."
+          },
+          "cluster_rows": {
+            "type": "boolean",
+            "default": true
+          },
+          "cluster_columns": {
+            "type": "boolean",
+            "default": true
+          },
+          "figure_width_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 120
+          },
+          "figure_height_mm": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 90
+          },
+          "figure_dpi": {
+            "type": "integer",
+            "minimum": 72,
+            "default": 300
+          },
+          "figure_font_size": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 8
+          }
+        }
+      },
+      "contracts": {
+        "version": 1,
+        "inputs": [
+          {
+            "kind": "form",
+            "numeric": true,
+            "ndim": 2
+          }
+        ],
+        "output": {
+          "mode": "report"
+        }
+      },
+      "resources": {
+        "memory_modes": [
+          "full"
+        ],
+        "estimate": "estimate_memory",
+        "r": {
+          "version": ">=4.3,<5",
+          "packages": [
+            {
+              "name": "ComplexHeatmap",
+              "source": "bioconductor",
+              "version": ">=2.18"
+            }
+          ]
+        }
+      },
+      "dependencies": [
+        "numpy>=1.26"
+      ],
+      "inputs_arity": 1,
+      "outputs": [],
+      "output_parameter": null
+    }
+  ]
+}

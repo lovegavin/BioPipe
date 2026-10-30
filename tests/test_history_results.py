@@ -93,6 +93,21 @@ def test_remote_history_previews_reports_figures_downloads_and_reconnect(tmp_pat
                 calls.clear()
                 assert client.get(export+'/figure', params={'format':fmt}).content == opened.content
                 assert 'transfer_read' not in calls
+            # Two PDFs from the same remote step must resolve and cache separately.
+            import json
+            step_report = remote.service.export_file(job['id'], index)
+            record = json.loads(step_report.read_text(encoding='utf-8'))
+            first = next(f for f in record['figures'] if f['format'] == 'pdf')
+            second = Path(first['path']).with_name('companion.pdf')
+            second.write_bytes(Path(first['path']).read_bytes() + b'\n% companion figure\n')
+            record['figures'].append({'id': 'companion', 'title': 'Companion', 'format': 'pdf', 'path': str(second)})
+            step_report.write_text(json.dumps(record), encoding='utf-8')
+            for figure_id, expected in [(first['id'], Path(first['path']).read_bytes()), ('companion', second.read_bytes())]:
+                opened = client.get(export+'/figure', params={'format': 'pdf', 'figure_id': figure_id})
+                assert opened.status_code == 200 and opened.content == expected
+                calls.clear()
+                assert client.get(export+'/figure', params={'format': 'pdf', 'figure_id': figure_id}).content == expected
+                assert 'transfer_read' not in calls
             assert client.get(export+'/figure', params={'format':'exe'}).status_code == 422
             assert client.get(export+'/figure', params={'format':'tiff'}).status_code == 404
             assert client.get(f'/api/jobs/{key}/exports/999').status_code in (404,422)

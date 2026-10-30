@@ -384,8 +384,8 @@ def create_app(settings=None):
         return FileResponse(path, filename=path.name, media_type="application/json")
 
     @app.get("/api/jobs/{key}/exports/{index}/figure")
-    def figure(key: str, index: int, format: Literal["png", "pdf", "svg", "jpg", "jpeg", "webp", "tif", "tiff"] | None = None):
-        path = result_service(key).figure_file(key, index, format=format)
+    def figure(key: str, index: int, format: Literal["png", "pdf", "svg", "jpg", "jpeg", "webp", "tif", "tiff"] | None = None, figure_id: str | None = None):
+        path = result_service(key).figure_file(key, index, format=format, **({"figure_id": figure_id} if figure_id is not None else {}))
         return FileResponse(path, filename=path.name, content_disposition_type="inline")
 
     @app.get("/api/jobs/{key}/console")

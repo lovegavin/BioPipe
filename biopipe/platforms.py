@@ -16,6 +16,8 @@ PORTABLE = {'numpy', 'scipy', 'pandas', 'matplotlib', 'statsmodels', 'scikit-lea
 
 def systems_status(descriptor):
     unknown = set(descriptor.get('resources', {}).get('external_tools', [])) - EXTERNAL_SYSTEMS.keys()
+    if descriptor.get('resources', {}).get('r') is not None:
+        unknown.add('R packages')
     for value in descriptor.get('dependencies', []):
         try:
             requirement = Requirement(value)

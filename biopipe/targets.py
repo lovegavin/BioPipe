@@ -47,6 +47,8 @@ def invoke(paths, module, args, directory, *, timeout=180):
 
 
 def activate(state):
+    if state.get("_runtime_root"):
+        os.environ["BIOPIPE_R_HOME"] = str(Path(state["_runtime_root"]).parent / "runtimes/r")
     sys.dont_write_bytecode = True
     # Called before importing numpy/SDK in a fresh pipeline worker.
     if state.get('runtime_protocol') == 1:

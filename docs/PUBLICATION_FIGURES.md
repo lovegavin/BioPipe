@@ -62,3 +62,10 @@ Rerun a route to produce the new output formats. Third-party operators can expos
 `figures: [{format, path, filename}]` in their step report; the files must exist
 inside the job directory. The runner copies this list into the run summary. They
 remain responsible for their own plotting style and complete-data semantics.
+
+## Static plotting and R adapters
+
+Protocol v3 now supports the public figure-artifact SDK and optional validated
+`resources.r` declarations. Multiple figures retain distinct IDs across local and
+SSH result viewing. See [Static plotting adapters](static_plotting.md) for the
+API, dependency lifecycle, frozen JSON parameters, memory limits and examples.

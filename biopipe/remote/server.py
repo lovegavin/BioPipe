@@ -164,7 +164,7 @@ class RemoteService:
             elif kind == 'artifact_file':
                 path = service.artifact_file(key, params['artifact_id'], params['role'])
             elif kind == 'figure':
-                path = service.figure_file(key, params['index'], format=params.get('format'))
+                path = service.figure_file(key, params['index'], format=params.get('format'), **({'figure_id': params['figure_id']} if 'figure_id' in params else {}))
             elif kind == 'export':
                 path = service.export_file(key, params['index'])
             else:

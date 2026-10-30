@@ -16,7 +16,7 @@ import { api } from "./api";
 import { bytes } from "./graph";
 import {isActiveJob, jobStatusLabel} from './execution';
 import {TaskManager, TaskProgress} from './TaskManager';
-import {FigureLinks, figureFormats, figureUrl} from './FigureOutputs';
+import {FigureLinks, figureFormats, figureGroups, FigureGallery} from './FigureOutputs';
 import type { Job, Preview, RunEvent, SpillCounts } from "./types";
 
 export const statusLabel = jobStatusLabel;
@@ -190,13 +190,12 @@ export function Results({
   const [detail, setDetail] = useState<Record<string, unknown> | null>(null),
     [step, setStep] = useState(-1);
   const reportRequest = useRef(0);
+  const [focusedFigure, setFocusedFigure] = useState<string | undefined>(undefined);
   const artifacts = job?.report?.artifacts.filter((a) => a.disk_uri) || [];
   const hasOutputs = artifacts.length > 0 || !!job?.summary?.steps.length;
   const savedFormats = figureFormats(detail);
-  const imageFormat = savedFormats.find(format => ['png','svg','jpg','jpeg','webp'].includes(format));
   const savedFigures = job?.summary?.steps.flatMap((item, index) => {
-    const formats = figureFormats(item);
-    return formats.length ? [{...item, index, formats}] : [];
+    return figureGroups(item).map(group => ({...item, index, ...group}));
   }) || [];
   async function openJob(id: string, destination: string) {
     const request = ++selectionRequest.current;
@@ -254,10 +253,11 @@ export function Results({
     selected,
     artifacts.map((a) => a.artifact_id).join(","),
   ]);
-  async function report(index: number) {
+  async function report(index: number, figureId?: string) {
     if (!job) return;
     const request = ++reportRequest.current;
     setStep(index);
+    setFocusedFigure(figureId);
     setDetail(null);
     setPreviewError('');
     const jobId = job.id;
@@ -484,9 +484,9 @@ export function Results({
               {job.remote && <div className="result-location" title={`${job.remote.workspace}/.studio/jobs/${job.remote.job_id}`}>{job.remote.name}</div>}
               {savedFigures.length > 0 && <>
                 <div className="section-caption">输出图表 <span>{savedFigures.length}</span></div>
-                {savedFigures.map(item => <div className="saved-figure" key={item.index}>
-                  <button className="text-button" onClick={() => void report(item.index)}><ChartScatter size={15}/>{item.name}</button>
-                  <FigureLinks jobId={job.id} step={item.index} formats={item.formats} compact/>
+                {savedFigures.map(item => <div className="saved-figure" key={`${item.index}:${item.id}`}>
+                  <button className="text-button" onClick={() => void report(item.index, item.id)}><ChartScatter size={15}/>{item.title}</button>
+                  <FigureLinks jobId={job.id} step={item.index} formats={item.formats} figureId={item.id === "__legacy__" ? undefined : item.id} compact/>
                 </div>)}
               </>}
               <div className="section-caption">
@@ -544,12 +544,7 @@ export function Results({
                     </a>
                   </div>
                   {savedFormats.length ? (
-                    <div className="figure-preview">
-                      {imageFormat && <a className="figure-image-link" href={figureUrl(job.id, step, imageFormat)} target="_blank" rel="noreferrer" aria-label="打开已保存原图">
-                        <img src={figureUrl(job.id, step, imageFormat)} alt={`${detail?.kind || '分析'}图像产物`}/>
-                      </a>}
-                      <FigureLinks jobId={job.id} step={step} formats={savedFormats}/>
-                    </div>
+                    <FigureGallery jobId={job.id} step={step} report={detail!} focusId={focusedFigure}/>
                   ) : (
                     <pre className="report-json">
                       {detail

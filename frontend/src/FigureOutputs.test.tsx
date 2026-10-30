@@ -1,6 +1,6 @@
 import {renderToStaticMarkup} from 'react-dom/server';
 import {describe, expect, it} from 'vitest';
-import {FigureLinks, figureFormats} from './FigureOutputs';
+import {FigureLinks, figureFormats, figureGroups, FigureGallery} from './FigureOutputs';
 import {groupParameters} from './execution';
 
 describe('saved publication figures', () => {
@@ -22,5 +22,26 @@ describe('saved publication figures', () => {
   it('keeps figure sizing and resolution in the collapsed advanced parameters', () => {
     const groups = groupParameters([{key:'figure_dpi',label:'DPI',type:'integer'}]);
     expect(groups[0].id).toBe('advanced');
+  });
+});
+
+describe('saved figure collections', () => {
+  it('keeps two PDFs distinct and renders both original links', () => {
+    const report = {figures: [
+      {id: 'volcano', title: 'Volcano', format: 'pdf', path: '/run/v.pdf'},
+      {id: 'heatmap', title: 'Heatmap', format: 'pdf', path: '/run/h.pdf'},
+      {id: 'heatmap', title: 'Heatmap', format: 'png', path: '/run/h.png'},
+    ]};
+    expect(figureGroups(report).map(g => g.id)).toEqual(['volcano','heatmap']);
+    const html = renderToStaticMarkup(<FigureGallery jobId="job" step={0} report={report}/>);
+    expect(html).toContain('figure_id=volcano');
+    expect(html).toContain('figure_id=heatmap');
+    expect(html).toContain('loading="lazy"');
+    const focused = renderToStaticMarkup(<FigureGallery jobId="job" step={0} report={report} focusId="heatmap"/>);
+    expect(focused).not.toContain('figure_id=volcano');
+    expect(focused).toContain('figure_id=heatmap');
+  });
+  it('retains original single-figure reports', () => {
+    expect(figureGroups({path: '/run/plot.pdf'})[0]).toMatchObject({id: '__legacy__', formats: ['pdf']});
   });
 });

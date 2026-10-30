@@ -140,3 +140,10 @@ are errors; dynamic keys and parameters forwarded to helpers generate warnings.
 This is conservative static checking, not proof about arbitrary Python execution.
 CI runs registry drift checking and tests. See [migration](migration_v2.md) before
 using a v1/v2 profile or extension with this development version.
+
+## Static plotting and R adapters
+
+Protocol v3 now supports the public figure-artifact SDK and optional validated
+`resources.r` declarations. Multiple figures retain distinct IDs across local and
+SSH result viewing. See [Static plotting adapters](static_plotting.md) for the
+API, dependency lifecycle, frozen JSON parameters, memory limits and examples.

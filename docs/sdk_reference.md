@@ -154,3 +154,10 @@ file relative to the workflow directory. Reader-only `x-biopipe-path: source`
 marks a companion relative to the primary input. Studio resolves these paths at
 job preparation and makes them relative during manifest export. This annotation
 does not create a file or override the project containment boundary.
+
+## Static plotting and R adapters
+
+Protocol v3 now supports the public figure-artifact SDK and optional validated
+`resources.r` declarations. Multiple figures retain distinct IDs across local and
+SSH result viewing. See [Static plotting adapters](static_plotting.md) for the
+API, dependency lifecycle, frozen JSON parameters, memory limits and examples.

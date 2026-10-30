@@ -45,7 +45,7 @@
   "routes": [
     {
       "id": "route_240979c8e1c4",
-      "version": 2,
+      "version": 3,
       "name": "Hi-C from PAIRS",
       "graph": {
         "schema_version": 2,
@@ -216,6 +216,8 @@
               "cluster_cols": false,
               "show_row_labels": false,
               "show_col_labels": true,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "contacts.png"
             },
             "context_params": {},
@@ -375,7 +377,7 @@
     },
     {
       "id": "route_274abd24ce8d",
-      "version": 4,
+      "version": 5,
       "name": "RNA-seq DE",
       "graph": {
         "schema_version": 2,
@@ -505,6 +507,8 @@
               "point_size": 8,
               "alpha": 0.7,
               "label_top": 8,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "volcano.png",
               "title": "Airway: dex vs untrt"
             },
@@ -534,6 +538,8 @@
               "point_size": 8,
               "alpha": 0.7,
               "label_top": 0,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "ma.png",
               "title": "Airway: dex vs untrt"
             },
@@ -613,6 +619,8 @@
               "dim": "component",
               "alpha": 0.7,
               "point_size": 8,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "pca.png",
               "title": "Sample PCA",
               "x_label": "PC1",
@@ -644,6 +652,8 @@
               "cluster_cols": true,
               "show_row_labels": false,
               "show_col_labels": true,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "top50_heatmap.png",
               "title": "Top 50 variable genes"
             },
@@ -687,6 +697,8 @@
               "show_points": true,
               "point_size": 4,
               "point_alpha": 0.5,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "ZBTB16_boxplot.png",
               "group_dim": "sample",
               "group_label": "dex",
@@ -998,7 +1010,7 @@
     },
     {
       "id": "route_5d8f861d9506",
-      "version": 3,
+      "version": 4,
       "name": "16S Microbiome",
       "graph": {
         "schema_version": 2,
@@ -1254,6 +1266,8 @@
               "dim": "component",
               "alpha": 0.75,
               "point_size": 30,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "color_label": "meta_site",
               "filename": "pcoa_by_site.png",
               "title": "PCoA (Bray-Curtis), colored by site",
@@ -1278,6 +1292,8 @@
               "dim": "component",
               "alpha": 0.75,
               "point_size": 30,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "color_label": "meta_horizon",
               "filename": "pcoa_by_horizon.png",
               "title": "PCoA (Bray-Curtis), colored by horizon",
@@ -1302,6 +1318,8 @@
               "dim": "component",
               "alpha": 0.75,
               "point_size": 30,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "color_label": "meta_transect",
               "filename": "pcoa_by_transect.png",
               "title": "PCoA (Bray-Curtis), colored by transect",
@@ -1424,6 +1442,8 @@
               "cluster_cols": true,
               "show_row_labels": false,
               "show_col_labels": true,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "sample_correlation.png",
               "title": "Sample-sample Spearman correlation"
             },
@@ -1488,6 +1508,8 @@
               "legend": true,
               "legend_ncol": 3,
               "rotate_labels": false,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "dim": "species",
               "filename": "site_composition.png",
               "sample_dim": "site",
@@ -2128,7 +2150,7 @@
     },
     {
       "id": "route_7219caa8ef7d",
-      "version": 3,
+      "version": 4,
       "name": "Hi-C from FASTQ",
       "graph": {
         "schema_version": 2,
@@ -2347,6 +2369,8 @@
               "cluster_cols": false,
               "show_row_labels": false,
               "show_col_labels": true,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "contacts.png"
             },
             "context_params": {},
@@ -2545,7 +2569,7 @@
     },
     {
       "id": "route_88fb083f4238",
-      "version": 4,
+      "version": 5,
       "name": "Proteomics DE",
       "graph": {
         "schema_version": 2,
@@ -2741,6 +2765,8 @@
               "point_size": 8,
               "alpha": 0.7,
               "label_top": 10,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "volcano.png",
               "title": "CPTAC BRCA: Stage III vs Stage II"
             },
@@ -2770,6 +2796,8 @@
               "point_size": 8,
               "alpha": 0.7,
               "label_top": 0,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "ma.png",
               "title": "CPTAC BRCA: Stage III vs Stage II"
             },
@@ -2820,6 +2848,8 @@
               "cluster_cols": true,
               "show_row_labels": false,
               "show_col_labels": true,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "heatmap.png",
               "title": "Top 50 variable proteins"
             },
@@ -3078,7 +3108,7 @@
     },
     {
       "id": "route_bf78f7a6e12f",
-      "version": 3,
+      "version": 4,
       "name": "生存分析",
       "graph": {
         "schema_version": 2,
@@ -3131,6 +3161,8 @@
               "ylabel": "Survival probability",
               "show_censors": true,
               "show_ci": false,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "event_label": "OS_event_nature2012",
               "filename": "km_stage.png",
               "group_label": "AJCC_Stage_nature2012",
@@ -3244,6 +3276,8 @@
               "color_ns": "#4C72B0",
               "sort_by": "p",
               "log_scale": true,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "forest.png",
               "title": "TCGA BRCA: multivariable Cox regression"
             },
@@ -3430,7 +3464,7 @@
     },
     {
       "id": "route_e43131160eaa",
-      "version": 2,
+      "version": 3,
       "name": "Hi-C from BAM",
       "graph": {
         "schema_version": 2,
@@ -3601,6 +3635,8 @@
               "cluster_cols": false,
               "show_row_labels": false,
               "show_col_labels": true,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "contacts.png"
             },
             "context_params": {},
@@ -3763,7 +3799,7 @@
     },
     {
       "id": "route_f6f466bace35",
-      "version": 4,
+      "version": 5,
       "name": "GWAS",
       "graph": {
         "schema_version": 2,
@@ -4108,6 +4144,8 @@
               "dim": "feature",
               "alpha": 0.85,
               "point_size": 6,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "chrom_label": "chrom",
               "filename": "manhattan.png",
               "p_dim": "statistic",
@@ -4133,6 +4171,8 @@
               "dim": "component",
               "alpha": 0.7,
               "point_size": 8,
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "pca_scatter.png",
               "title": "PCA",
               "x_label": "PC1",
@@ -4159,6 +4199,8 @@
               "bins": 20,
               "log_y": false,
               "ylabel": "Count",
+              "figure_dpi": 300,
+              "figure_font_size": 8,
               "filename": "pvalue_hist.png",
               "title": "P-value distribution",
               "value_label": "P",

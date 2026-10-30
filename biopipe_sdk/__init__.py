@@ -8,6 +8,11 @@ from importlib import import_module
 __version__ = "3.0.0"
 from .protocol import PROTOCOL_VERSION
 _EXPORTS = {
+    "publication_style": ("biopipe_sdk.figures", "publication_style"),
+    "register_figure": ("biopipe_sdk.figures", "register_figure"),
+    "figure_collection": ("biopipe_sdk.figures", "figure_collection"),
+    "save_matplotlib": ("biopipe_sdk.figures", "save_matplotlib"),
+    "run_r": ("biopipe.r_runtime", "run_r"),
     "load_class": ("biopipe_sdk.declarations", "load_class"),
     "bind_class": ("biopipe_sdk.declarations", "bind_class"),
     "Form": ("src.core", "Form"),

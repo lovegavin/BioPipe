@@ -701,10 +701,15 @@ class JobService:
             raise KeyError("报告路径不可用。")
         return path
 
-    def figure_file(self, key, index, format=None):
+    def figure_file(self, key, index, format=None, figure_id=None):
         content = read_json(self.export_file(key, index), {})
         if not isinstance(content, dict):
             raise KeyError("此步骤没有图像产物。")
+        if figure_id is not None:
+            selected = [item for item in content.get("figures", []) if item.get("id", "default") == figure_id]
+            if not selected:
+                raise KeyError("Figure ID not found in this step")
+            content = {"figures": selected, "path": selected[0]["path"]}
         value = content.get("path") or content.get("figure_path")
         if format is not None:
             if format not in {"png", "pdf", "svg", "jpg", "jpeg", "webp", "tif", "tiff"}:

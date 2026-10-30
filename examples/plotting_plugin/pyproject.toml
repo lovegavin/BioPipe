@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "biopipe-plot-examples"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["biopipe-studio>=0.8.1,<1"]
+[project.entry-points."biopipe.operators"]
+volcano = "biopipe_plot_examples.volcano:Volcano"
+complex_heatmap = "biopipe_plot_examples.complex_heatmap:ComplexHeatmap"
+[tool.setuptools.package-data]
+biopipe_plot_examples = ["*.parameters.json"]

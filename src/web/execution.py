@@ -807,10 +807,10 @@ class ExecutionService:
         child, index = self._export_ref(key, index)
         return self.service.export_file(child['id'], index) if child['target']['kind'] == 'local' else self._fetch_output(key, child, 'export', index=index)
 
-    def figure_file(self, key, index, format=None):
+    def figure_file(self, key, index, format=None, figure_id=None):
         child, index = self._export_ref(key, index)
-        fields = {'index': index, **({'format': format} if format else {})}
-        return self.service.figure_file(child['id'], index, format=format) if child['target']['kind'] == 'local' else self._fetch_output(key, child, 'figure', **fields)
+        fields = {'index': index, **({'format': format} if format else {}), **({'figure_id': figure_id} if figure_id is not None else {})}
+        return self.service.figure_file(child['id'], index, format=format, **({'figure_id': figure_id} if figure_id is not None else {})) if child['target']['kind'] == 'local' else self._fetch_output(key, child, 'figure', **fields)
 
     def history(self):
         return sorted([self.details(path.parent.name) for path in self.directory.glob('exec-*/job.json')],

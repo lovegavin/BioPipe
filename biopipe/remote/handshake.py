@@ -118,8 +118,8 @@ def runtime_identity():
 
 
 def _installation_key(entry):
-    return digest({key: entry.get(key) for key in
-                   ('id', 'kind', 'version', 'entry_point', 'code_sha', 'dependencies', 'dependency_imports')})
+    return digest({'r': entry.get('resources', {}).get('r'), **{key: entry.get(key) for key in
+                   ('id', 'kind', 'version', 'entry_point', 'code_sha', 'dependencies', 'dependency_imports')}})
 
 
 def installation_readiness(entries, results):
@@ -132,7 +132,7 @@ def installation_readiness(entries, results):
             'entries': {entry['id']: {'declaration_key': _installation_key(entry),
                                       'status': results[entry['id']]['status'],
                                       'error': results[entry['id']].get('error', '')}
-                        for entry in entries if entry['id'] in results}}
+                        for entry in entries if entry['id'] in results and entry.get('resources', {}).get('r') is None}}
 
 
 class ManifestHandshake:
@@ -182,7 +182,18 @@ class ManifestHandshake:
         # invalidates readiness when a path string happened to stay unchanged.
         targets = [self.service.plugins.directory / path for path in selected]
         return digest({'runtime': self.runtime, 'code_paths': state.get('code_paths', []),
-                       'targets': [[str(path), path.is_dir(), _stamp(path / 'biopipe-target.json')] for path in targets]})
+                       'targets': [[str(path), path.is_dir(), _stamp(path / 'biopipe-target.json')] for path in targets],
+                       'r': entry.get('r'), 'r_receipts': self._r_receipt(entry)})
+
+    def _r_receipt(self, entry):
+        if entry.get('r') is None:
+            return None
+        from biopipe.r_runtime import RRuntime
+        runtime = RRuntime(self.service.plugins.directory.parent / 'runtimes/r')
+        path = runtime.root / 'receipts' / (runtime.key(entry['r']) + '.json')
+        receipt = _read(path)
+        return [_stamp(path), Path(receipt.get('executable', '/missing')).is_file(),
+                Path(receipt.get('library', '/missing')).is_dir()]
 
     def sync(self, *, force=False):
         from biopipe.plugins import require_current_state
@@ -312,7 +323,7 @@ class ManifestHandshake:
                         entry.update(status='unchecked', error='')
                 self.sync(force=True)
                 self.persist()
-            self.service.dependencies.check(repair=False)
+            self.service.dependencies.check(repair=False, repair_r=True)
             with self.lock:
                 self.sync()
                 self.tool_snapshot(refresh=True)

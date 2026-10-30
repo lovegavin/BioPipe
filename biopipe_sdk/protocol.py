@@ -242,6 +242,8 @@ def validate_declaration(value):
     Descriptor.model_validate(value)
     validate_schema(value['parameters_schema'])
     resources, contracts = value['resources'], value['contracts']
+    from .r_dependencies import validate_r
+    validate_r(resources.get('r'))
     modes = resources.get('memory_modes', [])
     allowed = {'full', 'stream'} if value['kind'] == 'operator' else {'full', 'disk'}
     if not modes or 'full' not in modes or set(modes) - allowed:

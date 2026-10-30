@@ -1,0 +1,44 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "type": "string",
+      "default": "Expression heatmap"
+    },
+    "top_n": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 50,
+      "description": "First N rows in input order; zero means all rows. Subset/order upstream for biological selection."
+    },
+    "cluster_rows": {
+      "type": "boolean",
+      "default": true
+    },
+    "cluster_columns": {
+      "type": "boolean",
+      "default": true
+    },
+    "figure_width_mm": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 120
+    },
+    "figure_height_mm": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 90
+    },
+    "figure_dpi": {
+      "type": "integer",
+      "minimum": 72,
+      "default": 300
+    },
+    "figure_font_size": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 8
+    }
+  }
+}

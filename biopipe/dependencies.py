@@ -83,13 +83,15 @@ class DependencySession:
             for descriptor in active_descriptors(state):
                 identity = {k: descriptor.get(k) for k in ('id', 'kind', 'version', 'entry_point', 'implementation', 'dependencies', 'dependency_imports', 'execution')}
                 identity['implementation'] = {k: v for k, v in (descriptor.get('implementation') or {}).items() if k not in {'declaration_sha', 'sha256'}}
+                identity['r'] = descriptor.get('resources', {}).get('r')
                 fingerprint = sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
                 old = self.entries.get(descriptor['id'], {})
                 current[descriptor['id']] = old if old.get('fingerprint') == fingerprint else {
                     'id': descriptor['id'], 'title': descriptor['title'], 'fingerprint': fingerprint,
                     'status': 'unchecked', 'error': '', 'execution': descriptor.get('execution', {'mode': 'shared'}),
                     'dependencies': descriptor.get('dependencies', []),
-                    'dependency_imports': descriptor.get('dependency_imports', [])}
+                    'dependency_imports': descriptor.get('dependency_imports', []),
+                    'r': descriptor.get('resources', {}).get('r')}
             self.entries = current
 
     def snapshot(self):
@@ -111,9 +113,10 @@ class DependencySession:
             return inspect_entries(state, entries, self.manager.directory / 'staging')
         return self.inspector(self.manager.python_for(state), entries, self.manager.directory / 'staging')
 
-    def check(self, *, repair=True):
+    def check(self, *, repair=True, repair_r=None):
         # Shared with source/wheel transactions so the runtime cannot change
         # between probing and committing a repair. HTTP reads remain lock-free.
+        repair_r = repair if repair_r is None else repair_r
         self.manager.state()
         with self.manager.lock:
             state = self.manager.state()
@@ -135,7 +138,8 @@ class DependencySession:
                 results = self._inspect(state, pending)
                 failed = [v for v in pending if results[v['id']]['status'] != 'passed']
                 for entry in pending:
-                    self._update([entry['id']], **results[entry['id']])
+                    result = results[entry['id']]
+                    self._update([entry['id']], **({'status': 'checking', 'error': ''} if entry.get('r') is not None and result['status'] == 'passed' else result))
                 if repair:
                     from biopipe.install_targets import repair_entries
                     for entry in failed:
@@ -151,6 +155,16 @@ class DependencySession:
                             state = self.manager._publish(candidate)
                             self.sync(state)
                             self._update([entry['id']], **checked)
+                        except Exception as exc:
+                            self._update([entry['id']], 'failed', str(exc))
+                from biopipe.r_runtime import RRuntime
+                r_runtime = RRuntime(self.manager.directory.parent / 'runtimes/r')
+                for entry in pending:
+                    if entry.get('r') is not None and self.entries[entry['id']]['status'] in ('passed', 'checking'):
+                        self._update([entry['id']], 'installing' if repair_r else 'checking')
+                        try:
+                            r_runtime.ensure(entry['r'], repair=repair_r, verify=True)
+                            self._update([entry['id']], 'passed')
                         except Exception as exc:
                             self._update([entry['id']], 'failed', str(exc))
             except Exception as exc:

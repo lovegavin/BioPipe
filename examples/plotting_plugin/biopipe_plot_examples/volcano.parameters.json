@@ -1,0 +1,45 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "type": "string",
+      "default": "Differential expression"
+    },
+    "fdr": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "default": 0.05
+    },
+    "effect_threshold": {
+      "type": "number",
+      "minimum": 0,
+      "default": 1
+    },
+    "highlight": {
+      "type": "string",
+      "default": "#D55E00"
+    },
+    "figure_width_mm": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 120
+    },
+    "figure_height_mm": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 90
+    },
+    "figure_dpi": {
+      "type": "integer",
+      "minimum": 72,
+      "default": 300
+    },
+    "figure_font_size": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 8
+    }
+  }
+}

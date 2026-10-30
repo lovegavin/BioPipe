@@ -1010,3 +1010,13 @@ Compatible entries share the runtime. Only conflicting entries use a private
 dependency directory and subprocess with the same Python executable. See
 [selective dependency isolation](docs/dependency_isolation.md) for declarations, streaming,
 memory accounting and supported metadata.
+
+### Extending static plotting
+
+Use the [public figure SDK and R adapter guide](docs/static_plotting.md) to wrap
+Matplotlib or domain plotting tools. Operators can return multiple named figures
+with direct links to saved PDF/SVG/PNG files. Optional R requirements are checked
+and prepared in managed libraries; existing v3 declarations and independently
+saved workflow parameters remain the authoring model. The
+[plotting examples](examples/plotting_plugin/README.md) include a Python volcano
+report and R ComplexHeatmap with explicit memory estimates.

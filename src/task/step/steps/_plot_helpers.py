@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -81,7 +82,7 @@ def save_figure(fig, ctx, filename: str) -> str:
                 target = path.with_suffix('.' + fmt)
                 fig.savefig(target, format=fmt, dpi=dpi, bbox_inches=None,
                             facecolor="white", edgecolor="white", transparent=False)
-                outputs.append({"format": fmt, "path": str(target), "filename": target.name,
+                outputs.append({"id": "figure-" + hashlib.sha256(str(path.relative_to(directory)).encode()).hexdigest()[:16], "title": str(params.get("title") or path.stem), "format": fmt, "path": str(target), "filename": target.name,
                                 "width_mm": float(width), "height_mm": float(height), "dpi": dpi})
         path.with_suffix('.figure.json').write_text(json.dumps(outputs, indent=2), encoding="utf-8")
         return str(path)

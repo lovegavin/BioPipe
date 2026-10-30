@@ -321,8 +321,8 @@ class RemoteManager:
     def export_file(self, key, index):
         return self._output(key, 'export', index=index)
 
-    def figure_file(self, key, index, format=None):
-        return self._output(key, 'figure', index=index, **({'format': format} if format else {}))
+    def figure_file(self, key, index, format=None, figure_id=None):
+        return self._output(key, 'figure', index=index, **({'format': format} if format else {}), **({'figure_id': figure_id} if figure_id is not None else {}))
 
     def cancel(self, key):
         ref = self.reference(key)
