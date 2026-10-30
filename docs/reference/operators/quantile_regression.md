@@ -24,7 +24,6 @@
 | `quantile` | Quantile | number | 0.5 |  |  |  | basic |
 | `alpha` | 显著性水平 | number | 0.0 | 0 |  |  | advanced |
 | `solver` | Solver | string; enum=['highs', 'highs-ds', 'highs-ipm'] | highs |  |  |  | basic |
-| `max_iter` | Max Iter | integer | 1000 | 1 |  |  | basic |
 
 ## Input contract
 
@@ -107,7 +106,6 @@ Linear quantile regression.
     quantile: <number>
     alpha: <number>
     solver: <string; enum=['highs', 'highs-ds', 'highs-ipm']>
-    max_iter: <integer>
     output: <output_name>
 ```
 

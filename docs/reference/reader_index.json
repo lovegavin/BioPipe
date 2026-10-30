@@ -499,6 +499,65 @@
     "quality": "auto"
   },
   {
+    "id": "BroadPeakReader",
+    "kind": "reader",
+    "extensions": [
+      ".broadpeak",
+      ".broadPeak"
+    ],
+    "file_input": {
+      "dims": [
+        "region",
+        "field"
+      ],
+      "labels": {
+        "region": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/broadpeak_reader.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "doc": "docs/reference/readers/BroadPeakReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "ChainReader",
     "kind": "reader",
     "extensions": [
@@ -1382,6 +1441,64 @@
     "quality": "reviewed"
   },
   {
+    "id": "GffReader",
+    "kind": "reader",
+    "extensions": [
+      ".gff2"
+    ],
+    "file_input": {
+      "dims": [
+        "feature",
+        "field"
+      ],
+      "labels": {
+        "feature": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/gff_reader.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "doc": "docs/reference/readers/GffReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "GmtReader",
     "kind": "reader",
     "extensions": [
@@ -1885,6 +2002,80 @@
     "quality": "auto"
   },
   {
+    "id": "MmcifReader",
+    "kind": "reader",
+    "extensions": [
+      ".cif",
+      ".mmcif"
+    ],
+    "file_input": {
+      "dims": [
+        "atom",
+        "field"
+      ],
+      "labels": {
+        "atom": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "max_atoms": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100000,
+          "title": "Max Atoms",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "model": {
+          "type": "integer",
+          "minimum": 1,
+          "title": "Model",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/mmcif_reader.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "doc": "docs/reference/readers/MmcifReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "MtxReader",
     "kind": "reader",
     "extensions": [
@@ -2170,6 +2361,64 @@
       "tests/test_plugin_refresh.py"
     ],
     "doc": "docs/reference/readers/NpyReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "OboReader",
+    "kind": "reader",
+    "extensions": [
+      ".obo"
+    ],
+    "file_input": {
+      "dims": [
+        "term",
+        "field"
+      ],
+      "labels": {
+        "term": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/obo_reader.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "doc": "docs/reference/readers/OboReader.md",
     "quality": "auto"
   },
   {
@@ -2677,6 +2926,72 @@
     "quality": "auto"
   },
   {
+    "id": "SdfReader",
+    "kind": "reader",
+    "extensions": [
+      ".sdf"
+    ],
+    "file_input": {
+      "dims": [
+        "molecule",
+        "field"
+      ],
+      "labels": {
+        "molecule": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "max_records": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10000,
+          "title": "Max Records",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/sdf_reader.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "doc": "docs/reference/readers/SdfReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "StockholmReader",
     "kind": "reader",
     "extensions": [
@@ -3082,6 +3397,73 @@
     ],
     "doc": "docs/reference/readers/VcfReader.md",
     "quality": "reviewed"
+  },
+  {
+    "id": "WigReader",
+    "kind": "reader",
+    "extensions": [
+      ".wig"
+    ],
+    "file_input": {
+      "dims": [
+        "region",
+        "field"
+      ],
+      "labels": {
+        "region": "auto",
+        "field": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "max_records": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1000000,
+          "title": "Max Records",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "encoders": {
+          "type": "object",
+          "additionalProperties": true,
+          "title": "Encoders",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/wig_reader.py",
+    "tests": [
+      "tests/test_extension7.py",
+      "tests/test_extension9.py"
+    ],
+    "doc": "docs/reference/readers/WigReader.md",
+    "quality": "auto"
   },
   {
     "id": "ZarrReader",

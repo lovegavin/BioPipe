@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：全量 pytest **560 passed / 0 skipped**；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：全量 pytest **560 passed / 0 skipped**（0.16 增量 **12 passed**，未重跑全量）；独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -11,7 +11,7 @@
 | B | 算子 demo 自测：手工可算的小例子 |
 | C | 仅契约/route/artifact 覆盖；没有独立数值 oracle |
 
-## 2. Reader（49）
+## 2. Reader（55）
 | Reader | 级别 | 证据/独立 oracle |
 |---|---|---|
 | `BedReader` | S | test_readers_sop.py / test_genotype_readers_sop.py |
@@ -64,8 +64,15 @@
 | `ZarrReader` | B | test_extension8.py（2D 数值数组、labels） |
 | `BcfReader` | B | test_extension8.py（pysam BCF；Windows 原生不可用） |
 
+| `WigReader` | B | test_extension9.py（fixedStep/variableStep、0-based region） |
+| `BroadPeakReader` | B | test_extension9.py（9 列 broadPeak） |
+| `GffReader` | B | test_extension9.py（9 列 GFF2；避开 Gff3Reader 的 .gff） |
+| `MmcifReader` | B | test_extension9.py（mmCIF atom_site loop） |
+| `OboReader` | B | test_extension9.py（OBO [Term] 常用字段） |
+| `SdfReader` | B | test_extension9.py（SDF 原子/键计数与分子量） |
+
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（158；下表为 89 个早期算子，0.8–0.15 新增见末尾证据）
+## 3. Operator（167；下表为 89 个早期算子，0.8–0.16 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -237,3 +244,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - 新增 4 个 Reader：GenBank、PDB、Zarr、BCF；BCF 依赖 pysam，原生 Windows 不可用，见 [Windows 兼容性](windows_compatibility.md)。
 - 未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、registry 生成物、测试、图标和参考页。
 - 全量 pytest 基线更新为 **560 passed / 0 skipped**；参考页 158 算子 / 49 Reader；21 条 route fixture 保持不变。
+
+## 15. 0.16.0 扩展证据
+
+- 新增 9 个算子：DBSCAN、层次聚类、GMM、孤立森林、Cramér–von Mises、Welch ANOVA、Tukey HSD、C-index、二分类指标；`tests/test_extension9.py` 12 项通过。
+- 新增 6 个 Reader：WIG、broadPeak、GFF2、mmCIF、OBO、SDF；`tests/test_extension9.py` 临时文件解析和 `pick_reader` 分派通过。
+- 未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、registry 生成物、测试、图标和参考页。
+- 按用户要求只跑增量测试，未重跑全量：0.16 增量 **12 passed**；registry 167/55/21；参考页 167 算子 / 55 Reader；前端 113 passed。
+- 边界：聚类标签编号不稳定（受随机种子/样本顺序影响）；Cramér–von Mises 仅两组；Welch ANOVA/Tukey HSD 至少三组；C-index 把 risk 方向定义为越高风险越大；分类指标只支持二分类且正类默认按标签排序后的最后一个；GFF 使用 `.gff2` 以避免与 Gff3Reader 冲突；WIG/broadPeak 为 0-based 区间；mmCIF 只解析 atom_site；OBO 只读取 Term 常用字段；SDF 不重建键连接图。

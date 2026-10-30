@@ -1,7 +1,14 @@
 # 更新记录
 
-BioPipe 使用语义化版本和 git tag。当前源码版本：**0.15.0（2026-10-30）**。
+BioPipe 使用语义化版本和 git tag。当前源码版本：**0.16.0（2026-10-30）**。
 更早版本从 git tag/history 查；本页只保留当前版本摘要。
+
+## 0.16.0 — 2026-10-30
+- 新增 9 个算子：DBSCAN、层次聚类、GMM、孤立森林、Cramér–von Mises、Welch ANOVA、Tukey HSD、C-index、二分类指标。
+- 新增 6 个 Reader：WIG、broadPeak、GFF2、mmCIF、OBO、SDF。
+- 当前：167 算子 / 55 Reader / 21 route；未修改核心层。
+- 验证：按用户要求只跑 **增量测试 12 passed**（`tests/test_extension9.py`），未重跑全量；registry clean；参考页 167/55；Studio 前端 **113 passed**。
+- 边界：聚类标签不稳定；Cramér–von Mises 仅两组；Welch ANOVA/Tukey HSD 至少三组；C-index 的 risk 越高表示风险越大；分类指标仅二分类；GFF Reader 使用 `.gff2` 避免与 Gff3Reader 冲突；WIG/broadPeak 0-based；mmCIF 仅 atom_site；OBO 仅 Term；SDF 不重建键图。
 
 ## 0.15.0 — 2026-10-30
 - 新增 6 个算子：Mantel 检验、PLS 回归、分位数回归、bootstrap 置信区间、silhouette、互信息。

@@ -13,6 +13,7 @@
 | key | title | type | default | min | max | required | group |
 |---|---|---|---|---|---|---|---|
 | `sample_dim` | 样本维度 | string | sample |  |  |  | basic |
+| `sample_b_dim` | Sample B Dim | string | sample_b |  |  |  | basic |
 | `n_perm` | N Perm | integer | 999 | 9 | 99999 |  | basic |
 | `random_state` | 随机种子 | integer | 0 |  |  |  | advanced |
 | `alternative` | Alternative | string; enum=['greater', 'less', 'two-sided'] | greater |  |  |  | basic |
@@ -88,6 +89,7 @@ Mantel test between two square distance matrices.
   inputs: [<input1>, <input2>]
   params:
     sample_dim: <string>
+    sample_b_dim: <string>
     n_perm: <integer>
     random_state: <integer>
     alternative: <string; enum=['greater', 'less', 'two-sided']>

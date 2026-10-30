@@ -136,6 +136,7 @@ YAML / JSON
 - 0.12.0 新增：UMAP、配对/单样本 t 检验、z-score/min-max/softmax，以及 MAF/UCSC chain Reader；核心层不变；
 - 0.14.0 新增：距离相关、偏相关、VIF、分位数/幂变换、稳健缩放、缩尾、秩变换；BAM/CRAM/BigWig/PED/GFA Reader；核心层不变；
 - 0.15.0 新增：Mantel、PLS 回归、分位数回归、bootstrap CI、silhouette、互信息；GenBank/PDB/Zarr/BCF Reader；核心层不变；
+- 0.16.0 新增：DBSCAN、层次聚类、GMM、孤立森林、Cramér–von Mises、Welch ANOVA、Tukey HSD、C-index、分类指标；WIG/broadPeak/GFF2/mmCIF/OBO/SDF Reader；核心层不变；
 - 0.13.0 新增：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera；核心层不变；
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)；
 - 尚未支持：mzML、FCS、空间转录组、影像等；

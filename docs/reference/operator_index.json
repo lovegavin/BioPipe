@@ -327,6 +327,111 @@
     "quality": "auto"
   },
   {
+    "id": "agglomerative",
+    "kind": "operator",
+    "title": "Agglomerative clustering",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_clusters": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 2,
+          "title": "聚类数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "linkage": {
+          "type": "string",
+          "enum": [
+            "ward",
+            "complete",
+            "average",
+            "single"
+          ],
+          "default": "ward",
+          "title": "Linkage",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "metric": {
+          "type": "string",
+          "enum": [
+            "euclidean",
+            "manhattan",
+            "cosine"
+          ],
+          "default": "euclidean",
+          "title": "距离/相关指标",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/agglomerative.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/agglomerative.md",
+    "quality": "auto"
+  },
+  {
     "id": "aggregate",
     "kind": "operator",
     "title": "Aggregate",
@@ -1085,7 +1190,8 @@
     },
     "source": "src/task/step/steps/anova.py",
     "tests": [
-      "tests/test_extension3.py"
+      "tests/test_extension3.py",
+      "tests/test_extension9.py"
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/anova.md",
@@ -2351,6 +2457,133 @@
     "quality": "auto"
   },
   {
+    "id": "classification_metrics",
+    "kind": "operator",
+    "title": "Classification metrics",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "score_dim",
+              "default": "score"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "score_dim": {
+          "type": "string",
+          "default": "score",
+          "title": "Score Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "score_label": {
+          "type": "string",
+          "title": "Score Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "positive_label": {
+          "type": "string",
+          "title": "Positive Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "threshold": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.5,
+          "title": "阈值",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/classification_metrics.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/classification_metrics.md",
+    "quality": "auto"
+  },
+  {
     "id": "cluster_axis",
     "kind": "operator",
     "title": "Clustering",
@@ -3016,6 +3249,92 @@
     "quality": "reviewed"
   },
   {
+    "id": "concordance_index",
+    "kind": "operator",
+    "title": "Concordance index",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "time_label": {
+          "type": "string",
+          "title": "随访时间字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "event_label": {
+          "type": "string",
+          "title": "事件字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "risk_label": {
+          "type": "string",
+          "title": "Risk Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "time_label",
+        "event_label",
+        "risk_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/concordance_index.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/concordance_index.md",
+    "quality": "auto"
+  },
+  {
     "id": "correction",
     "kind": "operator",
     "title": "correction",
@@ -3325,6 +3644,212 @@
       "tasks/survival_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/cox_regression.md",
+    "quality": "auto"
+  },
+  {
+    "id": "cramer_von_mises",
+    "kind": "operator",
+    "title": "Cramer-von Mises test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/cramer_von_mises.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/cramer_von_mises.md",
+    "quality": "auto"
+  },
+  {
+    "id": "dbscan",
+    "kind": "operator",
+    "title": "DBSCAN clustering",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "eps": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 0.5,
+          "title": "Eps",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "min_samples": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "最少样本数",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "metric": {
+          "type": "string",
+          "enum": [
+            "euclidean",
+            "manhattan",
+            "cosine"
+          ],
+          "default": "euclidean",
+          "title": "距离/相关指标",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/dbscan.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/dbscan.md",
     "quality": "auto"
   },
   {
@@ -6335,6 +6860,114 @@
     "quality": "auto"
   },
   {
+    "id": "gaussian_mixture",
+    "kind": "operator",
+    "title": "Gaussian mixture clustering",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "covariance_type": {
+          "type": "string",
+          "enum": [
+            "full",
+            "tied",
+            "diag",
+            "spherical"
+          ],
+          "default": "full",
+          "title": "Covariance Type",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 200,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/gaussian_mixture.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/gaussian_mixture.md",
+    "quality": "auto"
+  },
+  {
     "id": "gaussian_random_projection",
     "kind": "operator",
     "title": "Gaussian random projection",
@@ -8470,6 +9103,112 @@
       "tasks/interval_stats_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/interval_stats.md",
+    "quality": "auto"
+  },
+  {
+    "id": "isolation_forest",
+    "kind": "operator",
+    "title": "Isolation Forest",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_estimators": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100,
+          "title": "树数量",
+          "x-ui-group": "advanced",
+          "x-ui-order": 20
+        },
+        "contamination": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "auto"
+              ]
+            },
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 0.5
+            }
+          ],
+          "default": "auto",
+          "title": "Contamination",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "random_state": {
+          "type": "integer",
+          "default": 0,
+          "title": "随机种子",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/isolation_forest.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/isolation_forest.md",
     "quality": "auto"
   },
   {
@@ -11354,6 +12093,13 @@
           "x-ui-group": "basic",
           "x-ui-order": 0
         },
+        "sample_b_dim": {
+          "type": "string",
+          "default": "sample_b",
+          "title": "Sample B Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
         "n_perm": {
           "type": "integer",
           "minimum": 9,
@@ -11361,14 +12107,14 @@
           "default": 999,
           "title": "N Perm",
           "x-ui-group": "basic",
-          "x-ui-order": 10
+          "x-ui-order": 20
         },
         "random_state": {
           "type": "integer",
           "default": 0,
           "title": "随机种子",
           "x-ui-group": "advanced",
-          "x-ui-order": 20
+          "x-ui-order": 30
         },
         "alternative": {
           "type": "string",
@@ -11380,13 +12126,13 @@
           "default": "greater",
           "title": "Alternative",
           "x-ui-group": "basic",
-          "x-ui-order": 30
+          "x-ui-order": 40
         },
         "output": {
           "type": "string",
           "title": "输出名称",
           "x-ui-group": "basic",
-          "x-ui-order": 40
+          "x-ui-order": 50
         }
       },
       "additionalProperties": false
@@ -14674,14 +15420,6 @@
           "title": "Solver",
           "x-ui-group": "basic",
           "x-ui-order": 110
-        },
-        "max_iter": {
-          "type": "integer",
-          "minimum": 1,
-          "default": 1000,
-          "title": "Max Iter",
-          "x-ui-group": "basic",
-          "x-ui-order": 120
         }
       },
       "required": [
@@ -18537,6 +19275,121 @@
     "quality": "auto"
   },
   {
+    "id": "tukey_hsd",
+    "kind": "operator",
+    "title": "Tukey HSD",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0.001,
+          "maximum": 0.5,
+          "default": 0.05,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/tukey_hsd.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/tukey_hsd.md",
+    "quality": "auto"
+  },
+  {
     "id": "umap",
     "kind": "operator",
     "title": "UMAP",
@@ -19075,6 +19928,112 @@
       "tasks/volcano_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/volcano.md",
+    "quality": "auto"
+  },
+  {
+    "id": "welch_anova",
+    "kind": "operator",
+    "title": "Welch ANOVA",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "group_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/welch_anova.py",
+    "tests": [
+      "tests/test_extension9.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/welch_anova.md",
     "quality": "auto"
   },
   {
