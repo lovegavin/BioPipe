@@ -5,7 +5,7 @@
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
 |---|---|---|---|
 | `ansari_bradley` | R `stats::ansari.test(exact=FALSE)` | `tests/test_r_oracles37.py` | x=[1..5], y=[1,4,9,16,25]：AB 18，z 1.0392304845413265，p 0.29869755599497028；正态近似、含并列校正 |
-| `chisq_out_test` | R `outliers::chisq.out.test` | `tests/test_r_oracles37.py` | [1,2,3,4,5,100]：χ² 4.161359374447157，p 0.04135620027516618；opposite 4.161359 对应 1 |
+| `chisq_out_test` | R `outliers::chisq.out.test` | `tests/test_r_oracles37.py` | [1,2,3,4,5,100]：χ² 4.161359374447157，p 0.04135620027516618；opposite χ² 0.21018646286664547，p 0.6466212955873326，对应 1 |
 | `calibration_curve` | 自有分箱实现（对齐 sklearn） | `tests/test_extension46.py` | 20 样本 / 5 箱：均匀分箱边界与每箱预测均值/观测比例 |
 
 - R 4.3.3；Ansari 只对照正态近似分支，精确条件分布未实现；校准曲线无外部 oracle。
