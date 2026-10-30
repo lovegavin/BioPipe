@@ -23,6 +23,8 @@ Rscript scripts/install_r_deps.R
 | `fgsea` | 必需 | `gsea` 的 enrichment score 对拍 |
 | `metafor` | 必需 | `meta_analysis` 的 fixed/random-effect 对拍 |
 | `GSVA` | 必需 | `ssgsea` 的 rank-sum 对拍 |
+| `sva` | 可选 | ComBat 的 R 参考；用于差异表达/批次校正研究 |
+| `Kendall` | 可选 | `mann_kendall` 与 R `Kendall::MannKendall` 对拍 |
 | `edgeR` | 可选 | RNA-seq 计数模型参考 |
 | `DESeq2` | 可选 | RNA-seq 差异分析参考 |
 | `clusterProfiler` | 可选 | ORA/富集分析参考 |
@@ -30,15 +32,15 @@ Rscript scripts/install_r_deps.R
 | `ALDEx2` | 可选 | 成分数据差异丰度参考 |
 | `BiocManager` | 必需 | Bioconductor 安装器 |
 
-可选包依赖系统库（libcurl、OpenSSL、fontconfig、GSL、HiGHS 等）；缺失时脚本会报告并继续，不会让四个必需 oracle 失败。当前 WSL 主机上 `limma` 3.58.1、`fgsea` 1.28.0、`metafor` 5.2.1、`GSVA` 1.50.5 已安装；`clusterProfiler`、`ANCOMBC`、`ALDEx2`、`DESeq2` 仍未安装。
+可选包依赖系统库（libcurl、OpenSSL、fontconfig、GSL、HiGHS 等）；缺失时脚本会报告并继续，不会让四个必需 oracle 失败。当前 WSL 主机上 `limma` 3.58.1、`fgsea` 1.28.0、`metafor` 5.2.1、`GSVA` 1.50.5、`sva`、`Kendall`、`edgeR`、`DESeq2`、`ALDEx2` 已安装；`clusterProfiler`、`ANCOMBC` 仍受 `treeio`/`TreeSummarizedExperiment` 依赖链影响，`gsl` 的 CRAN 版本要求 R >= 4.5，R 4.3 下不可用。
 
 ## 3. 测试
 
 ```bash
-python -m pytest -q tests/test_r_oracles.py
+python -m pytest -q tests/test_r_oracles.py tests/test_r_oracles2.py tests/test_r_oracles3.py
 ```
 
-覆盖 7 个测试：
+覆盖 13 个测试：
 
 - `limma_de`：平衡两组、`prior_df=0` 时与 R `limma::lmFit` 的 logFC/t/p 逐值对拍。
 - `ora`：与 R base `phyper` 的超几何尾概率逐值对拍。
@@ -46,6 +48,9 @@ python -m pytest -q tests/test_r_oracles.py
 - `meta_analysis`：与 `metafor::rma(method="FE"/"DL")` 的 beta/se/z/p/Q/I² 对拍；`I2` 输出为百分比（0–100）。
 - `ssgsea`：与 `GSVA::gsva(ssgseaParam(...))` 的 rank-sum 分数对拍；Python 沿用 GSVA 的 global-range 归一化。
 - `ancom_bc` / `aldex2`：与独立 R base log-ratio + Welch t 公式对拍；Monte Carlo 分支不逐随机数对拍。
+- `wilcoxon`：与 R `wilcox.test(..., paired=TRUE, exact=TRUE)` 的 W/P 对拍。
+- `friedman` / `bartlett` / `ks_2samp`：分别与 R `friedman.test`、`bartlett.test`、`ks.test(exact=TRUE)` 对拍。
+- `mann_kendall`：与 R `Kendall::MannKendall` 的 S/tau/P 对拍。
 
 R 或某个必需包不存在时，对应测试自动 skip，不会阻止纯 Python 环境运行全量测试。
 

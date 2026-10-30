@@ -13,7 +13,7 @@ class BroadPeakReader(Reader):
 
     output_contract = reader_contract()
     file_input = {"dims": ["region", "field"], "labels": {"region": "auto", "field": "builtin"}}
-    extensions = [".broadpeak", ".broadPeak"]
+    extensions = [".broadpeak"]
     handles_compression = False
     parameters_schema = {
         "type": "object",

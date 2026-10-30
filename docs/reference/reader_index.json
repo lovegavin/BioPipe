@@ -620,8 +620,7 @@
     "id": "BroadPeakReader",
     "kind": "reader",
     "extensions": [
-      ".broadpeak",
-      ".broadPeak"
+      ".broadpeak"
     ],
     "file_input": {
       "dims": [

@@ -1188,8 +1188,7 @@
           "name": "BroadPeakReader",
           "module": "src.reader.readers.broadpeak_reader",
           "extensions": [
-            ".broadpeak",
-            ".broadPeak"
+            ".broadpeak"
           ],
           "requires_siblings": [],
           "excludes_siblings": [],

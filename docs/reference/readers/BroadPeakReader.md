@@ -3,7 +3,7 @@
 > Auto-generated reference. Verify format edge cases against the linked source and tests.
 
 - Source: [`src/reader/readers/broadpeak_reader.py`](../../../src/reader/readers/broadpeak_reader.py)
-- Extensions: `.broadpeak, .broadPeak`
+- Extensions: `.broadpeak`
 - Compression handled natively: `False`
 - Tests: [`tests/test_extension9.py`](../../../tests/test_extension9.py)
 

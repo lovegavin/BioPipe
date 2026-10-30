@@ -6,6 +6,7 @@
 # Packages are installed into the user library, so no sudo password is needed.
 #
 # `limma`, `fgsea`, `metafor` and `GSVA` are required by tests/test_r_oracles.py.
+# `sva` and `Kendall` back the optional cross-checks in tests/test_r_oracles3.py.
 # The other packages are optional references and may fail when system libraries
 # (libcurl, OpenSSL, fontconfig, GSL, HiGHS, ...) are unavailable.
 
@@ -36,15 +37,17 @@ message("Using Bioconductor ", bioc, " and library ", lib)
 # Core oracle packages.  fgsea is handled separately because its 1.28.0
 # Makevars forces C++11 while the current BH headers require C++14/17.
 BiocManager::install(
-  c("limma", "fgsea", "edgeR", "clusterProfiler", "ANCOMBC", "ALDEx2",
+  c("limma", "fgsea", "sva", "edgeR", "clusterProfiler", "ANCOMBC", "ALDEx2",
     "DESeq2", "GSVA"),
   lib = lib, version = bioc, ask = FALSE, update = FALSE,
   Ncpus = getOption("Ncpus", 2L)
 )
 
-if (!requireNamespace("metafor", quietly = TRUE)) {
-  install.packages("metafor", lib = lib,
-                   repos = "https://mirrors.ustc.edu.cn/CRAN/")
+for (pkg in c("metafor", "Kendall")) {
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    install.packages(pkg, lib = lib,
+                     repos = "https://mirrors.ustc.edu.cn/CRAN/")
+  }
 }
 
 # fgsea 1.28.0's src/Makevars has no CXX_STD; R 4.3 defaults to C++11, which is
@@ -73,7 +76,7 @@ if (length(missing)) {
   stop("Required R oracle packages still missing: ", paste(missing, collapse = ", "))
 }
 
-optional <- c("edgeR", "clusterProfiler", "ANCOMBC", "ALDEx2", "DESeq2")
+optional <- c("sva", "Kendall", "edgeR", "clusterProfiler", "ANCOMBC", "ALDEx2", "DESeq2")
 missing_optional <- optional[
   !vapply(optional, requireNamespace, logical(1), quietly = TRUE)
 ]

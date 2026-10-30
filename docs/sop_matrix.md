@@ -268,3 +268,12 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - 未修改 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑；仅新增模块、registry 生成物、测试、图标和参考页。
 - 按用户要求只跑增量测试，未重跑全量：0.17 增量 **11 passed**（`tests/test_extension10.py` 10 项 + R oracle 1 项）；参考页 179 算子 / 63 Reader；21 条 route fixture 保持不变；Studio 前端 125 passed。
 - 边界：Holm/BY 对 NaN p 保留 NaN；效应量只支持连续特征；Mann-Kendall 使用 tie-corrected 正态近似；聚类标签编号不稳定；SMI 的重原子计数为近似值；MOL2 不重建键级；bedMethyl 仅解析 15 列常用字段。
+
+## 17. 严格增量测试基础设施
+
+- `scripts/test_incremental.py`：按 `git diff`/未跟踪文件选择测试；改动 `src/core/`、Reader/Step 基类、runner 或 registry 发现逻辑时拒绝增量，要求 `--full`。
+- `tests/test_incremental_gate.py`：静态检查封闭 schema、Reader 扩展名/兄弟文件消歧、算子 arity/输出契约、参考索引/页面/源码，以及改动模块的测试映射。
+- `tests/test_incremental_runner.py`：覆盖核心改动拒绝、前端/文档分类、Reader 到 `pick_reader` 测试的映射。
+- 新增 5 个 R oracle 测试：Wilcoxon、Friedman、Bartlett、KS、Mann-Kendall；R 包 `sva`、`Kendall`、`edgeR`、`DESeq2`、`ALDEx2` 已安装，`clusterProfiler`/`ANCOMBC` 仍受依赖链限制。
+- 0.17 增量验证：文档/reference/portability + read/write gate + R oracle 共 **36 passed**；新增测试在 `-W error` 下 **14 passed**；未重跑全量。
+- 日常命令：`python scripts/test_incremental.py`；周期命令：`python scripts/test_incremental.py --full`。详见 [测试范式](testing.md)。

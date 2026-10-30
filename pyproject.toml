@@ -17,6 +17,10 @@ dev = ["pytest>=8", "build>=1.2", "setuptools>=69"]
 [project.scripts]
 biopipe = "biopipe.cli:main"
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+minversion = "8.0"
+
 [tool.setuptools.packages.find]
 include = ["biopipe*", "src*"]
 

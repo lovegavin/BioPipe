@@ -38,8 +38,9 @@
 4. [Reader 扩展](reader_extensions.md) / [Step 扩展](step_extensions.md)
 5. [SDK 快速开始](sdk_quickstart.md) / [SDK 参考](sdk_reference.md)
 6. [注册表维护](registry_maintenance.md) 与 [插件生命周期](plugins.md)
-7. [测试与证据矩阵](sop_matrix.md)
-8. [R oracle 设置](r_oracles.md)
+7. [测试范式](testing.md) — 严格增量 + 周期全量
+8. [测试与证据矩阵](sop_matrix.md)
+9. [R oracle 设置](r_oracles.md)
 
 ### 我要新增 Reader / 算子
 
@@ -48,7 +49,8 @@
 3. [Reader 扩展](reader_extensions.md) / [Step 扩展](step_extensions.md)
 4. [SDK 快速开始](sdk_quickstart.md)
 5. [测试与证据矩阵](sop_matrix.md)
-6. 新增页面后运行 `python scripts/build_reference_docs.py`
+6. 按 [测试范式](testing.md) 补增量测试，并运行 `python scripts/test_incremental.py`
+7. 新增页面后运行 `python scripts/build_reference_docs.py`
 
 ## 3. 文档权威性
 
@@ -59,6 +61,7 @@
 | [reference/](reference/README.md) | 自动生成 | 每个 Reader/算子的参数、契约、源码/测试链接 |
 | [route_sop.md](route_sop.md) | 当前流程 | 自定义任务的标准操作流程 |
 | [llm_guide.md](llm_guide.md) / [user_guide.md](user_guide.md) | 当前指南 | LLM/真人的操作手册 |
+| [testing.md](testing.md) | 当前流程 | 严格增量测试、静态 gate、周期全量 |
 | [sop_matrix.md](sop_matrix.md) | 证据快照 | 覆盖级别、oracle、缺口 |
 | [r_oracles.md](r_oracles.md) | 专题 | R 包安装与外部 oracle 测试 |
 | [windows_compatibility.md](windows_compatibility.md) | 专题 | 原生 Windows 不可用的 Reader/依赖与 WSL 建议 |
@@ -89,8 +92,8 @@
 ## 5. 最常用的五个命令
 
 ```bash
-python -m pytest -q
-python -m pytest -q tests/sop
+python scripts/test_incremental.py            # 日常严格增量
+python scripts/test_incremental.py --full     # 周期全量
 python -m biopipe inspect "<绝对路径>" --json
 python scripts/run.py tasks/<任务> --check
 python scripts/build_reference_docs.py --check
