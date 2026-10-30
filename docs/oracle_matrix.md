@@ -153,6 +153,18 @@
 - 复现：`python -m pytest -q tests/test_extension23.py tests/test_r_oracles15.py`。
 - 边界：多项 logit 使用 softmax 参数化，不输出个体预测；条件 logit 不做分层随机效应；稳健回归不输出权重诊断图。
 
+## 0.31.0
+
+| Operator | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `gamma_regression` | R `glm(y ~ x1 + x2, family=Gamma(link="log"))` | `tests/test_r_oracles16.py` | 系数/SE 对齐；MLE 尺度参数 |
+| `zero_inflated_poisson` | R `pscl::zeroinfl(y ~ x | z, dist="poisson")` | `tests/test_r_oracles16.py` | count/zero 系数对齐；零模型默认仅截距 |
+
+- 使用已安装的 base R 与 `pscl 1.5.9`；`quantreg 6.1` 也已安装，但 0.31 不重复实现既有 `quantile_regression`。
+- 参考值：Gamma 系数 `0.4403480 / 0.3146126 / -0.2057134`，SE `0.05692901 / 0.05703248 / 0.04923079`；ZIP count `1.0500853 / 0.4181325`，zero `-0.7452351 / 1.0384099`。
+- 复现：`python -m pytest -q tests/test_extension24.py tests/test_r_oracles16.py`。
+- 边界：Gamma 为 log link、固定 shape 的 MLE；ZIP 的零模型可加 `zero_predictors`，计数模型支持分类预测；不输出个体拟合值/残差。
+
 ## 环境与缺口
 
 - R 4.3.3；已装 `vegan`、`survival`、`metafor`、`edgeR`、`limma`、`DESeq2`、`fgsea`、`GSVA`、`sva`、`Kendall`、`ALDEx2` 等。

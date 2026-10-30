@@ -22127,6 +22127,192 @@
         },
         {
           "protocol_version": 1,
+          "id": "gamma_regression",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.gamma_regression:GammaRegressionStep",
+          "title": "Gamma regression",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response_label": {
+                "type": "string",
+                "title": "Response Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "predictors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Predictors",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "categorical": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": [],
+                "title": "分类协变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "maxiter": {
+                "type": "integer",
+                "minimum": 20,
+                "default": 200,
+                "title": "Maxiter",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "response_label",
+              "predictors"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "gamma_regression",
+          "module": "src.task.step.steps.gamma_regression",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Gamma GLM with a log link, fitted by maximum likelihood.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "response_label",
+              "label": "Response Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "predictors",
+              "label": "Predictors",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "categorical",
+              "label": "分类协变量",
+              "type": "list",
+              "required": false,
+              "default": []
+            },
+            {
+              "key": "maxiter",
+              "label": "Maxiter",
+              "type": "integer",
+              "required": false,
+              "default": 200,
+              "min": 20
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "categorical": [],
+            "maxiter": 200
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "gaussian_mixture",
           "version": "1.0.0",
           "kind": "operator",
@@ -44617,6 +44803,210 @@
             "feature_dim": "feature",
             "lower": 5.0,
             "upper": 95.0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "zero_inflated_poisson",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.zero_inflated_poisson:ZeroInflatedPoissonStep",
+          "title": "Zero-inflated Poisson regression",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response_label": {
+                "type": "string",
+                "title": "Response Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "count_predictors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Count Predictors",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "zero_predictors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": [],
+                "title": "Zero Predictors",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "categorical": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": [],
+                "title": "分类协变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "maxiter": {
+                "type": "integer",
+                "minimum": 20,
+                "default": 200,
+                "title": "Maxiter",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "response_label",
+              "count_predictors"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "zero_inflated_poisson",
+          "module": "src.task.step.steps.zero_inflated_poisson",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Poisson count model with a logistic zero-inflation component.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "response_label",
+              "label": "Response Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "count_predictors",
+              "label": "Count Predictors",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "zero_predictors",
+              "label": "Zero Predictors",
+              "type": "list",
+              "required": false,
+              "default": []
+            },
+            {
+              "key": "categorical",
+              "label": "分类协变量",
+              "type": "list",
+              "required": false,
+              "default": []
+            },
+            {
+              "key": "maxiter",
+              "label": "Maxiter",
+              "type": "integer",
+              "required": false,
+              "default": 200,
+              "min": 20
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "zero_predictors": [],
+            "categorical": [],
+            "maxiter": 200
           },
           "legacy_parameters": false
         },

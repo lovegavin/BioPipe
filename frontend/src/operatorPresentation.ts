@@ -171,6 +171,8 @@ export const builtinPresentation = {
   breusch_godfrey: { category: "统计分析", icon: "TrendUp" },
   reset_test: { category: "统计分析", icon: "ChartScatter" },
   harvey_collier: { category: "统计分析", icon: "ChartLine" },
+  gamma_regression: { category: "统计分析", icon: "ChartLine" },
+  zero_inflated_poisson: { category: "统计分析", icon: "ChartBar" },
   multinomial_logit: { category: "统计分析", icon: "ChartBar" },
   conditional_logit: { category: "统计分析", icon: "Intersect" },
   robust_regression: { category: "统计分析", icon: "ChartLine" },

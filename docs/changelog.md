@@ -1,5 +1,12 @@
 # 更新记录
 
+## 0.31.0 — 2026-10-31
+- 新增 2 个回归模型算子：`gamma_regression`（Gamma GLM，log link）、`zero_inflated_poisson`（零膨胀 Poisson）；未新增 Reader。
+- 恢复并保留 0.15 既有 `quantile_regression`（ML 算子）；本批不重复注册同名算子。
+- 当前：242 算子 / 82 Reader / 21 route；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension24.py` 3 项、`tests/test_r_oracles16.py` 1 项，合计 **4 passed**；R 对照 base `glm(Gamma, log)`、`pscl::zeroinfl`；registry clean；参考页 242/82；增量门 20 passed；Studio 前端 188 passed。
+- 边界：Gamma 使用 log link 与 MLE 尺度；零膨胀 Poisson 零模型默认仅截距，可选 `zero_predictors`；不提供稳健标准误或随机效应。
+
 ## 0.30.0 — 2026-10-31
 - 新增 3 个回归模型算子：`multinomial_logit`（多项 logit）、`conditional_logit`（条件 logit）、`robust_regression`（Huber M 稳健回归）；未新增 Reader。
 - 当前：240 算子 / 82 Reader / 21 route；未修改核心层。
