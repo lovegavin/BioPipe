@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.38.0 — 2026-10-31
+
+- 新增：259 算子 / 82 Reader / 21 route；新增 Somers' D、Goodman-Kruskal gamma、Kendall's W 三个有序关联/一致性算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension31.py` 4 项、`tests/test_r_oracles23.py` 1 项，合计 **5 passed**；R 对照 `DescTools::SomersDelta`、`DescTools::GoodmanKruskalGamma`、`DescTools::KendallW(correct=FALSE)`；registry clean；参考页 259/82；增量门 21 passed；Studio 前端 205 passed。
+- 边界：Somers' D 需选择 `direction`；gamma 不提供 CI；Kendall's W 使用列排名与 `correct=FALSE` 语义，不做并列秩校正/事后两两比较。
+
 ## 0.37.0 — 2026-10-31
 
 - 新增：256 算子 / 82 Reader / 21 route；新增 Cramér's V、Jonckheere-Terpstra 有序秩检验、varimax 正交旋转三个效应量/多变量算子；未修改核心层。

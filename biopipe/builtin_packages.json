@@ -24217,6 +24217,121 @@
         },
         {
           "protocol_version": 1,
+          "id": "goodman_kruskal_gamma",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.goodman_kruskal_gamma:GoodmanKruskalGammaStep",
+          "title": "Goodman-Kruskal gamma",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "row_dim": {
+                "type": "string",
+                "default": "row",
+                "title": "Row Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "column_dim": {
+                "type": "string",
+                "default": "column",
+                "title": "Column Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "row_dim",
+                    "default": "row"
+                  },
+                  {
+                    "param": "column_dim",
+                    "default": "column"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [],
+          "dependency_imports": [],
+          "name": "goodman_kruskal_gamma",
+          "module": "src.task.step.steps.goodman_kruskal_gamma",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Goodman-Kruskal gamma, the symmetric ordinal association measure.",
+          "parameters": [
+            {
+              "key": "row_dim",
+              "label": "Row Dim",
+              "type": "string",
+              "required": false,
+              "default": "row"
+            },
+            {
+              "key": "column_dim",
+              "label": "Column Dim",
+              "type": "string",
+              "required": false,
+              "default": "column"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "row_dim": "row",
+            "column_dim": "column"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "gradient_boosting_classifier",
           "version": "1.0.0",
           "kind": "operator",
@@ -28068,6 +28183,140 @@
             "sample_dim": "sample",
             "feature_x": "feature",
             "feature_y": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "kendall_w",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.kendall_w:KendallWStep",
+          "title": "Kendall's W",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "subject_dim": {
+                "type": "string",
+                "default": "subject",
+                "title": "Subject Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "rater_dim": {
+                "type": "string",
+                "default": "rater",
+                "title": "Rater Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "raters": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Raters",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "subject_dim",
+                    "default": "subject"
+                  },
+                  {
+                    "param": "rater_dim",
+                    "default": "rater"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "kendall_w",
+          "module": "src.task.step.steps.kendall_w",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Kendall's W with column-wise ranks and no tie correction.",
+          "parameters": [
+            {
+              "key": "subject_dim",
+              "label": "Subject Dim",
+              "type": "string",
+              "required": false,
+              "default": "subject"
+            },
+            {
+              "key": "rater_dim",
+              "label": "Rater Dim",
+              "type": "string",
+              "required": false,
+              "default": "rater"
+            },
+            {
+              "key": "raters",
+              "label": "Raters",
+              "type": "list",
+              "required": false
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "subject_dim": "subject",
+            "rater_dim": "rater"
           },
           "legacy_parameters": false
         },
@@ -42858,6 +43107,144 @@
             "sample_dim": "sample",
             "feature_dim": "feature",
             "dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "somers_d",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.somers_d:SomersDStep",
+          "title": "Somers' D",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "row_dim": {
+                "type": "string",
+                "default": "row",
+                "title": "Row Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "column_dim": {
+                "type": "string",
+                "default": "column",
+                "title": "Column Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "direction": {
+                "type": "string",
+                "enum": [
+                  "row",
+                  "column"
+                ],
+                "default": "row",
+                "title": "Direction",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "row_dim",
+                    "default": "row"
+                  },
+                  {
+                    "param": "column_dim",
+                    "default": "column"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [],
+          "dependency_imports": [],
+          "name": "somers_d",
+          "module": "src.task.step.steps.somers_d",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Somers' D with the row or column variable as dependent.",
+          "parameters": [
+            {
+              "key": "row_dim",
+              "label": "Row Dim",
+              "type": "string",
+              "required": false,
+              "default": "row"
+            },
+            {
+              "key": "column_dim",
+              "label": "Column Dim",
+              "type": "string",
+              "required": false,
+              "default": "column"
+            },
+            {
+              "key": "direction",
+              "label": "Direction",
+              "type": "choice",
+              "required": false,
+              "default": "row",
+              "options": [
+                "row",
+                "column"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "row_dim": "row",
+            "column_dim": "column",
+            "direction": "row"
           },
           "legacy_parameters": false
         },

@@ -11597,6 +11597,79 @@
     "quality": "reviewed"
   },
   {
+    "id": "goodman_kruskal_gamma",
+    "kind": "operator",
+    "title": "Goodman-Kruskal gamma",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "row_dim",
+              "default": "row"
+            },
+            {
+              "param": "column_dim",
+              "default": "column"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "row_dim": {
+          "type": "string",
+          "default": "row",
+          "title": "Row Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "column_dim": {
+          "type": "string",
+          "default": "column",
+          "title": "Column Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/goodman_kruskal_gamma.py",
+    "tests": [
+      "tests/test_extension31.py",
+      "tests/test_r_oracles23.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/goodman_kruskal_gamma.md",
+    "quality": "auto"
+  },
+  {
     "id": "gradient_boosting_classifier",
     "kind": "operator",
     "title": "Gradient Boosting classifier",
@@ -14824,6 +14897,88 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/kendall_tau.md",
+    "quality": "auto"
+  },
+  {
+    "id": "kendall_w",
+    "kind": "operator",
+    "title": "Kendall's W",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "subject_dim",
+              "default": "subject"
+            },
+            {
+              "param": "rater_dim",
+              "default": "rater"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "subject_dim": {
+          "type": "string",
+          "default": "subject",
+          "title": "Subject Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "rater_dim": {
+          "type": "string",
+          "default": "rater",
+          "title": "Rater Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "raters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Raters",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/kendall_w.py",
+    "tests": [
+      "tests/test_extension31.py",
+      "tests/test_r_oracles23.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/kendall_w.md",
     "quality": "auto"
   },
   {
@@ -26262,6 +26417,90 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/softmax.md",
+    "quality": "auto"
+  },
+  {
+    "id": "somers_d",
+    "kind": "operator",
+    "title": "Somers' D",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "row_dim",
+              "default": "row"
+            },
+            {
+              "param": "column_dim",
+              "default": "column"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "row_dim": {
+          "type": "string",
+          "default": "row",
+          "title": "Row Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "column_dim": {
+          "type": "string",
+          "default": "column",
+          "title": "Column Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "row",
+            "column"
+          ],
+          "default": "row",
+          "title": "Direction",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/somers_d.py",
+    "tests": [
+      "tests/test_extension31.py",
+      "tests/test_r_oracles23.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/somers_d.md",
     "quality": "auto"
   },
   {

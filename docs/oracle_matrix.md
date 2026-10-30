@@ -2,6 +2,18 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.38.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `somers_d` | R `DescTools::SomersDelta` | `tests/test_r_oracles23.py` | D(row) 0.44885945548197204，D(column) 0.45218680504077097，concordant/discordant 787/177；direction 决定被解释变量 |
+| `goodman_kruskal_gamma` | R `DescTools::GoodmanKruskalGamma` | `tests/test_r_oracles23.py` | gamma 0.63278008298755184，concordant/discordant 787/177；对称关联，不提供 CI |
+| `kendall_w` | R `DescTools::KendallW(correct=FALSE)` | `tests/test_r_oracles23.py` | W 0.84444444444444444，chisq 10.133333333333333，df 4，p 0.038240605326664866，S 76；列排名、无并列校正 |
+
+- 使用已安装的 `DescTools`。
+- 复现：`python -m pytest -q tests/test_extension31.py tests/test_r_oracles23.py`。
+- 边界：三个算子均只接受完整列联表/评分矩阵；不做事后比较，不提供 bootstrap/CI。
+
 ## 0.37.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
