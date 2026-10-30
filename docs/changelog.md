@@ -1,7 +1,13 @@
 # 更新记录
 
-BioPipe 使用语义化版本和 git tag。当前源码版本：**0.12.0（2026-10-30）**。
+BioPipe 使用语义化版本和 git tag。当前源码版本：**0.13.0（2026-10-30）**。
 更早版本从 git tag/history 查；本页只保留当前版本摘要。
+
+## 0.13.0 — 2026-10-30
+- 新增 6 个统计算子：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera。
+- 当前：144 算子 / 40 Reader / 21 route；未修改核心层。
+- 验证：**544 passed / 0 skipped**（2026-10-30）；registry clean；参考页 144/40；新增测试 `tests/test_extension6.py` 4 项；Studio 前端 **90 passed**。
+- 边界：K-S/置换检验的 p 值基于有限重采样或渐近近似；Fligner-Killeen 依赖 scipy 当前版本 API。
 
 ## 0.12.0 — 2026-10-30
 - 新增 6 个算子：UMAP、配对 t 检验、单样本 t 检验、z-score、min-max 缩放、softmax。
