@@ -51,6 +51,18 @@
 - 当前 R：`flowCore 2.14.2`、`sangerseqR 1.38.0`；已安装 `BH 1.84.0.0` 于 `<R 用户库>/boost184`。
 - 未安装 `ShortRead`；FCS/AB1 已不再属于缺口。
 
+## 0.23.0
+
+| Operator | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `time_dependent_auc` | R `survivalROC::survivalROC(method="KM")` | `tests/test_r_oracles8.py` | AUC@5/10/15 完全一致；仅 KM 法 |
+| `brier_score` | R `survival::brier` + `coxph` | `tests/test_r_oracles8.py` | 三点 Brier 一致；含删失 timefix |
+| `integrated_brier_score` | 上述 Brier 的梯形积分 | `tests/test_r_oracles8.py` | IBS 1.7687351192 一致 |
+
+- 新增/使用的 R 包：`survivalROC 1.0.3.1`、`survival 3.5.8`；已有 `survival`/`survivalROC`。
+- R 参考值：AUC@5/10/15 = 0.6552020987/0.8091230111/0.6519226986；Brier = 0.1315697618/0.1807035261/0.2145172338；IBS = 1.7687351192。
+- 复现：`python -m pytest -q tests/test_extension16.py tests/test_r_oracles8.py`。
+
 ## 环境与缺口
 
 - R 4.3.3；已装 `vegan`、`survival`、`metafor`、`edgeR`、`limma`、`DESeq2`、`fgsea`、`GSVA`、`sva`、`Kendall`、`ALDEx2` 等。

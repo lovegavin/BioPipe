@@ -2655,6 +2655,105 @@
     "quality": "auto"
   },
   {
+    "id": "brier_score",
+    "kind": "operator",
+    "title": "Brier score (Cox)",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "time_label": {
+          "type": "string",
+          "title": "随访时间字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "event_label": {
+          "type": "string",
+          "title": "事件字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "risk_label": {
+          "type": "string",
+          "title": "Risk Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "times": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "minItems": 1,
+          "title": "Times",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "time_label",
+        "event_label",
+        "risk_label",
+        "times"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/brier_score.py",
+    "tests": [
+      "tests/test_extension16.py",
+      "tests/test_r_oracles8.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/brier_score.md",
+    "quality": "auto"
+  },
+  {
     "id": "brunner_munzel",
     "kind": "operator",
     "title": "Brunner-Munzel test",
@@ -11339,6 +11438,105 @@
       "tasks/proteomics_de_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/impute.md",
+    "quality": "auto"
+  },
+  {
+    "id": "integrated_brier_score",
+    "kind": "operator",
+    "title": "Integrated Brier score (Cox)",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "time_label": {
+          "type": "string",
+          "title": "随访时间字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "event_label": {
+          "type": "string",
+          "title": "事件字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "risk_label": {
+          "type": "string",
+          "title": "Risk Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "times": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "minItems": 2,
+          "title": "Times",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "time_label",
+        "event_label",
+        "risk_label",
+        "times"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/integrated_brier_score.py",
+    "tests": [
+      "tests/test_extension16.py",
+      "tests/test_r_oracles8.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/integrated_brier_score.md",
     "quality": "auto"
   },
   {
@@ -23463,6 +23661,101 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/theil_sen_regressor.md",
+    "quality": "auto"
+  },
+  {
+    "id": "time_dependent_auc",
+    "kind": "operator",
+    "title": "Time-dependent AUC",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "time_label": {
+          "type": "string",
+          "title": "随访时间字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "event_label": {
+          "type": "string",
+          "title": "事件字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "risk_label": {
+          "type": "string",
+          "title": "Risk Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "predict_time": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "title": "Predict Time",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "time_label",
+        "event_label",
+        "risk_label",
+        "predict_time"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/time_dependent_auc.py",
+    "tests": [
+      "tests/test_extension16.py",
+      "tests/test_r_oracles8.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/time_dependent_auc.md",
     "quality": "auto"
   },
   {

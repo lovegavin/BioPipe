@@ -2,6 +2,8 @@
 
 本手册给具备终端/文件读取能力的 LLM。目标：**不通读仓库**，只读 `docs/README.md`、`docs/architecture.md`、`docs/route_sop.md`、机器索引、少量算子页和必要的源码/测试，就能为用户搭建可校验的 BioPipe 任务。
 
+BioPipe 的定位不是让 agent 现写分析代码，而是让 agent **调用已验证的工具集**。选路线时先查注册表和参考页；只有现有算子确实不覆盖时，才考虑扩展，并遵循 `docs/vision.md` 与协议总集。
+
 ## 1. 阅读顺序（严格遵守）
 
 1. `docs/README.md` 与 `docs/architecture.md`（入口和仓库结构）；

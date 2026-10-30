@@ -68,7 +68,7 @@ FCS (Flow Cytometry Standard) reader.
 
 The reader supports the list-mode integer/float/double FCS 2.0-3.1
 layouts used by flowCore.  It exposes one row per event and one column
-per parameter; parameter names come from ``$PnS``/``$PnN`` and event
+per parameter; parameter names prefer ``$PnN`` over ``$PnS`` and event
 labels are stable ``event:<n>`` strings.
 ```
 

@@ -12055,6 +12055,177 @@
         },
         {
           "protocol_version": 1,
+          "id": "brier_score",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.brier_score:BrierScoreStep",
+          "title": "Brier score (Cox)",
+          "category": "Survival",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "time_label": {
+                "type": "string",
+                "title": "随访时间字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "event_label": {
+                "type": "string",
+                "title": "事件字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "risk_label": {
+                "type": "string",
+                "title": "Risk Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "times": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "minItems": 1,
+                "title": "Times",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "time_label",
+              "event_label",
+              "risk_label",
+              "times"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "lifelines<0.31,>=0.30",
+            "pandas>=2"
+          ],
+          "dependency_imports": [
+            "lifelines",
+            "pandas"
+          ],
+          "name": "brier_score",
+          "module": "src.task.step.steps.brier_score",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Cox PH Brier score with inverse-probability-of-censoring weights.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "time_label",
+              "label": "随访时间字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "event_label",
+              "label": "事件字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "risk_label",
+              "label": "Risk Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "times",
+              "label": "Times",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "brunner_munzel",
           "version": "1.0.0",
           "kind": "operator",
@@ -22808,6 +22979,177 @@
             "whiten": "unit-variance",
             "max_iter": 500,
             "random_state": 0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "integrated_brier_score",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.integrated_brier_score:IntegratedBrierScoreStep",
+          "title": "Integrated Brier score (Cox)",
+          "category": "Survival",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "time_label": {
+                "type": "string",
+                "title": "随访时间字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "event_label": {
+                "type": "string",
+                "title": "事件字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "risk_label": {
+                "type": "string",
+                "title": "Risk Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "times": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "minItems": 2,
+                "title": "Times",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "time_label",
+              "event_label",
+              "risk_label",
+              "times"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "lifelines<0.31,>=0.30",
+            "pandas>=2"
+          ],
+          "dependency_imports": [
+            "lifelines",
+            "pandas"
+          ],
+          "name": "integrated_brier_score",
+          "module": "src.task.step.steps.integrated_brier_score",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Trapezoidal integral of the Cox IPCW Brier score.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "time_label",
+              "label": "随访时间字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "event_label",
+              "label": "事件字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "risk_label",
+              "label": "Risk Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "times",
+              "label": "Times",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
           },
           "legacy_parameters": false
         },
@@ -38086,6 +38428,165 @@
             "scale": true,
             "max_subpopulation": 10000,
             "max_iter": 300
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "time_dependent_auc",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.time_dependent_auc:TimeDependentAucStep",
+          "title": "Time-dependent AUC",
+          "category": "Survival",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "time_label": {
+                "type": "string",
+                "title": "随访时间字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "event_label": {
+                "type": "string",
+                "title": "事件字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "risk_label": {
+                "type": "string",
+                "title": "Risk Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "predict_time": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "title": "Predict Time",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "time_label",
+              "event_label",
+              "risk_label",
+              "predict_time"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "time_dependent_auc",
+          "module": "src.task.step.steps.time_dependent_auc",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Kaplan-Meier cumulative/dynamic AUC at one prediction time.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "time_label",
+              "label": "随访时间字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "event_label",
+              "label": "事件字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "risk_label",
+              "label": "Risk Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "predict_time",
+              "label": "Predict Time",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
           },
           "legacy_parameters": false
         },

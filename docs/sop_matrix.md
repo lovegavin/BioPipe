@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（216；下表为 89 个早期算子，0.8–0.22 新增见末尾证据）
+## 3. Operator（219；下表为 89 个早期算子，0.8–0.22 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -338,3 +338,12 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - 依赖修复：`cytolib`/`flowCore` 在 BH 1.90 下编译失败，改用 BH 1.84 用户库编译后复制到主 R 库；`sangerseqR` 从 Bioconductor 安装。
 - 0.22 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 216/82/21；参考页 216 算子 / 82 Reader；Studio 前端 162 passed。
 - 边界：FCS 只支持 list mode、`$DATATYPE` I/F/D；AB1 只解析 ABIF 常用 tag，不重做 basecalling；两者都不展开原始峰列表/电泳图。
+
+## 23. 0.23.0 扩展证据
+
+- 新增 3 个生存预测算子：`time_dependent_auc`、`brier_score`、`integrated_brier_score`；未新增 Reader。
+- `tests/test_extension16.py` 4 项、`tests/test_r_oracles8.py` 1 项，合计 **5 项通过**；R 对照使用 `survivalROC::survivalROC`、`survival::coxph`、`survival::brier`。
+- R 参考值：AUC@5/10/15 = **0.6552020987 / 0.8091230111 / 0.6519226986**；Brier = **0.1315697618 / 0.1807035261 / 0.2145172338**；IBS = **1.7687351192**；Cox coef **0.2425241**。
+- 关键边界：t=10 有删失，按 R `brier` 的 timefix 将删失时间 +0.5；否则 Brier 为 0.17347 而非 0.1807035。
+- 0.23 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 219/82/21；参考页 219 算子 / 82 Reader；增量门 21 passed；Studio 前端 165 passed。
+- 边界：时间依赖 AUC 只实现 KM 法；Brier 使用 Cox PH 的 IPCW；积分 Brier 仅对给定 times 做梯形积分。

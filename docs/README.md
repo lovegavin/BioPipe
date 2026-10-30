@@ -6,8 +6,9 @@
 
 1. [架构总览](architecture.md) — 模块、执行流、数据流、目录地图、改哪里。
 2. [协议总集](protocol_suite.md) — Form、Reader、算子、契约、注册表、路线、扩展、测试的规范。
-3. [参考索引](reference/README.md) — 216 个算子、82 个 Reader 的逐项页面和机器索引。
+3. [参考索引](reference/README.md) — 219 个算子、82 个 Reader 的逐项页面和机器索引。
 4. [任务 SOP](route_sop.md) — 从数据到自定义路线、验证、运行、解释结果。
+5. [价值主张与设计原则](vision.md) — 为什么做、五个支撑手段、设计判断标准。
 
 一句话：**`task.yaml`/Studio Graph → Reader → Form → Step 链 → 输出/图片/report**。Reader 负责忠实解析，算子负责数学处理，契约负责连接，测试负责证明。
 
@@ -34,7 +35,7 @@
 
 1. [架构总览](architecture.md)
 2. [协议总集](protocol_suite.md)
-3. [协议总集](protocol_suite.md) 与 [算子协议](operator_protocol.md)
+3. [算子协议](operator_protocol.md)
 4. [Reader 扩展](reader_extensions.md) / [Step 扩展](step_extensions.md)
 5. [SDK 快速开始](sdk_quickstart.md) / [SDK 参考](sdk_reference.md)
 6. [注册表维护](registry_maintenance.md) 与 [插件生命周期](plugins.md)
@@ -57,6 +58,7 @@
 
 | 文档 | 状态 | 用途 |
 |---|---|---|
+| [vision.md](vision.md) | 当前定位 | 核心价值、支撑手段、差异化与设计判断 |
 | [architecture.md](architecture.md) | 当前权威 | 仓库结构、执行流、模块边界、改哪里 |
 | [protocol_suite.md](protocol_suite.md) | 当前规范 | 数据/Reader/算子/契约的硬性约定 |
 | [reference/](reference/README.md) | 自动生成 | 每个 Reader/算子的参数、契约、源码/测试链接 |
@@ -82,8 +84,8 @@
 
 ## 4. 当前版本与能力
 
-- 版本：**0.22.0**（见 [changelog](changelog.md)）
-- 216 个算子、82 个 Reader、6 个 provider 包、21 条内置路线
+- 版本：**0.23.0**（见 [changelog](changelog.md)）
+- 219 个算子、82 个 Reader、6 个 provider 包、21 条内置路线
 - 所有内置 Reader/算子参数严格（`additionalProperties: false`）
 - Reader 覆盖：CSV/TSV/TXT/Parquet、BED/GFF3/GTF/GAF、FASTA、MTX、H5AD、10x H5、VCF、PLINK1/2、BGEN、GMT、Loom、BIOM、FAM/BIM/HapMap、MOL/XYZ/GRO、PSL/genePred、MGF、HMMER domtblout、mzML/mzXML/mzTab、mzIdentML/pepXML/mzDATA/protXML 摘要、FCS/AB1
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)

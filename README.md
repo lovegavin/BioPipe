@@ -4,7 +4,21 @@ BioPipe 是本地生信流水线引擎 + Studio 可视化工作区 + CLI/MCP Age
 Reader 读取标准格式，用带类型契约的算子处理 `Form`，并在本地生成表格、图片和报告。
 BioPipe 本身不提供 AI 服务。
 
-当前源码版本 **0.22.0**：**216 个算子、82 个 Reader、6 个 provider 包、21 条路线**。
+当前源码版本 **0.23.0**：**219 个算子、82 个 Reader、6 个 provider 包、21 条路线**。
+
+## 价值主张
+
+**一个巨大、可维护、经过验证的工具集，让 agent 以最低成本调用分析，而不必自己写代码——从而避免生成实现时的逻辑错误和额外 token 消耗。**
+
+- 契约化算子库：注册表 + 两层测试 + 文档索引，agent 在边界内选算子，不靠猜。
+- 算子/Reader/ML 模型统一为一等公民：模型即插件，同一套发现、校验、组合、追溯机制。
+- 可视化可追溯：每步绑定契约与注册表，不只是画布。
+- 底层稳定：合规算子组合行为可预测。
+- 边际成本趋零：dsh 批量生成、测试筛真伪，工具集能快速扩大。
+
+**差异化：别人让 agent 现写分析代码，BioPipe 让 agent 调用已验证的工具集。**
+
+完整说明见 [价值主张与设计原则](docs/vision.md)。
 
 ## 先读文档
 
@@ -107,7 +121,7 @@ docs/reference/    自动生成 Reader/算子参考页
 
 ## 版本与更新记录
 
-- 当前：**0.20.0**，见 [CHANGELOG](docs/changelog.md)。
+- 当前：**0.23.0**，见 [CHANGELOG](docs/changelog.md)。
 - Windows 测试环境快照：[conda](windows-biopipe-conda.yml) /
   [pip](windows-biopipe-pip-freeze.txt)。
 

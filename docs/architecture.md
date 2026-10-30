@@ -8,6 +8,8 @@ BioPipe 是**本地生信流水线引擎 + Studio 可视化 + Agent/CLI 接口**
 
 它**不负责**自动理解生物学问题、自动识图、自动写论文结论，也不内置 AI 服务；LLM/Agent 是外部调用者。
 
+> **价值主张**：一个巨大、可维护、经过验证的工具集，让 agent 以最低成本调用分析，而不必自己写代码——从而避免生成实现时的逻辑错误和额外 token 消耗。支撑手段与设计判断见 [vision.md](vision.md)。
+
 ## 2. 执行流
 
 ### 2.1 CLI / 任务
@@ -142,6 +144,7 @@ YAML / JSON
 - 0.20.0 新增：Cohen/Fleiss kappa、Breusch-Pagan、Durbin-Watson、Egger 检验、ANOSIM、Procrustes、偏 Mantel；mzIdentML/pepXML/mzDATA/protXML Reader；核心层不变；
 - 0.21.0 新增：Storey q-value、DeLong AUC、Dunn 检验、决策曲线、有序 logistic、线性混合模型、Hosmer-Lemeshow、Stuart-Maxwell；核心层不变；
 - 0.22.0 新增：FCS 流式细胞术与 AB1 Sanger 测序 Reader；核心层不变；
+- 0.23.0 新增：时间依赖 AUC、Brier 与积分 Brier 三个生存预测算子；核心层不变；
 - 0.17.0 新增：Holm/BY 校正、Cohen's d/Hedges g、Cliff's delta、η²、rank-biserial、Davies–Bouldin、Calinski–Harabasz、ARI、混淆矩阵、ROC 曲线、Mann–Kendall；BLAST tabular/HMMER tblout/InterProScan/EMBL/HMM/MOL2/SMI/bedMethyl Reader；核心层不变；
 - 0.13.0 新增：KS 两样本、Brunner-Munzel、Fligner-Killeen、置换检验、符号检验、Jarque-Bera；核心层不变；
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)；
