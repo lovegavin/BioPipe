@@ -10,6 +10,167 @@
       "descriptors": [
         {
           "protocol_version": 1,
+          "id": "flow_compensate",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.flow_compensate:FlowCompensateStep",
+          "title": "Flow cytometry compensation",
+          "category": "Data preparation",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "event_dim": {
+                "type": "string",
+                "default": "event",
+                "title": "Event Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "channel_dim": {
+                "type": "string",
+                "default": "channel",
+                "title": "Channel Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "detector_dim": {
+                "type": "string",
+                "default": "detector",
+                "title": "Detector Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "fluorochrome_dim": {
+                "type": "string",
+                "default": "fluorochrome",
+                "title": "Fluorochrome Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "event_dim",
+                    "default": "event"
+                  },
+                  {
+                    "param": "channel_dim",
+                    "default": "channel"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "detector_dim",
+                    "default": "detector"
+                  },
+                  {
+                    "param": "fluorochrome_dim",
+                    "default": "fluorochrome"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "flow_compensate",
+          "module": "src.task.step.steps.flow_compensate",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "event_dim",
+              "label": "Event Dim",
+              "type": "string",
+              "required": false,
+              "default": "event"
+            },
+            {
+              "key": "channel_dim",
+              "label": "Channel Dim",
+              "type": "string",
+              "required": false,
+              "default": "channel"
+            },
+            {
+              "key": "detector_dim",
+              "label": "Detector Dim",
+              "type": "string",
+              "required": false,
+              "default": "detector"
+            },
+            {
+              "key": "fluorochrome_dim",
+              "label": "Fluorochrome Dim",
+              "type": "string",
+              "required": false,
+              "default": "fluorochrome"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "event_dim": "event",
+            "channel_dim": "channel",
+            "detector_dim": "detector",
+            "fluorochrome_dim": "fluorochrome"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "flow_gate",
           "version": "1.0.0",
           "kind": "operator",
@@ -11081,6 +11242,172 @@
             "feature_dim": "feature",
             "sample_dim": "sample",
             "group_dim": "sample"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "arch_test",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.arch_test:ArchTestStep",
+          "title": "ARCH heteroskedasticity test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "time_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "Time Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "value_label": {
+                "type": "string",
+                "title": "数值字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "lags": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 5,
+                "title": "Lags",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "demean": {
+                "type": "boolean",
+                "default": false,
+                "title": "Demean",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "value_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "time_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "arch_test",
+          "module": "src.task.step.steps.arch_test",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "time_dim",
+              "label": "Time Dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "value_label",
+              "label": "数值字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "lags",
+              "label": "Lags",
+              "type": "integer",
+              "required": false,
+              "default": 5,
+              "min": 1
+            },
+            {
+              "key": "demean",
+              "label": "Demean",
+              "type": "boolean",
+              "required": false,
+              "default": false
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "time_dim": "sample",
+            "feature_dim": "feature",
+            "lags": 5,
+            "demean": false
           },
           "legacy_parameters": false
         },
@@ -22898,6 +23225,170 @@
             "n_estimators": 100,
             "learning_rate": 0.1,
             "max_depth": 3
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "granger_causality",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.granger_causality:GrangerCausalityStep",
+          "title": "Granger causality test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "time_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "Time Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "cause_label": {
+                "type": "string",
+                "title": "Cause Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "effect_label": {
+                "type": "string",
+                "title": "Effect Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "max_lag": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 2,
+                "title": "Max Lag",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "cause_label",
+              "effect_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "time_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "granger_causality",
+          "module": "src.task.step.steps.granger_causality",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "time_dim",
+              "label": "Time Dim",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "cause_label",
+              "label": "Cause Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "effect_label",
+              "label": "Effect Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "max_lag",
+              "label": "Max Lag",
+              "type": "integer",
+              "required": false,
+              "default": 2,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "time_dim": "sample",
+            "feature_dim": "feature",
+            "max_lag": 2
           },
           "legacy_parameters": false
         },

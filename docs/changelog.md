@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.28.0 — 2026-10-31
+- 新增 3 个算子：`granger_causality`（Granger 因果 F 检验）、`arch_test`（ARCH LM 检验）、`flow_compensate`（流式溢漏补偿）；未新增 Reader。
+- 当前：234 算子 / 82 Reader / 21 route；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension21.py` 4 项、`tests/test_r_oracles13.py` 1 项，合计 **5 passed**；R 对照 `lmtest`、`FinTS`、`flowCore`；registry clean；参考页 234/82；增量门 22 passed；Studio 前端 180 passed。
+- 边界：Granger 为双变量 F 检验；ARCH 使用平方序列 LM；flow_compensate 只处理方阵线性溢漏补偿。
+
 ## 0.27.0 — 2026-10-31
 - 新增 4 个统计算子：`adf_test`（ADF 单位根）、`kpss_test`（KPSS 平稳性）、`poisson_regression`（Poisson GLM）、`negative_binomial_regression`（NB2 回归）。
 - 当前：231 算子 / 82 Reader / 21 route；未修改核心层。

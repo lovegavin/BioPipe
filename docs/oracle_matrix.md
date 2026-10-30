@@ -114,6 +114,19 @@
 - 复现：`python -m pytest -q tests/test_extension20.py tests/test_r_oracles12.py`。
 - 边界：ADF 默认 `regression="ct"`；KPSS 的 `lags` 可固定；Poisson/NB 响应必须为非负计数；NB 为 NB2。
 
+## 0.28.0
+
+| Operator | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `granger_causality` | R `lmtest::grangertest(effect ~ cause, order=k)` | `tests/test_r_oracles13.py` | F/p 一致；df 取模型 1 的 Res.Df 与 abs(Df) |
+| `arch_test` | R `FinTS::ArchTest(x, lags=5, demean=FALSE)` | `tests/test_r_oracles13.py` | LM/p 一致；平方序列滞后回归 |
+| `flow_compensate` | R `flowCore::compensate(flowFrame(e), spillover)` | `tests/test_r_oracles13.py` | 三行事件矩阵逐值一致；方阵、标签匹配 |
+
+- 新增 R 包 `lmtest 0.9.40`、`FinTS 0.4.9`；使用已安装的 `flowCore 2.14.2`。
+- 参考值：Granger F `395.9681448165 / 211.8084391160 / 146.0148719626`（lag 1/2/3）；ARCH LM `11.4217771216`、p `0.0436298086`；补偿行为 `[1, 0, 5]`、`[1.9897959, 0.1020408, 6]`、`[3.0510204, -0.5102041, 7]`。
+- 复现：`python -m pytest -q tests/test_extension21.py tests/test_r_oracles13.py`。
+- 边界：Granger 只做双变量、指定滞后阶数的 F 检验；ARCH 不做 GARCH 拟合；flow_compensate 只支持方阵线性溢漏矩阵。
+
 ## 环境与缺口
 
 - R 4.3.3；已装 `vegan`、`survival`、`metafor`、`edgeR`、`limma`、`DESeq2`、`fgsea`、`GSVA`、`sva`、`Kendall`、`ALDEx2` 等。

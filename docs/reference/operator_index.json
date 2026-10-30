@@ -1513,6 +1513,103 @@
     "quality": "auto"
   },
   {
+    "id": "arch_test",
+    "kind": "operator",
+    "title": "ARCH heteroskedasticity test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "time_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "time_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "Time Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "lags": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 5,
+          "title": "Lags",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "demean": {
+          "type": "boolean",
+          "default": false,
+          "title": "Demean",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/arch_test.py",
+    "tests": [
+      "tests/test_extension21.py",
+      "tests/test_r_oracles13.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/arch_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "attach_info",
     "kind": "operator",
     "title": "attach_info",
@@ -9233,6 +9330,111 @@
     "quality": "auto"
   },
   {
+    "id": "flow_compensate",
+    "kind": "operator",
+    "title": "Flow cytometry compensation",
+    "package": "biopipe-readers",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "event_dim",
+              "default": "event"
+            },
+            {
+              "param": "channel_dim",
+              "default": "channel"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "detector_dim",
+              "default": "detector"
+            },
+            {
+              "param": "fluorochrome_dim",
+              "default": "fluorochrome"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "event_dim": {
+          "type": "string",
+          "default": "event",
+          "title": "Event Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "channel_dim": {
+          "type": "string",
+          "default": "channel",
+          "title": "Channel Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "detector_dim": {
+          "type": "string",
+          "default": "detector",
+          "title": "Detector Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "fluorochrome_dim": {
+          "type": "string",
+          "default": "fluorochrome",
+          "title": "Fluorochrome Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/flow_compensate.py",
+    "tests": [
+      "tests/test_extension21.py",
+      "tests/test_r_oracles13.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/flow_compensate.md",
+    "quality": "auto"
+  },
+  {
     "id": "flow_gate",
     "kind": "operator",
     "title": "Flow cytometry rectangular gate",
@@ -10774,6 +10976,103 @@
       "tasks/ml_regression_route_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/gradient_boosting_regressor.md",
+    "quality": "auto"
+  },
+  {
+    "id": "granger_causality",
+    "kind": "operator",
+    "title": "Granger causality test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "time_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "time_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "Time Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "cause_label": {
+          "type": "string",
+          "title": "Cause Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "effect_label": {
+          "type": "string",
+          "title": "Effect Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "max_lag": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 2,
+          "title": "Max Lag",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "cause_label",
+        "effect_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/granger_causality.py",
+    "tests": [
+      "tests/test_extension21.py",
+      "tests/test_r_oracles13.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/granger_causality.md",
     "quality": "auto"
   },
   {
