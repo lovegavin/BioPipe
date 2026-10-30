@@ -182,6 +182,8 @@ export const builtinPresentation = {
   cronbach_alpha: { category: "统计分析", icon: "ChartLine" },
   canonical_correlation: { category: "统计分析", icon: "Intersect" },
   runs_test: { category: "统计分析", icon: "ChartScatter" },
+  kmo_test: { category: "统计分析", icon: "ChartScatter" },
+  bartlett_sphericity: { category: "统计分析", icon: "ChartBar" },
   multinomial_logit: { category: "统计分析", icon: "ChartBar" },
   conditional_logit: { category: "统计分析", icon: "Intersect" },
   robust_regression: { category: "统计分析", icon: "ChartLine" },

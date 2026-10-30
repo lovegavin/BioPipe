@@ -1950,6 +1950,79 @@
     "quality": "auto"
   },
   {
+    "id": "bartlett_sphericity",
+    "kind": "operator",
+    "title": "Bartlett sphericity test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/bartlett_sphericity.py",
+    "tests": [
+      "tests/test_extension29.py",
+      "tests/test_r_oracles21.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/bartlett_sphericity.md",
+    "quality": "auto"
+  },
+  {
     "id": "bayesian_ridge_regressor",
     "kind": "operator",
     "title": "Bayesian ridge regressor",
@@ -14782,6 +14855,79 @@
       "tasks/sequence_profiling_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/kmer_count.md",
+    "quality": "auto"
+  },
+  {
+    "id": "kmo_test",
+    "kind": "operator",
+    "title": "KMO sampling adequacy",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/kmo_test.py",
+    "tests": [
+      "tests/test_extension29.py",
+      "tests/test_r_oracles21.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/kmo_test.md",
     "quality": "auto"
   },
   {

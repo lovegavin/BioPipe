@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.36.0 — 2026-10-31
+
+- 新增：253 算子 / 82 Reader / 21 route；新增 KMO 取样适切性、Bartlett 球形检验两个因子可分析性诊断算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension29.py` 3 项、`tests/test_r_oracles21.py` 1 项，合计 **4 passed**；R 对照 `psych::KMO`、`psych::cortest.bartlett`；registry clean；参考页 253/82；增量门 20 passed；`-W error` 6 passed；Studio 前端 199 passed。
+- 边界：KMO 要求完整样本、非奇异相关矩阵；Bartlett 要求正定相关矩阵；不做因子数选择或旋转。
+
 ## 0.35.0 — 2026-10-31
 
 - 新增：251 算子 / 82 Reader / 21 route；新增 Cronbach's alpha、典型相关、Wald–Wolfowitz runs test 三个可靠性/多变量算子；未修改核心层。
