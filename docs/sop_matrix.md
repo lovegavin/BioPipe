@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（219；下表为 89 个早期算子，0.8–0.22 新增见末尾证据）
+## 3. Operator（222；下表为 89 个早期算子，0.8–0.22 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -347,3 +347,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - 关键边界：t=10 有删失，按 R `brier` 的 timefix 将删失时间 +0.5；否则 Brier 为 0.17347 而非 0.1807035。
 - 0.23 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 219/82/21；参考页 219 算子 / 82 Reader；增量门 21 passed；Studio 前端 165 passed。
 - 边界：时间依赖 AUC 只实现 KM 法；Brier 使用 Cox PH 的 IPCW；积分 Brier 仅对给定 times 做梯形积分。
+
+## 24. 0.24.0 扩展证据
+
+- 新增 3 个临床预测评估算子：`calibration_slope`、`net_reclassification_improvement`、`integrated_discrimination_improvement`；未新增 Reader。
+- `tests/test_extension17.py` 4 项、`tests/test_r_oracles9.py` 1 项，合计 **5 项通过**；R 对照使用 base `glm`、`qlogis` 与 NRI/IDI 公式。
+- R 值：校准截距 **-0.4063779**、斜率 **3.621762**、斜率 SE **2.577094**；NRI **1.0**；IDI **0.1083333**。
+- 0.24 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 222/82/21；参考页 222 算子 / 82 Reader；增量门 21 passed；Studio 前端 168 passed。
+- 边界：校准截距用 `glm(y ~ 1, offset=logit(p))`；NRI 仅连续版本；IDI 只适用于二分类结局。

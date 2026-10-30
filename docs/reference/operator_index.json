@@ -2956,6 +2956,103 @@
     "quality": "auto"
   },
   {
+    "id": "calibration_slope",
+    "kind": "operator",
+    "title": "Calibration intercept and slope",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "outcome_label": {
+          "type": "string",
+          "title": "Outcome Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "risk_label": {
+          "type": "string",
+          "title": "Risk Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "outcome_label",
+        "risk_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/calibration_slope.py",
+    "tests": [
+      "tests/test_extension17.py",
+      "tests/test_r_oracles9.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/calibration_slope.md",
+    "quality": "auto"
+  },
+  {
     "id": "calinski_harabasz",
     "kind": "operator",
     "title": "Calinski-Harabasz index",
@@ -11540,6 +11637,110 @@
     "quality": "auto"
   },
   {
+    "id": "integrated_discrimination_improvement",
+    "kind": "operator",
+    "title": "Integrated discrimination improvement",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "outcome_label": {
+          "type": "string",
+          "title": "Outcome Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "old_risk_label": {
+          "type": "string",
+          "title": "Old Risk Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "new_risk_label": {
+          "type": "string",
+          "title": "New Risk Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "outcome_label",
+        "old_risk_label",
+        "new_risk_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/integrated_discrimination_improvement.py",
+    "tests": [
+      "tests/test_extension17.py",
+      "tests/test_r_oracles9.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/integrated_discrimination_improvement.md",
+    "quality": "auto"
+  },
+  {
     "id": "interval_merge",
     "kind": "operator",
     "title": "interval_merge",
@@ -16443,6 +16644,110 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/mutual_information.md",
+    "quality": "auto"
+  },
+  {
+    "id": "net_reclassification_improvement",
+    "kind": "operator",
+    "title": "Continuous net reclassification improvement",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": false,
+          "axis_info_open": false,
+          "info": {
+            "missing_code": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "outcome_label": {
+          "type": "string",
+          "title": "Outcome Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "old_risk_label": {
+          "type": "string",
+          "title": "Old Risk Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "new_risk_label": {
+          "type": "string",
+          "title": "New Risk Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "outcome_label",
+        "old_risk_label",
+        "new_risk_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/net_reclassification_improvement.py",
+    "tests": [
+      "tests/test_extension17.py",
+      "tests/test_r_oracles9.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/net_reclassification_improvement.md",
     "quality": "auto"
   },
   {

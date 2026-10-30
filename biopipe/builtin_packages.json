@@ -12560,6 +12560,155 @@
         },
         {
           "protocol_version": 1,
+          "id": "calibration_slope",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.calibration_slope:CalibrationSlopeStep",
+          "title": "Calibration intercept and slope",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "outcome_label": {
+                "type": "string",
+                "title": "Outcome Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "risk_label": {
+                "type": "string",
+                "title": "Risk Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "outcome_label",
+              "risk_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "calibration_slope",
+          "module": "src.task.step.steps.calibration_slope",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "outcome_label",
+              "label": "Outcome Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "risk_label",
+              "label": "Risk Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "calinski_harabasz",
           "version": "1.0.0",
           "kind": "operator",
@@ -23155,6 +23304,168 @@
         },
         {
           "protocol_version": 1,
+          "id": "integrated_discrimination_improvement",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.integrated_discrimination_improvement:IntegratedDiscriminationImprovementStep",
+          "title": "Integrated discrimination improvement",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "outcome_label": {
+                "type": "string",
+                "title": "Outcome Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "old_risk_label": {
+                "type": "string",
+                "title": "Old Risk Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "new_risk_label": {
+                "type": "string",
+                "title": "New Risk Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "outcome_label",
+              "old_risk_label",
+              "new_risk_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "integrated_discrimination_improvement",
+          "module": "src.task.step.steps.integrated_discrimination_improvement",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "outcome_label",
+              "label": "Outcome Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "old_risk_label",
+              "label": "Old Risk Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "new_risk_label",
+              "label": "New Risk Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "interval_merge",
           "version": "1.0.0",
           "kind": "operator",
@@ -28905,6 +29216,168 @@
             "task": "classification",
             "n_neighbors": 3,
             "random_state": 0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "net_reclassification_improvement",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.net_reclassification_improvement:NetReclassificationImprovementStep",
+          "title": "Continuous net reclassification improvement",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "outcome_label": {
+                "type": "string",
+                "title": "Outcome Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "old_risk_label": {
+                "type": "string",
+                "title": "Old Risk Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "new_risk_label": {
+                "type": "string",
+                "title": "New Risk Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "outcome_label",
+              "old_risk_label",
+              "new_risk_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": false,
+                "axis_info_open": false,
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "net_reclassification_improvement",
+          "module": "src.task.step.steps.net_reclassification_improvement",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "outcome_label",
+              "label": "Outcome Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "old_risk_label",
+              "label": "Old Risk Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "new_risk_label",
+              "label": "New Risk Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
           },
           "legacy_parameters": false
         },

@@ -63,6 +63,18 @@
 - R 参考值：AUC@5/10/15 = 0.6552020987/0.8091230111/0.6519226986；Brier = 0.1315697618/0.1807035261/0.2145172338；IBS = 1.7687351192。
 - 复现：`python -m pytest -q tests/test_extension16.py tests/test_r_oracles8.py`。
 
+## 0.24.0
+
+| Operator | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `calibration_slope` | R base `glm`（offset 截距 + lp 斜率） | `tests/test_r_oracles9.py` | 截距/斜率/SE 一致 |
+| `net_reclassification_improvement` | R base 连续 NRI 公式 | `tests/test_r_oracles9.py` | NRI 1.0 一致 |
+| `integrated_discrimination_improvement` | R base IDI 公式 | `tests/test_r_oracles9.py` | IDI 0.1083333 一致 |
+
+- 本轮不新增 R 包；使用 base `stats::glm`、`qlogis`。
+- 参考值：截距 -0.4063779、斜率 3.621762、斜率 SE 2.577094；NRI 1.0；IDI 0.1083333。
+- 复现：`python -m pytest -q tests/test_extension17.py tests/test_r_oracles9.py`。
+
 ## 环境与缺口
 
 - R 4.3.3；已装 `vegan`、`survival`、`metafor`、`edgeR`、`limma`、`DESeq2`、`fgsea`、`GSVA`、`sva`、`Kendall`、`ALDEx2` 等。
