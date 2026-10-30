@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.58.0 — 2026-10-31
+
+- 新增：318 算子 / 82 Reader / 21 route；新增轮廓系数、调整兰德指数、归一化互信息三个聚类验证/一致性算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension51.py` 4 项、`tests/test_r_oracles42.py` 1 项，合计 **5 passed**；对照 R `cluster::silhouette` 与 `aricode`；registry clean；参考页 318/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 264 passed。
+- 边界：轮廓系数要求至少 2 个簇且每簇至少 2 个样本；ARI/NMI 按共享样本对齐并拒绝缺失标签；NMI 的 arithmetic/geometric/max/min 分别对应 R `aricode` 的 sum/sqrt/max/min。
+
 ## 0.57.0 — 2026-10-31
 
 - 新增：315 算子 / 82 Reader / 21 route；新增 Tukey HSD、Tamhane T2、Student-Newman-Keuls 三个全成对均值比较算子；未修改核心层。

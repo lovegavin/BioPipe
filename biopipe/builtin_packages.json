@@ -10600,6 +10600,171 @@
         },
         {
           "protocol_version": 1,
+          "id": "adjusted_rand_index",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.adjusted_rand_index:AdjustedRandIndexStep",
+          "title": "Adjusted Rand index",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label",
+                "title": "标签维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "label_a": {
+                "type": "string",
+                "title": "Label A",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "label_b": {
+                "type": "string",
+                "title": "Label B",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "label_a",
+              "label_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "adjusted_rand_index",
+          "module": "src.task.step.steps.adjusted_rand_index",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Adjusted Rand index between two partitions of the same samples.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "label_dim",
+              "label": "标签维度",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "label_a",
+              "label": "Label A",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "label_b",
+              "label": "Label B",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "label_dim": "label"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "agglomerative",
           "version": "1.0.0",
           "kind": "operator",
@@ -40351,6 +40516,198 @@
         },
         {
           "protocol_version": 1,
+          "id": "normalized_mutual_info",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.normalized_mutual_info:NormalizedMutualInfoStep",
+          "title": "Normalized mutual information",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label",
+                "title": "标签维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "label_a": {
+                "type": "string",
+                "title": "Label A",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "label_b": {
+                "type": "string",
+                "title": "Label B",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "average_method": {
+                "type": "string",
+                "enum": [
+                  "arithmetic",
+                  "geometric",
+                  "max",
+                  "min"
+                ],
+                "default": "arithmetic",
+                "title": "Average Method",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "label_a",
+              "label_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "normalized_mutual_info",
+          "module": "src.task.step.steps.normalized_mutual_info",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Normalized mutual information between two partitions.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "label_dim",
+              "label": "标签维度",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "label_a",
+              "label": "Label A",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "label_b",
+              "label": "Label B",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "average_method",
+              "label": "Average Method",
+              "type": "choice",
+              "required": false,
+              "default": "arithmetic",
+              "options": [
+                "arithmetic",
+                "geometric",
+                "max",
+                "min"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "label_dim": "label",
+            "average_method": "arithmetic"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "normaltest",
           "version": "1.0.0",
           "kind": "operator",
@@ -50767,6 +51124,173 @@
             "feature_dim": "feature",
             "label_dim": "label",
             "metric": "euclidean"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "silhouette_score",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.silhouette_score:SilhouetteScoreStep",
+          "title": "Silhouette score",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label",
+                "title": "标签维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "target_label": {
+                "type": "string",
+                "title": "目标字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "silhouette_score",
+          "module": "src.task.step.steps.silhouette_score",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Mean silhouette coefficient for a clustering.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "label_dim",
+              "label": "标签维度",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "target_label",
+              "label": "目标字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "label_dim": "label"
           },
           "legacy_parameters": false
         },

@@ -1,5 +1,13 @@
 # 权威实现对照矩阵
 
+## 0.58.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `silhouette_score` | R `cluster::silhouette`（欧氏距离） | `tests/test_r_oracles42.py` | 6 样本 2 簇均值 0.9722473303668445；sklearn 与 R 一致 |
+| `adjusted_rand_index` | R `aricode::ARI` | `tests/test_r_oracles42.py` | 0.32432432432432434 |
+| `normalized_mutual_info` | R `aricode::NMI` | `tests/test_r_oracles42.py` | arithmetic 0.47870397138568005、geometric 0.4791387674918639、max 0.45914791702724483、min 0.5 |
+
 ## 0.57.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
