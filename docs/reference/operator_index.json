@@ -11219,6 +11219,113 @@
     "quality": "auto"
   },
   {
+    "id": "fligner_killeen",
+    "kind": "operator",
+    "title": "Fligner-Killeen variance homogeneity test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "group_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/fligner_killeen.py",
+    "tests": [
+      "tests/test_extension44.py",
+      "tests/test_r_oracles35.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/fligner_killeen.md",
+    "quality": "auto"
+  },
+  {
     "id": "fligner_kruskal",
     "kind": "operator",
     "title": "Fligner-Killeen test",
@@ -20688,6 +20795,145 @@
     "quality": "auto"
   },
   {
+    "id": "mood_scale",
+    "kind": "operator",
+    "title": "Mood two-sample scale test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "group_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_a": {
+          "type": [
+            "string",
+            "number"
+          ],
+          "title": "A 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "group_b": {
+          "type": [
+            "string",
+            "number"
+          ],
+          "title": "B 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "less",
+            "greater"
+          ],
+          "default": "two-sided",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "group_label",
+        "group_a",
+        "group_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/mood_scale.py",
+    "tests": [
+      "tests/test_extension44.py",
+      "tests/test_r_oracles35.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/mood_scale.md",
+    "quality": "auto"
+  },
+  {
     "id": "moses_test",
     "kind": "operator",
     "title": "Moses extreme reactions test",
@@ -28931,6 +29177,145 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/shapiro_wilk.md",
+    "quality": "auto"
+  },
+  {
+    "id": "siegel_tukey",
+    "kind": "operator",
+    "title": "Siegel-Tukey rank dispersion test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            },
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "group_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "分组维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "group_a": {
+          "type": [
+            "string",
+            "number"
+          ],
+          "title": "A 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "group_b": {
+          "type": [
+            "string",
+            "number"
+          ],
+          "title": "B 组",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "less",
+            "greater"
+          ],
+          "default": "two-sided",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "group_label",
+        "group_a",
+        "group_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/siegel_tukey.py",
+    "tests": [
+      "tests/test_extension44.py",
+      "tests/test_r_oracles35.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/siegel_tukey.md",
     "quality": "auto"
   },
   {

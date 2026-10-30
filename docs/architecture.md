@@ -162,6 +162,7 @@ YAML / JSON
 - 0.43.0 新增：Page 有序备择检验、Mardia 多元正态性检验、Turning Point 序列随机性检验三个算子；核心层不变；
 - 0.47.0 新增：Scheffe 事后比较、Nemenyi 事后比较、Pettitt 变点检验三个算子；核心层不变；
 - 0.48.0 新增：Conover 事后比较、Games-Howell 事后比较、Quade 区组秩检验三个算子；核心层不变；
+- 0.51.0 新增：Fligner-Killeen、Mood 尺度检验、Siegel-Tukey 秩离散度检验三个算子；核心层不变；
 - 0.50.0 新增：Levene 方差齐性、Brown-Forsythe 稳健方差齐性、Barnard 精确独立性检验三个算子；核心层不变；
 - 0.49.0 新增：Durbin 平衡不完全区组检验、Skillings-Mack 缺失区组检验、Cuzick 有序趋势检验三个算子；核心层不变；
 - 0.42.0 新增：Shapiro-Wilk 正态性检验、Lilliefors 正态性检验、Moses 极端反应检验三个算子；核心层不变；

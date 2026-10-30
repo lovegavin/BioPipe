@@ -24711,6 +24711,173 @@
         },
         {
           "protocol_version": 1,
+          "id": "fligner_killeen",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.fligner_killeen:FlignerKilleenStep",
+          "title": "Fligner-Killeen variance homogeneity test",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "分组维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "group_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "group_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "fligner_killeen",
+          "module": "src.task.step.steps.fligner_killeen",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Fligner-Killeen median-centered rank test for each feature.",
+          "parameters": [
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_dim",
+              "label": "分组维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "feature_dim": "feature",
+            "sample_dim": "sample",
+            "group_dim": "sample"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "fligner_kruskal",
           "version": "1.0.0",
           "kind": "operator",
@@ -35895,6 +36062,230 @@
             "feature_dim": "feature",
             "ties": "below",
             "correction": true
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "mood_scale",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.mood_scale:MoodScaleStep",
+          "title": "Mood two-sample scale test",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "分组维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "group_a": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "title": "A 组",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "group_b": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "title": "B 组",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "alternative": {
+                "type": "string",
+                "enum": [
+                  "two-sided",
+                  "less",
+                  "greater"
+                ],
+                "default": "two-sided",
+                "title": "Alternative",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "group_label",
+              "group_a",
+              "group_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "group_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "mood_scale",
+          "module": "src.task.step.steps.mood_scale",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Mood's two-sample rank test for equality of scale.",
+          "parameters": [
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_dim",
+              "label": "分组维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "group_a",
+              "label": "A 组",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "group_b",
+              "label": "B 组",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "alternative",
+              "label": "Alternative",
+              "type": "choice",
+              "required": false,
+              "default": "two-sided",
+              "options": [
+                "two-sided",
+                "less",
+                "greater"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "feature_dim": "feature",
+            "sample_dim": "sample",
+            "group_dim": "sample",
+            "alternative": "two-sided"
           },
           "legacy_parameters": false
         },
@@ -47258,6 +47649,230 @@
           "runtime_defaults": {
             "sample_dim": "sample",
             "feature_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "siegel_tukey",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.siegel_tukey:SiegelTukeyStep",
+          "title": "Siegel-Tukey rank dispersion test",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "分组维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "group_a": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "title": "A 组",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "group_b": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "title": "B 组",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "alternative": {
+                "type": "string",
+                "enum": [
+                  "two-sided",
+                  "less",
+                  "greater"
+                ],
+                "default": "two-sided",
+                "title": "Alternative",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "group_label",
+              "group_a",
+              "group_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  },
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "group_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "siegel_tukey",
+          "module": "src.task.step.steps.siegel_tukey",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Siegel-Tukey rank test for equality of dispersion (no ties).",
+          "parameters": [
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_dim",
+              "label": "分组维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "group_a",
+              "label": "A 组",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "group_b",
+              "label": "B 组",
+              "type": "json",
+              "required": true
+            },
+            {
+              "key": "alternative",
+              "label": "Alternative",
+              "type": "choice",
+              "required": false,
+              "default": "two-sided",
+              "options": [
+                "two-sided",
+                "less",
+                "greater"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "feature_dim": "feature",
+            "sample_dim": "sample",
+            "group_dim": "sample",
+            "alternative": "two-sided"
           },
           "legacy_parameters": false
         },

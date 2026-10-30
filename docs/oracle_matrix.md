@@ -1,5 +1,16 @@
 # 权威实现对照矩阵
 
+## 0.51.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `fligner_killeen` | R `stats::fligner.test` | `tests/test_r_oracles35.py` | 3 组各 6 个：statistic 3.8539129401029886，df 2，p 0.14559063431450478 |
+| `mood_scale` | R `stats::mood.test` | `tests/test_r_oracles35.py` | 两样本各 6 个：Z -0.72323757801982935，p 0.46953393562819462；含并列校正 |
+| `siegel_tukey` | R `PMCMRplus::siegelTukeyTest` | `tests/test_r_oracles35.py` | 5 vs 5 无并列：W 14，p 0.84126984126984128；有并列时拒绝 |
+
+- R 4.3.3；`PMCMRplus` 已安装；Siegel-Tukey 小样本使用精确秩和分布，`n_a*n_b > 10000` 时退回正态近似并在 info 标记 `exact=false`。
+- 复现：`python -m pytest -q tests/test_extension44.py tests/test_r_oracles35.py`。
+
 ## 0.50.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

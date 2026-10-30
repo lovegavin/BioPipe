@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.51.0 — 2026-10-31
+
+- 新增：298 算子 / 82 Reader / 21 route；新增 Fligner-Killeen 方差齐性、Mood 两样本尺度、Siegel-Tukey 秩离散度检验三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension44.py` 4 项、`tests/test_r_oracles35.py` 1 项，合计 **5 passed**；Fligner/Mood 对照 base R，Siegel-Tukey 对照 R `PMCMRplus::siegelTukeyTest`；registry clean；参考页 298/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 244 passed。
+- 边界：Fligner-Killeen/Mood 要求每组至少两个有限值；Siegel-Tukey 不支持并列值，出现并列时明确报错，避免用近似 p 值冒充精确结果。
+
 ## 0.50.0 — 2026-10-31
 
 - 新增：295 算子 / 82 Reader / 21 route；新增 Levene 方差齐性、Brown-Forsythe 稳健方差齐性、Barnard 精确独立性检验三个算子；未修改核心层。
