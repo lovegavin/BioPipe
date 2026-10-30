@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.55.0 — 2026-10-31
+
+- 新增：309 算子 / 82 Reader / 21 route；新增 Anscombe-Glynn 峰度、Bonett-Seier 峰度、Mauchly 球形三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension48.py` 4 项、`tests/test_r_oracles39.py` 1 项，合计 **5 passed**；Anscombe/Bonett 对照 R `moments`，Mauchly 对照 base R；registry clean；参考页 309/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 255 passed。
+- 边界：Anscombe-Glynn 要求 n≥8，Bonett-Seier 要求 n≥3；Mauchly 要求 ≥3 特征、n>p、协方差非奇异且无缺失，使用卡方近似。
+
 ## 0.54.0 — 2026-10-31
 
 - 新增：306 算子 / 82 Reader / 21 route；新增 Goldfeld-Quandt 异方差、Rainbow 线性偏离两个回归诊断算子；未修改核心层。

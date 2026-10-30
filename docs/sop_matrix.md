@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**；0.41 新增 **5 passed**、增量门 **21 passed**；0.42 新增 **5 passed**、增量门 **21 passed**；0.43 新增 **6 passed**、增量门 **22 passed**；0.44 新增 **6 passed**、增量门 **22 passed**；0.45 新增 **4 passed**、增量门 **20 passed**；0.46 新增 **5 passed**、增量门 **26 passed**；0.47 新增 **5 passed**、增量门 **21 passed**；0.48 新增 **5 passed**、增量门 **21 passed**；0.49 新增 **5 passed**、增量门 **21 passed**；0.50 新增 **5 passed**、增量门 **21 passed**；0.51 新增 **5 passed**、增量门 **21 passed**；0.52 新增 **5 passed**、增量门 **21 passed**；0.53 新增 **5 passed**、增量门 **21 passed**；0.54 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**；0.41 新增 **5 passed**、增量门 **21 passed**；0.42 新增 **5 passed**、增量门 **21 passed**；0.43 新增 **6 passed**、增量门 **22 passed**；0.44 新增 **6 passed**、增量门 **22 passed**；0.45 新增 **4 passed**、增量门 **20 passed**；0.46 新增 **5 passed**、增量门 **26 passed**；0.47 新增 **5 passed**、增量门 **21 passed**；0.48 新增 **5 passed**、增量门 **21 passed**；0.49 新增 **5 passed**、增量门 **21 passed**；0.50 新增 **5 passed**、增量门 **21 passed**；0.51 新增 **5 passed**、增量门 **21 passed**；0.52 新增 **5 passed**、增量门 **21 passed**；0.53 新增 **5 passed**、增量门 **21 passed**；0.54 新增 **5 passed**、增量门 **21 passed**；0.55 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（306；下表为 89 个早期算子，0.8–0.54 新增见末尾证据）
+## 3. Operator（309；下表为 89 个早期算子，0.8–0.55 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -600,3 +600,11 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - R 参考值：GQ 20 样本、`fraction=0` → statistic **7.8091706001348626**、df1 **8**、df2 **8**、p **0.0043735156064267696**；Rainbow 20 样本、`fraction=0.5` → statistic **37.09507275139439**、df1 **10**、df2 **8**、p **1.298882331413825e-05**，中心子样本 **6..15**。
 - 0.54 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 306/82/21；参考页 306 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 252 passed。
 - 边界：两个算子均只支持单个响应 + 单个自变量 + 截距；Goldfeld-Quandt 的 `fraction` 是比例（[0,0.5)），Rainbow 的 `fraction` 是中心子样本比例（(0,1)），`center` ± `fraction/2` 必须在 [0,1]；输入缺失值会从拟合中剔除。
+
+## 55. 0.55.0 扩展证据
+
+- 新增 3 个分布/多元结构算子：`anscombe_glynn`（Anscombe-Glynn 峰度检验，two-sided/greater/less）、`bonett_seier`（Bonett-Seier Geary 峰度检验）、`mauchly_test`（Mauchly 球形检验，卡方近似）。
+- `tests/test_extension48.py` 4 项、`tests/test_r_oracles39.py` 1 项，合计 **5 passed**；Anscombe/Bonett 对照 R `moments`，Mauchly 对照 base R `stats:::mauchly.test.SSD`。
+- R 参考值：Anscombe 12 样本 → kurt **2.1341104474559254**、z **-0.42227346311066044**、p **0.6728254253719288**；Bonett → tau **4.9861111111111107**、z **-1.0951999132137393**、p **0.27342906371823772**；Mauchly 6 样本 × 3 特征 → W **0.00012919496245979595**、chi2 **33.329477397827**、df **5**、p **7.0069860189294373e-06**。
+- 0.55 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 309/82/21；参考页 309 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 255 passed。
+- 边界：Anscombe-Glynn 要求 n≥8 且方差非零，Bonett-Seier 要求 n≥3；Mauchly 要求至少 3 个特征、样本数大于特征数、协方差非奇异、无缺失值；Mauchly 使用卡方近似（含 w2 修正），不是精确分布。

@@ -1,5 +1,16 @@
 # 权威实现对照矩阵
 
+## 0.55.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `anscombe_glynn` | R `moments::anscombe.test` | `tests/test_r_oracles39.py` | 12 样本：kurt 2.1341104474559254，z -0.42227346311066044，p 0.6728254253719288；n≥8 |
+| `bonett_seier` | R `moments::bonett.test` | `tests/test_r_oracles39.py` | 12 样本：tau 4.9861111111111107，z -1.0951999132137393，p 0.27342906371823772；n≥3 |
+| `mauchly_test` | R `stats:::mauchly.test.SSD` | `tests/test_r_oracles39.py` | 6×3：W 0.00012919496245979595，chi2 33.329477397827，df 5，p 7.0069860189294373e-06；卡方近似 |
+
+- R 4.3.3；`moments` 已安装；Mauchly 使用 `T=diag(p)`，即检验协方差矩阵的球形性；p<3、n≤p、奇异协方差拒绝。
+- 复现：`python -m pytest -q tests/test_extension48.py tests/test_r_oracles39.py`。
+
 ## 0.54.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
