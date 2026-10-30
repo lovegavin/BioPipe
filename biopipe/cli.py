@@ -60,8 +60,9 @@ def parser():
     jobs.add_argument("action", choices=["get", "cancel"])
     jobs.add_argument("id")
     plugin = commands.add_parser("plugin")
-    plugin.add_argument("action", choices=["init", "check", "test", "build", "install", "list", "refresh", "declarations", "remove", "enable", "disable", "restore"])
+    plugin.add_argument("action", choices=["init", "check", "test", "build", "export-library", "install", "list", "refresh", "declarations", "remove", "enable", "disable", "restore"])
     plugin.add_argument("path", nargs="?")
+    plugin.add_argument("--library-version", default="1.0.0")
     plugin.add_argument("--template", choices=["operator", "reader"], default="operator")
     schema = commands.add_parser("schema")
     schema.add_argument("name", choices=["operator", "package", "graph", "workspace"])
@@ -103,6 +104,10 @@ def execute(args):
         if args.action == "build":
             return developer.build(args.path)
         manager = PluginManager(data_directory(args.profile_dir, args.workspace, args.data_dir))
+        if args.action == 'export-library':
+            from .library_bundle import build_bundle
+            manager.ensure_source_root()
+            return build_bundle(manager.source_root, args.path or '.', args.library_version)
         if args.action == "list":
             from .source_library import directories
             return {**manager.state(), "inbox": str(manager.inbox),

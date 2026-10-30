@@ -5,7 +5,11 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Release **v0.8.1** adds independent server handshakes, historical result viewing
+Local **v0.8.3** adds [independent operator-library updates](docs/plugins.md#independent-library-releases):
+editable sources live in the persistent profile and complete libraries install
+atomically without replacing the application. Version 0.8.2 added unified figure
+artifacts, multi-figure viewing and managed R dependencies. These build on
+v0.8.1's independent server handshakes, historical result viewing
 and automatically saved publication figures. It retains resumable input uploads,
 per-workflow execution environments, concurrent tasks, explicit Linux server deployment,
 backed-up profile upgrades and the [Hi-C workflows](docs/HIC.md): paired FASTQ,

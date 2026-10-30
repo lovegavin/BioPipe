@@ -16,11 +16,11 @@ def mount_plugins(app, service):
 
     def public_state():
         state = service.plugins.state()
-        from biopipe.packages import bundled_state
         result = {key: state[key] for key in ("generation", "packages", "descriptors")}
+        result["library_release"] = state.get("library_release")
         source_managed = set(state.get("source_library", {}).get("packages", []))
         result["packages"] = [{**p, "source_managed": p["name"] in source_managed} for p in state["packages"]]
-        result["bundled_packages"] = bundled_state()["packages"]
+        result["bundled_packages"] = service.plugins.bundled_state()["packages"]
         result["inbox"] = str(service.plugins.inbox)
         from biopipe.source_library import directories
         result["source_directories"] = {kind: str(path) for kind, path in directories(service.plugins.source_root).items()}
@@ -109,6 +109,8 @@ def mount_plugins(app, service):
         kind = payload.get("kind", "operator")
         if not isinstance(kind, str) or kind not in paths:
             raise HTTPException(422, "请选择算子或 Reader 目录。")
+        if kind != "extra":
+            service.plugins.ensure_source_root()
         directory = paths[kind]
         if os.name == "nt":
             os.startfile(directory)
@@ -121,8 +123,8 @@ def mount_plugins(app, service):
     async def install(request: Request, filename: str):
         check_idle()
         if (Path(filename).name != filename or any(c in filename for c in '\\/:*?"<>|')
-                or not filename.endswith(".whl")):
-            raise HTTPException(422, "请选择有效的 .whl 插件包。")
+                or not filename.lower().endswith((".whl", ".biopipe-library.zip"))):
+            raise HTTPException(422, "请选择 .whl 或 .biopipe-library.zip 算子库包。")
         key = uuid.uuid4().hex
         active.add(key)
         temporary = service.plugins.directory / "incoming" / key

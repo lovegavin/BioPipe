@@ -4,8 +4,8 @@ BioPipe loads checked-in JSON indexes at startup. It does not repeatedly scan
 source folders or fetch GitHub while the user edits a canvas. Maintainers use one
 explicit discover/check/build workflow; plugin wheel installation remains a
 separate, hot-install operation. For **live operator library updates**, the
-operator library's refresh button scans the application's existing operator/Reader
-source directories and the shared profile's additional folder. It validates changed
+operator library's refresh button scans the selected profile's persistent operator/Reader
+source directories and its additional folder. It validates changed
 source modules, wheel or project inputs and atomically updates the live
 registry. See [library hot refresh](plugins.md#drop-refresh-use). The commands
 below maintain the repository indexes and are not required for local hot refresh.

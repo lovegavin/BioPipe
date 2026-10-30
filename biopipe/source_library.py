@@ -7,6 +7,8 @@ from copy import deepcopy
 import hashlib
 import json
 from pathlib import Path
+import tempfile
+import os
 
 from biopipe.plugins import ROOT
 from biopipe_sdk.protocol import PROTOCOL_VERSION
@@ -18,6 +20,30 @@ def directories(root=ROOT):
     if root is None:
         return {}
     return {kind: root / relative for kind, relative in SOURCE_DIRS.items()}
+
+
+def snapshot_sources(root, staged):
+    from biopipe.dropins import snapshot
+    digest = hashlib.sha256()
+    for relative in [*SOURCE_DIRS.values(), "biopipe/builtin_packages.json"]:
+        source = root / relative
+        target = staged / relative if source.is_dir() else (staged / relative).parent
+        digest.update(relative.encode() + snapshot(source, target).encode())
+    return digest.hexdigest()
+
+
+def seed_sources(seed, target):
+    """Never overwrite an existing authoring tree during an application update."""
+    if target.exists():
+        if not (target / "biopipe/builtin_packages.json").is_file():
+            raise ValueError(f"Incomplete library source directory: {target}")
+        return
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="seed-", dir=target.parent) as temporary:
+        staged = Path(temporary) / "sources"
+        fingerprint = snapshot_sources(seed, staged)
+        (staged / '.seed.json').write_text(json.dumps({'sha256': fingerprint}), encoding='utf-8')
+        os.replace(staged, target)
 
 
 def provider_wheel(package, root, output):
@@ -69,20 +95,18 @@ def provider_wheel(package, root, output):
 
 def prepare(manager, current, temporary):
     """Capture exact bytes before scanning; no source tree or shipped index edits."""
-    from biopipe.dropins import snapshot
     root = manager.source_root
     if root is None:
         return {"wheels": [], "updated": [], "unchanged": [], "receipt": current.get("source_library")}
     staged = temporary / "source"
-    digest = hashlib.sha256()
-    for relative in [*SOURCE_DIRS.values(), "biopipe/builtin_packages.json"]:
-        source = root / relative
-        target = staged / relative if source.is_dir() else (staged / relative).parent
-        digest.update(relative.encode() + snapshot(source, target).encode())
-    fingerprint = digest.hexdigest()
-    previous = current.get("source_library", {})
-    if previous.get("sha256") == fingerprint:
-        return {"wheels": [], "updated": [], "unchanged": ["operator / Reader source directories"], "receipt": previous}
+    fingerprint = snapshot_sources(root, staged)
+    previous = current.get("source_library") or {}
+    needs_detach = manager.managed_sources and any(p.get('origin') == 'bundled' for p in current['packages'])
+    if previous.get("sha256") == fingerprint and not needs_detach:
+        receipt = deepcopy(previous)
+        if manager.managed_sources:
+            receipt['root'] = root.relative_to(manager.directory.resolve()).as_posix()
+        return {"wheels": [], "updated": [], "unchanged": ["operator / Reader source directories"], "receipt": receipt}
     from biopipe.registry import scan_sources, package_manifest, read_json
     records, errors = scan_sources(staged)
     if errors:
@@ -113,8 +137,11 @@ def prepare(manager, current, temporary):
             d['declaration_sha'] = declaration_hash(d)
             candidate.append(d)
     receipt = {'sha256': fingerprint, 'code_sha': code_sha, 'packages': [p['name'] for p in packages]}
+    if manager.managed_sources:
+        receipt['root'] = root.relative_to(manager.directory.resolve()).as_posix()
     same_ids = {d['id'] for d in candidate} == {d['id'] for p in packages for d in p['descriptors']}
-    if code_sha == old_code and same_ids:
+    detach = manager.managed_sources and any(installed.get(p['name'], {}).get('origin') == 'bundled' for p in packages)
+    if code_sha == old_code and same_ids and not detach:
         # Validate the entire transaction before publishing any change.
         state = replace_declarations(current, candidate)
         return {'wheels': [], 'updated': [p['name'] for p in packages], 'unchanged': [],

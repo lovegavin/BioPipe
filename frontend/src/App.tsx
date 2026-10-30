@@ -1012,6 +1012,7 @@ function Studio() {
         : file.name.toLowerCase().endsWith(".json")
           ? normalizeGraph(JSON.parse(await file.text()))
           : autoLayout(normalizeGraph(await api.import(await file.text(), importBase)));
+      setImportBase(next.base_dir);
       openPages([{graph: next}]);
       setSelected(next.nodes[0]?.id || null);
       closeInspector();

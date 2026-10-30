@@ -42,15 +42,16 @@ export function PluginPanel({onClose, onChanged}: {onClose: () => void; onChange
   }
   return <Modal dismissDisabled={pending} title="算子库管理" onClose={() => {if (!pending) onClose();}}>
     <div className="plugin-panel-body">
-      <input ref={file} hidden type="file" accept=".whl" onChange={event => {
+      <input ref={file} hidden type="file" accept=".whl,.biopipe-library.zip" onChange={event => {
         const selected = event.target.files?.[0]; event.target.value = '';
         if (selected) void operate(() => api.installPlugin(selected));
       }}/>
       <div className="plugin-toolbar">
+        {state.library_release && <span className="route-version" title="最近导入的算子库版本，独立于软件版本">库 v{state.library_release.version}</span>}
         <button className="primary-button" disabled={busy} onClick={() => void operate(api.refreshPlugins)}><ArrowClockwise size={16} className={pending ? 'spin' : ''}/>刷新算子库</button>
         <button className="subtle-button" disabled={busy} onClick={() => file.current?.click()}><Plus size={16}/>导入包</button>
         <button className="subtle-button" disabled={pending || state.dependencies?.running} onClick={() => void operate(api.repairDependencies)}><ArrowClockwise size={16}/>{state.dependencies?.running ? '准备环境…' : '修复依赖'}</button>
-        <HelpTip label="算子目录说明">将算子或 Reader 文件放入对应目录，点击刷新即可扫描、校验并加载。也可导入 .whl。代码须来自可信来源；更新失败保留当前算子库。</HelpTip>
+        <HelpTip label="算子目录说明">编辑目录独立于软件安装目录。放入算子或 Reader 后刷新；整库更新可导入 .biopipe-library.zip，单包可导入 .whl。更新失败保留当前库。</HelpTip>
       </div>
       <div className="plugin-folder-row">
         <button className="subtle-button" title={state.source_directories?.operator} onClick={() => void api.openPluginFolder('operator').catch(e => setError(e.message))}><FolderOpen size={16}/>算子目录</button>

@@ -14,7 +14,7 @@ import { HelpTip } from "./HelpTip";
 import {ExecutionSettings} from './ExecutionSettings';
 import {defaultTarget, executionConfig, groupParameters, nodeTarget, targetFromKey, targetKey, targetLabel} from './execution';
 import { api } from "./api";
-import { inputAccept, renameSourceDimensions, readerForPath } from "./readerInput";
+import { inputAccept, renameSourceDimensions, readerForPath, rePointSource } from "./readerInput";
 import { bytes, displayTitle, inputCount, outputCount, specFor, retainedOutputs } from "./graph";
 import type { Catalog, Graph, Parameter, RouteDefinition, TargetRef, ExecutionConfig, RemoteStatus, NodePatch } from "./types";
 
@@ -268,7 +268,7 @@ export function Inspector({
     try {
       const result = await api.uploadFiles(files, graph.base_dir);
       onNode(node.id, {
-        source: {...result.source, location: {kind: 'local'}},
+        source: rePointSource(node.source, result.source, catalog),
         title: result.filename.replace(/\.(?:gz|bz2|xz)$/i, '').replace(/\.[^.]+$/, ''),
       });
     } catch (error) {

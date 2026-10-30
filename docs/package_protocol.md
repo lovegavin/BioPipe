@@ -17,6 +17,7 @@ operators and readers, not a new route packaging format.
 | `biopipe-plots` | 12 | Plots, including survival curves |
 | `biopipe-microbiome` | 8 | Abundance diversity, distances, ordination, joins, PERMANOVA, correlation and composition |
 | `biopipe-readers` | 15 | File readers, including H5AD and MTX disk preparation |
+| `biopipe-hic` | 7 | Sequencing/contact file Readers and Hi-C processing |
 
 The startup index is `biopipe/builtin_packages.json`. It enumerates each package's
 name, version, title and descriptors. Paths are Python import entry points, never
@@ -33,7 +34,10 @@ authority for pip dependencies, and manifest identity must match wheel metadata.
 ## Management and hot replacement
 
 Studio's **算子库管理** lists both bundled and wheel providers, their entries and
-resource modes. Installation/update accepts a local wheel. Enable, disable, remove
+resource modes. Installation/update accepts a local wheel or a complete
+`.biopipe-library.zip` source-library release. See [independent library releases](plugins.md#independent-library-releases).
+Application installations retain a factory seed; editable sources and installed
+provider revisions belong to the selected persistent profile. Enable, disable, remove
 and restore publish a new registry generation without restarting the application.
 The primary **Refresh library** action also discovers changes directly in the normal
 operator/Reader directories. Authors save each implementation together with its parameter JSON; scanning,

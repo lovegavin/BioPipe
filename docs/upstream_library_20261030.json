@@ -1,0 +1,649 @@
+{
+  "checked_date": "2026-10-30",
+  "upstream_commit": "9fccadb24624f9fffb8ab756fa730adbb9857fb2",
+  "common_ancestor": "3d57139167ee07428bf41276b84999feb84a06c0",
+  "upstream_protocol": 1,
+  "local_protocol": 3,
+  "upstream_counts": {
+    "operator": 144,
+    "reader": 40
+  },
+  "local_counts": {
+    "operator": 67,
+    "reader": 19
+  },
+  "not_yet_adapted": [
+    {
+      "id": "BedGraphReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.bedgraph_reader:BedGraphReader",
+      "category": null
+    },
+    {
+      "id": "BedpeReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.bedpe_reader:BedpeReader",
+      "category": null
+    },
+    {
+      "id": "BiomReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.biom_reader:BiomReader",
+      "category": null
+    },
+    {
+      "id": "ChainReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.chain_reader:ChainReader",
+      "category": null
+    },
+    {
+      "id": "ClustalReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.clustal_reader:ClustalReader",
+      "category": null
+    },
+    {
+      "id": "CytobandReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.cytoband_reader:CytobandReader",
+      "category": null
+    },
+    {
+      "id": "ExcelReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.excel_reader:ExcelReader",
+      "category": null
+    },
+    {
+      "id": "FaiReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.fai_reader:FaiReader",
+      "category": null
+    },
+    {
+      "id": "GctReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.gct_reader:GctReader",
+      "category": null
+    },
+    {
+      "id": "GmtReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.gmt_reader:GmtReader",
+      "category": null
+    },
+    {
+      "id": "H5Reader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.h5_reader:H5Reader",
+      "category": null
+    },
+    {
+      "id": "JsonTableReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.json_table_reader:JsonTableReader",
+      "category": null
+    },
+    {
+      "id": "LoomReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.loom_reader:LoomReader",
+      "category": null
+    },
+    {
+      "id": "MafReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.maf_reader:MafReader",
+      "category": null
+    },
+    {
+      "id": "MapReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.map_reader:MapReader",
+      "category": null
+    },
+    {
+      "id": "NarrowPeakReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.narrowpeak_reader:NarrowPeakReader",
+      "category": null
+    },
+    {
+      "id": "NewickReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.newick_reader:NewickReader",
+      "category": null
+    },
+    {
+      "id": "NexusReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.nexus_reader:NexusReader",
+      "category": null
+    },
+    {
+      "id": "NpyReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.npy_reader:NpyReader",
+      "category": null
+    },
+    {
+      "id": "PafReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.paf_reader:PafReader",
+      "category": null
+    },
+    {
+      "id": "PhylipReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.phylip_reader:PhylipReader",
+      "category": null
+    },
+    {
+      "id": "SamReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.sam_reader:SamReader",
+      "category": null
+    },
+    {
+      "id": "StockholmReader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.stockholm_reader:StockholmReader",
+      "category": null
+    },
+    {
+      "id": "TenxH5Reader",
+      "kind": "reader",
+      "entry_point": "src.reader.readers.tenx_h5_reader:TenxH5Reader",
+      "category": null
+    },
+    {
+      "id": "ada_boost_classifier",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.ada_boost_classifier:AdaBoostClassifierStep",
+      "category": "analysis"
+    },
+    {
+      "id": "ada_boost_regressor",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.ada_boost_regressor:AdaBoostRegressorStep",
+      "category": "analysis"
+    },
+    {
+      "id": "aldex2",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.aldex2:Aldex2Step",
+      "category": "Microbiome"
+    },
+    {
+      "id": "ancom_bc",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.ancom_bc:AncomBcStep",
+      "category": "Microbiome"
+    },
+    {
+      "id": "anova",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.anova:AnovaStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "bartlett",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.bartlett:BartlettStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "bayesian_ridge_regressor",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.bayesian_ridge_regressor:BayesianRidgeRegressorStep",
+      "category": "analysis"
+    },
+    {
+      "id": "bh_adjust",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.bh_adjust:BhAdjustStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "bonferroni",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.bonferroni:BonferroniStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "brunner_munzel",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.brunner_munzel:BrunnerMunzelStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "chi_square",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.chi_square:ChiSquareStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "combat",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.combat:CombatStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "complement_nb_classifier",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.complement_nb_classifier:ComplementNBClassifierStep",
+      "category": "analysis"
+    },
+    {
+      "id": "decision_tree_classifier",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.decision_tree_classifier:DecisionTreeClassifierStep",
+      "category": "analysis"
+    },
+    {
+      "id": "decision_tree_regressor",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.decision_tree_regressor:DecisionTreeRegressorStep",
+      "category": "analysis"
+    },
+    {
+      "id": "doublet_detect",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.doublet_detect:DoubletDetectStep",
+      "category": "Single cell"
+    },
+    {
+      "id": "elastic_net_regressor",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.elastic_net_regressor:ElasticNetRegressorStep",
+      "category": "analysis"
+    },
+    {
+      "id": "extra_trees_classifier",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.extra_trees_classifier:ExtraTreesClassifierStep",
+      "category": "analysis"
+    },
+    {
+      "id": "extra_trees_regressor",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.extra_trees_regressor:ExtraTreesRegressorStep",
+      "category": "analysis"
+    },
+    {
+      "id": "factor_analysis",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.factor_analysis:FactorAnalysisStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "fisher_combined",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.fisher_combined:FisherCombinedStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "fisher_exact",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.fisher_exact:FisherExactStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "fligner_kruskal",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.fligner_kruskal:FlignerKruskalStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "friedman",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.friedman:FriedmanStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "gaussian_random_projection",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.gaussian_random_projection:GaussianRandomProjectionStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "gc_skew_profile",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.gc_skew_profile:GcSkewProfileStep",
+      "category": "analysis"
+    },
+    {
+      "id": "gene_list_to_hits",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.gene_list_to_hits:GeneListToHitsStep",
+      "category": "analysis"
+    },
+    {
+      "id": "gradient_boosting_classifier",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.gradient_boosting_classifier:GradientBoostingClassifierStep",
+      "category": "analysis"
+    },
+    {
+      "id": "gradient_boosting_regressor",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.gradient_boosting_regressor:GradientBoostingRegressorStep",
+      "category": "analysis"
+    },
+    {
+      "id": "gsea",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.gsea:GseaStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "huber_regressor",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.huber_regressor:HuberRegressorStep",
+      "category": "analysis"
+    },
+    {
+      "id": "ica",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.ica:IcaStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "isomap",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.isomap:IsomapStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "jarque_bera",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.jarque_bera:JarqueBeraStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "kernel_pca",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.kernel_pca:KernelPcaStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "kruskal",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.kruskal:KruskalStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "ks_2samp",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.ks_2samp:Ks2SampStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "lasso_regression",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.lasso_regression:LassoRegressionStep",
+      "category": "analysis"
+    },
+    {
+      "id": "lda_classifier",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.lda_classifier:LdaClassifierStep",
+      "category": "analysis"
+    },
+    {
+      "id": "levene",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.levene:LeveneStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "limma_de",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.limma_de:LimmaDeStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "linear_regression",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.linear_regression:LinearRegressionStep",
+      "category": "analysis"
+    },
+    {
+      "id": "locally_linear_embedding",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.locally_linear_embedding:LocallyLinearEmbeddingStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "logistic_regression",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.logistic_regression:LogisticRegressionStep",
+      "category": "analysis"
+    },
+    {
+      "id": "mann_whitney",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.mann_whitney:MannWhitneyStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "marker_score",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.marker_score:MarkerScoreStep",
+      "category": "Single cell"
+    },
+    {
+      "id": "mds",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.mds:MdsStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "meta_analysis",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.meta_analysis:MetaAnalysisStep",
+      "category": "Genetics"
+    },
+    {
+      "id": "min_max_scale",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.min_max_scale:MinMaxScaleStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "multinomial_nb_classifier",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.multinomial_nb_classifier:MultinomialNBClassifierStep",
+      "category": "analysis"
+    },
+    {
+      "id": "nmf",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.nmf:NmfStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "normaltest",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.normaltest:NormaltestStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "ora",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.ora:OraStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "permutation_test",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.permutation_test:PermutationTestStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "protein_rollup",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.protein_rollup:ProteinRollupStep",
+      "category": "Proteomics"
+    },
+    {
+      "id": "prs",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.prs:PrsStep",
+      "category": "Genetics"
+    },
+    {
+      "id": "pseudobulk",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.pseudobulk:PseudobulkStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "qc_metrics",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.qc_metrics:QcMetricsStep",
+      "category": "quality_control"
+    },
+    {
+      "id": "random_forest_classifier",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.random_forest_classifier:RandomForestClassifierStep",
+      "category": "analysis"
+    },
+    {
+      "id": "random_forest_regressor",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.random_forest_regressor:RandomForestRegressorStep",
+      "category": "analysis"
+    },
+    {
+      "id": "ridge_regression",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.ridge_regression:RidgeRegressionStep",
+      "category": "analysis"
+    },
+    {
+      "id": "scale_features",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.scale_features:ScaleFeaturesStep",
+      "category": "data"
+    },
+    {
+      "id": "sgd_classifier",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.sgd_classifier:SgdClassifierStep",
+      "category": "analysis"
+    },
+    {
+      "id": "sgd_regressor",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.sgd_regressor:SgdRegressorStep",
+      "category": "analysis"
+    },
+    {
+      "id": "shapiro",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.shapiro:ShapiroStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "sign_test",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.sign_test:SignTestStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "softmax",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.softmax:SoftmaxStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "spectral_embedding",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.spectral_embedding:SpectralEmbeddingStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "ssgsea",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.ssgsea:SsgseaStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "svm_classifier",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.svm_classifier:SvmClassifierStep",
+      "category": "analysis"
+    },
+    {
+      "id": "svm_regressor",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.svm_regressor:SvmRegressorStep",
+      "category": "analysis"
+    },
+    {
+      "id": "theil_sen_regressor",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.theil_sen_regressor:TheilSenRegressorStep",
+      "category": "analysis"
+    },
+    {
+      "id": "topic_lda",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.topic_lda:TopicLdaStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "truncated_svd",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.truncated_svd:TruncatedSvdStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "tsne",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.tsne:TsneStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "ttest_one_sample",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.ttest_one_sample:TTestOneSampleStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "ttest_paired",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.ttest_paired:TTestPairedStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "umap",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.umap:UmapStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "wilcoxon",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.wilcoxon:WilcoxonStep",
+      "category": "Analysis"
+    },
+    {
+      "id": "zscore",
+      "kind": "operator",
+      "entry_point": "src.task.step.steps.zscore:ZscoreStep",
+      "category": "Analysis"
+    }
+  ],
+  "local_only_ids": [
+    "AlignmentReader",
+    "CoolerReader",
+    "PairsReader",
+    "align_reads",
+    "analyze_contacts",
+    "build_contacts"
+  ]
+}

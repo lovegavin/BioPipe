@@ -115,13 +115,37 @@ def load_runtime(lock, manifest=None):
             READERS.append(reader_proxy(descriptor, factory))
 
 
+_DEFAULT_SOURCES = object()
+
+
 class PluginManager:
-    def __init__(self, data_dir, *, source_root=ROOT, manifest_only=False):
+    def __init__(self, data_dir, *, source_root=_DEFAULT_SOURCES, manifest_only=None):
         self.directory = Path(data_dir) / "plugins"
-        self.source_root = Path(source_root).resolve() if source_root is not None else None
-        self.manifest_only = manifest_only
+        self.managed_sources = source_root is _DEFAULT_SOURCES
+        self._source_root = (None if self.managed_sources or source_root is None else Path(source_root).resolve())
+        self.manifest_only = self.managed_sources if manifest_only is None else manifest_only
         self.registry = self.directory / "registry.json"
         self.lock = FileLock(self.directory / ".install.lock", timeout=600)
+
+    @property
+    def source_root(self):
+        if not self.managed_sources:
+            return self._source_root
+        state = json.loads(self.registry.read_text(encoding="utf-8")) if self.registry.exists() else {}
+        receipt = state.get("source_library") or {}
+        relative = receipt.get("root", "library/sources/editable")
+        root = (self.directory / relative).resolve()
+        if not root.is_relative_to((self.directory / "library/sources").resolve()):
+            raise ValueError("Library source directory must stay inside the profile")
+        return root
+
+    def ensure_source_root(self):
+        """Seed editable sources only on an explicit folder/refresh operation."""
+        from biopipe.source_library import seed_sources
+        with self.lock:
+            if self.managed_sources:
+                seed_sources(ROOT, self.source_root)
+            return self.source_root
 
     def bundled_state(self):
         """Use one discovery policy for live, restored, and archived catalogs."""
@@ -143,7 +167,7 @@ class PluginManager:
                    and p["name"] in current and p.get("sha256") != current[p["name"]]["sha256"]}
         # Persisted receipt distinguishes new providers from deliberate removals.
         seen = set(value["bundled_seen"])
-        additions = set(current) - seen - {p["name"] for p in value["packages"]}
+        additions = set() if value.get("library_detached") else set(current) - seen - {p["name"] for p in value["packages"]}
         if changed or additions:
             with self.lock:
                 value = json.loads(self.registry.read_text(encoding="utf-8"))
@@ -270,6 +294,9 @@ class PluginManager:
         """Install a wheel transactionally; a failed probe never changes registry."""
         if remove:
             return self.manage(canonicalize_name(remove), "remove")
+        if Path(wheel).name.lower().endswith(".biopipe-library.zip"):
+            from biopipe.library_bundle import install_bundle
+            return install_bundle(self, Path(wheel))
         return self.install_many([wheel])
 
     @property
@@ -283,6 +310,7 @@ class PluginManager:
         from biopipe.dropins import refresh
         self.state()
         with self.lock:
+            self.ensure_source_root()
             return refresh(self, self.state())
 
     def install_many(self, wheels):
@@ -332,6 +360,8 @@ class PluginManager:
         state.update(protocol_version=PROTOCOL_VERSION, package_protocol_version=PROTOCOL_VERSION,
                      dropin_receipts=receipts if receipts is not None else current.get("dropin_receipts", {}),
                      source_library=source_receipt)
+        if source_receipt.get('root'):
+            state['library_detached'] = True
         atomic_json(environment / "lock.json", state)
         if publish:
             atomic_json(self.registry, state)

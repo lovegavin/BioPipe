@@ -1,6 +1,6 @@
 # Plugin installation and version lifecycle
 
-All built-in operators and Readers ship as six preinstalled packages.
+All built-in operators and Readers ship as seven preinstalled packages.
 These include the eight microbiome operators; see [16S analysis](microbiome.md).
 Use whole-library refresh below for runtime additions, or
 [registry maintenance](registry_maintenance.md) to maintain the repository's shipped indexes.
@@ -16,6 +16,7 @@ with `BIOPIPE_STUDIO_HOME` or `--profile-dir`, or use an explicit `--workspace`.
 <data directory>/
   operators.json
   plugins/
+    library/sources/<revision>/   persistent editable operators, Readers and parameter JSON
     inbox/                        .py files, wheels, or plugin project folders
     registry.json                 active generation and descriptors
     snapshots/<generation>.json   non-installation lifecycle snapshots
@@ -31,10 +32,18 @@ with `BIOPIPE_STUDIO_HOME` or `--profile-dir`, or use an explicit `--workspace`.
 
 The **whole operator library** supports hot refresh, including preinstalled
 operators and Readers. Open **算子库管理** (operator library management), then
-**算子目录** or **Reader 目录** to open the existing source directories:
+**算子目录** or **Reader 目录** to open the profile's persistent source directories:
 
-- Operators: `<application root>/src/task/step/steps/*.py`
-- Readers: `<application root>/src/reader/readers/*.py`
+- Operators: `<active library source root>/src/task/step/steps/*.py`
+- Readers: `<active library source root>/src/reader/readers/*.py`
+
+The active root is below `<data directory>/plugins/library/sources/`, outside the
+application installation. Opening a source folder or explicitly refreshing seeds
+it once from the factory library. Startup only reads the active manifest; it does
+not copy or scan these directories. Application upgrades never overwrite this
+authoring tree. After the first refresh, providers run from immutable private
+wheels rather than mutable application files. The factory sources remain in the
+application as a first-use/restore seed and for source-development tests.
 
 Add or edit a normal, protocol-compliant `Step`/`Operator` or `Reader` file, then
 click **刷新算子库** in the dialog or the refresh icon beside the library heading.
@@ -61,10 +70,47 @@ parallel extension-only system. Stream operators and disk Readers retain their h
 
 The CLI equivalent is `biopipe plugin refresh`; `biopipe plugin list` reports
 `source_directories` and the optional `inbox`. Paths are resolved from the running
-application and selected profile, never from a fixed drive or developer account.
+selected profile, never from a fixed drive or developer account.
 Desktop and development launches sharing a profile read the same active registry.
-Refresh scans the source directories displayed by that instance. A read-only
-application installation can instead use the writable **附加目录** (additional folder).
+Refresh scans the source directories displayed by that instance. Read-only
+application installations use the same writable profile directories. Source
+maintainers can still explicitly pass a repository root to `PluginManager`.
+
+## Independent library releases
+
+The application version and the managed source library version are independent.
+**Import package** accepts a `.biopipe-library.zip` for the complete managed
+source library, or `.whl` for one provider. Import validates checksums, protocol,
+minimum application version and source/wheel consistency before preparing the
+environment. The existing dependency manager handles shared and conflicting
+requirements. All providers publish as one registry generation. A failed import
+keeps the active registry; old environments and source revisions remain available.
+Disabled providers stay disabled. Re-importing the identical installed bundle is
+a no-op. Unrefreshed local source edits must be refreshed or exported first.
+
+Build a release from a v3 source repository (without starting Studio):
+
+```bash
+python scripts/build_builtin_packages.py --library-version 1.0.0 --output build/library
+```
+
+Export the editable library in the selected profile, or install a supplied bundle:
+
+```bash
+biopipe plugin export-library ./library-release --library-version 1.0.1
+biopipe plugin install ./library-release/BioPipe-Library-v1.0.1.biopipe-library.zip
+```
+
+This exports the managed source trees, not unrelated standalone packages installed
+through the additional inbox. Distribute those as their own wheels. Existing
+saved routes retain their frozen parameter JSON and implementation pins; installing
+a library does not rewrite historical jobs. Routes use their existing independent
+save/import interface and are not implicitly replaced by a library bundle.
+
+The `.zip` is a transport envelope around existing protocol-v3 wheels, declarations
+and source/parameter files. It introduces no new operator or Reader protocol.
+Do not copy another branch's frontend, engine or legacy declarations into these
+directories. Convert older declarations to v3 and validate them before exporting.
 
 Source refresh updates the **active profile**, not the checked-in JSON manifests.
 Maintainers still run `biopipe registry build` before committing/publishing source

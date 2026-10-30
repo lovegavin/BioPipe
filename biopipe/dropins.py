@@ -250,6 +250,8 @@ def refresh(manager, current):
             state = current
             if metadata_changed or library.get("receipt") != current.get("source_library") or library.get("state") is not None:
                 state["source_library"] = library["receipt"]
+                if library["receipt"] and library["receipt"].get('root'):
+                    state['library_detached'] = True
                 state['dropin_receipts'] = receipts
                 state = manager._publish(state)
     return {"generation": state["generation"], "updated": changed, "unchanged": skipped,

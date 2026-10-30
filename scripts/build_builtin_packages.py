@@ -44,6 +44,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--refresh", action="store_true")
     parser.add_argument("--package")
+    parser.add_argument("--library-version", help="Build a separate complete .biopipe-library.zip")
     parser.add_argument("--output", type=Path, default=Path("build/packages"))
     args = parser.parse_args()
     if args.refresh:
@@ -51,3 +52,6 @@ if __name__ == "__main__":
         print("Builtin package index refreshed")
     if args.package:
         print(json.dumps(build_package(args.package, args.output), indent=2))
+    if args.library_version:
+        from biopipe.library_bundle import build_bundle
+        print(json.dumps(build_bundle(ROOT, args.output, args.library_version), indent=2))

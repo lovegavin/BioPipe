@@ -18,6 +18,7 @@ export type PluginOperation = {id: string; status: 'running' | 'complete' | 'fai
 export type PluginPackage = {name: string; title?: string; version: string; sha256: string; origin?: 'bundled' | 'wheel'; enabled?: boolean; source_managed?: boolean};
 export type DependencyState = {running: boolean; entries: {id: string; title: string; status: 'unchecked' | 'checking' | 'installing' | 'passed' | 'failed'; error: string; execution?: {mode: 'shared' | 'isolated'; reason?: string}}[]};
 export type PluginState = {generation: string | null; packages: PluginPackage[]; bundled_packages?: PluginPackage[]; inbox?: string;
+  library_release?: {version: string; sha256: string} | null;
   dependencies?: DependencyState;
   source_directories?: {operator: string; reader: string};
   descriptors: {id: string; kind: 'reader' | 'operator'; title: string; distribution: string; resources?: {memory_modes: string[]}}[]};
