@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.46.0 — 2026-10-31
+
+- 新增：283 算子 / 82 Reader / 21 route；新增 Sen 斜率、Mahalanobis 距离、Box's M 协方差齐性检验三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension39.py` 4 项、`tests/test_r_oracles30.py` 1 项，合计 **5 passed**；Sen 对照 SciPy `stats.theilslopes`，Mahalanobis 对照 R base，Box's M 对照 R `biotools::boxM`；registry clean；参考页 283/82；增量门 26 passed；`-W error` 7 passed；Studio 前端 229 passed。
+- 边界：Sen 斜率至少 3 个完整对且 x 非常量；Mahalanobis 要求样本数大于特征数、协方差可逆、完整数值行；Box's M 要求每组样本数大于特征数、协方差可逆，使用卡方近似。
+
 ## 0.45.0 — 2026-10-31
 
 - 新增：280 算子 / 82 Reader / 21 route；新增精确二项检验、Mood 中位数检验、Boschloo 精确检验三个算子；未修改核心层。

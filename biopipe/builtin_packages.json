@@ -13630,6 +13630,142 @@
         },
         {
           "protocol_version": 1,
+          "id": "box_m",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.box_m:BoxMStep",
+          "title": "Box's M test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "required": [
+              "group_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.24",
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "scipy"
+          ],
+          "name": "box_m",
+          "module": "src.task.step.steps.box_m",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Box's M test for equal covariance matrices across groups.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "breusch_godfrey",
           "version": "1.0.0",
           "kind": "operator",
@@ -32688,6 +32824,127 @@
         },
         {
           "protocol_version": 1,
+          "id": "mahalanobis_distance",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.mahalanobis_distance:MahalanobisDistanceStep",
+          "title": "Mahalanobis distance",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.24",
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "scipy"
+          ],
+          "name": "mahalanobis_distance",
+          "module": "src.task.step.steps.mahalanobis_distance",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Squared Mahalanobis distance from the sample mean.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "mann_kendall",
           "version": "1.0.0",
           "kind": "operator",
@@ -43791,6 +44048,172 @@
             }
           ],
           "runtime_defaults": {},
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "sen_slope",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.sen_slope:SenSlopeStep",
+          "title": "Sen's slope",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "x_label": {
+                "type": "string",
+                "title": "自变量字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "y_label": {
+                "type": "string",
+                "title": "因变量字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "confidence": {
+                "type": "number",
+                "default": 0.95,
+                "minimum": 0.0,
+                "maximum": 1.0,
+                "title": "置信水平",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "x_label",
+              "y_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "sen_slope",
+          "module": "src.task.step.steps.sen_slope",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Sen's median pairwise slope with a Theil-Sen confidence interval.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "x_label",
+              "label": "自变量字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "y_label",
+              "label": "因变量字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "confidence",
+              "label": "置信水平",
+              "type": "number",
+              "required": false,
+              "default": 0.95,
+              "min": 0.0,
+              "max": 1.0
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "confidence": 0.95
+          },
           "legacy_parameters": false
         },
         {

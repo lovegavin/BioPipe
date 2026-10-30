@@ -2,6 +2,17 @@
 
 本页记录扩展算子与外部权威实现的对标方式。原则：优先使用同语义的成熟实现；数值差异必须能由算法差异、参数或浮点精度解释；不能对标的项要明确写出原因。
 
+## 0.46.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `sen_slope` | SciPy 1.17.1 `stats.theilslopes` | `tests/test_extension39.py` | slope 1.98，intercept 0.26，95% CI 1.9..2.025；至少 3 个完整对，x 非常量 |
+| `mahalanobis_distance` | R base `mahalanobis` | `tests/test_r_oracles30.py` | 8×3 距离 3.0759981851181237..3.1839836660619767；样本协方差 ddof=1，输出平方距离 |
+| `box_m` | R `biotools::boxM` | `tests/test_r_oracles30.py` | 3 组×8、p=2：M 0.8753278628690389，chi2 0.7549123896701234，df 6，p 0.9932284578587726 |
+
+- `mahalanobis_distance`、`box_m` 使用 R 4.3.3 与 `biotools` 4.3；`sen_slope` 无 R oracle，直接对照 SciPy。
+- 复现：`python -m pytest -q tests/test_extension39.py tests/test_r_oracles30.py`。
+
 ## 0.45.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

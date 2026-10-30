@@ -3116,6 +3116,88 @@
     "quality": "auto"
   },
   {
+    "id": "box_m",
+    "kind": "operator",
+    "title": "Box's M test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "group_label": {
+          "type": "string",
+          "title": "分组字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "required": [
+        "group_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/box_m.py",
+    "tests": [
+      "tests/test_extension39.py",
+      "tests/test_r_oracles30.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/box_m.md",
+    "quality": "auto"
+  },
+  {
     "id": "boxplot",
     "kind": "operator",
     "title": "boxplot",
@@ -18391,6 +18473,79 @@
     "quality": "reviewed"
   },
   {
+    "id": "mahalanobis_distance",
+    "kind": "operator",
+    "title": "Mahalanobis distance",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/mahalanobis_distance.py",
+    "tests": [
+      "tests/test_extension39.py",
+      "tests/test_r_oracles30.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/mahalanobis_distance.md",
+    "quality": "auto"
+  },
+  {
     "id": "manhattan",
     "kind": "operator",
     "title": "manhattan",
@@ -26826,6 +26981,103 @@
       "tasks/select_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/select.md",
+    "quality": "auto"
+  },
+  {
+    "id": "sen_slope",
+    "kind": "operator",
+    "title": "Sen's slope",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "x_label": {
+          "type": "string",
+          "title": "自变量字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "y_label": {
+          "type": "string",
+          "title": "因变量字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "confidence": {
+          "type": "number",
+          "default": 0.95,
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "title": "置信水平",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "x_label",
+        "y_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/sen_slope.py",
+    "tests": [
+      "tests/test_extension39.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/sen_slope.md",
     "quality": "auto"
   },
   {
