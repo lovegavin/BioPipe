@@ -4411,6 +4411,79 @@
     "quality": "auto"
   },
   {
+    "id": "brennan_prediger",
+    "kind": "operator",
+    "title": "Brennan-Prediger coefficient",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "subject_dim",
+              "default": "subject"
+            },
+            {
+              "param": "rater_dim",
+              "default": "rater"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "subject_dim": {
+          "type": "string",
+          "default": "subject",
+          "title": "Subject Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "rater_dim": {
+          "type": "string",
+          "default": "rater",
+          "title": "Rater Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/brennan_prediger.py",
+    "tests": [
+      "tests/test_extension61.py",
+      "tests/test_r_oracles52.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/brennan_prediger.md",
+    "quality": "auto"
+  },
+  {
     "id": "breusch_godfrey",
     "kind": "operator",
     "title": "Breusch-Godfrey serial correlation test",
@@ -8026,6 +8099,79 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/confusion_matrix.md",
+    "quality": "auto"
+  },
+  {
+    "id": "conger_kappa",
+    "kind": "operator",
+    "title": "Conger's kappa",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "subject_dim",
+              "default": "subject"
+            },
+            {
+              "param": "rater_dim",
+              "default": "rater"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "subject_dim": {
+          "type": "string",
+          "default": "subject",
+          "title": "Subject Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "rater_dim": {
+          "type": "string",
+          "default": "rater",
+          "title": "Rater Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/conger_kappa.py",
+    "tests": [
+      "tests/test_extension61.py",
+      "tests/test_r_oracles52.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/conger_kappa.md",
     "quality": "auto"
   },
   {
@@ -16221,6 +16367,79 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/gsea.md",
+    "quality": "auto"
+  },
+  {
+    "id": "gwet_ac1",
+    "kind": "operator",
+    "title": "Gwet's AC1",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "subject_dim",
+              "default": "subject"
+            },
+            {
+              "param": "rater_dim",
+              "default": "rater"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "subject_dim": {
+          "type": "string",
+          "default": "subject",
+          "title": "Subject Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "rater_dim": {
+          "type": "string",
+          "default": "rater",
+          "title": "Rater Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/gwet_ac1.py",
+    "tests": [
+      "tests/test_extension61.py",
+      "tests/test_r_oracles52.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/gwet_ac1.md",
     "quality": "auto"
   },
   {

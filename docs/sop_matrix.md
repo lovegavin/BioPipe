@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（345；下表为 89 个早期算子，0.8–0.67 新增见末尾证据）
+## 3. Operator（348；下表为 89 个早期算子，0.8–0.68 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -724,3 +724,13 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - 公式：OLS 含截距；标准化残差 `e/(s*sqrt(1-h))`；学生化残差 `e/(s_i*sqrt(1-h))`，`s_i²=(SSE-e²/(1-h))/(n-p-1)`；PRESS `sum((e/(1-h))²)`，RMSE `sqrt(PRESS/n)`。
 - 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 345/82/21；参考页 345 算子 / 82 Reader；增量门 21 passed；`-W error` 5 passed；Studio 前端 291 passed。
 - 边界：输入为含响应列的 OLS 设计表；listwise 删除缺失行；要求 `n > p+1`、满秩、杠杆值不接近 1；p 含截距。
+
+## 68. 0.68.0 扩展证据
+
+- 新增 3 个未加权评分者一致性系数：`gwet_ac1`（Gwet AC1）、`brennan_prediger`（Brennan-Prediger）、`conger_kappa`（Conger kappa）。
+- 输入为一个 `[subject,rater]` 数值评分矩阵；类别按唯一值排序；每名受试者至少 2 个评分；允许缺失，但 Conger 要求每名评分者至少 2 个评分。
+- `tests/test_extension61.py` 4 项、`tests/test_r_oracles52.py` 1 项，合计 **5 passed**；R 对照 `irrCAC::gwet.ac1.raw`、`bp.coeff.raw`、`conger.kappa.raw`。
+- 参考 fixture：5×4 `[[1,2,3,3],[2,1,1,2],[2,3,3,2],[1,1,2,3],[3,1,2,2]]`。Gwet AC1 **-0.14427860696517408**（pa 0.2333333333333333，pe 0.32999999999999996）；Brennan-Prediger **-0.15**（pe 0.3333333333333333）；Conger **-0.11650485436893211**（pe 0.31333333333333335）。
+- 公式：`pa = mean_subject[sum_c n_ic(n_ic-1)/(r_i(r_i-1))]`；AC1 `pe = sum_c pi_c(1-pi_c)/(q-1)`；Brennan-Prediger `pe=1/q`；Conger `pe = sum_c mean_p_c² - trace(S)/r`；`coeff=(pa-pe)/(1-pe)`。
+- 边界：仅实现未加权系数；`irrCAC` 的系数输出只保留约 5 位小数，R oracle 用 `abs=1e-5`，手算测试验证完整精度。
+- 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 348/82/21；参考页 348 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 294 passed。

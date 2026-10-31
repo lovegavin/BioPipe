@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.68.0 — 2026-10-31
+
+- 新增：348 算子 / 82 Reader / 21 route；新增 Gwet AC1、Brennan-Prediger、Conger kappa 三个未加权评分者一致性系数；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension61.py` 4 项、`tests/test_r_oracles52.py` 1 项，合计 **5 passed**；R 对照 `irrCAC`；registry clean；参考页 348/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 294 passed。
+- 边界：输入为一个 `[subject,rater]` 评分矩阵；每名受试者至少 2 个评分；允许缺失；Conger 要求每名评分者至少 2 个评分；仅实现未加权系数。
+
 ## 0.67.0 — 2026-10-31
 
 - 新增：345 算子 / 82 Reader / 21 route；新增标准化残差、学生化残差、PRESS 三个 OLS 残差诊断算子；未修改核心层。

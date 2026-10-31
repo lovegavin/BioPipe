@@ -1,5 +1,13 @@
 # 权威实现对照矩阵
 
+## 0.68.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `gwet_ac1` | R `irrCAC::gwet.ac1.raw` | `tests/test_r_oracles52.py` | 5×4 fixture，AC1 -0.14427860696517408；R 输出四舍五入到 5 位小数，oracle 容差 1e-5 |
+| `brennan_prediger` | R `irrCAC::bp.coeff.raw` | `tests/test_r_oracles52.py` | 同一 fixture，系数 -0.15；未加权 |
+| `conger_kappa` | R `irrCAC::conger.kappa.raw` | `tests/test_r_oracles52.py` | 同一 fixture，系数 -0.11650485436893211；未加权 |
+
 ## 0.67.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

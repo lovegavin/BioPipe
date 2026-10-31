@@ -15524,6 +15524,121 @@
         },
         {
           "protocol_version": 1,
+          "id": "brennan_prediger",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.brennan_prediger:BrennanPredigerStep",
+          "title": "Brennan-Prediger coefficient",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "subject_dim": {
+                "type": "string",
+                "default": "subject",
+                "title": "Subject Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "rater_dim": {
+                "type": "string",
+                "default": "rater",
+                "title": "Rater Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "subject_dim",
+                    "default": "subject"
+                  },
+                  {
+                    "param": "rater_dim",
+                    "default": "rater"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [],
+          "dependency_imports": [],
+          "name": "brennan_prediger",
+          "module": "src.task.step.steps.brennan_prediger",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "subject_dim",
+              "label": "Subject Dim",
+              "type": "string",
+              "required": false,
+              "default": "subject"
+            },
+            {
+              "key": "rater_dim",
+              "label": "Rater Dim",
+              "type": "string",
+              "required": false,
+              "default": "rater"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "subject_dim": "subject",
+            "rater_dim": "rater"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "breusch_godfrey",
           "version": "1.0.0",
           "kind": "operator",
@@ -21124,6 +21239,121 @@
           "runtime_defaults": {
             "sample_dim": "sample",
             "label_dim": "label"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "conger_kappa",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.conger_kappa:CongerKappaStep",
+          "title": "Conger's kappa",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "subject_dim": {
+                "type": "string",
+                "default": "subject",
+                "title": "Subject Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "rater_dim": {
+                "type": "string",
+                "default": "rater",
+                "title": "Rater Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "subject_dim",
+                    "default": "subject"
+                  },
+                  {
+                    "param": "rater_dim",
+                    "default": "rater"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [],
+          "dependency_imports": [],
+          "name": "conger_kappa",
+          "module": "src.task.step.steps.conger_kappa",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "subject_dim",
+              "label": "Subject Dim",
+              "type": "string",
+              "required": false,
+              "default": "subject"
+            },
+            {
+              "key": "rater_dim",
+              "label": "Rater Dim",
+              "type": "string",
+              "required": false,
+              "default": "rater"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "subject_dim": "subject",
+            "rater_dim": "rater"
           },
           "legacy_parameters": false
         },
@@ -31607,6 +31837,121 @@
             "sample_dim": "sample",
             "feature_dim": "feature",
             "two_sided": false
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "gwet_ac1",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.gwet_ac1:GwetAc1Step",
+          "title": "Gwet's AC1",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "subject_dim": {
+                "type": "string",
+                "default": "subject",
+                "title": "Subject Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "rater_dim": {
+                "type": "string",
+                "default": "rater",
+                "title": "Rater Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "subject_dim",
+                    "default": "subject"
+                  },
+                  {
+                    "param": "rater_dim",
+                    "default": "rater"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [],
+          "dependency_imports": [],
+          "name": "gwet_ac1",
+          "module": "src.task.step.steps.gwet_ac1",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "subject_dim",
+              "label": "Subject Dim",
+              "type": "string",
+              "required": false,
+              "default": "subject"
+            },
+            {
+              "key": "rater_dim",
+              "label": "Rater Dim",
+              "type": "string",
+              "required": false,
+              "default": "rater"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "subject_dim": "subject",
+            "rater_dim": "rater"
           },
           "legacy_parameters": false
         },
