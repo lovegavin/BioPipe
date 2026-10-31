@@ -26372,6 +26372,198 @@
         },
         {
           "protocol_version": 1,
+          "id": "engle_granger",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.engle_granger:EngleGrangerStep",
+          "title": "Engle-Granger cointegration test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "y_label": {
+                "type": "string",
+                "title": "Y Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "x_label": {
+                "type": "string",
+                "title": "X Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "trend": {
+                "type": "string",
+                "enum": [
+                  "c",
+                  "ct",
+                  "ctt"
+                ],
+                "default": "c",
+                "title": "Trend",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "lags": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "default": null,
+                "title": "Lags",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "y_label",
+              "x_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "engle_granger",
+          "module": "src.task.step.steps.engle_granger",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "y_label",
+              "label": "Y Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "x_label",
+              "label": "X Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "trend",
+              "label": "Trend",
+              "type": "choice",
+              "required": false,
+              "default": "c",
+              "options": [
+                "c",
+                "ct",
+                "ctt"
+              ]
+            },
+            {
+              "key": "lags",
+              "label": "Lags",
+              "type": "integer",
+              "required": false,
+              "default": null,
+              "min": 0
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "trend": "c",
+            "lags": null
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "enrich_go",
           "version": "1.0.0",
           "kind": "operator",
@@ -35390,6 +35582,168 @@
           "runtime_defaults": {
             "feature_dim": "feature",
             "sample_dim": "sample"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "johansen",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.johansen:JohansenStep",
+          "title": "Johansen cointegration test",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "det_order": {
+                "type": "integer",
+                "enum": [
+                  -1,
+                  0,
+                  1
+                ],
+                "default": 0,
+                "title": "Det Order",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "k_ar_diff": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1,
+                "title": "K Ar Diff",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "johansen",
+          "module": "src.task.step.steps.johansen",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "det_order",
+              "label": "Det Order",
+              "type": "choice",
+              "required": false,
+              "default": 0,
+              "options": [
+                -1,
+                0,
+                1
+              ]
+            },
+            {
+              "key": "k_ar_diff",
+              "label": "K Ar Diff",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "det_order": 0,
+            "k_ar_diff": 1
           },
           "legacy_parameters": false
         },

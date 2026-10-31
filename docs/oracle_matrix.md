@@ -1,3 +1,10 @@
+## 0.70.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `engle_granger` | R `urca::ur.df`（残差 ADF，`type="none"`，`lags=2`） | `tests/test_r_oracles54.py` | 160 点随机游走 fixture：统计量 -6.365675416103156，p 2.536310715415716e-07；n=160；临界值 -3.96664605 / -3.37482819 / -3.0712318 |
+| `johansen` | R `urca::ca.jo`（`type="trace"/"eigen"`，`ecdet="none"`，`K=2`） | `tests/test_r_oracles54.py` | trace 72.01098429 / 4.146971568；max-eig 67.86401273 / 4.146971568；eigen 0.34917798 / 0.02590521；R 的 `@teststat` 为逆序 |
+
 # 权威实现对照矩阵
 
 ## 0.69.0

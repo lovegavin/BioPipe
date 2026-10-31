@@ -12098,6 +12098,118 @@
     "quality": "auto"
   },
   {
+    "id": "engle_granger",
+    "kind": "operator",
+    "title": "Engle-Granger cointegration test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "y_label": {
+          "type": "string",
+          "title": "Y Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "x_label": {
+          "type": "string",
+          "title": "X Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "trend": {
+          "type": "string",
+          "enum": [
+            "c",
+            "ct",
+            "ctt"
+          ],
+          "default": "c",
+          "title": "Trend",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "lags": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "default": null,
+          "title": "Lags",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "y_label",
+        "x_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/engle_granger.py",
+    "tests": [
+      "tests/test_extension63.py",
+      "tests/test_r_oracles54.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/engle_granger.md",
+    "quality": "auto"
+  },
+  {
     "id": "enrich_go",
     "kind": "operator",
     "title": "enrich_go",
@@ -18999,6 +19111,100 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/jarque_bera.md",
+    "quality": "auto"
+  },
+  {
+    "id": "johansen",
+    "kind": "operator",
+    "title": "Johansen cointegration test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "det_order": {
+          "type": "integer",
+          "enum": [
+            -1,
+            0,
+            1
+          ],
+          "default": 0,
+          "title": "Det Order",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "k_ar_diff": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "title": "K Ar Diff",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/johansen.py",
+    "tests": [
+      "tests/test_extension63.py",
+      "tests/test_r_oracles54.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/johansen.md",
     "quality": "auto"
   },
   {

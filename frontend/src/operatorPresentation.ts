@@ -287,6 +287,8 @@ export const builtinPresentation = {
   dotplot: artwork("可视化", "ChartScatter", "dotplot", "点大小与强度"),
   violin: artwork("可视化", "ChartLine", "violin", "分组密度与分布"),
   barplot: artwork("可视化", "ChartBar", "composition", "各组组成比例"),
+  engle_granger: { category: "统计分析", icon: "ChartLine" },
+  johansen: { category: "统计分析", icon: "ChartScatter" },
 } satisfies Record<string, Pick<Operator, "category" | "icon" | "preview">>;
 
 export function presentOperator(spec: Operator): Operator {

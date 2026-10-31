@@ -1,3 +1,9 @@
+## 0.70.0 — 2026-10-31
+
+- 新增：352 算子 / 82 Reader / 21 route；新增 Engle-Granger 残差协整、Johansen 迹/最大特征值协整两个时间序列算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension63.py` 4 项、`tests/test_r_oracles54.py` 1 项，合计 **5 passed**；R 对照 `urca::ur.df` 与 `urca::ca.jo`；registry clean；参考页 352/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 298 passed。
+- 边界：EG 仅二元且仅 `aeg` 方法，`trend` 支持 c/ct/ctt，`lags` 可手动或 AIC；Johansen 要求完整样本，`det_order` 为 -1/0/1；临界值来自 statsmodels 表。
+
 # 更新记录
 
 ## 0.69.0 — 2026-10-31
