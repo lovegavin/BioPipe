@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（357；下表为 89 个早期算子，0.8–0.72 新增见末尾证据）
+## 3. Operator（360；下表为 89 个早期算子，0.8–0.73 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -774,3 +774,13 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - `tests/test_extension65.py` 4 项、`tests/test_r_oracles56.py` 1 项，合计 **5 passed**。
 - 边界：DFBETAS 使用留一残差方差与 `(X'X)^-1` 标准化；COVRATIO 使用 R `stats::covratio` 同一公式；Theil U 只支持二维列联表，不提供 DescTools 的置信区间。
 - 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 357/82/21；参考页 357 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 303 passed。
+
+## 73. 0.73.0 扩展证据
+
+- 新增 3 个时间序列算子：`phillips_perron`（Phillips-Perron Z-tau 单位根）、`dfgls`（DF-GLS 单位根）、`arch_lm`（Engle ARCH LM 条件异方差检验）。
+- `phillips_perron`：一个 `[sample,feature]`，`trend` 为 `c`/`ct`，`lags` 为固定滞后或 `null` 时 AIC；输出 `statistic,p,lags,nobs,n,critical_1pct,critical_5pct,critical_10pct`。fixture seed 20261102、120 点 `cumsum(rnorm(120))`，`lags=2, trend=c`：统计量 **-1.9273077985416451**，p **0.31932569624470114**，nobs **119**；R `urca::ur.pp(type="Z-t",model="constant",lags="short",use.lag=2)` 统计量 **-1.9273080452513796**，差异 <1e-6（长程方差带宽实现不同），测试按 1e-6 对齐。
+- `dfgls`：同样的单序列输入，`trend` 为 `c`/`ct`，`lags` 为固定滞后或 `null` 时 AIC；输出含 `max_lags`。fixture 同上，`lags=2`：统计量 **-1.74135623062118**，p **0.08039437046328551**，nobs **117**；R `urca::ur.ers(type="DF-GLS",model="constant",lag.max=2)` 统计量 **-1.7413562306211814**，逐值一致。
+- `arch_lm`：一个残差序列，`lags` 默认 12；输出 `statistic,p,df,f_statistic,f_p,lags,n`。fixture seed 20261102、200 个 t(5) 残差、`lags=5`：LM **4.186145832492666**，p **0.5229387617060965**，F **0.829270564019495**，F p **0.5303006600082081**；R `FinTS::ArchTest(e,lags=5)` 逐值一致。
+- `tests/test_extension66.py` 4 项、`tests/test_r_oracles57.py` 1 项，合计 **5 passed**；R 对照 `urca::ur.pp`、`urca::ur.ers`、`FinTS::ArchTest`。
+- 边界：Phillips-Perron 只实现 Z-tau，不实现 Z-alpha；`arch` 与 R `urca` 的 PP 长程方差带宽细节不同，统计量按 1e-6 容差比较，临界值只作参考不逐位断言；DF-GLS 固定滞后时与 R 对齐，`lags=null` 使用 arch 的 AIC 选择；ARCH LM 输入按残差处理，不拟合均值模型。
+- 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 360/82/21；参考页 360 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 306 passed。

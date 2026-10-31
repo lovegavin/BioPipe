@@ -2346,6 +2346,96 @@
     "quality": "auto"
   },
   {
+    "id": "arch_lm",
+    "kind": "operator",
+    "title": "ARCH LM test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "lags": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 12,
+          "title": "Lags",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/arch_lm.py",
+    "tests": [
+      "tests/test_extension66.py",
+      "tests/test_r_oracles57.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/arch_lm.md",
+    "quality": "auto"
+  },
+  {
     "id": "arch_test",
     "kind": "operator",
     "title": "ARCH heteroskedasticity test",
@@ -10821,6 +10911,110 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/dffits.md",
+    "quality": "auto"
+  },
+  {
+    "id": "dfgls",
+    "kind": "operator",
+    "title": "DF-GLS unit-root test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "lags": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "default": null,
+          "title": "Lags",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "trend": {
+          "type": "string",
+          "enum": [
+            "c",
+            "ct"
+          ],
+          "default": "c",
+          "title": "Trend",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/dfgls.py",
+    "tests": [
+      "tests/test_extension66.py",
+      "tests/test_r_oracles57.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/dfgls.md",
     "quality": "auto"
   },
   {
@@ -27912,6 +28106,110 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/pettitt_test.md",
+    "quality": "auto"
+  },
+  {
+    "id": "phillips_perron",
+    "kind": "operator",
+    "title": "Phillips-Perron unit-root test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "lags": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "default": null,
+          "title": "Lags",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "trend": {
+          "type": "string",
+          "enum": [
+            "c",
+            "ct"
+          ],
+          "default": "c",
+          "title": "Trend",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/phillips_perron.py",
+    "tests": [
+      "tests/test_extension66.py",
+      "tests/test_r_oracles57.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/phillips_perron.md",
     "quality": "auto"
   },
   {

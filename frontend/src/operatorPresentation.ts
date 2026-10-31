@@ -294,6 +294,9 @@ export const builtinPresentation = {
   dfbetas: { category: "统计分析", icon: "ChartScatter" },
   covratio: { category: "统计分析", icon: "ChartLine" },
   theil_u: { category: "统计分析", icon: "ChartBar" },
+  phillips_perron: { category: "统计分析", icon: "ChartLine" },
+  dfgls: { category: "统计分析", icon: "ChartLine" },
+  arch_lm: { category: "统计分析", icon: "ChartScatter" },
 } satisfies Record<string, Pick<Operator, "category" | "icon" | "preview">>;
 
 export function presentOperator(spec: Operator): Operator {

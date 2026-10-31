@@ -1,3 +1,11 @@
+## 0.73.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `phillips_perron` | R `urca::ur.pp(type="Z-t", model="constant", lags="short", use.lag=2)` | `tests/test_r_oracles57.py` | 120 点随机游走 fixture：stat **-1.9273077985416451**，p **0.31932569624470114**，nobs 119；R stat **-1.9273080452513796**，差 <1e-6；长程方差带宽实现不同 |
+| `dfgls` | R `urca::ur.ers(type="DF-GLS", model="constant", lag.max=2)` | `tests/test_r_oracles57.py` | 同一 fixture：stat **-1.74135623062118**，p **0.08039437046328551**，nobs 117；R stat **-1.7413562306211814**，逐值一致 |
+| `arch_lm` | R `FinTS::ArchTest(e, lags=5)` | `tests/test_r_oracles57.py` | 200 个 t(5) 残差：LM **4.186145832492666**，p **0.5229387617060965**，F **0.829270564019495**，F p **0.5303006600082081**；逐值一致 |
+
 ## 0.72.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

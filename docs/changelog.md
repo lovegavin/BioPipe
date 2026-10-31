@@ -1,3 +1,9 @@
+## 0.73.0 — 2026-10-31
+
+- 新增：360 算子 / 82 Reader / 21 route；新增 Phillips-Perron 单位根、DF-GLS 单位根、Engle ARCH LM 波动检验三个时间序列诊断算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension66.py` 4 项、`tests/test_r_oracles57.py` 1 项，合计 **5 passed**；R 对照 `urca::ur.pp`、`urca::ur.ers`、`FinTS::ArchTest`；registry clean；参考页 360/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 306 passed。
+- 边界：`phillips_perron` 使用 arch 的 Z-tau，`lags=null` 时 AIC 选滞后；与 R `ur.pp` 的统计量在 1e-6 内一致（长程方差带宽实现不同）。`dfgls` 使用 arch 的 DF-GLS，`lags=null` 时 AIC；固定滞后时与 R `ur.ers` 逐值一致。`arch_lm` 输入按残差处理，不拟合均值模型；依赖 `arch>=6`。
+
 ## 0.72.0 — 2026-10-31
 
 - 新增：357 算子 / 82 Reader / 21 route；新增 Theil 不确定系数、标准化 DFBETAS、COVRATIO 三个关联/回归影响算子；未修改核心层。
