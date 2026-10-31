@@ -1,3 +1,11 @@
+## 0.94.0 — 2026-10-31
+
+- 新增 `box_cox` Box-Cox 变换：逐特征 MLE 估计 lambda，也支持固定标量/按特征映射；`shift` 可把非正数据平移到正域；缺失值保留，输出同维表。
+- 算子总数 **393**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 393/85，registry `errors []`；Data 类别 35→36，Statistics 保持 230。
+- 验证：`tests/test_box_cox.py` 5 项 + `tests/test_r_oracles75.py` 1 项 = **6 passed**；R `MASS::boxcox` lambda 对照；增量门 **22 passed**；`-W error` **8 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：仅 2D 数值表；正性、每特征至少 3 个有限值、lambda 键/数值合法性均严格检查；不提供置信区间或自动反变换。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.93.0 — 2026-10-31
 
 - 新增 `probit_regression` 概率单位回归：一个二分类响应表，`response_label` + `predictors`，隐式截距，支持可选 `categorical`；输出系数/标准误/z/p/置信区间，info 记录 loglik、AIC 与 pseudo-R²。

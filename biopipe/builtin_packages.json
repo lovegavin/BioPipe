@@ -17124,6 +17124,166 @@
         },
         {
           "protocol_version": 1,
+          "id": "box_cox",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.box_cox:BoxCoxStep",
+          "title": "Box-Cox transform",
+          "category": "Data",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "lambdas": {
+                "oneOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "number"
+                    }
+                  }
+                ],
+                "title": "固定 lambda（标量或按特征映射；省略则逐特征 MLE）",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "shift": {
+                "type": "number",
+                "minimum": 0.0,
+                "default": 0.0,
+                "title": "变换前加常数，使取值严格为正",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.24",
+            "scipy>=1.10"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "scipy"
+          ],
+          "name": "box_cox",
+          "module": "src.task.step.steps.box_cox",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Box-Cox transform each feature, optionally estimating lambda.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "lambdas",
+              "label": "固定 lambda（标量或按特征映射；省略则逐特征 MLE）",
+              "type": "json",
+              "required": false
+            },
+            {
+              "key": "shift",
+              "label": "变换前加常数，使取值严格为正",
+              "type": "number",
+              "required": false,
+              "default": 0.0,
+              "min": 0.0
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "shift": 0.0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "box_m",
           "version": "1.0.0",
           "kind": "operator",

@@ -6,10 +6,10 @@
 
 1. [架构总览](architecture.md) — 模块、执行流、数据流、目录地图、改哪里。
 2. [协议总集](protocol_suite.md) — Form、Reader、算子、契约、注册表、路线、扩展、测试的规范。
-3. [参考索引](reference/README.md) — 392 个算子、85 个 Reader 的逐项页面和机器索引。
+3. [参考索引](reference/README.md) — 393 个算子、85 个 Reader 的逐项页面和机器索引。
 4. [任务 SOP](route_sop.md) — 从数据到自定义路线、验证、运行、解释结果。
 5. [价值主张与设计原则](vision.md) — 为什么做、五个支撑手段、设计判断标准。
-6. [覆盖与创新点审计](coverage_audit.md) — 392 算子/85 Reader 的覆盖、增长、缺口与五支撑逐项审计。
+6. [覆盖与创新点审计](coverage_audit.md) — 393 算子/85 Reader 的覆盖、增长、缺口与五支撑逐项审计。
 7. [系统对象](reference/subjects/README.md) — Form、Task、Graph、Project、Reader、Step、Runner、Registry、SDK 的职责、边界与不变量。
 
 一句话：**`task.yaml`/Studio Graph → Reader → Form → Step 链 → 输出/图片/report**。Reader 负责忠实解析，算子负责数学处理，契约负责连接，测试负责证明。
@@ -87,9 +87,9 @@
 
 ## 4. 当前版本与能力
 
-- 版本：**0.93.0**（见 [changelog](changelog.md)）
-- 392 个算子、85 个 Reader、6 个 provider 包、21 条内置路线
-- 0.93 新增概率单位回归（probit regression）；0.92 新增季节性 ARIMA（SARIMA）；0.91 新增非度量多维尺度分析（NMDS）；0.90 新增 Fine-Gray 竞争风险回归；0.89 新增 Bai-Perron 多结构突变回归
+- 版本：**0.94.0**（见 [changelog](changelog.md)）
+- 393 个算子、85 个 Reader、6 个 provider 包、21 条内置路线
+- 0.94 新增 Box-Cox 变换（box_cox，逐特征 MLE）；0.93 新增概率单位回归（probit regression）；0.92 新增季节性 ARIMA（SARIMA）；0.91 新增非度量多维尺度分析（NMDS）；0.90 新增 Fine-Gray 竞争风险回归；0.89 新增 Bai-Perron 多结构突变回归
 - 分类统一为 6 类；算子/Reader 功能预览、平台标记与 catalog integrity 检查已接入
 - 许可证：Apache License 2.0（见根目录 `LICENSE`/`NOTICE`）
 - 所有内置 Reader/算子参数严格（`additionalProperties: false`）
