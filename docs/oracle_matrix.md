@@ -1,3 +1,7 @@
+## 0.84.0
+
+本轮不新增算子/Reader，也不新增外部数值 oracle；验证重点是分类、Reader 元数据、平台标记与目录完整性。新增 `tests/test_catalog_integrity.py`，并保留既有 R/Python oracle 全部通过。全量 pytest：**974 passed, 1 skipped**。
+
 ## 0.83.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

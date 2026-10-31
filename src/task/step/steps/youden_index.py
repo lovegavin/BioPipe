@@ -1,4 +1,4 @@
-﻿"""Youden index and the optimal ROC threshold."""
+"""Youden index and the optimal ROC threshold."""
 from __future__ import annotations
 
 import numpy as np

@@ -85,8 +85,9 @@
 
 ## 4. 当前版本与能力
 
-- 版本：**0.83.0**（见 [changelog](changelog.md)）
+- 版本：**0.84.0**（见 [changelog](changelog.md)）
 - 379 个算子、85 个 Reader、6 个 provider 包、21 条内置路线
+- 分类统一为 6 类；算子/Reader 功能预览、平台标记与 catalog integrity 检查已接入
 - 所有内置 Reader/算子参数严格（`additionalProperties: false`）
 - Reader 覆盖：CSV/TSV/TXT/Parquet、BED/GFF3/GTF/GAF、FASTA、MTX、H5AD、10x H5、VCF、PLINK1/2、BGEN、GMT、Loom、BIOM、FAM/BIM/HapMap、MOL/XYZ/GRO、PSL/genePred、MGF、HMMER domtblout、mzML/mzXML/mzTab、mzIdentML/pepXML/mzDATA/protXML 摘要、FCS/AB1
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 需 WSL/Linux；见 [Windows 兼容性](windows_compatibility.md)

@@ -1,4 +1,5 @@
 import { PluginPanel } from "./PluginPanel";
+import { isWindowsBlocked } from "./platform";
 import { version as studioVersion } from "../package.json";
 import {
   Component,
@@ -1107,6 +1108,11 @@ function Studio() {
       .toLowerCase()
       .includes(search.toLowerCase()),
   );
+  const filteredReaders = (catalog.readers ?? []).filter((reader) =>
+    `${reader.title || ""} ${reader.name} ${reader.description || ""} ${reader.extensions.join(" ")}`
+      .toLowerCase()
+      .includes(search.toLowerCase()),
+  );
   const categories = [...new Set(filtered.map((o) => o.category))].sort(compareCategories);
   return (
     <div
@@ -1277,7 +1283,7 @@ function Studio() {
         >
           <div className="panel-heading">
             <h2>算子库</h2>
-            <span className="count-badge">{catalog.operators.filter(item => !libraryState.hidden.includes(item.name)).length + routes.length}</span>
+            <span className="count-badge">{catalog.operators.filter(item => !libraryState.hidden.includes(item.name)).length + (catalog.readers?.length ?? 0) + routes.length}</span>
             <button className="icon-button register-route-button" aria-label="添加路线算子" title="从已保存路线添加算子" onClick={() => setPicker("register")}><Plus size={18}/></button>
             <button className="icon-button library-refresh" aria-label="刷新算子库" title="扫描算子与 Reader 目录并热更新" disabled={refreshingPlugins} onClick={() => void refreshPlugins()}><ArrowClockwise size={16} className={refreshingPlugins ? "spin" : ""}/></button>
             <button
@@ -1291,8 +1297,8 @@ function Studio() {
           <label className="search-field">
             <MagnifyingGlass size={16} />
             <input
-              aria-label="搜索算子"
-              placeholder="搜索算子"
+              aria-label="搜索算子与 Reader"
+              placeholder="搜索算子与 Reader"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -1353,6 +1359,7 @@ function Studio() {
                       </span>
                       <span>
                         <strong>{spec.title}</strong>
+                        <small className="operator-preview">{spec.description}</small>
                         {libraryState.hidden.includes(spec.name) ? <small>已删除</small> : libraryState.disabled.includes(spec.name) ? <small>已禁用</small> : null}
                       </span>
                       <Plus className="add-hint" size={14} />
@@ -1360,7 +1367,25 @@ function Studio() {
                   ))}
               </LibrarySection>
             ))}
-            {!filtered.length && !routes.some(r => r.name.toLowerCase().includes(search.toLowerCase())) && (
+            {!!filteredReaders.length && (
+              <LibrarySection name="Readers" count={filteredReaders.length} sectionKey="readers" search={search} className="reader-library">
+                {filteredReaders.map((reader) => {
+                  const blocked = isWindowsBlocked(reader.platforms);
+                  return <div key={reader.name} className="operator-item reader-item" title={reader.description}>
+                    <span className="operator-icon"><OperatorIcon name="Database" size={18}/></span>
+                    <span>
+                      <strong>{reader.title || reader.name}</strong>
+                      <small className="operator-preview">{reader.description}</small>
+                      <span className="reader-meta">
+                        <span>{reader.extensions.join(" · ")}</span>
+                        {blocked && <span className="platform-badge">Windows 不可用</span>}
+                      </span>
+                    </span>
+                  </div>;
+                })}
+              </LibrarySection>
+            )}
+            {!filtered.length && !filteredReaders.length && !routes.some(r => r.name.toLowerCase().includes(search.toLowerCase())) && (
               <div className="search-empty">
                 没有找到算子
                 <br />

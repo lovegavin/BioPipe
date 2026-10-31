@@ -20,6 +20,7 @@ class CramReader(Reader):
     output_contract = reader_contract()
     file_input = {"dims": ["read", "field"], "labels": {"read": "auto", "field": "builtin"}}
     extensions = [".cram"]
+    platforms = ["linux", "darwin"]
     handles_compression = False
     dependencies = ["pysam"]
     dependency_imports = ["pysam"]

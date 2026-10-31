@@ -1,20 +1,29 @@
-import type { Catalog, Operator } from "./types";
+import type { Catalog, Operator, ReaderSpec } from "./types";
 
-const categoryOrder = ["质量控制", "统计分析", "数据整理", "可视化", "未分类"];
+export const CANONICAL_CATEGORIES = ["Data", "Statistics", "Machine Learning", "Omics", "Visualization", "Quality Control"] as const;
+const categoryOrder = [...CANONICAL_CATEGORIES, "Other"];
+const canonical = new Set<string>(categoryOrder);
 const categoryAliases: Record<string, string> = {
-  analysis: "统计分析", statistics: "统计分析", "statistical analysis": "统计分析",
-  visualization: "可视化", plotting: "可视化", plots: "可视化",
-  "quality control": "质量控制", quality_control: "质量控制", qc: "质量控制",
-  "single cell": "质量控制", single_cell: "质量控制", proteomics: "数据整理",
-  data: "数据整理", "data preparation": "数据整理", "data processing": "数据整理",
-  plugins: "未分类", extensions: "未分类", "扩展算子": "未分类", microbiome: "微生物组",
-  genetics: "统计分析",
+  analysis: "Statistics", statistics: "Statistics", "statistical analysis": "Statistics",
+  survival: "Statistics", 统计分析: "Statistics", 数据整理: "Data",
+  "data preparation": "Data", "data processing": "Data", data: "Data",
+  visualization: "Visualization", visualisation: "Visualization", plotting: "Visualization",
+  plots: "Visualization", 可视化: "Visualization",
+  "quality control": "Quality Control", quality_control: "Quality Control", qc: "Quality Control",
+  质量控制: "Quality Control",
+  "machine learning": "Machine Learning", ml: "Machine Learning",
+  omics: "Omics", genetics: "Omics", genomics: "Omics", transcriptomics: "Omics",
+  proteomics: "Omics", "single cell": "Omics", single_cell: "Omics", microbiome: "Omics",
+  metagenomics: "Omics", sequence: "Omics", expression: "Omics",
+  plugins: "Other", extensions: "Other", 扩展算子: "Other", 未分类: "Other",
 };
 
 export function categoryLabel(category?: string | null): string {
   const name = category?.trim() ?? "";
+  if (!name) return "Other";
+  if (canonical.has(name)) return name;
   const key = name.toLowerCase();
-  return Object.hasOwn(categoryAliases, key) ? categoryAliases[key] : (name || "未分类");
+  return Object.hasOwn(categoryAliases, key) ? categoryAliases[key] : "Other";
 }
 
 export function compareCategories(a: string, b: string): number {
@@ -22,7 +31,7 @@ export function compareCategories(a: string, b: string): number {
     const index = categoryOrder.indexOf(name);
     return index < 0 ? categoryOrder.length : index;
   };
-  return rank(a) - rank(b) || a.localeCompare(b, "zh-CN");
+  return rank(a) - rank(b) || a.localeCompare(b, "en");
 }
 
 // Presentation is independent of package ownership and runtime fingerprints.
@@ -320,14 +329,32 @@ export const builtinPresentation = {
 
 export function presentOperator(spec: Operator): Operator {
   const fallback = (builtinPresentation as Record<string, Partial<Operator>>)[spec.name];
+  const description = (spec.description || "").trim();
   return {
     ...spec,
-    category: categoryLabel(fallback?.category ?? spec.category),
+    // Registry metadata wins over legacy presentation copy. The fallback only
+    // fills display values for older/imported catalogs that predate the field.
+    category: categoryLabel(spec.category || fallback?.category),
+    description: description || fallback?.description || `${spec.title}。`,
     icon: spec.icon ?? fallback?.icon,
     preview: spec.preview ?? fallback?.preview,
   };
 }
 
+export function presentReader(spec: ReaderSpec): ReaderSpec {
+  return {
+    ...spec,
+    title: spec.title || spec.name,
+    category: categoryLabel(spec.category),
+    description: (spec.description || "").trim() || `读取 ${spec.extensions.join(" / ")} 文件。`,
+    platforms: spec.platforms ?? [],
+  };
+}
+
 export function presentCatalog(catalog: Catalog): Catalog {
-  return { ...catalog, operators: catalog.operators.map(presentOperator) };
+  return {
+    ...catalog,
+    operators: catalog.operators.map(presentOperator),
+    readers: (catalog.readers ?? []).map(presentReader),
+  };
 }

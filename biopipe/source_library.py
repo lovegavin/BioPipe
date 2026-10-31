@@ -31,7 +31,7 @@ def describe(root, output, sources=None):
     from src.task import operator_catalog
     operator_catalog.__file__ = str(root / "src/task/operator_catalog.py")
     from biopipe.registry import scan_sources, package_manifest, PACKAGE_INDEX, read_json
-    descriptors, errors = scan_sources(root, sources)
+    descriptors, errors = scan_sources(root, sources, normalize_categories=False)
     if sources is not None:
         output.write_text(json.dumps({'descriptors': descriptors, 'errors': errors}, ensure_ascii=False), encoding='utf-8')
         return

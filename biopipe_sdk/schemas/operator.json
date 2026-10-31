@@ -1,38 +1,6 @@
 {
   "additionalProperties": true,
   "properties": {
-    "protocol_version": {
-      "const": 1,
-      "default": 1,
-      "title": "Protocol Version",
-      "type": "integer"
-    },
-    "id": {
-      "pattern": "^[A-Za-z_][A-Za-z0-9_.-]{0,79}$",
-      "title": "Id",
-      "type": "string"
-    },
-    "version": {
-      "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][A-Za-z0-9.-]+)?$",
-      "title": "Version",
-      "type": "string"
-    },
-    "kind": {
-      "enum": [
-        "operator",
-        "reader"
-      ],
-      "title": "Kind",
-      "type": "string"
-    },
-    "entry_point": {
-      "title": "Entry Point",
-      "type": "string"
-    },
-    "title": {
-      "title": "Title",
-      "type": "string"
-    },
     "category": {
       "anyOf": [
         {
@@ -45,6 +13,31 @@
       "default": null,
       "description": "Operator library category, independent of package origin. Custom labels are allowed.",
       "title": "Category"
+    },
+    "contracts": {
+      "additionalProperties": true,
+      "title": "Contracts",
+      "type": "object"
+    },
+    "dependencies": {
+      "description": "PEP 508 dependencies; compatible versions share the host runtime, conflicting versions use a private dependency directory and subprocess with the same Python.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Dependencies",
+      "type": "array"
+    },
+    "dependency_imports": {
+      "description": "Optional import smoke checks, run outside the UI process.",
+      "items": {
+        "type": "string"
+      },
+      "title": "Dependency Imports",
+      "type": "array"
+    },
+    "entry_point": {
+      "title": "Entry Point",
+      "type": "string"
     },
     "icon": {
       "anyOf": [
@@ -73,36 +66,59 @@
       "description": "SDK-generated portable image data; authors declare a relative path in icon.",
       "title": "Icon Image"
     },
+    "id": {
+      "pattern": "^[A-Za-z_][A-Za-z0-9_.-]{0,79}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "operator",
+        "reader"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
     "parameters_schema": {
       "additionalProperties": true,
       "title": "Parameters Schema",
       "type": "object"
     },
-    "contracts": {
-      "additionalProperties": true,
-      "title": "Contracts",
-      "type": "object"
+    "platforms": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Platforms where the implementation is supported; absent means all supported platforms.",
+      "title": "Platforms"
+    },
+    "protocol_version": {
+      "const": 1,
+      "default": 1,
+      "title": "Protocol Version",
+      "type": "integer"
     },
     "resources": {
       "additionalProperties": true,
       "title": "Resources",
       "type": "object"
     },
-    "dependencies": {
-      "description": "PEP 508 dependencies; compatible versions share the host runtime, conflicting versions use a private dependency directory and subprocess with the same Python.",
-      "items": {
-        "type": "string"
-      },
-      "title": "Dependencies",
-      "type": "array"
+    "title": {
+      "title": "Title",
+      "type": "string"
     },
-    "dependency_imports": {
-      "description": "Optional import smoke checks, run outside the UI process.",
-      "items": {
-        "type": "string"
-      },
-      "title": "Dependency Imports",
-      "type": "array"
+    "version": {
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][A-Za-z0-9.-]+)?$",
+      "title": "Version",
+      "type": "string"
     }
   },
   "required": [

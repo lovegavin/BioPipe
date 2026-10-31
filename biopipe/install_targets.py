@@ -94,7 +94,14 @@ def probe_entry(request):
         if not cls.output_contract or kind == 'operator' and cls.input_contracts is None:
             raise ValueError('Extensions must declare input/output contracts')
         expected = request.get('expected')
-        if expected is not None and descriptor != expected:
+        # Display metadata is normalized when the catalog is built; a wheel may
+        # therefore carry the canonical category/description while the loaded
+        # class still declares its original label. Executable descriptor fields
+        # must match exactly; presentation fields are checked by catalog tests.
+        def contract_view(value):
+            return {key: item for key, item in value.items()
+                    if key not in {'category', 'description', 'icon', 'icon_image', 'platforms'}}
+        if expected is not None and contract_view(descriptor) != contract_view(expected):
             raise ValueError(f'Wheel descriptor differs from implementation: {descriptor["id"]}')
         descriptor['dependencies'] = sorted(set(request['dependencies'] + descriptor.get('dependencies', [])))
         result.append(descriptor)

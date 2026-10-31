@@ -25,7 +25,7 @@ def read_json(path, default):
     return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else deepcopy(default)
 
 
-def scan_sources(root=ROOT, sources=None):
+def scan_sources(root=ROOT, sources=None, normalize_categories=True):
     """Import fresh declarations, collect every error, and reject duplicate IDs."""
     from biopipe_sdk.protocol import validate_extension, describe_reader
     from src.task.step.base import Step
@@ -62,7 +62,7 @@ def scan_sources(root=ROOT, sources=None):
     for kind, cls, source in classes:
         try:
             if kind == "operator":
-                descriptor = build_catalog({cls.name: cls})["operators"][0]
+                descriptor = build_catalog({cls.name: cls}, normalize_categories=normalize_categories)["operators"][0]
                 if cls.parameters_schema is None:
                     cls.parameters_schema = deepcopy(descriptor["parameters_schema"])
                 validate_extension(cls, kind)

@@ -22,7 +22,7 @@ class MinimalOperator(Step):
 
 def test_display_fields_are_public_optional_schema_properties():
     schema = Descriptor.model_json_schema()
-    for field in ("category", "icon"):
+    for field in ("category", "icon", "platforms"):
         assert field in schema["properties"]
         assert field not in schema["required"]
 
@@ -32,10 +32,14 @@ def test_class_metadata_reaches_sdk_and_catalog():
         category = "analysis"
         icon = "Intersect"
 
-    for descriptor in (describe_operator(Declared), build_catalog({Declared.name: Declared})["operators"][0]):
-        assert descriptor["kind"] == "operator"
-        assert descriptor["category"] == "analysis"
-        assert descriptor["icon"] == "Intersect"
+    sdk_descriptor = describe_operator(Declared)
+    assert sdk_descriptor["kind"] == "operator"
+    assert sdk_descriptor["category"] == "analysis"
+    assert sdk_descriptor["icon"] == "Intersect"
+    catalog_descriptor = build_catalog({Declared.name: Declared})["operators"][0]
+    assert catalog_descriptor["kind"] == "operator"
+    assert catalog_descriptor["category"] == "Statistics"
+    assert catalog_descriptor["icon"] == "Intersect"
 
 
 def test_omitted_icon_preserves_existing_wheel_descriptor_shape():
@@ -80,12 +84,12 @@ def test_new_bundled_operators_have_declared_categories_and_icons():
     root = Path(__file__).resolve().parents[1]
     manifest = json.loads((root / "biopipe/builtin_packages.json").read_text(encoding="utf-8"))
     descriptors = {d["id"]: d for p in manifest["packages"] for d in p["descriptors"]}
-    expected = {"annotate": "data", "explode": "data", "order_axis": "data",
-                "pivot": "data", "prioritize": "data", "enrich_go": "analysis",
-                "enrichment_plot": "visualization"}
+    expected = {"annotate": "Data", "explode": "Data", "order_axis": "Data",
+                "pivot": "Data", "prioritize": "Data", "enrich_go": "Omics",
+                "enrichment_plot": "Visualization"}
     for name, category in expected.items():
         descriptor = descriptors[name]
         cls = load_entry(descriptor)
-        assert descriptor["category"] == cls.category == category
+        assert descriptor["category"] == category
         assert descriptor["icon"] == cls.icon
         assert isinstance(cls.icon, str) and cls.icon

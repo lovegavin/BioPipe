@@ -79,7 +79,7 @@ steps:
     assert code == 0 and built["operators"] == operator_count + 1 and built["routes"] == len(discovery["routes"])
     manifest = json.loads((checkout / "biopipe/builtin_packages.json").read_text(encoding="utf-8"))
     descriptor = next(d for p in manifest["packages"] for d in p["descriptors"] if d["id"] == "example.probe")
-    assert descriptor["category"] == "analysis" and descriptor["icon"] == "Sigma"
+    assert descriptor["category"] == "Statistics" and descriptor["icon"] == "Sigma"
     code, check = cli(checkout, "check")
     assert code == 0 and not check["changed"]
     assert next(r for r in cli(checkout, "discover")[1]["routes"] if r["name"] == "Custom report")["indexed"]

@@ -25,6 +25,7 @@ export type Operator = {
   runtime_defaults?: Record<string, unknown>;
   category: string;
   description: string;
+  platforms?: string[];
   icon?: string | null;
   icon_image?: string | null;
   preview?: { kind: string; caption: string };
@@ -38,7 +39,8 @@ export type Operator = {
   parameters: Parameter[];
   contracts?: { version: number; inputs: PortContract[] | null; output: { mode: string } | null };
 };
-export type ReaderSpec = { name: string; extensions: string[]; output_contract: PortContract | null;
+export type ReaderSpec = { name: string; title?: string; category?: string; description?: string;
+  platforms?: string[]; extensions: string[]; output_contract: PortContract | null;
   parameters?: Parameter[];
   requires_siblings?: string[]; handles_compression?: boolean;
   file_input?: { dims?: string[]; labels?: Record<string, unknown>; compression?: string[]; companions?: string[][] } };

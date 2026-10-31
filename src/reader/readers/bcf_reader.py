@@ -21,6 +21,7 @@ class BcfReader(Reader):
     output_contract = reader_contract()
     file_input = {"dims": ["variant", "field"], "labels": {"variant": "auto", "field": "builtin"}}
     extensions = [".bcf"]
+    platforms = ["linux", "darwin"]
     handles_compression = False
     dependencies = ["pysam>=0.22"]
     dependency_imports = ["pysam"]

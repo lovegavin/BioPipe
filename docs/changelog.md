@@ -1,3 +1,12 @@
+## 0.84.0 — 2026-10-31
+
+- 重构：算子分类收敛为 **6 个英文首字母大写类别**（Data / Statistics / Machine Learning / Omics / Visualization / Quality Control）；分类在 `build_catalog` 归一，注册表保存机器分类，前端只做显示映射。
+- 新增：每个算子/Reader 的 title/description/category/platforms 进入 manifest 与 SDK `Descriptor`；算子库卡片、Reader 库、Inspector 功能预览展示描述、输入输出、扩展名与“Windows 不可用”标记。
+- 自动检查：新增 `tests/test_catalog_integrity.py`，对比注册表与 `discover_steps()`/`discover_readers()`，防止新模块漏检；前端测试强制所有算子/Reader 有分类、标题、描述，并覆盖 Reader 卡片渲染。
+- 修复：`tenx_h5_reader.py` 导入的 `CsvReader` 曾被误计入 Reader 集合（86→85）；`youden_index.py` 的 UTF-8 BOM 曾使注册表静态解析失败；均已修正。
+- 验证：分类/目录定向测试 **20 passed**；Studio 前端 **39 passed（9 files）**，构建通过；registry clean **379/85/21/6**。全量 pytest：**974 passed, 1 skipped**。
+- 计数口径：前端按 Vitest 实际用例数记录；此前 changelog 的累计口径不再作为覆盖审计依据。
+
 ## 0.83.0 — 2026-10-31
 
 - 新增：379 算子 / 85 Reader / 21 route；新增距离基冗余分析（db-RDA）与留一研究 Meta 分析两个多元/证据综合算子；未修改核心层。

@@ -4,7 +4,9 @@ BioPipe 是本地生信流水线引擎 + Studio 可视化工作区 + CLI/MCP Age
 Reader 读取标准格式，用带类型契约的算子处理 `Form`，并在本地生成表格、图片和报告。
 BioPipe 本身不提供 AI 服务。
 
-当前源码版本 **0.83.0**：**379 个算子、85 个 Reader、6 个 provider 包、21 条路线**。
+当前源码版本 **0.84.0**：**379 个算子、85 个 Reader、6 个 provider 包、21 条路线**。
+
+0.84 起算子分类归一为 6 类；每个算子与 Reader 都有功能预览，平台受限格式在界面和 manifest 中标记。
 
 ## 价值主张
 
@@ -161,7 +163,7 @@ docs/reference/    自动生成 Reader/算子参考页
 
 ## 版本与更新记录
 
-- 当前：**0.83.0**，见 [CHANGELOG](docs/changelog.md)。
+- 当前：**0.84.0**，见 [CHANGELOG](docs/changelog.md)。
 - Windows 测试环境快照：[conda](windows-biopipe-conda.yml) /
   [pip](windows-biopipe-pip-freeze.txt)。
 

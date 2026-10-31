@@ -51,7 +51,13 @@ def test_registry_all_ports_and_readers_json():
     assert catalog["contract_version"] == 1
     assert len(catalog["readers"]) == len(READERS)
     assert all(reader["output_contract"] for reader in catalog["readers"])
-    assert all(op["contracts"]["inputs"] and op["contracts"]["output"] for op in catalog["operators"])
+    for op in catalog["operators"]:
+        assert op["contracts"]["output"]
+        arity = op["inputs_arity"]
+        if isinstance(arity, int):
+            assert len(op["contracts"]["inputs"]) == arity, op["id"]
+        else:
+            assert op["contracts"]["inputs"], op["id"]
     json.dumps(catalog, allow_nan=False)
 
 

@@ -17,6 +17,7 @@ class BigWigReader(Reader):
     output_contract = reader_contract()
     file_input = {"dims": ["region", "field"], "labels": {"region": "auto", "field": "builtin"}}
     extensions = [".bw", ".bigwig"]
+    platforms = ["linux", "darwin"]
     handles_compression = False
     dependencies = ["pyBigWig"]
     dependency_imports = ["pyBigWig"]

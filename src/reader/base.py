@@ -34,6 +34,10 @@ class Reader(ABC):
     """
 
     output_contract: ClassVar[dict | None] = None
+    category: ClassVar[str] = "Data"
+    title: ClassVar[str | None] = None
+    description: ClassVar[str | None] = None
+    platforms: ClassVar[list[str] | None] = None
     version: ClassVar[str] = "1.0.0"
     dependencies: ClassVar[list[str] | None] = None
     dependency_imports: ClassVar[list[str] | None] = None

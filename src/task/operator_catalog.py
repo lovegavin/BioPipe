@@ -6,10 +6,36 @@ import textwrap
 from pathlib import Path
 
 from .memory.planner import FORM_STEPS
+from .operator_categories import category_for_operator
 from src.core.contracts import VERSION
 
 
-def build_catalog(registry):
+def _preview_description(descriptor):
+    """Every operator must have a one-line functional preview.
+
+    Older bulk-generated operators have an empty docstring.  The fallback
+    states the executable contract rather than inventing biological meaning.
+    """
+    text = (descriptor.get("description") or "").strip()
+    if text:
+        return text
+    title = descriptor.get("title") or descriptor.get("name") or "Operator"
+    arity = descriptor.get("inputs_arity")
+    if arity == 0:
+        lead = "无需数据输入"
+    elif isinstance(arity, int):
+        lead = f"接收 {arity} 个输入"
+    else:
+        lead = "接收可变数量的输入"
+    output = descriptor.get("output_type") or "Form"
+    properties = (descriptor.get("parameters_schema") or {}).get("properties") or {}
+    params = [field.get("title") or key for key, field in properties.items()
+              if key != "output"]
+    detail = f"；主要参数：{'、'.join(params[:6])}" if params else ""
+    return f"{title}：{lead}，输出 {output}{detail}。"
+
+
+def build_catalog(registry, *, normalize_categories=True):
     definitions = json.loads(Path(__file__).with_name("operator_ui.json").read_text(encoding="utf-8"))
     operators = []
     for name, cls in sorted(registry.items()):
@@ -45,7 +71,11 @@ def build_catalog(registry):
             pass
         descriptor["runtime_defaults"] = defaults
         from biopipe_sdk.protocol import describe_operator
-        operators.append(describe_operator(cls, descriptor))
+        operator = describe_operator(cls, descriptor)
+        if normalize_categories:
+            operator["category"] = category_for_operator(name, operator.get("category"))
+        operator["description"] = _preview_description(operator)
+        operators.append(operator)
     from src.reader import READERS
     from biopipe_sdk.protocol import describe_reader
     readers = [describe_reader(reader) for reader in READERS]

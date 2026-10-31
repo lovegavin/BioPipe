@@ -11,6 +11,7 @@ import {
 import { OperatorArtwork, OperatorPreview } from "./OperatorArtwork";
 import { OperatorIcon } from "./icons";
 import { HelpTip } from "./HelpTip";
+import { isWindowsBlocked } from "./platform";
 import { api } from "./api";
 import { inputAccept, renameSourceDimensions, readerForPath, rePointSource } from "./readerInput";
 import { bytes, displayTitle, inputCount, outputCount, specFor, retainedOutputs } from "./graph";
@@ -379,7 +380,36 @@ export function Inspector({
                 <OperatorArtwork spec={spec} source={node.kind === "source"}/>
               </div>
               <h3>{displayTitle(node, spec)}</h3>
-              {spec?.description && node.kind !== "source" && <HelpTip label="算子说明">{spec.description}</HelpTip>}
+              {node.kind !== "source" && spec && (
+                <div className="function-preview">
+                  <p>{spec.description}</p>
+                  <small>
+                    {spec.inputs_arity === 0
+                      ? "无数据输入"
+                      : `${spec.inputs_arity} 个输入`}
+                    {` · ${spec.parameters.length} 个参数`}
+                    {spec.parameters.some((parameter) => parameter.required)
+                      ? `（${spec.parameters.filter((parameter) => parameter.required).length} 必填）`
+                      : ""}
+                    {spec.outputs.length
+                      ? ` · 输出：${spec.outputs.join(" / ")}`
+                      : " · 输出：报告"}
+                  </small>
+                </div>
+              )}
+              {node.kind === "source" && reader && (
+                <div className="function-preview">
+                  <p>{reader.description}</p>
+                  <small>
+                    {reader.extensions.join(" · ")}
+                    {isWindowsBlocked(reader.platforms)
+                      ? " · Windows 不可用"
+                      : reader.platforms?.length
+                        ? ` · 平台：${reader.platforms.join(" / ")}`
+                        : ""}
+                  </small>
+                </div>
+              )}
             </div>
             <OperatorPreview spec={spec}/>
             <label className="field">

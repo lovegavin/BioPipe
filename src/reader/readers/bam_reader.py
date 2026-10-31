@@ -20,6 +20,7 @@ class BamReader(Reader):
     output_contract = reader_contract()
     file_input = {"dims": ["read", "field"], "labels": {"read": "auto", "field": "builtin"}}
     extensions = [".bam"]
+    platforms = ["linux", "darwin"]
     handles_compression = False
     dependencies = ["pysam"]
     dependency_imports = ["pysam"]

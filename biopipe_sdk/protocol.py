@@ -19,6 +19,7 @@ class Descriptor(BaseModel):
     entry_point: str
     title: str
     category: str | None = Field(default=None, description="Operator library category, independent of package origin. Custom labels are allowed.")
+    platforms: list[str] | None = Field(default=None, description="Platforms where the implementation is supported; absent means all supported platforms.")
     icon: str | None = Field(default=None, description="Optional module-relative image path or Studio icon name. Missing or unknown names use the category default.")
     icon_image: str | None = Field(default=None, pattern=r"^data:image/(png|jpeg|webp|gif|svg\+xml);base64,[A-Za-z0-9+/]+={0,2}$", description="SDK-generated portable image data; authors declare a relative path in icon.")
     parameters_schema: dict[str, Any]
@@ -364,7 +365,9 @@ def describe_operator(cls, legacy=None):
                                 "stream_buffer_multiplier": cls.stream_buffer_multiplier,
                                 "stream_fixed_bytes": cls.stream_fixed_bytes} if cls.supports_streaming else {})})
     # Declarations travel through source scans and wheel manifests alike. A base
-    # class's None defaults must not erase older packaged presentation metadata.
+    # class's None defaults must not erase older packaged presentation metadata,
+    # and an installed descriptor must stay the source of truth for display
+    # fields such as the library category.
     for field in ("category", "icon"):
         declared = getattr(cls, field, None)
         if declared is not None:
@@ -390,9 +393,20 @@ def describe_reader(reader):
     schema = getattr(cls, "parameters_schema", None) or {"type": "object", "additionalProperties": True}
     validate_schema(schema)
     schema = normalize_schema_titles(schema)
+    doc = (cls.__doc__ or "").strip()
+    # Reader subclasses often rely on the class name; a docstring first line is
+    # a better Studio title when no explicit title was declared.
+    title = getattr(cls, "title", None)
+    if not title:
+        title = doc.splitlines()[0].strip().rstrip(".") if doc else cls.__name__
+    description = getattr(cls, "description", None) or doc or f"Reads {', '.join(reader.extensions)} files."
+    platforms = getattr(cls, "platforms", None)
+    extra = {"platforms": list(platforms)} if platforms else {}
     return Descriptor(protocol_version=1, id=getattr(cls, "name", None) or cls.__name__,
                       version=getattr(cls, "version", "1.0.0"), kind="reader",
-                      entry_point=f"{cls.__module__}:{cls.__name__}", title=getattr(cls, "title", None) or cls.__name__,
+                      entry_point=f"{cls.__module__}:{cls.__name__}", title=title,
+                      category=getattr(cls, "category", None) or "Data",
+                      description=description, **extra,
                       parameters_schema=schema, contracts={"version": 1, "inputs": [], "output": reader.output_contract},
                       parameters=schema_to_fields(schema),
                       resources={"memory_modes": ["full", "disk"] if reader.supports_disk_read else ["full"], "supports_cuda": False,

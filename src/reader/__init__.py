@@ -42,6 +42,7 @@ def _discover() -> list[Reader]:
                 isinstance(attr, type)
                 and issubclass(attr, Reader)
                 and attr is not Reader
+                and attr.__module__ == f"src.reader.readers.{mod_name}"
                 and getattr(attr, "extensions", None)
             ):
                 if attr.parameters_schema is None:
