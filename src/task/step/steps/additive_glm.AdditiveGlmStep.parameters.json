@@ -1,0 +1,89 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "response_label": {
+      "type": "string",
+      "title": "因变量列",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "predictors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 2,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "title": "自变量列",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "family": {
+      "type": "string",
+      "enum": [
+        "binomial",
+        "poisson"
+      ],
+      "title": "分布族",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "df": {
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 10,
+          "default": 4
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 4,
+            "maximum": 10
+          }
+        }
+      ],
+      "title": "B-spline 自由度",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "confidence": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1,
+      "default": 0.95,
+      "title": "置信水平",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "required": [
+    "response_label",
+    "predictors",
+    "family"
+  ],
+  "additionalProperties": false
+}

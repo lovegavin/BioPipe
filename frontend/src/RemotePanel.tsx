@@ -130,7 +130,7 @@ export function RemotePanel({servers, active, onUpdate, onSelect, onClose}: {
   </div>;
 }
 
-export function RemoteFilePicker({profileId, initial, source, onSelect, onClose}: {profileId: string; initial: string; source?: boolean;
+export function RemoteFilePicker({profileId, initial, source, reader, onSelect, onClose}: {profileId: string; initial: string; source?: boolean; reader?: string;
   onSelect: (path: string, source?: DataSource) => void; onClose: () => void}) {
   const [path, setPath] = useState(() => initial.includes('/') ? initial.slice(0, initial.lastIndexOf('/')) || '/' : '.');
   const [listing, setListing] = useState<RemoteListing | null>(null), [selected, setSelected] = useState('');
@@ -150,7 +150,7 @@ export function RemoteFilePicker({profileId, initial, source, onSelect, onClose}
     return () => {request.current++; window.removeEventListener('keydown', key);};}, []);
   async function choose(value: string) {
     if (!value) return; setBusy(true); setError('');
-    try {const result = source ? await api.sourceRemote(profileId, value) : undefined; onSelect(value, result?.source); onClose();}
+    try {const result = source ? await api.sourceRemote(profileId, value, reader) : undefined; onSelect(value, result?.source); onClose();}
     catch(e) {setError((e as Error).message);} finally {setBusy(false);}
   }
   return <div className="agent-overlay"><section className="remote-files" role="dialog" aria-modal="true" aria-label="选择服务器文件">

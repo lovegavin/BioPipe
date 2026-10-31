@@ -1,0 +1,70 @@
+name: pbmc3k_single_cell_atlas
+sources:
+  expression:
+    path: input/pbmc3k_processed.h5ad
+    dims:
+    - sample
+    - gene
+    labels:
+      sample: builtin
+      gene: builtin
+    reader: H5adReader
+  samples:
+    path: input/pbmc3k_cells.csv
+    dims:
+    - sample
+    - feature
+    labels:
+      sample:
+        feature: 0
+      feature: builtin
+    reader: CsvReader
+steps:
+- name: boxplot
+  inputs:
+  - samples
+  - samples
+- name: pca
+  inputs:
+  - expression
+- name: boxplot
+  inputs:
+  - pcs
+  - samples
+- name: boxplot
+  inputs:
+  - pcs
+  - samples
+- name: umap
+  inputs:
+  - expression
+- name: boxplot
+  inputs:
+  - embedding
+  - samples
+- name: boxplot
+  inputs:
+  - embedding
+  - samples
+- name: aggregate
+  inputs:
+  - expression
+  - samples
+- name: rename_dim
+  inputs:
+  - cell_type_mean
+- name: heatmap
+  inputs:
+  - cell_type_mean_labeled
+- name: random_forest_classifier
+  inputs:
+  - expression
+  - samples
+- name: describe
+  inputs:
+  - rf
+parameters_file: parameters.json
+runtime:
+  memory:
+    enabled: true
+    auto_spill: true

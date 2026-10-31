@@ -1,0 +1,131 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "table": {
+      "taxonomy": false
+    },
+    "meta": {
+      "header": true
+    }
+  },
+  "steps": [
+    {
+      "name": "filter_min",
+      "inputs": [
+        "table"
+      ],
+      "params": {
+        "dim": "taxon",
+        "min_value": 1,
+        "min_samples": 2,
+        "output": "filtered"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "normalize",
+      "inputs": [
+        "filtered"
+      ],
+      "params": {
+        "method": "total",
+        "dim": "sample",
+        "target_sum": 1000000.0,
+        "output": "relative"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "ancom_bc",
+      "inputs": [
+        "relative",
+        "meta"
+      ],
+      "params": {
+        "sample_dim": "sample",
+        "taxon_dim": "taxon",
+        "group_label": "group",
+        "group_a": "ctrl",
+        "group_b": "case",
+        "pseudocount": 1.0,
+        "correction": "fdr",
+        "output": "ancom"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "aldex2",
+      "inputs": [
+        "relative",
+        "meta"
+      ],
+      "params": {
+        "sample_dim": "sample",
+        "taxon_dim": "taxon",
+        "group_label": "group",
+        "group_a": "ctrl",
+        "group_b": "case",
+        "n_mc": 32,
+        "seed": 3,
+        "pseudocount": 0.5,
+        "monte_carlo": true,
+        "correction": "fdr",
+        "output": "aldex"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "ancom"
+      ],
+      "params": {},
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "aldex"
+      ],
+      "params": {},
+      "context_params": {}
+    },
+    {
+      "name": "transpose",
+      "inputs": [
+        "relative"
+      ],
+      "params": {
+        "order": [
+          "taxon",
+          "sample"
+        ],
+        "output": "taxa_by_sample"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "barplot",
+      "inputs": [
+        "taxa_by_sample"
+      ],
+      "params": {
+        "dim": "taxon",
+        "sample_dim": "sample",
+        "top_n": 10,
+        "normalize": true,
+        "filename": "composition.png",
+        "other_label": "Other",
+        "cmap": "tab20",
+        "legend": true,
+        "legend_ncol": 3,
+        "rotate_labels": true,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    }
+  ]
+}

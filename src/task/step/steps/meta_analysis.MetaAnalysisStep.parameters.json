@@ -1,0 +1,51 @@
+{
+  "type": "object",
+  "properties": {
+    "variant_dim": {
+      "type": "string",
+      "default": "variant",
+      "title": "Variant Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "study_dim": {
+      "type": "string",
+      "default": "study",
+      "title": "Study Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "fixed",
+        "random"
+      ],
+      "default": "random",
+      "title": "方法",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "correction": {
+      "type": "string",
+      "enum": [
+        "fdr",
+        "bonferroni",
+        "holm",
+        "hommel",
+        "fdr_by"
+      ],
+      "default": "fdr",
+      "title": "Correction",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "additionalProperties": false
+}

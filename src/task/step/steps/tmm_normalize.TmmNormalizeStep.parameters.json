@@ -1,0 +1,59 @@
+{
+  "type": "object",
+  "properties": {
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "target_sum": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 1000000.0,
+      "title": "目标总量",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "logratio_trim": {
+      "type": "number",
+      "minimum": 0,
+      "exclusiveMaximum": 0.5,
+      "default": 0.3,
+      "title": "Logratio Trim",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "sum_trim": {
+      "type": "number",
+      "minimum": 0,
+      "exclusiveMaximum": 0.5,
+      "default": 0.05,
+      "title": "Sum Trim",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "do_weighting": {
+      "type": "boolean",
+      "default": true,
+      "title": "Do Weighting",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "additionalProperties": false
+}

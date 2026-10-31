@@ -14,7 +14,7 @@ def _defaults(spec, values):
                if "default" in field}, **deepcopy(values)}
 
 
-def freeze_graph(graph, catalog, root, *, bound=False, depth=0):
+def freeze_graph(graph, catalog, root, *, bound=False, depth=0, input_roots=None):
     """Materialize declared runtime defaults without executing implementations.
 
     Incomplete canvases may be saved; required-value validation belongs to run.
@@ -30,9 +30,9 @@ def freeze_graph(graph, catalog, root, *, bound=False, depth=0):
                 from .graph import GraphError
                 raise GraphError(f"Missing operator definition: {node.operator}", node.id)
             node.params = _defaults(operators[node.operator], node.params)
-        elif node.kind == "source" and node.source and node.source.path and not bound:
+        elif node.kind == "source" and node.source and (node.source.path or node.source.reader) and not bound and node.id not in graph.runtime.get('exchange_inputs', []):
             from .source_paths import source_candidates
-            candidates = source_candidates(graph, catalog, root, node.source.path, node.source.location)
+            candidates = source_candidates(graph, catalog, root, node.source.path, node.source.location, node.source.reader, input_roots=input_roots)
             if len(candidates) == 1:
                 reader = candidates[0]
                 node.source.args = _defaults(reader, node.source.args)
@@ -44,7 +44,7 @@ def freeze_graph(graph, catalog, root, *, bound=False, depth=0):
                     if len(choices) == 1:
                         node.source.args = _defaults(choices[0], node.source.args)
         elif node.kind == "route" and node.route:
-            node.route.graph = freeze_graph(node.route.graph, catalog, root, bound=True, depth=depth + 1)
+            node.route.graph = freeze_graph(node.route.graph, catalog, root, bound=True, depth=depth + 1, input_roots=input_roots)
     return result
 
 

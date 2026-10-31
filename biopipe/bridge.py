@@ -32,7 +32,8 @@ class Bridge:
             return
         import psutil
         atomic_json(self.path, {"protocol_version": 1, "instance_id": self.id, "url": url,
-                               "pid": os.getpid(), "created": psutil.Process().create_time(), "secret": self.secret})
+                               "pid": os.getpid(), "created": psutil.Process().create_time(), "secret": self.secret,
+                               "headless": bool(getattr(self.app.state, 'headless', False)), "api_version": 1})
         os.chmod(self.path, 0o600)
 
     def close(self):
@@ -172,6 +173,9 @@ class Bridge:
         @app.post("/api/agent/validate")
         def validate(request: Request, payload: dict):
             self.actor(request, "context")
+            application = getattr(service, 'application', None)
+            if application is not None:
+                return application.validate(payload['graph'], require_files=payload.get('require_files', False))
             from biopipe.documents import layout
             graph = Graph.model_validate(layout(payload["graph"]))
             executions = getattr(service, 'executions', None)
@@ -189,6 +193,9 @@ class Bridge:
             doc = next((d for d in snapshot["workspace"]["documents"] if d["id"] == payload["document_id"]), None)
             if doc is None:
                 raise CommandError("not_found", "Unknown document", 404)
+            application = getattr(service, 'application', None)
+            if application is not None:
+                return application.jobs.submit({'graph': doc['graph'], **({'request_id': payload['request_id']} if payload.get('request_id') else {})})
             graph = Graph.model_validate(doc['graph'])
             executions = getattr(service, 'executions', None)
             return executions.launch(graph) if executions and executions.applies(graph) else service.launch(graph)
@@ -196,12 +203,18 @@ class Bridge:
         @app.get("/api/agent/jobs/{job}")
         def job(job: str, request: Request):
             self.actor(request, "context")
+            application = getattr(service, 'application', None)
+            if application is not None:
+                return application.jobs.details(job)
             executions = getattr(service, 'executions', None)
             return executions.details(job) if executions and executions.owns(job) else service.details(job)
 
         @app.post("/api/agent/jobs/{job}/cancel")
         def cancel(job: str, request: Request):
             self.actor(request, "run")
+            application = getattr(service, 'application', None)
+            if application is not None:
+                return application.jobs.cancel(job)
             executions = getattr(service, 'executions', None)
             return executions.cancel(job) if executions and executions.owns(job) else service.cancel(job)
 

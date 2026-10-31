@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "n_components": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2,
+      "title": "主成分数",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "n_neighbors": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 5,
+      "title": "邻居数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "standard",
+        "modified",
+        "ltsa",
+        "hessian"
+      ],
+      "default": "standard",
+      "title": "方法",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

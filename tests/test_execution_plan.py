@@ -85,6 +85,21 @@ def test_linux_requirement_moves_automatic_operator_and_rejects_manual_windows()
     assert error.value.node_id == "hic"
 
 
+def test_selected_reader_controls_placement_even_when_origin_has_another_reader():
+    input_node = source(location=LOCAL, path='counts.csv')
+    input_node['source']['reader'] = 'RemoteTableReader'
+    workflow = graph([input_node, operator('step')], [('input', 'step')], mode='auto')
+    remote_reader = spec('RemoteTableReader', ['linux'], extensions=['.csv'])
+    infos = [host(), host(SSH, 'linux', readers=[remote_reader])]
+    plan = planner.make_plan(workflow, infos, stat_file=lambda *_: 1024)
+    assert targets(plan) == {'step': SSH}
+    assert plan['transfers'][0]['from'] == LOCAL
+    assert plan['transfers'][0]['to'] == SSH
+    workflow.nodes[0].source.reader = 'MissingReader'
+    with pytest.raises(GraphError, match='Unknown Reader: MissingReader'):
+        planner.make_plan(workflow, infos)
+
+
 def test_missing_executable_and_failed_python_dependencies_exclude_hosts():
     specs = [spec("align", ["linux"], ["bwa", "samtools"])]
     workflow = graph([operator("align", "align")], mode="auto")

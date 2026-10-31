@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "value_label": {
+      "type": "string",
+      "title": "数值字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "group_label": {
+      "type": "string",
+      "title": "分组字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "group_a": {
+      "type": "string",
+      "title": "第一组",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "group_b": {
+      "type": "string",
+      "title": "第二组",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "extreme": {
+      "type": "integer",
+      "minimum": 0,
+      "title": "每侧截尾个数",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "required": [
+    "value_label",
+    "group_label",
+    "group_a",
+    "group_b"
+  ],
+  "additionalProperties": false
+}

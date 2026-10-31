@@ -195,6 +195,8 @@ class PluginManager:
         return value
 
     def _publish(self, state):
+        from biopipe.operator_docs import cache_state
+        cache_state(self, state)
         state["generation"] = uuid.uuid4().hex
         atomic_json(self.directory / "snapshots" / (state["generation"] + ".json"), state)
         atomic_json(self.registry, state)
@@ -264,7 +266,15 @@ class PluginManager:
                 if candidate.get("package_protocol_version") == PROTOCOL_VERSION:
                     candidate["_runtime_root"] = str(self.directory.resolve())
                     candidates.append(candidate)
-        return resolve(graph, candidates, self.bundled_state())
+        selected = resolve(graph, candidates, self.bundled_state())
+        # A retained wheel can be combined with updated bundled metadata. Keep
+        # that synthetic generation addressable for job provenance and exact
+        # documentation retrieval without changing the active registry.
+        snapshot = self.directory / 'snapshots' / (selected['generation'] + '.json')
+        with self.lock:
+            if not snapshot.exists():
+                atomic_json(snapshot, selected)
+        return selected
 
     def pin(self, graph, *, snapshot=None):
         state = self.snapshot(graph) if snapshot is None else snapshot
@@ -279,12 +289,12 @@ class PluginManager:
                 for descriptor in descriptors:
                     if descriptor["id"] == node.operator:
                         graph.plugin_lock[descriptor["id"]] = descriptor["implementation"]
-            elif node.source:
-                # Conservatively pin all installed readers claiming the suffix.
-                from src.reader.base import primary_ext
-                for descriptor in descriptors:
-                    if descriptor["kind"] == "reader" and primary_ext(Path(node.source.path)) in descriptor["extensions"]:
-                        graph.plugin_lock[descriptor["id"]] = descriptor["implementation"]
+            elif node.source and node.id not in graph.runtime.get('exchange_inputs', []):
+                # An explicit Reader is part of the saved route identity. Auto
+                # routing retains all suffix candidates until files disambiguate.
+                from biopipe.reader_selection import candidates
+                for descriptor in candidates([d for d in descriptors if d['kind'] == 'reader'], node.source.path, node.source.reader):
+                    graph.plugin_lock[descriptor['id']] = descriptor['implementation']
         return graph
 
     def catalog_for(self, graph, base):
@@ -345,13 +355,45 @@ class PluginManager:
             if not cached.exists():
                 shutil.copy2(wheel, cached)
             previous = next((item for item in packages if item["name"] == name), {})
+            from biopipe.install_targets import execution_digest
+            execution_sha = execution_digest(cached)
+            from biopipe.operator_docs import cache_wheel
+            cache_wheel(self, cached)
             packages = [item for item in packages if item["name"] != name]
             packages.append({"protocol_version": PROTOCOL_VERSION, "origin": "wheel", "enabled": previous.get("enabled", True),
                              "name": name, "version": info["Version"], "sha256": digest,
+                             "execution_sha": execution_sha,
                              "wheel": str(cached.relative_to(self.directory))})
         generation = uuid.uuid4().hex
         from biopipe.install_targets import install
-        state = install(self, current, packages, generation, dependencies=dependencies)
+        old_packages = {p['name']: p for p in current['packages']}
+        metadata_only = bool(replacements) and not dependencies and current.get('runtime_protocol') == 1 and all(
+            old_packages.get(p['name'], {}).get('version') == p['version'] and
+            old_packages.get(p['name'], {}).get('execution_sha') == p.get('execution_sha') and p.get('execution_sha')
+            for p in packages if p['name'] in replacements)
+        if metadata_only:
+            from biopipe.install_targets import wheel_entries
+            from biopipe.metadata_updates import replace_declarations
+            from biopipe_sdk.declarations import declaration_hash
+            old = {d['id']: d for d in current['descriptors']}
+            declarations = []
+            for package in packages:
+                if package['name'] not in replacements:
+                    continue
+                for entry in wheel_entries(self.directory / package['wheel']):
+                    descriptor = deepcopy(entry['expected'])
+                    descriptor['dependencies'] = deepcopy(old[descriptor['id']].get('dependencies', []))
+                    descriptor['declaration_sha'] = declaration_hash(descriptor)
+                    declarations.append(descriptor)
+            state = replace_declarations(current, declarations)
+            state.update(packages=packages, generation=generation)
+            selected = {p['name']: p for p in packages if p['name'] in replacements}
+            for descriptor in state['descriptors']:
+                package = selected.get(descriptor['distribution'])
+                if package:
+                    descriptor['implementation'].update(sha256=package['sha256'], execution_sha=package['execution_sha'])
+        else:
+            state = install(self, current, packages, generation, dependencies=dependencies)
         environment = self.directory / "environments" / generation
         source_receipt = deepcopy(source_library if source_library is not None else current.get("source_library", {}))
         if source_library is None:

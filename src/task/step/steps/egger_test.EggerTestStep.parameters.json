@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "properties": {
+    "study_dim": {
+      "type": "string",
+      "default": "study",
+      "title": "Study Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "title": "Statistic Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "effect_label": {
+      "type": "string",
+      "default": "effect",
+      "title": "Effect Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "se_label": {
+      "type": "string",
+      "default": "se",
+      "title": "Se Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "additionalProperties": false
+}

@@ -56,6 +56,7 @@ import numpy as np
 import pandas as pd
 
 from src.core import Form, ReaderError
+from src.core.numeric import compact_numeric
 from src.reader.base import Reader
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
@@ -188,7 +189,7 @@ class BedReader(Reader):
             col = df.iloc[:, old_idx]
             numeric = True
             try:
-                values = col.to_numpy(dtype=np.float32)
+                values = col.to_numpy(dtype=np.float64)
             except (ValueError, TypeError):
                 numeric = False
 
@@ -206,7 +207,7 @@ class BedReader(Reader):
             cols_data.append(encoder.fit_transform(col.tolist()))
             encoders_used[name] = encoder
 
-        data = np.stack(cols_data, axis=1).astype(np.float32)
+        data = compact_numeric(np.stack(cols_data, axis=1))
 
         final: dict[str, dict[str, int]] = {}
 
@@ -249,7 +250,11 @@ def _load(path: Path) -> pd.DataFrame:
             line = line.rstrip("\r\n")
             if not line.strip():
                 continue
-            parts = line.split()
+            if line.startswith("#"):
+                continue
+            # Preserve spaces in tab-delimited names while retaining support
+            # for older whitespace-aligned BED files.
+            parts = line.split("\t") if "\t" in line else line.split()
             if parts and parts[0] in ("track", "browser"):
                 continue
             rows.append(parts)

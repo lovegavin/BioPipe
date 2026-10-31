@@ -74,11 +74,11 @@ def check_interface(graph, catalog):
         seen.add(key)
 
 
-def prepare_interface(graph, catalog, root):
+def prepare_interface(graph, catalog, root, *, input_roots=None):
     """Attach an editable interface even to an incomplete saved canvas."""
     from .contracts import analyze_graph
     result = graph.model_copy(deep=True)
-    analysis = analyze_graph(result, catalog, root)
+    analysis = analyze_graph(result, catalog, root, input_roots=input_roots)
     old = result.interface
     previous_inputs = {p.node_id: p for p in old.inputs} if old else {}
     inputs = []
@@ -259,8 +259,9 @@ def expand_routes(graph, catalog):
 
 
 class RouteLibrary:
-    def __init__(self, directory, catalog, root, catalog_for=None):
+    def __init__(self, directory, catalog, root, catalog_for=None, *, input_roots=None):
         self.directory, self.catalog, self.root = Path(directory), catalog, root
+        self.input_roots = input_roots
         self.catalog_for = catalog_for or (lambda graph: self.catalog)
         self.directory.mkdir(parents=True, exist_ok=True)
         self.lock = FileLock(self.directory / ".library.lock")
@@ -340,7 +341,8 @@ class RouteLibrary:
 
     def save(self, payload):
         catalog = self.catalog_for(payload.graph)
-        graph = prepare_interface(freeze_graph(payload.graph, catalog, self.root), catalog, self.root)
+        graph = prepare_interface(freeze_graph(payload.graph, catalog, self.root, input_roots=self.input_roots),
+                                  catalog, self.root, input_roots=self.input_roots)
         with self.lock:
             self._reload(force=True)
             key = payload.id or "route_" + uuid.uuid4().hex[:12]
@@ -376,7 +378,7 @@ class RouteLibrary:
                         # Preserve the declared reader contract (e.g. VCF
                         # genotype metadata); only replace the file location.
                         node.source.path = "route-input" + primary_ext(Path(node.source.path))
-                compile_graph(checked, catalog, self.root)
+                compile_graph(checked, catalog, self.root, input_roots=self.input_roots)
                 additions[key] = RouteDefinition(id=key, version=item.version, name=item.graph.name, graph=item.graph)
             updated = {**self.registered, **additions}
             self._write(self.directory / "registry.json", [item.model_dump(mode="json") for item in updated.values()])
@@ -435,8 +437,8 @@ class RouteLibrary:
                 if item.id not in self.saved and item.id not in self.registered:
                     check_interface(item.graph, self.catalog)
                     from .graph import compile_graph
-                    compile_graph(item.graph, self.catalog, self.root)
-                    item.graph = freeze_graph(item.graph, self.catalog_for(item.graph), self.root)
+                    compile_graph(item.graph, self.catalog, self.root, input_roots=self.input_roots)
+                    item.graph = freeze_graph(item.graph, self.catalog_for(item.graph), self.root, input_roots=self.input_roots)
                     saved = SavedWorkflow(id=item.id, version=item.version, graph=item.graph,
                                           updated_at=datetime.now(timezone.utc).isoformat())
                     self._write_saved(saved)

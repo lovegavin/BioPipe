@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "sample_b_dim": {
+      "type": "string",
+      "default": "sample_b",
+      "title": "Sample B Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "group_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "分组维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "group_label": {
+      "type": "string",
+      "title": "分组字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "required": [
+    "group_label"
+  ],
+  "additionalProperties": false
+}

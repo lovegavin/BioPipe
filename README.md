@@ -5,19 +5,29 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-Source update **v0.8.3** adds [independent operator-library updates](docs/plugins.md#independent-library-releases):
-editable sources live in the persistent profile and complete libraries install
-atomically without replacing the application. Version 0.8.2 added unified figure
-artifacts, multi-figure viewing and managed R dependencies. These build on
-v0.8.1's independent server handshakes, historical result viewing
-and automatically saved publication figures. It retains resumable input uploads,
-per-workflow execution environments, concurrent tasks, explicit Linux server deployment,
-backed-up profile upgrades and the [Hi-C workflows](docs/HIC.md): paired FASTQ,
-BAM/SAM or pairs to contact matrices and expected/compartment/insulation/loop/pileup
-analysis. It reuses existing QC, selection and plotting operators, with three new
-tool adapters and four file Readers. The bundled catalog has 67 operators,
-19 Readers, seven provider packages and eight route templates. Linux tools are
-required for the full raw-read workflow and run on a Linux server or WSL.
+The unified **v0.116.0 source tree** combines the tested desktop/runtime with
+the author's operator library. It includes **405 operators, 88 Readers, seven
+provider packages and 24 route templates**. Operators and Readers use **protocol
+v3 / SDK 3.1**, separate parameter JSON and adjacent Markdown documentation.
+
+[HTTP API, CLI and MCP](docs/headless_api.md) share workflow, task and artifact
+services. A desktop window is optional: the CLI/MCP can start an authenticated
+local background service, save/validate routes, submit work, inspect logs and
+retrieve artifacts. The canvas still supplies selection context and atomic,
+undoable edits when open. [Operator discovery](docs/operator_documentation.md)
+returns compact search results and loads selected contracts, parameters and
+Markdown sections on demand without importing implementations.
+
+Existing memory planning, emergency spill, disk-backed/streaming Readers,
+independent frozen workflow values, resumable SSH uploads, concurrent task
+admission and publication figure artifacts are preserved. Newly integrated
+full-memory operators remain full-memory: registration does not imply a
+streaming implementation. See the [integration record](docs/UNIFIED_MAIN.md)
+and [documentation index](docs/README.md).
+
+Source version and downloadable desktop release are separate. The latest
+published Windows ZIP has the version shown on its Release page; updating
+`main` does not silently replace an existing desktop package.
 
 The desktop editor also supports [SSH remote execution](docs/REMOTE_EXECUTION.md):
 edit on Windows, browse inputs on a Linux server, submit workflows and reconnect
@@ -51,7 +61,7 @@ files; **Saved figures** provides direct original-file links. Software previews
 remain sampled inspection aids. Physical size, font size and resolution are
 ordinary frozen JSON parameters. See [publication figures](docs/PUBLICATION_FIGURES.md).
 
-The release retains **SDK 3.0 / protocol v3**, existing calculation implementations
+The source retains **protocol v3**, existing calculation implementations
 and stable IDs. The five existing route templates remain available: GWAS, RNA-seq
 DE, Proteomics DE, survival analysis and [16S microbiome](docs/microbiome.md), joined
 by FASTQ, BAM and pairs Hi-C routes. The desktop package includes this catalog and
@@ -96,15 +106,15 @@ dependencies, optional analyses and troubleshooting resolver backtracking.
 Choose the archive without `Lite` for the bundled environment. The smaller
 `Windows-x64-Lite.zip` uses an existing Python environment instead.
 
-Application source is maintained on [`release/v0.8.3`](https://github.com/lovegavin/BioPipe/tree/release/v0.8.3).
-The standalone operator/Reader authoring project is on
-[`library/v1.0.0`](https://github.com/lovegavin/BioPipe/tree/library/v1.0.0),
-with its own builder and parameter JSON files. Clone that branch into a separate
-directory to maintain or distribute the library without editing the application.
-These branches have independent histories; use library bundles to install providers.
-`main` retains the author's separate upstream development. See the
-[upstream review and adaptation inventory](docs/UPSTREAM_REVIEW_20261030.md).
-Packaged desktop releases are listed separately on the repository's Releases page.
+Application and operator/Reader sources now share a single maintained
+[`main`](https://github.com/lovegavin/BioPipe/tree/main). The library remains an
+independently built, versioned installation unit; use
+[library bundles](docs/plugins.md#independent-library-releases) to update it
+without replacing the application. The earlier `release/*` and
+`library/v1.0.0` branches are historical baselines, not competing current sources.
+The previous main is preserved as a checksummed
+[legacy archive](https://github.com/lovegavin/BioPipe/releases/tag/legacy-main-20261101).
+Packaged desktop releases are listed separately on the Releases page.
 Upgrading from v0.4.1 uses a one-time backed-up
 [migration](docs/migration_v2.md), automatic for supported built-in desktop profiles;
 old external extensions must be converted explicitly. The runtime
@@ -289,11 +299,11 @@ Repository: <https://github.com/lovegavin/BioPipe>
   - [Write task.yaml](#write-taskyaml)
   - [Run](#run)
   - [Output Overview](#output-overview)
-- [Core Architecture: Four Protocols](#core-architecture-four-protocols)
-  - [Protocol 1: Manifest Task Protocol](#protocol-1-manifest-task-protocol)
-  - [Protocol 2: Reader Protocol](#protocol-2-reader-protocol)
-  - [Protocol 3: Step Protocol](#protocol-3-step-protocol)
-  - [Protocol 4: Form Data Protocol](#protocol-4-form-data-protocol)
+- [Core Architecture: Runtime Interfaces](#core-architecture-runtime-interfaces)
+  - [Task Manifest Interface](#task-manifest-interface)
+  - [Reader Runtime Interface](#reader-runtime-interface)
+  - [Step Runtime Interface](#step-runtime-interface)
+  - [Form Data Interface](#form-data-interface)
 - [Runtime: Context and Runner](#runtime-context-and-runner)
 - [Built-in Readers](#built-in-readers)
 - [Built-in Steps](#built-in-steps)
@@ -333,7 +343,7 @@ Python 3.11+ is required. Conda is recommended for environment management.
 **Option 1: Conda (recommended)**
 
 ```bash
-git clone --branch release/v0.8.3 --single-branch https://github.com/lovegavin/BioPipe.git
+git clone --branch main --single-branch https://github.com/lovegavin/BioPipe.git
 cd BioPipe
 conda env create -f environment.yml
 conda activate biopipe
@@ -344,7 +354,7 @@ conda activate biopipe
 **Option 2: pip**
 
 ```bash
-git clone --branch release/v0.8.3 --single-branch https://github.com/lovegavin/BioPipe.git
+git clone --branch main --single-branch https://github.com/lovegavin/BioPipe.git
 cd BioPipe
 pip install -r requirements.txt
 ```
@@ -404,7 +414,7 @@ output/
 
 ---
 
-## Core Architecture: Four Protocols
+## Core Architecture: Runtime Interfaces
 
 BioPipe can be summarized as **four protocols/contracts**, plus two runtime components. The four protocols are the heart of the project; understanding them means understanding the whole framework.
 
@@ -425,7 +435,7 @@ In one sentence:
 
 ---
 
-## Protocol 1: Manifest Task Protocol
+## Task Manifest Interface
 
 The Manifest is the declarative orchestration layer. Users only write YAML, no Python.
 
@@ -505,7 +515,7 @@ Runner executes in order:
 
 ---
 
-## Protocol 2: Reader Protocol
+## Reader Runtime Interface
 
 The Reader is the input adaptation layer, converting heterogeneous files such as FASTA, VCF, BED, CSV, H5AD, PLINK, BGEN into a unified `Form`.
 
@@ -539,14 +549,14 @@ class Reader(ABC):
 ### Routing and auto-discovery
 
 `src/reader/__init__.py` loads explicit entry points from
-`biopipe/builtin_packages.json`. The 15 readers ship as the `biopipe-readers`
-package; a hot-installed replacement uses the same IDs and resource contracts.
-Scanning is a maintenance command (`python scripts/build_builtin_packages.py --refresh`),
+`biopipe/builtin_packages.json`. The full Reader catalog spans the provider
+packages; hot-installed replacements use the same IDs and resource contracts.
+Scanning is an explicit maintenance command (`python -m biopipe registry build`),
 not a runtime registration mechanism.
 
 `read_source(path, dims, labels, **args)` is the unified entry:
 
-1. Calls `pick_reader(path)` to select the unique matching Reader.
+1. Calls `pick_reader(path, reader_id=...)` to honor an explicit Reader or select a unique automatic match.
 2. If the Reader does not handle compression, decompresses to a temp file via `_decompressed`.
 3. Calls `reader.read(...)`.
 
@@ -576,7 +586,7 @@ Duplicate labels are handled by `unique_labels`; the second occurrence gets `#<p
 
 ---
 
-## Protocol 3: Step Protocol
+## Step Runtime Interface
 
 Step is the operator layer. Filtering, selection, merging, transposition, PCA, regression, HWE, MAF, LD pruning, plotting — all are pluggable Steps.
 
@@ -625,7 +635,7 @@ New workers load the selected package generation; running workers keep their loc
 
 ---
 
-## Protocol 4: Form Data Protocol
+## Form Data Interface
 
 Form is the shared language between Readers and Steps.
 
@@ -693,6 +703,8 @@ Responsibilities:
 
 ## Built-in Readers
 
+Representative formats are shown below. The [complete searchable index](docs/reference/reader_index.json) covers all 88 Readers.
+
 | Reader | Extensions | Main layout | Notes |
 |---|---|---|---|
 | FastaReader | `.fasta` `.fa` `.fna` `.faa` | sequence × position | Nucleotide/protein sequences, NaN-padded |
@@ -711,6 +723,8 @@ Responsibilities:
 ---
 
 ## Built-in Steps
+
+These examples are a small subset of the [405-operator index](docs/reference/operator_index.json).
 
 | Category | Step |
 |---|---|
@@ -878,8 +892,9 @@ python scripts/build_builtin_packages.py --package biopipe-core --output build/p
 biopipe plugin install build/packages/biopipe-core/dist/biopipe_core-1.0.0-py3-none-any.whl
 ```
 
-Bump the package version in the manifest for a published update. Direct edits to
-the application's source still require a restart. See [unified packages and resource
+Bump the package version in the manifest for a published update. Refresh operator
+source through the library manager to create a new immutable generation. Changes
+to the application framework itself require a restart. See [unified packages and resource
 protocols](docs/package_protocol.md) for disable/remove/restore, version locking,
 streaming operators, disk readers and an executable SDK-only example.
 
@@ -889,12 +904,13 @@ streaming operators, disk readers and an executable SDK-only example.
    `biopipe plugin init <project>` (`--template reader` for a Reader).
 2. Keep identity, input/output contracts, resource modes and optional UI metadata
    in the class's literal `definition`. Reference the JSON with `parameters_file`.
-3. Put parameter types, defaults and constraints only in that JSON.
+3. Put parameter types, defaults and constraints only in that JSON. Add adjacent
+   Markdown explaining purpose, input/output meaning, assumptions and examples.
 4. Implement `Reader.read`, `Operator.compute` or `Step.run`/`export`. Preserve
    `info` and `axis_info` with the data. Declare only resource modes actually implemented.
 5. Run protocol checks and calculation tests, then `biopipe registry build` for
    bundled source or `biopipe plugin build <project>` for a distributable wheel.
-   Include the parameter JSON and optional icons in wheel package data.
+   Include parameter JSON, Markdown and optional icons in wheel package data.
 
 Complete examples: [Readers](docs/reader_extensions.md),
 [Steps/Operators](docs/step_extensions.md), [SDK quickstart](docs/sdk_quickstart.md).
@@ -917,8 +933,17 @@ Complete examples: [Readers](docs/reader_extensions.md),
 ## Directory Structure
 
 ```text
+biopipe/
+  application.py            # workflow, task and artifact services
+  control_api.py            # versioned HTTP integration
+  headless.py               # service without a desktop window
+  cli.py                    # command-line adapter
+  mcp_server.py             # external agent adapter
+  operator_docs.py          # bounded document search and retrieval
+  worker.py                 # installed scientific worker entry
+
 scripts/
-  run.py                    # entry point
+  run.py                    # source compatibility entry point
 
 src/
   core/

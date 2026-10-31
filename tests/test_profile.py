@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 
 import pytest
 
@@ -102,12 +103,27 @@ def test_concurrent_process_registration_and_live_reload(tmp_path, catalog):
 
 
 def test_second_launcher_does_not_interrupt_active_worker(tmp_path, catalog):
-    first = JobService(settings(tmp_path), catalog)
+    # A small demo can finish while a second launcher initializes. Hold a real
+    # worker at a file gate so this test proves ownership, independent of speed.
+    code = tmp_path / 'code'; (code / 'scripts').mkdir(parents=True)
+    (code / 'scripts/run.py').write_text(
+        "import sys,time\nfrom pathlib import Path\ntask=Path(sys.argv[1])\n"
+        "(task/'worker-ready').write_text('ready')\n"
+        "while not (task/'release').exists(): time.sleep(.02)\n", encoding='utf-8')
+    selected = settings(tmp_path); selected.code_root = code
+    first = JobService(selected, catalog)
     graph = Graph.model_validate(first.demo)
     graph.memory["budget_mb"] = 64
     launched = first.launch(graph)
+    second = None
     try:
-        second = JobService(settings(tmp_path), catalog)
+        ready = first.jobs_dir / launched['id'] / 'worker-ready'
+        deadline = time.monotonic() + 10
+        while not ready.is_file() and time.monotonic() < deadline:
+            time.sleep(.02)
+        assert ready.is_file()
+        selected = settings(tmp_path); selected.code_root = code
+        second = JobService(selected, catalog)
         job = second.require(launched["id"])
         assert job["status"] == "running"
         with pytest.raises(GraphError, match="另一个"):
@@ -117,4 +133,6 @@ def test_second_launcher_does_not_interrupt_active_worker(tmp_path, catalog):
         second.shutdown()
         assert first.require(launched["id"])["status"] == "running"
     finally:
+        if second is not None:
+            second.shutdown()
         first.shutdown()

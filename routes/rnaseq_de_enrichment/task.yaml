@@ -1,0 +1,56 @@
+name: rnaseq_de_enrichment
+sources:
+  counts:
+    path: input/counts.csv
+    dims:
+    - gene
+    - sample
+    labels:
+      gene:
+        sample: 0
+      sample: builtin
+    reader: CsvReader
+  meta:
+    path: input/meta.csv
+    dims:
+    - sample
+    - feature
+    labels:
+      sample:
+        feature: 0
+      feature: builtin
+    reader: CsvReader
+  sets:
+    path: input/sets.gmt
+    dims:
+    - gene
+    - gene_set
+    labels:
+      gene: builtin
+      gene_set: builtin
+    reader: GmtReader
+steps:
+- name: filter_min
+  inputs:
+  - counts
+- name: compare_groups
+  inputs:
+  - filtered
+  - meta
+- name: volcano
+  inputs:
+  - de
+- name: ma_plot
+  inputs:
+  - de
+- name: gsea
+  inputs:
+  - de
+  - sets
+- name: enrichment_plot
+  inputs:
+  - gsea
+- name: describe
+  inputs:
+  - de
+parameters_file: parameters.json

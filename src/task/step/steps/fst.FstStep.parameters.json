@@ -1,0 +1,55 @@
+{
+  "type": "object",
+  "properties": {
+    "variant_dim": {
+      "type": "string",
+      "default": "variant",
+      "title": "Variant Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "group_label": {
+      "type": "string",
+      "title": "分组字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "group_a": {
+      "type": [
+        "string",
+        "number"
+      ],
+      "title": "A 组",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "group_b": {
+      "type": [
+        "string",
+        "number"
+      ],
+      "title": "B 组",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    }
+  },
+  "required": [
+    "group_label",
+    "group_a",
+    "group_b"
+  ],
+  "additionalProperties": false
+}

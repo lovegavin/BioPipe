@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "dataset": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null,
+      "title": "Dataset",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    }
+  },
+  "additionalProperties": false
+}

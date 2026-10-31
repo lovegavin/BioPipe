@@ -1,0 +1,55 @@
+name: single_cell_batch
+sources:
+  expr:
+    path: input/batch_cells.h5ad
+    dims:
+    - cell
+    - gene
+    labels:
+      cell: builtin
+      gene: builtin
+    reader: H5adReader
+  meta:
+    path: input/meta.csv
+    dims:
+    - cell
+    - feature
+    labels:
+      cell:
+        feature: 0
+      feature: builtin
+    reader: CsvReader
+  markers:
+    path: input/markers.gmt
+    dims:
+    - gene
+    - gene_set
+    labels:
+      gene: builtin
+      gene_set: builtin
+    reader: GmtReader
+steps:
+- name: normalize
+  inputs:
+  - expr
+- name: log_transform
+  inputs:
+  - cpm
+- name: combat
+  inputs:
+  - logged
+  - meta
+- name: transpose
+  inputs:
+  - corrected
+- name: marker_score
+  inputs:
+  - corrected_cells
+  - markers
+- name: describe
+  inputs:
+  - scores
+- name: heatmap
+  inputs:
+  - scores
+parameters_file: parameters.json

@@ -388,6 +388,19 @@
     "Source": {
       "additionalProperties": false,
       "properties": {
+        "reader": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z_][A-Za-z0-9_.-]{0,79}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reader"
+        },
         "path": {
           "default": "",
           "maxLength": 2048,

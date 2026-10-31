@@ -1,15 +1,16 @@
 # Operator protocol v3
 
-BioPipe 0.5.1 uses SDK 3.0.0 and protocol 3. Operator IDs, numerical kernels,
+BioPipe 0.116.0 uses SDK 3.1.0 and protocol 3. Operator IDs, numerical kernels,
 Form contracts and resource protocols retain their existing meaning.
 
-## Authoring unit: code + its own parameter JSON
+## Authoring unit: code + its own parameter JSON + Markdown
 
-Each operator or Reader owns two files, for example:
+Each new operator or Reader owns three files, for example:
 
 ```text
 pca.py
 pca.parameters.json
+pca.md
 ```
 
 The Python class contains a literal `definition` dictionary describing identity,
@@ -17,7 +18,10 @@ ports, resource capabilities, dependencies and presentation, plus its execution
 methods. Its `parameters_file` points to a JSON Schema beside that module.
 When omitted, the filename is `<module>.parameters.json` (`parameters.json` for
 `__init__.py`). Multiple classes in one module must use distinct explicit filenames.
-There is no centrally edited parameter document for the whole library.
+There is no centrally edited parameter document for the whole library. Markdown
+explains scientific purpose, assumptions, parameter choices and interpretation;
+parameter tables and contracts are generated from the descriptor. Existing v3
+providers without Markdown remain valid. See [operator documentation](operator_documentation.md).
 
 This authoring JSON is a **schema**, not a workflow's mutable value file. Saving a
 route freezes effective values for each node into its own parameter JSON; each job
@@ -33,7 +37,7 @@ validates parameters and supplies defaults before dispatch. A default is not a
 required parameter; add a name to the schema's `required` array to require input.
 
 See the complete [Step](step_extensions.md) and [Reader](reader_extensions.md)
-examples. `biopipe plugin init` creates this file pair and an executable test.
+examples. `biopipe plugin init` creates these files and an executable test.
 
 ## Definition fields
 
@@ -50,6 +54,7 @@ Maintenance reads the Python AST and JSON; it never executes module top-level co
 | `extensions`, sibling/compression fields, `file_input` | Reader routing and input hints |
 | `dependencies`, `dependency_imports` | PEP 508 requirements and optional import checks |
 | `category`, `icon`, `preview`, title hints | Optional presentation; category supplies the default icon |
+| `documentation` | Optional SDK-generated Markdown metadata: relative path, content hash, summary and section index; requires SDK 3.1 |
 
 Use namespaced IDs for external providers, such as `lab.scale`. A bundled provider
 can retain its existing IDs. `provider = "biopipe-core"` chooses ownership for a
@@ -89,18 +94,26 @@ unchanged. It does not restore the removed v1/v2 class-field fallback.
 ## Identities and updates
 
 - `code_sha` hashes normalized implementation/helper Python source bytes. Parameter
-  JSON and icons are excluded. The bundled library currently hashes its two small
+  JSON and icons are excluded. The bundled library currently hashes its two
   implementation trees together, conservatively invalidating cross-module helpers.
 - `declaration_sha` hashes the canonical descriptor excluding the two hashes and
   installed-state fields. It includes the parsed parameter JSON and frozen icon.
 - The wheel's package `sha256` is artifact provenance, separate from these identities.
+- New wheel pins additionally record `execution_sha`: all wheel bytes except
+  hash-verified declared Markdown and parameter JSON, their generated metadata
+  and RECORD checksums. Frozen workflow values own execution parameters.
+  Native libraries, executable code, resource declarations and other assets remain
+  part of this digest. Documentation-only updates reuse code/dependency targets
+  and match saved routes even in a new profile. Old pins without this field
+  retain exact-archive matching; no unverified compatibility is inferred.
 
 Graph pins match execution identity, not `declaration_sha`. The declaration hash
 remains an audit/integrity field in descriptors and locks:
 
 | Provider | Graph matching fields |
 | --- | --- |
-| Installed wheel | Package, package version, wheel `sha256`, `code_sha` |
+| New installed wheel | Package, package version, `execution_sha`, `code_sha` |
+| Old wheel pin without `execution_sha` | Package, package version, exact archive `sha256`, `code_sha` |
 | Bundled v3 source | Package, package version, `code_sha` |
 
 The bundled `sha256` fingerprints both the generated index and source bytes, so
@@ -138,6 +151,9 @@ normal checked source; never precompile mutable development folders unchecked.
 against JSON properties, and compares the generated index. Unknown literal keys
 are errors; dynamic keys and parameters forwarded to helpers generate warnings.
 This is conservative static checking, not proof about arbitrary Python execution.
+One maintenance transaction shares each source namespace's code identity and
+rechecks it before publication; it does not rescan the entire implementation tree
+for every descriptor. Runtime code verification remains independent.
 CI runs registry drift checking and tests. See [migration](migration_v2.md) before
 using a v1/v2 profile or extension with this development version.
 

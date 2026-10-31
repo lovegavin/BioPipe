@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "n_components": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 2,
+      "title": "主成分数",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "n_neighbors": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 5,
+      "title": "邻居数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "additionalProperties": false
+}

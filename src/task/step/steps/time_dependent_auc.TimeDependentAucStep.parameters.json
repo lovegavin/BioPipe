@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "time_label": {
+      "type": "string",
+      "title": "随访时间字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "event_label": {
+      "type": "string",
+      "title": "事件字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "risk_label": {
+      "type": "string",
+      "title": "Risk Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "predict_time": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "title": "Predict Time",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "required": [
+    "time_label",
+    "event_label",
+    "risk_label",
+    "predict_time"
+  ],
+  "additionalProperties": false
+}

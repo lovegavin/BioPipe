@@ -22,7 +22,16 @@ def identity(pin, *, bundled=False):
     keys = PIN_KEYS
     if bundled and pin.get('code_sha'):
         keys = tuple(key for key in keys if key != 'sha256')
-    return tuple((key, pin.get(key)) for key in keys)
+    return tuple((key, ('execution:' + pin['execution_sha']) if key == 'sha256' and pin.get('execution_sha') and not bundled else pin.get(key)) for key in keys)
+
+
+def equivalent(left, right, *, bundled=False):
+    # Older pins do not have the executable digest. They still match an exact
+    # archive SHA; never infer compatibility from code alone for those wheels.
+    if not bundled and not (left.get('execution_sha') and right.get('execution_sha')):
+        left = {k: v for k, v in left.items() if k != 'execution_sha'}
+        right = {k: v for k, v in right.items() if k != 'execution_sha'}
+    return identity(left, bundled=bundled) == identity(right, bundled=bundled)
 
 
 @lru_cache(maxsize=1)
@@ -66,8 +75,7 @@ def requirements(graph, replacements=None, *, state=None):
     for part in graphs(graph):
         for key, original in part.plugin_lock.items():
             pin = (replacements or {}).get((key, identity(original)), original)
-            if (key in required and identity(required[key], bundled=key in bundled) !=
-                    identity(pin, bundled=key in bundled)):
+            if key in required and not equivalent(required[key], pin, bundled=key in bundled):
                 raise ValueError(f'Conflicting plugin versions in one graph: {key}')
             required[key] = pin
     return required
@@ -77,8 +85,7 @@ def matches(state, required):
     enabled = {p['name'] for p in state['packages'] if p.get('enabled', True)}
     available = {d['id']: d for d in state['descriptors'] if d['distribution'] in enabled}
     return all(key in available and
-               identity(available[key]['implementation'], bundled=available[key].get('origin') == 'bundled') ==
-               identity(pin, bundled=available[key].get('origin') == 'bundled')
+               equivalent(available[key]['implementation'], pin, bundled=available[key].get('origin') == 'bundled')
                for key, pin in required.items())
 
 

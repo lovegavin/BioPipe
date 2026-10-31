@@ -43,7 +43,7 @@ dependencies = ["biopipe-studio>={__version__},<1"]
 [tool.setuptools.packages.find]
 include = ["{module}*"]
 [tool.setuptools.package-data]
-"{module}" = ["*.json", "*.svg", "*.png"]
+"{module}" = ["*.json", "*.md", "*.svg", "*.png"]
 ''', encoding='utf-8')
     source = '''"""Numerical implementation. Edit parameter defaults in parameters.json."""
 import numpy as np
@@ -95,9 +95,39 @@ class ArrayReader(Reader):
                             f'class {cls}(' + ('Reader' if reader else 'Operator') + '):\n' + definition)
     (folder / '__init__.py').write_text(source, encoding='utf-8')
     (folder / 'parameters.json').write_text(json.dumps(parameters, indent=2)+'\n', encoding='utf-8')
+    (folder / '__init__.md').write_text('''# Example extension
+
+## Purpose
+
+''' + ('Read a NumPy array saved with `allow_pickle=False`. The caller supplies dimension names.' if reader else
+       'Multiply a numeric matrix by a scalar while retaining dimension labels and axis metadata.') + '''
+
+## Inputs and outputs
+
+The structured descriptor is the source of truth for input/output contracts.
+This example returns a Form and preserves the missing-value convention.
+
+## Parameter guidance
+
+''' + ('Use dimension names in the same order as the saved array axes.' if reader else
+       'Choose `factor` in parameters.json. A factor of 1 preserves finite values; 0 sets them to zero.') + '''
+
+## Interpretation
+
+This is a small SDK example, not a scientific normalization method.
+
+## Limitations
+
+The example reads or computes the complete array in memory. It does not claim streaming support.
+
+## Examples
+
+Run `biopipe plugin test .` from this project. The executable example is in tests/test_plugin.py.
+''', encoding='utf-8')
     (path / 'README.md').write_text(f'''# {package}
 
-BioPipe SDK v3. Edit `{module}/parameters.json` for parameters; keep the operator definition with its implementation.
+BioPipe SDK v3.1. Edit `{module}/parameters.json` for parameters and `{module}/__init__.md` for scientific guidance;
+keep the operator definition with its implementation. Generated parameter tables come from JSON.
 
 Run `biopipe plugin check .`, `biopipe plugin test .`, then `biopipe plugin build .`.
 Install the wheel or put the project in the operator inbox and refresh.

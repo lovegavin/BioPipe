@@ -5,8 +5,10 @@ import os
 from pathlib import Path
 
 
-def filesystem_path(path):
-    value = str(Path(path).resolve())
+def filesystem_path(path, *, resolve=True):
+    # Snapshot/cache I/O must preserve links until their own validation runs.
+    # Resolving first would hide a linked source file from the snapshot guard.
+    value = str(Path(path).resolve()) if resolve else os.path.abspath(path)
     if os.name == 'nt' and not value.startswith('\\\\?\\'):
         return '\\\\?\\UNC\\' + value[2:] if value.startswith('\\\\') else '\\\\?\\' + value
     return value

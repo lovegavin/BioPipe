@@ -1,0 +1,4052 @@
+[
+  {
+    "id": "acf",
+    "kind": "operator",
+    "title": "Autocorrelation function",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Autocorrelation function：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、数值字段、Lags、显著性水平。",
+    "doc": "src/task/step/steps/acf.AcfStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ada_boost_classifier",
+    "kind": "operator",
+    "title": "AdaBoost classifier",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "AdaBoost classifier：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/ada_boost_classifier.AdaBoostClassifierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ada_boost_regressor",
+    "kind": "operator",
+    "title": "AdaBoost regressor",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "AdaBoost regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/ada_boost_regressor.AdaBoostRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "additive_glm",
+    "kind": "operator",
+    "title": "Additive B-spline GLM",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fit an additive GLM with one cubic B-spline per predictor.",
+    "doc": "src/task/step/steps/additive_glm.AdditiveGlmStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "additive_spline_regression",
+    "kind": "operator",
+    "title": "Additive B-spline regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fit an additive OLS model with one cubic B-spline per predictor.",
+    "doc": "src/task/step/steps/additive_spline_regression.AdditiveSplineRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "adf_test",
+    "kind": "operator",
+    "title": "Augmented Dickey-Fuller test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Augmented Dickey-Fuller test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、数值字段、Lags、Regression。",
+    "doc": "src/task/step/steps/adf_test.AdfTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "adjusted_mutual_info",
+    "kind": "operator",
+    "title": "Adjusted mutual information",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Adjusted mutual information between two partitions.",
+    "doc": "src/task/step/steps/adjusted_mutual_info.AdjustedMutualInfoStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "adjusted_rand",
+    "kind": "operator",
+    "title": "Adjusted Rand index",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Adjusted Rand index between two label columns on the same samples.",
+    "doc": "src/task/step/steps/adjusted_rand.AdjustedRandStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "adjusted_rand_index",
+    "kind": "operator",
+    "title": "Adjusted Rand index",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Adjusted Rand index between two partitions of the same samples.",
+    "doc": "src/task/step/steps/adjusted_rand_index.AdjustedRandIndexStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "aft",
+    "kind": "operator",
+    "title": "Weibull accelerated failure time",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Weibull accelerated failure time model with right censoring.",
+    "doc": "src/task/step/steps/aft.AftStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "agglomerative",
+    "kind": "operator",
+    "title": "Agglomerative clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Agglomerative (hierarchical) clustering.",
+    "doc": "src/task/step/steps/agglomerative.AgglomerativeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "aggregate",
+    "kind": "operator",
+    "title": "Aggregate",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "Aggregate positions along one axis by group.",
+    "doc": "src/task/step/steps/aggregate.AggregateStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "agostino_skewness",
+    "kind": "operator",
+    "title": "D'Agostino skewness test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "D'Agostino test for sample skewness.",
+    "doc": "src/task/step/steps/agostino_skewness.AgostinoSkewnessStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "aldex2",
+    "kind": "operator",
+    "title": "Compositional differential abundance",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Compositional differential abundance：接收 2 个输入，输出 Form；主要参数：样本维度、Taxon Dim、分组字段、A 组、B 组、N Mc。",
+    "doc": "src/task/step/steps/aldex2.Aldex2Step.md",
+    "status": "generated"
+  },
+  {
+    "id": "align_reads",
+    "kind": "operator",
+    "title": "Hi-C read alignment",
+    "category": "data preparation",
+    "version": "1.0.0",
+    "description": "Hi-C read alignment using versioned, logged external tools.",
+    "doc": "src/task/step/steps/align_reads.AlignReadsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "analyze_contacts",
+    "kind": "operator",
+    "title": "Hi-C structure analysis",
+    "category": "analysis",
+    "version": "1.0.0",
+    "description": "Hi-C structure analysis using versioned, logged external tools.",
+    "doc": "src/task/step/steps/analyze_contacts.AnalyzeContactsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ancom_bc",
+    "kind": "operator",
+    "title": "Log-ratio differential abundance",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Log-ratio differential abundance：接收 2 个输入，输出 Form；主要参数：样本维度、Taxon Dim、分组字段、A 组、B 组、伪计数。",
+    "doc": "src/task/step/steps/ancom_bc.AncomBcStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "anderson_darling",
+    "kind": "operator",
+    "title": "Anderson-Darling normality test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Anderson-Darling composite normality test.",
+    "doc": "src/task/step/steps/anderson_darling.AndersonDarlingStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "annotate",
+    "kind": "operator",
+    "title": "annotate",
+    "category": "data",
+    "version": "1.0.0",
+    "description": "Attach reference fields onto a target by key label.",
+    "doc": "src/task/step/steps/annotate.AnnotateStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "annotation_gaps",
+    "kind": "operator",
+    "title": "annotation_gaps",
+    "category": "analysis",
+    "version": "1.0.0",
+    "description": "Inter-gene gap lengths for GFF3/GTF annotation QC.",
+    "doc": "src/task/step/steps/annotation_gaps.AnnotationGapsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "anosim",
+    "kind": "operator",
+    "title": "ANOSIM",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "ANOSIM：接收 2 个输入，输出 Form；主要参数：样本维度、Sample B Dim、分组维度、分组字段、N Perm、随机种子。",
+    "doc": "src/task/step/steps/anosim.AnosimStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "anova",
+    "kind": "operator",
+    "title": "one-way ANOVA",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "one-way ANOVA：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段。",
+    "doc": "src/task/step/steps/anova.AnovaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ansari_bradley",
+    "kind": "operator",
+    "title": "Ansari-Bradley scale test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Ansari-Bradley rank test for a difference in scale.",
+    "doc": "src/task/step/steps/ansari_bradley.AnsariBradleyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "anscombe_glynn",
+    "kind": "operator",
+    "title": "Anscombe-Glynn kurtosis test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Anscombe-Glynn test for sample kurtosis.",
+    "doc": "src/task/step/steps/anscombe_glynn.AnscombeGlynnStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "approx_entropy",
+    "kind": "operator",
+    "title": "Approximate entropy",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Approximate entropy for a univariate series.",
+    "doc": "src/task/step/steps/approx_entropy.ApproxEntropyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "arch_lm",
+    "kind": "operator",
+    "title": "ARCH LM test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "ARCH LM test on a residual or return series.",
+    "doc": "src/task/step/steps/arch_lm.ArchLmStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "arch_test",
+    "kind": "operator",
+    "title": "ARCH heteroskedasticity test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "ARCH heteroskedasticity test：接收 1 个输入，输出 Form；主要参数：Time Dim、特征维度、数值字段、Lags、Demean。",
+    "doc": "src/task/step/steps/arch_test.ArchTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "arima",
+    "kind": "operator",
+    "title": "ARIMA model",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fit a non-seasonal ARIMA(p, d, q) model by maximum likelihood.",
+    "doc": "src/task/step/steps/arima.ArimaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "attach_info",
+    "kind": "operator",
+    "title": "附加注释",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "输入 1 为目标数据，输入 2 为注释来源。",
+    "doc": "src/task/step/steps/attach_info.AttachInfoStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bai_perron",
+    "kind": "operator",
+    "title": "Bai-Perron multiple structural breaks",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Bai-Perron multiple structural breaks：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Response Label、Predictors、N Breaks、Min Segment。",
+    "doc": "src/task/step/steps/bai_perron.BaiPerronStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "barnard_test",
+    "kind": "operator",
+    "title": "Barnard exact test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Barnard's exact unconditional test of independence in a 2x2 table.",
+    "doc": "src/task/step/steps/barnard_test.BarnardTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "barplot",
+    "kind": "operator",
+    "title": "Composition barplot",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "Stacked bar plot of a matrix along one axis.",
+    "doc": "src/task/step/steps/barplot.BarplotStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bartels_rank",
+    "kind": "operator",
+    "title": "Bartels rank test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Bartels rank von Neumann ratio test, normal approximation.",
+    "doc": "src/task/step/steps/bartels_rank.BartelsRankStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bartlett",
+    "kind": "operator",
+    "title": "Bartlett variance test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Bartlett variance test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段。",
+    "doc": "src/task/step/steps/bartlett.BartlettStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bartlett_sphericity",
+    "kind": "operator",
+    "title": "Bartlett sphericity test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Test whether a correlation matrix differs from the identity.",
+    "doc": "src/task/step/steps/bartlett_sphericity.BartlettSphericityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bayesian_ridge_regressor",
+    "kind": "operator",
+    "title": "Bayesian ridge regressor",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Bayesian ridge regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/bayesian_ridge_regressor.BayesianRidgeRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bds_test",
+    "kind": "operator",
+    "title": "BDS nonlinearity test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "BDS nonlinearity test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、数值字段、Max Dim、epsilon、Distance。",
+    "doc": "src/task/step/steps/bds_test.BdsTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "beta_regression",
+    "kind": "operator",
+    "title": "Beta regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Beta regression with a logit mean link and identity precision link.",
+    "doc": "src/task/step/steps/beta_regression.BetaRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "betadisper",
+    "kind": "operator",
+    "title": "Beta dispersion",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Distance-to-centroid dispersion per group, with one-way ANOVA.",
+    "doc": "src/task/step/steps/betadisper.BetadisperStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bh_adjust",
+    "kind": "operator",
+    "title": "Benjamini-Hochberg FDR",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Benjamini-Hochberg FDR：接收 1 个输入，输出 Form；主要参数：特征维度、Value Dim。",
+    "doc": "src/task/step/steps/bh_adjust.BhAdjustStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bhapkar_test",
+    "kind": "operator",
+    "title": "Bhapkar test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Bhapkar test, the Stuart-Maxwell statistic with a finite-sample correction.",
+    "doc": "src/task/step/steps/bhapkar_test.BhapkarTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bin",
+    "kind": "operator",
+    "title": "Bin",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "Discretize a continuous axis into bins.",
+    "doc": "src/task/step/steps/bin.BinStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "binomial_test",
+    "kind": "operator",
+    "title": "Exact binomial test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Exact binomial test of ``k`` successes out of ``n`` trials.",
+    "doc": "src/task/step/steps/binomial_test.BinomialTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bland_altman",
+    "kind": "operator",
+    "title": "Bland-Altman agreement",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Bland-Altman agreement：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Method A、Method B、Confidence。",
+    "doc": "src/task/step/steps/bland_altman.BlandAltmanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bonett_seier",
+    "kind": "operator",
+    "title": "Bonett-Seier Geary kurtosis test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Bonett-Seier test that Geary kurtosis equals sqrt(2/pi).",
+    "doc": "src/task/step/steps/bonett_seier.BonettSeierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bonferroni",
+    "kind": "operator",
+    "title": "Bonferroni correction",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Bonferroni correction：接收 1 个输入，输出 Form；主要参数：特征维度、Statistic Dim、Value Dim。",
+    "doc": "src/task/step/steps/bonferroni.BonferroniStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bootstrap_ci",
+    "kind": "operator",
+    "title": "Bootstrap confidence interval",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Bootstrap confidence interval：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、统计量、N Boot、Confidence、随机种子。",
+    "doc": "src/task/step/steps/bootstrap_ci.BootstrapCiStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "boschloo_exact",
+    "kind": "operator",
+    "title": "Boschloo exact test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Boschloo's exact test for association in a 2x2 contingency table.",
+    "doc": "src/task/step/steps/boschloo_exact.BoschlooExactStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "box_cox",
+    "kind": "operator",
+    "title": "Box-Cox transform",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Box-Cox transform each feature, optionally estimating lambda.",
+    "doc": "src/task/step/steps/box_cox.BoxCoxStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "box_m",
+    "kind": "operator",
+    "title": "Box's M test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Box's M test for equal covariance matrices across groups.",
+    "doc": "src/task/step/steps/box_m.BoxMStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "box_pierce",
+    "kind": "operator",
+    "title": "Box-Pierce autocorrelation test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Box-Pierce autocorrelation test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、数值字段、Lags、Fitdf。",
+    "doc": "src/task/step/steps/box_pierce.BoxPierceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "boxplot",
+    "kind": "operator",
+    "title": "Boxplot",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "分组分布与散点",
+    "doc": "src/task/step/steps/boxplot.BoxplotStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "brennan_prediger",
+    "kind": "operator",
+    "title": "Brennan-Prediger coefficient",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Brennan-Prediger coefficient：接收 1 个输入，输出 Form；主要参数：Subject Dim、Rater Dim。",
+    "doc": "src/task/step/steps/brennan_prediger.BrennanPredigerStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "breusch_godfrey",
+    "kind": "operator",
+    "title": "Breusch-Godfrey serial correlation test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Breusch-Godfrey serial correlation test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Response Label、Predictors、分类协变量、Lags。",
+    "doc": "src/task/step/steps/breusch_godfrey.BreuschGodfreyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "breusch_pagan",
+    "kind": "operator",
+    "title": "Breusch-Pagan test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Breusch-Pagan test：接收 1 个输入，输出 Form；主要参数：样本维度、Variable Dim、响应变量、Regressors。",
+    "doc": "src/task/step/steps/breusch_pagan.BreuschPaganStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "brier_score",
+    "kind": "operator",
+    "title": "Brier score (Cox)",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cox PH Brier score with inverse-probability-of-censoring weights.",
+    "doc": "src/task/step/steps/brier_score.BrierScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "brown_forsythe",
+    "kind": "operator",
+    "title": "Brown-Forsythe variance test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Median-centered Levene test, known as the Brown-Forsythe test.",
+    "doc": "src/task/step/steps/brown_forsythe.BrownForsytheStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "brunner_munzel",
+    "kind": "operator",
+    "title": "Brunner-Munzel test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Brunner-Munzel test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、Alternative、Distribution。",
+    "doc": "src/task/step/steps/brunner_munzel.BrunnerMunzelStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "build_contacts",
+    "kind": "operator",
+    "title": "Build contact map",
+    "category": "data preparation",
+    "version": "1.0.0",
+    "description": "Build contact map using versioned, logged external tools.",
+    "doc": "src/task/step/steps/build_contacts.BuildContactsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "by_adjust",
+    "kind": "operator",
+    "title": "Benjamini-Yekutieli FDR",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Benjamini-Yekutieli p-value adjustment; output feature x qvalue.",
+    "doc": "src/task/step/steps/by_adjust.ByAdjustStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "calibration_curve",
+    "kind": "operator",
+    "title": "Calibration curve",
+    "category": "Visualization",
+    "version": "1.0.0",
+    "description": "Reliability curve with uniform or quantile probability bins.",
+    "doc": "src/task/step/steps/calibration_curve.CalibrationCurveStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "calibration_slope",
+    "kind": "operator",
+    "title": "Calibration intercept and slope",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Calibration intercept and slope：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Outcome Label、Risk Label。",
+    "doc": "src/task/step/steps/calibration_slope.CalibrationSlopeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "calinski_harabasz",
+    "kind": "operator",
+    "title": "Calinski-Harabasz index",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Calinski-Harabasz index for features and a label column.",
+    "doc": "src/task/step/steps/calinski_harabasz.CalinskiHarabaszStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "canonical_correlation",
+    "kind": "operator",
+    "title": "Canonical correlation",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Canonical correlations via reduced QR and an SVD cross-product.",
+    "doc": "src/task/step/steps/canonical_correlation.CanonicalCorrelationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cca",
+    "kind": "operator",
+    "title": "Canonical correspondence analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Constrained correspondence analysis of a count table.",
+    "doc": "src/task/step/steps/cca.CcaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cell_cycle_score",
+    "kind": "operator",
+    "title": "Cell cycle score",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Cell cycle score：接收 2 个输入，输出 Form；主要参数：Cell Dim、Gene Dim、Gene Set Dim、Ctrl Size、N Bins、随机种子。",
+    "doc": "src/task/step/steps/cell_cycle_score.CellCycleScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "chacko_test",
+    "kind": "operator",
+    "title": "Chacko ordered alternatives test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Rank-based test for a monotone ordered alternative.",
+    "doc": "src/task/step/steps/chacko_test.ChackoTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "chao1",
+    "kind": "operator",
+    "title": "Chao1 richness estimator",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Estimate the number of unobserved species with the Chao1 estimator.",
+    "doc": "src/task/step/steps/chao1.Chao1Step.md",
+    "status": "generated"
+  },
+  {
+    "id": "chi_square",
+    "kind": "operator",
+    "title": "Chi-square test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Chi-square test：接收 1 个输入，输出 Form；主要参数：Row Dim、Col Dim、Correction。",
+    "doc": "src/task/step/steps/chi_square.ChiSquareStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "chi_square_gof",
+    "kind": "operator",
+    "title": "Pearson chi-square goodness-of-fit test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "One-sample chi-square test against expected relative frequencies.",
+    "doc": "src/task/step/steps/chi_square_gof.ChiSquareGofStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "chisq_out_test",
+    "kind": "operator",
+    "title": "Chi-square outlier test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Chi-square test for one extreme observation.",
+    "doc": "src/task/step/steps/chisq_out_test.ChiSquareOutTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "chow_test",
+    "kind": "operator",
+    "title": "Chow structural-break test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Chow structural-break test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Response Label、Predictors、Break Fraction。",
+    "doc": "src/task/step/steps/chow_test.ChowTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "classification_metrics",
+    "kind": "operator",
+    "title": "Classification metrics",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "ROC AUC, PR AUC, accuracy, F1 and MCC for binary labels.",
+    "doc": "src/task/step/steps/classification_metrics.ClassificationMetricsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cliffs_delta",
+    "kind": "operator",
+    "title": "Cliff's delta",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Per-feature Cliff's delta, positive when group0 tends larger.",
+    "doc": "src/task/step/steps/cliffs_delta.CliffsDeltaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cluster_axis",
+    "kind": "operator",
+    "title": "Clustering",
+    "category": "统计分析",
+    "version": "1.0.0",
+    "description": "Cluster positions along one axis.",
+    "doc": "src/task/step/steps/cluster_axis.ClusterAxisStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cochran_armitage",
+    "kind": "operator",
+    "title": "Cochran-Armitage trend test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cochran-Armitage trend test：接收 1 个输入，输出 Form；主要参数：分组维度、特征维度、Cases Column、Total Column、Group Scores。",
+    "doc": "src/task/step/steps/cochran_armitage.CochranArmitageStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cochran_c_test",
+    "kind": "operator",
+    "title": "Cochran's C outlying variance test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cochran's C test for homogeneity of variances with equal group sizes.",
+    "doc": "src/task/step/steps/cochran_c_test.CochranCTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cochran_q",
+    "kind": "operator",
+    "title": "Cochran's Q test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Test equality of binary responses across three or more conditions.",
+    "doc": "src/task/step/steps/cochran_q.CochranQStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "codon_usage",
+    "kind": "operator",
+    "title": "Codon usage",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Codon usage：接收 1 个输入，输出 Form；主要参数：序列维度、位置维度、Frame。",
+    "doc": "src/task/step/steps/codon_usage.CodonUsageStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cohens_d",
+    "kind": "operator",
+    "title": "Cohen's d",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Per-feature standardized mean difference between two groups.",
+    "doc": "src/task/step/steps/cohens_d.CohensDStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cohens_h",
+    "kind": "operator",
+    "title": "Cohen's h",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cohen's h：接收 1 个输入，输出 Form；主要参数：Row Dim、Col Dim、Confidence。",
+    "doc": "src/task/step/steps/cohens_h.CohensHStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cohens_kappa",
+    "kind": "operator",
+    "title": "Cohen's kappa",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cohen's kappa：接收 1 个输入，输出 Form；主要参数：Row Dim、Col Dim、Weights。",
+    "doc": "src/task/step/steps/cohens_kappa.CohensKappaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "combat",
+    "kind": "operator",
+    "title": "Batch correction",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Batch correction：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、Batch Label、方法。",
+    "doc": "src/task/step/steps/combat.CombatStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "compare_groups",
+    "kind": "operator",
+    "title": "Group comparison",
+    "category": "Analysis",
+    "version": "1.0.0",
+    "description": "T-test、Welch、Mann–Whitney 或 DESeq2",
+    "doc": "src/task/step/steps/compare_groups.CompareGroupsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "complement_nb_classifier",
+    "kind": "operator",
+    "title": "Complement Naive Bayes classifier",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Complement Naive Bayes classifier：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/complement_nb_classifier.ComplementNBClassifierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "concat",
+    "kind": "operator",
+    "title": "合并数据",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "按指定维度连接多个输入，输入端口顺序决定合并顺序。",
+    "doc": "src/task/step/steps/concat.ConcatStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "concordance_correlation",
+    "kind": "operator",
+    "title": "Lin's concordance correlation",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Lin's concordance correlation：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Method A、Method B、Confidence。",
+    "doc": "src/task/step/steps/concordance_correlation.ConcordanceCorrelationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "concordance_index",
+    "kind": "operator",
+    "title": "Concordance index",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Harrell C-index for a survival risk column.",
+    "doc": "src/task/step/steps/concordance_index.ConcordanceIndexStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "conditional_logistic",
+    "kind": "operator",
+    "title": "Conditional logistic regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fit a conditional logistic model for matched case-control strata.",
+    "doc": "src/task/step/steps/conditional_logistic.ConditionalLogisticStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "conditional_logit",
+    "kind": "operator",
+    "title": "Conditional logistic regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fixed-effects logistic regression for matched case-control strata.",
+    "doc": "src/task/step/steps/conditional_logit.ConditionalLogitStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "confusion_matrix",
+    "kind": "operator",
+    "title": "Confusion matrix",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Binary confusion matrix with actual rows and predicted columns.",
+    "doc": "src/task/step/steps/confusion_matrix.ConfusionMatrixStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "conger_kappa",
+    "kind": "operator",
+    "title": "Conger's kappa",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Conger's kappa：接收 1 个输入，输出 Form；主要参数：Subject Dim、Rater Dim。",
+    "doc": "src/task/step/steps/conger_kappa.CongerKappaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "conover_test",
+    "kind": "operator",
+    "title": "Conover post-hoc test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "All-pairwise Conover comparisons for every feature.",
+    "doc": "src/task/step/steps/conover_test.ConoverTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cooks_distance",
+    "kind": "operator",
+    "title": "Cook's distance",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cook's distance：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、响应变量。",
+    "doc": "src/task/step/steps/cooks_distance.CooksDistanceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "correction",
+    "kind": "operator",
+    "title": "FDR",
+    "category": "统计分析",
+    "version": "1.0.0",
+    "description": "进行 Bonferroni 或 FDR 校正。",
+    "doc": "src/task/step/steps/correction.CorrectionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "correlation",
+    "kind": "operator",
+    "title": "Correlation",
+    "category": "统计分析",
+    "version": "1.0.0",
+    "description": "Pairwise correlation matrix along one axis.",
+    "doc": "src/task/step/steps/correlation.CorrelationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "correspondence_analysis",
+    "kind": "operator",
+    "title": "Correspondence analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Row and column principal coordinates from a contingency table.",
+    "doc": "src/task/step/steps/correspondence_analysis.CorrespondenceAnalysisStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "covratio",
+    "kind": "operator",
+    "title": "COVRATIO",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "COVRATIO：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、响应变量。",
+    "doc": "src/task/step/steps/covratio.CovratioStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cox_regression",
+    "kind": "operator",
+    "title": "Cox",
+    "category": "统计分析",
+    "version": "1.0.0",
+    "description": "多变量比例风险回归",
+    "doc": "src/task/step/steps/cox_regression.CoxRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cox_stuart_test",
+    "kind": "operator",
+    "title": "Cox-Stuart trend test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cox-Stuart sign test for a monotone trend.",
+    "doc": "src/task/step/steps/cox_stuart_test.CoxStuartTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cramer_v",
+    "kind": "operator",
+    "title": "Cramer's V",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cramer's V with the Pearson chi-square statistic (no continuity correction).",
+    "doc": "src/task/step/steps/cramer_v.CramerVStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cramer_von_mises",
+    "kind": "operator",
+    "title": "Cramer-von Mises test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Per-feature two-sample Cramer-von Mises test.",
+    "doc": "src/task/step/steps/cramer_von_mises.CramerVonMisesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cronbach_alpha",
+    "kind": "operator",
+    "title": "Cronbach's alpha",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cronbach's alpha for a set of continuous items.",
+    "doc": "src/task/step/steps/cronbach_alpha.CronbachAlphaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cross_correlation",
+    "kind": "operator",
+    "title": "Cross-correlation function",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cross-correlation function：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、First Label、Second Label、Lags、显著性水平。",
+    "doc": "src/task/step/steps/cross_correlation.CrossCorrelationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cumulative_incidence",
+    "kind": "operator",
+    "title": "Cumulative incidence",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cumulative incidence：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、随访时间字段、事件字段、分组字段、Event Of Interest。",
+    "doc": "src/task/step/steps/cumulative_incidence.CumulativeIncidenceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cusum_chart",
+    "kind": "operator",
+    "title": "CUSUM control chart",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Tabular CUSUM chart with a moving-range sigma estimate.",
+    "doc": "src/task/step/steps/cusum_chart.CusumChartStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cuzick_test",
+    "kind": "operator",
+    "title": "Cuzick trend test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cuzick's rank-based trend test across ordered groups.",
+    "doc": "src/task/step/steps/cuzick_test.CuzickTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "davies_bouldin",
+    "kind": "operator",
+    "title": "Davies-Bouldin index",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Davies-Bouldin index for features and a label column.",
+    "doc": "src/task/step/steps/davies_bouldin.DaviesBouldinStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "dbrda",
+    "kind": "operator",
+    "title": "Distance-based redundancy analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Constrain a PCoA of a distance matrix by explanatory variables.",
+    "doc": "src/task/step/steps/dbrda.DbrdaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "dbscan",
+    "kind": "operator",
+    "title": "DBSCAN clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Density-based spatial clustering (DBSCAN).",
+    "doc": "src/task/step/steps/dbscan.DbscanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "dca",
+    "kind": "operator",
+    "title": "Decision curve analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Net benefit of a binary prediction rule across probability thresholds.",
+    "doc": "src/task/step/steps/dca.DcaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "decision_curve",
+    "kind": "operator",
+    "title": "Decision curve analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Net benefit across risk thresholds (decision-curve analysis).",
+    "doc": "src/task/step/steps/decision_curve.DecisionCurveStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "decision_tree_classifier",
+    "kind": "operator",
+    "title": "Decision Tree classifier",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Decision Tree classifier：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/decision_tree_classifier.DecisionTreeClassifierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "decision_tree_regressor",
+    "kind": "operator",
+    "title": "Decision Tree regressor",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Decision Tree regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/decision_tree_regressor.DecisionTreeRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "delong_auc",
+    "kind": "operator",
+    "title": "DeLong AUC",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "AUC with the DeLong variance and normal confidence interval.",
+    "doc": "src/task/step/steps/delong_auc.DeLongAucStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "deming_regression",
+    "kind": "operator",
+    "title": "Deming regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Deming regression：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Method A、Method B、Error Ratio。",
+    "doc": "src/task/step/steps/deming_regression.DemingRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "describe",
+    "kind": "operator",
+    "title": "数据概览",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "查看形状、标签、缺失情况与全局统计。支持分块读取。",
+    "doc": "src/task/step/steps/describe.DescribeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "dfbetas",
+    "kind": "operator",
+    "title": "Standardized DFBETAS",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Standardized DFBETAS：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、响应变量。",
+    "doc": "src/task/step/steps/dfbetas.DfbetasStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "dffits",
+    "kind": "operator",
+    "title": "DFFITS",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "DFFITS：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、响应变量。",
+    "doc": "src/task/step/steps/dffits.DffitsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "dfgls",
+    "kind": "operator",
+    "title": "DF-GLS unit-root test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "DF-GLS test with local-to-unity demeaning or detrending.",
+    "doc": "src/task/step/steps/dfgls.DfglsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "difference_sign",
+    "kind": "operator",
+    "title": "Difference-sign test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Difference-sign test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、数值字段、Alternative。",
+    "doc": "src/task/step/steps/difference_sign.DifferenceSignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "distance_correlation",
+    "kind": "operator",
+    "title": "Distance correlation",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Distance correlation：接收 2 个输入，输出 Form；主要参数：样本维度、X Feature Dim、Y Feature Dim。",
+    "doc": "src/task/step/steps/distance_correlation.DistanceCorrelationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "distance_matrix",
+    "kind": "operator",
+    "title": "Distance matrix",
+    "category": "统计分析",
+    "version": "1.0.0",
+    "description": "Pairwise distance matrix along one axis.",
+    "doc": "src/task/step/steps/distance_matrix.DistanceMatrixStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "diversity",
+    "kind": "operator",
+    "title": "Alpha diversity",
+    "category": "统计分析",
+    "version": "1.0.0",
+    "description": "Compute diversity metrics along one axis.",
+    "doc": "src/task/step/steps/diversity.DiversityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "dotplot",
+    "kind": "operator",
+    "title": "Dot plot",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "Dot plot of features grouped by a label column.",
+    "doc": "src/task/step/steps/dotplot.DotplotStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "doublet_detect",
+    "kind": "operator",
+    "title": "Doublet detection",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Doublet detection：接收 1 个输入，输出 Form；主要参数：Cell Dim、Gene Dim、Expected Doublet Rate、随机种子、阈值、N Prin Comps。",
+    "doc": "src/task/step/steps/doublet_detect.DoubletDetectStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "drop",
+    "kind": "operator",
+    "title": "移除特征",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "移除指定维度上的标签。",
+    "doc": "src/task/step/steps/drop.DropStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "dunn_index",
+    "kind": "operator",
+    "title": "Dunn index",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Ratio of the smallest between-cluster distance to the largest diameter.",
+    "doc": "src/task/step/steps/dunn_index.DunnIndexStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "dunn_test",
+    "kind": "operator",
+    "title": "Dunn post-hoc test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Pairwise Dunn comparisons with tie correction.",
+    "doc": "src/task/step/steps/dunn_test.DunnTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "durbin_test",
+    "kind": "operator",
+    "title": "Durbin test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Durbin's rank sum test for a balanced incomplete block design.",
+    "doc": "src/task/step/steps/durbin_test.DurbinTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "durbin_watson",
+    "kind": "operator",
+    "title": "Durbin-Watson statistic",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Durbin-Watson statistic：接收 1 个输入，输出 Form；主要参数：样本维度、Variable Dim、响应变量、Regressors。",
+    "doc": "src/task/step/steps/durbin_watson.DurbinWatsonStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "egger_test",
+    "kind": "operator",
+    "title": "Egger's test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Egger's test：接收 1 个输入，输出 Form；主要参数：Study Dim、Statistic Dim、Effect Label、Se Label。",
+    "doc": "src/task/step/steps/egger_test.EggerTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "elastic_net_regressor",
+    "kind": "operator",
+    "title": "Elastic net regressor",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Elastic net regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/elastic_net_regressor.ElasticNetRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "engle_granger",
+    "kind": "operator",
+    "title": "Engle-Granger cointegration test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Engle-Granger cointegration test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Y Label、X Label、Trend、Lags。",
+    "doc": "src/task/step/steps/engle_granger.EngleGrangerStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "enrich_go",
+    "kind": "operator",
+    "title": "enrich_go",
+    "category": "analysis",
+    "version": "1.0.0",
+    "description": "Hypergeometric enrichment of one term axis over two inputs.",
+    "doc": "src/task/step/steps/enrich_go.EnrichGoStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "enrichment_plot",
+    "kind": "operator",
+    "title": "enrichment_plot",
+    "category": "visualization",
+    "version": "1.0.0",
+    "description": "Horizontal bar plot of enrichment results.",
+    "doc": "src/task/step/steps/enrichment_plot.EnrichmentPlotStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "envfit",
+    "kind": "operator",
+    "title": "Environmental vector fitting",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Environmental vector fitting：接收 2 个输入，输出 Form；主要参数：样本维度、Component Dim、特征维度。",
+    "doc": "src/task/step/steps/envfit.EnvfitStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "eta_squared",
+    "kind": "operator",
+    "title": "Eta squared",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Per-feature eta-squared, the between-group share of total variance.",
+    "doc": "src/task/step/steps/eta_squared.EtaSquaredStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ewma_chart",
+    "kind": "operator",
+    "title": "EWMA control chart",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Exponentially weighted moving-average chart with time-varying limits.",
+    "doc": "src/task/step/steps/ewma_chart.EwmaChartStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "explode",
+    "kind": "operator",
+    "title": "explode",
+    "category": "data",
+    "version": "1.0.0",
+    "description": "Expand a multi-valued info field into separate positions.",
+    "doc": "src/task/step/steps/explode.ExplodeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "extra_trees_classifier",
+    "kind": "operator",
+    "title": "Extra Trees classifier",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Extra Trees classifier：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/extra_trees_classifier.ExtraTreesClassifierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "extra_trees_regressor",
+    "kind": "operator",
+    "title": "Extra Trees regressor",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Extra Trees regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/extra_trees_regressor.ExtraTreesRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "factor_analysis",
+    "kind": "operator",
+    "title": "Factor analysis",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Factor analysis：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、Max Iter。",
+    "doc": "src/task/step/steps/factor_analysis.FactorAnalysisStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "filter_by",
+    "kind": "operator",
+    "title": "Filter by metrics",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "Keep positions along a dim that satisfy thresholds from another form.",
+    "doc": "src/task/step/steps/filter_by.FilterByStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "filter_min",
+    "kind": "operator",
+    "title": "低表达过滤",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "按最低信号和有效样本数过滤",
+    "doc": "src/task/step/steps/filter_min.FilterMinStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "find_orfs",
+    "kind": "operator",
+    "title": "find_orfs",
+    "category": "analysis",
+    "version": "1.0.0",
+    "description": "Locate complete ATG..stop ORFs on both strands.",
+    "doc": "src/task/step/steps/find_orfs.FindOrfsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fine_gray",
+    "kind": "operator",
+    "title": "Fine-Gray subdistribution regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fine-Gray subdistribution hazard regression.",
+    "doc": "src/task/step/steps/fine_gray.FineGrayStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fisher_combined",
+    "kind": "operator",
+    "title": "Fisher combined p-value",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fisher combined p-value：接收 1 个输入，输出 Form；主要参数：特征维度、Statistic Dim、Pvalue Dims。",
+    "doc": "src/task/step/steps/fisher_combined.FisherCombinedStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fisher_exact",
+    "kind": "operator",
+    "title": "Fisher exact test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fisher exact test：接收 1 个输入，输出 Form；主要参数：Row Dim、Col Dim、Alternative。",
+    "doc": "src/task/step/steps/fisher_exact.FisherExactStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fleiss_kappa",
+    "kind": "operator",
+    "title": "Fleiss' kappa",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fleiss' kappa：接收 1 个输入，输出 Form；主要参数：Subject Dim、Category Dim、方法。",
+    "doc": "src/task/step/steps/fleiss_kappa.FleissKappaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fligner_killeen",
+    "kind": "operator",
+    "title": "Fligner-Killeen variance homogeneity test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fligner-Killeen median-centered rank test for each feature.",
+    "doc": "src/task/step/steps/fligner_killeen.FlignerKilleenStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fligner_kruskal",
+    "kind": "operator",
+    "title": "Fligner-Killeen test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fligner-Killeen test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、Center。",
+    "doc": "src/task/step/steps/fligner_kruskal.FlignerKruskalStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fligner_wolfe",
+    "kind": "operator",
+    "title": "Fligner-Wolfe test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Rank test comparing every treatment group with a control group.",
+    "doc": "src/task/step/steps/fligner_wolfe.FlignerWolfeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "flow_compensate",
+    "kind": "operator",
+    "title": "Flow cytometry compensation",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Flow cytometry compensation：接收 2 个输入，输出 Form；主要参数：Event Dim、Channel Dim、Detector Dim、Fluorochrome Dim。",
+    "doc": "src/task/step/steps/flow_compensate.FlowCompensateStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "flow_gate",
+    "kind": "operator",
+    "title": "Flow cytometry rectangular gate",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Flow cytometry rectangular gate：接收 1 个输入，输出 Form；主要参数：Event Dim、Channel Dim、X Channel、Y Channel、X Min、X Max。",
+    "doc": "src/task/step/steps/flow_gate.FlowGateStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "flow_transform",
+    "kind": "operator",
+    "title": "Flow cytometry arcsinh transform",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Flow cytometry arcsinh transform：接收 1 个输入，输出 Form；主要参数：Event Dim、Channel Dim、Channels、A、B、C。",
+    "doc": "src/task/step/steps/flow_transform.FlowTransformStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "forest_plot",
+    "kind": "operator",
+    "title": "Forest plot",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "HR 与置信区间",
+    "doc": "src/task/step/steps/forest_plot.ForestPlotStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fowlkes_mallows",
+    "kind": "operator",
+    "title": "Fowlkes-Mallows index",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Geometric mean of pairwise precision and recall between two partitions.",
+    "doc": "src/task/step/steps/fowlkes_mallows.FowlkesMallowsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "friedman",
+    "kind": "operator",
+    "title": "Friedman test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Friedman test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段。",
+    "doc": "src/task/step/steps/friedman.FriedmanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fst",
+    "kind": "operator",
+    "title": "Fst",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Fst：接收 2 个输入，输出 Form；主要参数：Variant Dim、样本维度、分组字段、A 组、B 组。",
+    "doc": "src/task/step/steps/fst.FstStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "g_test",
+    "kind": "operator",
+    "title": "G-test of independence",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "G-test of independence：接收 1 个输入，输出 Form；主要参数：Row Dim、Column Dim。",
+    "doc": "src/task/step/steps/g_test.GTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "games_howell",
+    "kind": "operator",
+    "title": "Games-Howell post-hoc test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "All-pairwise Games-Howell comparisons for every feature.",
+    "doc": "src/task/step/steps/games_howell.GamesHowellStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gamma_regression",
+    "kind": "operator",
+    "title": "Gamma regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Gamma GLM with a log link, fitted by maximum likelihood.",
+    "doc": "src/task/step/steps/gamma_regression.GammaRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "garch",
+    "kind": "operator",
+    "title": "GARCH volatility model",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fit a GARCH(p, q) model with a constant or zero mean.",
+    "doc": "src/task/step/steps/garch.GarchStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gaussian_mixture",
+    "kind": "operator",
+    "title": "Gaussian mixture clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Gaussian mixture model clustering.",
+    "doc": "src/task/step/steps/gaussian_mixture.GaussianMixtureStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gaussian_process_regressor",
+    "kind": "operator",
+    "title": "Gaussian-process regression",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Fit a Gaussian-process regressor with a fixed RBF kernel.",
+    "doc": "src/task/step/steps/gaussian_process_regressor.GaussianProcessRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gaussian_random_projection",
+    "kind": "operator",
+    "title": "Gaussian random projection",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Gaussian random projection：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、随机种子。",
+    "doc": "src/task/step/steps/gaussian_random_projection.GaussianRandomProjectionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gc_skew_profile",
+    "kind": "operator",
+    "title": "gc_skew_profile",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "GC / AT composition and cumulative GC skew over sliding windows.",
+    "doc": "src/task/step/steps/gc_skew_profile.GcSkewProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gene_list_to_hits",
+    "kind": "operator",
+    "title": "gene_list_to_hits",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Turn a gene list into a subset hits matrix over a universe.",
+    "doc": "src/task/step/steps/gene_list_to_hits.GeneListToHitsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gene_structure",
+    "kind": "operator",
+    "title": "gene_structure",
+    "category": "analysis",
+    "version": "1.0.0",
+    "description": "Per-gene exon/intron/CDS summary for GFF3/GTF.",
+    "doc": "src/task/step/steps/gene_structure.GeneStructureStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gff_feature_stats",
+    "kind": "operator",
+    "title": "gff_feature_stats",
+    "category": "analysis",
+    "version": "1.0.0",
+    "description": "Per-feature-type length and count statistics for GFF3/GTF.",
+    "doc": "src/task/step/steps/gff_feature_stats.GffFeatureStatsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "goldfeld_quandt",
+    "kind": "operator",
+    "title": "Goldfeld-Quandt test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Goldfeld-Quandt test：接收 1 个输入，输出 Form；主要参数：样本维度、Variable Dim、因变量、自变量、排序变量（默认自变量）、Fraction。",
+    "doc": "src/task/step/steps/goldfeld_quandt.GoldfeldQuandtStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "goodman_kruskal_gamma",
+    "kind": "operator",
+    "title": "Goodman-Kruskal gamma",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Goodman-Kruskal gamma, the symmetric ordinal association measure.",
+    "doc": "src/task/step/steps/goodman_kruskal_gamma.GoodmanKruskalGammaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gradient_boosting_classifier",
+    "kind": "operator",
+    "title": "Gradient Boosting classifier",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Gradient Boosting classifier：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/gradient_boosting_classifier.GradientBoostingClassifierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gradient_boosting_regressor",
+    "kind": "operator",
+    "title": "Gradient Boosting regressor",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Gradient Boosting regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/gradient_boosting_regressor.GradientBoostingRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "granger_causality",
+    "kind": "operator",
+    "title": "Granger causality test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Granger causality test：接收 1 个输入，输出 Form；主要参数：Time Dim、特征维度、Cause Label、Effect Label、Max Lag。",
+    "doc": "src/task/step/steps/granger_causality.GrangerCausalityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "grubbs_test",
+    "kind": "operator",
+    "title": "Grubbs outlier test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Grubbs (extreme studentized deviate) test for one outlier.",
+    "doc": "src/task/step/steps/grubbs_test.GrubbsTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gsea",
+    "kind": "operator",
+    "title": "Preranked GSEA",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Preranked GSEA：接收 2 个输入，输出 Form；主要参数：Gene Dim、统计维度、Gene Set Dim、Rank Label、Weight、置换次数。",
+    "doc": "src/task/step/steps/gsea.GseaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gwet_ac1",
+    "kind": "operator",
+    "title": "Gwet's AC1",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Gwet's AC1：接收 1 个输入，输出 Form；主要参数：Subject Dim、Rater Dim。",
+    "doc": "src/task/step/steps/gwet_ac1.GwetAc1Step.md",
+    "status": "generated"
+  },
+  {
+    "id": "hardy_weinberg",
+    "kind": "operator",
+    "title": "Hardy-Weinberg equilibrium",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Exact and descriptive Hardy-Weinberg statistics for biallelic variants.",
+    "doc": "src/task/step/steps/hardy_weinberg.HardyWeinbergStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "harvey_collier",
+    "kind": "operator",
+    "title": "Harvey-Collier linearity test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Harvey-Collier linearity test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Response Label、Predictors、分类协变量。",
+    "doc": "src/task/step/steps/harvey_collier.HarveyCollierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "heatmap",
+    "kind": "operator",
+    "title": "Heatmap",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "矩阵热图与层次聚类",
+    "doc": "src/task/step/steps/heatmap.HeatmapStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "hierarchical_clustering",
+    "kind": "operator",
+    "title": "Hierarchical clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Cluster samples with single/complete/average/Ward linkage.",
+    "doc": "src/task/step/steps/hierarchical_clustering.HierarchicalClusteringStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "histogram",
+    "kind": "operator",
+    "title": "直方图",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "查看指定数值标签的分布。",
+    "doc": "src/task/step/steps/histogram.HistogramStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "holm_adjust",
+    "kind": "operator",
+    "title": "Holm adjustment",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Holm step-down p-value adjustment; output feature x qvalue.",
+    "doc": "src/task/step/steps/holm_adjust.HolmAdjustStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "homogeneity_completeness_v_measure",
+    "kind": "operator",
+    "title": "Homogeneity, completeness, V-measure",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Three entropy-based agreement scores for two partitions.",
+    "doc": "src/task/step/steps/homogeneity_completeness_v_measure.HomogeneityCompletenessVMeasureStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "hosmer_lemeshow",
+    "kind": "operator",
+    "title": "Hosmer-Lemeshow test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Hosmer-Lemeshow test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Outcome Label、Probability Label、分组顺序。",
+    "doc": "src/task/step/steps/hosmer_lemeshow.HosmerLemeshowStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "hotelling_t2",
+    "kind": "operator",
+    "title": "Hotelling's T-squared",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Hotelling's T-squared：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、A 组、B 组。",
+    "doc": "src/task/step/steps/hotelling_t2.HotellingT2Step.md",
+    "status": "generated"
+  },
+  {
+    "id": "huber_regressor",
+    "kind": "operator",
+    "title": "Huber regressor",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Huber regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/huber_regressor.HuberRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "hurst_exponent",
+    "kind": "operator",
+    "title": "Hurst exponent (simple R/S)",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Simple R/S Hurst exponent, matching R pracma::hurstexp(x)$Hs.",
+    "doc": "src/task/step/steps/hurst_exponent.HurstExponentStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "hvg",
+    "kind": "operator",
+    "title": "Highly variable genes",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Highly variable genes：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、N Top、Min Mean、Max Mean。",
+    "doc": "src/task/step/steps/hvg.HvgStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "hwe",
+    "kind": "operator",
+    "title": "HWE",
+    "category": "质量控制",
+    "version": "1.0.0",
+    "description": "Hardy–Weinberg 平衡过滤。输入需要二倍体基因型。",
+    "doc": "src/task/step/steps/hwe.HweStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ica",
+    "kind": "operator",
+    "title": "ICA",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "ICA：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、Whiten、Max Iter、随机种子。",
+    "doc": "src/task/step/steps/ica.IcaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "impute",
+    "kind": "operator",
+    "title": "缺失值填补",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "以 Min、Median 或 Mean 填补缺失",
+    "doc": "src/task/step/steps/impute.ImputeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "integrated_brier_score",
+    "kind": "operator",
+    "title": "Integrated Brier score (Cox)",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Trapezoidal integral of the Cox IPCW Brier score.",
+    "doc": "src/task/step/steps/integrated_brier_score.IntegratedBrierScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "integrated_discrimination_improvement",
+    "kind": "operator",
+    "title": "Integrated discrimination improvement",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Integrated discrimination improvement：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Outcome Label、Old Risk Label、New Risk Label。",
+    "doc": "src/task/step/steps/integrated_discrimination_improvement.IntegratedDiscriminationImprovementStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interval_censored_regression",
+    "kind": "operator",
+    "title": "Interval-censored Weibull AFT",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fit a Weibull AFT model to interval-censored observations.",
+    "doc": "src/task/step/steps/interval_censored_regression.IntervalCensoredRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interval_merge",
+    "kind": "operator",
+    "title": "interval_merge",
+    "category": "analysis",
+    "version": "1.0.0",
+    "description": "Merge overlapping BED intervals per chromosome.",
+    "doc": "src/task/step/steps/interval_merge.IntervalMergeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interval_overlap",
+    "kind": "operator",
+    "title": "interval_overlap",
+    "category": "analysis",
+    "version": "1.0.0",
+    "description": "Pairwise overlap of intervals between two BED forms.",
+    "doc": "src/task/step/steps/interval_overlap.IntervalOverlapStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interval_stats",
+    "kind": "operator",
+    "title": "interval_stats",
+    "category": "analysis",
+    "version": "1.0.0",
+    "description": "Per-chromosome interval count and length statistics.",
+    "doc": "src/task/step/steps/interval_stats.IntervalStatsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "intraclass_correlation",
+    "kind": "operator",
+    "title": "Intraclass correlation",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Intraclass correlation：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Raters、Model、Type、Unit。",
+    "doc": "src/task/step/steps/intraclass_correlation.IntraclassCorrelationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "inverse_gaussian_regression",
+    "kind": "operator",
+    "title": "Inverse Gaussian regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Inverse Gaussian GLM with a log link, fitted by maximum likelihood.",
+    "doc": "src/task/step/steps/inverse_gaussian_regression.InverseGaussianRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "isolation_forest",
+    "kind": "operator",
+    "title": "Isolation Forest",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Isolation Forest anomaly scores.",
+    "doc": "src/task/step/steps/isolation_forest.IsolationForestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "isomap",
+    "kind": "operator",
+    "title": "Isomap",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Isomap：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、邻居数。",
+    "doc": "src/task/step/steps/isomap.IsomapStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "isotonic",
+    "kind": "operator",
+    "title": "Isotonic regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fit a monotone (increasing or decreasing) least-squares curve.",
+    "doc": "src/task/step/steps/isotonic.IsotonicStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "jarque_bera",
+    "kind": "operator",
+    "title": "Jarque-Bera normality test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Jarque-Bera normality test：接收 1 个输入，输出 Form；主要参数：特征维度、样本维度。",
+    "doc": "src/task/step/steps/jarque_bera.JarqueBeraStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "johansen",
+    "kind": "operator",
+    "title": "Johansen cointegration test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Johansen cointegration test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Det Order、K Ar Diff。",
+    "doc": "src/task/step/steps/johansen.JohansenStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "join",
+    "kind": "operator",
+    "title": "Join",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "Join two forms along a shared dim by label.",
+    "doc": "src/task/step/steps/join.JoinStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "jonckheere_terpstra",
+    "kind": "operator",
+    "title": "Jonckheere-Terpstra test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Rank-based test for a monotone trend across ordered groups.",
+    "doc": "src/task/step/steps/jonckheere_terpstra.JonckheereTerpstraStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "kaplan_meier",
+    "kind": "operator",
+    "title": "KM",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "分组生存曲线与置信区间",
+    "doc": "src/task/step/steps/kaplan_meier.KaplanMeierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "kendall_tau",
+    "kind": "operator",
+    "title": "Kendall tau",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Kendall tau：接收 2 个输入，输出 Form；主要参数：样本维度、Feature X、Feature Y。",
+    "doc": "src/task/step/steps/kendall_tau.KendallTauStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "kendall_w",
+    "kind": "operator",
+    "title": "Kendall's W",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Kendall's W with column-wise ranks and no tie correction.",
+    "doc": "src/task/step/steps/kendall_w.KendallWStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "kernel_pca",
+    "kind": "operator",
+    "title": "Kernel PCA",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Kernel PCA：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、Kernel、Gamma。",
+    "doc": "src/task/step/steps/kernel_pca.KernelPcaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "kmer_count",
+    "kind": "operator",
+    "title": "kmer_count",
+    "category": "analysis",
+    "version": "1.0.0",
+    "description": "Count k-mers per sequence for any sequence-codes Form.",
+    "doc": "src/task/step/steps/kmer_count.KmerCountStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "kmo_test",
+    "kind": "operator",
+    "title": "KMO sampling adequacy",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "KMO overall and per-variable measures of sampling adequacy.",
+    "doc": "src/task/step/steps/kmo_test.KmoTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "kpss_test",
+    "kind": "operator",
+    "title": "KPSS stationarity test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "KPSS stationarity test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、数值字段、Regression、Lags。",
+    "doc": "src/task/step/steps/kpss_test.KpssTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "krippendorff_alpha",
+    "kind": "operator",
+    "title": "Krippendorff's alpha",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Krippendorff's alpha：接收 1 个输入，输出 Form；主要参数：Subject Dim、Rater Dim、Level。",
+    "doc": "src/task/step/steps/krippendorff_alpha.KrippendorffAlphaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "kruskal",
+    "kind": "operator",
+    "title": "Kruskal-Wallis test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Kruskal-Wallis test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段。",
+    "doc": "src/task/step/steps/kruskal.KruskalStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ks_2samp",
+    "kind": "operator",
+    "title": "Two-sample KS test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Two-sample KS test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、Alternative、方法。",
+    "doc": "src/task/step/steps/ks_2samp.Ks2SampStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "lasso_regression",
+    "kind": "operator",
+    "title": "Lasso regression",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Lasso regression：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/lasso_regression.LassoRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ld_prune",
+    "kind": "operator",
+    "title": "LD pruning",
+    "category": "质量控制",
+    "version": "1.0.0",
+    "description": "在滑动窗口内移除高度相关的变异。",
+    "doc": "src/task/step/steps/ld_prune.LdPruneStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "lda_classifier",
+    "kind": "operator",
+    "title": "Linear Discriminant Analysis classifier",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Linear Discriminant Analysis classifier：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/lda_classifier.LdaClassifierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "leave_one_out",
+    "kind": "operator",
+    "title": "Leave-one-out meta-analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Refit an intercept-only meta-analysis after omitting each study.",
+    "doc": "src/task/step/steps/leave_one_out.LeaveOneOutStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "levene",
+    "kind": "operator",
+    "title": "Levene variance test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Levene variance test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、Center。",
+    "doc": "src/task/step/steps/levene.LeveneStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "levene_test",
+    "kind": "operator",
+    "title": "Levene variance homogeneity test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Levene test for each feature.",
+    "doc": "src/task/step/steps/levene_test.LeveneTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "leverage",
+    "kind": "operator",
+    "title": "OLS leverage",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "OLS leverage：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、响应变量。",
+    "doc": "src/task/step/steps/leverage.LeverageStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "lillie_test",
+    "kind": "operator",
+    "title": "Lilliefors normality test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Lilliefors (Kolmogorov-Smirnov) normality test.",
+    "doc": "src/task/step/steps/lillie_test.LillieTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "limma_de",
+    "kind": "operator",
+    "title": "Moderated t differential analysis",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Moderated t differential analysis：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组字段、A 组、B 组、Prior Df。",
+    "doc": "src/task/step/steps/limma_de.LimmaDeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "line",
+    "kind": "operator",
+    "title": "折线图",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "选择两个数值标签，按横坐标排序后绘制曲线。",
+    "doc": "src/task/step/steps/line.LineStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "linear_mixed_model",
+    "kind": "operator",
+    "title": "Linear mixed model",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Random-intercept linear mixed model via statsmodels MixedLM.",
+    "doc": "src/task/step/steps/linear_mixed_model.LinearMixedModelStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "linear_regression",
+    "kind": "operator",
+    "title": "Linear regression",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Linear regression：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/linear_regression.LinearRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ljung_box",
+    "kind": "operator",
+    "title": "Ljung-Box autocorrelation test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Ljung-Box autocorrelation test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、数值字段、Lags。",
+    "doc": "src/task/step/steps/ljung_box.LjungBoxStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "locally_linear_embedding",
+    "kind": "operator",
+    "title": "Locally linear embedding",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Locally linear embedding：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、邻居数、方法、随机种子。",
+    "doc": "src/task/step/steps/locally_linear_embedding.LocallyLinearEmbeddingStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "log_transform",
+    "kind": "operator",
+    "title": "Log",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "按指定底数与伪计数变换",
+    "doc": "src/task/step/steps/log_transform.LogTransformStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "logistic_regression",
+    "kind": "operator",
+    "title": "Logistic regression",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Logistic regression：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/logistic_regression.LogisticRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "logrank_test",
+    "kind": "operator",
+    "title": "Log-rank",
+    "category": "统计分析",
+    "version": "1.0.0",
+    "description": "整体与两两生存差异检验",
+    "doc": "src/task/step/steps/logrank_test.LogrankTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "lowess",
+    "kind": "operator",
+    "title": "LOWESS smoother",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cleveland's LOWESS smoother with a fixed span and robust iterations.",
+    "doc": "src/task/step/steps/lowess.LowessStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ma_plot",
+    "kind": "operator",
+    "title": "MA plot",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "平均表达量与效应大小",
+    "doc": "src/task/step/steps/ma_plot.MaPlotStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mack_wolfe",
+    "kind": "operator",
+    "title": "Mack-Wolfe umbrella test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Rank test for a monotone rise to a known peak and fall afterwards.",
+    "doc": "src/task/step/steps/mack_wolfe.MackWolfeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "maf",
+    "kind": "operator",
+    "title": "MAF",
+    "category": "质量控制",
+    "version": "1.0.0",
+    "description": "过滤低频变异。输入需要基因型及 ploidy 元数据。",
+    "doc": "src/task/step/steps/maf.MafStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mahalanobis_distance",
+    "kind": "operator",
+    "title": "Mahalanobis distance",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Squared Mahalanobis distance from the sample mean.",
+    "doc": "src/task/step/steps/mahalanobis_distance.MahalanobisDistanceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "manhattan",
+    "kind": "operator",
+    "title": "曼哈顿图",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "用染色体、位置和 P 值绘制关联结果。",
+    "doc": "src/task/step/steps/manhattan.ManhattanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mann_kendall",
+    "kind": "operator",
+    "title": "Mann-Kendall trend",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Per-feature Mann-Kendall S, Kendall tau, z and two-sided p.",
+    "doc": "src/task/step/steps/mann_kendall.MannKendallStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mann_whitney",
+    "kind": "operator",
+    "title": "Mann-Whitney U test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Mann-Whitney U test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、Alternative。",
+    "doc": "src/task/step/steps/mann_whitney.MannWhitneyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mantel",
+    "kind": "operator",
+    "title": "Mantel test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Mantel test：接收 2 个输入，输出 Form；主要参数：样本维度、Sample B Dim、N Perm、随机种子、Alternative。",
+    "doc": "src/task/step/steps/mantel.MantelStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mantel_haenszel",
+    "kind": "operator",
+    "title": "Mantel-Haenszel test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Mantel-Haenszel test：接收 1 个输入，输出 Form；主要参数：Stratum Dim、特征维度、Case Exposed、Case Unexposed、Control Exposed、Control Unexposed。",
+    "doc": "src/task/step/steps/mantel_haenszel.MantelHaenszelStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mardia_test",
+    "kind": "operator",
+    "title": "Mardia multivariate normality test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Mardia's multivariate normality tests.",
+    "doc": "src/task/step/steps/mardia_test.MardiaTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "marker_score",
+    "kind": "operator",
+    "title": "Signature score",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Signature score：接收 2 个输入，输出 Form；主要参数：Cell Dim、Gene Dim、Gene Set Dim、Min Genes、Ctrl Size、N Bins。",
+    "doc": "src/task/step/steps/marker_score.MarkerScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mauchly_test",
+    "kind": "operator",
+    "title": "Mauchly's sphericity test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Mauchly's sphericity test with the chi-square approximation.",
+    "doc": "src/task/step/steps/mauchly_test.MauchlyTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mcnemar",
+    "kind": "operator",
+    "title": "McNemar test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "McNemar test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Label A、Label B、Exact。",
+    "doc": "src/task/step/steps/mcnemar.McnemarStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mds",
+    "kind": "operator",
+    "title": "Multidimensional scaling",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Multidimensional scaling：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、距离/相关指标。",
+    "doc": "src/task/step/steps/mds.MdsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "meta_analysis",
+    "kind": "operator",
+    "title": "Meta-analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Meta-analysis：接收 2 个输入，输出 Form；主要参数：Variant Dim、Study Dim、方法、Correction。",
+    "doc": "src/task/step/steps/meta_analysis.MetaAnalysisStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "meta_regression",
+    "kind": "operator",
+    "title": "Meta-regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Meta-regression：接收 1 个输入，输出 Form；主要参数：Study Dim、特征维度、Effect Label、Variance Label、Moderators、分类协变量。",
+    "doc": "src/task/step/steps/meta_regression.MetaRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "min_max_scale",
+    "kind": "operator",
+    "title": "Min-max scaling",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Min-max scaling：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、分析维度。",
+    "doc": "src/task/step/steps/min_max_scale.MinMaxScaleStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "missing",
+    "kind": "operator",
+    "title": "缺失值过滤",
+    "category": "质量控制",
+    "version": "1.0.0",
+    "description": "按指定维度过滤缺失比例过高的样本或特征。",
+    "doc": "src/task/step/steps/missing.MissingStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mood_median_test",
+    "kind": "operator",
+    "title": "Mood's median test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Mood's median test for equal group medians.",
+    "doc": "src/task/step/steps/mood_median_test.MoodMedianTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mood_scale",
+    "kind": "operator",
+    "title": "Mood two-sample scale test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Mood's two-sample rank test for equality of scale.",
+    "doc": "src/task/step/steps/mood_scale.MoodScaleStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "moses_test",
+    "kind": "operator",
+    "title": "Moses extreme reactions test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Moses two-sample test for extreme reactions.",
+    "doc": "src/task/step/steps/moses_test.MosesTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "motif_scan",
+    "kind": "operator",
+    "title": "motif_scan",
+    "category": "analysis",
+    "version": "1.0.0",
+    "description": "Count IUPAC motif occurrences per sequence.",
+    "doc": "src/task/step/steps/motif_scan.MotifScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "multinomial_logit",
+    "kind": "operator",
+    "title": "Multinomial logistic regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Maximum-likelihood multinomial logit with the first level as reference.",
+    "doc": "src/task/step/steps/multinomial_logit.MultinomialLogitStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "multinomial_nb_classifier",
+    "kind": "operator",
+    "title": "Multinomial Naive Bayes classifier",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Multinomial Naive Bayes classifier：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/multinomial_nb_classifier.MultinomialNBClassifierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mutual_information",
+    "kind": "operator",
+    "title": "Mutual information",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Mutual information：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、Task、邻居数。",
+    "doc": "src/task/step/steps/mutual_information.MutualInformationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "negative_binomial_regression",
+    "kind": "operator",
+    "title": "Negative-binomial regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Negative-binomial regression：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Response Label、Predictors、分类协变量、Maxiter。",
+    "doc": "src/task/step/steps/negative_binomial_regression.NegativeBinomialRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "nemenyi_test",
+    "kind": "operator",
+    "title": "Nemenyi post-hoc test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "All-pairwise Nemenyi comparisons using mean ranks.",
+    "doc": "src/task/step/steps/nemenyi_test.NemenyiTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "net_reclassification_improvement",
+    "kind": "operator",
+    "title": "Continuous net reclassification improvement",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Continuous net reclassification improvement：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Outcome Label、Old Risk Label、New Risk Label。",
+    "doc": "src/task/step/steps/net_reclassification_improvement.NetReclassificationImprovementStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "nmds",
+    "kind": "operator",
+    "title": "Non-metric multidimensional scaling",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Non-metric multidimensional scaling from a dissimilarity matrix.",
+    "doc": "src/task/step/steps/nmds.NmdsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "nmf",
+    "kind": "operator",
+    "title": "NMF",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "NMF：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、Init、Max Iter、随机种子。",
+    "doc": "src/task/step/steps/nmf.NmfStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "normalize",
+    "kind": "operator",
+    "title": "归一化",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "CPM、DESeq2 size factors、Quantile 或 Z-score",
+    "doc": "src/task/step/steps/normalize.NormalizeStep.md",
+    "status": "authored"
+  },
+  {
+    "id": "normalized_mutual_info",
+    "kind": "operator",
+    "title": "Normalized mutual information",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Normalized mutual information between two partitions.",
+    "doc": "src/task/step/steps/normalized_mutual_info.NormalizedMutualInfoStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "normaltest",
+    "kind": "operator",
+    "title": "D'Agostino-Pearson normality test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "D'Agostino-Pearson normality test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度。",
+    "doc": "src/task/step/steps/normaltest.NormaltestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "odds_ratio",
+    "kind": "operator",
+    "title": "Odds ratio",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Odds ratio：接收 1 个输入，输出 Form；主要参数：Row Dim、Col Dim、Correction、Confidence。",
+    "doc": "src/task/step/steps/odds_ratio.OddsRatioStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ora",
+    "kind": "operator",
+    "title": "Gene-set ORA",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Gene-set ORA：接收 2 个输入，输出 Form；主要参数：Gene Dim、统计维度、Gene Set Dim、P 值字段、log2FC 字段、P 值阈值。",
+    "doc": "src/task/step/steps/ora.OraStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "order_axis",
+    "kind": "operator",
+    "title": "order_axis",
+    "category": "data",
+    "version": "1.0.0",
+    "description": "Reorder an axis by a numeric info field, keeping all positions.",
+    "doc": "src/task/step/steps/order_axis.OrderAxisStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ordinal_logistic",
+    "kind": "operator",
+    "title": "Ordinal logistic regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Proportional-odds ordinal regression via statsmodels OrderedModel.",
+    "doc": "src/task/step/steps/ordinal_logistic.OrdinalLogisticStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pacf",
+    "kind": "operator",
+    "title": "Partial autocorrelation function",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Partial autocorrelation function：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、数值字段、Lags、显著性水平。",
+    "doc": "src/task/step/steps/pacf.PacfStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "page_test",
+    "kind": "operator",
+    "title": "Page test for ordered alternatives",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Page's L test for a monotone ordered alternative.",
+    "doc": "src/task/step/steps/page_test.PageTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pair_confusion_matrix",
+    "kind": "operator",
+    "title": "Pair confusion matrix",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Pair-count confusion matrix behind Rand-type agreement scores.",
+    "doc": "src/task/step/steps/pair_confusion_matrix.PairConfusionMatrixStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "partial_correlation",
+    "kind": "operator",
+    "title": "Partial correlation",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Partial correlation：接收 3 个输入，输出 Form；主要参数：样本维度、X Feature Dim、Y Feature Dim、Covariate Dim。",
+    "doc": "src/task/step/steps/partial_correlation.PartialCorrelationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "partial_mantel",
+    "kind": "operator",
+    "title": "Partial Mantel test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Partial Mantel test：接收 3 个输入，输出 Form；主要参数：样本维度、Sample B Dim、N Perm、随机种子。",
+    "doc": "src/task/step/steps/partial_mantel.PartialMantelStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "passing_bablok",
+    "kind": "operator",
+    "title": "Passing-Bablok regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Passing-Bablok regression：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Method A、Method B。",
+    "doc": "src/task/step/steps/passing_bablok.PassingBablokStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pca",
+    "kind": "operator",
+    "title": "PCA",
+    "category": "统计分析",
+    "version": "1.0.0",
+    "description": "标准化数据，提取主成分；缺失值以特征均值填充。",
+    "doc": "src/task/step/steps/pca.PcaStep.md",
+    "status": "authored"
+  },
+  {
+    "id": "pca_loadings",
+    "kind": "operator",
+    "title": "PCA loadings",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "PCA loadings：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、标准化。",
+    "doc": "src/task/step/steps/pca_loadings.PcaLoadingsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pcoa",
+    "kind": "operator",
+    "title": "Principal coordinates analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Principal coordinates from a symmetric distance matrix.",
+    "doc": "src/task/step/steps/pcoa.PcoaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "peak_nearest_gene",
+    "kind": "operator",
+    "title": "peak_nearest_gene",
+    "category": "analysis",
+    "version": "1.0.0",
+    "description": "Assign every BED interval to its nearest annotated gene.",
+    "doc": "src/task/step/steps/peak_nearest_gene.PeakNearestGeneStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "peptide_qvalue",
+    "kind": "operator",
+    "title": "Peptide q-values",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Peptide q-values：接收 1 个输入，输出 Form；主要参数：Psm Dim、特征维度、Score Label、Decoy Label、Decoy Values。",
+    "doc": "src/task/step/steps/peptide_qvalue.PeptideQvalueStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "permanova",
+    "kind": "operator",
+    "title": "PERMANOVA",
+    "category": "统计分析",
+    "version": "1.0.0",
+    "description": "PERMANOVA on a distance matrix with a grouping column.",
+    "doc": "src/task/step/steps/permanova.PermanovaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "permutation_test",
+    "kind": "operator",
+    "title": "Permutation test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Permutation test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、N Perm、随机种子。",
+    "doc": "src/task/step/steps/permutation_test.PermutationTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pettitt_test",
+    "kind": "operator",
+    "title": "Pettitt change-point test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Pettitt's non-parametric single change-point test.",
+    "doc": "src/task/step/steps/pettitt_test.PettittTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "phillips_perron",
+    "kind": "operator",
+    "title": "Phillips-Perron unit-root test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Phillips-Perron Z-tau test with Newey-West long-run variance.",
+    "doc": "src/task/step/steps/phillips_perron.PhillipsPerronStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pivot",
+    "kind": "operator",
+    "title": "pivot",
+    "category": "data",
+    "version": "1.0.0",
+    "description": "Pivot a long 2D table into a wide matrix by two categorical columns.",
+    "doc": "src/task/step/steps/pivot.PivotStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pls_regression",
+    "kind": "operator",
+    "title": "PLS regression",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "PLS regression：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/pls_regression.PlsRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "poisson_means_test",
+    "kind": "operator",
+    "title": "Exact two-sample Poisson rate test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Exact two-sample Poisson rate test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、A 组、B 组。",
+    "doc": "src/task/step/steps/poisson_means_test.PoissonMeansTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "poisson_regression",
+    "kind": "operator",
+    "title": "Poisson regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Poisson regression：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Response Label、Predictors、分类协变量、Maxiter。",
+    "doc": "src/task/step/steps/poisson_regression.PoissonRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "power_anova",
+    "kind": "operator",
+    "title": "ANOVA power",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Compute achieved power for a balanced one-way ANOVA.",
+    "doc": "src/task/step/steps/power_anova.PowerAnovaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "power_prop_test",
+    "kind": "operator",
+    "title": "Two-proportion power",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Compute achieved power for a two-sided two-proportion test.",
+    "doc": "src/task/step/steps/power_prop_test.PowerPropTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "power_t_test",
+    "kind": "operator",
+    "title": "t-test power",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Compute achieved power for a t test from effect size and sample size.",
+    "doc": "src/task/step/steps/power_t_test.PowerTTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "power_transform",
+    "kind": "operator",
+    "title": "Power transform",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Power transform：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、方法、标准化。",
+    "doc": "src/task/step/steps/power_transform.PowerTransformStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "precision_recall_curve",
+    "kind": "operator",
+    "title": "Precision-recall curve",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Precision-recall curve：接收 2 个输入，输出 Form；主要参数：样本维度、标签维度、Score Dim、目标字段、Score Label、Positive Label。",
+    "doc": "src/task/step/steps/precision_recall_curve.PrecisionRecallCurveStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "press",
+    "kind": "operator",
+    "title": "Prediction error sum of squares",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Prediction error sum of squares：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、响应变量。",
+    "doc": "src/task/step/steps/press.PressStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "prioritize",
+    "kind": "operator",
+    "title": "prioritize",
+    "category": "data",
+    "version": "1.0.0",
+    "description": "Keep the top positions along a dimension, ranked by an info field.",
+    "doc": "src/task/step/steps/prioritize.PrioritizeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "probit_regression",
+    "kind": "operator",
+    "title": "Probit regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fit a binomial probit regression by maximum likelihood.",
+    "doc": "src/task/step/steps/probit_regression.ProbitRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "procrustes",
+    "kind": "operator",
+    "title": "Procrustes analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Procrustes analysis：接收 2 个输入，输出 Form；主要参数：样本维度、Axis Dim、标准化。",
+    "doc": "src/task/step/steps/procrustes.ProcrustesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "protein_properties",
+    "kind": "operator",
+    "title": "Protein properties",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Protein properties：接收 1 个输入，输出 Form；主要参数：序列维度、位置维度。",
+    "doc": "src/task/step/steps/protein_properties.ProteinPropertiesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "protein_rollup",
+    "kind": "operator",
+    "title": "Peptide to protein rollup",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Peptide to protein rollup：接收 2 个输入，输出 Form；主要参数：Peptide Dim、样本维度、Protein Dim、方法、Min Peptides。",
+    "doc": "src/task/step/steps/protein_rollup.ProteinRollupStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "prs",
+    "kind": "operator",
+    "title": "Polygenic risk score",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Polygenic risk score：接收 2 个输入，输出 Form；主要参数：Variant Dim、样本维度、统计维度、Weight Label。",
+    "doc": "src/task/step/steps/prs.PrsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pseudobulk",
+    "kind": "operator",
+    "title": "Pseudobulk aggregation",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Pseudobulk aggregation：接收 2 个输入，输出 Form；主要参数：Cell Dim、Gene Dim、分组字段、方法。",
+    "doc": "src/task/step/steps/pseudobulk.PseudobulkStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "qc_metrics",
+    "kind": "operator",
+    "title": "qc_metrics",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Per-sample summary metrics along a feature axis.",
+    "doc": "src/task/step/steps/qc_metrics.QcMetricsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "quade_test",
+    "kind": "operator",
+    "title": "Quade test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Quade rank test for a complete block design.",
+    "doc": "src/task/step/steps/quade_test.QuadeTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "quantile_regression",
+    "kind": "operator",
+    "title": "Quantile regression",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Quantile regression：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/quantile_regression.QuantileRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "quantile_transform",
+    "kind": "operator",
+    "title": "Quantile transform",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Quantile transform：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、N Quantiles、Output Distribution、随机种子。",
+    "doc": "src/task/step/steps/quantile_transform.QuantileTransformStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rainbow_test",
+    "kind": "operator",
+    "title": "Rainbow test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Rainbow test：接收 1 个输入，输出 Form；主要参数：样本维度、Variable Dim、因变量、自变量、排序变量（默认自变量）、Fraction。",
+    "doc": "src/task/step/steps/rainbow_test.RainbowTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "random_forest_classifier",
+    "kind": "operator",
+    "title": "Random Forest classifier",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Random Forest classifier：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/random_forest_classifier.RandomForestClassifierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "random_forest_regressor",
+    "kind": "operator",
+    "title": "Random Forest regressor",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Random Forest regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/random_forest_regressor.RandomForestRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rank_axis",
+    "kind": "operator",
+    "title": "Rank features",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "Rank positions along one axis by a statistic.",
+    "doc": "src/task/step/steps/rank_axis.RankAxisStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rank_biserial",
+    "kind": "operator",
+    "title": "Rank-biserial correlation",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Per-feature rank-biserial correlation, positive when group0 tends larger.",
+    "doc": "src/task/step/steps/rank_biserial.RankBiserialStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rank_transform",
+    "kind": "operator",
+    "title": "Rank transform",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Rank transform：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、方法、Normal Score。",
+    "doc": "src/task/step/steps/rank_transform.RankTransformStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rarefaction",
+    "kind": "operator",
+    "title": "Individual-based rarefaction",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Expected species richness at a fixed number of individuals.",
+    "doc": "src/task/step/steps/rarefaction.RarefactionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "reduce",
+    "kind": "operator",
+    "title": "PCA / PCoA / UMAP / t-SNE",
+    "category": "统计分析",
+    "version": "1.0.0",
+    "description": "Reduce one axis of a 2D form to a small number of components.",
+    "doc": "src/task/step/steps/reduce.ReduceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "reduce_axis",
+    "kind": "operator",
+    "title": "Axis statistics",
+    "category": "统计分析",
+    "version": "1.0.0",
+    "description": "Reduce one axis of a form to summary statistics.",
+    "doc": "src/task/step/steps/reduce_axis.ReduceAxisStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "redundancy_analysis",
+    "kind": "operator",
+    "title": "Redundancy analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Constrained ordination of a response matrix by explanatory variables.",
+    "doc": "src/task/step/steps/redundancy_analysis.RedundancyAnalysisStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "regress",
+    "kind": "operator",
+    "title": "回归分析",
+    "category": "统计分析",
+    "version": "1.0.0",
+    "description": "逐个特征拟合回归模型，可加入协变量。",
+    "doc": "src/task/step/steps/regress.RegressStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "relatedness",
+    "kind": "operator",
+    "title": "Relatedness",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Relatedness：接收 1 个输入，输出 Form；主要参数：Variant Dim、样本维度、Min Maf。",
+    "doc": "src/task/step/steps/relatedness.RelatednessStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "remove_batch_effect",
+    "kind": "operator",
+    "title": "Remove batch effect",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Remove batch effect：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、Batch Label、协变量。",
+    "doc": "src/task/step/steps/remove_batch_effect.RemoveBatchEffectStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rename_dim",
+    "kind": "operator",
+    "title": "重命名维度",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "为一个维度更换名称。",
+    "doc": "src/task/step/steps/rename_dim.RenameDimStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "reset_test",
+    "kind": "operator",
+    "title": "RESET functional-form test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "RESET functional-form test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Response Label、Predictors、分类协变量、Power。",
+    "doc": "src/task/step/steps/reset_test.ResetTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "restriction_sites",
+    "kind": "operator",
+    "title": "Restriction sites",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Restriction sites：接收 1 个输入，输出 Form；主要参数：序列维度、位置维度、Enzymes。",
+    "doc": "src/task/step/steps/restriction_sites.RestrictionSitesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "reverse_complement",
+    "kind": "operator",
+    "title": "Reverse complement",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Reverse complement：接收 1 个输入，输出 Form；主要参数：序列维度、位置维度。",
+    "doc": "src/task/step/steps/reverse_complement.ReverseComplementStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ridge_regression",
+    "kind": "operator",
+    "title": "Ridge regression",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Ridge regression：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/ridge_regression.RidgeRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "risk_ratio",
+    "kind": "operator",
+    "title": "Risk ratio",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Risk ratio：接收 1 个输入，输出 Form；主要参数：Row Dim、Col Dim、Correction、Confidence。",
+    "doc": "src/task/step/steps/risk_ratio.RiskRatioStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rmst",
+    "kind": "operator",
+    "title": "Restricted mean survival",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Restricted mean survival：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、随访时间字段、事件字段、分组字段、Tau。",
+    "doc": "src/task/step/steps/rmst.RmstStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "robust_regression",
+    "kind": "operator",
+    "title": "Robust linear regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Huber M-estimator matching R MASS::rlm(psi = psi.huber).",
+    "doc": "src/task/step/steps/robust_regression.RobustRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "robust_scale",
+    "kind": "operator",
+    "title": "Robust scaling",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Robust scaling：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、分析维度。",
+    "doc": "src/task/step/steps/robust_scale.RobustScaleStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "roc_comparison",
+    "kind": "operator",
+    "title": "Paired ROC comparison",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Compare two AUCs measured on the same samples (DeLong).",
+    "doc": "src/task/step/steps/roc_comparison.RocComparisonStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "roc_curve",
+    "kind": "operator",
+    "title": "ROC curve",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "ROC curve points (FPR, TPR, threshold) for a binary target.",
+    "doc": "src/task/step/steps/roc_curve.RocCurveStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "runs_test",
+    "kind": "operator",
+    "title": "Runs test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Runs test with a median (or explicit) threshold.",
+    "doc": "src/task/step/steps/runs_test.RunsTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sarima",
+    "kind": "operator",
+    "title": "Seasonal ARIMA model",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fit a seasonal ARIMA(p, d, q)(P, D, Q)s model by maximum likelihood.",
+    "doc": "src/task/step/steps/sarima.SarimaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "scale_features",
+    "kind": "operator",
+    "title": "scale_features",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Z-score standardise a 2D Form along one axis.",
+    "doc": "src/task/step/steps/scale_features.ScaleFeaturesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "scatter",
+    "kind": "operator",
+    "title": "散点图",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "选择两个标签绘制散点图。",
+    "doc": "src/task/step/steps/scatter.ScatterStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "scheffe_test",
+    "kind": "operator",
+    "title": "Scheffe post-hoc test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "All-pairwise Scheffe comparisons for every feature.",
+    "doc": "src/task/step/steps/scheffe_test.ScheffeTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "select",
+    "kind": "operator",
+    "title": "选择特征",
+    "category": "数据整理",
+    "version": "1.1.0",
+    "description": "按标签选择样本或特征。",
+    "doc": "src/task/step/steps/select.SelectStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sen_slope",
+    "kind": "operator",
+    "title": "Sen's slope",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Sen's median pairwise slope with a Theil-Sen confidence interval.",
+    "doc": "src/task/step/steps/sen_slope.SenSlopeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_stats",
+    "kind": "operator",
+    "title": "sequence_stats",
+    "category": "analysis",
+    "version": "1.1.0",
+    "description": "Per-sequence length, GC and N content for any sequence-codes Form.",
+    "doc": "src/task/step/steps/sequence_stats.SequenceStatsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sgd_classifier",
+    "kind": "operator",
+    "title": "SGD classifier",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "SGD classifier：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/sgd_classifier.SgdClassifierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sgd_regressor",
+    "kind": "operator",
+    "title": "SGD regressor",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "SGD regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/sgd_regressor.SgdRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "shapiro",
+    "kind": "operator",
+    "title": "Shapiro-Wilk test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Shapiro-Wilk test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度。",
+    "doc": "src/task/step/steps/shapiro.ShapiroStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "shapiro_francia",
+    "kind": "operator",
+    "title": "Shapiro-Francia normality test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Shapiro-Francia W test with the standard normalizing approximation.",
+    "doc": "src/task/step/steps/shapiro_francia.ShapiroFranciaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "shapiro_wilk",
+    "kind": "operator",
+    "title": "Shapiro-Wilk normality test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Shapiro-Wilk W test for univariate normality.",
+    "doc": "src/task/step/steps/shapiro_wilk.ShapiroWilkStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "siegel_tukey",
+    "kind": "operator",
+    "title": "Siegel-Tukey rank dispersion test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Siegel-Tukey rank test for equality of dispersion (no ties).",
+    "doc": "src/task/step/steps/siegel_tukey.SiegelTukeyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sign_test",
+    "kind": "operator",
+    "title": "Paired sign test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Paired sign test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、Alternative。",
+    "doc": "src/task/step/steps/sign_test.SignTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "silhouette",
+    "kind": "operator",
+    "title": "Silhouette score",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Silhouette score：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、距离/相关指标。",
+    "doc": "src/task/step/steps/silhouette.SilhouetteStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "silhouette_samples",
+    "kind": "operator",
+    "title": "Silhouette samples",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Silhouette coefficient for each sample in a clustering.",
+    "doc": "src/task/step/steps/silhouette_samples.SilhouetteSamplesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "silhouette_score",
+    "kind": "operator",
+    "title": "Silhouette score",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Mean silhouette coefficient for a clustering.",
+    "doc": "src/task/step/steps/silhouette_score.SilhouetteScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "skillings_mack",
+    "kind": "operator",
+    "title": "Skillings-Mack test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Skillings-Mack test for an arbitrary incomplete block design.",
+    "doc": "src/task/step/steps/skillings_mack.SkillingsMackTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "snk_test",
+    "kind": "operator",
+    "title": "Student-Newman-Keuls test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "SNK all-pairwise comparisons with a pooled variance and step-down ranges.",
+    "doc": "src/task/step/steps/snk_test.SnkTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "softmax",
+    "kind": "operator",
+    "title": "Softmax",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Softmax：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、分析维度。",
+    "doc": "src/task/step/steps/softmax.SoftmaxStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "somers_d",
+    "kind": "operator",
+    "title": "Somers' D",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Somers' D with the row or column variable as dependent.",
+    "doc": "src/task/step/steps/somers_d.SomersDStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "spectral_embedding",
+    "kind": "operator",
+    "title": "Spectral embedding",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Spectral embedding：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、Affinity、Gamma、随机种子。",
+    "doc": "src/task/step/steps/spectral_embedding.SpectralEmbeddingStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "spline_regression",
+    "kind": "operator",
+    "title": "B-spline regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fit an ordinary least-squares model on a cubic B-spline basis.",
+    "doc": "src/task/step/steps/spline_regression.SplineRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ssgsea",
+    "kind": "operator",
+    "title": "ssGSEA",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "ssGSEA：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、Gene Dim、Gene Set Dim、显著性水平、Min Size。",
+    "doc": "src/task/step/steps/ssgsea.SsgseaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "standardized_residuals",
+    "kind": "operator",
+    "title": "Standardized residuals",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Standardized residuals：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、响应变量。",
+    "doc": "src/task/step/steps/standardized_residuals.StandardizedResidualsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "storey_qvalue",
+    "kind": "operator",
+    "title": "Storey q-values",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Storey's q-value procedure for a column of p-values.",
+    "doc": "src/task/step/steps/storey_qvalue.StoreyQvalueStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "stuart_maxwell",
+    "kind": "operator",
+    "title": "Stuart-Maxwell test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Test whether two raters have the same marginal distribution.",
+    "doc": "src/task/step/steps/stuart_maxwell.StuartMaxwellStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "stuart_maxwell_test",
+    "kind": "operator",
+    "title": "Stuart-Maxwell marginal homogeneity test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Stuart-Maxwell marginal homogeneity test：接收 1 个输入，输出 Form；主要参数：Row Dim、Column Dim。",
+    "doc": "src/task/step/steps/stuart_maxwell_test.StuartMaxwellTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "studentized_residuals",
+    "kind": "operator",
+    "title": "Studentized residuals",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Studentized residuals：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、响应变量。",
+    "doc": "src/task/step/steps/studentized_residuals.StudentizedResidualsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "svm_classifier",
+    "kind": "operator",
+    "title": "Linear SVM classifier",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Linear SVM classifier：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/svm_classifier.SvmClassifierStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "svm_regressor",
+    "kind": "operator",
+    "title": "Linear SVM regressor",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Linear SVM regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/svm_regressor.SvmRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "tamhane_t2",
+    "kind": "operator",
+    "title": "Tamhane T2 test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Tamhane T2 comparisons with Welch degrees of freedom and Sidak correction.",
+    "doc": "src/task/step/steps/tamhane_t2.TamhaneT2Step.md",
+    "status": "generated"
+  },
+  {
+    "id": "theil_sen_regressor",
+    "kind": "operator",
+    "title": "Theil-Sen regressor",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Theil-Sen regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
+    "doc": "src/task/step/steps/theil_sen_regressor.TheilSenRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "theil_u",
+    "kind": "operator",
+    "title": "Theil's uncertainty coefficient",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Theil's uncertainty coefficient：接收 1 个输入，输出 Form；主要参数：Row Dim、Column Dim。",
+    "doc": "src/task/step/steps/theil_u.TheilUStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "time_dependent_auc",
+    "kind": "operator",
+    "title": "Time-dependent AUC",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Kaplan-Meier cumulative/dynamic AUC at one prediction time.",
+    "doc": "src/task/step/steps/time_dependent_auc.TimeDependentAucStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "tmm_normalize",
+    "kind": "operator",
+    "title": "TMM normalization",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Normalize a count matrix with edgeR-style TMM factors.",
+    "doc": "src/task/step/steps/tmm_normalize.TmmNormalizeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "tobit",
+    "kind": "operator",
+    "title": "Tobit censored regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Normal regression with left-censoring at a fixed threshold.",
+    "doc": "src/task/step/steps/tobit.TobitStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "topic_lda",
+    "kind": "operator",
+    "title": "Topic LDA",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Topic LDA：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、Max Iter、Learning Method、随机种子。",
+    "doc": "src/task/step/steps/topic_lda.TopicLdaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "tost_equivalence",
+    "kind": "operator",
+    "title": "TOST equivalence test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "TOST equivalence test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、A 组、B 组。",
+    "doc": "src/task/step/steps/tost_equivalence.TostEquivalenceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "translate",
+    "kind": "operator",
+    "title": "Translate sequences",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Translate sequences：接收 1 个输入，输出 Form；主要参数：序列维度、位置维度、Frame、To Stop。",
+    "doc": "src/task/step/steps/translate.TranslateStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "transpose",
+    "kind": "operator",
+    "title": "维度转置",
+    "category": "数据整理",
+    "version": "1.0.0",
+    "description": "调整命名维度的排列顺序。",
+    "doc": "src/task/step/steps/transpose.TransposeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "truncated_svd",
+    "kind": "operator",
+    "title": "Truncated SVD",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Truncated SVD：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数。",
+    "doc": "src/task/step/steps/truncated_svd.TruncatedSvdStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "tsne",
+    "kind": "operator",
+    "title": "t-SNE",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "t-SNE：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、Perplexity、学习率、Max Iter。",
+    "doc": "src/task/step/steps/tsne.TsneStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ttest_one_sample",
+    "kind": "operator",
+    "title": "One-sample t-test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "One-sample t-test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Popmean、Alternative。",
+    "doc": "src/task/step/steps/ttest_one_sample.TTestOneSampleStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ttest_paired",
+    "kind": "operator",
+    "title": "Paired t-test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Paired t-test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、Alternative。",
+    "doc": "src/task/step/steps/ttest_paired.TTestPairedStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "tukey_hsd",
+    "kind": "operator",
+    "title": "Tukey HSD",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Tukey HSD across groups for every feature.",
+    "doc": "src/task/step/steps/tukey_hsd.TukeyHsdStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "tukey_test",
+    "kind": "operator",
+    "title": "Tukey HSD test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Tukey HSD all-pairwise comparisons for every feature.",
+    "doc": "src/task/step/steps/tukey_test.TukeyTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "turning_point_test",
+    "kind": "operator",
+    "title": "Turning point randomness test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Turning point test for serial randomness.",
+    "doc": "src/task/step/steps/turning_point_test.TurningPointTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "umap",
+    "kind": "operator",
+    "title": "UMAP",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "UMAP：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、邻居数、Min Dist、距离/相关指标。",
+    "doc": "src/task/step/steps/umap.UmapStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "van_waerden",
+    "kind": "operator",
+    "title": "Van der Waerden test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Two-sample Van der Waerden normal-scores test.",
+    "doc": "src/task/step/steps/van_waerden.VanWaerdenStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "var_model",
+    "kind": "operator",
+    "title": "Vector autoregression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Estimate a VAR(p) model with a deterministic OLS fit.",
+    "doc": "src/task/step/steps/var_model.VarModelStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "variance_ratio",
+    "kind": "operator",
+    "title": "Variance ratio F test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Variance ratio F test：接收 2 个输入，输出 Form；主要参数：样本维度、Value Dim、First Label、Second Label、Alternative、Confidence。",
+    "doc": "src/task/step/steps/variance_ratio.VarianceRatioStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "variation_of_information",
+    "kind": "operator",
+    "title": "Variation of information",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Variation of information：接收 2 个输入，输出 Form；主要参数：样本维度、标签维度、Label A、Label B。",
+    "doc": "src/task/step/steps/variation_of_information.VariationOfInformationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "varimax_rotation",
+    "kind": "operator",
+    "title": "Varimax rotation",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Orthogonal varimax rotation, matching ``stats::varimax``.",
+    "doc": "src/task/step/steps/varimax_rotation.VarimaxRotationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vecm",
+    "kind": "operator",
+    "title": "Vector error correction model",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Estimate a VECM and expose the Johansen trace/eigen diagnostics.",
+    "doc": "src/task/step/steps/vecm.VecmStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vif",
+    "kind": "operator",
+    "title": "Variance inflation factor",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Variance inflation factor：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度。",
+    "doc": "src/task/step/steps/vif.VifStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "violin",
+    "kind": "operator",
+    "title": "Violin plot",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "Draw violin plots of a value column grouped by a label.",
+    "doc": "src/task/step/steps/violin.ViolinStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "volcano",
+    "kind": "operator",
+    "title": "Volcano",
+    "category": "可视化",
+    "version": "1.0.0",
+    "description": "效应大小与显著性",
+    "doc": "src/task/step/steps/volcano.VolcanoStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "von_neumann",
+    "kind": "operator",
+    "title": "Von Neumann randomness test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Von Neumann ratio test for serial randomness.",
+    "doc": "src/task/step/steps/von_neumann.VonNeumannStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "welch_anova",
+    "kind": "operator",
+    "title": "Welch ANOVA",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Per-feature Welch one-way ANOVA.",
+    "doc": "src/task/step/steps/welch_anova.WelchAnovaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "white_test",
+    "kind": "operator",
+    "title": "White heteroskedasticity test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "White heteroskedasticity test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Response Label、Predictors。",
+    "doc": "src/task/step/steps/white_test.WhiteTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "wilcoxon",
+    "kind": "operator",
+    "title": "Wilcoxon signed-rank test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Wilcoxon signed-rank test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、Zero Method、Alternative。",
+    "doc": "src/task/step/steps/wilcoxon.WilcoxonStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "winsorize",
+    "kind": "operator",
+    "title": "Winsorise",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Winsorise：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Lower、Upper。",
+    "doc": "src/task/step/steps/winsorize.WinsorizeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "woolf_test",
+    "kind": "operator",
+    "title": "Woolf test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Woolf test for homogeneity of odds ratios across 2x2 strata.",
+    "doc": "src/task/step/steps/woolf_test.WoolfTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "youden_index",
+    "kind": "operator",
+    "title": "Youden index",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Youden index：接收 2 个输入，输出 Form；主要参数：样本维度、标签维度、Score Dim、目标字段、Score Label、Positive Label。",
+    "doc": "src/task/step/steps/youden_index.YoudenIndexStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "yuen_test",
+    "kind": "operator",
+    "title": "Yuen trimmed-mean test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Yuen trimmed-mean test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、A 组、B 组。",
+    "doc": "src/task/step/steps/yuen_test.YuenTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "zero_inflated_negative_binomial",
+    "kind": "operator",
+    "title": "Zero-inflated negative binomial regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Zero-inflated NB2 regression with logit inflation and log count links.",
+    "doc": "src/task/step/steps/zero_inflated_negative_binomial.ZeroInflatedNegativeBinomialStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "zero_inflated_poisson",
+    "kind": "operator",
+    "title": "Zero-inflated Poisson regression",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Poisson count model with a logistic zero-inflation component.",
+    "doc": "src/task/step/steps/zero_inflated_poisson.ZeroInflatedPoissonStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "zivot_andrews",
+    "kind": "operator",
+    "title": "Zivot-Andrews structural break unit-root test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Zivot-Andrews structural break unit-root test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、数值字段、Regression、Trim、Lags。",
+    "doc": "src/task/step/steps/zivot_andrews.ZivotAndrewsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "zscore",
+    "kind": "operator",
+    "title": "Z-score scaling",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Z-score scaling：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、分析维度。",
+    "doc": "src/task/step/steps/zscore.ZscoreStep.md",
+    "status": "generated"
+  }
+]

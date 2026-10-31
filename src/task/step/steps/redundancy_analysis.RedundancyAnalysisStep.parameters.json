@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "response_dim": {
+      "type": "string",
+      "default": "response",
+      "title": "Response Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "predictor_dim": {
+      "type": "string",
+      "default": "predictor",
+      "title": "Predictor Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "n_components": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2,
+      "title": "主成分数",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "additionalProperties": false
+}

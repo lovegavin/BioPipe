@@ -1,0 +1,5 @@
+{
+  "key": "single_cell_batch",
+  "name": "Single-cell batch correction",
+  "base_dir": "routes/single_cell_batch"
+}

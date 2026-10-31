@@ -1,0 +1,99 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "title": "Taxon Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "group_label": {
+      "type": "string",
+      "title": "分组字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "group_a": {
+      "type": [
+        "string",
+        "number"
+      ],
+      "title": "A 组",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "group_b": {
+      "type": [
+        "string",
+        "number"
+      ],
+      "title": "B 组",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "n_mc": {
+      "type": "integer",
+      "minimum": 8,
+      "default": 128,
+      "title": "N Mc",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "seed": {
+      "type": "integer",
+      "default": 0,
+      "title": "Seed",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "pseudocount": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 0.5,
+      "title": "伪计数",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "monte_carlo": {
+      "type": "boolean",
+      "default": true,
+      "title": "Monte Carlo",
+      "x-ui-group": "basic",
+      "x-ui-order": 80
+    },
+    "correction": {
+      "type": "string",
+      "enum": [
+        "fdr",
+        "bonferroni",
+        "holm",
+        "hommel",
+        "fdr_by"
+      ],
+      "default": "fdr",
+      "title": "Correction",
+      "x-ui-group": "basic",
+      "x-ui-order": 90
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 100
+    }
+  },
+  "required": [
+    "group_label",
+    "group_a",
+    "group_b"
+  ],
+  "additionalProperties": false
+}

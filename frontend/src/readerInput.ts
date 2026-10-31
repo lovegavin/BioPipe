@@ -1,9 +1,32 @@
-import type { Catalog, DataSource, ReaderSpec } from './types';
+import type { Catalog, DataSource, Graph, GraphNode, ReaderSpec, TargetRef } from './types';
+import { makeNode } from './graph';
+
+export function readerForSource(catalog: Catalog, source: DataSource): ReaderSpec | undefined {
+  // An explicit selection must not silently become a different installed reader.
+  return source.reader ? catalog.readers?.find(reader => reader.id === source.reader) : readerForPath(catalog, source.path);
+}
+
+export function makeReaderNode(graph: Graph, reader: ReaderSpec, position: {x: number; y: number}, location?: TargetRef): GraphNode {
+  const node = makeNode(graph, undefined, position);
+  const dims = [...(reader.file_input?.dims ?? reader.contracts.output?.dims ?? ['sample', 'feature'])];
+  return {...node, title: reader.title || reader.id, source: {
+    reader: reader.id, path: '', dims,
+    labels: structuredClone(reader.file_input?.labels ?? Object.fromEntries(dims.map(dim => [dim, 'auto']))),
+    args: Object.fromEntries((reader.parameters ?? []).filter(field => field.default !== undefined).map(field => [field.key, structuredClone(field.default)])),
+    ...(location ? {location} : {}),
+  }};
+}
+
+export function readerMatches(reader: ReaderSpec, search: string): boolean {
+  return `${reader.id} ${reader.title || ''} ${reader.description || ''} ${reader.extensions.join(' ')}`.toLowerCase().includes(search.trim().toLowerCase());
+}
 
 export function rePointSource(previous: DataSource, uploaded: DataSource, catalog: Catalog): DataSource {
-  const before = readerForPath(catalog, previous.path), after = readerForPath(catalog, uploaded.path);
+  const before = readerForSource(catalog, previous), after = readerForSource(catalog, uploaded);
   const source: DataSource = {...uploaded, location: {kind: 'local'}};
-  if (!before || before.id !== after?.id) return source;
+  if (previous.reader && !before) throw Error(`Reader ${previous.reader} 未安装。`);
+  if (previous.reader && before) source.reader = previous.reader;
+  if (!before || before.id !== (source.reader || after?.id)) return source;
   const fileKeys = new Set((before.parameters ?? []).filter(p => p.path_kind).map(p => p.key));
   const retained = Object.fromEntries(Object.entries(previous.args).filter(([key]) => !fileKeys.has(key)));
   return {...source, dims: [...previous.dims], labels: structuredClone(previous.labels), args: {...retained, ...uploaded.args}};

@@ -13,8 +13,11 @@ Install the repository package in the Studio environment:
 python -m pip install -e ".[agent]"
 ```
 
-Launch the desktop app or `python scripts/studio.py`, then open a canvas. Configure
-a client supporting MCP stdio with:
+The desktop is optional. CLI and MCP reuse a running application service or start
+a detached headless service automatically. Open a Studio canvas only when you
+want selection context and live canvas editing. See [the application API and
+headless workflow guide](headless_api.md) for standalone workflows, jobs and
+artifacts. Configure a client supporting MCP stdio with:
 
 ```json
 {
@@ -65,7 +68,9 @@ Single-click selects; double-click opens the inspector. Select several nodes wit
 Ctrl-click or Shift selection. Use **Agent → Copy selection context**, or the canvas
 context menu, to paste the JSON into a client without MCP.
 
-MCP instructions ask the agent to call `biopipe_context` before answering a canvas
+An empty canvas-session list is normal without Studio; use `biopipe_workflows`
+and `biopipe_submit` instead of inventing a canvas session. MCP instructions ask
+the agent to call `biopipe_context` before answering a canvas
 question. Tools always read current state; BioPipe cannot force a particular client
 to inject context automatically. This version exposes polling and resources, not
 MCP resource-change subscriptions or unsolicited messages to a model. A client that
@@ -95,6 +100,12 @@ biopipe --session <session> context get
 biopipe --session <session> context get --scope document
 biopipe operators list
 biopipe operators describe pca
+biopipe operators search --query "principal components"
+biopipe operators describe pca --section parameters
+biopipe workflow validate route.json --require-files
+biopipe run route.json --request-id analysis-001
+biopipe jobs logs <job> --follow
+biopipe artifacts list <job>
 biopipe graph validate route.json
 biopipe --session <session> graph open route.json --expected-revision 4 --new-tab
 biopipe --session <session> graph get
@@ -165,6 +176,9 @@ change; a local backup is retained if the 20-tab limit prevents recovery.
 | `biopipe_events` | Poll changes after a cursor |
 | `biopipe_run`, `biopipe_job`, `biopipe_cancel` | Explicit execution and job inspection |
 | `biopipe_plugin_install` | Capability-gated local wheel installation |
+| `biopipe_operator_search`, `biopipe_operator_describe` | Paged discovery and selected documentation sections |
+| `biopipe_workflows`, `biopipe_workflow_save`, `biopipe_workflow_prepare` | Workflows independent of canvas sessions |
+| `biopipe_submit`, `biopipe_jobs`, `biopipe_logs`, `biopipe_artifacts` | Headless execution, status, log cursors and result links |
 
 Resources: `biopipe://selection`, `biopipe://sessions/{session_id}/selection`,
 `biopipe://catalog`. Commands share the CLI's HTTP service and validations.

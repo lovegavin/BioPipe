@@ -1,0 +1,44 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "variable_dim": {
+      "type": "string",
+      "default": "variable",
+      "title": "Variable Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "response": {
+      "type": "string",
+      "title": "响应变量",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "regressors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Regressors",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "required": [
+    "response"
+  ],
+  "additionalProperties": false
+}

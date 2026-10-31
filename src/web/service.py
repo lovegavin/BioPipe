@@ -69,6 +69,8 @@ class JobService:
         self.settings, self.base_catalog = settings, catalog
         self.remotes = None
         self.root = settings.root.resolve()
+        if settings.input_roots is None:
+            settings.input_roots = list(dict.fromkeys([self.root, (settings.code_root or self.root).resolve()]))
         self.directory = settings.data_dir.resolve()
         from biopipe.plugins import PluginManager
         self.plugins = PluginManager(self.directory, manifest_only=settings.manifest_only_registry)
@@ -95,7 +97,7 @@ class JobService:
             self.demo = self._demo()
             write_json(self.directory / "operators.json", self.catalog)
         self.routes = RouteLibrary(self.directory / "workflows", self.catalog, self.root,
-                                   self.graph_catalog)
+                                   self.graph_catalog, input_roots=settings.input_roots)
         if settings.builtin_routes:
             self.routes.install_builtins()
         self.scheduler = threading.Thread(target=self._schedule, name='biopipe-admission', daemon=True)
@@ -115,7 +117,8 @@ class JobService:
             return self.remotes.prepare(graph)
         graph = self.plugins.pin(graph)
         catalog = self.graph_catalog(graph)
-        return prepare_interface(freeze_graph(graph, catalog, self.root), catalog, self.root)
+        return prepare_interface(freeze_graph(graph, catalog, self.root, input_roots=self.settings.input_roots),
+                                 catalog, self.root, input_roots=self.settings.input_roots)
 
     def validate_graph(self, graph, require_files=True):
         from .source_paths import remote_profile
@@ -126,7 +129,8 @@ class JobService:
         catalog = self.graph_catalog(graph)
         manifest, order = compile_graph(graph, catalog, self.root, require_files=require_files,
                                         input_roots=self.settings.input_roots)
-        return {'valid': True, 'order': order, 'manifest': manifest, 'contracts': analyze_graph(graph, catalog, self.root)}
+        return {'valid': True, 'order': order, 'manifest': manifest,
+                'contracts': analyze_graph(graph, catalog, self.root, input_roots=self.settings.input_roots)}
 
     def refresh_catalog(self):
         state = self.plugins.state()
@@ -222,7 +226,7 @@ class JobService:
         catalog = self.plugins._catalog(plugin_snapshot, self.base_catalog)
         from .parameters import freeze_graph
         from biopipe.parameter_values import split_task
-        graph = freeze_graph(graph, catalog, self.root)
+        graph = freeze_graph(graph, catalog, self.root, input_roots=self.settings.input_roots)
         manifest, order = compile_graph(graph, catalog, self.root, require_files=True, input_roots=self.settings.input_roots)
         try:
             allocation = self.admission.request(manifest)
@@ -316,10 +320,18 @@ class JobService:
             env['BIOPIPE_AVAILABLE_AT_START_BYTES'] = str(job['allocation']['available_at_start_bytes'])
             code_root = self.settings.code_root or self.root
             python = self.plugins.python_for(read_json(directory / 'plugins.lock.json'))
+            if (code_root / 'biopipe/worker.py').is_file():
+                # Wheels have no scripts/ tree. Preserve code selection when
+                # dependency resolution chooses a different Python runtime.
+                env['PYTHONPATH'] = os.pathsep.join(part for part in (str(code_root), env.get('PYTHONPATH')) if part)
+                command = [python, '-P', '-m', 'biopipe.worker', str(directory)]
+            else:
+                # Older server distributions and explicit custom worker roots.
+                command = [python, str(code_root / 'scripts/run.py'), str(directory)]
             console.write(f'[BioPipe launcher] Job {key}\nPython: {python}\nTask: {directory}\n')
             console.flush()
             self._launcher_event(job, 'worker_launching', python=python, allocation=job['allocation'], message='Starting analysis worker')
-            process = subprocess.Popen([python, str(code_root / 'scripts/run.py'), str(directory)],
+            process = subprocess.Popen(command,
                                        cwd=self.root, env=env, stdin=subprocess.DEVNULL,
                                        stdout=console, stderr=subprocess.STDOUT,
                                        creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)

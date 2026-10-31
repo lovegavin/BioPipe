@@ -22,7 +22,7 @@ def test_archive_is_repeatable_and_contains_only_distributable_code(tmp_path):
     (tmp_path / 'scripts').mkdir()
     for name in ('run.py', 'desktop_server.py', 'maintainer_only.py'):
         (tmp_path / 'scripts' / name).write_text('# public source')
-    for name in ('src/a.py', 'src/reader/a.parameters.json', 'src/__pycache__/cached.py',
+    for name in ('src/a.py', 'src/reader/a.parameters.json', 'src/reader/a.Reader.md', 'src/__pycache__/cached.py',
                  '.studio/password.json', '.tmp/test.py', 'dist/user.json', 'src/dataset.csv'):
         path = tmp_path / name; path.parent.mkdir(parents=True, exist_ok=True); path.write_text('content')
     a = source_archive(tmp_path)
@@ -30,7 +30,7 @@ def test_archive_is_repeatable_and_contains_only_distributable_code(tmp_path):
     assert source_archive(tmp_path) == a
     with tarfile.open(fileobj=io.BytesIO(a)) as archive:
         assert set(archive.getnames()) == {'pyproject.toml', 'README.md', 'requirements-hic-linux.txt',
-            'src/a.py', 'src/reader/a.parameters.json', 'scripts/run.py', 'scripts/desktop_server.py'}
+            'src/a.py', 'src/reader/a.parameters.json', 'src/reader/a.Reader.md', 'scripts/run.py', 'scripts/desktop_server.py'}
     (tmp_path / 'scripts/maintainer_only.py').unlink()
     assert source_archive(tmp_path) == a  # Source checkout and desktop archive agree.
 

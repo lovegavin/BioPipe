@@ -1,0 +1,72 @@
+name: qiime_moving_pictures_microbiome
+sources:
+  table:
+    path: input/feature-table.biom
+    dims:
+    - sample
+    - taxon
+    labels:
+      sample: builtin
+      taxon: builtin
+    reader: BiomReader
+  samples:
+    path: input/sample_metadata.csv
+    dims:
+    - sample
+    - feature
+    labels:
+      sample:
+        feature: 0
+      feature: builtin
+    reader: CsvReader
+steps:
+- name: filter_min
+  inputs:
+  - table
+- name: diversity
+  inputs:
+  - table_filtered
+- name: boxplot
+  inputs:
+  - alpha
+  - samples
+- name: distance_matrix
+  inputs:
+  - table_filtered
+- name: pcoa
+  inputs:
+  - bray
+- name: boxplot
+  inputs:
+  - pcoa_scores
+  - samples
+- name: boxplot
+  inputs:
+  - pcoa_scores
+  - samples
+- name: permanova
+  inputs:
+  - bray
+  - samples
+- name: aggregate
+  inputs:
+  - table_filtered
+  - samples
+- name: rename_dim
+  inputs:
+  - subject_mean
+- name: hvg
+  inputs:
+  - subject_mean_named
+- name: filter_by
+  inputs:
+  - subject_mean_named
+  - taxa_hvg
+- name: heatmap
+  inputs:
+  - top_taxa
+parameters_file: parameters.json
+runtime:
+  memory:
+    enabled: true
+    auto_spill: true

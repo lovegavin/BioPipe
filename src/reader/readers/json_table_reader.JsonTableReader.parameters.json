@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "orient": {
+      "type": "string",
+      "enum": [
+        "records",
+        "columns"
+      ],
+      "default": "records",
+      "title": "Orient",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "encoders": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Encoders",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    }
+  },
+  "additionalProperties": false
+}

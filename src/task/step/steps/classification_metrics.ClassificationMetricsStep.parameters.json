@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "label_dim": {
+      "type": "string",
+      "default": "label",
+      "title": "标签维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "score_dim": {
+      "type": "string",
+      "default": "score",
+      "title": "Score Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "target_label": {
+      "type": "string",
+      "title": "目标字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "score_label": {
+      "type": "string",
+      "title": "Score Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "positive_label": {
+      "type": "string",
+      "title": "Positive Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "threshold": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "default": 0.5,
+      "title": "阈值",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "required": [
+    "target_label"
+  ],
+  "additionalProperties": false
+}

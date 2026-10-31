@@ -11,13 +11,17 @@ operators and readers, not a new route packaging format.
 
 | Package | Entries | Purpose |
 | --- | ---: | --- |
-| `biopipe-core` | 30 | Selection, dimensions, concatenation, metadata and describe |
-| `biopipe-genetics` | 7 | QC, PCA, regression and correction |
-| `biopipe-expression` | 7 | Expression transformations and statistical analysis |
+| `biopipe-core` | 351 | Data transformations, statistics, machine learning and domain analyses |
+| `biopipe-genetics` | 13 | QC, PCA, regression and correction |
+| `biopipe-expression` | 12 | Expression transformations and statistical analysis |
 | `biopipe-plots` | 12 | Plots, including survival curves |
-| `biopipe-microbiome` | 8 | Abundance diversity, distances, ordination, joins, PERMANOVA, correlation and composition |
-| `biopipe-readers` | 15 | File readers, including H5AD and MTX disk preparation |
+| `biopipe-microbiome` | 11 | Abundance diversity, distances, ordination, joins, PERMANOVA, correlation and composition |
+| `biopipe-readers` | 87 | File readers, including H5AD and MTX disk preparation |
 | `biopipe-hic` | 7 | Sequencing/contact file Readers and Hi-C processing |
+
+Counts describe the 0.116.0 factory library: 405 operators and 88 Readers. Installed
+profiles may add, replace or disable providers; use `biopipe plugin list` for the
+active library rather than assuming these counts at runtime.
 
 The startup index is `biopipe/builtin_packages.json`. It enumerates each package's
 name, version, title and descriptors. Paths are Python import entry points, never
@@ -78,8 +82,10 @@ Third-party IDs remain namespaced, such as `lab.scale`.
 
 Bundled pins include code and declaration hashes plus an index/source fingerprint.
 Graph matching uses package/version and `code_sha`; declaration-only rebuilds do
-not require the old profile's snapshots. Installed wheel pins still require their
-artifact digest. See [identity rules](operator_protocol.md#identities-and-updates).
+not require the old profile's snapshots. New installed wheel pins use the validated
+`execution_sha` so documentation/default changes remain portable; old pins retain
+exact archive matching. Full archive hashes are always recorded and verified.
+See [identity rules](operator_protocol.md#identities-and-updates).
 New runs reconcile known bundled source updates within the same operator/package versions and record
 the effective fingerprints. A worker refuses code changed after its job was prepared. To keep historical implementations executable across application upgrades,
 use versioned wheels and retain their generations. Native/optional reader libraries

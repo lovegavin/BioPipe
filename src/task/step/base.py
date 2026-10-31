@@ -13,14 +13,10 @@ from src.task.context import Context
 class Step(ABC):
     """Abstract step.
 
-    Subclasses declare:
-
-    * ``name`` — matched against the manifest's ``name`` field.
-    * ``inputs_arity`` — number of input forms, or ``"*"`` for any.
-    * ``outputs`` — context keys the step registers on exit.
-
-    And implement ``run``. They may also implement ``export`` to
-    return a JSON-serializable dict of the step's full results.
+    Authors provide a literal protocol v3 ``definition``, independent parameter
+    JSON, and ``run``. The SDK binds the runtime attributes below from the
+    validated descriptor only when loading that implementation. They are not a
+    second authoring protocol. ``export`` may return structured results.
     """
 
     name: ClassVar[str] = "unnamed"

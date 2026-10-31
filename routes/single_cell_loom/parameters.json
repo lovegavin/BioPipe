@@ -1,0 +1,158 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "expr": {
+      "matrix": "matrix"
+    },
+    "meta": {
+      "header": true
+    },
+    "markers": {}
+  },
+  "steps": [
+    {
+      "name": "qc_metrics",
+      "inputs": [
+        "expr"
+      ],
+      "params": {
+        "feature_dim": "gene",
+        "sample_dim": "cell",
+        "metrics": [
+          {
+            "name": "total",
+            "op": "sum"
+          },
+          {
+            "name": "n_detected",
+            "op": "nonzero"
+          }
+        ],
+        "output": "qc"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "normalize",
+      "inputs": [
+        "expr"
+      ],
+      "params": {
+        "method": "cpm",
+        "dim": "cell",
+        "target_sum": 1000000.0,
+        "output": "cpm"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "log_transform",
+      "inputs": [
+        "cpm"
+      ],
+      "params": {
+        "base": 2,
+        "pseudocount": 1,
+        "output": "logged"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "transpose",
+      "inputs": [
+        "logged"
+      ],
+      "params": {
+        "order": [
+          "cell",
+          "gene"
+        ],
+        "output": "cells_by_gene"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "doublet_detect",
+      "inputs": [
+        "cells_by_gene"
+      ],
+      "params": {
+        "cell_dim": "cell",
+        "gene_dim": "gene",
+        "n_prin_comps": 10,
+        "expected_doublet_rate": 0.06,
+        "random_state": 0,
+        "threshold": 0.25,
+        "output": "doublets"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "pseudobulk",
+      "inputs": [
+        "cells_by_gene",
+        "meta"
+      ],
+      "params": {
+        "cell_dim": "cell",
+        "gene_dim": "gene",
+        "group_label": "group",
+        "method": "sum",
+        "output": "pseudobulk"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "marker_score",
+      "inputs": [
+        "cells_by_gene",
+        "markers"
+      ],
+      "params": {
+        "cell_dim": "cell",
+        "gene_dim": "gene",
+        "gene_set_dim": "gene_set",
+        "min_genes": 5,
+        "ctrl_size": 50,
+        "n_bins": 25,
+        "random_state": 0,
+        "output": "scores"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "qc"
+      ],
+      "params": {},
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "doublets"
+      ],
+      "params": {},
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "pseudobulk"
+      ],
+      "params": {},
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "scores"
+      ],
+      "params": {},
+      "context_params": {}
+    }
+  ]
+}

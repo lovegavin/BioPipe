@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "title": "Key",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    }
+  },
+  "additionalProperties": false
+}

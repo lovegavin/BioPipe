@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "properties": {
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "gene_dim": {
+      "type": "string",
+      "default": "gene",
+      "title": "Gene Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "gene_set_dim": {
+      "type": "string",
+      "default": "gene_set",
+      "title": "Gene Set Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "alpha": {
+      "type": "number",
+      "minimum": 0.0,
+      "default": 0.25,
+      "title": "显著性水平",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "min_size": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1,
+      "title": "Min Size",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "normalize": {
+      "type": "boolean",
+      "default": true,
+      "title": "归一化",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "additionalProperties": false
+}

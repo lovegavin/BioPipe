@@ -1,0 +1,80 @@
+{
+  "type": "object",
+  "properties": {
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "group_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "分组维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "group_label": {
+      "type": "string",
+      "title": "分组字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "group_a": {
+      "type": "string",
+      "title": "A 组",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "group_b": {
+      "type": "string",
+      "title": "B 组",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "margin": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "title": "Margin",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "alpha": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 0.5,
+      "default": 0.05,
+      "title": "显著性水平",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "equal_var": {
+      "type": "boolean",
+      "default": false,
+      "title": "Equal Var",
+      "x-ui-group": "basic",
+      "x-ui-order": 80
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 90
+    }
+  },
+  "required": [
+    "group_label",
+    "group_a",
+    "group_b",
+    "margin"
+  ],
+  "additionalProperties": false
+}

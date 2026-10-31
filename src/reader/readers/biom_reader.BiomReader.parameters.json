@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "properties": {
+    "taxonomy": {
+      "type": "boolean",
+      "default": false,
+      "title": "Taxonomy",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    }
+  },
+  "additionalProperties": false
+}

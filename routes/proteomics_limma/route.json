@@ -1,0 +1,5 @@
+{
+  "key": "proteomics_limma",
+  "name": "Proteomics rollup and moderated t",
+  "base_dir": "routes/proteomics_limma"
+}

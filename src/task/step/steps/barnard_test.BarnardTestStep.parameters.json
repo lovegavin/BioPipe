@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "properties": {
+    "row_dim": {
+      "type": "string",
+      "default": "row",
+      "title": "Row Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "column_dim": {
+      "type": "string",
+      "default": "column",
+      "title": "Column Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "alternative": {
+      "type": "string",
+      "enum": [
+        "two-sided",
+        "less",
+        "greater"
+      ],
+      "default": "two-sided",
+      "title": "Alternative",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "pooled": {
+      "type": "boolean",
+      "default": true,
+      "title": "Pooled",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "integration_points": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4096,
+      "default": 32,
+      "title": "Integration Points",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    }
+  },
+  "additionalProperties": false
+}

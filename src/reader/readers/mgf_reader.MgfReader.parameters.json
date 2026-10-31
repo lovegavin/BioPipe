@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "encoders": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Encoders",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "max_spectra": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 100000,
+      "title": "Max Spectra",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    }
+  },
+  "additionalProperties": false
+}

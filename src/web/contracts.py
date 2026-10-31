@@ -5,7 +5,7 @@ from src.core.contracts import VERSION, compatible, infer_output, resolve, sourc
 from biopipe.file_formats import primary_ext
 
 
-def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=()):
+def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), input_roots=None):
     source_overrides = {**graph.runtime.get("exchange_contracts", {}), **(source_overrides or {})}
     from .graph import GraphError, project_path
     from .routes import check_interface, require_route, port_index
@@ -28,7 +28,7 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=()):
             elif source:
                 schema.update(dims=source.dims, ndim=len(source.dims))
                 from .source_paths import source_candidates
-                candidates = source_candidates(graph, catalog, root, source.path, source.location)
+                candidates = source_candidates(graph, catalog, root, source.path, source.location, source.reader, input_roots=input_roots)
                 if len(candidates) == 1:
                     reader = candidates[0]
                     if reader["id"] == "TxtReader":
@@ -97,7 +97,7 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=()):
                 route = require_route(node)
                 overrides = {port.node_id: inputs[i] for i, port in enumerate(route.graph.interface.inputs)}
                 try:
-                    inner = analyze_graph(route.graph, catalog, root, source_overrides=overrides, ancestry=(*ancestry, route.id))
+                    inner = analyze_graph(route.graph, catalog, root, source_overrides=overrides, ancestry=(*ancestry, route.id), input_roots=input_roots)
                 except GraphError as exc:
                     raise GraphError(f"{node.title or route.name}：{exc}", key) from exc
                 failures = [check for check in inner["edges"] if check["status"] == "incompatible"]

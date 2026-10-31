@@ -15,10 +15,15 @@ import zipfile
 from packaging.version import Version
 
 from biopipe_sdk.protocol import PROTOCOL_VERSION
+from biopipe.bytecode import filesystem_path
+
+
+def _io_path(path):
+    return Path(filesystem_path(path, resolve=False))
 
 
 def sha256(path):
-    with Path(path).open("rb") as stream:
+    with _io_path(path).open("rb") as stream:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
@@ -26,7 +31,8 @@ def build_bundle(root, output, version):
     """Compile declarations statically; never import author operator modules."""
     from biopipe.registry import scan_sources, package_manifest, read_json
     from biopipe.source_library import snapshot_sources, provider_wheel
-    root, output = Path(root), Path(output)
+    logical_output = Path(output).resolve()
+    root, output = _io_path(root), _io_path(output)
     version = str(Version(version))
     output.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="library-build-", dir=output) as temporary:
@@ -49,7 +55,8 @@ def build_bundle(root, output, version):
             raise ValueError("Library contains no operators or Readers")
         files = {p.relative_to(staging).as_posix(): sha256(p) for p in sorted(staging.rglob("*")) if p.is_file()}
         document = {"format": "biopipe.library", "version": version, "protocol_version": PROTOCOL_VERSION,
-                    "minimum_application": "0.8.3", "packages": packages, "files": files}
+                    "minimum_application": "0.116.0" if any(d.get('documentation') for p in manifest['packages'] for d in p['descriptors']) else "0.8.3",
+                    "packages": packages, "files": files}
         archive_path = staging / "library.zip"
         with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
             archive.writestr("library.json", json.dumps(document, indent=2))
@@ -57,14 +64,15 @@ def build_bundle(root, output, version):
                 archive.write(staging / relative, relative)
         destination = output / f"BioPipe-Library-v{version}.biopipe-library.zip"
         os.replace(archive_path, destination)
-    return {"bundle": str(destination.resolve()), "sha256": sha256(destination),
+    return {"bundle": str(logical_output / destination.name), "sha256": sha256(destination),
             "version": version, "packages": len(packages), "descriptors": sum(len(p['descriptors']) for p in manifest['packages'])}
 
 
 def unpack_bundle(path, destination):
     from biopipe import __version__
     from biopipe.source_library import SOURCE_DIRS
-    with zipfile.ZipFile(path) as archive:
+    destination = _io_path(destination)
+    with zipfile.ZipFile(_io_path(path)) as archive:
         infos = archive.infolist()
         names = [info.filename for info in infos]
         if len({n.casefold() for n in names}) != len(names):
@@ -124,7 +132,7 @@ def install_bundle(manager, bundle):
     manager.state()
     with manager.lock:
         current = manager.state()
-        staging = manager.directory / 'staging'
+        staging = _io_path(manager.directory / 'staging')
         staging.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix='library-', dir=staging) as temporary:
             temporary = Path(temporary)
@@ -144,7 +152,7 @@ def install_bundle(manager, bundle):
                 return current
             identifier = uuid.uuid4().hex
             relative = f'library/sources/{identifier}'
-            target = manager.directory / relative
+            target = _io_path(manager.directory / relative)
             target.parent.mkdir(parents=True, exist_ok=True)
             fingerprint = snapshot_sources(incoming / 'sources', temporary / 'snapshot')
             from biopipe_sdk.declarations import code_hash

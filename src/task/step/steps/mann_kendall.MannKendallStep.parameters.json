@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "properties": {
+    "time_dim": {
+      "type": "string",
+      "default": "time",
+      "title": "Time Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    }
+  },
+  "additionalProperties": false
+}

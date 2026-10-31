@@ -1,0 +1,72 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "n_components": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 3,
+      "default": 2,
+      "title": "主成分数",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "n_neighbors": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 15,
+      "title": "邻居数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "min_dist": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.1,
+      "title": "Min Dist",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "metric": {
+      "type": "string",
+      "enum": [
+        "euclidean",
+        "cosine",
+        "correlation",
+        "manhattan"
+      ],
+      "default": "euclidean",
+      "title": "距离/相关指标",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "additionalProperties": false
+}

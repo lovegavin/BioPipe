@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "properties": {
+    "row_dim": {
+      "type": "string",
+      "default": "row",
+      "title": "Row Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "column_dim": {
+      "type": "string",
+      "default": "column",
+      "title": "Column Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    }
+  },
+  "additionalProperties": false
+}

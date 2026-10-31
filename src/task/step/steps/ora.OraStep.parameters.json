@@ -1,0 +1,102 @@
+{
+  "type": "object",
+  "properties": {
+    "gene_dim": {
+      "type": "string",
+      "default": "gene",
+      "title": "Gene Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "stat_dim": {
+      "type": "string",
+      "default": "statistic",
+      "title": "统计维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "gene_set_dim": {
+      "type": "string",
+      "default": "gene_set",
+      "title": "Gene Set Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "p_label": {
+      "type": "string",
+      "default": "Q_VALUE",
+      "title": "P 值字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "lfc_label": {
+      "type": "string",
+      "default": "log2FC",
+      "title": "log2FC 字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "p_threshold": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.05,
+      "title": "P 值阈值",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "lfc_threshold": {
+      "type": "number",
+      "minimum": 0,
+      "default": 0.0,
+      "title": "log2FC 阈值",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "up",
+        "down",
+        "both"
+      ],
+      "default": "both",
+      "title": "Direction",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "correction": {
+      "type": "string",
+      "enum": [
+        "fdr",
+        "bonferroni",
+        "holm",
+        "hommel",
+        "fdr_by"
+      ],
+      "default": "fdr",
+      "title": "Correction",
+      "x-ui-group": "basic",
+      "x-ui-order": 80
+    },
+    "min_set_size": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1,
+      "title": "Min Set Size",
+      "x-ui-group": "basic",
+      "x-ui-order": 90
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 100
+    }
+  },
+  "required": [
+    "p_label",
+    "lfc_label"
+  ],
+  "additionalProperties": false
+}

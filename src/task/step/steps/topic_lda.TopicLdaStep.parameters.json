@@ -1,0 +1,61 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "n_components": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2,
+      "title": "主成分数",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "max_iter": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 20,
+      "title": "Max Iter",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "learning_method": {
+      "type": "string",
+      "enum": [
+        "batch",
+        "online"
+      ],
+      "default": "batch",
+      "title": "Learning Method",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

@@ -1,0 +1,68 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "n_components": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2,
+      "title": "主成分数",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "kernel": {
+      "type": "string",
+      "enum": [
+        "rbf",
+        "linear",
+        "poly",
+        "sigmoid",
+        "cosine"
+      ],
+      "default": "rbf",
+      "title": "Kernel",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "gamma": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "exclusiveMinimum": 0,
+      "default": null,
+      "title": "Gamma",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "random_state": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295,
+      "default": 0,
+      "title": "Random seed",
+      "description": "Seed passed to the randomized solver for reproducible execution.",
+      "x-ui-group": "advanced"
+    }
+  },
+  "additionalProperties": false
+}

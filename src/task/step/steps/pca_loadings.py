@@ -1,0 +1,79 @@
+"""PCA feature loadings from a two-dimensional form."""
+from __future__ import annotations
+
+import numpy as np
+
+from src.core import Form, StepError
+from src.task.context import Context
+from src.task.step.base import Step
+
+from ._ext_common import labels_in_order, reorder
+
+
+class PcaLoadingsStep(Step):
+    provider = 'biopipe-core'
+    parameters_file = 'pca_loadings.PcaLoadingsStep.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'pca_loadings',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'PCA loadings',
+     'category': 'Machine Learning',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'sample_dim', 'default': 'sample'},
+                                        {'param': 'feature_dim', 'default': 'feature'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': False,
+                                         'axis_info_open': False,
+                                         'info': {'missing_code': {'type': ['number', 'null']}}}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output',
+     'description': 'PCA loadings：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、标准化。'}
+
+    def run(self, ctx: Context, inputs) -> None:
+        form = inputs[0]
+        sample_dim = ctx.step_params.get("sample_dim", "sample")
+        feature_dim = ctx.step_params.get("feature_dim", "feature")
+        n_components = int(ctx.step_params.get("n_components", 10))
+        scale = bool(ctx.step_params.get("scale", True))
+        out_name = ctx.step_params.get("output", self.name)
+        X = reorder(form, sample_dim, feature_dim).astype(np.float64)
+        if X.shape[0] < 2 or X.shape[1] < 1:
+            raise StepError("pca_loadings needs at least two samples and one feature")
+        col_mean = np.nanmean(X, axis=0)
+        col_mean = np.where(np.isfinite(col_mean), col_mean, 0.0)
+        centered = np.where(np.isfinite(X), X, col_mean) - col_mean
+        if scale:
+            col_std = np.nanstd(np.where(np.isfinite(X), X, np.nan), axis=0)
+            col_std = np.where(np.isfinite(col_std) & (col_std > 1e-12), col_std, 1.0)
+            centered = centered / col_std
+        k = min(n_components, min(centered.shape))
+        _, s, vt = np.linalg.svd(centered, full_matrices=False)
+        loadings = vt[:k].T.astype(np.float32)
+        features = labels_in_order(form, feature_dim)
+        out = Form(
+            data=loadings,
+            dims=[feature_dim, "component"],
+            labels={feature_dim: {name: i for i, name in enumerate(features)},
+                    "component": {f"PC{i + 1}": i for i in range(k)}},
+            info={"missing_code": np.nan},
+        )
+        out.validate()
+        ctx[out_name] = out
+        explained = (s[:k] ** 2) / float((s ** 2).sum())
+        self._export_data = {"n_components": k, "scale": scale,
+                             "explained_variance_ratio": [float(v) for v in explained],
+                             "features": features}
+
+    def export(self, ctx: Context) -> dict:
+        return getattr(self, "_export_data", {})

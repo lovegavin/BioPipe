@@ -1,0 +1,55 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "label_dim": {
+      "type": "string",
+      "default": "label",
+      "title": "标签维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "label_a": {
+      "type": "string",
+      "title": "Label A",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "label_b": {
+      "type": "string",
+      "title": "Label B",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "average_method": {
+      "type": "string",
+      "enum": [
+        "max",
+        "arithmetic",
+        "geometric",
+        "min"
+      ],
+      "default": "max",
+      "title": "Average Method",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    }
+  },
+  "required": [
+    "label_a",
+    "label_b"
+  ],
+  "additionalProperties": false
+}

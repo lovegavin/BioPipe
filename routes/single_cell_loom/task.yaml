@@ -1,0 +1,67 @@
+name: single_cell_loom
+sources:
+  expr:
+    path: input/small.loom
+    dims:
+    - gene
+    - cell
+    labels:
+      gene: builtin
+      cell: builtin
+    reader: LoomReader
+  meta:
+    path: input/meta.csv
+    dims:
+    - cell
+    - feature
+    labels:
+      cell:
+        feature: 0
+      feature: builtin
+    reader: CsvReader
+  markers:
+    path: input/markers.gmt
+    dims:
+    - gene
+    - gene_set
+    labels:
+      gene: builtin
+      gene_set: builtin
+    reader: GmtReader
+steps:
+- name: qc_metrics
+  inputs:
+  - expr
+- name: normalize
+  inputs:
+  - expr
+- name: log_transform
+  inputs:
+  - cpm
+- name: transpose
+  inputs:
+  - logged
+- name: doublet_detect
+  inputs:
+  - cells_by_gene
+- name: pseudobulk
+  inputs:
+  - cells_by_gene
+  - meta
+- name: marker_score
+  inputs:
+  - cells_by_gene
+  - markers
+- name: describe
+  inputs:
+  - qc
+- name: describe
+  inputs:
+  - doublets
+- name: describe
+  inputs:
+  - pseudobulk
+- name: describe
+  inputs:
+  - scores
+parameters_file: parameters.json

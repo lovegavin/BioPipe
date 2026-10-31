@@ -62,8 +62,8 @@ def main():
     parser.add_argument('--workspace', type=Path, required=True)
     parser.add_argument('--source-sha256')
     args = parser.parse_args()
-    if not (args.app_dir/'scripts/run.py').is_file():
-        parser.error('The server application directory must contain scripts/run.py')
+    if not any((args.app_dir / name).is_file() for name in ('biopipe/worker.py', 'scripts/run.py')):
+        parser.error('The server application directory must contain biopipe/worker.py or a legacy scripts/run.py')
     print(json.dumps(register(args.base, app_dir=args.app_dir, python=args.python,
                               workspace=args.workspace, source_sha256=args.source_sha256)))
 

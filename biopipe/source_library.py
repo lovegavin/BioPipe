@@ -58,12 +58,24 @@ def provider_wheel(package, root, output):
             value = value.replace(before, after)
         return value
     files = {}
+    document_paths = set()
+    for descriptor in package['descriptors']:
+        if descriptor.get('documentation'):
+            source = Path(root) / (descriptor['entry_point'].split(':')[0].replace('.', '/') + '.py')
+            if not source.is_file():
+                source = source.with_suffix('') / '__init__.py'
+            document_paths.add((source.parent / descriptor['documentation']['path']).resolve())
     # Copy the small module trees, preserving helper/cross-operator imports in a
     # private namespace. No new source can overwrite the engine's src package.
     for kind, relative in SOURCE_DIRS.items():
         folder = "steps" if kind == "operator" else "readers"
         for source in sorted((root / relative).rglob("*")):
             if source.is_file() and '__pycache__' not in source.parts and source.suffix != '.pyc':
+                # Providers share helper Python but ship only their own declared
+                # documentation. A different provider's docs cannot alter this
+                # provider's executable digest.
+                if source.suffix.lower() == '.md' and source.resolve() not in document_paths:
+                    continue
                 path = source.relative_to(root / relative).as_posix()
                 files[f"{module}/{folder}/{path}"] = (rewrite(source.read_text(encoding="utf-8")).encode("utf-8")
                     if source.suffix == ".py" else source.read_bytes())
@@ -98,7 +110,8 @@ def prepare(manager, current, temporary):
     root = manager.source_root
     if root is None:
         return {"wheels": [], "updated": [], "unchanged": [], "receipt": current.get("source_library")}
-    staged = temporary / "source"
+    from biopipe.bytecode import filesystem_path
+    staged = Path(filesystem_path(temporary / "source", resolve=False))
     fingerprint = snapshot_sources(root, staged)
     previous = current.get("source_library") or {}
     needs_detach = manager.managed_sources and any(p.get('origin') == 'bundled' for p in current['packages'])
@@ -112,6 +125,8 @@ def prepare(manager, current, temporary):
     if errors:
         raise ValueError('; '.join(f"{e['source']}: {e['error']}" for e in errors))
     manifest = package_manifest(records, read_json(staged / 'biopipe/builtin_packages.json', {'packages': []}))
+    from biopipe.operator_docs import cache_sources
+    cache_sources(manager, [record[0] for record in records], staged)
     installed = {p["name"]: p for p in current["packages"]}
     source_managed = set(previous.get("packages", []))
     seen = set(current.get("bundled_seen", []))

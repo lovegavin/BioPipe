@@ -59,7 +59,7 @@ export const api = {
   disconnectRemote: (id: string) => request(`/api/remote/${id}/disconnect`, {}),
   removeRemote: (id: string) => request(`/api/remote/${id}/remove`, {}),
   browseRemote: (id: string, path: string, offset = 0, hidden = false) => request<import('./types').RemoteListing>(`/api/remote/${id}/browse`, {path, offset, hidden}),
-  sourceRemote: (id: string, path: string) => request<{source: DataSource; filename: string; reader: string}>(`/api/remote/${id}/source`, {path}),
+  sourceRemote: (id: string, path: string, reader?: string) => request<{source: DataSource; filename: string; reader: string}>(`/api/remote/${id}/source`, {path, ...(reader ? {reader} : {})}),
   plugins: () => request<import('./types').PluginState>('/api/plugins'),
   refreshPlugins: () => request<import('./types').PluginOperation>('/api/plugins/refresh', {}),
   repairDependencies: () => request<import('./types').PluginOperation>('/api/plugins/dependencies', {}),
@@ -134,8 +134,8 @@ export const api = {
       `/api/jobs/${encodeURIComponent(id)}/exports/${index}`,
     ),
   url: (path: string) => base + path,
-  uploadFiles: async (files: File[], base_dir: string) => {
-    const batch = await request<{ id: string }>("/api/assets/batches", {filenames: files.map(file => file.name)});
+  uploadFiles: async (files: File[], base_dir: string, reader?: string) => {
+    const batch = await request<{ id: string }>("/api/assets/batches", {filenames: files.map(file => file.name), ...(reader ? {reader} : {})});
     try {
       for (const file of files) await api.upload(file, batch.id);
       return await request<{source: DataSource; filename: string; reader: string; files: string[]}>(

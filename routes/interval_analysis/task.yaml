@@ -1,0 +1,50 @@
+name: interval_analysis
+sources:
+  ccre:
+    reader: BedReader
+    path: input/cCREs.bed
+    dims:
+    - region
+    - field
+    labels:
+      region: auto
+      field: builtin
+  reg:
+    reader: BedReader
+    path: input/ensembl_regulatory.bed
+    dims:
+    - region
+    - field
+    labels:
+      region: auto
+      field: builtin
+steps:
+- name: interval_stats
+  inputs:
+  - ccre
+- name: describe
+  inputs:
+  - stats
+- name: interval_merge
+  inputs:
+  - ccre
+- name: describe
+  inputs:
+  - merged
+- name: interval_overlap
+  inputs:
+  - ccre
+  - reg
+- name: describe
+  inputs:
+  - pairs
+- name: histogram
+  inputs:
+  - stats
+- name: histogram
+  inputs:
+  - merged
+- name: histogram
+  inputs:
+  - pairs
+parameters_file: parameters.json

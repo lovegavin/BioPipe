@@ -1,0 +1,68 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "n_components": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 3,
+      "default": 2,
+      "title": "主成分数",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "perplexity": {
+      "type": "number",
+      "exclusiveMinimum": 1,
+      "default": 30.0,
+      "title": "Perplexity",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "learning_rate": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "default": "auto",
+      "title": "学习率",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "max_iter": {
+      "type": "integer",
+      "minimum": 250,
+      "default": 1000,
+      "title": "Max Iter",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "additionalProperties": false
+}

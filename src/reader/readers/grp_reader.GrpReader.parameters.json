@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "encoders": {
+      "type": "object",
+      "title": "Encoders",
+      "additionalProperties": true,
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_label": {
+      "type": "string",
+      "title": "Phenotype column label",
+      "default": "class",
+      "minLength": 1,
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    }
+  },
+  "additionalProperties": false
+}

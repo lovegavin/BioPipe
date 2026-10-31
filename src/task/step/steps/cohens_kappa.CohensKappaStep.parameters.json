@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "properties": {
+    "row_dim": {
+      "type": "string",
+      "default": "rater_a",
+      "title": "Row Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "col_dim": {
+      "type": "string",
+      "default": "rater_b",
+      "title": "Col Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "weights": {
+      "type": "string",
+      "enum": [
+        "none",
+        "linear",
+        "quadratic"
+      ],
+      "default": "none",
+      "title": "Weights",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    }
+  },
+  "additionalProperties": false
+}

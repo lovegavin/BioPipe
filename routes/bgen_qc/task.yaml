@@ -1,0 +1,37 @@
+name: bgen_qc
+sources:
+  geno:
+    path: input/example.bgen
+    dims:
+    - variant
+    - sample
+    labels:
+      variant: builtin
+      sample: builtin
+    reader: BgenReader
+steps:
+- name: missing
+  inputs:
+  - geno
+- name: missing
+  inputs:
+  - geno_sm
+- name: maf
+  inputs:
+  - geno_vm
+- name: ld_prune
+  inputs:
+  - geno_maf
+- name: pca
+  inputs:
+  - geno_pruned
+- name: scatter
+  inputs:
+  - pcs
+- name: describe
+  inputs:
+  - geno_pruned
+- name: describe
+  inputs:
+  - pcs
+parameters_file: parameters.json

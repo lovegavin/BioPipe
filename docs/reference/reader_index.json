@@ -1,0 +1,882 @@
+[
+  {
+    "id": "Ab1Reader",
+    "kind": "reader",
+    "title": "Reader for ABI .ab1 Sanger trace files",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for ABI .ab1 Sanger trace files.",
+    "doc": "src/reader/readers/ab1_reader.Ab1Reader.md",
+    "status": "generated"
+  },
+  {
+    "id": "AlignmentReader",
+    "kind": "reader",
+    "title": "AlignmentReader",
+    "category": "Hi-C",
+    "version": "1.0.0",
+    "description": "Reference a disk dataset without loading its payload into memory.",
+    "doc": "src/reader/readers/alignment_reader.AlignmentReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "BamReader",
+    "kind": "reader",
+    "title": "Binary Alignment/Map reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Binary Alignment/Map reader.",
+    "doc": "src/reader/readers/bam_reader.BamReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "BcfReader",
+    "kind": "reader",
+    "title": "BCF variant reader; exposes position, quality and allele/sample counts",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "BCF variant reader; exposes position, quality and allele/sample counts.",
+    "doc": "src/reader/readers/bcf_reader.BcfReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "BedGraphReader",
+    "kind": "reader",
+    "title": "Reader for 4-column bedGraph files; output is region x field",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for 4-column bedGraph files; output is region x field.",
+    "doc": "src/reader/readers/bedgraph_reader.BedGraphReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "BedMethylReader",
+    "kind": "reader",
+    "title": "bedMethyl reader (15-column ENCODE layout)",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "bedMethyl reader (15-column ENCODE layout).",
+    "doc": "src/reader/readers/bedmethyl_reader.BedMethylReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "BedReader",
+    "kind": "reader",
+    "title": "BedReader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/bed_reader.BedReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "BedpeReader",
+    "kind": "reader",
+    "title": "Paired-end BED reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Paired-end BED reader.",
+    "doc": "src/reader/readers/bedpe_reader.BedpeReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "BgenReader",
+    "kind": "reader",
+    "title": "BgenReader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/bgen_reader.BgenReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "BigWigReader",
+    "kind": "reader",
+    "title": "Reader for .bw / .bigwig coverage tracks",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for .bw / .bigwig coverage tracks.",
+    "doc": "src/reader/readers/bigwig_reader.BigWigReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "BimReader",
+    "kind": "reader",
+    "title": "PLINK BIM reader (six standard columns)",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "PLINK BIM reader (six standard columns).",
+    "doc": "src/reader/readers/bim_reader.BimReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "BiomReader",
+    "kind": "reader",
+    "title": "Reader for .biom tables (JSON or HDF5)",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for .biom tables (JSON or HDF5).",
+    "doc": "src/reader/readers/biom_reader.BiomReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "BlastTabularReader",
+    "kind": "reader",
+    "title": "BLAST outfmt 6 reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "BLAST outfmt 6 reader.",
+    "doc": "src/reader/readers/blast_tabular_reader.BlastTabularReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "BroadPeakReader",
+    "kind": "reader",
+    "title": "Reader for broadPeak files; output is region x field",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for broadPeak files; output is region x field.",
+    "doc": "src/reader/readers/broadpeak_reader.BroadPeakReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "ChainReader",
+    "kind": "reader",
+    "title": "UCSC chain alignment reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "UCSC chain alignment reader.",
+    "doc": "src/reader/readers/chain_reader.ChainReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "ClsReader",
+    "kind": "reader",
+    "title": "Reader for GSEA .cls categorical phenotype files",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for GSEA .cls categorical phenotype files.\n\n    The output is ``[sample, feature]`` with one encoded ``class`` column.\n    Class names are stored in the label encoder, so ``group_values`` can\n    recover them for differential-expression operators.",
+    "doc": "src/reader/readers/cls_reader.ClsReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "ClustalReader",
+    "kind": "reader",
+    "title": "Reader for .aln / .clustal block alignments",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for .aln / .clustal block alignments.",
+    "doc": "src/reader/readers/clustal_reader.ClustalReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "CoolerReader",
+    "kind": "reader",
+    "title": "CoolerReader",
+    "category": "Hi-C",
+    "version": "1.0.0",
+    "description": "Reference a disk dataset without loading its payload into memory.",
+    "doc": "src/reader/readers/cooler_reader.CoolerReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "CramReader",
+    "kind": "reader",
+    "title": "Compressed Reference-oriented Alignment/Map reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Compressed Reference-oriented Alignment/Map reader.",
+    "doc": "src/reader/readers/cram_reader.CramReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "CsvReader",
+    "kind": "reader",
+    "title": "CsvReader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/csv_reader.CsvReader.md",
+    "status": "authored"
+  },
+  {
+    "id": "CytobandReader",
+    "kind": "reader",
+    "title": "Cytogenetic band reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Cytogenetic band reader.",
+    "doc": "src/reader/readers/cytoband_reader.CytobandReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "EmblReader",
+    "kind": "reader",
+    "title": "EMBL flat-file reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "EMBL flat-file reader.",
+    "doc": "src/reader/readers/embl_reader.EmblReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "ExcelReader",
+    "kind": "reader",
+    "title": "Reader for .xlsx and .xlsm workbooks",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for .xlsx and .xlsm workbooks.",
+    "doc": "src/reader/readers/excel_reader.ExcelReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "FaiReader",
+    "kind": "reader",
+    "title": "Reader for 5-column .fai sequence index files",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for 5-column .fai sequence index files.",
+    "doc": "src/reader/readers/fai_reader.FaiReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "FamReader",
+    "kind": "reader",
+    "title": "PLINK FAM reader (six standard columns)",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "PLINK FAM reader (six standard columns).",
+    "doc": "src/reader/readers/fam_reader.FamReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "FastaReader",
+    "kind": "reader",
+    "title": "FastaReader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/fasta_reader.FastaReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "FastqReader",
+    "kind": "reader",
+    "title": "FastqReader",
+    "category": "Hi-C",
+    "version": "1.0.0",
+    "description": "Reference a disk dataset without loading its payload into memory.",
+    "doc": "src/reader/readers/fastq_reader.FastqReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "FcsReader",
+    "kind": "reader",
+    "title": "Reader for .fcs flow-cytometry files",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for .fcs flow-cytometry files.",
+    "doc": "src/reader/readers/fcs_reader.FcsReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "GafReader",
+    "kind": "reader",
+    "title": "GafReader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/gaf_reader.GafReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "GctReader",
+    "kind": "reader",
+    "title": "Reader for .gct expression matrices; output is sample x gene",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for .gct expression matrices; output is sample x gene.",
+    "doc": "src/reader/readers/gct_reader.GctReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "GenBankReader",
+    "kind": "reader",
+    "title": "Summary reader for GenBank (.gb/.gbk/.gbff) flat files",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Summary reader for GenBank (.gb/.gbk/.gbff) flat files.",
+    "doc": "src/reader/readers/genbank_reader.GenBankReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "GenePredReader",
+    "kind": "reader",
+    "title": "UCSC genePred reader, one row per gene/transcript",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "UCSC genePred reader, one row per gene/transcript.",
+    "doc": "src/reader/readers/genepred_reader.GenePredReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "GfaReader",
+    "kind": "reader",
+    "title": "GFA segment reader; links and paths are ignored",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "GFA segment reader; links and paths are ignored.",
+    "doc": "src/reader/readers/gfa_reader.GfaReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "Gff3Reader",
+    "kind": "reader",
+    "title": "Gff3Reader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/gff3_reader.Gff3Reader.md",
+    "status": "generated"
+  },
+  {
+    "id": "GffReader",
+    "kind": "reader",
+    "title": "Reader for 9-column GFF files; output is feature x field",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for 9-column GFF files; output is feature x field.",
+    "doc": "src/reader/readers/gff_reader.GffReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "GmtReader",
+    "kind": "reader",
+    "title": "Reader for .gmt gene-set files",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for .gmt gene-set files.",
+    "doc": "src/reader/readers/gmt_reader.GmtReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "GroReader",
+    "kind": "reader",
+    "title": "GROMACS GRO reader, one row per atom",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "GROMACS GRO reader, one row per atom.",
+    "doc": "src/reader/readers/gro_reader.GroReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "GrpReader",
+    "kind": "reader",
+    "title": "Reader for GSEA .grp phenotype group files",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for GSEA .grp phenotype group files.\n\n    The layout is the same as CLS: counts, a ``#`` class-name line, then\n    one class index per sample. Output is ``[sample, feature]`` with one\n    encoded phenotype column.",
+    "doc": "src/reader/readers/grp_reader.GrpReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "GtfReader",
+    "kind": "reader",
+    "title": "GtfReader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/gtf_reader.GtfReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "H5Reader",
+    "kind": "reader",
+    "title": "Read a 2D numeric dataset from an .hdf5 file",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read a 2D numeric dataset from an .hdf5 file.",
+    "doc": "src/reader/readers/h5_reader.H5Reader.md",
+    "status": "generated"
+  },
+  {
+    "id": "H5adReader",
+    "kind": "reader",
+    "title": "H5adReader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/h5ad_reader.H5adReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "HapmapReader",
+    "kind": "reader",
+    "title": "HapMap genotype table, returned as variant x sample dosage",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "HapMap genotype table, returned as variant x sample dosage.",
+    "doc": "src/reader/readers/hapmap_reader.HapmapReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "HmmReader",
+    "kind": "reader",
+    "title": "HMMER3 profile reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "HMMER3 profile reader.",
+    "doc": "src/reader/readers/hmm_reader.HmmReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "HmmerDomtblReader",
+    "kind": "reader",
+    "title": "HMMER3 --domtblout reader, one row per domain",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "HMMER3 --domtblout reader, one row per domain.",
+    "doc": "src/reader/readers/hmmer_domtbl_reader.HmmerDomtblReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "HmmerTbloutReader",
+    "kind": "reader",
+    "title": "HMMER3 --tblout reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "HMMER3 --tblout reader.",
+    "doc": "src/reader/readers/hmmer_tblout_reader.HmmerTbloutReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "InterProScanReader",
+    "kind": "reader",
+    "title": "InterProScan tabular output reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "InterProScan tabular output reader.",
+    "doc": "src/reader/readers/interproscan_reader.InterProScanReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "JsonTableReader",
+    "kind": "reader",
+    "title": "Reader for a JSON array of records or a mapping of column -> list",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for a JSON array of records or a mapping of column -> list.",
+    "doc": "src/reader/readers/json_table_reader.JsonTableReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "LoomReader",
+    "kind": "reader",
+    "title": "Reader for .loom files",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for .loom files.",
+    "doc": "src/reader/readers/loom_reader.LoomReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "MafReader",
+    "kind": "reader",
+    "title": "Mutation Annotation Format table reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Mutation Annotation Format table reader.",
+    "doc": "src/reader/readers/maf_reader.MafReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "MapReader",
+    "kind": "reader",
+    "title": "Reader for the four-column PLINK .map format",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for the four-column PLINK .map format.",
+    "doc": "src/reader/readers/map_reader.MapReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "MgfReader",
+    "kind": "reader",
+    "title": "MGF reader returning one row per spectrum (peak lists are summarized)",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "MGF reader returning one row per spectrum (peak lists are summarized).",
+    "doc": "src/reader/readers/mgf_reader.MgfReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "MmcifReader",
+    "kind": "reader",
+    "title": "Reader for mmCIF atom_site loops; output is atom x field",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for mmCIF atom_site loops; output is atom x field.",
+    "doc": "src/reader/readers/mmcif_reader.MmcifReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "Mol2Reader",
+    "kind": "reader",
+    "title": "MOL2 reader with atom and bond counts per molecule",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "MOL2 reader with atom and bond counts per molecule.",
+    "doc": "src/reader/readers/mol2_reader.Mol2Reader.md",
+    "status": "generated"
+  },
+  {
+    "id": "MolReader",
+    "kind": "reader",
+    "title": "Read one MDL MOL V2000 file and summarize its atom/bond block",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read one MDL MOL V2000 file and summarize its atom/bond block.",
+    "doc": "src/reader/readers/mol_reader.MolReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "MtxReader",
+    "kind": "reader",
+    "title": "MtxReader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/mtx_reader.MtxReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "MzdataReader",
+    "kind": "reader",
+    "title": "MzdataReader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reads .mzdata files.",
+    "doc": "src/reader/readers/mzdata_reader.MzdataReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "MzidentmlReader",
+    "kind": "reader",
+    "title": "MzidentmlReader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reads .mzid, .mzidentml files.",
+    "doc": "src/reader/readers/mzidentml_reader.MzidentmlReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "MzmlReader",
+    "kind": "reader",
+    "title": "One row per mzML spectrum, with peak lists summarized",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "One row per mzML spectrum, with peak lists summarized.",
+    "doc": "src/reader/readers/mzml_reader.MzmlReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "MztabReader",
+    "kind": "reader",
+    "title": "One section of an mzTab file as a record x feature table",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "One section of an mzTab file as a record x feature table.",
+    "doc": "src/reader/readers/mztab_reader.MztabReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "MzxmlReader",
+    "kind": "reader",
+    "title": "One row per mzXML scan; peak arrays are only counted",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "One row per mzXML scan; peak arrays are only counted.",
+    "doc": "src/reader/readers/mzxml_reader.MzxmlReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "NarrowPeakReader",
+    "kind": "reader",
+    "title": "Reader for 10-column ENCODE narrowPeak files",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for 10-column ENCODE narrowPeak files.",
+    "doc": "src/reader/readers/narrowpeak_reader.NarrowPeakReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "NewickReader",
+    "kind": "reader",
+    "title": "Parse a Newick tree into a node x field table",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Parse a Newick tree into a node x field table.",
+    "doc": "src/reader/readers/newick_reader.NewickReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "NexusReader",
+    "kind": "reader",
+    "title": "Reader for .nex / .nexus alignments",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for .nex / .nexus alignments.",
+    "doc": "src/reader/readers/nexus_reader.NexusReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "NpyReader",
+    "kind": "reader",
+    "title": "Reader for 2D numeric .npy/.npz arrays; output is sample x feature",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for 2D numeric .npy/.npz arrays; output is sample x feature.",
+    "doc": "src/reader/readers/npy_reader.NpyReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "OboReader",
+    "kind": "reader",
+    "title": "Reader for [Term] stanzas in OBO files; output is term x field",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for [Term] stanzas in OBO files; output is term x field.",
+    "doc": "src/reader/readers/obo_reader.OboReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "PafReader",
+    "kind": "reader",
+    "title": "Pairwise mapping format (PAF) reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Pairwise mapping format (PAF) reader.",
+    "doc": "src/reader/readers/paf_reader.PafReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "PairsReader",
+    "kind": "reader",
+    "title": "PairsReader",
+    "category": "Hi-C",
+    "version": "1.0.0",
+    "description": "Reference a disk dataset without loading its payload into memory.",
+    "doc": "src/reader/readers/pairs_reader.PairsReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "ParquetReader",
+    "kind": "reader",
+    "title": "ParquetReader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/parquet_reader.ParquetReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "PdbReader",
+    "kind": "reader",
+    "title": "ATOM/HETATM coordinate reader using fixed PDB columns",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "ATOM/HETATM coordinate reader using fixed PDB columns.",
+    "doc": "src/reader/readers/pdb_reader.PdbReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "PedReader",
+    "kind": "reader",
+    "title": "PLINK PED reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "PLINK PED reader.",
+    "doc": "src/reader/readers/ped_reader.PedReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "PepxmlReader",
+    "kind": "reader",
+    "title": "PepxmlReader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reads .pepxml files.",
+    "doc": "src/reader/readers/pepxml_reader.PepxmlReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "PhylipReader",
+    "kind": "reader",
+    "title": "Reader for sequential PHYLIP alignments",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for sequential PHYLIP alignments.",
+    "doc": "src/reader/readers/phylip_reader.PhylipReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "Plink1Reader",
+    "kind": "reader",
+    "title": "Plink1Reader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/plink_reader.Plink1Reader.md",
+    "status": "generated"
+  },
+  {
+    "id": "Plink2Reader",
+    "kind": "reader",
+    "title": "Plink2Reader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/plink_reader.Plink2Reader.md",
+    "status": "generated"
+  },
+  {
+    "id": "ProtxmlReader",
+    "kind": "reader",
+    "title": "ProtxmlReader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reads .protxml files.",
+    "doc": "src/reader/readers/protxml_reader.ProtxmlReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "PslReader",
+    "kind": "reader",
+    "title": "UCSC PSL reader, one row per alignment",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "UCSC PSL reader, one row per alignment.",
+    "doc": "src/reader/readers/psl_reader.PslReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "RnkReader",
+    "kind": "reader",
+    "title": "Reader for GSEA .rnk ranked gene lists",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for GSEA .rnk ranked gene lists.\n\n    The output is ``[gene, feature]`` with a single numeric ``score``\n    feature. File order is preserved because rank order is meaningful for\n    preranked GSEA.",
+    "doc": "src/reader/readers/rnk_reader.RnkReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "SamReader",
+    "kind": "reader",
+    "title": "Sequence Alignment/Map text reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Sequence Alignment/Map text reader.",
+    "doc": "src/reader/readers/sam_reader.SamReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "SdfReader",
+    "kind": "reader",
+    "title": "Reader for SDF records; output is molecule x [atoms, bonds, molecular_weight]",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for SDF records; output is molecule x [atoms, bonds, molecular_weight].",
+    "doc": "src/reader/readers/sdf_reader.SdfReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "SmiReader",
+    "kind": "reader",
+    "title": "SMILES .smi reader with length and approximate heavy-atom count",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "SMILES .smi reader with length and approximate heavy-atom count.",
+    "doc": "src/reader/readers/smi_reader.SmiReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "StockholmReader",
+    "kind": "reader",
+    "title": "Reader for Stockholm alignments",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for Stockholm alignments.",
+    "doc": "src/reader/readers/stockholm_reader.StockholmReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "TenxH5Reader",
+    "kind": "reader",
+    "title": "Reader for 10x Cell Ranger h5 count matrices",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for 10x Cell Ranger h5 count matrices.",
+    "doc": "src/reader/readers/tenx_h5_reader.TenxH5Reader.md",
+    "status": "generated"
+  },
+  {
+    "id": "TsvReader",
+    "kind": "reader",
+    "title": "TsvReader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/tsv_reader.TsvReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "TxtReader",
+    "kind": "reader",
+    "title": "TxtReader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/txt_reader.TxtReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "VcfReader",
+    "kind": "reader",
+    "title": "VcfReader",
+    "category": null,
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/reader/readers/vcf_reader.VcfReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "WigReader",
+    "kind": "reader",
+    "title": "Reader for fixedStep and variableStep WIG tracks; output is region x field",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reader for fixedStep and variableStep WIG tracks; output is region x field.",
+    "doc": "src/reader/readers/wig_reader.WigReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "XyzReader",
+    "kind": "reader",
+    "title": "XYZ reader, one row per atom",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "XYZ reader, one row per atom.",
+    "doc": "src/reader/readers/xyz_reader.XyzReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "ZarrReader",
+    "kind": "reader",
+    "title": "Read a two-dimensional numeric Zarr array or group member",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read a two-dimensional numeric Zarr array or group member.",
+    "doc": "src/reader/readers/zarr_reader.ZarrReader.md",
+    "status": "generated"
+  }
+]

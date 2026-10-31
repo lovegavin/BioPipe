@@ -1,0 +1,45 @@
+{
+  "type": "object",
+  "properties": {
+    "category_dim": {
+      "type": "string",
+      "default": "category",
+      "title": "Category Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "count_label": {
+      "type": "string",
+      "title": "计数列",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "expected": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "default": [],
+      "title": "期望相对频数（留空为均匀分布）",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "required": [
+    "count_label"
+  ],
+  "additionalProperties": false
+}

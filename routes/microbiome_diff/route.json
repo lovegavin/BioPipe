@@ -1,0 +1,5 @@
+{
+  "key": "microbiome_diff",
+  "name": "Microbiome differential abundance",
+  "base_dir": "routes/microbiome_diff"
+}

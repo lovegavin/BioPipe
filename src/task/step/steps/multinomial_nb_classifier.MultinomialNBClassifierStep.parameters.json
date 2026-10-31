@@ -1,0 +1,97 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "label_dim": {
+      "type": "string",
+      "default": "label",
+      "title": "标签维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "target_label": {
+      "type": "string",
+      "title": "目标字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "test_size": {
+      "type": "number",
+      "minimum": 0.05,
+      "maximum": 0.5,
+      "default": 0.25,
+      "title": "测试集比例",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "cv_folds": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 5,
+      "title": "交叉验证折数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "scale": {
+      "type": "boolean",
+      "default": false,
+      "title": "标准化",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 80
+    },
+    "valid_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "有效标签",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    },
+    "alpha": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 1.0,
+      "title": "显著性水平",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    },
+    "fit_prior": {
+      "type": "boolean",
+      "default": true,
+      "title": "Fit Prior",
+      "x-ui-group": "basic",
+      "x-ui-order": 110
+    }
+  },
+  "required": [
+    "target_label"
+  ],
+  "additionalProperties": false
+}

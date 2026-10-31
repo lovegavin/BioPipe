@@ -14,7 +14,8 @@ import { HelpTip } from "./HelpTip";
 import {ExecutionSettings} from './ExecutionSettings';
 import {defaultTarget, executionConfig, groupParameters, nodeTarget, targetFromKey, targetKey, targetLabel} from './execution';
 import { api } from "./api";
-import { inputAccept, renameSourceDimensions, readerForPath, rePointSource } from "./readerInput";
+import { inputAccept, makeReaderNode, renameSourceDimensions, readerForSource, rePointSource } from "./readerInput";
+import { supportedPlatformLabel, targetPlatformWarning } from './platform';
 import { bytes, displayTitle, inputCount, outputCount, specFor, retainedOutputs } from "./graph";
 import type { Catalog, Graph, Parameter, RouteDefinition, TargetRef, ExecutionConfig, RemoteStatus, NodePatch } from "./types";
 
@@ -214,6 +215,7 @@ export function Inspector({
   onOpenRoute,
   onBrowseRemote,
   servers = [],
+  localSystem,
   onExecution = () => {},
   onFileLocation = () => {},
 }: {
@@ -234,6 +236,7 @@ export function Inspector({
   onOpenRoute: (route: RouteDefinition) => void;
   onBrowseRemote?: import('./types').BrowseRemote;
   servers?: RemoteStatus[];
+  localSystem?: string;
   onExecution?: (patch: Partial<ExecutionConfig>) => void;
   onFileLocation?: (key: string, target: TargetRef) => void;
 }) {
@@ -247,7 +250,7 @@ export function Inspector({
   const [uploading, setUploading] = useState(false);
   const memory = graph.memory;
   const automaticPercent = automaticMemoryFraction == null ? undefined : automaticMemoryFraction * 100;
-  const reader = node?.source ? readerForPath(catalog, node.source.path) : undefined;
+  const reader = node?.source ? readerForSource(catalog, node.source) : undefined;
   const retainedNames = node ? retainedOutputs(node, spec) : [];
   const sourceLocation = node?.source?.location ?? defaultTarget(graph);
   const pathTarget = (key: string) => executionConfig(graph).file_locations?.[key] ?? (node ? nodeTarget(graph, node.id) : defaultTarget(graph));
@@ -266,7 +269,7 @@ export function Inspector({
       return onError(`单个文件超过 ${uploadLimit} MiB，可改用项目内路径。`);
     setUploading(true);
     try {
-      const result = await api.uploadFiles(files, graph.base_dir);
+      const result = await api.uploadFiles(files, graph.base_dir, node.source.reader);
       onNode(node.id, {
         source: rePointSource(node.source, result.source, catalog),
         title: result.filename.replace(/\.(?:gz|bz2|xz)$/i, '').replace(/\.[^.]+$/, ''),
@@ -420,12 +423,15 @@ export function Inspector({
           <>
             <div className="inspector-intro">
               <div className="node-icon">
-                <OperatorArtwork spec={spec} source={node.kind === "source"}/>
+                <OperatorArtwork spec={node.kind === 'source' && reader ? {...reader, icon: reader.icon || 'Database'} : spec} source={node.kind === 'source' && !reader}/>
               </div>
               <h3>{displayTitle(node, spec)}</h3>
               {spec?.description && node.kind !== "source" && <HelpTip label="算子说明">{spec.description}</HelpTip>}
+              {reader?.description && node.kind === 'source' && <HelpTip label="Reader 说明">{reader.description}</HelpTip>}
             </div>
             <OperatorPreview spec={spec}/>
+            {targetPlatformWarning((node.kind === 'source' ? reader : spec)?.supported_systems, graph, servers, localSystem, node.id) &&
+              <p className="helper" role="status">{targetPlatformWarning((node.kind === 'source' ? reader : spec)?.supported_systems, graph, servers, localSystem, node.id)}</p>}
             <label className="field">
               <span>显示名称</span>
               <input
@@ -437,10 +443,32 @@ export function Inspector({
             </label>
             {node.kind === "source" && node.source ? (
               <>
+                <label className="field"><span>Reader</span>
+                  <select aria-label="选择 Reader" value={node.source.reader || ''} disabled={busy || uploading}
+                    onChange={event => {
+                      const chosen = catalog.readers?.find(item => item.id === event.target.value);
+                      if (chosen) {
+                        const template = makeReaderNode(graph, chosen, node.position, sourceLocation);
+                        onNode(node.id, {source: {...template.source!, path: node.source!.path}});
+                      } else {
+                        const source = {...node.source!}; delete source.reader;
+                        onNode(node.id, {source});
+                      }
+                    }}>
+                    <option value="">按文件格式自动识别</option>
+                    {node.source.reader && !reader && <option value={node.source.reader}>{node.source.reader} · 未安装</option>}
+                    {(catalog.readers ?? []).map(item => <option key={item.id} value={item.id}>{item.title || item.id}</option>)}
+                  </select>
+                </label>
+                {reader && <details className="advanced input-format-help"><summary>格式与读取说明 <CaretDown size={14}/></summary>
+                  {reader.description && <p className="helper">{reader.description}</p>}
+                  <p className="helper">{reader.extensions.join(' · ')}</p>
+                  {supportedPlatformLabel(reader.supported_systems) && <p className="helper">运行环境：{supportedPlatformLabel(reader.supported_systems)}</p>}
+                </details>}
                 <input
                   ref={fileInput}
                   type="file"
-                  accept={inputAccept(catalog)}
+                  accept={inputAccept(reader ? {...catalog, readers: [reader]} : catalog)}
                   multiple
                   className="sr-only"
                   aria-label="选择数据文件"
@@ -457,7 +485,7 @@ export function Inspector({
                 </button>
                 {onBrowseRemote && <button className="subtle-button source-server-button" disabled={busy || uploading}
                   onClick={() => onBrowseRemote(node.source!.path, (path, source, location) => onNode(node.id,
-                    {source: {...(source || node.source!), path, location: location || sourceLocation}}), true, sourceLocation)}>选择服务器文件</button>}
+                    {source: {...(source || node.source!), path, location: location || sourceLocation}}), true, sourceLocation, node.source!.reader)}>选择服务器文件</button>}
                 <details className="advanced input-format-help"><summary>多文件格式 <CaretDown size={14}/></summary>
                   <p className="helper">PLINK：同时选择同名的 .bed、.bim、.fam。10x MTX：同时选择 matrix、barcodes 和 features / genes。</p>
                 </details>

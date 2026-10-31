@@ -34,6 +34,52 @@ def wheel_entries(wheel):
         raise ValueError(f'{wheel.name}: protocol v3 wheel requires biopipe.json; build with `biopipe plugin build`')
 
 
+def execution_digest(wheel):
+    """Fingerprint executable wheel contents separately from Markdown bytes.
+
+    Full archive SHA-256 is retained for transport/integrity. Only declared,
+    hash-verified Markdown and parameter sidecars, their descriptor metadata and
+    RECORD checksums are excluded here. Concrete parameter values belong to the
+    workflow. Code, resource capabilities, native libraries and other assets remain.
+    """
+    import hashlib
+    from biopipe_sdk.documentation import archive_path
+    from biopipe_sdk.declarations import declaration_hash
+    records = wheel_entries(wheel)
+    with zipfile.ZipFile(wheel) as archive:
+        entries = {name: archive.read(name) for name in archive.namelist() if not name.endswith('/')}
+    excluded = {archive_path(entries, entry['expected']) for entry in records if entry['expected'].get('documentation')}
+    import ast
+    from pathlib import PurePosixPath
+    for record in records:
+        descriptor = record['expected']
+        module, classname = descriptor['entry_point'].split(':')
+        module = module.replace('.', '/')
+        source = module + '.py' if module + '.py' in entries else module + '/__init__.py'
+        cls = next(node for node in ast.parse(entries[source].decode('utf-8')).body
+                   if isinstance(node, ast.ClassDef) and node.name == classname)
+        relative = 'parameters.json' if source.endswith('/__init__.py') else PurePosixPath(source).stem + '.parameters.json'
+        for node in cls.body:
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target] if isinstance(node, ast.AnnAssign) else []
+            if any(isinstance(target, ast.Name) and target.id == 'parameters_file' for target in targets):
+                relative = ast.literal_eval(node.value)
+        # wheel_entries already checked containment and exact schema content.
+        excluded.add(str(PurePosixPath(source).parent / relative.replace('\\', '/')))
+    digest = hashlib.sha256()
+    for name, content in sorted(entries.items()):
+        if name in excluded or name.endswith(('.dist-info/RECORD', '.dist-info/RECORD.jws', '.dist-info/RECORD.p7s')):
+            continue
+        if name.endswith('.dist-info/biopipe.json'):
+            value = json.loads(content)
+            for descriptor in value['descriptors']:
+                descriptor.pop('documentation', None)
+                descriptor.pop('parameters_schema', None)
+                descriptor['declaration_sha'] = declaration_hash(descriptor)
+            content = json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')
+        digest.update(name.encode('utf-8') + b'\0' + hashlib.sha256(content).digest())
+    return digest.hexdigest()
+
+
 def load_class(descriptor):
     from biopipe_sdk.declarations import load_class as load
     return load(descriptor)
@@ -65,7 +111,12 @@ def probe_entry(request):
 
 
 def install(manager, current, packages, generation, *, dependencies=()):
-    from biopipe.packages import bundled_state, owns_builtin_id
+    # One discovery-policy-aware factory snapshot per transaction. Repeating a
+    # filesystem-backed bundled_state() for every entry made large library
+    # refreshes scan the same source tree hundreds of times.
+    bundled = manager.bundled_state()
+    bundled_names = {p['name'] for p in bundled['packages']}
+    bundled_owners = {d['id']: d['distribution'] for d in bundled['descriptors']}
     builder = TargetBuilder(manager, current)
     environment = manager.directory / 'environments' / generation
     environment.mkdir(parents=True)
@@ -77,7 +128,7 @@ def install(manager, current, packages, generation, *, dependencies=()):
     if wheels:
         from biopipe.bytecode import precompile
         precompile(code)
-    descriptors = [deepcopy(d) for d in bundled_state()['descriptors'] if any(p['name'] == d['distribution'] and p.get('origin') == 'bundled' for p in packages)]
+    descriptors = [deepcopy(d) for d in bundled['descriptors'] if any(p['name'] == d['distribution'] and p.get('origin') == 'bundled' for p in packages)]
     old = {d['id']: d for d in current['descriptors']}
     # Existing successful isolation choices remain pinned. Dependency repair
     # handles bundled declarations individually, not an incompatible union.
@@ -116,17 +167,17 @@ def install(manager, current, packages, generation, *, dependencies=()):
                 for descriptor in found:
                     if not reuse:
                         execution = builder.prepare(descriptor['dependencies'])
-                    bundled_names = {p['name'] for p in bundled_state()['packages']}
-                    base_ids = {d['id'] for d in bundled_state()['descriptors']}
-                    if descriptor['id'] in base_ids and not owns_builtin_id(package['name'], descriptor['id']):
+                    if descriptor['id'] in bundled_owners and bundled_owners[descriptor['id']] != package['name']:
                         raise ValueError(f'Plugin shadows a built-in: {descriptor["id"]}')
                     if '.' not in descriptor['id'] and package['name'] not in bundled_names:
                         raise ValueError('Plugin IDs must be namespaced')
                     descriptor.update(distribution=package['name'], package_version=package['version'], origin='wheel', execution=execution,
                                       implementation={k: package[k] for k in ('version', 'sha256')})
                     descriptor['implementation'].update(package=package['name'], code_sha=descriptor['code_sha'], declaration_sha=descriptor['declaration_sha'])
+                    if package.get('execution_sha'):
+                        descriptor['implementation']['execution_sha'] = package['execution_sha']
                     records.append(descriptor)
-        owned = {d['id'] for d in bundled_state()['descriptors'] if d['distribution'] == package['name']}
+        owned = {key for key, owner in bundled_owners.items() if owner == package['name']}
         if not owned <= {d['id'] for d in records}:
             raise ValueError('Replacement package must preserve its bundled IDs')
         if not records:

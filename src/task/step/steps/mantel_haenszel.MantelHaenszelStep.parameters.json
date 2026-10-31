@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "properties": {
+    "stratum_dim": {
+      "type": "string",
+      "default": "stratum",
+      "title": "Stratum Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "case_exposed": {
+      "type": "string",
+      "default": "case_exposed",
+      "title": "Case Exposed",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "case_unexposed": {
+      "type": "string",
+      "default": "case_unexposed",
+      "title": "Case Unexposed",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "control_exposed": {
+      "type": "string",
+      "default": "control_exposed",
+      "title": "Control Exposed",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "control_unexposed": {
+      "type": "string",
+      "default": "control_unexposed",
+      "title": "Control Unexposed",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "confidence": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1,
+      "default": 0.95,
+      "title": "Confidence",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "additionalProperties": false
+}

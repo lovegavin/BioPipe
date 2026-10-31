@@ -40,6 +40,9 @@ def source_files(path):
 
 def snapshot(source, target):
     """Hash the bytes actually staged, so an editor cannot change a pending install."""
+    from biopipe.bytecode import filesystem_path
+    source = Path(filesystem_path(source, resolve=False))
+    target = Path(filesystem_path(target, resolve=False))
     digest = hashlib.sha256()
     for path in source_files(source):
         relative = path.relative_to(source) if source.is_dir() else Path(source.name)
@@ -72,6 +75,8 @@ def module_assets(source):
     for d in records:
         if is_image_icon(d.get('icon')):
             assets.add(d['icon'])
+        if d.get('documentation'):
+            assets.add(d['documentation']['path'])
     return sorted(assets)
 
 
@@ -171,7 +176,8 @@ def refresh(manager, current):
     sources = [p for p in sorted(inbox.iterdir()) if not p.name.startswith((".", "_")) and
                (p.suffix.lower() in {".py", ".whl"} or p.is_dir()) and
                not (p.is_dir() and p.name in {"icons", "assets"} and not (p / "pyproject.toml").exists())]
-    staging = manager.directory / "staging"
+    from biopipe.bytecode import filesystem_path
+    staging = Path(filesystem_path(manager.directory / "staging", resolve=False))
     staging.mkdir(parents=True, exist_ok=True)
     changed, skipped, wheels, owners, extra_packages = [], [], [], {}, set()
     metadata_changed = False
@@ -202,6 +208,8 @@ def refresh(manager, current):
                         raise ValueError("A plugin folder must contain pyproject.toml with BioPipe entry points")
                     from biopipe.developer import build, check_source
                     manifest = check_source(target)
+                    from biopipe.operator_docs import cache_sources
+                    cache_sources(manager, manifest['descriptors'], target / 'src' if (target / 'src').is_dir() else target)
                     package = manifest['name']
                     # Parameter-only edits do not even invoke the wheel builder.
                     candidates = [{**d, 'dependencies': sorted(set(d.get('dependencies', []) + manifest.get('dependencies', [])))} for d in manifest['descriptors']]
@@ -227,6 +235,8 @@ def refresh(manager, current):
                 receipts[source.name] = {"sha256": digest, "package": package}
                 from biopipe.install_targets import wheel_entries
                 candidates = [{**e['expected'], 'dependencies': e['dependencies']} for e in wheel_entries(wheel)]
+                from biopipe.operator_docs import cache_wheel
+                cache_wheel(manager, wheel)
                 with zipfile.ZipFile(wheel) as archive:
                     from email.parser import BytesParser
                     wheel_version = BytesParser().parsebytes(archive.read(next(n for n in archive.namelist() if n.endswith('.dist-info/METADATA'))))['Version']

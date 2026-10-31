@@ -1,0 +1,49 @@
+name: microbiome_diff
+sources:
+  table:
+    path: input/table.biom
+    dims:
+    - sample
+    - taxon
+    labels:
+      sample: builtin
+      taxon: builtin
+    reader: BiomReader
+  meta:
+    path: input/meta.csv
+    dims:
+    - sample
+    - feature
+    labels:
+      sample:
+        feature: 0
+      feature: builtin
+    reader: CsvReader
+steps:
+- name: filter_min
+  inputs:
+  - table
+- name: normalize
+  inputs:
+  - filtered
+- name: ancom_bc
+  inputs:
+  - relative
+  - meta
+- name: aldex2
+  inputs:
+  - relative
+  - meta
+- name: describe
+  inputs:
+  - ancom
+- name: describe
+  inputs:
+  - aldex
+- name: transpose
+  inputs:
+  - relative
+- name: barplot
+  inputs:
+  - taxa_by_sample
+parameters_file: parameters.json

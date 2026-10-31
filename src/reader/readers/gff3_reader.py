@@ -51,6 +51,7 @@ from pathlib import Path
 import numpy as np
 
 from src.core import Form, ReaderError
+from src.core.numeric import compact_numeric
 from src.reader.base import Reader
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
@@ -178,7 +179,7 @@ class Gff3Reader(Reader):
             raw = [r[old_idx] for r in rows]
             numeric = True
             try:
-                values = np.asarray(raw, dtype=np.float32)
+                values = np.asarray(raw, dtype=np.float64)
             except (ValueError, TypeError):
                 numeric = False
 
@@ -196,7 +197,7 @@ class Gff3Reader(Reader):
             cols_data.append(encoder.fit_transform(raw))
             encoders_used[name] = encoder
 
-        data = np.stack(cols_data, axis=1).astype(np.float32)
+        data = compact_numeric(np.stack(cols_data, axis=1))
 
         final: dict[str, dict[str, int]] = {}
 
@@ -237,6 +238,8 @@ def _load_rows(path: Path) -> list[list[str]]:
     with open(path, encoding="utf-8") as fh:
         for line in fh:
             line = line.rstrip("\r\n")
+            if line.startswith("##FASTA"):
+                break
             if not line.strip() or line.startswith("#"):
                 continue
             rows.append(line.split("\t"))

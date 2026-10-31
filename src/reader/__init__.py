@@ -39,13 +39,28 @@ def _from_packages():
 READERS: list[Reader] = [] if os.getenv("BIOPIPE_REGISTRY_MAINTENANCE") == "1" else _from_packages()
 
 
-def pick_reader(path: Path) -> Reader:
-    """Return the single reader that claims this path.
+def pick_reader(path: Path, name: str | None = None) -> Reader:
+    """Return an explicitly named Reader, or the single Reader claiming a path.
 
     Selection is based on the original path (compression suffix
-    included), so a ``.bed.gz`` still routes to the correct reader.
+    included), so a ``.bed.gz`` still routes to the correct reader. An explicit
+    registered ID bypasses suffix inference, but keeps compression and required
+    companion checks. Reader parameters remain independent of this selector.
     """
     path = Path(path)
+    if name is not None:
+        from biopipe.reader_selection import candidates as select
+        descriptors = [{**getattr(reader, '_declaration', {}),
+                        'id': getattr(reader, '_declaration', {}).get('id', type(reader).__name__),
+                        **{key: getattr(reader, key) for key in ('extensions', 'requires_siblings', 'excludes_siblings', 'handles_compression', 'file_input')}}
+                       for reader in READERS]
+        try:
+            selected = select(descriptors, path, name, check_siblings=True)
+        except ValueError as exc:
+            raise ReaderError(str(exc)) from exc
+        if not selected:
+            raise ReaderError(f'Reader {name} cannot read {path}: unsupported compression or missing required companion files')
+        return READERS[descriptors.index(selected[0])]
     candidates = [r for r in READERS if r.matches(path)]
 
     if not candidates:
@@ -98,6 +113,8 @@ def read_source(
     path: Path,
     dims: list,
     labels: dict,
+    *,
+    reader_id: str | None = None,
     **args,
 ):
     """Read a source file into a Form.
@@ -107,9 +124,9 @@ def read_source(
     ``handles_compression = True``.
     """
     path = Path(path)
-    reader = pick_reader(path)
+    reader = pick_reader(path, reader_id)
     if reader.parameters_schema is None:
-        raise ReaderError("Protocol v2 requires Reader parameters_schema; migrate the declaration first")
+        raise ReaderError("Protocol v3 requires a Reader parameter schema; migrate the declaration first")
     from biopipe_sdk.protocol import validate_parameters
     args = validate_parameters(reader.parameters_schema, args)
 

@@ -191,20 +191,16 @@ class RemoteService:
             return {'path': str(folder), 'parent': str(folder.parent), 'entries': entries[offset:offset+200],
                     'next_offset': offset+200 if offset+200 < len(entries) else None}
         if method == 'source':
-            from biopipe.file_formats import reader_extensions, uncompressed_path
+            from biopipe.reader_selection import candidates as select
             path = self.path(params['path'])
             if not path.is_file():
                 raise ValueError('Choose an existing server file')
-            primary = uncompressed_path(path)
-            candidates = [r for r in service.catalog['readers']
-                          if any(path.name.lower().endswith(ext) for ext in reader_extensions(r))
-                          and all(primary.with_suffix(s).exists() for s in r.get('requires_siblings', []))
-                          and not any(primary.with_suffix(s).exists() for s in r.get('excludes_siblings', []))]
+            candidates = select(service.catalog['readers'], path, params.get('reader'), check_siblings=True)
             if len(candidates) != 1:
                 raise ValueError('No unique registered Reader matches this server file')
             reader = candidates[0]; settings = reader.get('file_input', {})
             return {'filename': path.name, 'reader': reader['id'], 'bytes': path.stat().st_size,
-                    'source': {'path': str(path), 'dims': settings.get('dims', ['sample', 'feature']),
+                    'source': {'reader': reader['id'], 'path': str(path), 'dims': settings.get('dims', ['sample', 'feature']),
                                'labels': settings.get('labels', {'sample': 'auto', 'feature': 'builtin'}),
                                'args': reader.get('runtime_defaults', {})}}
         if method in ('validate', 'prepare', 'export', 'run'):

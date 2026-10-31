@@ -230,14 +230,18 @@ class RemoteManager:
             # companion formats when validating the actual server files.
             from .source_paths import source_candidates
             for node in part.nodes:
-                if node.source and node.source.path:
-                    used.update(r['id'] for r in source_candidates(graph, catalog, self.service.root, node.source.path))
+                if node.source and node.source.path and node.id not in part.runtime.get('exchange_inputs', []):
+                    used.update(r['id'] for r in source_candidates(graph, catalog, self.service.root,
+                                node.source.path, node.source.location, node.source.reader,
+                                input_roots=self.service.settings.input_roots))
             for descriptor in catalog['operators'] + catalog.get('readers', []):
                 if descriptor['id'] in used and descriptor.get('implementation'):
                     part.plugin_lock.setdefault(descriptor['id'], deepcopy(descriptor['implementation']))
         # Saved canvas snapshots remain editable offline. Fresh server pins are
         # resolved on submission; existing pins are never silently discarded.
-        return prepare_interface(freeze_graph(graph, catalog, self.service.root), catalog, self.service.root)
+        return prepare_interface(freeze_graph(graph, catalog, self.service.root,
+                                 input_roots=self.service.settings.input_roots), catalog, self.service.root,
+                                 input_roots=self.service.settings.input_roots)
 
     def wrap_job(self, key, job):
         job = deepcopy(job)

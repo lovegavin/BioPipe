@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "properties": {
+    "feature_type": {
+      "type": "string",
+      "title": "特征类型",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_id_field": {
+      "type": "string",
+      "enum": [
+        "name",
+        "id"
+      ],
+      "default": "name",
+      "title": "特征标识",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    }
+  },
+  "additionalProperties": false
+}

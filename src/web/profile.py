@@ -72,4 +72,4 @@ def make_settings(code_root, frontend, *, desktop=False, profile_dir=None,
     return Settings(profile.workspace, profile.data_dir, Path(frontend).resolve(),
                     max_upload=upload_limit_from_env(),
                     code_root=Path(code_root).resolve(), desktop=desktop, profile=profile.as_dict(),
-                    builtin_routes=True)
+                    builtin_routes=True, manifest_only_registry=True)

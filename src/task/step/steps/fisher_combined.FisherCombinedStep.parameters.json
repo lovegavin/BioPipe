@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "properties": {
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "title": "Statistic Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "pvalue_dims": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "title": "Pvalue Dims",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    }
+  },
+  "additionalProperties": false
+}

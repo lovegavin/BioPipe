@@ -20,6 +20,7 @@ class ExecutionTarget(StrictModel):
 
 
 class Source(StrictModel):
+    reader: str | None = Field(default=None, pattern=r"^[A-Za-z_][A-Za-z0-9_.-]{0,79}$")
     path: str = Field(default="", max_length=2048)
     dims: list[str] = Field(default_factory=lambda: ["sample", "feature"], min_length=1, max_length=8)
     labels: dict[str, Any] = Field(default_factory=lambda: {"sample": "auto", "feature": "builtin"})

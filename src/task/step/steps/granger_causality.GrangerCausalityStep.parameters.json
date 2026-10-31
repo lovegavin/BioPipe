@@ -1,0 +1,50 @@
+{
+  "type": "object",
+  "properties": {
+    "time_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Time Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "cause_label": {
+      "type": "string",
+      "title": "Cause Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "effect_label": {
+      "type": "string",
+      "title": "Effect Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "max_lag": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2,
+      "title": "Max Lag",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    }
+  },
+  "required": [
+    "cause_label",
+    "effect_label"
+  ],
+  "additionalProperties": false
+}

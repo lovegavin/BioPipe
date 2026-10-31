@@ -1,0 +1,60 @@
+name: ml_classification
+sources:
+  proteins:
+    path: input/proteomics_raw.txt
+    dims:
+    - protein
+    - sample
+    labels:
+      protein:
+        sample: 0
+      sample: builtin
+    reader: TxtReader
+  clinical:
+    path: input/clinical_raw.txt
+    dims:
+    - sample
+    - feature
+    labels:
+      sample:
+        feature: 0
+      feature: builtin
+    reader: TxtReader
+steps:
+- name: missing
+  inputs:
+  - proteins
+- name: impute
+  inputs:
+  - prot_filtered
+- name: normalize
+  inputs:
+  - prot_imputed
+- name: log_transform
+  inputs:
+  - prot_qn
+- name: transpose
+  inputs:
+  - prot_log
+- name: logistic_regression
+  inputs:
+  - samples_by_protein
+  - clinical
+- name: random_forest_classifier
+  inputs:
+  - samples_by_protein
+  - clinical
+- name: gradient_boosting_classifier
+  inputs:
+  - samples_by_protein
+  - clinical
+- name: describe
+  inputs:
+  - logistic
+- name: describe
+  inputs:
+  - rf
+- name: describe
+  inputs:
+  - gb
+parameters_file: parameters.json

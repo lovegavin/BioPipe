@@ -1,0 +1,57 @@
+name: gwas_meta_prs
+sources:
+  geno:
+    path: input/geno.vcf
+    dims:
+    - variant
+    - sample
+    labels:
+      variant: builtin
+      sample: builtin
+    reader: VcfReader
+  effects:
+    path: input/effects.csv
+    dims:
+    - variant
+    - study
+    labels:
+      variant:
+        study: 0
+      study: builtin
+    reader: CsvReader
+  stds:
+    path: input/stds.csv
+    dims:
+    - variant
+    - study
+    labels:
+      variant:
+        study: 0
+      study: builtin
+    reader: CsvReader
+  weights:
+    path: input/weights.csv
+    dims:
+    - variant
+    - statistic
+    labels:
+      variant:
+        statistic: 0
+      statistic: builtin
+    reader: CsvReader
+steps:
+- name: meta_analysis
+  inputs:
+  - effects
+  - stds
+- name: prs
+  inputs:
+  - geno
+  - weights
+- name: describe
+  inputs:
+  - meta
+- name: describe
+  inputs:
+  - prs
+parameters_file: parameters.json

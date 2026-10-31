@@ -1,0 +1,29 @@
+name: go_enrichment
+sources:
+  gaf:
+    path: input/goa_human.gaf.gz
+    dims:
+    - annotation
+    - field
+    labels:
+      annotation: auto
+      field: builtin
+    reader: GafReader
+steps:
+- name: pivot
+  inputs:
+  - gaf
+- name: gene_list_to_hits
+  inputs:
+  - universe
+- name: enrich_go
+  inputs:
+  - hits
+  - universe
+- name: enrichment_plot
+  inputs:
+  - enriched
+- name: describe
+  inputs:
+  - enriched
+parameters_file: parameters.json

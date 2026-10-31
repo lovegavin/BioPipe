@@ -30,17 +30,18 @@ def instances(directory):
             try:
                 if psutil.Process(value["pid"]).create_time() != value["created"]:
                     continue
+            except psutil.NoSuchProcess:
+                continue
             except psutil.Error:
-                # A sandboxed agent may reach loopback while its process table
-                # hides the desktop host. Authenticate that exact instance.
-                try:
-                    response = httpx.get(value["url"] + "/api/agent/identity",
-                                         headers={"X-BioPipe-Bridge": value["secret"]},
-                                         timeout=2, trust_env=False)
-                    if not response.is_success or response.json().get("instance_id") != value["instance_id"]:
-                        continue
-                except (httpx.HTTPError, ValueError):
+                pass  # The authenticated handshake also works with a hidden process table.
+            try:
+                response = httpx.get(value["url"] + "/api/agent/identity",
+                                     headers={"X-BioPipe-Bridge": value["secret"]},
+                                     timeout=2, trust_env=False)
+                if not response.is_success or response.json().get("instance_id") != value["instance_id"]:
                     continue
+            except (httpx.HTTPError, ValueError):
+                continue
             result.append(value)
         except (ValueError, KeyError, OSError, psutil.Error):
             continue
@@ -48,13 +49,17 @@ def instances(directory):
 
 
 class Client:
-    def __init__(self, directory, *, instance=None, name="external-agent", scopes=None):
+    def __init__(self, directory, *, instance=None, name="external-agent", scopes=None, auto_start=False, workspace=None, require_api=0):
         self.directory, self.name = Path(directory), name
         available = instances(directory)
+        available = [value for value in available if value.get('api_version', 0) >= require_api]
         if instance:
             available = [item for item in available if item["instance_id"] == instance]
+        if not available and auto_start and not instance:
+            from .headless import ensure_service
+            available = ensure_service(directory, workspace=workspace, require_api=require_api)
         if not available:
-            raise ClientError("No running BioPipe Studio found in this profile. Start the desktop app or scripts/studio.py.", "not_connected")
+            raise ClientError("No running BioPipe service found in this profile. Start biopipe serve or BioPipe Studio.", "not_connected")
         # Servers in one profile share the session command store. Select any live
         # endpoint unless the caller explicitly chooses an instance.
         self.instance = available[-1]
@@ -76,9 +81,30 @@ class Client:
         return value
 
     def request(self, path, payload=None):
-        response = self.http.get("/api/agent" + path) if payload is None else self.http.post(
-            "/api/agent" + path, json=payload, timeout=660 if path == "/plugins/install" else 30)
+        route = '/api' + path if path.startswith('/v1/') else '/api/agent' + path
+        response = self.http.get(route) if payload is None else self.http.post(
+            route, json=payload, timeout=660 if path == "/plugins/install" else 120)
         return self.decode(response)
+
+    def download(self, path, destination, payload=None):
+        """Stream an explicitly selected artifact/bundle without loading it in RAM."""
+        destination = Path(destination)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        import os, tempfile
+        fd, temporary = tempfile.mkstemp(prefix=destination.name + '.', dir=destination.parent)
+        size = 0
+        try:
+            with os.fdopen(fd, 'wb') as stream:
+                route = '/api' + path if path.startswith('/v1/') else '/api/agent' + path
+                with self.http.stream('POST' if payload is not None else 'GET', route, json=payload, timeout=120) as response:
+                    if not response.is_success:
+                        response.read(); self.decode(response)
+                    for chunk in response.iter_bytes(1024 * 1024):
+                        stream.write(chunk); size += len(chunk)
+            os.replace(temporary, destination)
+            return {'path': str(destination.resolve()), 'bytes': size}
+        finally:
+            Path(temporary).unlink(missing_ok=True)
 
     def sessions(self):
         return self.request("/sessions")
@@ -90,6 +116,8 @@ class Client:
         values = self.sessions()
         live = [value for value in values if (datetime.now(timezone.utc) - datetime.fromisoformat(value["updated_at"])).total_seconds() < 20]
         values = live or values
+        if not values:
+            raise ClientError('No canvas is open. Use workflow commands or biopipe_submit for headless analysis.', 'no_active_session')
         if len(values) != 1:
             raise ClientError("Select a canvas with --session; use sessions list to inspect available windows.", "ambiguous_session",
                               {"sessions": [{"id": v["id"], "name": v["name"]} for v in values]})

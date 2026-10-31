@@ -9,7 +9,7 @@ import heapq
 from pathlib import Path, PurePosixPath
 
 from biopipe.file_formats import primary_ext, uncompressed_path
-from biopipe.pins import identity, released_replacements
+from biopipe.pins import identity, equivalent, released_replacements
 from .graph import GraphError
 from .routes import output_names
 
@@ -120,7 +120,7 @@ def descriptor_capability(spec, info, pin=None):
             validated = {(key, identity(value)) for key, values in (info.get('validated_pins') or {}).items()
                          for value in values if isinstance(value, dict)}
         if ((name, identity(pin)) not in validated and
-                identity(current, bundled=bundled) != identity(replacement, bundled=bundled)):
+                not equivalent(current, replacement, bundled=bundled)):
             return f'{name} pinned implementation is unavailable'
     return None
 
@@ -214,7 +214,9 @@ def _metadata(graph, infos, stat_file, warnings):
                         where = config['file_locations'].get(field, target(original_config))
                         reference(node, field, value, where, part.base_dir, refs)
             elif node.kind == 'source' and node.source:
-                candidates = reader_by_ext.get(primary_ext(node.source.path), [])
+                if node.source.reader and node.source.reader not in readers:
+                    raise GraphError(f'Unknown Reader: {node.source.reader}', owner or node.id)
+                candidates = [node.source.reader] if node.source.reader else reader_by_ext.get(primary_ext(node.source.path), [])
                 fields = {name for reader in candidates for name in schemas.get(reader, set())}
                 if owner:
                     valid_locations.update(f'{node.id}.source.args.{name}' for name in fields
@@ -226,7 +228,7 @@ def _metadata(graph, infos, stat_file, warnings):
                 source_sizes[node.id] = size(location, node.source.path, part.base_dir, label=node.title or node.id) if node.source.path else None
                 origin_readers = {spec['id'] for spec in infos[target_key(location)]['catalog'].get('readers', [])
                                   if primary_ext(node.source.path) in spec.get('extensions', [])}
-                if origin_readers:
+                if origin_readers and not node.source.reader:
                     candidates = [name for name in candidates if name in origin_readers]
                 path_type = Path if location['kind'] == 'local' else PurePosixPath
                 source_base = str((path_type(part.base_dir) / node.source.path).parent)

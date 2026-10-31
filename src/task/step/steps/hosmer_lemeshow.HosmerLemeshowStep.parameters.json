@@ -1,0 +1,50 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "outcome_label": {
+      "type": "string",
+      "title": "Outcome Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "probability_label": {
+      "type": "string",
+      "title": "Probability Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "groups": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 10,
+      "title": "分组顺序",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    }
+  },
+  "required": [
+    "outcome_label",
+    "probability_label"
+  ],
+  "additionalProperties": false
+}

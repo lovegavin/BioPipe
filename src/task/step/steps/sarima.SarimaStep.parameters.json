@@ -1,0 +1,126 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "value_label": {
+      "type": "string",
+      "title": "数值字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "p": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4,
+      "default": 1,
+      "title": "P",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "d": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2,
+      "default": 0,
+      "title": "D",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "q": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4,
+      "default": 0,
+      "title": "Q",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "P": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2,
+      "default": 0,
+      "title": "P",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "D": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2,
+      "default": 0,
+      "title": "D",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "Q": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2,
+      "default": 1,
+      "title": "Q",
+      "x-ui-group": "basic",
+      "x-ui-order": 80
+    },
+    "seasonal_period": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 24,
+      "default": 4,
+      "title": "Seasonal Period",
+      "x-ui-group": "basic",
+      "x-ui-order": 90
+    },
+    "trend": {
+      "type": "string",
+      "enum": [
+        "c",
+        "n"
+      ],
+      "default": "c",
+      "title": "Trend",
+      "x-ui-group": "basic",
+      "x-ui-order": 100
+    },
+    "confidence": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1,
+      "default": 0.95,
+      "title": "Confidence",
+      "x-ui-group": "basic",
+      "x-ui-order": 110
+    },
+    "maxiter": {
+      "type": "integer",
+      "minimum": 10,
+      "default": 200,
+      "title": "Maxiter",
+      "x-ui-group": "basic",
+      "x-ui-order": 120
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 130
+    }
+  },
+  "required": [
+    "value_label"
+  ],
+  "additionalProperties": false
+}

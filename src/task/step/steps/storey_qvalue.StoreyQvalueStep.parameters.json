@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "properties": {
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "value_dim": {
+      "type": "string",
+      "default": "pvalue",
+      "title": "Value Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "lambda": {
+      "type": "number",
+      "minimum": 0.05,
+      "maximum": 0.95,
+      "default": 0.5,
+      "title": "Lambda",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    }
+  },
+  "additionalProperties": false
+}

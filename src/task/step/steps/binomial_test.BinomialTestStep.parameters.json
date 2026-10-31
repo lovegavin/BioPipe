@@ -1,0 +1,72 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "value_label": {
+      "type": "string",
+      "title": "数值字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "success_value": {
+      "type": "number",
+      "default": 1.0,
+      "title": "成功取值",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "null_probability": {
+      "type": "number",
+      "default": 0.5,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "title": "原假设概率",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "alternative": {
+      "type": "string",
+      "enum": [
+        "two-sided",
+        "greater",
+        "less"
+      ],
+      "default": "two-sided",
+      "title": "备择假设",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "confidence": {
+      "type": "number",
+      "default": 0.95,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "title": "置信水平",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "required": [
+    "value_label"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,72 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "time_label": {
+      "type": "string",
+      "title": "随访时间字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "event_label": {
+      "type": "string",
+      "title": "事件字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "covariates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "协变量",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "categorical": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "title": "分类协变量",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 0.999,
+      "default": 0.95,
+      "title": "Confidence",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "required": [
+    "time_label",
+    "event_label",
+    "covariates"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,78 @@
+{
+  "type": "object",
+  "properties": {
+    "test": {
+      "type": "string",
+      "enum": [
+        "two-sample",
+        "paired",
+        "one-sample"
+      ],
+      "default": "two-sample",
+      "title": "Test",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "effect_size": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "title": "Effect Size",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "alpha": {
+      "type": "number",
+      "default": 0.05,
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1,
+      "title": "显著性水平",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "nobs1": {
+      "type": "integer",
+      "minimum": 2,
+      "title": "Nobs1",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "nobs2": {
+      "type": "integer",
+      "minimum": 2,
+      "title": "Nobs2",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "ratio": {
+      "type": "number",
+      "default": 1.0,
+      "exclusiveMinimum": 0,
+      "title": "Ratio",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "alternative": {
+      "type": "string",
+      "enum": [
+        "two-sided",
+        "greater",
+        "less"
+      ],
+      "default": "two-sided",
+      "title": "Alternative",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "required": [
+    "effect_size",
+    "nobs1"
+  ],
+  "additionalProperties": false
+}

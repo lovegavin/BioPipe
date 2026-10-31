@@ -1,0 +1,60 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "outcome_label": {
+      "type": "string",
+      "title": "Outcome Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "risk_label": {
+      "type": "string",
+      "title": "Risk Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "positive_label": {
+      "type": "string",
+      "title": "Positive Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "thresholds": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "exclusiveMinimum": 0,
+        "exclusiveMaximum": 1
+      },
+      "minItems": 2,
+      "title": "Thresholds",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "required": [
+    "outcome_label",
+    "risk_label"
+  ],
+  "additionalProperties": false
+}

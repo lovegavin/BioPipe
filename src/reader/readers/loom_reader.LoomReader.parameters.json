@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "matrix": {
+      "type": "string",
+      "default": "matrix",
+      "title": "Matrix",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "row_ids": {
+      "type": "string",
+      "title": "Row Ids",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "col_ids": {
+      "type": "string",
+      "title": "Col Ids",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    }
+  },
+  "additionalProperties": false
+}

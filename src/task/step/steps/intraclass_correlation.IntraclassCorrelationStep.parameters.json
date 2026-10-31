@@ -1,0 +1,77 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "raters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Raters",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "model": {
+      "type": "string",
+      "enum": [
+        "oneway",
+        "twoway"
+      ],
+      "default": "twoway",
+      "title": "Model",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "consistency",
+        "agreement"
+      ],
+      "default": "agreement",
+      "title": "Type",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "unit": {
+      "type": "string",
+      "enum": [
+        "single",
+        "average"
+      ],
+      "default": "single",
+      "title": "Unit",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "confidence": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1,
+      "default": 0.95,
+      "title": "Confidence",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "additionalProperties": false
+}

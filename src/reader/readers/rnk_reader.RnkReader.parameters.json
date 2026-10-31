@@ -1,0 +1,45 @@
+{
+  "type": "object",
+  "properties": {
+    "header": {
+      "type": "boolean",
+      "title": "Header row",
+      "default": false,
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "comment": {
+      "type": "string",
+      "title": "Comment prefix",
+      "default": "#",
+      "description": "Lines starting with this prefix are ignored; empty disables comments.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "gene_column": {
+      "type": "integer",
+      "title": "Gene column",
+      "default": 0,
+      "minimum": 0,
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "score_column": {
+      "type": "integer",
+      "title": "Score column",
+      "default": 1,
+      "minimum": 0,
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "feature_label": {
+      "type": "string",
+      "title": "Score label",
+      "default": "score",
+      "minLength": 1,
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "additionalProperties": false
+}

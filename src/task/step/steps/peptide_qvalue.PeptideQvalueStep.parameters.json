@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "properties": {
+    "psm_dim": {
+      "type": "string",
+      "default": "psm",
+      "title": "Psm Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "score_label": {
+      "type": "string",
+      "title": "Score Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "decoy_label": {
+      "type": "string",
+      "title": "Decoy Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "decoy_values": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "number"
+        ]
+      },
+      "default": [
+        1
+      ],
+      "title": "Decoy Values",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    }
+  },
+  "required": [
+    "score_label",
+    "decoy_label"
+  ],
+  "additionalProperties": false
+}

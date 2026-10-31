@@ -1,0 +1,134 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "seqs": {}
+  },
+  "steps": [
+    {
+      "name": "sequence_stats",
+      "inputs": [
+        "seqs"
+      ],
+      "params": {
+        "sequence_dim": "sequence",
+        "position_dim": "position",
+        "fastq_summary": false,
+        "record_buffer_mb": 1,
+        "output": "stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "stats"
+      ],
+      "params": {},
+      "context_params": {}
+    },
+    {
+      "name": "find_orfs",
+      "inputs": [
+        "seqs"
+      ],
+      "params": {
+        "sequence_dim": "sequence",
+        "position_dim": "position",
+        "min_aa": 1,
+        "output": "orfs"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "orfs"
+      ],
+      "params": {},
+      "context_params": {}
+    },
+    {
+      "name": "motif_scan",
+      "inputs": [
+        "seqs"
+      ],
+      "params": {
+        "motifs": {
+          "TATA": "TATAAA",
+          "SP1": "GGGCGG"
+        },
+        "sequence_dim": "sequence",
+        "position_dim": "position",
+        "output": "motif_hits"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "motif_hits"
+      ],
+      "params": {},
+      "context_params": {}
+    },
+    {
+      "name": "histogram",
+      "inputs": [
+        "stats"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "length",
+        "bins": 30,
+        "filename": "seq_length_hist.png",
+        "title": "Sequence lengths",
+        "xlabel": "Length (nt)",
+        "log_y": false,
+        "ylabel": "Count",
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "histogram",
+      "inputs": [
+        "stats"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "gc",
+        "bins": 30,
+        "filename": "gc_hist.png",
+        "title": "GC content per sequence",
+        "xlabel": "GC fraction",
+        "log_y": false,
+        "ylabel": "Count",
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "histogram",
+      "inputs": [
+        "orfs"
+      ],
+      "params": {
+        "dim": "statistic",
+        "value_label": "length_aa",
+        "bins": 40,
+        "filename": "orf_length_hist.png",
+        "title": "ORF lengths",
+        "xlabel": "Length (aa)",
+        "log_y": false,
+        "ylabel": "Count",
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    }
+  ]
+}

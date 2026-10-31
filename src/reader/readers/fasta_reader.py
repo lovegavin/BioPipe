@@ -57,7 +57,7 @@ _UNKNOWN = 5
 
 _DNA_CHARS = set("ACGTN")
 _RNA_CHARS = set("ACGUN")
-_PROTEIN_CHARS = set("ACDEFGHIKLMNPQRSTVWY")
+_PROTEIN_CHARS = set("ACDEFGHIKLMNPQRSTVWYBXZJOU*")
 
 
 class FastaReader(Reader):
@@ -170,6 +170,7 @@ def _parse_fasta(path: Path) -> tuple[list[str], list[str]]:
     ids: list[str] = []
     seqs: list[str] = []
     current: list[str] = []
+    seen_header = False
 
     with open(path, encoding="utf-8") as fh:
         for line in fh:
@@ -177,17 +178,23 @@ def _parse_fasta(path: Path) -> tuple[list[str], list[str]]:
             if not line.strip():
                 continue
             if line.startswith(">"):
-                if current:
+                if seen_header:
+                    # An empty record still occupies one row and one label.
                     seqs.append("".join(current))
-                    current = []
+                current = []
                 header = line[1:].strip()
                 parts = header.split()
                 sid = parts[0] if parts else f"seq{len(ids)}"
                 ids.append(sid)
+                seen_header = True
             else:
+                if not seen_header:
+                    raise ReaderError(
+                        "FASTA sequence data appears before the first '>' header"
+                    )
                 current.append(line.rstrip())
 
-    if current:
+    if seen_header:
         seqs.append("".join(current))
 
     return ids, seqs
@@ -200,14 +207,18 @@ def _infer_alphabet(seqs: list[str]) -> str:
     observed.discard("-")
     observed.discard(".")
 
-    if observed <= _DNA_CHARS - {"T", "U"}:
+    if not observed:
         return "dna"
-    if observed <= _RNA_CHARS - {"T", "U"}:
+    # Protein-specific and unknown residues must not become DNA merely because
+    # their letters overlap with nucleotide ambiguity codes.
+    if observed & set("EFILPQXZJ*"):
+        return "protein"
+    if observed <= _DNA_CHARS:
+        return "dna"
+    if observed <= _RNA_CHARS:
         return "rna"
     if "U" in observed and "T" not in observed:
         return "rna"
-    if observed <= _DNA_CHARS:
-        return "dna"
     if observed <= _PROTEIN_CHARS:
         return "protein"
-    return "dna"
+    return "protein"

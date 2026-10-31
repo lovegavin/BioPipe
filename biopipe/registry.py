@@ -27,10 +27,11 @@ def read_json(path, default):
 
 def scan_sources(root=ROOT, sources=None, warnings_out=None):
     """Read per-class definitions and parameter files without importing code."""
-    from biopipe_sdk.declarations import compile_declaration, source_declarations
+    from biopipe_sdk.declarations import DeclarationCompiler, source_declarations
     from biopipe_sdk.drift import check_source
     root = Path(root)
     descriptors, errors, seen = [], [], set()
+    compiler = DeclarationCompiler(root)
     for folder in ('src/task/step/steps', 'src/reader/readers'):
         for path in sorted((root / folder).glob('[!_]*.py')):
             source = path.relative_to(root).as_posix()
@@ -38,11 +39,12 @@ def scan_sources(root=ROOT, sources=None, warnings_out=None):
                 continue
             try:
                 module = source[:-3].replace('/', '.')
+                compiler.capture(module)
                 for declaration in source_declarations(path, module):
                     if declaration['id'] in seen:
                         raise ValueError('Duplicate extension ID: ' + declaration['id'])
                     seen.add(declaration['id'])
-                    descriptor = compile_declaration(declaration, root)
+                    descriptor = compiler.compile(declaration)
                     issues, warnings = check_source(path.read_text(encoding='utf-8'), descriptor)
                     if warnings_out is not None:
                         warnings_out.extend({'source': source, 'id': descriptor['id'], 'warning': w} for w in warnings)
@@ -51,6 +53,10 @@ def scan_sources(root=ROOT, sources=None, warnings_out=None):
                     descriptors.append((descriptor, declaration.get('provider'), source))
             except Exception as exc:
                 errors.append({'source': source, 'error': str(exc)})
+    try:
+        compiler.verify()
+    except (OSError, ValueError) as exc:
+        errors.append({'source': '.', 'error': str(exc)})
     return descriptors, errors
 
 
@@ -132,7 +138,9 @@ def build_routes(root, catalog, previous, route_roots=None):
             if name in names:
                 raise ValueError(f"Duplicate route name: {name}")
             names.add(name)
-            graph = import_manifest(yaml.safe_dump(raw, allow_unicode=True), settings.get("base_dir", f".studio/builtin-inputs/{key}"), catalog, root)
+            graph = import_manifest(yaml.safe_dump(raw, allow_unicode=True),
+                                    settings.get("base_dir", f".studio/builtin-inputs/{key}"), catalog, root,
+                                    resolve_inputs=False)
             graph.name = name
             levels, rows = {}, {}
             for node in graph.nodes:

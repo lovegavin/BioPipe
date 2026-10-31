@@ -1,0 +1,70 @@
+{
+  "type": "object",
+  "properties": {
+    "event_dim": {
+      "type": "string",
+      "default": "event",
+      "title": "Event Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "channel_dim": {
+      "type": "string",
+      "default": "channel",
+      "title": "Channel Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "x_channel": {
+      "type": "string",
+      "title": "X Channel",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "y_channel": {
+      "type": "string",
+      "title": "Y Channel",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "x_min": {
+      "type": "number",
+      "title": "X Min",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "x_max": {
+      "type": "number",
+      "title": "X Max",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "y_min": {
+      "type": "number",
+      "title": "Y Min",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "y_max": {
+      "type": "number",
+      "title": "Y Max",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 80
+    }
+  },
+  "required": [
+    "x_channel",
+    "y_channel",
+    "x_min",
+    "x_max",
+    "y_min",
+    "y_max"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,65 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "geno": {},
+    "effects": {
+      "header": true
+    },
+    "stds": {
+      "header": true
+    },
+    "weights": {
+      "header": true
+    }
+  },
+  "steps": [
+    {
+      "name": "meta_analysis",
+      "inputs": [
+        "effects",
+        "stds"
+      ],
+      "params": {
+        "variant_dim": "variant",
+        "study_dim": "study",
+        "method": "random",
+        "correction": "fdr",
+        "output": "meta"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "prs",
+      "inputs": [
+        "geno",
+        "weights"
+      ],
+      "params": {
+        "variant_dim": "variant",
+        "sample_dim": "sample",
+        "weight_label": "beta",
+        "stat_dim": "statistic",
+        "output": "prs"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "meta"
+      ],
+      "params": {},
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "prs"
+      ],
+      "params": {},
+      "context_params": {}
+    }
+  ]
+}

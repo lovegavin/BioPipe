@@ -1,0 +1,47 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "det_order": {
+      "type": "integer",
+      "enum": [
+        -1,
+        0,
+        1
+      ],
+      "default": 0,
+      "title": "Det Order",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "k_ar_diff": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1,
+      "title": "K Ar Diff",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

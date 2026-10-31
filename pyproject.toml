@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "biopipe-studio"
-version = "0.8.3"
+version = "0.116.0"
 description = "Typed bioinformatics pipelines, desktop canvas and agent interfaces"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -24,5 +24,5 @@ include = ["biopipe*", "src*"]
 "biopipe" = ["builtin_packages.json", "bundled_history.json"]
 "src.web" = ["builtin_routes.json"]
 "biopipe_sdk" = ["schemas/*.json"]
-"src.task.step.steps" = ["*.parameters.json", "*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.svg", "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.webp", "**/*.gif", "**/*.svg"]
-"src.reader.readers" = ["*.parameters.json", "*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.svg", "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.webp", "**/*.gif", "**/*.svg"]
+"src.task.step.steps" = ["*.md", "*.parameters.json", "*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.svg", "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.webp", "**/*.gif", "**/*.svg"]
+"src.reader.readers" = ["*.md", "*.parameters.json", "*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.svg", "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.webp", "**/*.gif", "**/*.svg"]

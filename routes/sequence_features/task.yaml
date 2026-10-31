@@ -1,0 +1,40 @@
+name: sequence_features
+sources:
+  seqs:
+    path: input/sequences.fasta
+    dims:
+    - sequence
+    - position
+    labels:
+      sequence: builtin
+      position: auto
+    reader: FastaReader
+steps:
+- name: sequence_stats
+  inputs:
+  - seqs
+- name: describe
+  inputs:
+  - stats
+- name: find_orfs
+  inputs:
+  - seqs
+- name: describe
+  inputs:
+  - orfs
+- name: motif_scan
+  inputs:
+  - seqs
+- name: describe
+  inputs:
+  - motif_hits
+- name: histogram
+  inputs:
+  - stats
+- name: histogram
+  inputs:
+  - stats
+- name: histogram
+  inputs:
+  - orfs
+parameters_file: parameters.json

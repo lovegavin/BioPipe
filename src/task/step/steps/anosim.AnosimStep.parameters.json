@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "sample_b_dim": {
+      "type": "string",
+      "default": "sample_b",
+      "title": "Sample B Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "group_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "分组维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "group_label": {
+      "type": "string",
+      "title": "分组字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "n_perm": {
+      "type": "integer",
+      "minimum": 9,
+      "maximum": 99999,
+      "default": 999,
+      "title": "N Perm",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "required": [
+    "group_label"
+  ],
+  "additionalProperties": false
+}

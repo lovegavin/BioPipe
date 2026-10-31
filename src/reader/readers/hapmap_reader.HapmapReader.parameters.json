@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "properties": {
+    "has_header": {
+      "type": "boolean",
+      "default": true,
+      "title": "Has Header",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "id_column": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "title": "Id Column",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "first_sample_column": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 10,
+      "title": "First Sample Column",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "encoders": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Encoders",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    }
+  },
+  "additionalProperties": false
+}

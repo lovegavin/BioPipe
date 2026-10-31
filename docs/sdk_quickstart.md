@@ -1,6 +1,6 @@
 # Write an operator in 30 minutes
 
-SDK 3.0 / protocol 3 uses **one implementation plus its own parameter JSON**.
+SDK 3.1 / protocol 3 uses **one implementation, its own parameter JSON and Markdown**.
 The Python class owns a literal `definition`; its JSON owns parameter types,
 defaults, constraints and form hints. The registry is a generated index.
 
@@ -21,6 +21,7 @@ lab_scale/
   lab_scale/
     __init__.py         # definition + compute()
     parameters.json    # this operator's JSON Schema
+    __init__.md        # purpose, assumptions, parameter guidance and interpretation
   tests/test_plugin.py
   README.md
 ```
@@ -59,7 +60,10 @@ and its memory estimate to the actual algorithm. See the complete examples for
 
 Use `definition.category` for grouping. Omit `icon` for a category default, or set
 it to a module-relative image such as `icons/scale.svg`. Include JSON and images
-in setuptools package data (already configured in the scaffold).
+in setuptools package data (already configured in the scaffold). Keep Markdown in
+package data too. Write scientific guidance in `__init__.md`; do not duplicate the
+parameter table. The CLI, MCP and API generate that table from `parameters.json`.
+See [documentation and retrieval](operator_documentation.md).
 
 Declare per-operator dependencies in `definition.dependencies`. Common project
 requirements apply to every entry. Compatible entries share the environment;

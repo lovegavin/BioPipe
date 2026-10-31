@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "properties": {
+    "max_records": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 100000,
+      "title": "Max Records",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "chrom": {
+      "type": "string",
+      "title": "Chrom",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "encoders": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Encoders",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    }
+  },
+  "additionalProperties": false
+}

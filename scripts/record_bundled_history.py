@@ -15,21 +15,24 @@ sys.path.insert(0, str(ROOT))
 
 def record(source, release, commit, output):
     from biopipe.packages import bundled_state
-    from biopipe_sdk.declarations import code_hash
+    from biopipe_sdk.declarations import DeclarationCompiler
     if not re.fullmatch(r'[a-f0-9]{40}', commit):
         raise ValueError('Use the full verified release commit')
     manifest = json.loads((Path(source) / 'package-manifest.json').read_text(encoding='utf-8'))
     if manifest['source_commit'] != commit or 'v' + manifest['version'] != release:
         raise ValueError('Release provenance differs from the package manifest')
-    state = bundled_state(source)
+    # Desktop/source and metadata-only server startup have distinct artifact
+    # fingerprints. Record both exact shipped policies, never an ID-only match.
+    states = [bundled_state(source, manifest_only=policy) for policy in (False, True)]
+    compiler = DeclarationCompiler(source)
     output = Path(output)
     data = json.loads(output.read_text(encoding='utf-8')) if output.exists() else {'schema_version': 1, 'packages': []}
     if data.get('schema_version') != 1:
         raise ValueError('Unsupported bundled history format')
-    for package in state['packages']:
-        descriptors = [d for d in state['descriptors'] if d['distribution'] == package['name']]
+    for package, entries in [(p, state['descriptors']) for state in states for p in state['packages']]:
+        descriptors = [d for d in entries if d['distribution'] == package['name']]
         for d in descriptors:
-            if code_hash(d['entry_point'], source) != d['code_sha']:
+            if compiler.capture(d['entry_point']) != d['code_sha']:
                 raise ValueError(f'Historical release source differs from its index: {d["id"]}')
         identity = {k: package[k] for k in ('version', 'sha256', 'code_sha')}
         identity['package'] = package['name']
@@ -43,6 +46,7 @@ def record(source, release, commit, output):
         provenance = {'tag': release, 'commit': commit}
         if provenance not in receipt['releases']:
             receipt['releases'].append(provenance)
+    compiler.verify()
     output.write_text(json.dumps(data, indent=2, sort_keys=True)+'\n', encoding='utf-8')
     return len(data['packages'])
 

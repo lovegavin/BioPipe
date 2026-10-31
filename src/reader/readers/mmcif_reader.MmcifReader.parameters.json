@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "properties": {
+    "max_atoms": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 100000,
+      "title": "Max Atoms",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "model": {
+      "type": "integer",
+      "minimum": 1,
+      "title": "Model",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "encoders": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Encoders",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    }
+  },
+  "additionalProperties": false
+}

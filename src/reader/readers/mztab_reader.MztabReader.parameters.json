@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "properties": {
+    "encoders": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Encoders",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "section": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "PSM",
+        "PEP",
+        "PRT",
+        "SML"
+      ],
+      "default": "auto",
+      "title": "Section",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "max_records": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1000000,
+      "title": "Max Records",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    }
+  },
+  "additionalProperties": false
+}

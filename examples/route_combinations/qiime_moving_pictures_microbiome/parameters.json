@@ -1,0 +1,275 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "table": {
+      "taxonomy": true
+    },
+    "samples": {
+      "header": true
+    }
+  },
+  "steps": [
+    {
+      "name": "filter_min",
+      "inputs": [
+        "table"
+      ],
+      "params": {
+        "dim": "taxon",
+        "min_value": 10,
+        "min_samples": 10,
+        "output": "table_filtered"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "diversity",
+      "inputs": [
+        "table_filtered"
+      ],
+      "params": {
+        "dim": "taxon",
+        "metrics": [
+          "shannon",
+          "richness",
+          "evenness"
+        ],
+        "output": "alpha"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "boxplot",
+      "inputs": [
+        "alpha",
+        "samples"
+      ],
+      "params": {
+        "dim": "metric",
+        "value_label": "shannon",
+        "group_dim": "sample",
+        "group_label": "subject",
+        "groups": [
+          "L1",
+          "L2",
+          "L3",
+          "L4",
+          "L5",
+          "L6"
+        ],
+        "filename": "shannon_by_subject.png",
+        "title": "QIIME moving pictures: Shannon diversity by subject",
+        "xlabel": "subject",
+        "ylabel": "Shannon entropy",
+        "show_points": true,
+        "point_size": 4,
+        "point_alpha": 0.5,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "distance_matrix",
+      "inputs": [
+        "table_filtered"
+      ],
+      "params": {
+        "dim": "sample",
+        "metric": "braycurtis",
+        "max_positions": null,
+        "output": "bray"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "pcoa",
+      "inputs": [
+        "bray"
+      ],
+      "params": {
+        "sample_dim": "sample",
+        "sample_b_dim": "sample_b",
+        "n_components": 2,
+        "output": "pcoa_scores"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "boxplot",
+      "inputs": [
+        "pcoa_scores",
+        "samples"
+      ],
+      "params": {
+        "dim": "component",
+        "value_label": "PC1",
+        "group_dim": "sample",
+        "group_label": "subject",
+        "groups": [
+          "L1",
+          "L2",
+          "L3",
+          "L4",
+          "L5",
+          "L6"
+        ],
+        "filename": "pcoa_pc1_by_subject.png",
+        "title": "QIIME moving pictures: PCoA1 by subject",
+        "xlabel": "subject",
+        "ylabel": "PCoA1",
+        "show_points": true,
+        "point_size": 4,
+        "point_alpha": 0.5,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "boxplot",
+      "inputs": [
+        "pcoa_scores",
+        "samples"
+      ],
+      "params": {
+        "dim": "component",
+        "value_label": "PC2",
+        "group_dim": "sample",
+        "group_label": "subject",
+        "groups": [
+          "L1",
+          "L2",
+          "L3",
+          "L4",
+          "L5",
+          "L6"
+        ],
+        "filename": "pcoa_pc2_by_subject.png",
+        "title": "QIIME moving pictures: PCoA2 by subject",
+        "xlabel": "subject",
+        "ylabel": "PCoA2",
+        "show_points": true,
+        "point_size": 4,
+        "point_alpha": 0.5,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "permanova",
+      "inputs": [
+        "bray",
+        "samples"
+      ],
+      "params": {
+        "dist_dim": "sample",
+        "group_dim": "sample",
+        "group_label": "subject",
+        "groups": [
+          "L1",
+          "L2",
+          "L3",
+          "L4",
+          "L5",
+          "L6"
+        ],
+        "n_permutations": 999,
+        "random_state": 17,
+        "pairwise": false,
+        "output": "subject_permanova"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "aggregate",
+      "inputs": [
+        "table_filtered",
+        "samples"
+      ],
+      "params": {
+        "dim": "sample",
+        "group_col": "subject",
+        "method": "mean",
+        "output": "subject_mean"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "rename_dim",
+      "inputs": [
+        "subject_mean"
+      ],
+      "params": {
+        "from": "feature",
+        "to": "subject",
+        "output": "subject_mean_named"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "hvg",
+      "inputs": [
+        "subject_mean_named"
+      ],
+      "params": {
+        "sample_dim": "subject",
+        "feature_dim": "taxon",
+        "n_top": 20,
+        "min_mean": -1000000000000.0,
+        "max_mean": 1000000000000.0,
+        "output": "taxa_hvg"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "filter_by",
+      "inputs": [
+        "subject_mean_named",
+        "taxa_hvg"
+      ],
+      "params": {
+        "dim": "taxon",
+        "rules": [
+          {
+            "field": "highly_variable",
+            "min": 1
+          }
+        ],
+        "output": "top_taxa"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "heatmap",
+      "inputs": [
+        "top_taxa"
+      ],
+      "params": {
+        "dim": "taxon",
+        "other_dim": "subject",
+        "select": "all",
+        "standardize": "row",
+        "cluster_rows": true,
+        "cluster_cols": true,
+        "show_row_labels": true,
+        "show_col_labels": true,
+        "figsize": [
+          9,
+          8
+        ],
+        "filename": "top_taxa_by_subject.png",
+        "title": "QIIME moving pictures: top variable taxa by subject",
+        "cmap": "RdBu_r",
+        "nan_color": "#DDDDDD",
+        "top_n": 50,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    }
+  ]
+}

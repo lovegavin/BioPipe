@@ -7,6 +7,23 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 PROTOCOL_VERSION = 3
 
 
+class Documentation(BaseModel):
+    """Optional v3.1 resource metadata; Markdown bytes are stored separately."""
+    model_config = ConfigDict(extra="forbid")
+    path: str
+    sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    summary: str = Field(default="", max_length=500)
+    sections: list[str] = Field(default_factory=list)
+    status: Literal['generated', 'authored', 'reviewed'] = 'authored'
+    minimum_sdk: Literal['3.1.0'] = '3.1.0'
+
+    @field_validator('path')
+    @classmethod
+    def validate_path(cls, value):
+        from .documentation import relative_path
+        return relative_path(value)
+
+
 class Descriptor(BaseModel):
     """Canonical, versioned extension declaration; UI projections are separate."""
     model_config = ConfigDict(extra="forbid")
@@ -19,6 +36,7 @@ class Descriptor(BaseModel):
     declaration_sha: str = Field(pattern=r"^[a-f0-9]{64}$")
     title: str
     description: str = ""
+    documentation: Documentation | None = None
     category: str | None = Field(default=None, description="Operator library category, independent of package origin. Custom labels are allowed.")
     icon: str | None = Field(default=None, description="Optional module-relative image path or Studio icon name. Missing or unknown names use the category default.")
     icon_image: str | None = Field(default=None, pattern=r"^data:image/(png|jpeg|webp|gif|svg\+xml);base64,[A-Za-z0-9+/]+={0,2}$", description="SDK-generated portable image data; authors declare a relative path in icon.")
@@ -90,6 +108,25 @@ def validate_parameters(schema, params):
     validate_schema(schema)
     result = deepcopy(params)
     for name, field in schema.get("properties", {}).items():
+        # YAML 1.1 may decode an unquoted exponent such as 1e6 as text.
+        # Only unambiguously numeric fields are normalized; a declared string
+        # alternative and non-finite/fractional integer values stay unchanged.
+        types = field.get('type')
+        types = types if isinstance(types, list) else [types]
+        if isinstance(result.get(name), str) and 'string' not in types and ({'integer', 'number'} & set(types)):
+            from decimal import Decimal, InvalidOperation
+            import math
+            try:
+                value = Decimal(result[name])
+                if value.is_finite() and math.isfinite(float(value)):
+                    if 'number' in types:
+                        number = float(value)
+                        if math.isfinite(number):
+                            result[name] = number
+                    elif value == value.to_integral_value():
+                        result[name] = int(value)
+            except InvalidOperation:
+                pass
         if name not in result and "default" in field:
             result[name] = deepcopy(field["default"])
     errors = sorted(Draft202012Validator(schema).iter_errors(result), key=lambda error: str(error.path))

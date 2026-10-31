@@ -51,6 +51,17 @@
           "title": "Description",
           "type": "string"
         },
+        "documentation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Documentation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "category": {
           "anyOf": [
             {
@@ -241,6 +252,56 @@
         "resources"
       ],
       "title": "Descriptor",
+      "type": "object"
+    },
+    "Documentation": {
+      "additionalProperties": false,
+      "description": "Optional v3.1 resource metadata; Markdown bytes are stored separately.",
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "summary": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Summary",
+          "type": "string"
+        },
+        "sections": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sections",
+          "type": "array"
+        },
+        "status": {
+          "default": "authored",
+          "enum": [
+            "generated",
+            "authored",
+            "reviewed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "minimum_sdk": {
+          "const": "3.1.0",
+          "default": "3.1.0",
+          "title": "Minimum Sdk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "title": "Documentation",
       "type": "object"
     }
   },

@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "rater_a": {
+      "type": "string",
+      "title": "Rater A",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "rater_b": {
+      "type": "string",
+      "title": "Rater B",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "required": [
+    "rater_a",
+    "rater_b"
+  ],
+  "additionalProperties": false
+}

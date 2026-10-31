@@ -1,0 +1,57 @@
+name: proteomics_limma
+sources:
+  peptides:
+    path: input/peptides.csv
+    dims:
+    - peptide
+    - sample
+    labels:
+      peptide:
+        sample: 0
+      sample: builtin
+    reader: CsvReader
+  mapping:
+    path: input/mapping.csv
+    dims:
+    - peptide
+    - protein
+    labels:
+      peptide:
+        protein: 0
+      protein: builtin
+    reader: CsvReader
+  meta:
+    path: input/meta.csv
+    dims:
+    - sample
+    - feature
+    labels:
+      sample:
+        feature: 0
+      feature: builtin
+    reader: CsvReader
+steps:
+- name: protein_rollup
+  inputs:
+  - peptides
+  - mapping
+- name: missing
+  inputs:
+  - proteins
+- name: impute
+  inputs:
+  - filtered
+- name: normalize
+  inputs:
+  - imputed
+- name: limma_de
+  inputs:
+  - normalized
+  - meta
+- name: volcano
+  inputs:
+  - de
+- name: ma_plot
+  inputs:
+  - de
+parameters_file: parameters.json

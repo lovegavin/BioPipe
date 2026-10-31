@@ -1,0 +1,74 @@
+"""Spectral embedding of samples from a feature matrix.
+
+Uses sklearn.manifold.SpectralEmbedding on standardized features.
+The graph affinity can be rbf or nearest-neighbors; both are
+non-linear and deterministic for a fixed random_state."""
+from __future__ import annotations
+
+
+from src.core import StepError
+from src.task.context import Context
+from src.task.step.base import Step
+from ._matrix_common import matrix, projection
+
+
+class SpectralEmbeddingStep(Step):
+    provider = 'biopipe-core'
+    parameters_file = 'spectral_embedding.SpectralEmbeddingStep.parameters.json'
+    definition = {'protocol_version': 3,
+     'id': 'spectral_embedding',
+     'version': '1.0.0',
+     'kind': 'operator',
+     'title': 'Spectral embedding',
+     'category': 'Machine Learning',
+     'contracts': {'version': 1,
+                   'inputs': [{'version': 1,
+                               'numeric': True,
+                               'info': {},
+                               'dims': [{'param': 'sample_dim', 'default': 'sample'},
+                                        {'param': 'feature_dim', 'default': 'feature'}],
+                               'labels': [],
+                               'parallel': [],
+                               'ndim': 2}],
+                   'output': {'mode': 'declare',
+                              'schema': {'ndim': 2,
+                                         'numeric': True,
+                                         'info_open': True,
+                                         'axis_info_open': True}}},
+     'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
+     'dependencies': ['scikit-learn>=1.5'],
+     'dependency_imports': ['sklearn'],
+     'inputs_arity': 1,
+     'outputs': [],
+     'output_parameter': 'output',
+     'description': 'Spectral embedding：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、Affinity、Gamma、随机种子。'}
+
+    def run(self, ctx: Context, inputs) -> None:
+        form = inputs[0]
+        sample_dim = ctx.step_params.get("sample_dim", "sample")
+        feature_dim = ctx.step_params.get("feature_dim", "feature")
+        X, samples, _features = matrix(form, sample_dim, feature_dim)
+        if X.shape[0] < 3:
+            raise StepError("spectral_embedding needs at least three samples")
+        n = int(ctx.step_params.get("n_components", 2))
+        if n >= X.shape[0]:
+            raise StepError("spectral_embedding: n_components must be smaller than n_samples")
+        from sklearn.manifold import SpectralEmbedding
+        model = SpectralEmbedding(
+            n_components=int(ctx.step_params.get("n_components", 2)),
+            affinity=ctx.step_params.get("affinity", "nearest_neighbors"),
+            gamma=float(ctx.step_params.get("gamma", 1.0)),
+            random_state=int(ctx.step_params.get("random_state", 0)),
+        )
+        embedded = model.fit_transform(X)
+        projection(ctx, ctx.step_params.get("output", self.name), embedded,
+                   sample_dim, samples, "SE")
+        self._export = {
+            "n_samples": int(X.shape[0]),
+            "n_features": int(X.shape[1]),
+            "n_components": int(embedded.shape[1]),
+        }
+        print(f"[spectral_embedding] {X.shape[0]} samples, {X.shape[1]} features -> {embedded.shape[1]} components")
+
+    def export(self, ctx: Context) -> dict:
+        return self._export

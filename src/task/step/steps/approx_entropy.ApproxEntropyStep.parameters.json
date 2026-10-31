@@ -1,0 +1,51 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "value_label": {
+      "type": "string",
+      "title": "数值字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "embedding_dim": {
+      "type": "integer",
+      "default": 2,
+      "minimum": 1,
+      "maximum": 5,
+      "title": "Embedding Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "radius": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "title": "Radius",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    }
+  },
+  "required": [
+    "value_label"
+  ],
+  "additionalProperties": false
+}

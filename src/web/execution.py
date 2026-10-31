@@ -22,7 +22,7 @@ from biopipe.remote.client import RemoteError
 from .admission import process_identity, process_alive
 from .contracts import analyze_graph
 from .execution_plan import ACTIVE, LOCAL, make_plan, target, target_key, settings, source_location, operator_nodes
-from .graph import GraphError, compile_graph, project_path
+from .graph import GraphError, compile_graph, input_path
 from .models import Graph, GraphNode, Source, Position
 from .parameters import freeze_graph, export_bundle
 from .routes import prepare_interface, output_names, port_index
@@ -171,7 +171,7 @@ class ExecutionService:
     def prepare(self, graph):
         settings(graph)
         catalog = self.catalog(graph)
-        graph = freeze_graph(graph, catalog, self.service.root)
+        graph = freeze_graph(graph, catalog, self.service.root, input_roots=self.service.settings.input_roots)
         # Retain old pins; each selected host resolves them against its immutable
         # installed generations on stage submission. Defaults are already frozen.
         available = {s['id']: s.get('implementation') for s in catalog['operators'] + catalog['readers']}
@@ -180,13 +180,13 @@ class ExecutionService:
             for node in part.nodes:
                 if node.kind == 'operator' and available.get(node.operator):
                     part.plugin_lock.setdefault(node.operator, deepcopy(available[node.operator]))
-        return prepare_interface(graph, catalog, self.service.root)
+        return prepare_interface(graph, catalog, self.service.root, input_roots=self.service.settings.input_roots)
 
     def _stat(self, location, paths, base='.'):
         if target_key(location) == 'local':
             result = []
             for name in paths:
-                path = project_path(self.service.root, name, base)
+                path = input_path(self.service.root, name, base, self.service.settings.input_roots)
                 if path.is_symlink():
                     raise GraphError('Input symlinks cannot be uploaded')
                 result.append({'path': str(path), 'exists': path.is_file(), 'bytes': path.stat().st_size if path.is_file() else None})
@@ -224,8 +224,9 @@ class ExecutionService:
                     node.source.path = node.id + primary_ext(node.source.path)
                     node.source.location = None
                     for key in list(node.source.args):
-                        field = next((r.get('parameters_schema', {}).get('properties', {}).get(key, {}) for r in catalog['readers']
-                                      if primary_ext(node.source.path) in r.get('extensions', [])), {})
+                        from biopipe.reader_selection import candidates
+                        field = next((r.get('parameters_schema', {}).get('properties', {}).get(key, {})
+                                      for r in candidates(catalog['readers'], node.source.path, node.source.reader)), {})
                         if field.get('x-biopipe-path'):
                             node.source.args[key] = 'reference.dat'
                 elif node.kind == 'operator':
@@ -239,7 +240,8 @@ class ExecutionService:
         graph = self.prepare(graph)
         plan = self.plan(graph)
         _, order = self._validate_structure(graph)
-        return {'valid': True, 'order': order, 'contracts': analyze_graph(graph, self.catalog(graph), self.service.root),
+        return {'valid': True, 'order': order, 'contracts': analyze_graph(graph, self.catalog(graph), self.service.root,
+                                                                      input_roots=self.service.settings.input_roots),
                 'execution_plan': plan}
 
     def resources(self):
@@ -421,8 +423,8 @@ class ExecutionService:
             self._check(key)
             if node.source and node.id not in graph.runtime.get('exchange_inputs', []):
                 location = source_location(node, original_config)
-                from biopipe.file_formats import primary_ext
-                readers = [r for r in catalog['readers'] if primary_ext(node.source.path) in r.get('extensions', [])]
+                from biopipe.reader_selection import candidates
+                readers = candidates(catalog['readers'], node.source.path, node.source.reader)
                 # Resolve ambiguous companion formats using the owning host.
                 reader = readers[0] if len(readers) == 1 else None
                 if len(readers) > 1:
@@ -537,10 +539,10 @@ class ExecutionService:
         stage.runtime['exchange_outputs'] = sorted(outgoing)
         self._stage_paths(key, unit, stage, catalog, settings(graph))
         used = {n.operator for node in stage.nodes for n in operator_nodes(node)}
-        from biopipe.file_formats import primary_ext
+        from biopipe.reader_selection import candidates
         for node in stage.nodes:
-            if node.source:
-                used.update(r['id'] for r in catalog['readers'] if primary_ext(node.source.path) in r.get('extensions', []))
+            if node.source and node.id not in stage.runtime.get('exchange_inputs', []):
+                used.update(r['id'] for r in candidates(catalog['readers'], node.source.path, node.source.reader))
         stage.plugin_lock = {name: pin for name, pin in stage.plugin_lock.items() if name in used}
         stage.base_dir = '.'
         config = settings(graph)

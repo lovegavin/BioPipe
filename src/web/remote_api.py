@@ -10,7 +10,7 @@ from .remote_service import RemoteManager
 
 
 def mount_remote(app, service):
-    manager = RemoteManager(service)
+    manager = service.remotes or RemoteManager(service)
     service.remotes = manager
 
     @app.exception_handler(RemoteError)

@@ -1,0 +1,107 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "geno": {}
+  },
+  "steps": [
+    {
+      "name": "missing",
+      "inputs": [
+        "geno"
+      ],
+      "params": {
+        "dim": "sample",
+        "threshold": 0.1,
+        "output": "geno_sm"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "missing",
+      "inputs": [
+        "geno_sm"
+      ],
+      "params": {
+        "dim": "variant",
+        "threshold": 0.05,
+        "output": "geno_vm"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "maf",
+      "inputs": [
+        "geno_vm"
+      ],
+      "params": {
+        "dim": "variant",
+        "threshold": 0.01,
+        "output": "geno_maf"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "ld_prune",
+      "inputs": [
+        "geno_maf"
+      ],
+      "params": {
+        "dim": "variant",
+        "window": 50,
+        "r2": 0.2,
+        "output": "geno_pruned"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "pca",
+      "inputs": [
+        "geno_pruned"
+      ],
+      "params": {
+        "dim": "variant",
+        "n_components": 10,
+        "output": "pcs"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "scatter",
+      "inputs": [
+        "pcs"
+      ],
+      "params": {
+        "dim": "component",
+        "x_label": "PC1",
+        "y_label": "PC2",
+        "filename": "pca_scatter.png",
+        "title": "BGEN dosage QC: PC1 vs PC2",
+        "xlabel": "PC1",
+        "ylabel": "PC2",
+        "alpha": 0.7,
+        "point_size": 8,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "geno_pruned"
+      ],
+      "params": {},
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "pcs"
+      ],
+      "params": {},
+      "context_params": {}
+    }
+  ]
+}

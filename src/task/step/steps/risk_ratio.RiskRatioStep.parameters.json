@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "properties": {
+    "row_dim": {
+      "type": "string",
+      "default": "row",
+      "title": "Row Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "col_dim": {
+      "type": "string",
+      "default": "col",
+      "title": "Col Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "correction": {
+      "type": "string",
+      "enum": [
+        "none",
+        "haldane"
+      ],
+      "default": "haldane",
+      "title": "Correction",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "confidence": {
+      "type": "number",
+      "default": 0.95,
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1,
+      "title": "Confidence",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "additionalProperties": false
+}

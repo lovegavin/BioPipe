@@ -34,7 +34,7 @@ function ImageIcon({ src, category, size }: { src: string; category?: string; si
       onError={() => setFailed(true)}/>;
 }
 
-export function OperatorArtwork({ spec, source, size = 20 }: { spec?: Operator; source?: boolean; size?: number }) {
+export function OperatorArtwork({ spec, source, size = 20 }: { spec?: Partial<Pick<Operator, 'id' | 'category' | 'icon' | 'icon_image' | 'preview'>>; source?: boolean; size?: number }) {
   if (!source && spec?.icon_image) {
     // Catalogs can also come from imported graphs. Never fetch arbitrary URLs.
     if (/^data:image\/(png|jpeg|webp|gif|svg\+xml);base64,[A-Za-z0-9+/]+={0,2}$/.test(spec.icon_image)) {

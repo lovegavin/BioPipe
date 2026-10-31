@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "max_events": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1000000,
+      "title": "Max Events",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    }
+  },
+  "additionalProperties": false
+}

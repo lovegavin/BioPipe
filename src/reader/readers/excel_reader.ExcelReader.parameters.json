@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "sheet": {
+      "type": [
+        "string",
+        "integer"
+      ],
+      "default": 0,
+      "title": "Sheet",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "header": {
+      "type": "boolean",
+      "default": true,
+      "title": "Header",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "encoders": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Encoders",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    }
+  },
+  "additionalProperties": false
+}

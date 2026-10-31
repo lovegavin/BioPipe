@@ -1,0 +1,47 @@
+{
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "window_size": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 10000,
+      "title": "窗口大小",
+      "x-ui-group": "basic",
+      "x-ui-order": 20,
+      "x-ui-unit": "bp"
+    },
+    "step_size": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "default": null,
+      "title": "步长",
+      "x-ui-group": "basic",
+      "x-ui-order": 30,
+      "x-ui-unit": "bp"
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "additionalProperties": false
+}

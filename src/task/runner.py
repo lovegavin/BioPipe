@@ -33,9 +33,10 @@ def run(ctx: Context, steps: list[dict]) -> None:
             names = spec.get("inputs", [])
             _check_arity(name, step.inputs_arity, names)
             ctx.step_params = dict(spec.get("params", {}))
+            ctx.step_params.pop('_input_names', None)
             from biopipe_sdk.protocol import validate_parameters
             if cls.parameters_schema is None:
-                raise StepError(f"{name}: protocol v2 requires parameters_schema; migrate the declaration first")
+                raise StepError(f"{name}: protocol v3 requires a compiled parameter schema; migrate the declaration first")
             output = ctx.step_params.pop(cls.output_parameter, None) if cls.output_parameter else None
             ctx.step_params = validate_parameters(cls.parameters_schema, ctx.step_params)
             if output is not None:

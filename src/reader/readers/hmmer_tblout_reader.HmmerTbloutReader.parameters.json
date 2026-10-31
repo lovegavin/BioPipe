@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "properties": {
+    "encoders": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Encoders",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    }
+  },
+  "additionalProperties": false
+}

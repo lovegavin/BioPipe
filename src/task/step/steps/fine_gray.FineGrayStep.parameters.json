@@ -1,0 +1,85 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "time_label": {
+      "type": "string",
+      "title": "随访时间列",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "event_label": {
+      "type": "string",
+      "title": "结局代码列",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "covariates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "协变量列",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "event_code": {
+      "type": "integer",
+      "default": 1,
+      "title": "目标事件代码",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "censor_code": {
+      "type": "integer",
+      "default": 0,
+      "title": "删失代码",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "confidence": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1,
+      "default": 0.95,
+      "title": "Confidence",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "max_iter": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 100,
+      "title": "Max Iter",
+      "x-ui-group": "basic",
+      "x-ui-order": 80
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 90
+    }
+  },
+  "required": [
+    "time_label",
+    "event_label",
+    "covariates"
+  ],
+  "additionalProperties": false
+}

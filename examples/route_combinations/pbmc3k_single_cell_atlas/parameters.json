@@ -1,0 +1,319 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "expression": {},
+    "samples": {
+      "header": true
+    }
+  },
+  "steps": [
+    {
+      "name": "boxplot",
+      "inputs": [
+        "samples",
+        "samples"
+      ],
+      "params": {
+        "dim": "feature",
+        "value_label": "n_genes",
+        "group_dim": "sample",
+        "group_label": "cell_type",
+        "groups": [
+          "CD4",
+          "CD8",
+          "B",
+          "NK",
+          "Mono",
+          "FcR3A",
+          "DC",
+          "MK"
+        ],
+        "filename": "qc_genes_by_cell_type.png",
+        "title": "PBMC3k: detected genes by annotated cell type",
+        "xlabel": "cell type",
+        "ylabel": "detected genes",
+        "show_points": true,
+        "point_size": 4,
+        "point_alpha": 0.5,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "pca",
+      "inputs": [
+        "expression"
+      ],
+      "params": {
+        "dim": "gene",
+        "n_components": 20,
+        "output": "pcs"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "boxplot",
+      "inputs": [
+        "pcs",
+        "samples"
+      ],
+      "params": {
+        "dim": "component",
+        "value_label": "PC1",
+        "group_dim": "sample",
+        "group_label": "cell_type",
+        "groups": [
+          "CD4",
+          "CD8",
+          "B",
+          "NK",
+          "Mono",
+          "FcR3A",
+          "DC",
+          "MK"
+        ],
+        "filename": "pca_pc1_by_cell_type.png",
+        "title": "PBMC3k: PC1 by annotated cell type",
+        "xlabel": "cell type",
+        "ylabel": "PC1 score",
+        "show_points": true,
+        "point_size": 4,
+        "point_alpha": 0.5,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "boxplot",
+      "inputs": [
+        "pcs",
+        "samples"
+      ],
+      "params": {
+        "dim": "component",
+        "value_label": "PC2",
+        "group_dim": "sample",
+        "group_label": "cell_type",
+        "groups": [
+          "CD4",
+          "CD8",
+          "B",
+          "NK",
+          "Mono",
+          "FcR3A",
+          "DC",
+          "MK"
+        ],
+        "filename": "pca_pc2_by_cell_type.png",
+        "title": "PBMC3k: PC2 by annotated cell type",
+        "xlabel": "cell type",
+        "ylabel": "PC2 score",
+        "show_points": true,
+        "point_size": 4,
+        "point_alpha": 0.5,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "umap",
+      "inputs": [
+        "expression"
+      ],
+      "params": {
+        "sample_dim": "sample",
+        "feature_dim": "gene",
+        "n_components": 2,
+        "n_neighbors": 15,
+        "min_dist": 0.1,
+        "metric": "euclidean",
+        "random_state": 17,
+        "output": "embedding"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "boxplot",
+      "inputs": [
+        "embedding",
+        "samples"
+      ],
+      "params": {
+        "dim": "component",
+        "value_label": "UMAP1",
+        "group_dim": "sample",
+        "group_label": "cell_type",
+        "groups": [
+          "CD4",
+          "CD8",
+          "B",
+          "NK",
+          "Mono",
+          "FcR3A",
+          "DC",
+          "MK"
+        ],
+        "filename": "umap1_by_cell_type.png",
+        "title": "PBMC3k: UMAP1 by annotated cell type",
+        "xlabel": "cell type",
+        "ylabel": "UMAP1",
+        "show_points": true,
+        "point_size": 4,
+        "point_alpha": 0.5,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "boxplot",
+      "inputs": [
+        "embedding",
+        "samples"
+      ],
+      "params": {
+        "dim": "component",
+        "value_label": "UMAP2",
+        "group_dim": "sample",
+        "group_label": "cell_type",
+        "groups": [
+          "CD4",
+          "CD8",
+          "B",
+          "NK",
+          "Mono",
+          "FcR3A",
+          "DC",
+          "MK"
+        ],
+        "filename": "umap2_by_cell_type.png",
+        "title": "PBMC3k: UMAP2 by annotated cell type",
+        "xlabel": "cell type",
+        "ylabel": "UMAP2",
+        "show_points": true,
+        "point_size": 4,
+        "point_alpha": 0.5,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "aggregate",
+      "inputs": [
+        "expression",
+        "samples"
+      ],
+      "params": {
+        "dim": "sample",
+        "group_col": "cell_type",
+        "method": "mean",
+        "output": "cell_type_mean"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "rename_dim",
+      "inputs": [
+        "cell_type_mean"
+      ],
+      "params": {
+        "from": "feature",
+        "to": "cell_type",
+        "output": "cell_type_mean_labeled"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "heatmap",
+      "inputs": [
+        "cell_type_mean_labeled"
+      ],
+      "params": {
+        "dim": "gene",
+        "other_dim": "cell_type",
+        "select": "label",
+        "labels": [
+          "LTB",
+          "MAL",
+          "GZMK",
+          "CCL5",
+          "CD79A",
+          "MS4A1",
+          "NKG7",
+          "GNLY",
+          "S100A8",
+          "FCN1",
+          "FCGR3A",
+          "IFITM3",
+          "FCER1A",
+          "CST3",
+          "PPBP",
+          "PF4"
+        ],
+        "standardize": "row",
+        "cluster_rows": true,
+        "cluster_cols": true,
+        "show_row_labels": true,
+        "show_col_labels": true,
+        "figsize": [
+          10,
+          6
+        ],
+        "title": "PBMC3k: canonical marker genes across annotated cell types",
+        "filename": "cell_type_mean_heatmap.png",
+        "cmap": "RdBu_r",
+        "nan_color": "#DDDDDD",
+        "top_n": 50,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "random_forest_classifier",
+      "inputs": [
+        "expression",
+        "samples"
+      ],
+      "params": {
+        "sample_dim": "sample",
+        "feature_dim": "gene",
+        "label_dim": "feature",
+        "target_label": "cell_type",
+        "valid_labels": [
+          "CD4",
+          "CD8",
+          "B",
+          "NK",
+          "Mono",
+          "FcR3A",
+          "DC",
+          "MK"
+        ],
+        "n_estimators": 500,
+        "test_size": 0.25,
+        "cv_folds": 5,
+        "random_state": 17,
+        "scale": true,
+        "max_depth": null,
+        "class_weight": null,
+        "output": "rf"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "rf"
+      ],
+      "params": {},
+      "context_params": {}
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "stratum_label": {
+      "type": "string",
+      "title": "Stratum Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "event_label": {
+      "type": "string",
+      "title": "事件字段",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "predictors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Predictors",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "categorical": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "title": "分类协变量",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "maxiter": {
+      "type": "integer",
+      "minimum": 20,
+      "default": 200,
+      "title": "Maxiter",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "required": [
+    "stratum_label",
+    "event_label",
+    "predictors"
+  ],
+  "additionalProperties": false
+}

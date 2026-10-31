@@ -1,8 +1,33 @@
 import { describe, expect, it } from 'vitest';
-import { inputAccept, readerForPath, renameSourceDimensions, rePointSource } from './readerInput';
-import type { Catalog } from './types';
+import { inputAccept, makeReaderNode, readerForPath, readerForSource, readerMatches, renameSourceDimensions, rePointSource } from './readerInput';
+import type { Catalog, Graph, ReaderSpec } from './types';
 
 describe('registry-based input file filters', () => {
+  it('creates an actual source with the exact Reader, its dimensions, defaults and location', () => {
+    const graph: Graph = {schema_version:2, name:'Test', base_dir:'.', nodes:[], edges:[], memory:{enabled:true}};
+    const reader: ReaderSpec = {id:'Plink1Reader', title:'PLINK BED', description:'Binary genotypes', extensions:['.bed'],
+      contracts:{output:null}, file_input:{dims:['variant','sample'], labels:{variant:'builtin',sample:'builtin'}},
+      parameters:[{key:'missing',label:'Missing',type:'json',default:[-1]}]};
+    const source = makeReaderNode(graph, reader, {x:12,y:34}, {kind:'ssh', profile_id:'linux'});
+    expect(source.kind).toBe('source');
+    expect(source.source).toEqual({reader:'Plink1Reader', path:'',dims:['variant','sample'],labels:{variant:'builtin',sample:'builtin'},
+      args:{missing:[-1]},location:{kind:'ssh',profile_id:'linux'}});
+    source.source!.args.missing = [];
+    expect(reader.parameters![0].default).toEqual([-1]);
+    expect(readerMatches(reader, 'genotypes')).toBe(true);
+    expect(readerMatches(reader, '.bed')).toBe(true);
+    expect(readerMatches(reader, 'BAM')).toBe(false);
+  });
+  it('honors explicit Reader IDs for ambiguous paths and never silently substitutes a missing Reader', () => {
+    const catalog: Catalog = {schema_version:1, operators:[], readers:[
+      {id:'BedReader',extensions:['.bed'],contracts:{output:null}}, {id:'Plink1Reader',extensions:['.bed'],contracts:{output:null}},
+    ]};
+    const source = {path:'x.bed',reader:'Plink1Reader',dims:['a','b'],labels:{},args:{}};
+    expect(readerForPath(catalog, source.path)).toBeUndefined();
+    expect(readerForSource(catalog, source)?.id).toBe('Plink1Reader');
+    expect(readerForSource(catalog, {...source,reader:'Missing'})).toBeUndefined();
+    expect(rePointSource(source,{...source,path:'new.bed',reader:undefined},catalog).reader).toBe('Plink1Reader');
+  });
   it('includes companions and only supported compression variants', () => {
     const catalog: Catalog = {schema_version:1, operators:[], readers:[
       {id:'CsvReader', extensions:['.csv'], contracts:{output:null}},

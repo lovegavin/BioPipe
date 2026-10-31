@@ -1,0 +1,49 @@
+{
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "enzymes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {
+        "EcoRI": "GAATTC",
+        "BamHI": "GGATCC",
+        "HindIII": "AAGCTT",
+        "NotI": "GCGGCCGC",
+        "XhoI": "CTCGAG",
+        "PstI": "CTGCAG",
+        "SalI": "GTCGAC",
+        "KpnI": "GGTACC",
+        "SacI": "GAGCTC",
+        "SmaI": "CCCGGG",
+        "TaqI": "TCGA",
+        "AluI": "AGCT"
+      },
+      "title": "Enzymes",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    }
+  },
+  "additionalProperties": false
+}

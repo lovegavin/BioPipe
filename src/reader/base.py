@@ -15,9 +15,9 @@ from biopipe.file_formats import COMPRESSION_SUFFIXES, compression_extensions, u
 class Reader(ABC):
     """Abstract reader.
 
-    Subclasses declare which extensions they handle, which sibling
-    files must or must not exist alongside the target, and whether
-    they can consume compressed input directly.
+    Protocol v3 definitions declare extensions, sibling requirements and
+    compression support. The SDK binds those runtime attributes from the
+    compiled descriptor; parameter schemas live in independent JSON files.
 
     A reader receives the manifest's ``labels`` block and is
     responsible for producing a Form in which every dim has a label

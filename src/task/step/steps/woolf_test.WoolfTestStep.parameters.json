@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "properties": {
+    "stratum_dim": {
+      "type": "string",
+      "default": "stratum",
+      "title": "Stratum Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "a_label": {
+      "type": "string",
+      "default": "a",
+      "title": "A：标签",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "b_label": {
+      "type": "string",
+      "default": "b",
+      "title": "B：标签",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "c_label": {
+      "type": "string",
+      "default": "c",
+      "title": "C Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "d_label": {
+      "type": "string",
+      "default": "d",
+      "title": "D Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "additionalProperties": false
+}

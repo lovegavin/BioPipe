@@ -1,0 +1,69 @@
+name: thousand_genomes_chr22_population
+sources:
+  genotypes:
+    path: input/kg_chr22_region.vcf
+    dims:
+    - variant
+    - sample
+    labels:
+      variant: builtin
+      sample: builtin
+    reader: VcfReader
+  samples:
+    path: input/kg_samples.csv
+    dims:
+    - sample
+    - feature
+    labels:
+      sample:
+        feature: 0
+      feature: builtin
+    reader: CsvReader
+steps:
+- name: maf
+  inputs:
+  - genotypes
+- name: missing
+  inputs:
+  - qc_maf
+- name: hwe
+  inputs:
+  - qc_missing
+- name: describe
+  inputs:
+  - qc_hwe
+- name: pca
+  inputs:
+  - qc_hwe
+- name: boxplot
+  inputs:
+  - pcs
+  - samples
+- name: boxplot
+  inputs:
+  - pcs
+  - samples
+- name: fst
+  inputs:
+  - qc_hwe
+  - samples
+- name: histogram
+  inputs:
+  - fst_afr_eur
+- name: relatedness
+  inputs:
+  - qc_hwe
+- name: rename_dim
+  inputs:
+  - grm
+- name: rename_dim
+  inputs:
+  - grm_rows
+- name: heatmap
+  inputs:
+  - grm_labeled
+parameters_file: parameters.json
+runtime:
+  memory:
+    enabled: true
+    auto_spill: true

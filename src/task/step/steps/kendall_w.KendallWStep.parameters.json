@@ -1,0 +1,35 @@
+{
+  "type": "object",
+  "properties": {
+    "subject_dim": {
+      "type": "string",
+      "default": "subject",
+      "title": "Subject Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "rater_dim": {
+      "type": "string",
+      "default": "rater",
+      "title": "Rater Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "raters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Raters",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    }
+  },
+  "additionalProperties": false
+}

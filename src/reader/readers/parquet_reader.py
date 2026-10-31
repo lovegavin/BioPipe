@@ -39,6 +39,7 @@ import numpy as np
 import pandas as pd
 
 from src.core import Form, ReaderError
+from src.core.numeric import compact_numeric
 from src.reader.base import Reader
 from src.reader.readers._encoder import get_encoder
 from src.reader.readers._labels import unique_labels
@@ -158,7 +159,7 @@ class ParquetReader(Reader):
             col = df.iloc[:, old_idx]
             numeric = True
             try:
-                values = col.to_numpy(dtype=np.float32)
+                values = col.to_numpy(dtype=np.float64)
             except (ValueError, TypeError):
                 numeric = False
 
@@ -176,7 +177,7 @@ class ParquetReader(Reader):
             cols_data.append(encoder.fit_transform(col.tolist()))
             encoders_used[name] = encoder
 
-        data = np.stack(cols_data, axis=1).astype(np.float32)
+        data = compact_numeric(np.stack(cols_data, axis=1))
 
         final: dict[str, dict[str, int]] = {}
 

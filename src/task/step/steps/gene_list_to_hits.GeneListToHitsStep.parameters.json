@@ -1,0 +1,39 @@
+{
+  "type": "object",
+  "properties": {
+    "genes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "基因列表",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "gene_dim": {
+      "type": "string",
+      "default": "gene",
+      "title": "Gene Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "term_dim": {
+      "type": "string",
+      "default": "go_term",
+      "title": "Term Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    }
+  },
+  "required": [
+    "genes"
+  ],
+  "additionalProperties": false
+}

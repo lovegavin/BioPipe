@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "label_dim": {
+      "type": "string",
+      "default": "label",
+      "title": "标签维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "true_label": {
+      "type": "string",
+      "title": "True Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "pred_label": {
+      "type": "string",
+      "title": "Pred Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "required": [
+    "true_label",
+    "pred_label"
+  ],
+  "additionalProperties": false
+}

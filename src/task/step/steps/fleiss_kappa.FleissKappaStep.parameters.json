@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "properties": {
+    "subject_dim": {
+      "type": "string",
+      "default": "subject",
+      "title": "Subject Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "category_dim": {
+      "type": "string",
+      "default": "category",
+      "title": "Category Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "fleiss",
+        "randolph"
+      ],
+      "default": "fleiss",
+      "title": "方法",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    }
+  },
+  "additionalProperties": false
+}

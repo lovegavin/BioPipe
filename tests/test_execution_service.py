@@ -8,6 +8,7 @@ from copy import deepcopy
 import json
 from pathlib import Path
 import threading
+import tempfile
 import time
 from types import SimpleNamespace
 
@@ -154,6 +155,22 @@ def test_real_remote_worker_upload_and_completed_content_reuse(studio):
     assert len([row for row in studio.control.calls if row[0] == 'transfer_chunk']) == before
     assert any(row[0] == 'transfer_begin' and row[2]['complete'] for row in studio.control.calls)
     assert studio.local.resources()['reserved_bytes'] == studio.remote.service.resources()['reserved_bytes'] == 0
+
+
+def test_code_root_input_uploads_and_runs_without_copying_into_workspace(studio):
+    scratch = ROOT / '.tmp'
+    scratch.mkdir(exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='code-root-input-', dir=scratch) as directory:
+        source = Path(directory) / 'input.csv'
+        source.write_bytes(studio.source.read_bytes())
+        assert not source.is_relative_to(studio.local.root)
+        graph = workflow(studio, environment=studio.ssh)
+        graph.nodes[0].source.path = source.as_posix()
+        result = completed(studio, graph)
+        remote_job = studio.remote.service.details(result['children'][0]['id'])
+        staged = next(node['source']['path'] for node in remote_job['graph']['nodes'] if node['kind'] == 'source')
+        assert Path(staged).read_bytes() == source.read_bytes()
+        assert result['report']['budget_bytes'] == 32 * 1024**2
 
 
 def routed_workflow(studio):

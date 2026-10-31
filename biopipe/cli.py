@@ -6,15 +6,31 @@ import os
 from pathlib import Path
 import sys
 import time
+from urllib.parse import quote, urlencode
 
 from .client import Client, ClientError, data_directory
 
 
 def read_graph_file(path):
+    if path is None:
+        raise ValueError('A workflow file is required')
+    path = Path(path)
     if path.suffix.lower() == ".zip":
         from src.web.parameters import import_bundle
         return import_bundle(path.read_bytes()).model_dump(mode="json")
-    return json.loads(path.read_text(encoding="utf-8"))
+    value = json.loads(path.read_text(encoding="utf-8"))
+    return value.get('graph', value)
+
+
+def _wait_job(client, job, timeout):
+    deadline = time.monotonic() + timeout if timeout > 0 else None
+    receipt = {key: job[key] for key in ('request_id', 'reused') if key in job}
+    while job['status'] in {'queued', 'preparing', 'uploading', 'running', 'waiting_connection'}:
+        if deadline is not None and time.monotonic() >= deadline:
+            return {**job, **receipt, 'wait_timed_out': True}
+        time.sleep(.25)
+        job = client.request('/v1/jobs/' + quote(job['id'], safe=''))
+    return {**job, **receipt}
 
 
 def parser():
@@ -26,6 +42,9 @@ def parser():
     root.add_argument("--session")
     root.add_argument("--json", action="store_true", help="JSON is the default output format")
     commands = root.add_subparsers(dest="command", required=True)
+    serve = commands.add_parser('serve', help='Run the application API without a desktop window')
+    serve.add_argument('--port', type=int, default=0, help='Loopback port; 0 selects an available port')
+    commands.add_parser('service').add_argument('action', choices=['start', 'status', 'stop'])
     migrate = commands.add_parser("migrate", help="Preview explicit protocol v3 conversion; --apply backs up and writes")
     migrate.add_argument("path", nargs="?", type=Path, help="Graph/workspace JSON, task YAML, or extension Python; omit to migrate the selected profile")
     migrate.add_argument("--manifest", type=Path, help="Old descriptor JSON for Python source conversion")
@@ -41,8 +60,22 @@ def parser():
     context.add_argument("action", choices=["get"], default="get", nargs="?")
     context.add_argument("--scope", choices=["selection", "document"], default="selection")
     operators = commands.add_parser("operators")
-    operators.add_argument("action", choices=["list", "describe"])
+    operators.add_argument("action", choices=["list", "search", "describe"])
     operators.add_argument("id", nargs="?")
+    operators.add_argument('--query', default='')
+    operators.add_argument('--kind', choices=['operator', 'reader'])
+    operators.add_argument('--category')
+    operators.add_argument('--limit', type=int, default=20)
+    operators.add_argument('--offset', type=int, default=0)
+    operators.add_argument('--section', action='append', help='Documentation section; * includes the complete Markdown')
+    operators.add_argument('--generation', help='Pinned job plugin generation')
+    workflow = commands.add_parser('workflow', help='Saved workflows independent of canvas sessions')
+    workflow.add_argument('action', choices=['list', 'get', 'save', 'prepare', 'validate', 'export'])
+    workflow.add_argument('value', nargs='?', help='Workflow ID for get; file path for save/prepare/validate/export')
+    workflow.add_argument('--id', help='Existing workflow to update')
+    workflow.add_argument('--expected-version', type=int)
+    workflow.add_argument('--require-files', action='store_true')
+    workflow.add_argument('--output', type=Path)
     graph = commands.add_parser("graph")
     graph.add_argument("action", choices=["get", "validate", "open", "apply", "undo", "redo"])
     graph.add_argument("file", nargs="?", type=Path)
@@ -54,11 +87,33 @@ def parser():
     events.add_argument("action", choices=["watch", "get"], default="watch", nargs="?")
     events.add_argument("--after", type=int, default=0)
     run = commands.add_parser("run")
-    run.add_argument("--document", required=True)
-    run.add_argument("--expected-revision", type=int, required=True)
+    run.add_argument('file', nargs='?', type=Path, help='Self-contained graph JSON or .biopipe.zip')
+    run.add_argument('--workflow', help='Saved workflow ID')
+    run.add_argument('--expected-version', type=int)
+    run.add_argument('--request-id', help='Stable idempotency key for retrying the same submission')
+    run.add_argument('--wait', action='store_true')
+    run.add_argument('--timeout', type=float, default=0, help='Maximum wait seconds; 0 waits until terminal')
+    run.add_argument("--document")
+    run.add_argument("--expected-revision", type=int)
     jobs = commands.add_parser("jobs")
-    jobs.add_argument("action", choices=["get", "cancel"])
-    jobs.add_argument("id")
+    jobs.add_argument("action", choices=["list", "get", "cancel", 'logs'])
+    jobs.add_argument("id", nargs='?')
+    jobs.add_argument('--offset', type=int, default=0)
+    jobs.add_argument('--limit', type=int, default=65536)
+    jobs.add_argument('--follow', action='store_true')
+    artifacts = commands.add_parser('artifacts')
+    artifacts.add_argument('action', choices=['list', 'get', 'preview', 'copy', 'report', 'figure'])
+    artifacts.add_argument('job')
+    artifacts.add_argument('id', nargs='?')
+    artifacts.add_argument('--output', type=Path)
+    artifacts.add_argument('--role')
+    artifacts.add_argument('--format')
+    artifacts.add_argument('--figure-id')
+    servers = commands.add_parser('servers')
+    servers.add_argument('action', choices=['list', 'save', 'connect', 'trust'])
+    servers.add_argument('value', nargs='?')
+    servers.add_argument('--credentials-stdin', action='store_true', help='Read password/passphrase JSON from stdin; never command arguments')
+    servers.add_argument('--fingerprint')
     plugin = commands.add_parser("plugin")
     plugin.add_argument("action", choices=["init", "check", "test", "build", "export-library", "install", "list", "refresh", "declarations", "remove", "enable", "disable", "restore"])
     plugin.add_argument("path", nargs="?")
@@ -74,6 +129,9 @@ def parser():
 
 
 def execute(args):
+    if args.command == 'serve':
+        from .headless import serve
+        return serve(profile_dir=args.profile_dir, workspace=args.workspace, data_dir=args.data_dir, port=args.port)
     if args.command == "migrate":
         from .migrate import migrate
         return migrate(path=args.path, profile_dir=args.profile_dir, workspace=args.workspace,
@@ -123,24 +181,113 @@ def execute(args):
         from .mcp_server import serve
         return serve(args)
     scopes = ["context", "edit"]
-    if args.command in ("run", "jobs"):
+    if args.command == 'run' or args.command == 'jobs' and args.action == 'cancel' or args.command == 'service' and args.action == 'stop' or args.command == 'servers' and args.action == 'connect':
         scopes.append("run")
-    client = Client(data_directory(args.profile_dir, args.workspace, args.data_dir), instance=args.instance, name="BioPipe CLI", scopes=scopes)
+    directory = data_directory(args.profile_dir, args.workspace, args.data_dir)
+    from src.web.profile import resolve_profile
+    profile = resolve_profile(Path(__file__).resolve().parents[1], profile_dir=args.profile_dir, workspace=args.workspace, data_dir=args.data_dir)
+    if args.command == 'service' and args.action == 'status':
+        from .client import instances
+        return {'instances': [{k: v for k, v in instance.items() if k != 'secret'} for instance in instances(directory)]}
+    client = Client(directory, instance=args.instance, name="BioPipe CLI", scopes=scopes,
+                    auto_start=not (args.command == 'service' and args.action == 'stop'), workspace=profile.workspace,
+                    require_api=1 if args.command in ('operators', 'workflow', 'jobs', 'artifacts', 'servers', 'service') or args.command == 'run' and (args.file or args.workflow) else 0)
     try:
+        if args.command == 'service':
+            return client.request('/v1/service/stop', {}) if args.action == 'stop' else client.request('/v1/service')
+        if args.command == 'workflow':
+            if args.action == 'list':
+                return client.request('/v1/workflows')
+            if args.action == 'get':
+                return client.request('/v1/workflows/' + quote(args.value or '', safe=''))
+            graph = read_graph_file(Path(args.value))
+            payload = {'graph': graph}
+            if args.action == 'save':
+                payload.update(workflow_id=args.id, expected_version=args.expected_version)
+                return client.request('/v1/workflows', payload)
+            if args.action == 'export':
+                if not args.output:
+                    raise ValueError('workflow export requires --output')
+                return client.download('/v1/workflows/export', args.output, payload)
+            if args.action == 'validate':
+                payload['require_files'] = args.require_files
+            return client.request('/v1/workflows/' + args.action, payload)
+        if args.command == 'run' and (args.file or args.workflow):
+            if args.document or (args.file and args.workflow):
+                raise ValueError('Choose a file, a saved workflow, or a canvas document, not multiple sources')
+            payload = {'graph': read_graph_file(args.file)} if args.file else {'workflow_id': args.workflow, 'expected_version': args.expected_version}
+            if args.request_id:
+                payload['request_id'] = args.request_id
+            job = client.request('/v1/jobs', payload)
+            return _wait_job(client, job, args.timeout) if args.wait else job
+        if args.command == 'run' and not args.document:
+            raise ValueError('run requires a workflow file, --workflow, or --document with --expected-revision')
+        if args.command == 'artifacts':
+            prefix = '/v1/jobs/' + quote(args.job, safe='')
+            if args.action == 'list':
+                return client.request(prefix + '/artifacts')
+            if not args.id:
+                raise ValueError('An artifact ID or report index is required')
+            if args.action in ('report', 'figure'):
+                path = prefix + '/reports/' + str(int(args.id))
+                if args.action == 'figure':
+                    path += '/figure?' + urlencode({k: v for k, v in {'format': args.format, 'figure_id': args.figure_id}.items() if v})
+            else:
+                path = prefix + '/artifacts/' + quote(args.id, safe='')
+                if args.action == 'preview':
+                    path += '/preview'
+                elif args.action == 'copy':
+                    path += '/file' + ('?' + urlencode({'role': args.role}) if args.role else '')
+                if args.action in ('get', 'preview'):
+                    return client.request(path)
+            if not args.output:
+                raise ValueError('Copying an artifact/report/figure requires --output')
+            return client.download(path, args.output)
+        if args.command == 'servers':
+            if args.action == 'list':
+                return client.request('/v1/remotes')
+            if args.action == 'save':
+                return client.request('/v1/remotes', json.loads(Path(args.value).read_text(encoding='utf-8')))
+            payload = {'fingerprint': args.fingerprint} if args.action == 'trust' else (json.load(sys.stdin) if args.credentials_stdin else {})
+            return client.request('/v1/remotes/' + quote(args.value or '', safe='') + '/' + args.action, payload)
         if args.command == "sessions":
             return client.sessions()
         if args.command == "operators":
-            catalog = client.request("/catalog")
-            if args.action == "list":
-                return catalog
-            item = next((item for item in [*catalog["operators"], *catalog["readers"]] if item["id"] == args.id), None)
-            if item is None:
-                raise ClientError("Unknown operator or reader", "not_found")
-            return item
+            if args.action == 'list':
+                # Preserve the original CLI catalog shape for existing scripts;
+                # search is the bounded, agent-oriented discovery operation.
+                return client.request('/catalog')
+            if args.action == 'describe':
+                if not args.id:
+                    raise ValueError('operators describe requires an operator/Reader ID')
+                result = client.request('/v1/operators/describe', {'ids': args.id.split(','), 'sections': args.section, 'generation': args.generation})
+                if len(result['items']) == 1:
+                    item = result['items'][0]
+                    return {**item['descriptor'], 'documentation': item['documentation'], 'generation': result['generation']}
+                return result
+            query = {'query': args.query or (args.id or ''), 'limit': args.limit, 'offset': args.offset}
+            query.update({k: v for k, v in {'kind': args.kind, 'category': args.category}.items() if v})
+            return client.request('/v1/operators?' + urlencode(query))
         if args.command == "context":
             return client.context(args.session, args.scope)
         if args.command == "jobs":
-            return client.request(f"/jobs/{args.id}" + ("/cancel" if args.action == "cancel" else ""), {} if args.action == "cancel" else None)
+            if args.action == 'list':
+                return client.request('/v1/jobs')
+            if not args.id:
+                raise ValueError('A job ID is required')
+            path = '/v1/jobs/' + quote(args.id, safe='')
+            if args.action == 'logs':
+                cursor = args.offset
+                while True:
+                    value = client.request(path + '/logs?' + urlencode({'offset': cursor, 'limit': args.limit}))
+                    if not args.follow:
+                        return value
+                    print(json.dumps(value, ensure_ascii=False), flush=True)
+                    cursor = value['offset']
+                    if value['done']:
+                        return None
+                    time.sleep(.4)
+            return client.request(path + ('/cancel' if args.action == 'cancel' else ''), {} if args.action == 'cancel' else None)
         if args.command == "graph" and args.action == "validate":
             return client.request("/validate", {"graph": read_graph_file(args.file)})
         session = client.session(args.session)
@@ -165,7 +312,10 @@ def execute(args):
             raise ClientError("Edits require --expected-revision from the context snapshot", "revision_required")
         payload = {"expected_revision": args.expected_revision, "document_id": args.document}
         if args.command == "run":
-            return client.request(f"/sessions/{session}/run", payload)
+            if args.request_id:
+                payload['request_id'] = args.request_id
+            job = client.request(f"/sessions/{session}/run", payload)
+            return _wait_job(client, job, args.timeout) if args.wait else job
         if args.action == "open":
             payload["graph"] = read_graph_file(args.file)
         elif args.action == "apply":
@@ -198,7 +348,7 @@ def main(argv=None):
     try:
         # MCP and JSONL streams own stdout; imports/calculation logs elsewhere
         # are redirected so clients always receive a parseable JSON document.
-        if args.command == "mcp" or args.command == "events":
+        if args.command in ('mcp', 'events', 'serve') or args.command == 'jobs' and args.action == 'logs' and args.follow:
             result = execute(args)
         else:
             with redirect_stdout(sys.stderr):
@@ -207,9 +357,17 @@ def main(argv=None):
             print(json.dumps(result, ensure_ascii=False, allow_nan=False, indent=2))
             if args.command == "registry" and (result["errors"] or (args.action == "check" and result["changed"])):
                 raise SystemExit(1)
+            if args.command == 'run' and args.wait:
+                if result.get('wait_timed_out'):
+                    raise SystemExit(124)
+                if result.get('status') not in ('complete',):
+                    raise SystemExit(1)
     except KeyboardInterrupt:
         raise SystemExit(130)
     except Exception as error:
+        if args.command == 'serve':
+            import traceback
+            traceback.print_exc(file=sys.stderr)
         code = getattr(error, "code", "invalid_request")
         print(json.dumps({"error": {"code": code, "message": str(error), "details": getattr(error, "details", None)}}, ensure_ascii=False), file=sys.stderr)
-        raise SystemExit(3 if code == "revision_conflict" else 4 if code in ("not_connected", "ambiguous_session") else 2)
+        raise SystemExit(3 if code == "revision_conflict" else 4 if code in ("not_connected", "ambiguous_session", "no_active_session") else 2)

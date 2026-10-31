@@ -1,0 +1,37 @@
+name: gtf_annotation
+sources:
+  annot:
+    path: input/saccharomyces_cerevisiae.gtf.gz
+    dims:
+    - record
+    - field
+    labels:
+      record: auto
+      field: builtin
+    reader: GtfReader
+steps:
+- name: gff_feature_stats
+  inputs:
+  - annot
+- name: describe
+  inputs:
+  - stats
+- name: gene_structure
+  inputs:
+  - annot
+- name: describe
+  inputs:
+  - structures
+- name: annotation_gaps
+  inputs:
+  - annot
+- name: describe
+  inputs:
+  - gaps
+- name: histogram
+  inputs:
+  - structures
+- name: histogram
+  inputs:
+  - gaps
+parameters_file: parameters.json

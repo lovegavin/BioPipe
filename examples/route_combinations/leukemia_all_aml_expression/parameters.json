@@ -1,0 +1,220 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "expression": {},
+    "samples": {
+      "header": true
+    }
+  },
+  "steps": [
+    {
+      "name": "impute",
+      "inputs": [
+        "expression"
+      ],
+      "params": {
+        "dim": "gene",
+        "method": "median",
+        "min_scale": 1.0,
+        "output": "expr_imp"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "pca",
+      "inputs": [
+        "expr_imp"
+      ],
+      "params": {
+        "dim": "gene",
+        "n_components": 4,
+        "output": "pcs"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "boxplot",
+      "inputs": [
+        "pcs",
+        "samples"
+      ],
+      "params": {
+        "dim": "component",
+        "value_label": "PC1",
+        "group_dim": "sample",
+        "group_label": "group",
+        "groups": [
+          "ALL",
+          "AML"
+        ],
+        "filename": "pca_pc1_by_group.png",
+        "title": "Leukemia: PC1 by ALL/AML group",
+        "xlabel": "group",
+        "ylabel": "PC1 score",
+        "show_points": true,
+        "point_size": 4,
+        "point_alpha": 0.5,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "boxplot",
+      "inputs": [
+        "pcs",
+        "samples"
+      ],
+      "params": {
+        "dim": "component",
+        "value_label": "PC2",
+        "group_dim": "sample",
+        "group_label": "group",
+        "groups": [
+          "ALL",
+          "AML"
+        ],
+        "filename": "pca_pc2_by_group.png",
+        "title": "Leukemia: PC2 by ALL/AML group",
+        "xlabel": "group",
+        "ylabel": "PC2 score",
+        "show_points": true,
+        "point_size": 4,
+        "point_alpha": 0.5,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "compare_groups",
+      "inputs": [
+        "expr_imp",
+        "samples"
+      ],
+      "params": {
+        "dim": "gene",
+        "group_dim": "sample",
+        "group_label": "group",
+        "mode": "two_groups",
+        "group_a": "ALL",
+        "group_b": "AML",
+        "method": "mannwhitney",
+        "min_per_group": 2,
+        "output": "stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "select",
+      "inputs": [
+        "stats"
+      ],
+      "params": {
+        "dim": "statistic",
+        "labels": [
+          "P"
+        ],
+        "source_type": "form",
+        "balanced": true,
+        "weight_name": "weight",
+        "output": "pvals"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "bh_adjust",
+      "inputs": [
+        "pvals"
+      ],
+      "params": {
+        "feature_dim": "gene",
+        "value_dim": "statistic",
+        "output": "qvals"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "filter_by",
+      "inputs": [
+        "expr_imp",
+        "qvals"
+      ],
+      "params": {
+        "dim": "gene",
+        "rules": [
+          {
+            "field": "qvalue",
+            "max": 0.05
+          }
+        ],
+        "output": "sig_expr"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "heatmap",
+      "inputs": [
+        "sig_expr"
+      ],
+      "params": {
+        "dim": "gene",
+        "other_dim": "sample",
+        "select": "variance",
+        "top_n": 40,
+        "standardize": "row",
+        "cluster_rows": true,
+        "cluster_cols": true,
+        "show_row_labels": true,
+        "filename": "top_significant_genes.png",
+        "title": "Leukemia: top variable genes by ALL/AML Mann-Whitney",
+        "figsize": [
+          12,
+          10
+        ],
+        "cmap": "RdBu_r",
+        "nan_color": "#DDDDDD",
+        "show_col_labels": true,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "random_forest_classifier",
+      "inputs": [
+        "expr_imp",
+        "samples"
+      ],
+      "params": {
+        "sample_dim": "sample",
+        "feature_dim": "gene",
+        "label_dim": "feature",
+        "target_label": "group",
+        "valid_labels": [
+          "ALL",
+          "AML"
+        ],
+        "n_estimators": 300,
+        "test_size": 0.25,
+        "cv_folds": 5,
+        "random_state": 42,
+        "scale": true,
+        "max_depth": null,
+        "class_weight": null,
+        "output": "rf"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "rf"
+      ],
+      "params": {},
+      "context_params": {}
+    }
+  ]
+}

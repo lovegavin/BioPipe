@@ -1,0 +1,61 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "x_label": {
+      "type": "string",
+      "title": "X Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "y_label": {
+      "type": "string",
+      "title": "Y Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "increasing": {
+      "type": "boolean",
+      "default": true,
+      "title": "Increasing",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "out_of_bounds": {
+      "type": "string",
+      "enum": [
+        "clip",
+        "nan",
+        "raise"
+      ],
+      "default": "clip",
+      "title": "Out Of Bounds",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "required": [
+    "x_label",
+    "y_label"
+  ],
+  "additionalProperties": false
+}

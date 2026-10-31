@@ -1,0 +1,100 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "counts": {
+      "header": true
+    },
+    "sets": {}
+  },
+  "steps": [
+    {
+      "name": "filter_min",
+      "inputs": [
+        "counts"
+      ],
+      "params": {
+        "dim": "gene",
+        "min_value": 10,
+        "min_samples": 3,
+        "output": "filtered"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "normalize",
+      "inputs": [
+        "filtered"
+      ],
+      "params": {
+        "method": "cpm",
+        "dim": "sample",
+        "target_sum": 1000000.0,
+        "output": "cpm"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "log_transform",
+      "inputs": [
+        "cpm"
+      ],
+      "params": {
+        "base": 2,
+        "pseudocount": 1,
+        "output": "logged"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "ssgsea",
+      "inputs": [
+        "logged",
+        "sets"
+      ],
+      "params": {
+        "feature_dim": "gene",
+        "sample_dim": "sample",
+        "gene_dim": "gene",
+        "gene_set_dim": "gene_set",
+        "alpha": 0.25,
+        "min_size": 3,
+        "normalize": true,
+        "output": "scores"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "heatmap",
+      "inputs": [
+        "scores"
+      ],
+      "params": {
+        "dim": "sample",
+        "other_dim": "gene_set",
+        "select": "all",
+        "cluster_cols": false,
+        "filename": "ssgsea_heatmap.png",
+        "standardize": "none",
+        "cmap": "RdBu_r",
+        "nan_color": "#DDDDDD",
+        "top_n": 50,
+        "cluster_rows": true,
+        "show_row_labels": false,
+        "show_col_labels": true,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "describe",
+      "inputs": [
+        "scores"
+      ],
+      "params": {},
+      "context_params": {}
+    }
+  ]
+}

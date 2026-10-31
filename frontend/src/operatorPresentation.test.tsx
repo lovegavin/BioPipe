@@ -2,7 +2,7 @@ import manifest from "../../biopipe/builtin_packages.json";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { OperatorArtwork, OperatorPreview } from "./OperatorArtwork";
-import { categoryLabel, compareCategories, presentCatalog, presentOperator } from "./operatorPresentation";
+import { CANONICAL_CATEGORIES, categoryId, categoryLabel, compareCategories, presentCatalog, presentOperator } from "./operatorPresentation";
 import type { Catalog, Operator } from "./types";
 
 // Exercise the shipped registry, including descriptors already present in saved
@@ -16,7 +16,8 @@ describe("operator presentation", () => {
     const before = structuredClone(catalog);
     const presented = presentCatalog(catalog);
     const groups = [...new Set(presented.operators.map(o => o.category))].sort(compareCategories);
-    expect(groups).toEqual(["质量控制", "统计分析", "数据整理", "可视化"]);
+    expect(groups).toEqual([...new Set(operators.map(o => categoryLabel(o.category)))].sort(compareCategories));
+    expect(groups).not.toEqual(expect.arrayContaining(['Data', 'Statistics', 'Visualization']));
     expect(new Set(presented.operators.map(o => o.id)).size).toBe(operators.length);
     expect(catalog).toEqual(before);
     for (const spec of presented.operators) {
@@ -59,6 +60,16 @@ describe("operator presentation", () => {
     expect(categoryLabel("Spatial biology")).toBe("Spatial biology");
     expect(["Spatial biology", "可视化", "质量控制"].sort(compareCategories))
       .toEqual(["质量控制", "可视化", "Spatial biology"]);
+  });
+
+  it('gives canonical categories stable IDs without discarding custom labels', () => {
+    expect(categoryId('Quality Control')).toBe('quality_control');
+    expect(categoryId('质量控制')).toBe('quality_control');
+    expect(categoryId('ML')).toBe('machine_learning');
+    expect(categoryId('Machine Learning')).toBe('machine_learning');
+    expect(categoryLabel('OMICS')).toBe('组学分析');
+    expect(categoryId('Spatial biology')).toBe('Spatial biology');
+    expect(new Set(CANONICAL_CATEGORIES.map(categoryLabel)).size).toBe(6);
   });
 
   it("uses the default icon for absent or unknown names and renders declared icons", () => {

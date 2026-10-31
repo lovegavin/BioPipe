@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "properties": {
+    "subject_dim": {
+      "type": "string",
+      "default": "subject",
+      "title": "Subject Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "rater_dim": {
+      "type": "string",
+      "default": "rater",
+      "title": "Rater Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "nominal",
+        "interval"
+      ],
+      "default": "nominal",
+      "title": "Level",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    }
+  },
+  "additionalProperties": false
+}

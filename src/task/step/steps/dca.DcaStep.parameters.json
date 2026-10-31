@@ -1,0 +1,80 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "outcome_label": {
+      "type": "string",
+      "title": "二分类结局列",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "probability_label": {
+      "type": "string",
+      "title": "预测概率列",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "thresholds": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "exclusiveMinimum": 0,
+        "exclusiveMaximum": 1
+      },
+      "title": "阈值列表（可选）",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "threshold_start": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.01,
+      "title": "Threshold Start",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "threshold_stop": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.99,
+      "title": "Threshold Stop",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "threshold_step": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "default": 0.01,
+      "title": "Threshold Step",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 80
+    }
+  },
+  "required": [
+    "outcome_label",
+    "probability_label"
+  ],
+  "additionalProperties": false
+}

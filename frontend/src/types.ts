@@ -43,6 +43,8 @@ export type Operator = {
   contracts?: { version: number; inputs: PortContract[] | null; output: { mode: string } | null };
 };
 export type ReaderSpec = { id: string; extensions: string[]; contracts: {output: PortContract | null};
+  title?: string; description?: string; category?: string; icon?: string | null; icon_image?: string | null;
+  supported_systems?: string[]; systems_status?: 'inferred' | 'unknown';
   parameters?: Parameter[];
   requires_siblings?: string[]; handles_compression?: boolean;
   file_input?: { dims?: string[]; labels?: Record<string, unknown>; compression?: string[]; companions?: string[][] } };
@@ -67,6 +69,7 @@ export type ContractCheck = { id: string; source: string; target: string; status
 export type NodeContracts = { inputs: (PortContract | null)[]; outputs: PortContract[] };
 export type ContractAnalysis = { version: number; nodes: Record<string, NodeContracts>; edges: ContractCheck[] };
 export type DataSource = {
+  reader?: string;
   location?: TargetRef;
   path: string;
   dims: string[];
@@ -190,6 +193,7 @@ export type Preview = {
   points: (number | null)[][];
 };
 export type Bootstrap = {
+  system?: string;
   automatic_memory_fraction?: number;
   automatic_memory_budget_bytes?: number | null;
   agent_config?: {command: string; args: string[]};
@@ -223,4 +227,4 @@ export type ExecutionPlan = {mode: 'manual' | 'auto';
 export type ExecutionResources = {targets: {target: TargetRef; name: string; capacity_bytes: number;
   reserved_bytes: number; available_bytes: number; active_jobs: number; queued_jobs: number;
   cpu_capacity: number; cpu_reserved: number}[]};
-export type BrowseRemote = (current: string, onSelected: (path: string, source?: DataSource, location?: TargetRef) => void, source?: boolean, target?: TargetRef) => void;
+export type BrowseRemote = (current: string, onSelected: (path: string, source?: DataSource, location?: TargetRef) => void, source?: boolean, target?: TargetRef, reader?: string) => void;

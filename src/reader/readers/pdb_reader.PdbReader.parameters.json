@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "model": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "title": "Model",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "encoders": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Encoders",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    }
+  },
+  "additionalProperties": false
+}

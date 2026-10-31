@@ -1,0 +1,59 @@
+{
+  "type": "object",
+  "properties": {
+    "cell_dim": {
+      "type": "string",
+      "default": "cell",
+      "title": "Cell Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "gene_dim": {
+      "type": "string",
+      "default": "gene",
+      "title": "Gene Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "expected_doublet_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.06,
+      "title": "Expected Doublet Rate",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "threshold": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.25,
+      "title": "阈值",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "n_prin_comps": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 20,
+      "title": "N Prin Comps",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "additionalProperties": false
+}

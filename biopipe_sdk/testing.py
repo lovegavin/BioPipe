@@ -15,8 +15,15 @@ def run_operator(cls, inputs, params=None):
     with TemporaryDirectory(prefix="biopipe-sdk-") as temporary:
         names = [f"input_{i}" for i in range(len(inputs))]
         spec = {"name": cls.name, "inputs": names, "params": dict(params or {})}
+        if cls.output_parameter:
+            spec['params'].setdefault(cls.output_parameter, cls.name)
         ctx = Context(Path(temporary), {"sources": {}, "steps": [spec]})
-        previous = STEPS.get(cls.name)
+        # Preserve lazy factories and descriptor metadata as well as loaded
+        # classes. Assigning a class and restoring only the value loses both.
+        sentinel = object()
+        stores = [getattr(STEPS, attr, None) for attr in ('factories', 'loaded', 'declarations')]
+        lazy = all(store is not None for store in stores)
+        previous = [store.get(cls.name, sentinel) for store in stores] if lazy else STEPS.get(cls.name, sentinel)
         STEPS[cls.name] = cls
         try:
             for name, form in zip(names, inputs):
@@ -27,8 +34,11 @@ def run_operator(cls, inputs, params=None):
             import json
             return json.loads((ctx.out_dir / ctx.artifacts["exports"][0]["export_path"]).read_text(encoding="utf-8"))
         finally:
-            if previous is None:
-                STEPS.pop(cls.name, None)
-            else:
+            STEPS.pop(cls.name, None)
+            if lazy:
+                for store, value in zip(stores, previous):
+                    if value is not sentinel:
+                        store[cls.name] = value
+            elif previous is not sentinel:
                 STEPS[cls.name] = previous
             ctx.finalize()

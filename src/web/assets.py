@@ -30,7 +30,7 @@ def accepted_extensions(catalog):
     return sorted(result)
 
 
-def plan_input(names, catalog):
+def plan_input(names, catalog, reader_id=None):
     """Choose one data set and validate companions using filenames only."""
     if not isinstance(names, list) or not 1 <= len(names) <= 32:
         raise GraphError('一次请选择一组数据，最多 32 个文件。')
@@ -38,13 +38,15 @@ def plan_input(names, catalog):
     if len({name.casefold() for name in names}) != len(names):
         raise GraphError('同组文件不能重名（不区分大小写）。')
     present = set(names)
+    from biopipe.reader_selection import candidates as select
+    selected_readers = select(catalog['readers'], '', reader_id) if reader_id else catalog['readers']
     candidates, incomplete = [], []
     for name in names:
-        for reader in catalog['readers']:
-            if not any(name.lower().endswith(ext.lower()) for ext in reader_extensions(reader)):
+        for reader in selected_readers:
+            if not select([reader], name, reader_id):
                 continue
             path = uncompressed_path(Path(name))
-            if any(path.with_suffix(ext).name in present for ext in reader.get('excludes_siblings', [])):
+            if not reader_id and any(path.with_suffix(ext).name in present for ext in reader.get('excludes_siblings', [])):
                 continue
             required = [path.with_suffix(ext).name for ext in reader.get('requires_siblings', [])]
             groups = (reader.get('file_input') or {}).get('companions', [])
@@ -69,15 +71,15 @@ def plan_input(names, catalog):
     hints = reader.get('file_input') or {}
     dims = deepcopy(hints.get('dims', ['sample', 'feature']))
     return {'filename': name, 'reader': reader['id'], 'source': {
-        'dims': dims, 'labels': deepcopy(hints.get('labels', {dim: 'auto' for dim in dims})), 'args': {}}}
+        'reader': reader['id'], 'dims': dims, 'labels': deepcopy(hints.get('labels', {dim: 'auto' for dim in dims})), 'args': {}}}
 
 
 class AssetImports:
     def __init__(self, service):
         self.service = service
 
-    def create(self, names):
-        plan = plan_input(names, self.service.catalog)
+    def create(self, names, reader_id=None):
+        plan = plan_input(names, self.service.catalog, reader_id)
         key = uuid.uuid4().hex
         directory = self.service.assets_dir / key
         directory.mkdir()

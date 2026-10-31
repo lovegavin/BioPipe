@@ -1,0 +1,135 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "peptides": {
+      "header": true
+    },
+    "mapping": {
+      "header": true
+    },
+    "meta": {
+      "header": true
+    }
+  },
+  "steps": [
+    {
+      "name": "protein_rollup",
+      "inputs": [
+        "peptides",
+        "mapping"
+      ],
+      "params": {
+        "peptide_dim": "peptide",
+        "sample_dim": "sample",
+        "protein_dim": "protein",
+        "method": "sum",
+        "min_peptides": 1,
+        "output": "proteins"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "missing",
+      "inputs": [
+        "proteins"
+      ],
+      "params": {
+        "dim": "protein",
+        "threshold": 0.5,
+        "output": "filtered"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "impute",
+      "inputs": [
+        "filtered"
+      ],
+      "params": {
+        "method": "min",
+        "dim": "protein",
+        "min_scale": 1.0,
+        "output": "imputed"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "normalize",
+      "inputs": [
+        "imputed"
+      ],
+      "params": {
+        "method": "quantile",
+        "dim": "sample",
+        "target_sum": 1000000.0,
+        "output": "normalized"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "limma_de",
+      "inputs": [
+        "normalized",
+        "meta"
+      ],
+      "params": {
+        "feature_dim": "protein",
+        "sample_dim": "sample",
+        "group_label": "group",
+        "group_a": "ctrl",
+        "group_b": "case",
+        "prior_df": 0,
+        "correction": "fdr",
+        "output": "de"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "volcano",
+      "inputs": [
+        "de"
+      ],
+      "params": {
+        "dim": "protein",
+        "stat_dim": "statistic",
+        "lfc_label": "logFC",
+        "p_label": "P_VALUE",
+        "filename": "volcano.png",
+        "ylabel": "-log10(P)",
+        "lfc_threshold": 1.0,
+        "p_threshold": 0.05,
+        "point_size": 8,
+        "alpha": 0.7,
+        "label_top": 0,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    },
+    {
+      "name": "ma_plot",
+      "inputs": [
+        "de"
+      ],
+      "params": {
+        "dim": "protein",
+        "stat_dim": "statistic",
+        "lfc_label": "logFC",
+        "mean_a_label": "mean_a",
+        "mean_b_label": "mean_b",
+        "p_label": "P_VALUE",
+        "filename": "ma.png",
+        "xlabel": "log2 mean",
+        "p_threshold": 0.05,
+        "point_size": 8,
+        "alpha": 0.7,
+        "label_top": 0,
+        "figure_dpi": 300,
+        "figure_font_size": 8
+      },
+      "context_params": {}
+    }
+  ]
+}

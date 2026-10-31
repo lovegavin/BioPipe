@@ -74,7 +74,7 @@ export function OperatorIcon({
 }: IconProps & { name?: string; category?: string }) {
   const defaults: Record<string, ComponentType<IconProps>> = {
     "统计分析": Sigma, "质量控制": CheckSquare, "数据整理": SlidersHorizontal,
-    "可视化": ChartBar, "微生物组": CirclesThree,
+    "可视化": ChartBar, "组学分析": Dna, "机器学习": TreeStructure,
   };
   const label = categoryLabel(category);
   const fallback = Object.hasOwn(defaults, label) ? defaults[label] : SquaresFour;

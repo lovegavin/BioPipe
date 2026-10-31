@@ -1,0 +1,57 @@
+name: single_cell
+sources:
+  counts:
+    path: input/filtered_gene_bc_matrices/hg19/matrix.mtx
+    dims:
+    - gene
+    - cell
+    labels:
+      gene: builtin
+      cell: builtin
+    reader: MtxReader
+steps:
+- name: qc_metrics
+  inputs:
+  - counts
+- name: describe
+  inputs:
+  - qc
+- name: filter_by
+  inputs:
+  - counts
+  - qc
+- name: filter_min
+  inputs:
+  - cells_filtered
+- name: normalize
+  inputs:
+  - genes_filtered
+- name: log_transform
+  inputs:
+  - cpm
+- name: rank_axis
+  inputs:
+  - logged
+- name: reduce
+  inputs:
+  - hvg
+- name: reduce
+  inputs:
+  - pcs
+- name: cluster_axis
+  inputs:
+  - pcs
+- name: compare_groups
+  inputs:
+  - logged
+  - clusters
+- name: scatter
+  inputs:
+  - umap
+- name: describe
+  inputs:
+  - clusters
+- name: describe
+  inputs:
+  - markers
+parameters_file: parameters.json

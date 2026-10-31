@@ -33,8 +33,9 @@ def create_app(settings=None):
     if settings is None:
         from .profile import make_settings
         settings = make_settings(root, root / "frontend/dist")
-    catalog = catalog_from_descriptors()
-    service = JobService(settings, catalog)
+    from biopipe.application import Application
+    application = Application(settings)
+    service = application.service
     catalog = service.catalog
     imports = AssetImports(service)
     token = secrets.token_urlsafe(32)
@@ -49,10 +50,10 @@ def create_app(settings=None):
             app.state.check_dependencies()
         yield
         bridge.close()
-        executions.shutdown()
-        service.shutdown()
+        application.shutdown()
     app = FastAPI(title="BioPipe Studio", version=__version__, lifespan=lifespan)
     app.state.service, app.state.token = service, token
+    app.state.application = application
     from biopipe.bridge import Bridge
     bridge = Bridge(app, service, token)
     app.state.bridge = bridge
@@ -60,11 +61,12 @@ def create_app(settings=None):
     mount_plugins(app, service)
     from .remote_api import mount_remote
     remote_events, remote_console = mount_remote(app, service)
-    from .execution import ExecutionService
-    executions = ExecutionService(service)
+    executions = application.executions
     app.state.executions = service.executions = executions
     from .execution_api import mount_execution, ACTIVE_STATUSES
     execution_events, execution_console = mount_execution(app, service, executions)
+    from biopipe.control_api import mount_control
+    mount_control(app, application, bridge)
 
     def graph_catalog(graph):
         return executions.catalog(graph) if executions.applies(graph) else service.graph_catalog(graph)
@@ -82,7 +84,7 @@ def create_app(settings=None):
         if not settings.testing and (host not in ("localhost", "127.0.0.1") or
                                     (origin and urlparse(origin).hostname not in ("localhost", "127.0.0.1"))):
             return JSONResponse({"message": "此服务仅允许本地访问。"}, status_code=403)
-        if request.method not in ("GET", "HEAD", "OPTIONS") and not request.url.path.startswith("/api/agent/"):
+        if request.method not in ("GET", "HEAD", "OPTIONS") and not request.url.path.startswith(("/api/agent/", "/api/v1/")):
             if not hmac.compare_digest(request.headers.get("x-studio-token", ""), token):
                 return JSONResponse({"message": "本地会话已更新，请刷新页面。"}, status_code=403)
         try:
@@ -123,8 +125,10 @@ def create_app(settings=None):
     @app.get("/api/bootstrap")
     def bootstrap():
         import sys
+        import platform
         agent_args = ["-m", "biopipe", "--workspace", str(service.root), "--data-dir", str(service.directory), "mcp"]
         return {"token": token, "catalog": catalog, "demo": service.demo,
+                "system": platform.system().lower().replace('darwin', 'macos'),
                 "automatic_memory_fraction": AUTO_BUDGET_FRACTION,
                 "automatic_memory_budget_bytes": automatic_memory_budget,
                 "agent_config": {"command": sys.executable, "args": agent_args},
@@ -166,8 +170,15 @@ def create_app(settings=None):
 
     @app.post("/api/workflows/save")
     def save_workflow(payload: SaveWorkflow):
-        payload.graph = prepare(payload.graph)
-        return service.routes.save(payload)
+        from biopipe.documents import CommandError
+        try:
+            return application.workflows.save(payload.graph, workflow_id=payload.id, expected_version=payload.expected_version)
+        except CommandError as error:
+            if error.code == 'revision_conflict':
+                # Preserve the desktop endpoint's established error contract;
+                # the public versioned API uses HTTP409 with the same CAS guard.
+                raise GraphError('流程已被其他页面更新，请重新打开。') from error
+            raise
 
     @app.get("/api/workflows/{key}")
     def get_workflow(key: str):
@@ -199,7 +210,7 @@ def create_app(settings=None):
 
     @app.post("/api/contracts")
     def contracts(graph: Graph):
-        return analyze_graph(graph, graph_catalog(graph), settings.root)
+        return analyze_graph(graph, graph_catalog(graph), settings.root, input_roots=settings.input_roots)
 
     @app.post("/api/export")
     def export(graph: Graph):
@@ -208,21 +219,37 @@ def create_app(settings=None):
             raise GraphError('多环境工作流请导出路线包。')
         if remote_profile(graph):
             return service.remotes.call(remote_profile(graph), 'export', {'graph': graph.model_dump(mode='json')})
-        manifest, order = compile_graph(graph, service.plugins.catalog_for(graph, service.base_catalog), settings.root)
+        manifest, order = compile_graph(graph, service.plugins.catalog_for(graph, service.base_catalog), settings.root,
+                                        input_roots=settings.input_roots)
         manifest = relative_manifest(manifest, project_path(settings.root, ".", graph.base_dir), service.plugins.catalog_for(graph, service.base_catalog))
         return {"yaml": yaml.safe_dump(manifest, allow_unicode=True, sort_keys=False), "order": order}
 
     @app.post("/api/import")
     def import_yaml(payload: ManifestImport):
         try:
-            return import_manifest(payload.text, payload.base_dir, catalog, settings.root).model_dump(mode="json")
+            import_root = settings.code_root or settings.root
+            raw = yaml.safe_load(payload.text)
+            sources = raw.get('sources') if isinstance(raw, dict) else None
+            if isinstance(sources, dict) and sources:
+                from .graph import input_path
+                # Existing workspace inputs take precedence over auto-location
+                # in the installation's task/example directories.
+                try:
+                    if all(input_path(settings.root, source['path'], payload.base_dir, settings.input_roots).is_file()
+                           for source in sources.values()):
+                        import_root = settings.root
+                except (GraphError, KeyError, TypeError):
+                    pass
+            return import_manifest(payload.text, payload.base_dir, catalog, import_root,
+                                   input_roots=settings.input_roots).model_dump(mode="json")
         except yaml.YAMLError as exc:
             raise GraphError("YAML 格式有误，请检查缩进及字段。") from exc
 
     @app.post("/api/assets/batches")
     async def begin_upload(request: Request):
         payload = await request.json()
-        return imports.create(payload.get('filenames') if isinstance(payload, dict) else None)
+        return imports.create(payload.get('filenames') if isinstance(payload, dict) else None,
+                              payload.get('reader') if isinstance(payload, dict) else None)
 
     @app.post("/api/assets/batches/{key}/complete")
     async def complete_upload(key: str, request: Request):
@@ -292,15 +319,15 @@ def create_app(settings=None):
 
     @app.post("/api/jobs", status_code=202)
     def run_job(graph: Graph):
-        return executions.launch(graph) if executions.applies(graph) else service.launch(graph)
+        return application.jobs.launch(graph)
 
     @app.get("/api/jobs/{key}")
     def details(key: str):
-        return executions.details(key) if executions.owns(key) else service.details(key)
+        return application.jobs.details(key)
 
     @app.post("/api/jobs/{key}/cancel")
     def cancel(key: str):
-        return executions.cancel(key) if executions.owns(key) else service.cancel(key)
+        return application.jobs.cancel(key)
 
     @app.get("/api/jobs/{key}/events")
     async def events(key: str, request: Request):

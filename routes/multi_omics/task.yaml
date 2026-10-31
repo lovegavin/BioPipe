@@ -1,0 +1,65 @@
+name: multi_omics
+sources:
+  rna:
+    path: input/cite_seq_pbmc.h5
+    dims:
+    - gene
+    - cell
+    labels:
+      gene: builtin
+      cell: builtin
+    reader: TenxH5Reader
+  protein:
+    path: input/cite_seq_pbmc.h5
+    dims:
+    - protein
+    - cell
+    labels:
+      protein: builtin
+      cell: builtin
+    reader: TenxH5Reader
+steps:
+- name: normalize
+  inputs:
+  - rna
+- name: log_transform
+  inputs:
+  - rna_cpm
+- name: rank_axis
+  inputs:
+  - rna_log
+- name: reduce
+  inputs:
+  - rna_hvg
+- name: describe
+  inputs:
+  - rna_pcs
+- name: normalize
+  inputs:
+  - protein
+- name: log_transform
+  inputs:
+  - protein_norm
+- name: reduce
+  inputs:
+  - protein_log
+- name: describe
+  inputs:
+  - protein_pcs
+- name: join
+  inputs:
+  - rna_pcs
+  - protein_pcs
+- name: describe
+  inputs:
+  - joint_pcs
+- name: rank_axis
+  inputs:
+  - protein_log
+- name: correlation
+  inputs:
+  - protein_var
+- name: heatmap
+  inputs:
+  - protein_corr
+parameters_file: parameters.json

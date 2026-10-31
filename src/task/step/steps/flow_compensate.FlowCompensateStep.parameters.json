@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "properties": {
+    "event_dim": {
+      "type": "string",
+      "default": "event",
+      "title": "Event Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "channel_dim": {
+      "type": "string",
+      "default": "channel",
+      "title": "Channel Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "detector_dim": {
+      "type": "string",
+      "default": "detector",
+      "title": "Detector Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "fluorochrome_dim": {
+      "type": "string",
+      "default": "fluorochrome",
+      "title": "Fluorochrome Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "additionalProperties": false
+}

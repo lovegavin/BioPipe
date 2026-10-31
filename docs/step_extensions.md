@@ -55,7 +55,7 @@ to replace those supplied values. See [workflow values](workflow_parameters.md).
 
 Place both files in the operator directory shown by **Library Management**, then
 refresh. For an external package, run `biopipe plugin init my_lab`, adapt its generated
-code/JSON pair, run `biopipe plugin check my_lab`, `biopipe plugin test my_lab`, and
+code/JSON/Markdown files, run `biopipe plugin check my_lab`, `biopipe plugin test my_lab`, and
 `biopipe plugin build my_lab`. Install the wheel or put the project in the inbox.
 Include `*.json` and optional icons in setuptools package data.
 

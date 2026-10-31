@@ -89,7 +89,9 @@ import { LibrarySection } from "./LibrarySection";
 import { Results, statusLabel } from "./Results";
 import { OperatorIcon } from "./icons";
 import { OperatorArtwork } from "./OperatorArtwork";
-import { compareCategories, presentCatalog } from "./operatorPresentation";
+import { categoryId, compareCategories, presentCatalog } from "./operatorPresentation";
+import { makeReaderNode, readerForSource, readerMatches } from "./readerInput";
+import { supportedPlatformLabel, targetPlatformWarning } from "./platform";
 import { PanelResizeHandle } from "./PanelResizeHandle";
 import { automaticPanels, panelLimits, panelMaximum, resolvePanels } from "./panelLayout";
 import type { PanelSide, PanelWidths } from "./panelLayout";
@@ -185,15 +187,15 @@ function Studio() {
   const [agentReady, setAgentReady] = useState(false), [agentPanel, setAgentPanel] = useState(false);
   const [routes, setRoutes] = useState<RouteDefinition[]>([]);
   const [servers, setServers] = useState<RemoteStatus[]>([]), [remoteOpen, setRemoteOpen] = useState(false);
-  const [remotePicker, setRemotePicker] = useState<{profileId: string; initial: string; source?: boolean; onSelect: (path: string, source?: DataSource) => void} | null>(null);
+  const [remotePicker, setRemotePicker] = useState<{profileId: string; initial: string; source?: boolean; reader?: string; onSelect: (path: string, source?: DataSource) => void} | null>(null);
   const selectedServerId = remoteId(graph);
   const selectedServer = servers.find(s => s.profile.id === selectedServerId);
   const refreshServers = async () => {setServers(await api.remoteStatus()); setHistory(await api.history());};
   const chooseServer = (id: string) => {if (!busy) commit(current => withExecution(current, {...targetFromKey(id), profile_id: id || undefined}));};
-  const browseRemote: BrowseRemote = (initial, onSelect, source, target) => {
+  const browseRemote: BrowseRemote = (initial, onSelect, source, target, reader) => {
     const profileId = target?.kind === 'ssh' ? target.profile_id : selectedServerId || servers.find(server => server.connected)?.profile.id || servers[0]?.profile.id;
     if (!profileId) {notify('请先连接服务器。'); return;}
-    setRemotePicker({profileId, initial, source, onSelect: (path, data) => {
+    setRemotePicker({profileId, initial, source, reader, onSelect: (path, data) => {
       const location = {kind: 'ssh' as const, profile_id: profileId};
       onSelect(path, data ? {...data, location} : undefined, location);
     }});
@@ -737,6 +739,7 @@ function Studio() {
     data: {
       model,
       spec: specFor(model, catalog),
+      reader: model.source ? readerForSource(catalog, model.source) : undefined,
       order: order.indexOf(model.id) + 1,
       status: statuses[model.id],
       invalid: invalid === model.id || contracts?.edges.some(edge => edge.target === model.id && edge.status === "incompatible"),
@@ -895,6 +898,7 @@ function Studio() {
   function add(operator?: string, position?: { x: number; y: number }) {
     if (busy) return;
     if (operator && (libraryState.disabled.includes(operator) || libraryState.hidden.includes(operator))) return;
+    const reader = operator?.startsWith('reader:') ? catalog.readers?.find(item => item.id === operator.slice(7)) : undefined;
     const spec = catalog.operators.find((o) => o.id === operator);
     const area = canvas.current?.getBoundingClientRect();
     const location =
@@ -904,8 +908,9 @@ function Studio() {
         y: (area?.top || 0) + (area?.height || 400) / 2 - 60,
       });
     const route = routes.find(item => item.id === operator);
-    if (operator && operator !== "source" && !spec && !route) return;
-    const node = route ? makeRouteNode(graphRef.current, route, location) : makeNode(graphRef.current, spec, location);
+    if (operator && operator !== "source" && !spec && !route && !reader) return;
+    const node = reader ? makeReaderNode(graphRef.current, reader, location, defaultTarget(graphRef.current))
+      : route ? makeRouteNode(graphRef.current, route, location) : makeNode(graphRef.current, spec, location);
     commit((current) => ({ ...current, nodes: [...current.nodes, node] }));
     setSelected(node.id);
     setSelection([node.id]);
@@ -1136,10 +1141,11 @@ function Studio() {
       </div>
     );
   const filtered = catalog.operators.filter((o) => (showHidden || !libraryState.hidden.includes(o.id)) &&
-    `${o.title} ${o.id} ${o.description} ${(o.title_aliases || []).join(" ")}`
+    `${o.title} ${o.id} ${o.description} ${o.category} ${(o.title_aliases || []).join(" ")}`
       .toLowerCase()
       .includes(search.toLowerCase()),
   );
+  const filteredReaders = (catalog.readers ?? []).filter(reader => readerMatches(reader, search));
   const categories = [...new Set(filtered.map((o) => o.category))].sort(compareCategories);
   return (
     <div
@@ -1310,7 +1316,7 @@ function Studio() {
         >
           <div className="panel-heading">
             <h2>算子库</h2>
-            <span className="count-badge">{catalog.operators.filter(item => !libraryState.hidden.includes(item.id)).length + routes.length}</span>
+            <span className="count-badge">{catalog.operators.filter(item => !libraryState.hidden.includes(item.id)).length + (catalog.readers?.length ?? 0) + routes.length}</span>
             <button className="icon-button register-route-button" aria-label="添加路线算子" title="从已保存路线添加算子" onClick={() => setPicker("register")}><Plus size={18}/></button>
             <button className="icon-button library-refresh" aria-label="刷新算子库" title={selectedServerId ? '连接服务器并读取算子库' : '扫描算子与 Reader 目录并热更新'} disabled={refreshingPlugins} onClick={() => void refreshPlugins()}><ArrowClockwise size={16} className={refreshingPlugins ? "spin" : ""}/></button>
             <button
@@ -1324,8 +1330,8 @@ function Studio() {
           <label className="search-field">
             <MagnifyingGlass size={16} />
             <input
-              aria-label="搜索算子"
-              placeholder="搜索算子"
+              aria-label="搜索算子与 Reader"
+              placeholder="搜索算子与 Reader"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -1349,6 +1355,17 @@ function Studio() {
             <Plus size={15} />
           </button>
           <div className="library-scroll">
+            {!!filteredReaders.length && <LibrarySection name="Readers" count={filteredReaders.length} sectionKey="readers" search={search} defaultCollapsed>
+              {filteredReaders.map(reader => <button key={reader.id} className="operator-item reader-item"
+                title={[reader.description, reader.extensions.join(' · '), targetPlatformWarning(reader.supported_systems, graph, servers, bootstrap.system)].filter(Boolean).join('\n')}
+                disabled={busy} draggable={!busy} onClick={() => add(`reader:${reader.id}`)}
+                onDragStart={event => {event.dataTransfer.setData('application/biopipe', `reader:${reader.id}`); event.dataTransfer.effectAllowed = 'move';}}>
+                <span className="operator-icon"><OperatorArtwork spec={{...reader, icon: reader.icon || 'Database'}} size={18}/></span>
+                <span><strong>{reader.title || reader.id}</strong>
+                  {supportedPlatformLabel(reader.supported_systems) && <span className="platform-badge" title="支持的运行环境">{supportedPlatformLabel(reader.supported_systems)}</span>}
+                </span><Plus className="add-hint" size={14}/>
+              </button>)}
+            </LibrarySection>}
             {(!search || routes.some(route => route.name.toLowerCase().includes(search.toLowerCase()))) && <LibrarySection name="路线算子" count={routes.filter(route => route.name.toLowerCase().includes(search.toLowerCase())).length} sectionKey="routes" search={search} className="route-library">
               {!routes.length && <button className="route-empty" onClick={() => setPicker("register")}>
                 <Stack size={20}/><strong>添加已保存路线</strong><Plus size={14}/>
@@ -1360,7 +1377,7 @@ function Studio() {
               </button>)}
             </LibrarySection>}
             {categories.map((category) => (
-              <LibrarySection key={category} name={category} count={filtered.filter(o => o.category === category).length} sectionKey={`operator:${category}`} search={search}>
+              <LibrarySection key={category} name={category} count={filtered.filter(o => o.category === category).length} sectionKey={`operator:${categoryId(category)}`} search={search}>
                 {filtered
                   .filter((o) => o.category === category)
                   .map((spec) => (
@@ -1369,7 +1386,7 @@ function Studio() {
                       className={`operator-item ${spec.preview ? "has-preview" : ""} ${libraryState.disabled.includes(spec.id) || libraryState.hidden.includes(spec.id) ? "is-library-disabled" : ""}`}
                       disabled={busy}
                       aria-disabled={libraryState.disabled.includes(spec.id) || libraryState.hidden.includes(spec.id)}
-                      title={spec.description}
+                      title={[spec.description, targetPlatformWarning(spec.supported_systems, graph, servers, bootstrap.system)].filter(Boolean).join('\n')}
                       draggable={!busy && !libraryState.disabled.includes(spec.id) && !libraryState.hidden.includes(spec.id)}
                       onContextMenu={event => {event.preventDefault(); setContextMenu({x: event.clientX, y: event.clientY, libraryKey: spec.id});}}
                       onDragStart={(e) => {
@@ -1385,7 +1402,7 @@ function Studio() {
                         <OperatorArtwork spec={spec} size={18}/>
                       </span>
                       <span>
-                        <strong>{spec.title}</strong>{spec.supported_systems?.join(',') === 'linux' && <span className="platform-badge" title="此算子的外部工具需要 Linux 运行环境">Linux</span>}
+                        <strong>{spec.title}</strong>{supportedPlatformLabel(spec.supported_systems) && <span className="platform-badge" title="支持的运行环境">{supportedPlatformLabel(spec.supported_systems)}</span>}
                         {libraryState.hidden.includes(spec.id) ? <small>已删除</small> : libraryState.disabled.includes(spec.id) ? <small>已禁用</small> : null}
                       </span>
                       <Plus className="add-hint" size={14} />
@@ -1393,7 +1410,7 @@ function Studio() {
                   ))}
               </LibrarySection>
             ))}
-            {!filtered.length && !routes.some(r => r.name.toLowerCase().includes(search.toLowerCase())) && (
+            {!filtered.length && !filteredReaders.length && !routes.some(r => r.name.toLowerCase().includes(search.toLowerCase())) && (
               <div className="search-empty">
                 没有找到算子
                 <br />
@@ -1707,6 +1724,7 @@ function Studio() {
             key={activeId}
             graph={graph}
             catalog={catalog}
+            localSystem={bootstrap.system}
             nodeId={inspected}
             settings={settings}
             busy={!!busy}

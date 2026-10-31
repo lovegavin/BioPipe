@@ -1,0 +1,50 @@
+name: refseq_cds_sequence_features
+sources:
+  cds:
+    path: input/refseq_cds.fasta
+    dims:
+    - sequence
+    - position
+    labels:
+      sequence: builtin
+      position: auto
+    reader: FastaReader
+steps:
+- name: sequence_stats
+  inputs:
+  - cds
+- name: drop
+  inputs:
+  - cds_stats
+- name: describe
+  inputs:
+  - cds_stats_core
+- name: translate
+  inputs:
+  - cds
+- name: protein_properties
+  inputs:
+  - proteins
+- name: describe
+  inputs:
+  - protein_props
+- name: heatmap
+  inputs:
+  - protein_props
+- name: correlation
+  inputs:
+  - protein_props
+- name: heatmap
+  inputs:
+  - protein_corr
+- name: codon_usage
+  inputs:
+  - cds
+- name: describe
+  inputs:
+  - codon_usage
+parameters_file: parameters.json
+runtime:
+  memory:
+    enabled: true
+    auto_spill: true

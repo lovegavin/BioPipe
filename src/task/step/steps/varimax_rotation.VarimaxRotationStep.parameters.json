@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "properties": {
+    "variable_dim": {
+      "type": "string",
+      "default": "variable",
+      "title": "Variable Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "factor_dim": {
+      "type": "string",
+      "default": "factor",
+      "title": "Factor Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "normalize": {
+      "type": "boolean",
+      "default": true,
+      "title": "行标准化",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "eps": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 1e-05,
+      "title": "Eps",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "additionalProperties": false
+}

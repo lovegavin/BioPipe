@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "properties": {
+    "event_dim": {
+      "type": "string",
+      "default": "event",
+      "title": "Event Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "channel_dim": {
+      "type": "string",
+      "default": "channel",
+      "title": "Channel Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "channels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Channels",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "a": {
+      "type": "number",
+      "default": 1.0,
+      "title": "A",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "b": {
+      "type": "number",
+      "default": 1.0,
+      "title": "B",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "c": {
+      "type": "number",
+      "default": 0.0,
+      "title": "C",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "additionalProperties": false
+}

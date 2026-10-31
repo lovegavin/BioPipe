@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "properties": {
+    "peptide_dim": {
+      "type": "string",
+      "default": "peptide",
+      "title": "Peptide Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "protein_dim": {
+      "type": "string",
+      "default": "protein",
+      "title": "Protein Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "sum",
+        "mean"
+      ],
+      "default": "sum",
+      "title": "方法",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "min_peptides": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1,
+      "title": "Min Peptides",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    }
+  },
+  "additionalProperties": false
+}

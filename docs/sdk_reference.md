@@ -130,7 +130,9 @@ and derive dimension names from parameters or another input. `choose` selects a
 rule by a method parameter. These are serialized declarations consumed equally
 by Studio and the runtime, not callable Python hooks. See the examples in
 [operator protocol](operator_protocol.md). Protocol v3 uses these rules without inference adapters. Rebuild extension
-packages with SDK 3.0 before installing them into this development version.
+packages with SDK 3.1 before installing them into this version. Existing v3
+packages without optional Markdown metadata remain supported; see
+[operator documentation](operator_documentation.md).
 
 Use `biopipe registry check` to validate local extension declarations and generated
 indexes without starting Studio. New source files with missing schemas/contracts

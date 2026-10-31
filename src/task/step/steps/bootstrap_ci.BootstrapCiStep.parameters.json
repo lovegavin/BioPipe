@@ -1,0 +1,62 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "statistic": {
+      "type": "string",
+      "enum": [
+        "mean",
+        "median"
+      ],
+      "default": "mean",
+      "title": "统计量",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "n_boot": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 100000,
+      "default": 2000,
+      "title": "N Boot",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "confidence": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1,
+      "default": 0.95,
+      "title": "Confidence",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "additionalProperties": false
+}

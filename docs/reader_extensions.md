@@ -1,6 +1,6 @@
 # Add a Reader
 
-Readers use the same code + per-Reader parameter JSON protocol as operators.
+Readers use the same code + per-Reader parameter JSON + Markdown protocol as operators.
 Save this implementation as `npy_reader.py`:
 
 ```python
@@ -41,9 +41,19 @@ explicit empty schema):
 {"type": "object", "properties": {}, "additionalProperties": false}
 ```
 
-Add both files through the Reader directory and refresh. Alternatively,
+Add `npy_reader.md` describing expected dtype, dimensions, labels, missing values,
+compression and resource limits. Parameter tables are generated from JSON;
+see [documentation and retrieval](operator_documentation.md). Add the files
+through the Reader directory and refresh. Alternatively,
 `biopipe plugin init lab_reader --template reader` generates a complete project.
 The file picker, contracts and worker all use the same generated descriptor.
+
+A source can explicitly select this registered Reader using `source.reader`, for
+example `"reader": "lab.npy"`. The selector is preserved in saved workflows and
+task manifests; only that Reader is pinned. Without it, metadata-based format
+routing remains available. The selector does not remove companion-file or
+compression requirements. `source.args.reader` is a distinct parser option used
+by some Readers and must not be repurposed for routing.
 
 Put suffixes, `requires_siblings`, `excludes_siblings`, `handles_compression` and
 optional `file_input` hints in `definition`. The framework selects a Reader without

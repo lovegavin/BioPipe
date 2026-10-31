@@ -29,7 +29,7 @@ def test_old_builtin_graph_runs_after_source_upgrade_without_repin(tmp_path, mon
     graph = Graph.model_validate({'nodes': [{'id': 'summary', 'kind': 'operator',
         'operator': 'describe', 'position': {'x': 0, 'y': 0}, 'params': {}}], 'edges': []})
     with monkeypatch.context() as old:
-        old.setattr('biopipe.plugins.bundled_state', lambda: previous)
+        old.setattr('biopipe.plugins.bundled_state', lambda **kwargs: previous)
         graph = manager.pin(graph)
     original = graph.model_dump(mode='json')
     archive = {p: p.read_bytes() for p in (manager.directory / 'snapshots').glob('*.json')}
@@ -59,7 +59,7 @@ def test_launch_records_rebinding_and_preserves_history(tmp_path, monkeypatch):
             d['implementation']['sha256'] = '0' * 64
             d['code_sha'] = d['implementation']['code_sha'] = '0' * 64
     with monkeypatch.context() as old:
-        old.setattr('biopipe.plugins.bundled_state', lambda: previous)
+        old.setattr('biopipe.plugins.bundled_state', lambda **kwargs: previous)
         service = JobService(Settings(tmp_path, tmp_path / '.studio', tmp_path, testing=True, code_root=ROOT), build_catalog(STEPS))
         graph = service.plugins.pin(Graph.model_validate(service.demo))
     history = service.jobs_dir / 'previous'
@@ -156,10 +156,10 @@ def test_worker_still_rejects_a_stale_frozen_job_lock(tmp_path):
     assert any('Implementation code hash mismatch' in json.dumps(event) for event in events)
 
 
-def test_retained_wheel_generation_refreshes_only_bundled_metadata(tmp_path):
+def test_retained_wheel_generation_refreshes_only_bundled_metadata(tmp_path, monkeypatch):
     from biopipe.pins import resolve
     state = deepcopy(bundled_state())
-    state.update(generation='new', code_paths=['environments/new/code'], shared_paths=['targets/shared'])
+    state.update(package_protocol_version=3, generation='new', code_paths=['environments/new/code'], shared_paths=['targets/shared'])
     package = {'name': 'lab-tool', 'version': '2', 'sha256': 'new', 'origin': 'wheel', 'enabled': True}
     descriptor = {'id': 'lab.tool', 'distribution': 'lab-tool', 'origin': 'wheel',
                   'implementation': {'package': 'lab-tool', 'version': '2', 'sha256': 'new'},
@@ -182,6 +182,18 @@ def test_retained_wheel_generation_refreshes_only_bundled_metadata(tmp_path):
     assert chosen['shared_paths'] == old['shared_paths']
     assert next(d for d in chosen['descriptors'] if d['id'] == 'lab.tool') == old['descriptors'][-1]
     assert next(d for d in chosen['descriptors'] if d['id'] == 'compare_groups')['implementation']['sha256'] != '0' * 64
+    # A job records the synthetic mixed generation. Its metadata and Markdown
+    # must remain retrievable without mutating the current installed generation.
+    from biopipe.operator_docs import OperatorDocs
+    from src.web.storage import atomic_json
+    manager = PluginManager(tmp_path / 'profile')
+    monkeypatch.setattr(manager, 'state', lambda: state)
+    atomic_json(manager.directory / 'snapshots/old.json', old)
+    selected = manager.snapshot(graph)
+    assert selected['generation'] != state['generation']
+    assert manager.state()['generation'] == 'new'
+    documented = OperatorDocs(manager).describe(['pca'], sections=['purpose'], generation=selected['generation'])
+    assert documented['items'][0]['documentation']['content']['purpose']
 
 
 def test_pin_diagnostic_is_read_only_and_respects_profile(tmp_path):
@@ -215,6 +227,26 @@ def test_nested_declaration_pins_share_code_identity_without_old_snapshots(tmp_p
     assert not selected.get('bundled_updates')  # Metadata changes are not code migrations.
     assert identity(current) == identity({**current, 'declaration_sha': '1' * 64})
     assert graph.nodes[0].route.graph.plugin_lock['pca'] == old
+
+
+@pytest.mark.parametrize('variant', [0, 1])
+def test_known_v083_receipts_resolve_in_a_fresh_profile(tmp_path, variant):
+    records = [p for p in json.loads((ROOT / 'biopipe/bundled_history.json').read_text(encoding='utf-8'))['packages']
+               if any(release['tag'] == 'v0.8.3' for release in p['releases'])]
+    # v0.8.3 ships both source-sensitive desktop and manifest-only server
+    # fingerprints. Both are exact known identities, not an ID-only fallback.
+    names = {record['implementation']['package'] for record in records}
+    assert len(names) == 7
+    groups = [[record for record in records if record['implementation']['package'] == name] for name in sorted(names)]
+    assert all(len(group) == 2 for group in groups)
+    required = {key: deepcopy(p['implementation']) for p in [group[variant] for group in groups] for key in p['operators']}
+    graph = Graph.model_validate({'nodes': [], 'edges': [], 'plugin_lock': required})
+    manager = PluginManager(tmp_path / 'fresh')
+    current = manager.state()
+    selected = manager.snapshot(graph)
+    assert selected['generation'] == current['generation']
+    assert {item['operator'] for item in selected['bundled_updates']} == set(required)
+    assert graph.plugin_lock == required  # Resolution never rewrites historical evidence.
 
 
 @pytest.mark.parametrize('field', ['version', 'package', 'sha256', 'code_sha'])

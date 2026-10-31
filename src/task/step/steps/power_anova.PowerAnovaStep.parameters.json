@@ -1,0 +1,47 @@
+{
+  "type": "object",
+  "properties": {
+    "effect_size": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "title": "Effect Size",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "n_per_group": {
+      "type": "integer",
+      "minimum": 2,
+      "title": "N Per Group",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "k_groups": {
+      "type": "integer",
+      "minimum": 2,
+      "title": "K Groups",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "alpha": {
+      "type": "number",
+      "default": 0.05,
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1,
+      "title": "显著性水平",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "required": [
+    "effect_size",
+    "n_per_group",
+    "k_groups"
+  ],
+  "additionalProperties": false
+}

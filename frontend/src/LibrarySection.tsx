@@ -2,13 +2,13 @@ import { useEffect, useId, useState } from "react";
 import type { ReactNode } from "react";
 import { CaretDown } from "@phosphor-icons/react";
 
-export function LibrarySection({name, count, sectionKey, search, children, className = ""}: {
-  name: string; count: number; sectionKey: string; search: string; children: ReactNode; className?: string;
+export function LibrarySection({name, count, sectionKey, search, children, className = "", defaultCollapsed = false}: {
+  name: string; count: number; sectionKey: string; search: string; children: ReactNode; className?: string; defaultCollapsed?: boolean;
 }) {
   const id = useId();
   const storageKey = `biopipe-library-collapsed:${sectionKey}`;
   const [collapsed, setCollapsed] = useState(() => {
-    try { return localStorage.getItem(storageKey) === "true"; } catch { return false; }
+    try { const saved = localStorage.getItem(storageKey); return saved === null ? defaultCollapsed : saved === "true"; } catch { return defaultCollapsed; }
   });
   const [searchCollapsed, setSearchCollapsed] = useState(false);
   useEffect(() => setSearchCollapsed(false), [search]);

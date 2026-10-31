@@ -1,6 +1,7 @@
 name: Hi-C from BAM
 sources:
   reads:
+    reader: AlignmentReader
     path: input/reads.bam
     dims:
     - file

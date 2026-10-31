@@ -10,12 +10,14 @@ import { Check, CircleNotch, WarningCircle } from "@phosphor-icons/react";
 import { OperatorArtwork } from "./OperatorArtwork";
 import { displayTitle, inputCount, outputCount } from "./graph";
 import { NODE_LAYOUT, portOffset, portRowHeight } from "./nodeLayout";
-import type { GraphNode, Operator, NodeContracts, ContractCheck } from "./types";
+import type { GraphNode, Operator, ReaderSpec, NodeContracts, ContractCheck } from "./types";
+import { supportedPlatformLabel } from './platform';
 import { InfoPort } from "./InfoPort";
 
 export type BlockData = {
   model: GraphNode;
   spec?: Operator;
+  reader?: ReaderSpec;
   status?: string;
   order?: number;
   invalid?: boolean;
@@ -29,7 +31,7 @@ export const WorkflowNode = memo(function WorkflowNode({
   data,
   selected,
 }: NodeProps<Block>) {
-  const { model: node, spec, order, status, invalid, busy } = data;
+  const { model: node, spec, reader, order, status, invalid, busy } = data;
   const title = displayTitle(node, spec);
   const inputs = inputCount(node, spec),
     outputs = outputCount(node, spec);
@@ -68,11 +70,11 @@ export const WorkflowNode = memo(function WorkflowNode({
           />
         ))}
       </InfoPort>
-      <div className="node-body" title={spec?.description} style={{ minHeight: NODE_LAYOUT.bodyHeight }}>
+      <div className="node-body" title={source ? reader?.description : spec?.description} style={{ minHeight: NODE_LAYOUT.bodyHeight }}>
         <div
           className={`node-icon category-${source ? "source" : spec?.category === "统计分析" ? "analysis" : spec?.category === "可视化" ? "plot" : "data"}`}
         >
-          <OperatorArtwork spec={spec} source={source}/>
+          <OperatorArtwork spec={source && reader ? {...reader, icon: reader.icon || 'Database'} : spec} source={source && !reader}/>
         </div>
         <div className="node-copy">
           <strong
@@ -82,7 +84,7 @@ export const WorkflowNode = memo(function WorkflowNode({
             {title}
           </strong>
           {subtitle && <p>{subtitle}</p>}
-          {spec?.supported_systems?.join(',') === 'linux' && <span className="platform-badge" title="需要 Linux 运行环境">Linux</span>}
+          {supportedPlatformLabel((source ? reader : spec)?.supported_systems) && <span className="platform-badge" title="支持的运行环境">{supportedPlatformLabel((source ? reader : spec)?.supported_systems)}</span>}
           {typeof data.environment === 'string' && <span className="environment-badge" title="手动指定的运行环境">{data.environment}</span>}
         </div>
         <span className="node-state">

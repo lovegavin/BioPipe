@@ -23,7 +23,7 @@ def source_archive(root):
                                      'scripts/run.py', 'scripts/desktop_server.py')]
     for directory in ('biopipe', 'biopipe_sdk', 'src'):
         files += [p for p in (root / directory).rglob('*') if p.is_file()
-                  and p.suffix in ('.py', '.json', '.png', '.jpg', '.jpeg', '.svg', '.webp', '.gif')
+                  and p.suffix in ('.py', '.json', '.md', '.png', '.jpg', '.jpeg', '.svg', '.webp', '.gif')
                   and '__pycache__' not in p.parts]
     stream = io.BytesIO()
     with tarfile.open(fileobj=stream, mode='w') as archive:

@@ -1,0 +1,93 @@
+{
+  "type": "object",
+  "properties": {
+    "gene_dim": {
+      "type": "string",
+      "default": "gene",
+      "title": "Gene Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "stat_dim": {
+      "type": "string",
+      "default": "statistic",
+      "title": "统计维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "gene_set_dim": {
+      "type": "string",
+      "default": "gene_set",
+      "title": "Gene Set Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "rank_label": {
+      "type": "string",
+      "default": "log2FC",
+      "title": "Rank Label",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "weight": {
+      "type": "number",
+      "minimum": 0,
+      "default": 1.0,
+      "title": "Weight",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "n_permutations": {
+      "type": "integer",
+      "minimum": 10,
+      "default": 1000,
+      "title": "置换次数",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "seed": {
+      "type": "integer",
+      "default": 0,
+      "title": "Seed",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "min_set_size": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 5,
+      "title": "Min Set Size",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "max_set_size": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 500,
+      "title": "Max Set Size",
+      "x-ui-group": "basic",
+      "x-ui-order": 80
+    },
+    "correction": {
+      "type": "string",
+      "enum": [
+        "fdr",
+        "bonferroni",
+        "holm",
+        "hommel",
+        "fdr_by"
+      ],
+      "default": "fdr",
+      "title": "Correction",
+      "x-ui-group": "basic",
+      "x-ui-order": 90
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 100
+    }
+  },
+  "additionalProperties": false
+}

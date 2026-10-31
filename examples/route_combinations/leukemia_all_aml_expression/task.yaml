@@ -1,0 +1,65 @@
+name: leukemia_all_aml_expression
+sources:
+  expression:
+    path: input/Leukemia.gct
+    dims:
+    - sample
+    - gene
+    labels:
+      sample: builtin
+      gene: builtin
+    reader: GctReader
+  samples:
+    path: input/leukemia_samples.csv
+    dims:
+    - sample
+    - feature
+    labels:
+      sample:
+        feature: 0
+      feature: builtin
+    reader: CsvReader
+steps:
+- name: impute
+  inputs:
+  - expression
+- name: pca
+  inputs:
+  - expr_imp
+- name: boxplot
+  inputs:
+  - pcs
+  - samples
+- name: boxplot
+  inputs:
+  - pcs
+  - samples
+- name: compare_groups
+  inputs:
+  - expr_imp
+  - samples
+- name: select
+  inputs:
+  - stats
+- name: bh_adjust
+  inputs:
+  - pvals
+- name: filter_by
+  inputs:
+  - expr_imp
+  - qvals
+- name: heatmap
+  inputs:
+  - sig_expr
+- name: random_forest_classifier
+  inputs:
+  - expr_imp
+  - samples
+- name: describe
+  inputs:
+  - rf
+parameters_file: parameters.json
+runtime:
+  memory:
+    enabled: true
+    auto_spill: true

@@ -1,0 +1,62 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "true_label": {
+      "type": "string",
+      "title": "真实标签列",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "prob_label": {
+      "type": "string",
+      "title": "预测概率列",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "n_bins": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 50,
+      "default": 10,
+      "title": "N Bins",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "strategy": {
+      "type": "string",
+      "enum": [
+        "uniform",
+        "quantile"
+      ],
+      "default": "uniform",
+      "title": "Strategy",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "required": [
+    "true_label",
+    "prob_label"
+  ],
+  "additionalProperties": false
+}

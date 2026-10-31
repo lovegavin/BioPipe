@@ -47,7 +47,7 @@ def source_declarations(path, module):
         for node in cls.body:
             targets = node.targets if isinstance(node, ast.Assign) else [node.target] if isinstance(node, ast.AnnAssign) else []
             for target in targets:
-                if isinstance(target, ast.Name) and target.id in {'definition', 'parameters_file', 'provider'}:
+                if isinstance(target, ast.Name) and target.id in {'definition', 'parameters_file', 'documentation_file', 'provider'}:
                     try:
                         fields[target.id] = ast.literal_eval(node.value)
                     except (ValueError, TypeError) as exc:
@@ -70,6 +70,14 @@ def source_declarations(path, module):
             raise ValueError(f'{cls.name}: parameter JSON already belongs to {parameter_owners[parameter_path]}; give each class its own file')
         parameter_owners[parameter_path] = cls.name
         schema = json.loads(parameter_path.read_text(encoding='utf-8'))
+        value = deepcopy(value)
+        document = fields.get('documentation_file')
+        if document is None and not value.get('documentation'):
+            # Per-class files disambiguate modules which contain several Readers.
+            options = [path.stem + '.' + cls.name + '.md', path.stem + '.md']
+            document = next((name for name in options if (path.parent / name).is_file()), None)
+        if document is not None:
+            value['documentation'] = {'path': document}
         result.append({**value, 'entry_point': module + ':' + cls.name,
                        'parameters_schema': schema, 'provider': fields.get('provider')})
     return result
@@ -111,7 +119,33 @@ def _code_hash(root, stamps):
     return digest.hexdigest()
 
 
-def compile_declaration(value, root):
+class DeclarationCompiler:
+    """Reuse source identities within one static maintenance transaction only.
+
+    Capture before reading declarations, then call verify() before publishing.
+    Runtime loaders keep their independent source verification unchanged.
+    """
+    def __init__(self, root):
+        self.root = Path(root)
+        self.identities = {}
+
+    def capture(self, entry):
+        module = entry.split(':')[0]
+        key = 'builtin-trees' if module.startswith(('src.task.step.steps.', 'src.reader.readers.')) else module.split('.')[0]
+        if key not in self.identities:
+            self.identities[key] = (entry, code_hash(entry, self.root))
+        return self.identities[key][1]
+
+    def compile(self, value):
+        return compile_declaration(value, self.root, _code_identity=self.capture(value['entry_point']))
+
+    def verify(self):
+        for entry, expected in self.identities.values():
+            if code_hash(entry, self.root) != expected:
+                raise ValueError('Implementation sources changed during registry compilation; retry the build')
+
+
+def compile_declaration(value, root, *, _code_identity=None):
     """Resolve assets and stamp source+declaration identities without imports."""
     from .protocol import Descriptor, validate_schema, validate_output_rule, validate_port_rule
     from .icons import is_image_icon, icon_path, image_data
@@ -125,6 +159,9 @@ def compile_declaration(value, root):
         source = Path(root) / module.replace('.', '/') / '__init__.py'
     if not source.is_file():
         raise ValueError(f'Implementation does not exist: {module}')
+    if value.get('documentation'):
+        from .documentation import compile_documentation
+        value['documentation'] = compile_documentation(source, value['documentation'])
     if is_image_icon(value.get('icon')):
         value['icon_image'] = image_data(icon_path(source.parent, value['icon']))
     else:
@@ -148,7 +185,7 @@ def compile_declaration(value, root):
         cls = next((n for n in ast.parse(source.read_text(encoding='utf-8')).body if isinstance(n, ast.ClassDef) and n.name == clsname), None)
         if cls and any(isinstance(n, ast.FunctionDef) and n.name == 'probe' for n in cls.body):
             value['resources']['probe'] = True
-    value['code_sha'] = code_hash(value['entry_point'], root)
+    value['code_sha'] = _code_identity if _code_identity is not None else code_hash(value['entry_point'], root)
     value['declaration_sha'] = '0' * 64
     value = Descriptor.model_validate(value).model_dump(exclude_unset=True)
     value['declaration_sha'] = declaration_hash(value)
@@ -254,13 +291,19 @@ def verify_archive(entries, descriptors):
             targets = node.targets if isinstance(node, ast.Assign) else [node.target] if isinstance(node, ast.AnnAssign) else []
             if any(isinstance(t, ast.Name) and t.id == 'parameters_file' for t in targets):
                 relative = ast.literal_eval(node.value)
-        if not isinstance(relative, str) or ':' in relative or PurePosixPath(relative.replace('\\', '/')).is_absolute() or '..' in PurePosixPath(relative.replace('\\', '/')).parts:
+        if not isinstance(relative, str) or ':' in relative or PurePosixPath(relative.replace('\\', '/')).is_absolute() or '..' in PurePosixPath(relative.replace('\\', '/')).parts or PurePosixPath(relative).suffix != '.json':
             raise ValueError('parameters_file must be a contained relative JSON path')
         parameter = str(PurePosixPath(entry).parent / relative.replace('\\', '/'))
         if parameter not in entries:
             raise ValueError(f'Missing parameter JSON in wheel: {parameter}. Include it in setuptools package-data.')
         if json.loads(entries[parameter]) != descriptor['parameters_schema']:
             raise ValueError(f'Parameters changed while building wheel: {parameter}; rebuild the package')
+        if descriptor.get('documentation'):
+            from .documentation import archive_path, verify_content
+            document = archive_path(entries, descriptor)
+            if document not in entries:
+                raise ValueError(f'Missing Markdown in wheel: {document}. Include *.md in package-data.')
+            verify_content(entries[document], descriptor['documentation'])
         if not descriptor.get("icon_image"):
             continue
         asset = str(PurePosixPath(entry).parent / descriptor["icon"].replace("\\", "/"))

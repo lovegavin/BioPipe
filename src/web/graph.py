@@ -23,8 +23,17 @@ def project_path(root, path, base="."):
     directory = (root / base).resolve()
     candidate = (directory / path).resolve()
     if not directory.is_relative_to(root) or not candidate.is_relative_to(root):
-        raise GraphError("文件路径必须位于当前 BioPipe 项目内；外部 CSV 可通过上传添加。")
+        raise GraphError("文件路径必须位于当前 BioPipe 项目内；外部数据文件可通过上传添加。")
     return candidate
+
+
+def _relative_or_absolute(path, directory):
+    try:
+        return Path(os.path.relpath(path, directory)).as_posix()
+    except ValueError:
+        # A Windows data drive cannot be expressed relative to a job on another
+        # drive. Preserve the already validated absolute input in that case.
+        return Path(path).as_posix()
 
 
 def relative_manifest(manifest, directory, catalog=None):
@@ -37,37 +46,42 @@ def relative_manifest(manifest, directory, catalog=None):
             schema = operators[step['name']]['parameters_schema']
             for key, field in schema.get('properties', {}).items():
                 if field.get('x-biopipe-path') == 'workflow' and step.get('params', {}).get(key):
-                    step['params'][key] = Path(os.path.relpath(step['params'][key], directory)).as_posix()
-        from biopipe.file_formats import primary_ext
+                    step['params'][key] = _relative_or_absolute(step['params'][key], directory)
+        from biopipe.reader_selection import candidates
         for source in result['sources'].values():
-            readers = [r for r in catalog['readers'] if primary_ext(source['path']) in r['extensions']]
+            readers = candidates(catalog['readers'], source['path'], source.get('reader'))
             if len(readers) == 1:
                 for key, field in readers[0]['parameters_schema'].get('properties', {}).items():
                     if field.get('x-biopipe-path') == 'source' and source.get('args', {}).get(key):
-                        source['args'][key] = Path(os.path.relpath(source['args'][key], Path(source['path']).parent)).as_posix()
+                        source['args'][key] = _relative_or_absolute(source['args'][key], Path(source['path']).parent)
     for source in result["sources"].values():
-        source["path"] = Path(os.path.relpath(source["path"], directory)).as_posix()
+        source["path"] = _relative_or_absolute(source["path"], directory)
     memory = dict(manifest.get("runtime", {}).get("memory", {}))
     if memory.get("cache_dir"):
-        memory["cache_dir"] = Path(os.path.relpath(memory["cache_dir"], directory)).as_posix()
+        memory["cache_dir"] = _relative_or_absolute(memory["cache_dir"], directory)
     result["runtime"] = {**manifest.get("runtime", {}), "memory": memory}
     return result
 
 
+def input_path(root, value, base='.', input_roots=None):
+    """Apply the caller's explicit read roots, or the default workspace policy."""
+    if input_roots is None:
+        return project_path(root, value, base)
+    candidate = (Path(root) / base / value).resolve()
+    if not any(candidate.is_relative_to(Path(folder).resolve()) for folder in input_roots):
+        raise GraphError('Input path is outside the configured server data roots')
+    return candidate
+
+
 def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=False, input_roots=None):
     def read_path(value, base):
-        if input_roots is None:
-            return project_path(root, value, base)
-        candidate = (root / base / value).resolve()
-        if not any(candidate.is_relative_to(Path(folder).resolve()) for folder in input_roots):
-            raise GraphError('Input path is outside the configured server data roots')
-        return candidate
+        return input_path(root, value, base, input_roots)
     from .parameters import freeze_graph
-    graph = freeze_graph(graph, catalog, root)
+    graph = freeze_graph(graph, catalog, root, input_roots=input_roots)
     if any(node.kind == "route" for node in graph.nodes):
         from .contracts import analyze_graph
         from .routes import expand_routes
-        analysis = analyze_graph(graph, catalog, root)
+        analysis = analyze_graph(graph, catalog, root, input_roots=input_roots)
         for edge in analysis["edges"]:
             if edge["status"] == "incompatible":
                 raise GraphError("；".join(edge["reasons"]), edge["target"])
@@ -100,7 +114,7 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
                 raise GraphError(f"未找到算子 {node.operator!r}；请更新算子清单。", node.id)
             spec = registry[node.operator]
             from biopipe_sdk.protocol import validate_parameters
-            params = dict(node.params)
+            params = {k: v for k, v in node.params.items() if k != '_input_names'}
             if spec.get("output_parameter"):
                 params.pop(spec["output_parameter"], None)
             try:
@@ -152,13 +166,25 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
         if node.kind == "source":
             source = node.source.model_dump()
             source.pop("location", None)
+            if source.get('reader') is None:
+                source.pop('reader', None)
             path = read_path(source["path"], graph.base_dir)
             if require_files and not path.is_file():
                 raise GraphError(f"找不到输入文件：{node.source.path}", key)
             source["path"] = str(path)
-            from biopipe.file_formats import primary_ext
-            readers = [r for r in catalog['readers'] if primary_ext(path) in r['extensions']]
+            from biopipe.reader_selection import candidates
+            is_exchange = key in graph.runtime.get('exchange_inputs', [])
+            readers = [] if is_exchange else candidates(catalog['readers'], path, source.get('reader'), check_siblings=require_files)
+            if not is_exchange and source.get('reader') and not readers:
+                raise GraphError(f"Selected Reader {source['reader']} cannot read the file compression or required companions are missing", key)
+            if require_files and not is_exchange and len(readers) != 1:
+                raise GraphError('Choose a registered Reader for this input; its format is unknown or ambiguous', key)
             if len(readers) == 1:
+                from biopipe_sdk.protocol import validate_parameters
+                try:
+                    source['args'] = validate_parameters(readers[0]['parameters_schema'], source['args'])
+                except ValueError as error:
+                    raise GraphError(str(error), key) from error
                 for name, field in readers[0]['parameters_schema'].get('properties', {}).items():
                     if field.get('x-biopipe-path') == 'source' and source['args'].get(name):
                         extra = read_path(source['args'][name], str(path.parent))
@@ -175,7 +201,7 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
             for _, edge in sorted(incoming[key].items()):
                 index = 0 if edge.sourceHandle == "out" else int(edge.sourceHandle[4:])
                 inputs.append(outputs[edge.source][index])
-            params = dict(node.params)
+            params = {k: v for k, v in node.params.items() if k != '_input_names'}
             for name, field in registry[node.operator]['parameters_schema'].get('properties', {}).items():
                 if field.get('x-biopipe-path') == 'workflow' and params.get(name):
                     extra = read_path(params[name], graph.base_dir)
@@ -209,14 +235,80 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
     if unknown_keep:
         raise GraphError(f"保留列表引用了未知数据：{sorted(unknown_keep)}。")
     from .contracts import analyze_graph
-    analysis = analyze_graph(graph, catalog, root)
+    analysis = analyze_graph(graph, catalog, root, input_roots=input_roots)
     for edge in analysis["edges"]:
         if edge["status"] == "incompatible":
             raise GraphError("输入输出契约不兼容：" + "；".join(edge["reasons"]), edge["target"])
     return manifest, step_ids
 
 
-def import_manifest(text, base_dir, catalog, root):
+def _resolve_import_base(raw, base_dir, root, *, input_roots=None):
+    """Locate task-relative inputs using metadata inside configured roots only.
+
+    The browser does not expose a selected YAML file's directory. Prefer its
+    declared base, then a named task/route, then a unique matching content
+    directory. Never guess between matches or inspect paths outside the roots.
+    Explicit non-root bases and missing template inputs are left intact.
+    """
+    root = Path(root).resolve()
+    base = project_path(root, '.', base_dir)
+    sources = [source for source in raw['sources'].values()
+               if not source.get('location') or source['location'].get('kind') != 'ssh']
+    if raw.get('runtime', {}).get('execution', {}).get('kind') == 'ssh':
+        return base_dir
+    paths = [(source, Path(source['path'])) for source in sources]
+
+    def resolved(directory):
+        return [input_path(root, path, str(directory), input_roots) for _, path in paths]
+
+    original = resolved(base)  # Check containment before even stat-ing inputs.
+    missing = [(source, path) for (source, path), target in zip(paths, original)
+               if not target.is_file()]
+    selected = base
+    if missing and base == root and all(not path.is_absolute() for _, path in missing):
+        name = str(raw.get('name') or '').strip()
+        candidates = []
+        if name and Path(name).name == name and name not in ('.', '..'):
+            for folder in ('tasks', 'routes', 'examples'):
+                directory = (root / folder / name).resolve()
+                if directory.is_relative_to(root) and directory.is_dir():
+                    if all(path.is_file() for path in resolved(directory)):
+                        candidates.append(directory)
+        if not candidates:
+            possible = None
+            for _, relative in missing:
+                found = set()
+                for folder in ('tasks', 'routes', 'examples'):
+                    search = root / folder
+                    if not search.is_dir():
+                        continue
+                    for candidate in search.rglob(relative.name):
+                        candidate = candidate.resolve()
+                        if not candidate.is_relative_to(root) or not candidate.is_file():
+                            continue
+                        parts = candidate.relative_to(root).parts
+                        if 'output' in parts or candidate.parts[-len(relative.parts):] != relative.parts:
+                            continue
+                        directory = candidate
+                        for _ in relative.parts:
+                            directory = directory.parent
+                        found.add(directory)
+                possible = found if possible is None else possible & found
+            candidates = sorted(directory for directory in (possible or [])
+                                if all(path.is_file() for path in resolved(directory)))
+        candidates = sorted(set(candidates))
+        if len(candidates) > 1:
+            raise GraphError('导入的 YAML 无法唯一定位输入文件；请填写明确的任务基准目录。')
+        if candidates:
+            selected = candidates[0]
+    for (source, _), path in zip(paths, resolved(selected)):
+        if path.is_file():
+            source['path'] = path.as_posix()
+    return selected.relative_to(root).as_posix() if selected != base else base_dir
+
+
+def import_manifest(text, base_dir, catalog, root, *, input_roots=None, resolve_inputs=True):
+    """Import a task; template builders preserve paths with resolve_inputs=False."""
     raw = yaml.safe_load(text)
     if not isinstance(raw, dict) or not isinstance(raw.get("sources"), dict) or not isinstance(raw.get("steps"), list):
         raise GraphError("任务 YAML 需要 sources 和 steps。")
@@ -225,6 +317,8 @@ def import_manifest(text, base_dir, catalog, root):
     _validate_sources(raw["sources"])
     _validate_steps(raw["steps"])
     MemoryConfig.parse(raw, detect_available=False)
+    if resolve_inputs:
+        base_dir = _resolve_import_base(raw, base_dir, root, input_roots=input_roots)
     registry = {o["id"]: o for o in catalog["operators"]}
     nodes, edges, latest, names = [], [], {}, set()
     def unique(name):
@@ -249,6 +343,10 @@ def import_manifest(text, base_dir, catalog, root):
         key = unique(f"{name}_{i+1}")
         params = dict(registry[name].get("runtime_defaults", {}))
         params.update(spec.get("params") or {})
+        for field_name, field in registry[name]['parameters_schema'].get('properties', {}).items():
+            if resolve_inputs and field.get('x-biopipe-path') == 'workflow' and params.get(field_name):
+                params[field_name] = input_path(root, params[field_name], base_dir, input_roots).as_posix()
+        params.pop('_input_names', None)
         aliases = {}
         for alias, (producer, handle) in latest.items():
             node = next(n for n in nodes if n.id == producer)
@@ -292,5 +390,5 @@ def import_manifest(text, base_dir, catalog, root):
                   params=raw.get("params", {}),
                   runtime={k: v for k, v in raw.get("runtime", {}).items() if k != "memory"},
                   manifest_extra={k: v for k, v in raw.items() if k not in ("name", "sources", "steps", "runtime", "params")})
-    compile_graph(graph, catalog, root)
+    compile_graph(graph, catalog, root, input_roots=input_roots)
     return graph

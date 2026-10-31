@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "response_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "Response Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "predictor_dim": {
+      "type": "string",
+      "default": "predictor",
+      "title": "Predictor Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "distance": {
+      "type": "string",
+      "enum": [
+        "bray",
+        "euclidean"
+      ],
+      "default": "bray",
+      "title": "Distance",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "n_components": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2,
+      "title": "主成分数",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    }
+  },
+  "additionalProperties": false
+}

@@ -11,7 +11,7 @@ from src.core import ManifestError
 from src.task.memory.config import MemoryConfig
 
 
-_SOURCE_KEYS = {"path", "dims", "labels", "args"}
+_SOURCE_KEYS = {"path", "dims", "labels", "args", "reader"}
 _STEP_KEYS = {"name", "inputs", "params", "context_params"}
 _LABEL_STRINGS = {"builtin", "auto"}
 
@@ -82,6 +82,10 @@ def _validate_sources(sources: dict) -> None:
         args = spec.get("args")
         if args is not None and not isinstance(args, dict):
             raise ManifestError(f"Source '{name}': args must be a mapping")
+        if spec.get('reader') is not None:
+            import re
+            if not isinstance(spec['reader'], str) or not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_.-]{0,79}', spec['reader']):
+                raise ManifestError(f"Source '{name}': reader must be a registered Reader ID")
 
 
 def _validate_label_rule(source: str, dim: str, rule, dim_set: set) -> None:
