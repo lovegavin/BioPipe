@@ -1,3 +1,9 @@
+## 0.91.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `nmds` | 无逐值 R oracle；sklearn `MDS(metric_mds=False, metric="precomputed", init="classical_mds", n_init=1)`；R `MASS::isoMDS` 仅作定性对照 | `tests/test_extension83.py` | 4 点一维距离 stress1≈**1.7e-31**；欧氏 6 点距离秩相关 >0.999；R isoMDS 非欧 10×10 stress **21.32521%** vs sklearn **25.45%**，局部最优不同，不声明逐值一致 |
+
 ## 0.90.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

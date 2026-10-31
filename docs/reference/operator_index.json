@@ -27957,6 +27957,105 @@
     "quality": "auto"
   },
   {
+    "id": "nmds",
+    "kind": "operator",
+    "title": "Non-metric multidimensional scaling",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "sample_b_dim",
+              "default": "sample_b"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_b_dim": {
+          "type": "string",
+          "default": "sample_b",
+          "title": "Sample B Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 10000,
+          "default": 300,
+          "title": "Max Iter",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "eps": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "default": 1e-09,
+          "title": "Eps",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/nmds.py",
+    "tests": [
+      "tests/test_extension83.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/nmds.md",
+    "quality": "auto"
+  },
+  {
     "id": "nmf",
     "kind": "operator",
     "title": "NMF",

@@ -1,3 +1,11 @@
+## 0.91.0 — 2026-10-31
+
+- 新增 `nmds`（非度量多维尺度分析）：一个对称距离矩阵，SMACOF + classical-MDS 确定性起点，输出样本坐标与 raw stress / Kruskal stress1；轴符号固定，重复运行一致。
+- 算子总数 **390**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 390/85，registry `errors []`。
+- 验证：`tests/test_extension83.py` 4 项 = **4 passed**；增量门 **20 passed**；`-W error` **6 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：R `MASS::isoMDS` 与非度量 SMACOF 在非欧矩阵上收敛到不同局部最优（stress 21.32521% vs 25.45%），不做逐值 oracle；仅用欧氏/一维 fixture 验证 stress≈0、距离秩相关与确定性。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.90.0 — 2026-10-31
 
 - 新增 `fine_gray`（Fine-Gray 竞争风险子分布回归）：一个 `[sample,feature]` 表，`time_label`/`event_label`/`covariates` 必填；加权子分布风险部分似然、Breslow ties、Newton + 线搜索，稳健 sandwich 协方差；输出系数、HR、SE、z/P/CI 与事件/竞争/删失计数。
