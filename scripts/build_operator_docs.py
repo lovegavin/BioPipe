@@ -91,18 +91,21 @@ def build(root, *, check=False):
                     if not destination.is_relative_to(path.parent.resolve()):
                         raise ValueError('Documentation must remain inside the implementation directory')
                     text = render(relative, cls, descriptor, ast.get_docstring(tree))
+                    existing_bytes = None
                     if destination.exists():
+                        existing_bytes = destination.read_bytes()
                         existing = destination.read_text(encoding='utf-8')
                         if '<!-- biopipe:generated -->' not in existing:
                             preserved.append(destination.relative_to(root).as_posix())
                             text = existing
                     else:
                         existing = None
-                    if existing != text:
+                    generated = '<!-- biopipe:generated -->' in text
+                    if existing != text or generated and existing_bytes != text.encode('utf-8'):
                         changed.append(destination.relative_to(root).as_posix())
                         if not check:
                             destination.parent.mkdir(parents=True, exist_ok=True)
-                            destination.write_text(text, encoding='utf-8')
+                            destination.write_text(text, encoding='utf-8', newline='\n')
                     pages.append(descriptor['id'])
                     indexes[descriptor['kind']].append({
                         'id': descriptor['id'], 'kind': descriptor['kind'],
@@ -120,7 +123,7 @@ def build(root, *, check=False):
             changed.append(destination.relative_to(root).as_posix())
             if not check:
                 destination.parent.mkdir(parents=True, exist_ok=True)
-                destination.write_text(text, encoding='utf-8')
+                destination.write_text(text, encoding='utf-8', newline='\n')
     return {'pages': len(pages), 'changed': changed, 'authored_preserved': preserved, 'errors': errors}
 
 

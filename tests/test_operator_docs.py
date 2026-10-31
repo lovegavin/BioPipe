@@ -98,6 +98,54 @@ def test_documented_wheel_checks_integrity_and_only_docs_are_nonexecuting(tmp_pa
     assert execution_digest(tmp_path / 'asset.whl') != before
 
 
+def test_markdown_identity_is_newline_independent_and_old_raw_cache_stays_valid(tmp_path):
+    import hashlib
+    from biopipe.operator_docs import cache_document, document_bytes
+    from biopipe_sdk.documentation import verify_content
+    path, markdown = extension(tmp_path)
+    lf = markdown.read_text(encoding='utf-8').encode('utf-8')
+    variants = [lf, lf.replace(b'\n', b'\r\n'), lf.replace(b'\n', b'\r')]
+    declarations = []
+    for content in variants:
+        markdown.write_bytes(content)
+        declarations.append(compile_declaration(source_declarations(path, 'answer')[0], tmp_path))
+    assert declarations[0] == declarations[1] == declarations[2]
+    metadata = declarations[0]['documentation']
+    assert metadata['sha256'] == hashlib.sha256(lf).hexdigest()
+    for content in variants:
+        assert verify_content(content, metadata) == lf.decode('utf-8')
+    historical = {**metadata, 'sha256': hashlib.sha256(variants[1]).hexdigest()}
+    class Manager:
+        directory = tmp_path / 'old-profile'
+    cache_document(Manager(), historical, variants[1])
+    archived = {**declarations[0], 'documentation': historical}
+    assert document_bytes(Manager(), {}, archived) == variants[1]
+    assert verify_content(variants[1], historical) == lf.decode('utf-8')
+    with pytest.raises(ValueError, match='Documentation content hash'):
+        verify_content(variants[1].replace(b'answer=7', b'answer=8'), historical)
+
+
+def test_generator_writes_lf_and_does_not_rewrite_authored_pages(tmp_path):
+    from scripts.build_operator_docs import build
+    folder = tmp_path / 'src/task/step/steps'
+    folder.mkdir(parents=True)
+    _, authored = extension(folder)
+    authored.unlink()
+    assert not build(tmp_path)['errors']
+    generated = folder / 'answer.Answer.md'
+    expected = generated.read_bytes()
+    assert b'\r' not in expected
+    generated.write_bytes(expected.replace(b'\n', b'\r\n'))
+    assert build(tmp_path, check=True)['changed']
+    build(tmp_path)
+    assert generated.read_bytes() == expected
+    authored_bytes = b'# Authored\r\n\r\n## Purpose\r\n\r\nA reviewed-by-author guide.\r\n'
+    generated.write_bytes(authored_bytes)
+    result = build(tmp_path)
+    assert result['authored_preserved'] == ['src/task/step/steps/answer.Answer.md']
+    assert generated.read_bytes() == authored_bytes
+
+
 def test_static_compiler_reuses_one_source_identity_and_detects_midbuild_edits(tmp_path, monkeypatch):
     import biopipe_sdk.declarations as declarations
     package = tmp_path / 'example'

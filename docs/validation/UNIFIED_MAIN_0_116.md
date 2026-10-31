@@ -15,6 +15,8 @@ skip the corresponding optional tests in a smaller installation.
 | Check | Result |
 | --- | --- |
 | Complete Python regression | 1,233 passed, 129 skipped, 0 failures/errors; 1,362 collected, 27 min 14 s |
+| Follow-up Markdown portability regressions | 12 passed, including two new newline/legacy-cache cases |
+| Fresh Git source archive | Registry and documentation checks both report no changes or errors after the newline fix |
 | Frontend tests | 117 passed across 17 files |
 | TypeScript and production frontend build | Passed; existing bundle-size advisory remains |
 | Static registry consistency | 405 operators, 88 Readers, 7 providers, 24 templates; no errors or pending generated changes |
@@ -42,6 +44,13 @@ interpretation limits. The old main archive preserves commit
 - Local SSH fixtures covering transfers, reuse, reconnection and mixed execution;
   explicit Reader selection through import, save, export and execution.
 - Registry portability, long Windows paths and configured input/output boundaries.
+
+The full regression preceded a clean-checkout CI finding: Windows-generated
+Markdown used CRLF bytes, while Git committed LF bytes. The follow-up fix
+canonicalizes documentation digests, preserves historical raw-byte verification
+and writes generated Markdown as LF. Its 12 focused checks and a fresh Git
+archive check passed. Only documentation/declaration hashes changed for 490
+generated pages; all operator code and execution identities remained unchanged.
 
 ## Limits
 

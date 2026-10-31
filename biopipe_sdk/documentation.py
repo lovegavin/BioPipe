@@ -8,6 +8,11 @@ from pathlib import Path, PurePosixPath
 import re
 
 
+def canonical_content(content):
+    """Fingerprint UTF-8 Markdown consistently across Git/OS newline policies."""
+    return content.decode('utf-8').replace('\r\n', '\n').replace('\r', '\n').encode('utf-8')
+
+
 def relative_path(value):
     if not isinstance(value, str):
         raise ValueError('documentation.path must be a relative Markdown path')
@@ -54,7 +59,7 @@ def compile_documentation(source, declaration):
     path = (source.parent / relative).resolve()
     if not path.is_relative_to(source.parent.resolve()):
         raise ValueError('Documentation must remain inside the implementation directory')
-    content = path.read_bytes()
+    content = canonical_content(path.read_bytes())
     markdown = content.decode('utf-8')
     parts = sections(markdown)
     if '<!-- biopipe:generated -->' in markdown and value.get('status') == 'reviewed':
@@ -75,9 +80,12 @@ def archive_path(entries, descriptor):
 
 
 def verify_content(content, metadata):
-    if sha256(content).hexdigest() != metadata['sha256']:
+    canonical = canonical_content(content)
+    # Historical descriptors hashed raw Markdown bytes. Keep those immutable
+    # resources valid; new descriptors use UTF-8/LF without changing code pins.
+    if metadata['sha256'] not in (sha256(content).hexdigest(), sha256(canonical).hexdigest()):
         raise ValueError('Documentation content hash mismatch: ' + metadata['path'])
-    text = content.decode('utf-8')
+    text = canonical.decode('utf-8')
     if list(sections(text)) != metadata['sections']:
         raise ValueError('Documentation section index differs from Markdown')
     return text

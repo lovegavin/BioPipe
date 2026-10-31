@@ -54,6 +54,9 @@ The optional descriptor `documentation` object carries:
 
 Full Markdown is not copied into every catalog response. Installation and refresh
 retain immutable content-addressed copies under the profile's plugin directory.
+New Markdown digests use UTF-8 with LF line endings, so Windows editors and clean
+Git checkouts produce the same descriptor. Historical raw-byte digests remain
+valid for their original cached or packaged resources.
 An older registry generation or job can request its original documentation. A
 missing historical resource produces an explicit error instead of silently
 showing instructions for a different implementation. No Python import is needed.
