@@ -1,3 +1,9 @@
+## 0.75.0 — 2026-10-31
+
+- 新增：364 算子 / 82 Reader / 21 route；新增对应分析（CA）与 Tobit 左删失回归两个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension68.py` 4 项、`tests/test_r_oracles59.py` 1 项，合计 **5 passed**；R 对照 `ca::ca`、`censReg`；registry clean；参考页 364/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 310 passed。
+- 边界：CA 要求非负计数表且行/列边际为正，`n_components` 自动截断；输出坐标/贡献/cos2，不画图。Tobit 只做左删失、隐式截距；全删失/秩亏/样本不足会拒绝；SE 为数值 Hessian，不提供稳健 SE。
+
 ## 0.74.0 — 2026-10-31
 
 - 新增：362 算子 / 82 Reader / 21 route；新增 CUSUM 与 EWMA 个体测量控制图两个统计过程控制算子；未修改核心层。

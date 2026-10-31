@@ -180,6 +180,7 @@ YAML / JSON
 - 0.72.0 新增：Theil 不确定系数、标准化 DFBETAS、COVRATIO 三个关联/回归影响算子；核心层不变；
 - 0.73.0 新增：Phillips-Perron 单位根、DF-GLS 单位根、Engle ARCH LM 波动检验三个时间序列诊断算子；核心层不变；
 - 0.74.0 新增：CUSUM 与 EWMA 个体测量控制图两个统计过程控制算子；核心层不变；
+- 0.75.0 新增：对应分析（CA）与 Tobit 左删失回归两个多元/受限因变量算子；核心层不变；
 - 0.65.0 新增：方差比检验、Youden 指数、Krippendorff α 三个推断/一致性算子；核心层不变；
 - 0.58.0 新增：轮廓系数、调整兰德指数、归一化互信息三个聚类验证/一致性算子；核心层不变；
 - 0.57.0 新增：Tukey HSD、Tamhane T2、Student-Newman-Keuls 三个全成对均值比较算子；核心层不变；

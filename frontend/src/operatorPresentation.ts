@@ -299,6 +299,8 @@ export const builtinPresentation = {
   arch_lm: { category: "统计分析", icon: "ChartScatter" },
   cusum_chart: { category: "统计分析", icon: "ChartLine" },
   ewma_chart: { category: "统计分析", icon: "ChartScatter" },
+  correspondence_analysis: { category: "统计分析", icon: "ChartScatter" },
+  tobit: { category: "统计分析", icon: "ChartLine" },
 } satisfies Record<string, Pick<Operator, "category" | "icon" | "preview">>;
 
 export function presentOperator(spec: Operator): Operator {
