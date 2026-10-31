@@ -68710,6 +68710,160 @@
         },
         {
           "protocol_version": 1,
+          "id": "vecm",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.vecm:VecmStep",
+          "title": "Vector error correction model",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "coint_rank": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1,
+                "title": "协整秩",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "k_ar_diff": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1,
+                "title": "差分滞后阶数",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "vecm",
+          "module": "src.task.step.steps.vecm",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Estimate a VECM and expose the Johansen trace/eigen diagnostics.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "coint_rank",
+              "label": "协整秩",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1
+            },
+            {
+              "key": "k_ar_diff",
+              "label": "差分滞后阶数",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "coint_rank": 1,
+            "k_ar_diff": 1
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "vif",
           "version": "1.0.0",
           "kind": "operator",

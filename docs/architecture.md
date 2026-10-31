@@ -184,6 +184,7 @@ YAML / JSON
 - 0.76.0 新增：GARCH 波动率模型与向量自回归（VAR）两个时间序列算子；核心层不变；
 - 0.77.0 新增：t 检验、两比例检验与单因素 ANOVA 的功效/样本量计算；核心层不变；
 - 0.84.0 重构：算子分类收敛为 6 类（Data/Statistics/Machine Learning/Omics/Visualization/Quality Control）；算子/Reader 元数据、功能预览、平台标记与 catalog integrity 测试；修正 Reader 发现去重；核心执行层不变；
+- 0.96.0：新增向量误差修正模型（vecm），复用 Johansen trace/eigen 诊断与 statsmodels VECM，输出协整向量 beta 与调整速度 alpha；R `urca::ca.jo` 对照；核心层不变；
 - 0.95.0：新增 B 样条回归（spline_regression），`patsy.bs` 三次 B 样条基 + OLS，输出拟合/残差/均值标准误/置信区间；R `splines::bs` 对照；核心层不变；
 - 0.94.0：新增 Box-Cox 变换（box_cox），逐特征 MLE 估计 lambda，支持固定 lambda、shift 与缺失值保留；R `MASS::boxcox` 对照；核心层不变；
 - 0.93.0：新增概率单位回归（probit_regression），用 statsmodels GLM 的 probit link 拟合二分类响应；输出系数/标准误/z/p/置信区间并记录 pseudo-R²；R `glm(family=binomial(link="probit"))` 逐值对照；核心层不变；

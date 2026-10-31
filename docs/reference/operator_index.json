@@ -41808,6 +41808,96 @@
     "quality": "auto"
   },
   {
+    "id": "vecm",
+    "kind": "operator",
+    "title": "Vector error correction model",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "coint_rank": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "title": "协整秩",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "k_ar_diff": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "title": "差分滞后阶数",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/vecm.py",
+    "tests": [
+      "tests/test_r_oracles77.py",
+      "tests/test_vecm.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/vecm.md",
+    "quality": "auto"
+  },
+  {
     "id": "vif",
     "kind": "operator",
     "title": "Variance inflation factor",
