@@ -1,3 +1,9 @@
+## 0.83.0 — 2026-10-31
+
+- 新增：379 算子 / 85 Reader / 21 route；新增距离基冗余分析（db-RDA）与留一研究 Meta 分析两个多元/证据综合算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension76.py` 7 项、`tests/test_r_oracles66.py` 2 项，合计 **9 passed**；R 对照 `vegan::dbrda`、`metafor::leave1out`；registry clean；参考页 379/85；增量门 25 passed；`-W error` 11 passed；Studio 前端 325 passed。
+- 边界：`dbrda` 只支持 Bray-Curtis/欧氏距离，要求响应非负且每样本行和为正，解释变量中心化后满秩；`leave_one_out` 仅重拟合截距模型，要求研究标签唯一、效应/方差有限、方差为正、至少 3 项研究。
+
 ## 0.82.0 — 2026-10-31
 
 - 新增：377 算子 / 85 Reader / 21 route；新增主坐标分析（PCoA）与典范对应分析（CCA）两个排序算子；未修改核心层。
@@ -25,7 +31,7 @@
 ## 0.78.0 — 2026-10-31
 
 - 新增：371 算子 / 82 Reader / 21 route；新增 Beta 回归与冗余分析（RDA）两个回归/约束排序算子；未修改核心层。
-- 验证：按用户要求只跑增量，`tests/test_extension71.py` 5 项、`tests/test_r_oracles62.py` 2 项，合计 **7 passed**；R 对照 `betareg`、`vegan`；registry clean；参考页 371/82；增量门 23 passed；`-W error` 9 passed；Studio 前端 317 passed。
+- 验证：按用户要求只跑增量，`tests/test_extension71.py` 5 项、`tests/test_r_oracles62.py` 2 项，合计 **7 passed**；R 对照 `betareg`、`vegan`；registry clean；参考页 371/82；增量门 23 passed；`-W error` 11 passed；Studio 前端 317 passed。
 - 边界：Beta 回归要求响应严格在 (0,1)，均值 logit、精度 identity，SE 用 statsmodels EIM 协方差；不处理 0/1 膨胀。RDA 只做线性约束排序，不提供置换显著性；惯量除以 n−1，与 vegan 一致；响应/解释矩阵秩亏或样本不足会拒绝。
 
 ## 0.77.0 — 2026-10-31

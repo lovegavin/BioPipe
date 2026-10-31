@@ -314,6 +314,8 @@ export const builtinPresentation = {
   meta_regression: { category: "统计分析", icon: "ChartLine" },
   pcoa: { category: "统计分析", icon: "ChartScatter" },
   cca: { category: "统计分析", icon: "ChartScatter" },
+  dbrda: { category: "统计分析", icon: "ChartScatter" },
+  leave_one_out: { category: "统计分析", icon: "ChartLine" },
 } satisfies Record<string, Pick<Operator, "category" | "icon" | "preview">>;
 
 export function presentOperator(spec: Operator): Operator {

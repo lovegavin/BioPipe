@@ -24784,6 +24784,198 @@
         },
         {
           "protocol_version": 1,
+          "id": "dbrda",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.dbrda:DbrdaStep",
+          "title": "Distance-based redundancy analysis",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "response_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "Response Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "predictor_dim": {
+                "type": "string",
+                "default": "predictor",
+                "title": "Predictor Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "distance": {
+                "type": "string",
+                "enum": [
+                  "bray",
+                  "euclidean"
+                ],
+                "default": "bray",
+                "title": "Distance",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "n_components": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 2,
+                "title": "主成分数",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "response_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "predictor_dim",
+                    "default": "predictor"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.26"
+          ],
+          "dependency_imports": [
+            "numpy"
+          ],
+          "name": "dbrda",
+          "module": "src.task.step.steps.dbrda",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Constrain a PCoA of a distance matrix by explanatory variables.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "response_dim",
+              "label": "Response Dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "predictor_dim",
+              "label": "Predictor Dim",
+              "type": "string",
+              "required": false,
+              "default": "predictor"
+            },
+            {
+              "key": "distance",
+              "label": "Distance",
+              "type": "choice",
+              "required": false,
+              "default": "bray",
+              "options": [
+                "bray",
+                "euclidean"
+              ]
+            },
+            {
+              "key": "n_components",
+              "label": "主成分数",
+              "type": "integer",
+              "required": false,
+              "default": 2,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "response_dim": "feature",
+            "predictor_dim": "predictor",
+            "distance": "bray",
+            "n_components": 2
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "dbscan",
           "version": "1.0.0",
           "kind": "operator",
@@ -40327,6 +40519,197 @@
             "scale": true,
             "solver": "svd",
             "tol": 0.0001
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "leave_one_out",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.leave_one_out:LeaveOneOutStep",
+          "title": "Leave-one-out meta-analysis",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "study_dim": {
+                "type": "string",
+                "default": "study",
+                "title": "Study Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "effect_label": {
+                "type": "string",
+                "title": "Effect Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "variance_label": {
+                "type": "string",
+                "title": "Variance Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "fixed",
+                  "random"
+                ],
+                "default": "random",
+                "title": "方法",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 0.999,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "effect_label",
+              "variance_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "study_dim",
+                    "default": "study"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.26",
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "scipy"
+          ],
+          "name": "leave_one_out",
+          "module": "src.task.step.steps.leave_one_out",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Refit an intercept-only meta-analysis after omitting each study.",
+          "parameters": [
+            {
+              "key": "study_dim",
+              "label": "Study Dim",
+              "type": "string",
+              "required": false,
+              "default": "study"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "effect_label",
+              "label": "Effect Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "variance_label",
+              "label": "Variance Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "method",
+              "label": "方法",
+              "type": "choice",
+              "required": false,
+              "default": "random",
+              "options": [
+                "fixed",
+                "random"
+              ]
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95,
+              "min": 0.5,
+              "max": 0.999
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "study_dim": "study",
+            "feature_dim": "feature",
+            "method": "random",
+            "confidence": 0.95
           },
           "legacy_parameters": false
         },

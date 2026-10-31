@@ -4,7 +4,7 @@ BioPipe 是本地生信流水线引擎 + Studio 可视化工作区 + CLI/MCP Age
 Reader 读取标准格式，用带类型契约的算子处理 `Form`，并在本地生成表格、图片和报告。
 BioPipe 本身不提供 AI 服务。
 
-当前源码版本 **0.82.0**：**377 个算子、85 个 Reader、6 个 provider 包、21 条路线**。
+当前源码版本 **0.83.0**：**379 个算子、85 个 Reader、6 个 provider 包、21 条路线**。
 
 ## 价值主张
 
@@ -24,13 +24,14 @@ BioPipe 本身不提供 AI 服务。
 
 完整入口：[docs/README.md](docs/README.md)。
 
-最值得先读的四份：
+最值得先读的五份：
 
 | 文档 | 作用 |
 |---|---|
 | [架构总览](docs/architecture.md) | 仓库结构、执行流、模块边界、改哪里 |
 | [协议总集](docs/protocol_suite.md) | Form/Reader/算子/契约/注册表/扩展/测试规范 |
 | [参考索引](docs/reference/README.md) | 每个 Reader/算子的参数、契约、源码/测试链接 |
+| [覆盖审计](docs/coverage_audit.md) | 379 算子/85 Reader 的覆盖、核心创新点落实度与缺口 |
 | [任务 SOP](docs/route_sop.md) | 从数据到自定义路线、`--check`、运行和结果解释 |
 
 按角色阅读：
@@ -160,7 +161,7 @@ docs/reference/    自动生成 Reader/算子参考页
 
 ## 版本与更新记录
 
-- 当前：**0.82.0**，见 [CHANGELOG](docs/changelog.md)。
+- 当前：**0.83.0**，见 [CHANGELOG](docs/changelog.md)。
 - Windows 测试环境快照：[conda](windows-biopipe-conda.yml) /
   [pip](windows-biopipe-pip-freeze.txt)。
 
