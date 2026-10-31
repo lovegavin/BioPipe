@@ -1,5 +1,13 @@
 # 权威实现对照矩阵
 
+## 0.66.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `leverage` | R `stats::hatvalues(lm)` | `tests/test_r_oracles50.py` | x=1..10 的 hat 值 0.34545454545454546…0.34545454545454546；OLS 含截距 |
+| `cooks_distance` | R `stats::cooks.distance(lm)` | `tests/test_r_oracles50.py` | x=1..10 的 Cook D 0.074610468585066189…0.017657992565055805；p 含截距 |
+| `dffits` | R `stats::dffits(lm)` | `tests/test_r_oracles50.py` | x=1..10 的 DFFITS 0.36790202489736512…0.17652800580145919；使用删除残差方差 |
+
 ## 0.65.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

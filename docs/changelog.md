@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.66.0 — 2026-10-31
+
+- 新增：342 算子 / 82 Reader / 21 route；新增 OLS 杠杆值、Cook 距离、DFFITS 三个回归影响诊断算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension59.py` 4 项、`tests/test_r_oracles50.py` 1 项，合计 **5 passed**；三项均对照 R `lm` 的 `hatvalues`/`cooks.distance`/`dffits`；registry clean；参考页 342/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 288 passed。
+- 边界：输入为含响应列的完整 OLS 设计表；自动加截距、listwise 删除缺失行；要求 `n > p+1` 且设计满秩，杠杆值接近 1 或删除残差方差非正时拒绝。
+
 ## 0.65.0 — 2026-10-31
 
 - 新增：339 算子 / 82 Reader / 21 route；新增方差比检验、Youden 指数、Krippendorff α 三个推断/一致性算子；未修改核心层。
