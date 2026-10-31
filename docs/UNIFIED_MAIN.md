@@ -90,8 +90,9 @@ The integration is checked with protocol, pin/default/documentation lifecycle,
 managed-memory, disk/compression, CLI/MCP process, HTTP permission, SSH fixture,
 frontend and public-data route tests. Optional dependency and real Linux-tool
 tests report skips explicitly; local synthetic SSH fixtures are not a new
-live-cloud acceptance run. The final recorded results belong in the integration
-commit/release notes, rather than being inferred from the extension count.
+live-cloud acceptance run. See the [acceptance record](validation/UNIFIED_MAIN_0_116.md)
+for concrete results and limits, rather than inferring coverage from the extension
+count.
 
 Five curated upstream public-data examples are retained in
 `examples/route_combinations/`. Their own frozen parameter files and validation
