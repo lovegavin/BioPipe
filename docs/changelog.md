@@ -2,7 +2,7 @@
 
 - 新增 `vecm` 向量误差修正模型：Johansen trace/eigenvalue 诊断 + statsmodels VECM 系数；输出所有秩的 trace/eigen 与所选秩的 beta/alpha；R `urca::ca.jo(ecdet="none", K=k_ar_diff+1)` 对照。
 - 算子总数 **395**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 395/85，registry `errors []`；Statistics 类别 231→232。
-- 验证：`tests/test_vecm.py` 3 项 + `tests/test_r_oracles77.py` 1 项 = **4 passed**；R trace/eigen 逐值一致，beta/alpha 容差 2e-3；增量门 **19 passed**；`-W error` **5 passed**；frontend **39 passed / 9 files**，构建通过。
+- 验证：`tests/test_vecm.py` 2 项 + `tests/test_r_oracles77.py` 1 项 = **3 passed**；R trace/eigen 逐值一致，beta/alpha 容差 2e-3；增量门 **19 passed**；`-W error` **5 passed**；frontend **39 passed / 9 files**，构建通过。
 - 边界：仅无确定性项、无外生变量/季节项；`coint_rank` 必须 1..变量数-1；不提供预测、IRF 或自动定阶。
 - 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
 
