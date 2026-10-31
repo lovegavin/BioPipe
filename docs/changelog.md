@@ -1,3 +1,11 @@
+## 0.105.0 — 2026-10-31
+
+- 新增第三条公开数据路线组合示例 `mite_community_ml`：R `vegan::mite` 泥炭沼泽甲螨 70 样本 × 35 类群 + `mite.env`；组合 `filter_min`、`diversity`、`distance_matrix`、`reduce(pcoa)`、`permanova`、`envfit`、`scatter`、`heatmap`、`random_forest_classifier` 与 `describe`。
+- 结果：PCo1 35.13%、PCo2 11.55%；PERMANOVA F=9.0365、R²=0.2124、P=0.001；envfit WatrCont R²=0.6664、SubsDens R²=0.2480；随机森林测试 accuracy 0.6111、AUC 0.7410、3 折 CV 0.6351±0.0169。
+- 数据映射：`Shrub=None` 在 CSV Reader 中被当作缺失，示例映射为 `NoShrub`；数据来源、引用、逐步理由与限制见 `examples/route_combinations/mite_community_ml/ANALYSIS.md`。
+- 算子/Reader/路线数量不变：**402/85/21/6**；registry `errors []`；参考页 402/85。
+- 验证：`tests/test_route_combinations.py` **6 passed**；增量门 **11 passed（另 1 skipped）**；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
+
 ## 0.104.0 — 2026-10-31
 
 - 新增两条基于公开数据的路线组合示例：`cancer_diagnosis_ml`（UCI Breast Cancer Wisconsin 差异分析 + 随机森林分类）与 `lung_regression_survival`（NCCTG 肺癌年龄回归 + 生存分析），放在 `examples/route_combinations/`，不新增算子、Reader 或内置路线。

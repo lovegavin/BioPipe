@@ -184,6 +184,7 @@ YAML / JSON
 - 0.76.0 新增：GARCH 波动率模型与向量自回归（VAR）两个时间序列算子；核心层不变；
 - 0.77.0 新增：t 检验、两比例检验与单因素 ANOVA 的功效/样本量计算；核心层不变；
 - 0.84.0 重构：算子分类收敛为 6 类（Data/Statistics/Machine Learning/Omics/Visualization/Quality Control）；算子/Reader 元数据、功能预览、平台标记与 catalog integrity 测试；修正 Reader 发现去重；核心执行层不变；
+- 0.105.0：新增第三条公开数据路线组合示例 `mite_community_ml`（`vegan::mite` 泥炭沼泽甲螨；alpha 多样性、Bray-Curtis PCoA、PERMANOVA、envfit 与随机森林三分类），不新增算子/Reader/路线；
 - 0.104.0：新增两条基于公开数据的路线组合示例（`examples/route_combinations/`），把 UCI 乳腺癌差异分析 + 随机森林分类、NCCTG 肺癌年龄回归 + 生存分析写成可执行任务；不新增算子/Reader/路线，registry 仍 402/85/21/6；
 - 0.103.0：新增层次聚类（hierarchical_clustering），一个 `[sample,feature]` 表按样本聚类；支持 single/complete/average/Ward.D2 四种连接和 euclidean/manhattan 距离；输出 0-based cluster 标签，info/export 提供 heights、merge 与 cophenetic correlation；R `stats::hclust` 对照；不画树状图、不做缺失值插补；核心层不变；
 - 0.102.0：新增条件 logistic 回归（conditional_logistic），一个 `[sample,feature]` 表提供分层、二分类结局与数值协变量；按层消去截距的精确条件似然，输出系数/SE/z/P/CI/OR，R `survival::clogit` 对照；仅数值协变量，不实现分层精确检验或新样本预测；核心层不变；

@@ -1,0 +1,123 @@
+name: mite_community_ml
+
+sources:
+  otu:
+    path: input/mite_otu.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+  meta:
+    path: input/mite_meta.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+  env:
+    path: input/mite_env.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+steps:
+  - name: filter_min
+    inputs: [otu]
+    params:
+      dim: feature
+      min_value: 2
+      min_samples: 3
+      output: otu_filtered
+
+  - name: diversity
+    inputs: [otu_filtered]
+    params:
+      dim: feature
+      metrics: [shannon, simpson, richness, evenness]
+      output: alpha_div
+
+  - name: distance_matrix
+    inputs: [otu_filtered]
+    params:
+      dim: sample
+      metric: braycurtis
+      output: bray_dist
+
+  - name: reduce
+    inputs: [bray_dist]
+    params:
+      dim: sample
+      method: pcoa
+      n_components: 5
+      output: pcoa_coords
+
+  - name: permanova
+    inputs: [bray_dist, meta]
+    params:
+      dist_dim: sample
+      group_dim: sample
+      group_label: Shrub
+      groups: [NoShrub, Few, Many]
+      n_permutations: 999
+      random_state: 7
+      output: permanova_result
+
+  - name: envfit
+    inputs: [pcoa_coords, env]
+    params:
+      sample_dim: sample
+      component_dim: component
+      feature_dim: feature
+      output: envfit_vectors
+
+  - name: scatter
+    inputs: [pcoa_coords]
+    params:
+      dim: component
+      x_label: PCo1
+      y_label: PCo2
+      filename: pcoa.png
+      title: "Mite community PCoA (Bray-Curtis), public vegan mite data"
+      point_size: 40
+      alpha: 0.8
+
+  - name: heatmap
+    inputs: [otu_filtered]
+    params:
+      dim: feature
+      other_dim: sample
+      select: variance
+      top_n: 20
+      standardize: row
+      cluster_rows: true
+      cluster_cols: true
+      filename: top20_species_heatmap.png
+      title: "Top 20 variable mite species"
+
+  - name: random_forest_classifier
+    inputs: [otu_filtered, meta]
+    params:
+      sample_dim: sample
+      feature_dim: feature
+      label_dim: feature
+      target_label: Shrub
+      valid_labels: [NoShrub, Few, Many]
+      test_size: 0.25
+      cv_folds: 3
+      random_state: 7
+      n_estimators: 200
+      output: rf_report
+
+  - name: describe
+    inputs: [pcoa_coords]
+
+  - name: describe
+    inputs: [permanova_result]
+
+  - name: describe
+    inputs: [envfit_vectors]
+
+  - name: describe
+    inputs: [rf_report]
