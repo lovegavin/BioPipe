@@ -1,0 +1,95 @@
+name: refseq_cds_sequence_features
+
+sources:
+  cds:
+    path: input/refseq_cds.fasta
+    dims: [sequence, position]
+    labels:
+      sequence: builtin
+      position: auto
+    args: {reader: fasta}
+
+steps:
+  - name: sequence_stats
+    inputs: [cds]
+    params:
+      sequence_dim: sequence
+      position_dim: position
+      output: cds_stats
+
+  - name: drop
+    inputs: [cds_stats]
+    params:
+      dim: statistic
+      labels: [n_ratio, valid_ratio]
+      output: cds_stats_core
+
+  - name: describe
+    inputs: [cds_stats_core]
+
+  - name: translate
+    inputs: [cds]
+    params:
+      sequence_dim: sequence
+      position_dim: position
+      frame: 0
+      to_stop: true
+      output: proteins
+
+  - name: protein_properties
+    inputs: [proteins]
+    params:
+      sequence_dim: sequence
+      position_dim: position
+      output: protein_props
+
+  - name: describe
+    inputs: [protein_props]
+
+  - name: heatmap
+    inputs: [protein_props]
+    params:
+      dim: sequence
+      other_dim: statistic
+      select: all
+      standardize: col
+      cluster_rows: true
+      cluster_cols: true
+      show_row_labels: true
+      show_col_labels: true
+      filename: protein_properties_by_gene.png
+      title: "RefSeq CDS: protein physicochemical properties"
+      cmap: RdBu_r
+
+  - name: correlation
+    inputs: [protein_props]
+    params:
+      dim: statistic
+      metric: pearson
+      output: protein_corr
+
+  - name: heatmap
+    inputs: [protein_corr]
+    params:
+      dim: statistic
+      other_dim: statistic_b
+      select: all
+      standardize: none
+      cluster_rows: true
+      cluster_cols: true
+      show_row_labels: true
+      show_col_labels: true
+      filename: protein_property_correlation.png
+      title: "RefSeq CDS: protein property correlation"
+      cmap: RdBu_r
+
+  - name: codon_usage
+    inputs: [cds]
+    params:
+      sequence_dim: sequence
+      position_dim: position
+      frame: 0
+      output: codon_usage
+
+  - name: describe
+    inputs: [codon_usage]

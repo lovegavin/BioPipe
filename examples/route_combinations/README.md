@@ -14,8 +14,9 @@
 | `birthwt_risk_factors/` | 差异比较 + 逻辑回归 + 随机森林 + PCA/相关热图 | `MASS::birthwt` 低出生体重数据；比较母亲基线、估计风险因素方向、评估分类并检查特征结构 |
 | `wine_cultivar_classification/` | 线性判别 + 随机森林 + PCA/相关热图 | UCI Wine 数据；比较 LDA 与随机森林的品种分类，检查线性判别边界、无监督分离与化学特征相关结构 |
 | `mtcars_regression_classification/` | 回归 + 分类 + 结构探索 | R datasets::mtcars 1974 年汽车数据；用重量/马力等预测油耗、判断变速箱类型，并用 PCA 与 Spearman 热图看共线结构 |
+| `refseq_cds_sequence_features/` | FASTA 读取 + 序列统计 + 翻译/蛋白性质 + 密码子使用 | NCBI RefSeq 六个人类癌症相关基因 CDS；用 FastaReader 读入，检查长度/GC，翻译后比较蛋白理化性质，并汇总密码子使用 |
 
-八个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
+九个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
 
 ## 运行
 
@@ -29,6 +30,7 @@
     python scripts/run.py examples/route_combinations/birthwt_risk_factors
     python scripts/run.py examples/route_combinations/wine_cultivar_classification
     python scripts/run.py examples/route_combinations/mtcars_regression_classification
+    python scripts/run.py examples/route_combinations/refseq_cds_sequence_features
 
 只做静态校验：
 
@@ -40,6 +42,7 @@
     python scripts/run.py examples/route_combinations/birthwt_risk_factors --check
     python scripts/run.py examples/route_combinations/wine_cultivar_classification --check
     python scripts/run.py examples/route_combinations/mtcars_regression_classification --check
+    python scripts/run.py examples/route_combinations/refseq_cds_sequence_features --check
 
 每个示例的输出写入各自 `output/`：`figures/` 为图片，`steps/` 为每步 JSON 摘要，`run_summary.txt/json` 为运行摘要。`input/` 中的 CSV 来自公开数据集，字段经过最小化整理；示例用于演示组合方式，不构成临床或生物学结论。
 
@@ -101,6 +104,14 @@
 - 引用：Henderson, H.V. & Velleman, P.F. (1981). Building multiple regression models interactively. Biometrics, 37(2), 391–411. 原始数据由 Motor Trend 1974 年收集。
 - 该数据是经典的小样本回归/分类教学数据；32 辆、8 辆测试集，结果只作方法演示，不作现代车辆结论。
 
+### NCBI RefSeq CDS（六个人类癌症相关基因）
+
+- 6 条 RefSeq CDS：TP53 `NM_000546.6`、BRCA1 `NM_007294.4`、BRCA2 `NM_000059.4`、EGFR `NM_005228.5`、KRAS `NM_004985.5`、PTEN `NM_000314.8`；对应蛋白 NP_000537.3、NP_009225.1、NP_000050.3、NP_005219.2、NP_004976.2、NP_000305.3。
+- 来源：NCBI RefSeq，通过 E-utilities `efetch`（`db=nuccore`、`rettype=fasta_cds_na`）取得；检索日期 2026-10-31，<https://www.ncbi.nlm.nih.gov/refseq/>。
+- 原始下载的 header 含 `[gene=...]` 与 `[protein=...]`；示例把第一个 token 改写为基因名，以便 FastaReader 生成可读的 `sequence` 标签；accession/长度/蛋白描述另存 `input/refseq_cds_sources.tsv`。
+- 引用：O'Leary, N.A. et al. (2016). Reference sequence (RefSeq) database at NCBI. *Nucleic Acids Research*, 44(D1), D733–D745. <https://doi.org/10.1093/nar/gkv1189>。
+- 该示例只做序列描述性分析，不构成临床或功能结论。
+
 ## 组合方式
 
 任务 YAML 是扁平的算子 DAG。示例把 route 中的算子直接展开为多个分支，而不是在 YAML 里引用 route ID：
@@ -114,12 +125,13 @@
 
 - `wine_cultivar_classification`：`lda_classifier` 与 `random_forest_classifier` 共享同一特征/标签和固定划分；`pca` + `join` + `scatter` 检查无监督分离；`correlation` + `heatmap` 检查 13 个化学特征的共变。LDA 的 1.0 测试准确率只代表这份小数据，不当作泛化证据。
 - `mtcars_regression_classification`：compare_groups 比较自动/手动挡的 mpg、wt、hp；ridge_regression 用 9 个特征预测 mpg；logistic_regression 与 random_forest_classifier 用同一组特征预测 am；pca + join + scatter 看变速箱分组；correlation + heatmap 看 10 个变量的共线结构。
+- `refseq_cds_sequence_features`：FastaReader 读入 6 条 RefSeq CDS；sequence_stats 检查长度/GC；translate + protein_properties 得到蛋白性质；heatmap 展示基因×性质谱；correlation + heatmap 检查性质相关；codon_usage 汇总密码子使用。
 
 Studio 中可以把这些任务作为图导入，再拆分、合并或替换分支。逐步解释、指标和限制见各目录的 `ANALYSIS.md`。
 
 ## 测试
 
-`tests/test_route_combinations.py` 对八个示例执行：
+`tests/test_route_combinations.py` 对九个示例执行：
 
 1. `--check` 静态校验；
 2. 复制到临时目录后实际运行，检查 `output/run_summary.json` 的状态与步骤数。

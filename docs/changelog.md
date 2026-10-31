@@ -1,3 +1,10 @@
+## 0.111.0 — 2026-10-31
+
+- 新增第九条公开数据路线组合示例 `refseq_cds_sequence_features`：NCBI RefSeq 六条人类癌症相关 CDS（TP53/BRCA1/BRCA2/EGFR/KRAS/PTEN），首次以 `FastaReader` 专用 Reader 读取，并组合 `sequence_stats`、`translate`、`protein_properties`、`correlation`、`codon_usage` 与热图；不新增算子/Reader/路线。
+- 结果：6 条 CDS 合计 22,443 nt、平均 GC 0.4396；翻译蛋白长度 393/1863/3418/1210/188/403，与 RefSeq NP 长度一致；BRCA2 最大（445,803 Da），KRAS 最小（24,811.266 Da）；length–MW r=0.99997，其余相关为弱描述性（n=6）；合并密码子 7,481 个。`protein_properties` 的分子量/等电点为序列计算值，未建模 PTM、信号肽或复合体。
+- 数据来源：NCBI RefSeq；O'Leary et al. (2016), Reference sequence (RefSeq) database at NCBI, *Nucleic Acids Research* 44(D1):D733–D745；检索日期 2026-10-31。不新增算子/Reader/路线，registry 仍 **402/85/21/6**。
+- 验证：`tests/test_route_combinations.py` **18 passed**；增量门 **33 passed（另 1 skipped）**；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
+
 ## 0.110.0 — 2026-10-31
 
 - 新增第八条公开数据路线组合示例 `mtcars_regression_classification`：R datasets::mtcars 1974 年 Motor Trend 数据，32 辆汽车、9 个特征；组合自动/手动挡分组比较、油耗 ridge 回归、变速箱 logistic 回归、随机森林分类、PCA + join + scatter、Spearman 相关热图。

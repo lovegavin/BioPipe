@@ -184,6 +184,7 @@ YAML / JSON
 - 0.76.0 新增：GARCH 波动率模型与向量自回归（VAR）两个时间序列算子；核心层不变；
 - 0.77.0 新增：t 检验、两比例检验与单因素 ANOVA 的功效/样本量计算；核心层不变；
 - 0.84.0 重构：算子分类收敛为 6 类（Data/Statistics/Machine Learning/Omics/Visualization/Quality Control）；算子/Reader 元数据、功能预览、平台标记与 catalog integrity 测试；修正 Reader 发现去重；核心执行层不变；
+- 0.111.0：新增第九条公开数据路线组合示例 `refseq_cds_sequence_features`（NCBI RefSeq 六条癌症相关 CDS；`FastaReader` + `sequence_stats` + `translate` + `protein_properties` + `codon_usage`，检验 Reader 与序列算子组合），不新增算子/Reader/路线；
 - 0.110.0：新增第八条公开数据路线组合示例 `mtcars_regression_classification`（R datasets::mtcars 1974 汽车数据；油耗回归、自动/手动挡分类、PCA + join + scatter、Spearman 相关热图），不新增算子/Reader/路线；
 - 0.109.0：新增第七条公开数据路线组合示例 `wine_cultivar_classification`（UCI Wine 三个品种：LDA、随机森林、PCA + join + scatter、Pearson 相关热图），不新增算子/Reader/路线；
 - 0.108.0：新增第六条公开数据路线组合示例 `birthwt_risk_factors`（R `MASS::birthwt`；母亲年龄/体重 Welch 比较、逻辑回归、随机森林、PCA + join + scatter、Spearman 相关热图），不新增算子/Reader/路线；
