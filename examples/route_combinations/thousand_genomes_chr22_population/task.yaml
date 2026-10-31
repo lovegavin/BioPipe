@@ -1,0 +1,131 @@
+name: thousand_genomes_chr22_population
+
+sources:
+  genotypes:
+    path: input/kg_chr22_region.vcf
+    dims: [variant, sample]
+    labels:
+      variant: builtin
+      sample: builtin
+
+  samples:
+    path: input/kg_samples.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+steps:
+  - name: maf
+    inputs: [genotypes]
+    params:
+      dim: variant
+      threshold: 0.05
+      output: qc_maf
+
+  - name: missing
+    inputs: [qc_maf]
+    params:
+      dim: variant
+      threshold: 0.10
+      output: qc_missing
+
+  - name: hwe
+    inputs: [qc_missing]
+    params:
+      dim: variant
+      threshold: 1.0e-6
+      output: qc_hwe
+
+  - name: describe
+    inputs: [qc_hwe]
+
+  - name: pca
+    inputs: [qc_hwe]
+    params:
+      dim: variant
+      n_components: 4
+      output: pcs
+
+  - name: boxplot
+    inputs: [pcs, samples]
+    params:
+      dim: component
+      value_label: PC1
+      group_dim: sample
+      group_label: super_pop
+      groups: [AFR, AMR, EAS, EUR, SAS]
+      filename: pca_pc1_by_superpopulation.png
+      title: "1000 Genomes chr22: PC1 by super-population"
+      xlabel: super-population
+      ylabel: PC1 score
+
+  - name: boxplot
+    inputs: [pcs, samples]
+    params:
+      dim: component
+      value_label: PC2
+      group_dim: sample
+      group_label: super_pop
+      groups: [AFR, AMR, EAS, EUR, SAS]
+      filename: pca_pc2_by_superpopulation.png
+      title: "1000 Genomes chr22: PC2 by super-population"
+      xlabel: super-population
+      ylabel: PC2 score
+
+  - name: fst
+    inputs: [qc_hwe, samples]
+    params:
+      variant_dim: variant
+      sample_dim: sample
+      group_label: super_pop
+      group_a: AFR
+      group_b: EUR
+      output: fst_afr_eur
+
+  - name: histogram
+    inputs: [fst_afr_eur]
+    params:
+      dim: statistic
+      value_label: fst
+      bins: 30
+      filename: fst_afr_eur_histogram.png
+      title: "1000 Genomes chr22: Hudson Fst (AFR vs EUR)"
+      xlabel: Hudson Fst
+      ylabel: variants
+
+  - name: relatedness
+    inputs: [qc_hwe]
+    params:
+      variant_dim: variant
+      sample_dim: sample
+      min_maf: 0.05
+      output: grm
+
+  - name: rename_dim
+    inputs: [grm]
+    params:
+      from: sample
+      to: individual_1
+      output: grm_rows
+
+  - name: rename_dim
+    inputs: [grm_rows]
+    params:
+      from: sample_b
+      to: individual_2
+      output: grm_labeled
+
+  - name: heatmap
+    inputs: [grm_labeled]
+    params:
+      dim: individual_2
+      other_dim: individual_1
+      select: all
+      cluster_rows: true
+      cluster_cols: true
+      show_row_labels: false
+      show_col_labels: false
+      figsize: [8, 7]
+      filename: relatedness_heatmap.png
+      title: "1000 Genomes chr22: genomic relationship"

@@ -1,3 +1,11 @@
+## 0.112.0 — 2026-10-31
+
+- 新增第十条公开数据路线组合示例 `thousand_genomes_chr22_population`：1000 Genomes Phase 3 chr22 GRCh37 16,000,000–16,200,000（约 200 kb），100 个样本（每个 super-population 20 个：AFR/AMR/EAS/EUR/SAS）；`VcfReader` 读取 1,663 个变异行，MAF/缺失/HWE 过滤后保留 97 个变异。
+- 组合：`pca`（4 个主成分）→ 两个 `boxplot`（PC1/PC2 按 `super_pop`）；`fst`（AFR vs EUR，Hudson）→ `histogram`；`relatedness` → `rename_dim` ×2 → 聚类 `heatmap`。不新增算子/Reader/路线，registry 仍 **402/85/21/6**。
+- 结果：PCA 解释方差 PC1 **0.159860**、PC2 **0.117049**；AFR-EUR 平均 FST **0.008607**（97 个变异）；GRM 为 100×100，对角线均值 **1.005047**。图：PC1/PC2 箱线图、FST 直方图、GRM 热图。
+- 说明：单个 200 kb 窗口和 100 个样本，不是全基因组分析；FST 可为负、未给置信区间；GRM 未做 LD 修剪且热图无群体注释；不构成祖源/亲缘/医学结论。
+- 验证：`tests/test_route_combinations.py` **20 passed**；增量门 **35 passed（另 1 skipped）**；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
+
 ## 0.111.0 — 2026-10-31
 
 - 新增第九条公开数据路线组合示例 `refseq_cds_sequence_features`：NCBI RefSeq 六条人类癌症相关 CDS（TP53/BRCA1/BRCA2/EGFR/KRAS/PTEN），首次以 `FastaReader` 专用 Reader 读取，并组合 `sequence_stats`、`translate`、`protein_properties`、`correlation`、`codon_usage` 与热图；不新增算子/Reader/路线。
