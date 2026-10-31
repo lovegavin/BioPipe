@@ -1,3 +1,11 @@
+## 0.95.0 — 2026-10-31
+
+- 新增 `spline_regression` B 样条回归：`patsy.bs` 三次 B 样条基 + OLS，输出拟合值、残差、均值标准误与置信区间；`df` 4–10，R `splines::bs` 对照。
+- 算子总数 **394**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 394/85，registry `errors []`；Statistics 类别 230→231。
+- 验证：`tests/test_spline_regression.py` 3 项 + `tests/test_r_oracles76.py` 1 项 = **4 passed**；R fitted/residual 误差 < 1e-8，R² 容差 1e-10；增量门 **20 passed**；`-W error` **6 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：单自变量、无外生变量/权重/稳健方差；丢弃非有限行；`n >= df+2`、设计矩阵不得秩亏；不提供新样本预测或自动选 df。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.94.0 — 2026-10-31
 
 - 新增 `box_cox` Box-Cox 变换：逐特征 MLE 估计 lambda，也支持固定标量/按特征映射；`shift` 可把非正数据平移到正域；缺失值保留，输出同维表。

@@ -1,3 +1,9 @@
+## 0.95.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `spline_regression` | R `lm(y ~ splines::bs(x, df=5, degree=3))` | `tests/test_r_oracles76.py` | fixture `x=1..30`、`y=sin(x/4)+0.05x+0.2cos(1.3x)`、df=5：fitted/residual 逐值误差 **<1e-8**，R² **0.9594966682092715**（容差 1e-10）；`patsy.bs` 与 R `splines::bs` 使用相同分位数节点 |
+
 ## 0.94.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
