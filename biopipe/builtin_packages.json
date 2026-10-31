@@ -14716,6 +14716,175 @@
         },
         {
           "protocol_version": 1,
+          "id": "betadisper",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.betadisper:BetadisperStep",
+          "title": "Beta dispersion",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_b_dim": {
+                "type": "string",
+                "default": "sample_b",
+                "title": "Sample B Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "group_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "分组维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "group_label": {
+                "type": "string",
+                "title": "分组字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "group_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "sample_b_dim",
+                    "default": "sample_b"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "group_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.26",
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "scipy"
+          ],
+          "name": "betadisper",
+          "module": "src.task.step.steps.betadisper",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Distance-to-centroid dispersion per group, with one-way ANOVA.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "sample_b_dim",
+              "label": "Sample B Dim",
+              "type": "string",
+              "required": false,
+              "default": "sample_b"
+            },
+            {
+              "key": "group_dim",
+              "label": "分组维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "group_label",
+              "label": "分组字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "sample_b_dim": "sample_b",
+            "group_dim": "sample"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "bh_adjust",
           "version": "1.0.0",
           "kind": "operator",
@@ -37006,6 +37175,209 @@
             "type": "agreement",
             "unit": "single",
             "confidence": 0.95
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "inverse_gaussian_regression",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.inverse_gaussian_regression:InverseGaussianRegressionStep",
+          "title": "Inverse Gaussian regression",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response_label": {
+                "type": "string",
+                "title": "Response Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "predictors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Predictors",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "categorical": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": [],
+                "title": "分类协变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "confidence": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "maxiter": {
+                "type": "integer",
+                "minimum": 20,
+                "default": 200,
+                "title": "Maxiter",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "response_label",
+              "predictors"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "inverse_gaussian_regression",
+          "module": "src.task.step.steps.inverse_gaussian_regression",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Inverse Gaussian GLM with a log link, fitted by maximum likelihood.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "response_label",
+              "label": "Response Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "predictors",
+              "label": "Predictors",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "categorical",
+              "label": "分类协变量",
+              "type": "list",
+              "required": false,
+              "default": []
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "maxiter",
+              "label": "Maxiter",
+              "type": "integer",
+              "required": false,
+              "default": 200,
+              "min": 20
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "categorical": [],
+            "confidence": 0.95,
+            "maxiter": 200
           },
           "legacy_parameters": false
         },
@@ -66280,6 +66652,226 @@
             "group_dim": "sample",
             "trim": 0.2,
             "confidence": 0.95
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "zero_inflated_negative_binomial",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.zero_inflated_negative_binomial:ZeroInflatedNegativeBinomialStep",
+          "title": "Zero-inflated negative binomial regression",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response_label": {
+                "type": "string",
+                "title": "Response Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "count_predictors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Count Predictors",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "zero_predictors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Zero Predictors",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "categorical": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": [],
+                "title": "分类协变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "confidence": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "maxiter": {
+                "type": "integer",
+                "minimum": 20,
+                "default": 2000,
+                "title": "Maxiter",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 80
+              }
+            },
+            "required": [
+              "response_label",
+              "count_predictors",
+              "zero_predictors"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "zero_inflated_negative_binomial",
+          "module": "src.task.step.steps.zero_inflated_negative_binomial",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Zero-inflated NB2 regression with logit inflation and log count links.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "response_label",
+              "label": "Response Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "count_predictors",
+              "label": "Count Predictors",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "zero_predictors",
+              "label": "Zero Predictors",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "categorical",
+              "label": "分类协变量",
+              "type": "list",
+              "required": false,
+              "default": []
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "maxiter",
+              "label": "Maxiter",
+              "type": "integer",
+              "required": false,
+              "default": 2000,
+              "min": 20
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "categorical": [],
+            "confidence": 0.95,
+            "maxiter": 2000
           },
           "legacy_parameters": false
         },

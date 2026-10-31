@@ -308,6 +308,9 @@ export const builtinPresentation = {
   power_anova: { category: "统计分析", icon: "ChartScatter" },
   beta_regression: { category: "统计分析", icon: "ChartLine" },
   redundancy_analysis: { category: "统计分析", icon: "ChartScatter" },
+  inverse_gaussian_regression: { category: "统计分析", icon: "ChartLine" },
+  betadisper: { category: "统计分析", icon: "ChartScatter" },
+  zero_inflated_negative_binomial: { category: "统计分析", icon: "ChartBar" },
   meta_regression: { category: "统计分析", icon: "ChartLine" },
 } satisfies Record<string, Pick<Operator, "category" | "icon" | "preview">>;
 

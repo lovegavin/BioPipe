@@ -1,3 +1,11 @@
+## 0.81.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `inverse_gaussian_regression` | R `stats::glm(family=inverse.gaussian(link="log"))` | `tests/test_r_oracles64.py` | seed 20261110、n=60：coef **0.29112628016820374 / 0.31847495391789 / -0.22659950198706433**，SE **0.1160139475750473 / 0.08959275775038143 / 0.1159005421324707**；deviance **47.62187822182909**，null dev **56.22929763488882**；coef 对齐 3e-5，SE 3e-6；AIC 因 likelihood 常数不同不比较 |
+| `betadisper` | R `vegan::betadisper(type="centroid")` + `anova` | `tests/test_r_oracles64.py` | 12 样本两组：group means **0.5432907785733675 / 1.5080518970308538**，F **12.27190000879564**，p **0.0056966678673121976**；距离和特征值对齐 1e-12 |
+| `zero_inflated_negative_binomial` | R `pscl::zeroinfl(dist="negbin")` | `tests/test_r_oracles64.py` | seed 20261111、n=220、125 zeros：count coef **0.504542522196694 / 0.35446674816788964 / -0.24305519652093036**，zero coef **-0.5862120388429567 / 0.537950517169738**，alpha **0.7224400229926667**，theta **1.38419795162726**，loglik **-312.2941749228622**；coef 3e-5，loglik 1e-7 |
+
 ## 0.80.0
 
 | Reader | 格式 | 对照 | 结论/边界 |

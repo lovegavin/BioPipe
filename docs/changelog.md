@@ -1,3 +1,9 @@
+## 0.81.0 — 2026-10-31
+
+- 新增：375 算子 / 85 Reader / 21 route；新增逆高斯回归、beta 离散度齐性检验、零膨胀负二项回归；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension74.py` 6 项、`tests/test_r_oracles64.py` 3 项，合计 **9 passed**；R 对照 `stats::glm`、`vegan::betadisper`、`pscl::zeroinfl`；registry clean；参考页 375/85；增量门 25 passed；`-W error` 11 passed；Studio 前端 321 passed。
+- 边界：逆高斯只支持 log link；AIC 与 R 的 likelihood 常数不同，R oracle 只比较 coef/se；betadisper 只做 centroid 距离；ZINB 只支持 NB2，count 与 zero 预测变量均必填。
+
 ## 0.80.0 — 2026-10-31
 
 - 新增：372 算子 / 85 Reader / 21 route；新增 GSEA `.rnk` 排名列表与 `.cls`/`.grp` 表型标签三个 Reader；未修改核心层。
