@@ -1,3 +1,11 @@
+## 0.99.0 — 2026-10-31
+
+- 新增 `envfit` 环境向量拟合：排序坐标 `[sample,component]` 与环境变量 `[sample,feature]` 按样本标签对齐；逐变量 OLS 得到 R²，回归系数单位化后作为环境梯度方向；输出 `r2,axis1..axisK` 与方向向量。
+- 算子总数 **398**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 398/85，registry `errors []`；Statistics 类别 233→234。
+- 验证：`tests/test_envfit.py` 3 项 + `tests/test_r_oracles79.py` 1 项 = **4 passed**；R `vegan::envfit` 对 n=30 fixture 的 R²/方向向量逐值一致；增量门 **20 passed**；`-W error` **6 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：只做线性环境向量拟合，不计算置换 p 值，不支持因子型 envfit 或非线性环境曲面；方向向量为单位长度。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.98.0 — 2026-10-31
 
 - 新增 `additive_spline_regression` 可加 B 样条回归：多个自变量的三次 B 样条基 + OLS，输出拟合/残差/均值标准误/置信区间；支持逐特征 `df` 映射；R `splines::bs` 对照。
