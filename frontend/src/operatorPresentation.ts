@@ -289,6 +289,8 @@ export const builtinPresentation = {
   barplot: artwork("可视化", "ChartBar", "composition", "各组组成比例"),
   engle_granger: { category: "统计分析", icon: "ChartLine" },
   johansen: { category: "统计分析", icon: "ChartScatter" },
+  zivot_andrews: { category: "统计分析", icon: "ChartLine" },
+  poisson_means_test: { category: "统计分析", icon: "ChartBar" },
 } satisfies Record<string, Pick<Operator, "category" | "icon" | "preview">>;
 
 export function presentOperator(spec: Operator): Operator {

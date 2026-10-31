@@ -1,3 +1,10 @@
+## 0.71.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `zivot_andrews` | R `urca::ur.za(model="intercept", lag=2)` | `tests/test_r_oracles55.py` | 80 点结构突变 fixture：统计量 -3.7254940402358883，p 0.5295691048518368，statsmodels bpidx 57 / R bpoint 58；临界值表不同，只比较统计量 |
+| `poisson_means_test` | R `poisson.test` 条件二项精确检验 | `tests/test_r_oracles55.py` | 100/4 vs 50/4：p 5.4475331033925765e-05，rate ratio 2，95% CI 1.4105504610094759–2.8676286550257819；与 scipy E-test 不同 |
+
 ## 0.70.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

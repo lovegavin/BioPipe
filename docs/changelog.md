@@ -1,3 +1,9 @@
+## 0.71.0 — 2026-10-31
+
+- 新增：354 算子 / 82 Reader / 21 route；新增 Zivot-Andrews 结构突变单位根、精确两样本泊松率检验两个推断算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension64.py` 4 项、`tests/test_r_oracles55.py` 1 项，合计 **5 passed**；R 对照 `urca::ur.za` 与 `poisson.test`；registry clean；参考页 354/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 300 passed。
+- 边界：Zivot-Andrews 的 `break_index` 为零基 `bpidx`，R `urca` 的 `bpoint` 为一基；泊松率检验使用条件二项精确检验和 exact proportion CI，不使用 scipy E-test；总计数为 0 时 p=1。
+
 ## 0.70.0 — 2026-10-31
 
 - 新增：352 算子 / 82 Reader / 21 route；新增 Engle-Granger 残差协整、Johansen 迹/最大特征值协整两个时间序列算子；未修改核心层。
