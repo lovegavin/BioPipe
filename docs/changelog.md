@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.63.0 — 2026-10-31
+
+- 新增：333 算子 / 82 Reader / 21 route；新增互相关函数、BDS 非线性依赖、差分符号检验三个时间序列诊断算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension56.py` 4 项、`tests/test_r_oracles47.py` 1 项，合计 **5 passed**；CCF/差分符号对照 R，BDS 对照 statsmodels；registry clean；参考页 333/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 279 passed。
+- 边界：CCF 要求 `lags < n`；差分符号要求至少两个非零差分；BDS 要求 `max_dim >= 2`、`n >= max_dim + 2`、非常量，epsilon 缺省 0.5×sd。
+
 ## 0.62.0 — 2026-10-31
 
 - 新增：330 算子 / 82 Reader / 21 route；新增 Fowlkes-Mallows、同质/完整/V-measure、成对混淆矩阵三个聚类一致性算子；未修改核心层。

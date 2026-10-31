@@ -3108,6 +3108,112 @@
     "quality": "auto"
   },
   {
+    "id": "bds_test",
+    "kind": "operator",
+    "title": "BDS nonlinearity test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "max_dim": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 10,
+          "default": 2,
+          "title": "Max Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "epsilon": {
+          "type": "number",
+          "exclusiveMinimum": 0.0,
+          "title": "epsilon",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "distance": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 5.0,
+          "default": 1.5,
+          "title": "Distance",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/bds_test.py",
+    "tests": [
+      "tests/test_extension56.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/bds_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "bh_adjust",
     "kind": "operator",
     "title": "Benjamini-Hochberg FDR",
@@ -8641,6 +8747,130 @@
     "quality": "auto"
   },
   {
+    "id": "cross_correlation",
+    "kind": "operator",
+    "title": "Cross-correlation function",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "first_label": {
+          "type": "string",
+          "title": "First Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "second_label": {
+          "type": "string",
+          "title": "Second Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "lags": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "title": "Lags",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0.001,
+          "maximum": 0.5,
+          "default": 0.05,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "first_label",
+        "second_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/cross_correlation.py",
+    "tests": [
+      "tests/test_extension56.py",
+      "tests/test_r_oracles47.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/cross_correlation.md",
+    "quality": "auto"
+  },
+  {
     "id": "cumulative_incidence",
     "kind": "operator",
     "title": "Cumulative incidence",
@@ -9938,6 +10168,100 @@
     ],
     "doc": "docs/reference/operators/describe.md",
     "quality": "reviewed"
+  },
+  {
+    "id": "difference_sign",
+    "kind": "operator",
+    "title": "Difference-sign test",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "greater",
+            "less"
+          ],
+          "default": "two-sided",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/difference_sign.py",
+    "tests": [
+      "tests/test_extension56.py",
+      "tests/test_r_oracles47.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/difference_sign.md",
+    "quality": "auto"
   },
   {
     "id": "distance_correlation",

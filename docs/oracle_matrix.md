@@ -1,5 +1,13 @@
 # 权威实现对照矩阵
 
+## 0.63.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `cross_correlation` | R `stats::ccf` | `tests/test_r_oracles47.py` | lags −3..3：0.46271424434198255 / 0.4797494951287023 / 0.43048539150224246 / 0.07044306406400333 / -0.31952605529685163 / -0.47744743421157804 / -0.6312251034754807；`lags < n` |
+| `difference_sign` | R `randtests::difference.sign.test` | `tests/test_r_oracles47.py` | x 12 点：z 1.4411533842457842、p 0.14954135458461512；零差分剔除 |
+| `bds_test` | Python `statsmodels.tsa.stattools.bds` | `tests/test_extension56.py` | 12 点、max_dim=2、eps=0.5：statistic 4.940627273908729、p 7.787164227744485e-07；R `tseries` 协方差缩放不同，不作为 oracle |
+
 ## 0.62.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
