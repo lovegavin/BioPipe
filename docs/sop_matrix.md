@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（366；下表为 89 个早期算子，0.8–0.74 新增见末尾证据）
+## 3. Operator（366；下表为 89 个早期算子，0.8–0.76 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
