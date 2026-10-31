@@ -1,3 +1,9 @@
+## 0.79.0 — 2026-10-31
+
+- 新增：372 算子 / 82 Reader / 21 route；新增逆方差固定/随机效应 Meta 回归（`meta_regression`）；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension72.py` 4 项、`tests/test_r_oracles63.py` 1 项，合计 **5 passed**；R 对照 `metafor` 固定效应与 DL 随机效应；registry clean；参考页 372/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 318 passed。
+- 边界：一个 `[study,feature]` 表，效应量/方差/moderators 必须为数值列；隐式截距；random 仅 DL，tau2 分母用 `tr(P)`；不做置换检验、发表偏倚或网状 Meta。
+
 ## 0.78.0 — 2026-10-31
 
 - 新增：371 算子 / 82 Reader / 21 route；新增 Beta 回归与冗余分析（RDA）两个回归/约束排序算子；未修改核心层。

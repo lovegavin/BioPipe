@@ -42976,6 +42976,232 @@
         },
         {
           "protocol_version": 1,
+          "id": "meta_regression",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.meta_regression:MetaRegressionStep",
+          "title": "Meta-regression",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "study_dim": {
+                "type": "string",
+                "default": "study",
+                "title": "Study Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "effect_label": {
+                "type": "string",
+                "title": "Effect Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "variance_label": {
+                "type": "string",
+                "title": "Variance Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "moderators": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Moderators",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "categorical": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": [],
+                "title": "分类协变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "method": {
+                "type": "string",
+                "enum": [
+                  "fixed",
+                  "random"
+                ],
+                "default": "random",
+                "title": "方法",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "confidence": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 80
+              }
+            },
+            "required": [
+              "effect_label",
+              "variance_label",
+              "moderators"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "study_dim",
+                    "default": "study"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.24",
+            "scipy>=1.10",
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "scipy",
+            "statsmodels"
+          ],
+          "name": "meta_regression",
+          "module": "src.task.step.steps.meta_regression",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "study_dim",
+              "label": "Study Dim",
+              "type": "string",
+              "required": false,
+              "default": "study"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "effect_label",
+              "label": "Effect Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "variance_label",
+              "label": "Variance Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "moderators",
+              "label": "Moderators",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "categorical",
+              "label": "分类协变量",
+              "type": "list",
+              "required": false,
+              "default": []
+            },
+            {
+              "key": "method",
+              "label": "方法",
+              "type": "choice",
+              "required": false,
+              "default": "random",
+              "options": [
+                "fixed",
+                "random"
+              ]
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "study_dim": "study",
+            "feature_dim": "feature",
+            "categorical": [],
+            "method": "random",
+            "confidence": 0.95
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "min_max_scale",
           "version": "1.0.0",
           "kind": "operator",
