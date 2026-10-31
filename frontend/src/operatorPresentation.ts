@@ -301,6 +301,8 @@ export const builtinPresentation = {
   ewma_chart: { category: "统计分析", icon: "ChartScatter" },
   correspondence_analysis: { category: "统计分析", icon: "ChartScatter" },
   tobit: { category: "统计分析", icon: "ChartLine" },
+  garch: { category: "统计分析", icon: "ChartLine" },
+  var_model: { category: "统计分析", icon: "ChartScatter" },
 } satisfies Record<string, Pick<Operator, "category" | "icon" | "preview">>;
 
 export function presentOperator(spec: Operator): Operator {

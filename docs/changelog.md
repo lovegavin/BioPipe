@@ -1,3 +1,10 @@
+## 0.76.0 — 2026-10-31
+
+- 新增：366 算子 / 82 Reader / 21 route；新增 GARCH 波动率模型与向量自回归（VAR）两个时间序列算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension69.py` 4 项、`tests/test_r_oracles60.py` 1 项，合计 **5 passed**；GARCH 用 `arch` 8.0.0，VAR 用 R `vars::VAR`；registry clean；参考页 366/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 312 passed。
+- 修复：`VarModelStep` 误把 `table_frame` 的 `__sample__` 列纳入特征，导致所有行被数值化丢弃；现在先排除该内部列，再检查至少两个序列。
+- 边界：GARCH 只实现常均值/零均值 GARCH，不实现 EGARCH/GJR/ARCH-in-mean；VAR 只输出简约式系数，不提供 IRF/FEVD/结构识别。
+
 ## 0.75.0 — 2026-10-31
 
 - 新增：364 算子 / 82 Reader / 21 route；新增对应分析（CA）与 Tobit 左删失回归两个算子；未修改核心层。

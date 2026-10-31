@@ -15754,6 +15754,127 @@
     "quality": "auto"
   },
   {
+    "id": "garch",
+    "kind": "operator",
+    "title": "GARCH volatility model",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "mean": {
+          "type": "string",
+          "enum": [
+            "Constant",
+            "Zero"
+          ],
+          "default": "Constant",
+          "title": "Mean",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "p": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "default": 1,
+          "title": "P",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "q": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3,
+          "default": 1,
+          "title": "Q",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "dist": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "t"
+          ],
+          "default": "normal",
+          "title": "Dist",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/garch.py",
+    "tests": [
+      "tests/test_extension69.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/garch.md",
+    "quality": "auto"
+  },
+  {
     "id": "gaussian_mixture",
     "kind": "operator",
     "title": "Gaussian mixture clustering",
@@ -38332,6 +38453,99 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/van_waerden.md",
+    "quality": "auto"
+  },
+  {
+    "id": "var_model",
+    "kind": "operator",
+    "title": "Vector autoregression",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "lags": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "title": "Lags",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "trend": {
+          "type": "string",
+          "enum": [
+            "c",
+            "n",
+            "ct"
+          ],
+          "default": "c",
+          "title": "Trend",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/var_model.py",
+    "tests": [
+      "tests/test_extension69.py",
+      "tests/test_r_oracles60.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/var_model.md",
     "quality": "auto"
   },
   {

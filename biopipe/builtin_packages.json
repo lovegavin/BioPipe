@@ -31136,6 +31136,224 @@
         },
         {
           "protocol_version": 1,
+          "id": "garch",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.garch:GarchStep",
+          "title": "GARCH volatility model",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "value_label": {
+                "type": "string",
+                "title": "数值字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "mean": {
+                "type": "string",
+                "enum": [
+                  "Constant",
+                  "Zero"
+                ],
+                "default": "Constant",
+                "title": "Mean",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "p": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3,
+                "default": 1,
+                "title": "P",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "q": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3,
+                "default": 1,
+                "title": "Q",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "dist": {
+                "type": "string",
+                "enum": [
+                  "normal",
+                  "t"
+                ],
+                "default": "normal",
+                "title": "Dist",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "value_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "arch>=6"
+          ],
+          "dependency_imports": [
+            "arch"
+          ],
+          "name": "garch",
+          "module": "src.task.step.steps.garch",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Fit a GARCH(p, q) model with a constant or zero mean.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "value_label",
+              "label": "数值字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "mean",
+              "label": "Mean",
+              "type": "choice",
+              "required": false,
+              "default": "Constant",
+              "options": [
+                "Constant",
+                "Zero"
+              ]
+            },
+            {
+              "key": "p",
+              "label": "P",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1,
+              "max": 3
+            },
+            {
+              "key": "q",
+              "label": "Q",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1,
+              "max": 3
+            },
+            {
+              "key": "dist",
+              "label": "Dist",
+              "type": "choice",
+              "required": false,
+              "default": "normal",
+              "options": [
+                "normal",
+                "t"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "mean": "Constant",
+            "p": 1,
+            "q": 1,
+            "dist": "normal"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "gaussian_mixture",
           "version": "1.0.0",
           "kind": "operator",
@@ -62336,6 +62554,167 @@
             "feature_dim": "feature",
             "sample_dim": "sample",
             "group_dim": "label"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "var_model",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.var_model:VarModelStep",
+          "title": "Vector autoregression",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "lags": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 1,
+                "title": "Lags",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "trend": {
+                "type": "string",
+                "enum": [
+                  "c",
+                  "n",
+                  "ct"
+                ],
+                "default": "c",
+                "title": "Trend",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "var_model",
+          "module": "src.task.step.steps.var_model",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Estimate a VAR(p) model with a deterministic OLS fit.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "lags",
+              "label": "Lags",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 1
+            },
+            {
+              "key": "trend",
+              "label": "Trend",
+              "type": "choice",
+              "required": false,
+              "default": "c",
+              "options": [
+                "c",
+                "n",
+                "ct"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "lags": 1,
+            "trend": "c"
           },
           "legacy_parameters": false
         },
