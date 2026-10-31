@@ -1,3 +1,11 @@
+## 0.93.0 — 2026-10-31
+
+- 新增 `probit_regression` 概率单位回归：一个二分类响应表，`response_label` + `predictors`，隐式截距，支持可选 `categorical`；输出系数/标准误/z/p/置信区间，info 记录 loglik、AIC 与 pseudo-R²。
+- 算子总数 **392**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 392/85，registry `errors []`；Statistics 类别 229→230。
+- 验证：`tests/test_extension86.py` 3 项 + `tests/test_r_oracles74.py` 1 项 = **4 passed**；R `glm(family=binomial(link="probit"))` 逐值对照（coef/SE 3e-5）；增量门 **20 passed**；`-W error` **7 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：仅二分类、无权重/偏移/稳健方差；字符串响应需先编码为数值；水平数不为 2、响应列同时作预测列、缺失预测列或秩亏时报错。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.92.0 — 2026-10-31
 
 - 新增 `sarima` 季节性 ARIMA：支持 `(p,d,q)(P,D,Q,s)`、常数趋势、置信区间；输出系数/标准误/z/p/CI 与 sigma2、loglik、AIC/BIC、阶数和样本数。
