@@ -1,3 +1,10 @@
+## 0.107.0 — 2026-10-31
+
+- 新增第五条公开数据路线组合示例 `pbc_competing_survival`：R `survival::pbc` 418 样本，232 删失 / 25 肝移植 / 161 死亡；组合性别分层 KM/log-rank、Cox、累积发生率与 Fine-Gray 竞争风险模型。
+- 结果：KM 中位生存女性 3445 天、男性 2386 天；log-rank χ²=2.977、P=0.0845；Cox C-index 0.811；10 年 CIF 死亡女性 0.519、男性 0.597；Fine-Gray 年龄 HR 1.041、bili HR 1.122、albumin HR 0.424。
+- 数据来源：R `survival::pbc`；引用 Therneau & Grambsch (2000), *Modeling Survival Data: Extending the Cox Model*。不新增算子/Reader/路线，registry 仍 **402/85/21/6**。
+- 验证：`tests/test_route_combinations.py` **10 passed**；增量门 **25 passed（另 1 skipped）**；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
+
 ## 0.106.0 — 2026-10-31
 
 - 新增第四条公开数据路线组合示例 `diabetes_classification_regression`：scikit-learn `load_diabetes` 442 样本 × 10 特征；同一组特征同时做高/低进展分类（`random_forest_classifier`）与连续进展回归（`ridge_regression`），并用 `pca` + `join` + `scatter` 观察分组重叠。

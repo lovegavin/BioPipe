@@ -10,8 +10,9 @@
 | `lung_regression_survival/` | 回归 + 生存分析 + 可视化 | NCCTG 肺癌数据；用生理指标回归年龄，并做性别分层 KM、log-rank 与 Cox 分析 |
 | `mite_community_ml/` | 群落多样性 + 排序/环境拟合 + 机器学习分类 | `vegan::mite` 泥炭沼泽甲螨数据；alpha 多样性、Bray-Curtis PCoA、PERMANOVA/envfit，以及随机森林预测灌木覆盖 |
 | `diabetes_classification_regression/` | 机器学习分类 + 机器学习回归 + PCA 可视化 | scikit-learn diabetes 数据；用同一组基线特征同时预测高/低进展组与连续进展值，并用 PCA 观察分组重叠 |
+| `pbc_competing_survival/` | 生存分析 + 竞争风险 | `survival::pbc` 原发性胆汁性胆管炎数据；性别分层 KM、Cox、CIF 与 Fine-Gray 竞争风险模型 |
 
-四个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
+五个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
 
 ## 运行
 
@@ -21,6 +22,7 @@
     python scripts/run.py examples/route_combinations/lung_regression_survival
     python scripts/run.py examples/route_combinations/mite_community_ml
     python scripts/run.py examples/route_combinations/diabetes_classification_regression
+    python scripts/run.py examples/route_combinations/pbc_competing_survival
 
 只做静态校验：
 
@@ -28,6 +30,7 @@
     python scripts/run.py examples/route_combinations/lung_regression_survival --check
     python scripts/run.py examples/route_combinations/mite_community_ml --check
     python scripts/run.py examples/route_combinations/diabetes_classification_regression --check
+    python scripts/run.py examples/route_combinations/pbc_competing_survival --check
 
 每个示例的输出写入各自 `output/`：`figures/` 为图片，`steps/` 为每步 JSON 摘要，`run_summary.txt/json` 为运行摘要。`input/` 中的 CSV 来自公开数据集，字段经过最小化整理；示例用于演示组合方式，不构成临床或生物学结论。
 
@@ -61,6 +64,13 @@
 - 引用：Efron, B., Hastie, T., Johnstone, I., & Tibshirani, R. (2004). Least Angle Regression. *Annals of Statistics*, 32(2), 407–499.
 - 说明：分类标签由目标中位数派生，仅用于演示；不是独立临床诊断标签。
 
+### survival::pbc（原发性胆汁性胆管炎）
+
+- 418 个样本；`status` 为 232 删失 / 25 肝移植 / 161 死亡；女性 374、男性 44。
+- 来源：R 包 `survival` 的 `pbc` 数据集，<https://cran.r-project.org/package=survival>。
+- 字段：`time`（天）、`status`（0=删失，1=肝移植，2=死亡）、`death`（status==2）、`age`、`sex`、`sex_code`（女=0，男=1）、`bili`、`albumin`、`edema`。样本 ID 重新编号为 `P001...`。
+- 引用：Therneau, T.M. & Grambsch, P.M. (2000). *Modeling Survival Data: Extending the Cox Model*. Springer。
+
 ## 组合方式
 
 任务 YAML 是扁平的算子 DAG。示例把 route 中的算子直接展开为多个分支，而不是在 YAML 里引用 route ID：
@@ -70,12 +80,13 @@
 - `mite_community_ml`：`diversity` 与 `distance_matrix` + `reduce` 两个分支；`permanova`、`envfit` 共享距离/坐标；同一丰度矩阵再进入 `random_forest_classifier`，最后 `describe`。PCoA 图使用无着色散点，因为 `join` 输出会丢失 component 标签，`scatter` 无法安全接收带元数据的坐标。
 
 - `diabetes_classification_regression`：`random_forest_classifier` 与 `ridge_regression` 共享同一特征/标签表；`pca` + `join` + `scatter` 提供无监督分组视图。
+- `pbc_competing_survival`：`kaplan_meier`/`logrank_test`/`cox_regression` 共享同一临床表；`cumulative_incidence` 与 `fine_gray` 把肝移植作为竞争事件，分别给出绝对风险和子分布风险。
 
 Studio 中可以把这些任务作为图导入，再拆分、合并或替换分支。逐步解释、指标和限制见各目录的 `ANALYSIS.md`。
 
 ## 测试
 
-`tests/test_route_combinations.py` 对四个示例执行：
+`tests/test_route_combinations.py` 对五个示例执行：
 
 1. `--check` 静态校验；
 2. 复制到临时目录后实际运行，检查 `output/run_summary.json` 的状态与步骤数。

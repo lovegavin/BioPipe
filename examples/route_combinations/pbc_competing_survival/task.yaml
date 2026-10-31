@@ -1,0 +1,78 @@
+name: pbc_competing_survival
+
+sources:
+  clinical:
+    path: input/pbc_clinical.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+steps:
+  - name: kaplan_meier
+    inputs: [clinical]
+    params:
+      time_label: time
+      event_label: death
+      group_label: sex
+      groups: ["f", "m"]
+      filename: km_death_by_sex.png
+      title: "PBC: overall survival by sex"
+      show_ci: true
+
+  - name: logrank_test
+    inputs: [clinical]
+    params:
+      time_label: time
+      event_label: death
+      group_label: sex
+      groups: ["f", "m"]
+      pairwise: false
+
+  - name: cox_regression
+    inputs: [clinical]
+    params:
+      time_label: time
+      event_label: death
+      covariates: [age, sex_code, bili, albumin, edema]
+      output: cox_result
+
+  - name: forest_plot
+    inputs: [cox_result]
+    params:
+      dim: covariate
+      stat_dim: statistic
+      filename: cox_forest.png
+      title: "PBC: cause-specific Cox model"
+      hr_label: HR
+      low_label: CI_low
+      high_label: CI_high
+      p_label: P
+
+  - name: cumulative_incidence
+    inputs: [clinical]
+    params:
+      time_label: time
+      event_label: status
+      group_label: sex
+      groups: ["f", "m"]
+      event_of_interest: 2
+      competing_event: 1
+      horizon: 3650
+      output: cif_result
+
+  - name: describe
+    inputs: [cif_result]
+
+  - name: fine_gray
+    inputs: [clinical]
+    params:
+      time_label: time
+      event_label: status
+      covariates: [age, sex_code, bili, albumin, edema]
+      event_code: 2
+      censor_code: 0
+      output: fine_gray_result
+
+  - name: describe
+    inputs: [fine_gray_result]
