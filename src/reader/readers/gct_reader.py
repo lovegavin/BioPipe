@@ -62,10 +62,19 @@ class GctReader(Reader):
                 )
             genes.append(fields[0])
             descriptions.append(fields[1])
-            try:
-                rows.append([float(x) for x in fields[2:]])
-            except ValueError as exc:
-                raise ReaderError(f"GCT reader: non-numeric expression value in {fields[0]!r}") from exc
+            values = []
+            for raw in fields[2:]:
+                token = raw.strip()
+                if token == "" or token.lower() in {"na", "nan", "null", "--"}:
+                    values.append(float("nan"))
+                    continue
+                try:
+                    values.append(float(token))
+                except ValueError as exc:
+                    raise ReaderError(
+                        f"GCT reader: non-numeric expression value in {fields[0]!r}"
+                    ) from exc
+            rows.append(values)
         if len(rows) != n_rows:
             raise ReaderError(f"GCT reader: expected {n_rows} data rows, got {len(rows)}")
         data = np.asarray(rows, dtype=np.float32).T

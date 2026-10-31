@@ -16,8 +16,9 @@
 | `mtcars_regression_classification/` | 回归 + 分类 + 结构探索 | R datasets::mtcars 1974 年汽车数据；用重量/马力等预测油耗、判断变速箱类型，并用 PCA 与 Spearman 热图看共线结构 |
 | `refseq_cds_sequence_features/` | FASTA 读取 + 序列统计 + 翻译/蛋白性质 + 密码子使用 | NCBI RefSeq 六个人类癌症相关基因 CDS；用 FastaReader 读入，检查长度/GC，翻译后比较蛋白理化性质，并汇总密码子使用 |
 | `thousand_genomes_chr22_population/` | VCF 读取 + 群体质控 + PCA + FST + 亲缘关系 | 1000 Genomes Phase 3 chr22 的 200 kb 区间；用 VcfReader 读入 100 个样本，做 MAF/缺失/HWE 过滤、PCA、AFR-EUR Hudson FST 与 GRM 热图 |
+| `leukemia_all_aml_expression/` | GCT 读取 + PCA + 差异分析 + FDR 热图 + 随机森林 | GSEA Leukemia 表达谱；用 GctReader 读取 48 个 ALL/AML 样本，做 Mann-Whitney + BH、显著基因热图与分类 |
 
-十个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
+十一个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
 
 ## 运行
 
@@ -33,6 +34,7 @@
     python scripts/run.py examples/route_combinations/mtcars_regression_classification
     python scripts/run.py examples/route_combinations/refseq_cds_sequence_features
     python scripts/run.py examples/route_combinations/thousand_genomes_chr22_population
+    python scripts/run.py examples/route_combinations/leukemia_all_aml_expression
 
 只做静态校验：
 
@@ -46,6 +48,7 @@
     python scripts/run.py examples/route_combinations/mtcars_regression_classification --check
     python scripts/run.py examples/route_combinations/refseq_cds_sequence_features --check
     python scripts/run.py examples/route_combinations/thousand_genomes_chr22_population --check
+    python scripts/run.py examples/route_combinations/leukemia_all_aml_expression --check
 
 每个示例的输出写入各自 `output/`：`figures/` 为图片，`steps/` 为每步 JSON 摘要，`run_summary.txt/json` 为运行摘要。`input/` 中的 CSV 来自公开数据集，字段经过最小化整理；示例用于演示组合方式，不构成临床或生物学结论。
 
@@ -125,6 +128,15 @@
 - 引用：1000 Genomes Project Consortium et al. (2015). A global reference for human genetic variation. *Nature*, 526, 68–74. <https://doi.org/10.1038/nature15393>。
 - 该示例用于验证 VcfReader 与群体遗传学算子的组合，不构成祖源、亲缘或医学结论。
 
+
+### GSEA Leukemia（ALL/AML 表达谱）
+
+- 48 个样本、24 个 ALL、24 个 AML、10,056 个基因；GCT 1.2，表达值为已归一化的有符号芯片值。
+- 来源：GSEA 示例数据集 `Leukemia`，<https://www.gsea-msigdb.org/gsea/datasets.jsp>；本示例的 `input/Leukemia.gct` 和 `Leukemia.cls` 来自 GitHub 镜像 `suhasvasaikar/GSEA_PHP` 的传输副本，内容按 GSEA 示例页核对。
+- 样本分组写入 `input/leukemia_samples.csv`（`sample,group`），表达矩阵保留在 `input/Leukemia.gct`；`GctReader` 输出 `sample × gene`。
+- 引用：Armstrong, S.A. et al. (2002). MLL translocations specify a distinct gene expression profile that distinguishes a unique leukemia. *Nature Genetics*, 30, 41–47. <https://doi.org/10.1038/ng809>。
+- 该数据用于演示 GCT 读取与表达谱分析，不是临床诊断/预后数据；ALL/AML 是强分离的经典教学数据，不能据此推断其他队列。
+
 ## 组合方式
 
 任务 YAML 是扁平的算子 DAG。示例把 route 中的算子直接展开为多个分支，而不是在 YAML 里引用 route ID：
@@ -140,12 +152,13 @@
 - `mtcars_regression_classification`：compare_groups 比较自动/手动挡的 mpg、wt、hp；ridge_regression 用 9 个特征预测 mpg；logistic_regression 与 random_forest_classifier 用同一组特征预测 am；pca + join + scatter 看变速箱分组；correlation + heatmap 看 10 个变量的共线结构。
 - `refseq_cds_sequence_features`：FastaReader 读入 6 条 RefSeq CDS；sequence_stats 检查长度/GC；translate + protein_properties 得到蛋白性质；heatmap 展示基因×性质谱；correlation + heatmap 检查性质相关；codon_usage 汇总密码子使用。
 - `thousand_genomes_chr22_population`：VcfReader 读入 100 个样本的 chr22 区间；maf/missing/hwe 做变异质控；pca 压缩变异维，boxplot 按 super_pop 展示 PC1/PC2；fst 计算 AFR-EUR Hudson FST 并用 histogram 展示分布；relatedness 计算 GRM，rename_dim 后聚类热图展示个体间结构。
+- `leukemia_all_aml_expression`：GctReader 读取 48 个样本 × 10,056 个基因；impute → pca → 两个 boxplot；compare_groups(Mann-Whitney) → select(P) → bh_adjust → filter_by(q<0.05) → heatmap（显著基因中 top-variance 40）；random_forest_classifier 在全部基因上训练，最后 describe。
 
 Studio 中可以把这些任务作为图导入，再拆分、合并或替换分支。逐步解释、指标和限制见各目录的 `ANALYSIS.md`。
 
 ## 测试
 
-`tests/test_route_combinations.py` 对十个示例执行：
+`tests/test_route_combinations.py` 对十一个示例执行：
 
 1. `--check` 静态校验；
 2. 复制到临时目录后实际运行，检查 `output/run_summary.json` 的状态与步骤数。

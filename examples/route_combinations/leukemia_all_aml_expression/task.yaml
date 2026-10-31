@@ -1,0 +1,125 @@
+name: leukemia_all_aml_expression
+
+sources:
+  expression:
+    path: input/Leukemia.gct
+    dims: [sample, gene]
+    labels:
+      sample: builtin
+      gene: builtin
+
+  samples:
+    path: input/leukemia_samples.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+steps:
+  - name: impute
+    inputs: [expression]
+    params:
+      dim: gene
+      method: median
+      output: expr_imp
+
+  - name: pca
+    inputs: [expr_imp]
+    params:
+      dim: gene
+      n_components: 4
+      output: pcs
+
+  - name: boxplot
+    inputs: [pcs, samples]
+    params:
+      dim: component
+      value_label: PC1
+      group_dim: sample
+      group_label: group
+      groups: [ALL, AML]
+      filename: pca_pc1_by_group.png
+      title: "Leukemia: PC1 by ALL/AML group"
+      xlabel: group
+      ylabel: PC1 score
+
+  - name: boxplot
+    inputs: [pcs, samples]
+    params:
+      dim: component
+      value_label: PC2
+      group_dim: sample
+      group_label: group
+      groups: [ALL, AML]
+      filename: pca_pc2_by_group.png
+      title: "Leukemia: PC2 by ALL/AML group"
+      xlabel: group
+      ylabel: PC2 score
+
+  - name: compare_groups
+    inputs: [expr_imp, samples]
+    params:
+      dim: gene
+      group_dim: sample
+      group_label: group
+      mode: two_groups
+      group_a: ALL
+      group_b: AML
+      method: mannwhitney
+      output: stats
+
+  - name: select
+    inputs: [stats]
+    params:
+      dim: statistic
+      labels: [P]
+      output: pvals
+
+  - name: bh_adjust
+    inputs: [pvals]
+    params:
+      feature_dim: gene
+      value_dim: statistic
+      output: qvals
+
+  - name: filter_by
+    inputs: [expr_imp, qvals]
+    params:
+      dim: gene
+      rules:
+        - field: qvalue
+          max: 0.05
+      output: sig_expr
+
+  - name: heatmap
+    inputs: [sig_expr]
+    params:
+      dim: gene
+      other_dim: sample
+      select: variance
+      top_n: 40
+      standardize: row
+      cluster_rows: true
+      cluster_cols: true
+      show_row_labels: true
+      filename: top_significant_genes.png
+      title: "Leukemia: top variable genes by ALL/AML Mann-Whitney"
+      figsize: [12, 10]
+
+  - name: random_forest_classifier
+    inputs: [expr_imp, samples]
+    params:
+      sample_dim: sample
+      feature_dim: gene
+      label_dim: feature
+      target_label: group
+      valid_labels: [ALL, AML]
+      n_estimators: 300
+      test_size: 0.25
+      cv_folds: 5
+      random_state: 42
+      scale: true
+      output: rf
+
+  - name: describe
+    inputs: [rf]

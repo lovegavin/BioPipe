@@ -7,6 +7,7 @@ import pandas as pd
 import pytest
 
 from src.core import Form
+from src.reader import pick_reader
 from src.reader.readers.bedgraph_reader import BedGraphReader
 from src.reader.readers.excel_reader import ExcelReader
 from src.reader.readers.fai_reader import FaiReader
@@ -247,3 +248,19 @@ def test_json_and_fai_readers(tmp_path):
     f = FaiReader().read(fai, ["record", "field"], {})
     assert f.data.shape == (2, 5)
     assert list(f.labels["field"]) == ["name", "length", "offset", "linebases", "linewidth"]
+
+
+def test_gct_reader_accepts_missing_tokens(tmp_path):
+    path = tmp_path / "expr_missing.gct"
+    path.write_text(
+        "#1.2\n2 2\nName\tDescription\ts1\ts2\n"
+        "g1\tdesc1\t1\tNA\ng2\tdesc2\t\t4\n",
+        encoding="utf-8",
+    )
+    form = GctReader().read(path, ["sample", "gene"], {})
+    assert form.data.shape == (2, 2)
+    assert form.data[0, 0] == 1
+    assert np.isnan(form.data[0, 1])
+    assert np.isnan(form.data[1, 0])
+    assert form.data[1, 1] == 4
+    assert isinstance(pick_reader(path), GctReader)

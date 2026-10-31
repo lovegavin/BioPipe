@@ -1,3 +1,12 @@
+## 0.113.0 — 2026-10-31
+
+- 新增第十一条公开数据路线组合示例 `leukemia_all_aml_expression`：GSEA 示例 Leukemia GCT，48 个样本（24 ALL / 24 AML）× 10,056 个基因，首次以 `GctReader` 专用 Reader 读取。
+- 组合：`impute`（中位数，无实际操作）→ `pca`（4 成分）→ PC1/PC2 `boxplot`；`compare_groups`（Mann-Whitney）→ `select`（P）→ `bh_adjust` → `filter_by`（q≤0.05）→ top-variance 40 `heatmap`；`random_forest_classifier` 在全部基因上训练并 `describe`。不新增算子/Reader/路线，registry 仍 **402/85/21/6**。
+- 结果：PC1 解释方差 **0.202433**、PC2 **0.165925**；PC1 中位数 ALL -16.81 / AML 24.06，PC2 31.26 / -25.16；10,056 个检验经 BH 后 **5,261 个基因 q<0.05**；随机森林测试 accuracy/macro F1/AUC 1.0、5 折 CV **0.9714±0.0571**（全部 10,056 个基因，无标签驱动筛选）。图：PC1/PC2 分组箱线图、显著基因 top-variance 热图。
+- 修复 `GctReader` 的缺失 token 处理：空字符串、`NA`、`na`、`NaN`、`null`、`--` 均映射为 NaN，其他非法值仍报错；新增回归测试。当前 Leukemia 数据没有空表达单元格，176 处 `NA` 只是基因名/描述子串，`impute` 报告 `no missing values to fill`。
+- 说明：`compare_groups` 对有符号值计算 log2 时产生一次警告，本路线只使用 P/q、不使用 log2FC；48 个样本、无独立验证，ALL/AML 为强分离教学数据，不作临床结论。
+- 验证：路线组合 **22 passed**；`tests/test_extension3.py` **20 passed**；增量门 **58 passed**；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
+
 ## 0.112.0 — 2026-10-31
 
 - 新增第十条公开数据路线组合示例 `thousand_genomes_chr22_population`：1000 Genomes Phase 3 chr22 GRCh37 16,000,000–16,200,000（约 200 kb），100 个样本（每个 super-population 20 个：AFR/AMR/EAS/EUR/SAS）；`VcfReader` 读取 1,663 个变异行，MAF/缺失/HWE 过滤后保留 97 个变异。
