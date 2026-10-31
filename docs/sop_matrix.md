@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**；0.41 新增 **5 passed**、增量门 **21 passed**；0.42 新增 **5 passed**、增量门 **21 passed**；0.43 新增 **6 passed**、增量门 **22 passed**；0.44 新增 **6 passed**、增量门 **22 passed**；0.45 新增 **4 passed**、增量门 **20 passed**；0.46 新增 **5 passed**、增量门 **26 passed**；0.47 新增 **5 passed**、增量门 **21 passed**；0.48 新增 **5 passed**、增量门 **21 passed**；0.49 新增 **5 passed**、增量门 **21 passed**；0.50 新增 **5 passed**、增量门 **21 passed**；0.51 新增 **5 passed**、增量门 **21 passed**；0.52 新增 **5 passed**、增量门 **21 passed**；0.53 新增 **5 passed**、增量门 **21 passed**；0.54 新增 **5 passed**、增量门 **21 passed**；0.55 新增 **5 passed**、增量门 **21 passed**；0.56 新增 **5 passed**、增量门 **21 passed**；0.57 新增 **5 passed**、增量门 **21 passed**；0.58 新增 **5 passed**、增量门 **21 passed**；0.59 新增 **5 passed**、增量门 **21 passed**；0.60 新增 **5 passed**、增量门 **21 passed**；0.61 新增 **5 passed**、增量门 **21 passed**；0.62 新增 **5 passed**、增量门 **21 passed**；0.63 新增 **5 passed**、增量门 **21 passed**；0.64 新增 **5 passed**、增量门 **21 passed**；0.65 新增 **5 passed**、增量门 **21 passed**；0.66 新增 **5 passed**、增量门 **21 passed**；0.67 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**；0.41 新增 **5 passed**、增量门 **21 passed**；0.42 新增 **5 passed**、增量门 **21 passed**；0.43 新增 **6 passed**、增量门 **22 passed**；0.44 新增 **6 passed**、增量门 **22 passed**；0.45 新增 **4 passed**、增量门 **20 passed**；0.46 新增 **5 passed**、增量门 **26 passed**；0.47 新增 **5 passed**、增量门 **21 passed**；0.48 新增 **5 passed**、增量门 **21 passed**；0.49 新增 **5 passed**、增量门 **21 passed**；0.50 新增 **5 passed**、增量门 **21 passed**；0.51 新增 **5 passed**、增量门 **21 passed**；0.52 新增 **5 passed**、增量门 **21 passed**；0.53 新增 **5 passed**、增量门 **21 passed**；0.54 新增 **5 passed**、增量门 **21 passed**；0.55 新增 **5 passed**、增量门 **21 passed**；0.56 新增 **5 passed**、增量门 **21 passed**；0.57 新增 **5 passed**、增量门 **21 passed**；0.58 新增 **5 passed**、增量门 **21 passed**；0.59 新增 **5 passed**、增量门 **21 passed**；0.60 新增 **5 passed**、增量门 **21 passed**；0.61 新增 **5 passed**、增量门 **21 passed**；0.62 新增 **5 passed**、增量门 **21 passed**；0.63 新增 **5 passed**、增量门 **21 passed**；0.64 新增 **5 passed**、增量门 **21 passed**；0.65 新增 **5 passed**、增量门 **21 passed**；0.66 新增 **5 passed**、增量门 **21 passed**；0.67 新增 **5 passed**、增量门 **21 passed**；0.69 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（348；下表为 89 个早期算子，0.8–0.68 新增见末尾证据）
+## 3. Operator（350；下表为 89 个早期算子，0.8–0.69 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -722,7 +722,7 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - `tests/test_extension60.py` 4 项、`tests/test_r_oracles51.py` 1 项，合计 **5 passed**；三项均对照 R `lm` 的 `rstandard`/`rstudent` 与 PRESS 公式。
 - 参考 fixture：x=1..10、y=2+0.5x+[1,-1,2,-2,0,1,-1,2,-2,0]。标准化残差 **0.531727756723047618, -0.925417554187445868, 1.280648753153083019, -1.443697579606987080, -0.024552664144405371, 0.699750928115549509, -0.609837770696054715, 1.536778503783700067, -1.287537466695575450, 0.258678368135536407**；学生化残差 **0.506415078205768143, -0.916068854139824862, 1.343546134340419584, -1.570438047114258939, -0.022967779665450629, 0.675557709012263419, -0.584191468491439103, 1.712323241759369008, -1.352655835647444293, 0.242989811997891242**；PRESS **29.579274620026872**，PRESS RMSE **1.719862628817397**。
 - 公式：OLS 含截距；标准化残差 `e/(s*sqrt(1-h))`；学生化残差 `e/(s_i*sqrt(1-h))`，`s_i²=(SSE-e²/(1-h))/(n-p-1)`；PRESS `sum((e/(1-h))²)`，RMSE `sqrt(PRESS/n)`。
-- 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 345/82/21；参考页 345 算子 / 82 Reader；增量门 21 passed；`-W error` 5 passed；Studio 前端 291 passed。
+- 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 345/82/21；参考页 345 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 291 passed。
 - 边界：输入为含响应列的 OLS 设计表；listwise 删除缺失行；要求 `n > p+1`、满秩、杠杆值不接近 1；p 含截距。
 
 ## 68. 0.68.0 扩展证据
@@ -734,3 +734,13 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - 公式：`pa = mean_subject[sum_c n_ic(n_ic-1)/(r_i(r_i-1))]`；AC1 `pe = sum_c pi_c(1-pi_c)/(q-1)`；Brennan-Prediger `pe=1/q`；Conger `pe = sum_c mean_p_c² - trace(S)/r`；`coeff=(pa-pe)/(1-pe)`。
 - 边界：仅实现未加权系数；`irrCAC` 的系数输出只保留约 5 位小数，R oracle 用 `abs=1e-5`，手算测试验证完整精度。
 - 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 348/82/21；参考页 348 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 294 passed。
+
+## 69. 0.69.0 扩展证据
+
+- 新增 2 个非线性序列算子：`approx_entropy`（近似熵 ApEn）、`hurst_exponent`（简单 R/S Hurst 指数）。
+- `approx_entropy`：一个 `[sample,feature]` 数值表；默认 `embedding_dim=2`、`radius=0.2*sd`；`ApEn=phi(m)-phi(m+1)`，phi 为嵌入向量在 Chebyshev 距离 r 内的平均对数比例（含自身）；要求 5–2000 个有限值且方差非零。
+- `hurst_exponent`：一个 `[sample,feature]` 数值表；先按 R `pracma::hurstexp` 约定把奇数长度序列用最后两个值的均值补齐，再计算 `H=log((max(cumsum(x-mean))-min(cumsum(x-mean)))/sd(x))/log(n)`。
+- `tests/test_extension62.py` 4 项、`tests/test_r_oracles53.py` 1 项，合计 **5 passed**；R 对照 `pracma::approx_entropy` 与 `hurstexp(..., display=FALSE)$Hs`。
+- 参考 fixture：`round(sin(linspace(0,8*pi,100))+0.1*arange(100)/100,1)`。ApEn **0.19343740801454112**；Hurst **0.54431529367338694**，n=100，奇数 99 点补齐为 100。
+- 边界：`approx_entropy` 的 `embedding_dim` 限 1–5，序列上限 2000；`hurst_exponent` 只实现简单 R/S 估计，不输出 `hurstexp` 的 Hrs/He/Hal/Ht 四种估计。
+- 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 350/82/21；参考页 350 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 296 passed。

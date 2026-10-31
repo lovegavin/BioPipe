@@ -1,5 +1,12 @@
 # 权威实现对照矩阵
 
+## 0.69.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `approx_entropy` | R `pracma::approx_entropy` | `tests/test_r_oracles53.py` | 100 点正弦 fixture，ApEn 0.19343740801454112；2 维嵌入、r=0.2*sd |
+| `hurst_exponent` | R `pracma::hurstexp(x)$Hs` | `tests/test_r_oracles53.py` | 同一 fixture，H 0.54431529367338694；奇数长度按 hurstexp 约定补齐 |
+
 ## 0.68.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

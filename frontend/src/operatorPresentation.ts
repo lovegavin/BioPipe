@@ -282,6 +282,8 @@ export const builtinPresentation = {
   gwet_ac1: { category: "统计分析", icon: "ChartLine" },
   brennan_prediger: { category: "统计分析", icon: "ChartBar" },
   conger_kappa: { category: "统计分析", icon: "ChartScatter" },
+  approx_entropy: { category: "统计分析", icon: "ChartLine" },
+  hurst_exponent: { category: "统计分析", icon: "TrendUp" },
   dotplot: artwork("可视化", "ChartScatter", "dotplot", "点大小与强度"),
   violin: artwork("可视化", "ChartLine", "violin", "分组密度与分布"),
   barplot: artwork("可视化", "ChartBar", "composition", "各组组成比例"),
