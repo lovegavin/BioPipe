@@ -1,0 +1,124 @@
+name: birthwt_risk_factors
+
+sources:
+  features:
+    path: input/birthwt_features.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args: {reader: csv}
+
+  maternal:
+    path: input/birthwt_maternal.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args: {reader: csv}
+
+  labels:
+    path: input/birthwt_labels.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args: {reader: csv}
+
+steps:
+  - name: compare_groups
+    inputs: [maternal, labels]
+    params:
+      dim: feature
+      group_dim: sample
+      group_label: low_label
+      group_a: normal
+      group_b: low
+      method: welch
+      output: maternal_diff
+
+  - name: describe
+    inputs: [maternal_diff]
+
+  - name: logistic_regression
+    inputs: [features, labels]
+    params:
+      sample_dim: sample
+      feature_dim: feature
+      label_dim: feature
+      target_label: low
+      test_size: 0.25
+      cv_folds: 3
+      random_state: 23
+      scale: false
+      penalty: l2
+      C: 1000000.0
+      output: logit
+
+  - name: describe
+    inputs: [logit]
+
+  - name: random_forest_classifier
+    inputs: [features, labels]
+    params:
+      sample_dim: sample
+      feature_dim: feature
+      label_dim: feature
+      target_label: low_label
+      valid_labels: [normal, low]
+      n_estimators: 300
+      test_size: 0.25
+      cv_folds: 3
+      random_state: 23
+      output: rf
+
+  - name: describe
+    inputs: [rf]
+
+  - name: pca
+    inputs: [features]
+    params:
+      dim: feature
+      n_components: 2
+      output: pcs
+
+  - name: join
+    inputs: [pcs, labels]
+    params:
+      dim: sample
+      columns: [low_label]
+      how: inner
+      prefix: "label_"
+      output: pcs_labeled
+
+  - name: scatter
+    inputs: [pcs_labeled]
+    params:
+      dim: component
+      x_label: PC1
+      y_label: PC2
+      color_label: label_low_label
+      filename: pca_by_birthweight_group.png
+      title: "MASS birthwt: PCA by birthweight group"
+      point_size: 26
+      alpha: 0.75
+
+  - name: correlation
+    inputs: [features]
+    params:
+      dim: feature
+      metric: spearman
+      output: risk_corr
+
+  - name: heatmap
+    inputs: [risk_corr]
+    params:
+      dim: feature
+      other_dim: feature_b
+      select: all
+      standardize: none
+      cluster_rows: true
+      cluster_cols: true
+      filename: risk_factor_correlation.png
+      title: "MASS birthwt: Spearman correlation of risk factors"
+      cmap: RdBu_r

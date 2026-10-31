@@ -1,9 +1,17 @@
+## 0.108.0 — 2026-10-31
+
+- 新增第六条公开数据路线组合示例 `birthwt_risk_factors`：R `MASS::birthwt` 189 例单胎出生记录，低出生体重 59 / 正常 130；组合母亲年龄/体重 Welch 比较、逻辑回归、随机森林、PCA + join + scatter、Spearman 相关热图。
+- 数据准备：`race=1` 为参照构造 `race_2`/`race_3`；不使用 `bwt` 作为预测特征，避免结局泄漏；race 作为社会/群体变量解释。
+- 结果：母亲年龄正常 23.662 vs 低出生体重 22.305（P=0.0783），体重 133.300 vs 122.136（P=0.01308）；逻辑回归 test accuracy 0.6875、AUC 0.6667、3 折 CV 0.6809±0.0521；随机森林 test accuracy 0.7292、AUC 0.8152、CV 0.6099±0.0100；PCA PC1 19.24%、PC2 15.74%；Spearman 相关范围 -0.323 到 0.234。
+- 数据来源：R `MASS::birthwt`；引用 Hosmer & Lemeshow (2000), *Applied Logistic Regression*, 2nd ed.；Venables & Ripley (2002), *Modern Applied Statistics with S*, 4th ed.。不新增算子/Reader/路线，registry 仍 **402/85/21/6**。
+- 验证：`tests/test_route_combinations.py` **12 passed**；增量门 **27 passed（另 1 skipped）**；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
+
 ## 0.107.0 — 2026-10-31
 
 - 新增第五条公开数据路线组合示例 `pbc_competing_survival`：R `survival::pbc` 418 样本，232 删失 / 25 肝移植 / 161 死亡；组合性别分层 KM/log-rank、Cox、累积发生率与 Fine-Gray 竞争风险模型。
 - 结果：KM 中位生存女性 3445 天、男性 2386 天；log-rank χ²=2.977、P=0.0845；Cox C-index 0.811；10 年 CIF 死亡女性 0.519、男性 0.597；Fine-Gray 年龄 HR 1.041、bili HR 1.122、albumin HR 0.424。
 - 数据来源：R `survival::pbc`；引用 Therneau & Grambsch (2000), *Modeling Survival Data: Extending the Cox Model*。不新增算子/Reader/路线，registry 仍 **402/85/21/6**。
-- 验证：`tests/test_route_combinations.py` **10 passed**；增量门 **25 passed（另 1 skipped）**；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
+- 验证：`tests/test_route_combinations.py` **10 passed**；增量门 **27 passed（另 1 skipped）**；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
 
 ## 0.106.0 — 2026-10-31
 

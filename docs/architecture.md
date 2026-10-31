@@ -184,6 +184,7 @@ YAML / JSON
 - 0.76.0 新增：GARCH 波动率模型与向量自回归（VAR）两个时间序列算子；核心层不变；
 - 0.77.0 新增：t 检验、两比例检验与单因素 ANOVA 的功效/样本量计算；核心层不变；
 - 0.84.0 重构：算子分类收敛为 6 类（Data/Statistics/Machine Learning/Omics/Visualization/Quality Control）；算子/Reader 元数据、功能预览、平台标记与 catalog integrity 测试；修正 Reader 发现去重；核心执行层不变；
+- 0.108.0：新增第六条公开数据路线组合示例 `birthwt_risk_factors`（R `MASS::birthwt`；母亲年龄/体重 Welch 比较、逻辑回归、随机森林、PCA + join + scatter、Spearman 相关热图），不新增算子/Reader/路线；
 - 0.107.0：新增第五条公开数据路线组合示例 `pbc_competing_survival`（R `survival::pbc`；性别分层 KM/log-rank、Cox、累积发生率与 Fine-Gray 竞争风险模型），不新增算子/Reader/路线；
 - 0.106.0：新增第四条公开数据路线组合示例 `diabetes_classification_regression`（scikit-learn diabetes；`random_forest_classifier` 高/低进展分类、`ridge_regression` 连续进展回归、`pca` + `join` + `scatter` 分组视图），不新增算子/Reader/路线；
 - 0.105.0：新增第三条公开数据路线组合示例 `mite_community_ml`（`vegan::mite` 泥炭沼泽甲螨；alpha 多样性、Bray-Curtis PCoA、PERMANOVA、envfit 与随机森林三分类），不新增算子/Reader/路线；

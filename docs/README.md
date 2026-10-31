@@ -22,7 +22,7 @@
 2. [任务 SOP](route_sop.md)
 3. [LLM 手册](llm_guide.md)
 4. [路线架构师提示词](prompts/route_architect.md)
-5. [路线组合示例](../examples/route_combinations/README.md) — 五条可运行的多路线组合
+5. [路线组合示例](../examples/route_combinations/README.md) — 六条可运行的多路线组合
 6. 需要时查 [算子/Reader 参考](reference/README.md)
 
 ### 我是 LLM / Agent
@@ -88,9 +88,9 @@
 
 ## 4. 当前版本与能力
 
-- 版本：**0.107.0**（见 [changelog](changelog.md)）
+- 版本：**0.108.0**（见 [changelog](changelog.md)）
 - 402 个算子、85 个 Reader、6 个 provider 包、21 条内置路线
-- 0.107 新增第五条公开数据路线组合示例（survival::pbc 竞争风险：性别分层 KM、Cox、CIF、Fine-Gray；不新增算子/Reader/路线）；0.106 新增第四条公开数据路线组合示例（scikit-learn diabetes：分类 + 回归 + PCA；不新增算子/Reader/路线）；0.105 新增第三条公开数据路线组合示例（vegan::mite 泥炭沼泽甲螨；不新增算子/Reader/路线）；0.104 新增两条可执行的路线组合示例（不新增算子/Reader/路线）；0.103 新增层次聚类（hierarchical_clustering）；0.102 新增条件 logistic 回归（conditional_logistic）；0.101 新增区间删失 Weibull AFT 回归（interval_censored_regression）；0.100 新增可加 B 样条 GLM（additive_glm，binomial/poisson 族）；0.99 新增环境向量拟合（envfit，线性环境向量与 R²）；0.98 新增可加 B 样条回归（additive_spline_regression，多个自变量的三次 B 样条可加模型）；0.97 新增高斯过程回归（gaussian_process_regressor，固定 RBF 核）；0.96 新增向量误差修正模型（vecm，Johansen 协整诊断 + VECM 系数）；0.95 新增 B 样条回归（spline_regression，三次 B 样条基与 R²）；0.94 新增 Box-Cox 变换（box_cox，逐特征 MLE）；0.93 新增概率单位回归（probit regression）；0.92 新增季节性 ARIMA（SARIMA）；0.91 新增非度量多维尺度分析（NMDS）；0.90 新增 Fine-Gray 竞争风险回归；0.89 新增 Bai-Perron 多结构突变回归
+- 0.108 新增第六条公开数据路线组合示例（MASS::birthwt 低出生体重：母亲基线差异、逻辑回归、随机森林、PCA 与相关热图；不新增算子/Reader/路线）；0.107 新增第五条公开数据路线组合示例（survival::pbc 竞争风险：性别分层 KM、Cox、CIF、Fine-Gray；不新增算子/Reader/路线）；0.106 新增第四条公开数据路线组合示例（scikit-learn diabetes：分类 + 回归 + PCA；不新增算子/Reader/路线）；0.105 新增第三条公开数据路线组合示例（vegan::mite 泥炭沼泽甲螨；不新增算子/Reader/路线）；0.104 新增两条可执行的路线组合示例（不新增算子/Reader/路线）；0.103 新增层次聚类（hierarchical_clustering）；0.102 新增条件 logistic 回归（conditional_logistic）；0.101 新增区间删失 Weibull AFT 回归（interval_censored_regression）；0.100 新增可加 B 样条 GLM（additive_glm，binomial/poisson 族）；0.99 新增环境向量拟合（envfit，线性环境向量与 R²）；0.98 新增可加 B 样条回归（additive_spline_regression，多个自变量的三次 B 样条可加模型）；0.97 新增高斯过程回归（gaussian_process_regressor，固定 RBF 核）；0.96 新增向量误差修正模型（vecm，Johansen 协整诊断 + VECM 系数）；0.95 新增 B 样条回归（spline_regression，三次 B 样条基与 R²）；0.94 新增 Box-Cox 变换（box_cox，逐特征 MLE）；0.93 新增概率单位回归（probit regression）；0.92 新增季节性 ARIMA（SARIMA）；0.91 新增非度量多维尺度分析（NMDS）；0.90 新增 Fine-Gray 竞争风险回归；0.89 新增 Bai-Perron 多结构突变回归
 - 分类统一为 6 类；算子/Reader 功能预览、平台标记与 catalog integrity 检查已接入
 - 许可证：Apache License 2.0（见根目录 `LICENSE`/`NOTICE`）
 - 所有内置 Reader/算子参数严格（`additionalProperties: false`）
