@@ -1,3 +1,11 @@
+## 0.92.0 — 2026-10-31
+
+- 新增 `sarima` 季节性 ARIMA：支持 `(p,d,q)(P,D,Q,s)`、常数趋势、置信区间；输出系数/标准误/z/p/CI 与 sigma2、loglik、AIC/BIC、阶数和样本数。
+- 算子总数 **391**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 391/85，registry `errors []`；Statistics 类别 228→229。
+- 验证：`tests/test_extension85.py` 2 项 + `tests/test_r_oracles73.py` 1 项 = **3 passed**；R `stats::arima` 季节模型逐值对照（系数/SE 1e-4，AIC 2e-3）；增量门 **19 passed**；`-W error` **5 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：单变量、等间隔、无外生变量/缺失时间戳；不提供预测、季节分解或自动定阶；拒绝全季节阶数为 0 与非平稳常数趋势组合。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.91.0 — 2026-10-31
 
 - 新增 `nmds`（非度量多维尺度分析）：一个对称距离矩阵，SMACOF + classical-MDS 确定性起点，输出样本坐标与 raw stress / Kruskal stress1；轴符号固定，重复运行一致。

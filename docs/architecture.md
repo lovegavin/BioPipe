@@ -184,6 +184,7 @@ YAML / JSON
 - 0.76.0 新增：GARCH 波动率模型与向量自回归（VAR）两个时间序列算子；核心层不变；
 - 0.77.0 新增：t 检验、两比例检验与单因素 ANOVA 的功效/样本量计算；核心层不变；
 - 0.84.0 重构：算子分类收敛为 6 类（Data/Statistics/Machine Learning/Omics/Visualization/Quality Control）；算子/Reader 元数据、功能预览、平台标记与 catalog integrity 测试；修正 Reader 发现去重；核心执行层不变；
+- 0.92.0：新增季节性 ARIMA（sarima），在 ARIMA 基础上支持 `(P,D,Q,s)` 季节阶数；输出系数/标准误/z/p/置信区间与 sigma2、loglik、AIC/BIC；R `stats::arima` 季节模型逐值对照；核心层不变；
 - 0.91.0：新增非度量多维尺度分析（nmds），SMACOF + classical-MDS 确定性起点，输出坐标与 Kruskal stress；仅做定性/阈值对照，不声明与 R `MASS::isoMDS` 逐值一致；核心层不变；
 - 0.90.0：新增 Fine-Gray 竞争风险回归（fine_gray），加权子分布风险部分似然 + 稳健 sandwich 协方差；R `cmprsk::crr` 对照；核心层不变；
 - 0.89.0：新增 Bai-Perron 多结构突变回归（bai_perron）；用动态规划最小化分段残差平方和，R `strucchange::breakpoints` 对照；核心层不变；
