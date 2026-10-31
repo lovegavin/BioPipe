@@ -37457,6 +37457,192 @@
         },
         {
           "protocol_version": 1,
+          "id": "hierarchical_clustering",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.hierarchical_clustering:HierarchicalClusteringStep",
+          "title": "Hierarchical clustering",
+          "category": "Machine Learning",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "n_clusters": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 3,
+                "title": "聚类数",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "linkage": {
+                "type": "string",
+                "enum": [
+                  "single",
+                  "complete",
+                  "average",
+                  "ward.D2"
+                ],
+                "default": "average",
+                "title": "Linkage",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "metric": {
+                "type": "string",
+                "enum": [
+                  "euclidean",
+                  "manhattan"
+                ],
+                "default": "euclidean",
+                "title": "距离/相关指标",
+                "x-ui-group": "advanced",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "hierarchical_clustering",
+          "module": "src.task.step.steps.hierarchical_clustering",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Cluster samples with single/complete/average/Ward linkage.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "n_clusters",
+              "label": "聚类数",
+              "type": "integer",
+              "required": false,
+              "default": 3,
+              "min": 2
+            },
+            {
+              "key": "linkage",
+              "label": "Linkage",
+              "type": "choice",
+              "required": false,
+              "default": "average",
+              "options": [
+                "single",
+                "complete",
+                "average",
+                "ward.D2"
+              ]
+            },
+            {
+              "key": "metric",
+              "label": "距离/相关指标",
+              "type": "choice",
+              "required": false,
+              "default": "euclidean",
+              "options": [
+                "euclidean",
+                "manhattan"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "n_clusters": 3,
+            "linkage": "average",
+            "metric": "euclidean"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "holm_adjust",
           "version": "1.0.0",
           "kind": "operator",

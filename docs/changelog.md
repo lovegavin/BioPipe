@@ -1,3 +1,11 @@
+## 0.103.0 — 2026-10-31
+
+- 新增 `hierarchical_clustering` 层次聚类：一个 `[sample,feature]` 数值表，支持 single/complete/average/Ward.D2 连接与 euclidean/manhattan 距离；输出 0-based cluster 标签，info/export 提供 heights、merge 与 cophenetic correlation。
+- 算子总数 **402**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 402/85，registry `errors []`；Machine Learning 类别 61→62。
+- 验证：`tests/test_hierarchical_clustering.py` 3 项 + `tests/test_r_oracles83.py` 1 项 = **4 passed**；R `stats::hclust` 对 6×2 fixture 的四种连接 heights、k=3 标签与 cophenetic correlation 对齐（heights/coph atol 1e-12）；增量门 **20 passed**；`-W error` **6 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：拒绝非有限值；不做缺失值插补；不生成树状图；不实现 bootstrap/consensus 聚类。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.102.0 — 2026-10-31
 
 - 新增 `conditional_logistic` 条件 logistic 回归：一个 `[sample,feature]` 表提供分层变量、二分类结局与一个或多个数值协变量；按层消去截距的精确条件似然，Newton-Raphson 拟合，观测信息矩阵标准误。

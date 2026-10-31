@@ -1,3 +1,9 @@
+## 0.103.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `hierarchical_clustering` | R `stats::hclust(dist(x), method=...)` + `cutree` + `cophenetic` | `tests/test_r_oracles83.py` | 6×2 fixture：single/complete/average/Ward.D2 的 heights 全精度一致（atol 1e-12）；k=3 标签一致；average cophenetic correlation **0.9714035035860376**（atol 1e-12）；仅 euclidean/manhattan，不画树状图、不做缺失插补 |
+
 ## 0.102.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
