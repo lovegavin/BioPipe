@@ -13565,6 +13565,112 @@
     "quality": "auto"
   },
   {
+    "id": "fowlkes_mallows",
+    "kind": "operator",
+    "title": "Fowlkes-Mallows index",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_a": {
+          "type": "string",
+          "title": "Label A",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "label_b": {
+          "type": "string",
+          "title": "Label B",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "label_a",
+        "label_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/fowlkes_mallows.py",
+    "tests": [
+      "tests/test_extension55.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/fowlkes_mallows.md",
+    "quality": "auto"
+  },
+  {
     "id": "friedman",
     "kind": "operator",
     "title": "Friedman test",
@@ -16043,6 +16149,120 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/holm_adjust.md",
+    "quality": "auto"
+  },
+  {
+    "id": "homogeneity_completeness_v_measure",
+    "kind": "operator",
+    "title": "Homogeneity, completeness, V-measure",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_a": {
+          "type": "string",
+          "title": "Label A",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "label_b": {
+          "type": "string",
+          "title": "Label B",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "beta": {
+          "type": "number",
+          "default": 1.0,
+          "exclusiveMinimum": 0.0,
+          "title": "Beta",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "label_a",
+        "label_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/homogeneity_completeness_v_measure.py",
+    "tests": [
+      "tests/test_extension55.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/homogeneity_completeness_v_measure.md",
     "quality": "auto"
   },
   {
@@ -24778,6 +24998,113 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/page_test.md",
+    "quality": "auto"
+  },
+  {
+    "id": "pair_confusion_matrix",
+    "kind": "operator",
+    "title": "Pair confusion matrix",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "label_a": {
+          "type": "string",
+          "title": "Label A",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "label_b": {
+          "type": "string",
+          "title": "Label B",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "label_a",
+        "label_b"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/pair_confusion_matrix.py",
+    "tests": [
+      "tests/test_extension55.py",
+      "tests/test_r_oracles46.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/pair_confusion_matrix.md",
     "quality": "auto"
   },
   {

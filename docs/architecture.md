@@ -168,6 +168,7 @@ YAML / JSON
 - 0.59.0 新增：Dunn 指数、调整互信息、逐样本轮廓系数三个聚类验证/一致性算子；核心层不变；
 - 0.60.0 新增：Box-Pierce 自相关检验、Stuart-Maxwell 边际齐性检验、变异信息三个算子；核心层不变；
 - 0.61.0 新增：ACF、PACF、precision-recall 曲线三个序列/评估算子；核心层不变；
+- 0.62.0 新增：Fowlkes-Mallows、同质/完整/V-measure、成对混淆矩阵三个聚类一致性算子；核心层不变；
 - 0.58.0 新增：轮廓系数、调整兰德指数、归一化互信息三个聚类验证/一致性算子；核心层不变；
 - 0.57.0 新增：Tukey HSD、Tamhane T2、Student-Newman-Keuls 三个全成对均值比较算子；核心层不变；
 - 0.56.0 新增：Chacko 有序备择、Fligner-Wolfe 对照比较、Mack-Wolfe 伞形检验三个算子；核心层不变；

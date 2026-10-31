@@ -27739,6 +27739,171 @@
         },
         {
           "protocol_version": 1,
+          "id": "fowlkes_mallows",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.fowlkes_mallows:FowlkesMallowsStep",
+          "title": "Fowlkes-Mallows index",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label",
+                "title": "标签维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "label_a": {
+                "type": "string",
+                "title": "Label A",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "label_b": {
+                "type": "string",
+                "title": "Label B",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "label_a",
+              "label_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "fowlkes_mallows",
+          "module": "src.task.step.steps.fowlkes_mallows",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Geometric mean of pairwise precision and recall between two partitions.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "label_dim",
+              "label": "标签维度",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "label_a",
+              "label": "Label A",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "label_b",
+              "label": "Label B",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "label_dim": "label"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "friedman",
           "version": "1.0.0",
           "kind": "operator",
@@ -30779,6 +30944,187 @@
           "runtime_defaults": {
             "feature_dim": "feature",
             "value_dim": "pvalue"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "homogeneity_completeness_v_measure",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.homogeneity_completeness_v_measure:HomogeneityCompletenessVMeasureStep",
+          "title": "Homogeneity, completeness, V-measure",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label",
+                "title": "标签维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "label_a": {
+                "type": "string",
+                "title": "Label A",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "label_b": {
+                "type": "string",
+                "title": "Label B",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "beta": {
+                "type": "number",
+                "default": 1.0,
+                "exclusiveMinimum": 0.0,
+                "title": "Beta",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "label_a",
+              "label_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "homogeneity_completeness_v_measure",
+          "module": "src.task.step.steps.homogeneity_completeness_v_measure",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Three entropy-based agreement scores for two partitions.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "label_dim",
+              "label": "标签维度",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "label_a",
+              "label": "Label A",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "label_b",
+              "label": "Label B",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "beta",
+              "label": "Beta",
+              "type": "number",
+              "required": false,
+              "default": 1.0
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "label_dim": "label",
+            "beta": 1.0
           },
           "legacy_parameters": false
         },
@@ -42143,6 +42489,171 @@
           "runtime_defaults": {
             "block_dim": "block",
             "treatment_dim": "treatment"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "pair_confusion_matrix",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.pair_confusion_matrix:PairConfusionMatrixStep",
+          "title": "Pair confusion matrix",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label",
+                "title": "标签维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "label_a": {
+                "type": "string",
+                "title": "Label A",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "label_b": {
+                "type": "string",
+                "title": "Label B",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "label_a",
+              "label_b"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "pair_confusion_matrix",
+          "module": "src.task.step.steps.pair_confusion_matrix",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Pair-count confusion matrix behind Rand-type agreement scores.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "label_dim",
+              "label": "标签维度",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "label_a",
+              "label": "Label A",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "label_b",
+              "label": "Label B",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "label_dim": "label"
           },
           "legacy_parameters": false
         },

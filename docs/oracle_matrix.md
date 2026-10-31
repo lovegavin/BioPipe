@@ -1,5 +1,13 @@
 # 权威实现对照矩阵
 
+## 0.62.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `fowlkes_mallows` | sklearn `fowlkes_mallows_score` | `tests/test_extension55.py` | A/B 各 9 样本 3 簇：FMI 0.5270462766947299；两分区均至少 2 簇 |
+| `homogeneity_completeness_v_measure` | sklearn `homogeneity_completeness_v_measure` | `tests/test_extension55.py` | H 0.5793801642856953、C 0.6000000000000002、V 0.5895098274473051；beta=1 |
+| `pair_confusion_matrix` | sklearn `pair_confusion_matrix`；Rand 关系对 R `aricode::RI` | `tests/test_r_oracles46.py` | `[[44,10],[8,10]]`；Rand index 0.75 |
+
 ## 0.61.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

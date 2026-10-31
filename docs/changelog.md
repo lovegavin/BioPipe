@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.62.0 — 2026-10-31
+
+- 新增：330 算子 / 82 Reader / 21 route；新增 Fowlkes-Mallows、同质/完整/V-measure、成对混淆矩阵三个聚类一致性算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension55.py` 4 项、`tests/test_r_oracles46.py` 1 项，合计 **5 passed**；FMI/HCV/PCM 用 sklearn 固定参考值，PCM 的 Rand 关系对照 R `aricode::RI`；registry clean；参考页 330/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 276 passed。
+- 边界：两个分区都至少 2 簇、至少 2 个共享样本；成对矩阵按 `[[同簇同标签, 同簇异标签], [异簇同标签, 异簇异标签]]`；V-measure 的 beta 必须大于 0。
+
 ## 0.61.0 — 2026-10-31
 
 - 新增：327 算子 / 82 Reader / 21 route；新增 ACF、PACF、precision-recall 曲线三个算子；未修改核心层。
