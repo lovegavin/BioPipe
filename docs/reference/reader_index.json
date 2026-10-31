@@ -851,6 +851,72 @@
     "quality": "auto"
   },
   {
+    "id": "ClsReader",
+    "kind": "reader",
+    "extensions": [
+      ".cls"
+    ],
+    "file_input": {
+      "dims": [
+        "sample",
+        "feature"
+      ],
+      "labels": {
+        "sample": "builtin",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "title": "Encoders",
+          "additionalProperties": true,
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_label": {
+          "type": "string",
+          "title": "Phenotype column label",
+          "default": "class",
+          "minLength": 1,
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/cls_reader.py",
+    "tests": [
+      "tests/test_extension73.py"
+    ],
+    "doc": "docs/reference/readers/ClsReader.md",
+    "quality": "auto"
+  },
+  {
     "id": "ClustalReader",
     "kind": "reader",
     "extensions": [
@@ -2075,6 +2141,72 @@
       "tests/test_extension11.py"
     ],
     "doc": "docs/reference/readers/GroReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "GrpReader",
+    "kind": "reader",
+    "extensions": [
+      ".grp"
+    ],
+    "file_input": {
+      "dims": [
+        "sample",
+        "feature"
+      ],
+      "labels": {
+        "sample": "builtin",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "encoders": {
+          "type": "object",
+          "title": "Encoders",
+          "additionalProperties": true,
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_label": {
+          "type": "string",
+          "title": "Phenotype column label",
+          "default": "class",
+          "minLength": 1,
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/grp_reader.py",
+    "tests": [
+      "tests/test_extension73.py"
+    ],
+    "doc": "docs/reference/readers/GrpReader.md",
     "quality": "auto"
   },
   {
@@ -4425,6 +4557,96 @@
       "tests/test_extension11.py"
     ],
     "doc": "docs/reference/readers/PslReader.md",
+    "quality": "auto"
+  },
+  {
+    "id": "RnkReader",
+    "kind": "reader",
+    "extensions": [
+      ".rnk"
+    ],
+    "file_input": {
+      "dims": [
+        "gene",
+        "feature"
+      ],
+      "labels": {
+        "gene": "builtin",
+        "feature": "builtin"
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "header": {
+          "type": "boolean",
+          "title": "Header row",
+          "default": false,
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "comment": {
+          "type": "string",
+          "title": "Comment prefix",
+          "default": "#",
+          "description": "Lines starting with this prefix are ignored; empty disables comments.",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "gene_column": {
+          "type": "integer",
+          "title": "Gene column",
+          "default": 0,
+          "minimum": 0,
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "score_column": {
+          "type": "integer",
+          "title": "Score column",
+          "default": 1,
+          "minimum": 0,
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "feature_label": {
+          "type": "string",
+          "title": "Score label",
+          "default": "score",
+          "minLength": 1,
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_contract": {
+      "version": 1,
+      "numeric": true,
+      "info": {
+        "missing_code": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "encoders": {
+          "type": "object",
+          "optional": true
+        }
+      },
+      "dims": [],
+      "labels": [],
+      "parallel": [],
+      "ndim": 2,
+      "axis_fields": [],
+      "info_open": false
+    },
+    "source": "src/reader/readers/rnk_reader.py",
+    "tests": [
+      "tests/test_extension73.py"
+    ],
+    "doc": "docs/reference/readers/RnkReader.md",
     "quality": "auto"
   },
   {

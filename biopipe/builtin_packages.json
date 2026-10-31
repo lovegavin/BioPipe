@@ -2057,6 +2057,122 @@
         },
         {
           "protocol_version": 1,
+          "id": "ClsReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.cls_reader:ClsReader",
+          "title": "ClsReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "title": "Encoders",
+                "additionalProperties": true,
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_label": {
+                "type": "string",
+                "title": "Phenotype column label",
+                "default": "class",
+                "minLength": 1,
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            },
+            {
+              "key": "feature_label",
+              "label": "Phenotype column label",
+              "type": "string",
+              "required": false,
+              "default": "class"
+            }
+          ],
+          "name": "ClsReader",
+          "module": "src.reader.readers.cls_reader",
+          "extensions": [
+            ".cls"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "sample",
+              "feature"
+            ],
+            "labels": {
+              "sample": "builtin",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
           "id": "ClustalReader",
           "version": "1.0.0",
           "kind": "reader",
@@ -4159,6 +4275,122 @@
             ],
             "labels": {
               "atom": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "GrpReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.grp_reader:GrpReader",
+          "title": "GrpReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "encoders": {
+                "type": "object",
+                "title": "Encoders",
+                "additionalProperties": true,
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_label": {
+                "type": "string",
+                "title": "Phenotype column label",
+                "default": "class",
+                "minLength": 1,
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "encoders",
+              "label": "Encoders",
+              "type": "json",
+              "required": false
+            },
+            {
+              "key": "feature_label",
+              "label": "Phenotype column label",
+              "type": "string",
+              "required": false,
+              "default": "class"
+            }
+          ],
+          "name": "GrpReader",
+          "module": "src.reader.readers.grp_reader",
+          "extensions": [
+            ".grp"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "sample",
+              "feature"
+            ],
+            "labels": {
+              "sample": "builtin",
               "feature": "builtin"
             }
           },
@@ -8309,6 +8541,171 @@
             ],
             "labels": {
               "alignment": "auto",
+              "feature": "builtin"
+            }
+          },
+          "output_contract": {
+            "version": 1,
+            "numeric": true,
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "dims": [],
+            "labels": [],
+            "parallel": [],
+            "ndim": 2,
+            "axis_fields": [],
+            "info_open": false
+          }
+        },
+        {
+          "protocol_version": 1,
+          "id": "RnkReader",
+          "version": "1.0.0",
+          "kind": "reader",
+          "entry_point": "src.reader.readers.rnk_reader:RnkReader",
+          "title": "RnkReader",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "header": {
+                "type": "boolean",
+                "title": "Header row",
+                "default": false,
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "comment": {
+                "type": "string",
+                "title": "Comment prefix",
+                "default": "#",
+                "description": "Lines starting with this prefix are ignored; empty disables comments.",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "gene_column": {
+                "type": "integer",
+                "title": "Gene column",
+                "default": 0,
+                "minimum": 0,
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "score_column": {
+                "type": "integer",
+                "title": "Score column",
+                "default": 1,
+                "minimum": 0,
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "feature_label": {
+                "type": "string",
+                "title": "Score label",
+                "default": "score",
+                "minLength": 1,
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "version": 1,
+              "numeric": true,
+              "info": {
+                "missing_code": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "encoders": {
+                  "type": "object",
+                  "optional": true
+                }
+              },
+              "dims": [],
+              "labels": [],
+              "parallel": [],
+              "ndim": 2,
+              "axis_fields": [],
+              "info_open": false
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false
+          },
+          "parameters": [
+            {
+              "key": "header",
+              "label": "Header row",
+              "type": "boolean",
+              "required": false,
+              "default": false
+            },
+            {
+              "key": "comment",
+              "label": "Comment prefix",
+              "type": "string",
+              "required": false,
+              "description": "Lines starting with this prefix are ignored; empty disables comments.",
+              "default": "#"
+            },
+            {
+              "key": "gene_column",
+              "label": "Gene column",
+              "type": "integer",
+              "required": false,
+              "default": 0,
+              "min": 0
+            },
+            {
+              "key": "score_column",
+              "label": "Score column",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 0
+            },
+            {
+              "key": "feature_label",
+              "label": "Score label",
+              "type": "string",
+              "required": false,
+              "default": "score"
+            }
+          ],
+          "name": "RnkReader",
+          "module": "src.reader.readers.rnk_reader",
+          "extensions": [
+            ".rnk"
+          ],
+          "requires_siblings": [],
+          "excludes_siblings": [],
+          "handles_compression": false,
+          "file_input": {
+            "dims": [
+              "gene",
+              "feature"
+            ],
+            "labels": {
+              "gene": "builtin",
               "feature": "builtin"
             }
           },

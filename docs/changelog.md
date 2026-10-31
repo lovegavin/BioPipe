@@ -1,3 +1,9 @@
+## 0.80.0 — 2026-10-31
+
+- 新增：372 算子 / 85 Reader / 21 route；新增 GSEA `.rnk` 排名列表与 `.cls`/`.grp` 表型标签三个 Reader；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension73.py` 7 项，合计 **7 passed**；格式 Reader 使用黄金文件与严格负例，无 R oracle；registry clean；参考页 372/85；增量门 23 passed；Studio 前端 318 passed（无新增算子）。
+- 边界：RNK 保留排名顺序，重复基因/非有限分数拒绝；CLS/GRP 共享严格计数与类别索引解析，类别名经 label encoder 记录，`group_values` 可还原；类别名含空格需按 GSEA 规范预处理。
+
 ## 0.79.0 — 2026-10-31
 
 - 新增：372 算子 / 82 Reader / 21 route；新增逆方差固定/随机效应 Meta 回归（`meta_regression`）；未修改核心层。
