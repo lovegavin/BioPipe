@@ -1,0 +1,102 @@
+name: wine_cultivar_classification
+
+sources:
+  features:
+    path: input/wine_features.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args: {reader: csv}
+
+  labels:
+    path: input/wine_labels.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args: {reader: csv}
+
+steps:
+  - name: lda_classifier
+    inputs: [features, labels]
+    params:
+      sample_dim: sample
+      feature_dim: feature
+      label_dim: feature
+      target_label: class_label
+      valid_labels: [cultivar_1, cultivar_2, cultivar_3]
+      test_size: 0.25
+      cv_folds: 5
+      random_state: 11
+      scale: true
+      output: lda
+
+  - name: describe
+    inputs: [lda]
+
+  - name: random_forest_classifier
+    inputs: [features, labels]
+    params:
+      sample_dim: sample
+      feature_dim: feature
+      label_dim: feature
+      target_label: class_label
+      valid_labels: [cultivar_1, cultivar_2, cultivar_3]
+      n_estimators: 500
+      test_size: 0.25
+      cv_folds: 5
+      random_state: 11
+      scale: false
+      output: rf
+
+  - name: describe
+    inputs: [rf]
+
+  - name: pca
+    inputs: [features]
+    params:
+      dim: feature
+      n_components: 2
+      output: pcs
+
+  - name: join
+    inputs: [pcs, labels]
+    params:
+      dim: sample
+      columns: [class_label]
+      how: inner
+      prefix: "label_"
+      output: pcs_labeled
+
+  - name: scatter
+    inputs: [pcs_labeled]
+    params:
+      dim: component
+      x_label: PC1
+      y_label: PC2
+      color_label: label_class_label
+      filename: pca_by_cultivar.png
+      title: "UCI Wine: PCA by cultivar"
+      point_size: 24
+      alpha: 0.75
+
+  - name: correlation
+    inputs: [features]
+    params:
+      dim: feature
+      metric: pearson
+      output: feature_corr
+
+  - name: heatmap
+    inputs: [feature_corr]
+    params:
+      dim: feature
+      other_dim: feature_b
+      select: all
+      standardize: none
+      cluster_rows: true
+      cluster_cols: true
+      filename: chemical_correlation.png
+      title: "UCI Wine: Pearson correlation of chemical features"
+      cmap: RdBu_r

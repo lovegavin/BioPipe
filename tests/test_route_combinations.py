@@ -17,6 +17,7 @@ CASES = [
     "diabetes_classification_regression",
     "pbc_competing_survival",
     "birthwt_risk_factors",
+    "wine_cultivar_classification",
 ]
 
 
@@ -51,5 +52,11 @@ def test_route_combination_executes_in_tmp(name: str, tmp_path: Path) -> None:
     assert summary_path.is_file()
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     assert summary["status"] == "complete"
-    threshold = 13 if name == "mite_community_ml" else 11 if name == "birthwt_risk_factors" else 8 if name == "pbc_competing_survival" else 7 if name == "diabetes_classification_regression" else 6
-    assert summary["n_steps"] >= threshold
+    thresholds = {
+        "mite_community_ml": 13,
+        "birthwt_risk_factors": 11,
+        "pbc_competing_survival": 8,
+        "wine_cultivar_classification": 9,
+        "diabetes_classification_regression": 7,
+    }
+    assert summary["n_steps"] >= thresholds.get(name, 6)

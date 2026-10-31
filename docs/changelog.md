@@ -1,3 +1,10 @@
+## 0.109.0 — 2026-10-31
+
+- 新增第七条公开数据路线组合示例 `wine_cultivar_classification`：UCI Wine 178 个样本、13 个化学特征、3 个品种（59/71/48）；组合 LDA、随机森林、PCA + join + scatter、Pearson 相关热图。
+- 结果：LDA 测试 accuracy 1.0000、5 折 CV 0.9852±0.0181；随机森林 accuracy 0.9556、CV 0.9772±0.0186；PCA PC1 36.20%、PC2 19.21%；Pearson 相关范围 -0.5613 到 0.8646。LDA 的完美测试只代表这份小数据，不当作泛化证据。
+- 数据来源：UCI Machine Learning Repository, Wine Data Set；本示例通过 scikit-learn `load_wine` 读取打包副本；原始提供者 Forina, M. et al., PARVUS。不新增算子/Reader/路线，registry 仍 **402/85/21/6**。
+- 验证：`tests/test_route_combinations.py` **14 passed**；增量门 **29 passed（另 1 skipped）**；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
+
 ## 0.108.0 — 2026-10-31
 
 - 新增第六条公开数据路线组合示例 `birthwt_risk_factors`：R `MASS::birthwt` 189 例单胎出生记录，低出生体重 59 / 正常 130；组合母亲年龄/体重 Welch 比较、逻辑回归、随机森林、PCA + join + scatter、Spearman 相关热图。

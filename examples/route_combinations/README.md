@@ -12,8 +12,9 @@
 | `diabetes_classification_regression/` | 机器学习分类 + 机器学习回归 + PCA 可视化 | scikit-learn diabetes 数据；用同一组基线特征同时预测高/低进展组与连续进展值，并用 PCA 观察分组重叠 |
 | `pbc_competing_survival/` | 生存分析 + 竞争风险 | `survival::pbc` 原发性胆汁性胆管炎数据；性别分层 KM、Cox、CIF 与 Fine-Gray 竞争风险模型 |
 | `birthwt_risk_factors/` | 差异比较 + 逻辑回归 + 随机森林 + PCA/相关热图 | `MASS::birthwt` 低出生体重数据；比较母亲基线、估计风险因素方向、评估分类并检查特征结构 |
+| `wine_cultivar_classification/` | 线性判别 + 随机森林 + PCA/相关热图 | UCI Wine 数据；比较 LDA 与随机森林的品种分类，检查线性判别边界、无监督分离与化学特征相关结构 |
 
-六个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
+七个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
 
 ## 运行
 
@@ -25,6 +26,7 @@
     python scripts/run.py examples/route_combinations/diabetes_classification_regression
     python scripts/run.py examples/route_combinations/pbc_competing_survival
     python scripts/run.py examples/route_combinations/birthwt_risk_factors
+    python scripts/run.py examples/route_combinations/wine_cultivar_classification
 
 只做静态校验：
 
@@ -34,6 +36,7 @@
     python scripts/run.py examples/route_combinations/diabetes_classification_regression --check
     python scripts/run.py examples/route_combinations/pbc_competing_survival --check
     python scripts/run.py examples/route_combinations/birthwt_risk_factors --check
+    python scripts/run.py examples/route_combinations/wine_cultivar_classification --check
 
 每个示例的输出写入各自 `output/`：`figures/` 为图片，`steps/` 为每步 JSON 摘要，`run_summary.txt/json` 为运行摘要。`input/` 中的 CSV 来自公开数据集，字段经过最小化整理；示例用于演示组合方式，不构成临床或生物学结论。
 
@@ -81,6 +84,13 @@
 - 字段：`low`、`age`、`lwt`、`race`、`smoke`、`ptl`、`ht`、`ui`、`ftv`；本示例不使用 `bwt` 作为预测特征。`race` 按 race=1 为参照构造 `race_2`、`race_3` 两个指示变量；race 是社会经济/群体变量，不能作生物学解释。
 - 引用：Hosmer, D.W. & Lemeshow, S. (2000). *Applied Logistic Regression*, 2nd ed. Wiley；R 包来源 Venables, W.N. & Ripley, B.D. (2002). *Modern Applied Statistics with S*, 4th ed. Springer。
 
+### UCI Wine（三个品种的化学特征）
+
+- 178 个样本、13 个连续化学特征；品种分布 cultivar_1 = 59、cultivar_2 = 71、cultivar_3 = 48；无缺失。
+- 来源：UCI Machine Learning Repository, Wine Data Set，<https://archive.ics.uci.edu/dataset/109/wine>；本示例通过 scikit-learn 的 load_wine 读取打包副本。
+- 样本 ID 重新编号为 wine_001...wine_178；标签写为 cultivar_1/2/3，类别编码 0/1/2 单独保留。
+- 原始提供者：Forina, M. et al., PARVUS - An Extendible Package for Data Exploration, Classification and Correlation。该数据用于方法演示，不构成品种鉴定或质量控制结论。
+
 ## 组合方式
 
 任务 YAML 是扁平的算子 DAG。示例把 route 中的算子直接展开为多个分支，而不是在 YAML 里引用 route ID：
@@ -92,11 +102,13 @@
 - `pbc_competing_survival`：`kaplan_meier`/`logrank_test`/`cox_regression` 共享同一临床表；`cumulative_incidence` 与 `fine_gray` 把肝移植作为竞争事件，分别给出绝对风险和子分布风险。
 - `birthwt_risk_factors`：`compare_groups` 比较两组母亲年龄/体重；`logistic_regression` 与 `random_forest_classifier` 共享 9 个基线特征；`pca` + `join` + `scatter` 观察分组重叠；`correlation` + `heatmap` 检查风险因素相关结构。逻辑回归的 OR 是描述性近似，不输出标准误/P 值/CI。
 
+- `wine_cultivar_classification`：`lda_classifier` 与 `random_forest_classifier` 共享同一特征/标签和固定划分；`pca` + `join` + `scatter` 检查无监督分离；`correlation` + `heatmap` 检查 13 个化学特征的共变。LDA 的 1.0 测试准确率只代表这份小数据，不当作泛化证据。
+
 Studio 中可以把这些任务作为图导入，再拆分、合并或替换分支。逐步解释、指标和限制见各目录的 `ANALYSIS.md`。
 
 ## 测试
 
-`tests/test_route_combinations.py` 对六个示例执行：
+`tests/test_route_combinations.py` 对七个示例执行：
 
 1. `--check` 静态校验；
 2. 复制到临时目录后实际运行，检查 `output/run_summary.json` 的状态与步骤数。
