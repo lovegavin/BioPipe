@@ -1,3 +1,9 @@
+## 0.97.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `gaussian_process_regressor` | 闭式 GP 后验（NumPy 手算） | `tests/test_gaussian_process_regressor.py` | 固定 RBF、`alpha=1e-4`、`normalize_y=true`，n=12：手算均值/后验标准误与 sklearn `GaussianProcessRegressor(optimizer=None)` 逐值 atol **1e-10**；不声称与 R 包 GP 实现对照 |
+
 ## 0.96.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

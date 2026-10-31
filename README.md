@@ -4,11 +4,11 @@ BioPipe 是本地生信流水线引擎 + Studio 可视化工作区 + CLI/MCP Age
 Reader 读取标准格式，用带类型契约的算子处理 `Form`，并在本地生成表格、图片和报告。
 BioPipe 本身不提供 AI 服务。
 
-当前源码版本 **0.96.0**：**395 个算子、85 个 Reader、6 个 provider 包、21 条路线**。
+当前源码版本 **0.97.0**：**396 个算子、85 个 Reader、6 个 provider 包、21 条路线**。
 
 0.84 起算子分类归一为 6 类；每个算子与 Reader 都有功能预览，平台受限格式在界面和 manifest 中标记。
 
-0.86 新增 Chao1 与 rarefaction（个体稀疏化）两个微生物/生态多样性算子；0.87 新增 ARIMA 与保序回归（isotonic）两个统计算子；0.88 新增决策曲线分析（DCA）与 LOWESS 平滑，并将项目许可证切换为 Apache-2.0；0.89 新增 Bai-Perron 多结构突变回归；0.90 新增 Fine-Gray 竞争风险回归；0.91 新增非度量多维尺度分析（NMDS）；0.92 新增季节性 ARIMA（SARIMA）；0.93 新增概率单位回归（probit regression）；0.94 新增 Box-Cox 变换（box_cox，逐特征 MLE）；0.95 新增 B 样条回归（spline_regression，三次 B 样条基）；0.96 新增向量误差修正模型（vecm，VECM）。
+0.86 新增 Chao1 与 rarefaction（个体稀疏化）两个微生物/生态多样性算子；0.87 新增 ARIMA 与保序回归（isotonic）两个统计算子；0.88 新增决策曲线分析（DCA）与 LOWESS 平滑，并将项目许可证切换为 Apache-2.0；0.89 新增 Bai-Perron 多结构突变回归；0.90 新增 Fine-Gray 竞争风险回归；0.91 新增非度量多维尺度分析（NMDS）；0.92 新增季节性 ARIMA（SARIMA）；0.93 新增概率单位回归（probit regression）；0.94 新增 Box-Cox 变换（box_cox，逐特征 MLE）；0.95 新增 B 样条回归（spline_regression，三次 B 样条基）；0.96 新增向量误差修正模型（vecm，VECM）；0.97 新增高斯过程回归（gaussian_process_regressor，固定 RBF 核与闭式后验）。
 
 ## 价值主张
 
@@ -36,7 +36,7 @@ BioPipe 本身不提供 AI 服务。
 | [协议总集](docs/protocol_suite.md) | Form/Reader/算子/契约/注册表/扩展/测试规范 |
 | [参考索引](docs/reference/README.md) | 每个 Reader/算子的参数、契约、源码/测试链接 |
 | [系统对象](docs/reference/subjects/README.md) | 九个核心对象：Form/Task/Graph/Project/Reader/Step/Runner/Registry/SDK |
-| [覆盖审计](docs/coverage_audit.md) | 395 算子/85 Reader 的覆盖、核心创新点落实度与缺口 |
+| [覆盖审计](docs/coverage_audit.md) | 396 算子/85 Reader 的覆盖、核心创新点落实度与缺口 |
 | [任务 SOP](docs/route_sop.md) | 从数据到自定义路线、`--check`、运行和结果解释 |
 
 按角色阅读：
@@ -167,7 +167,7 @@ docs/reference/    自动生成 Reader/算子参考页
 
 ## 版本与更新记录
 
-- 当前：**0.96.0**，见 [CHANGELOG](docs/changelog.md)。
+- 当前：**0.97.0**，见 [CHANGELOG](docs/changelog.md)。
 - Windows 测试环境快照：[conda](windows-biopipe-conda.yml) /
   [pip](windows-biopipe-pip-freeze.txt)。
 

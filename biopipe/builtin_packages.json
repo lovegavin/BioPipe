@@ -34232,6 +34232,220 @@
         },
         {
           "protocol_version": 1,
+          "id": "gaussian_process_regressor",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.gaussian_process_regressor:GaussianProcessRegressorStep",
+          "title": "Gaussian-process regression",
+          "category": "Machine Learning",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response_label": {
+                "type": "string",
+                "title": "响应列",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "predictors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "预测变量列",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "length_scale": {
+                "oneOf": [
+                  {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    }
+                  }
+                ],
+                "default": 1.0,
+                "title": "RBF 长度尺度",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "alpha": {
+                "type": "number",
+                "minimum": 0,
+                "default": 1e-06,
+                "title": "观测噪声方差",
+                "x-ui-group": "advanced",
+                "x-ui-order": 50
+              },
+              "normalize_y": {
+                "type": "boolean",
+                "default": true,
+                "title": "标准化响应",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "response_label",
+              "predictors"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.24",
+            "pandas>=2.0",
+            "scikit-learn>=1.3"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "pandas",
+            "sklearn"
+          ],
+          "name": "gaussian_process_regressor",
+          "module": "src.task.step.steps.gaussian_process_regressor",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Fit a Gaussian-process regressor with a fixed RBF kernel.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "response_label",
+              "label": "响应列",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "predictors",
+              "label": "预测变量列",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "length_scale",
+              "label": "RBF 长度尺度",
+              "type": "json",
+              "required": false,
+              "default": 1.0
+            },
+            {
+              "key": "alpha",
+              "label": "观测噪声方差",
+              "type": "number",
+              "required": false,
+              "default": 1e-06,
+              "min": 0
+            },
+            {
+              "key": "normalize_y",
+              "label": "标准化响应",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "length_scale": 1.0,
+            "alpha": 1e-06,
+            "normalize_y": true
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "gaussian_random_projection",
           "version": "1.0.0",
           "kind": "operator",

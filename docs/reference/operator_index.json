@@ -17229,6 +17229,132 @@
     "quality": "auto"
   },
   {
+    "id": "gaussian_process_regressor",
+    "kind": "operator",
+    "title": "Gaussian-process regression",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "response_label": {
+          "type": "string",
+          "title": "响应列",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "predictors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "预测变量列",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "length_scale": {
+          "oneOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            }
+          ],
+          "default": 1.0,
+          "title": "RBF 长度尺度",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0,
+          "default": 1e-06,
+          "title": "观测噪声方差",
+          "x-ui-group": "advanced",
+          "x-ui-order": 50
+        },
+        "normalize_y": {
+          "type": "boolean",
+          "default": true,
+          "title": "标准化响应",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "response_label",
+        "predictors"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/gaussian_process_regressor.py",
+    "tests": [
+      "tests/test_gaussian_process_regressor.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/gaussian_process_regressor.md",
+    "quality": "auto"
+  },
+  {
     "id": "gaussian_random_projection",
     "kind": "operator",
     "title": "Gaussian random projection",

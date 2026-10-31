@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "biopipe-studio"
-version = "0.96.0"
+version = "0.97.0"
 description = "Typed bioinformatics pipelines, desktop canvas and agent interfaces"
 readme = "README.md"
 requires-python = ">=3.11"

@@ -1,3 +1,11 @@
+## 0.97.0 — 2026-10-31
+
+- 新增 `gaussian_process_regressor` 高斯过程回归：固定 RBF 核与观测噪声，不做边际似然优化；输出观测/拟合/残差/后验标准误，info 记录 R²、RMSE 与 log marginal likelihood；闭式 GP 公式手算对照。
+- 算子总数 **396**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 396/85，registry `errors []`；Machine Learning 类别 60→61。
+- 验证：`tests/test_gaussian_process_regressor.py` 3 项 = **3 passed**；闭式后验均值/标准误 atol 1e-10；增量门 **19 passed**；`-W error` **5 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：仅固定核超参数、单输出、数值自变量；不提供新样本预测、分类 GP 或核超参数优化。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.96.0 — 2026-10-31
 
 - 新增 `vecm` 向量误差修正模型：Johansen trace/eigenvalue 诊断 + statsmodels VECM 系数；输出所有秩的 trace/eigen 与所选秩的 beta/alpha；R `urca::ca.jo(ecdet="none", K=k_ar_diff+1)` 对照。
