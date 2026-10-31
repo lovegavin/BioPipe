@@ -35588,6 +35588,144 @@
         },
         {
           "protocol_version": 1,
+          "id": "krippendorff_alpha",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.krippendorff_alpha:KrippendorffAlphaStep",
+          "title": "Krippendorff's alpha",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "subject_dim": {
+                "type": "string",
+                "default": "subject",
+                "title": "Subject Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "rater_dim": {
+                "type": "string",
+                "default": "rater",
+                "title": "Rater Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "level": {
+                "type": "string",
+                "enum": [
+                  "nominal",
+                  "interval"
+                ],
+                "default": "nominal",
+                "title": "Level",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "subject_dim",
+                    "default": "subject"
+                  },
+                  {
+                    "param": "rater_dim",
+                    "default": "rater"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [],
+          "dependency_imports": [],
+          "name": "krippendorff_alpha",
+          "module": "src.task.step.steps.krippendorff_alpha",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "subject_dim",
+              "label": "Subject Dim",
+              "type": "string",
+              "required": false,
+              "default": "subject"
+            },
+            {
+              "key": "rater_dim",
+              "label": "Rater Dim",
+              "type": "string",
+              "required": false,
+              "default": "rater"
+            },
+            {
+              "key": "level",
+              "label": "Level",
+              "type": "choice",
+              "required": false,
+              "default": "nominal",
+              "options": [
+                "nominal",
+                "interval"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "subject_dim": "subject",
+            "rater_dim": "rater",
+            "level": "nominal"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "kruskal",
           "version": "1.0.0",
           "kind": "operator",
@@ -58601,6 +58739,209 @@
         },
         {
           "protocol_version": 1,
+          "id": "variance_ratio",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.variance_ratio:VarianceRatioStep",
+          "title": "Variance ratio F test",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "value_dim": {
+                "type": "string",
+                "default": "value",
+                "title": "Value Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "first_label": {
+                "type": "string",
+                "title": "First Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "second_label": {
+                "type": "string",
+                "title": "Second Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "alternative": {
+                "type": "string",
+                "enum": [
+                  "two-sided",
+                  "less",
+                  "greater"
+                ],
+                "default": "two-sided",
+                "title": "Alternative",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "confidence": {
+                "type": "number",
+                "default": 0.95,
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "value_dim",
+                    "default": "value"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "value_dim",
+                    "default": "value"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "variance_ratio",
+          "module": "src.task.step.steps.variance_ratio",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "value_dim",
+              "label": "Value Dim",
+              "type": "string",
+              "required": false,
+              "default": "value"
+            },
+            {
+              "key": "first_label",
+              "label": "First Label",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "second_label",
+              "label": "Second Label",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "alternative",
+              "label": "Alternative",
+              "type": "choice",
+              "required": false,
+              "default": "two-sided",
+              "options": [
+                "two-sided",
+                "less",
+                "greater"
+              ]
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "value_dim": "value",
+            "alternative": "two-sided",
+            "confidence": 0.95
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "variation_of_information",
           "version": "1.0.0",
           "kind": "operator",
@@ -60064,6 +60405,197 @@
             "b_label": "b",
             "c_label": "c",
             "d_label": "d"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "youden_index",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.youden_index:YoudenIndexStep",
+          "title": "Youden index",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label",
+                "title": "标签维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "score_dim": {
+                "type": "string",
+                "default": "score",
+                "title": "Score Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "target_label": {
+                "type": "string",
+                "title": "目标字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "score_label": {
+                "type": "string",
+                "title": "Score Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "positive_label": {
+                "type": "string",
+                "title": "Positive Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "score_dim",
+                    "default": "score"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "youden_index",
+          "module": "src.task.step.steps.youden_index",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "label_dim",
+              "label": "标签维度",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "score_dim",
+              "label": "Score Dim",
+              "type": "string",
+              "required": false,
+              "default": "score"
+            },
+            {
+              "key": "target_label",
+              "label": "目标字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "score_label",
+              "label": "Score Label",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "positive_label",
+              "label": "Positive Label",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "label_dim": "label",
+            "score_dim": "score"
           },
           "legacy_parameters": false
         },

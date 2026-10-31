@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.65.0 — 2026-10-31
+
+- 新增：339 算子 / 82 Reader / 21 route；新增方差比检验、Youden 指数、Krippendorff α 三个推断/一致性算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension58.py` 4 项、`tests/test_r_oracles49.py` 1 项，合计 **5 passed**；方差比对照 R `var.test`，Krippendorff 对照标准公式与 R `irr::kripp.alpha` 缺失数据 fixture；registry clean；参考页 339/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 285 passed。
+- 边界：方差比要求每组 >=2 且方差非零；Youden 需要二分类标签和连续分数；Krippendorff 支持 nominal/interval 与缺失评分，R `irr` 0.84.1 的完整数据分母 bug 已在 SOP/测试中注明。
+
 ## 0.64.0 — 2026-10-31
 
 - 新增：336 算子 / 82 Reader / 21 route；新增风险比、比值比、Cohen's h 三个 2×2 表效应量算子；未修改核心层。

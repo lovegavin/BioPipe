@@ -19398,6 +19398,90 @@
     "quality": "auto"
   },
   {
+    "id": "krippendorff_alpha",
+    "kind": "operator",
+    "title": "Krippendorff's alpha",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "subject_dim",
+              "default": "subject"
+            },
+            {
+              "param": "rater_dim",
+              "default": "rater"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "subject_dim": {
+          "type": "string",
+          "default": "subject",
+          "title": "Subject Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "rater_dim": {
+          "type": "string",
+          "default": "rater",
+          "title": "Rater Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "level": {
+          "type": "string",
+          "enum": [
+            "nominal",
+            "interval"
+          ],
+          "default": "nominal",
+          "title": "Level",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/krippendorff_alpha.py",
+    "tests": [
+      "tests/test_extension58.py",
+      "tests/test_r_oracles49.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/krippendorff_alpha.md",
+    "quality": "auto"
+  },
+  {
     "id": "kruskal",
     "kind": "operator",
     "title": "Kruskal-Wallis test",
@@ -36072,6 +36156,130 @@
     "quality": "auto"
   },
   {
+    "id": "variance_ratio",
+    "kind": "operator",
+    "title": "Variance ratio F test",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "value_dim",
+              "default": "value"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "value_dim",
+              "default": "value"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "value_dim": {
+          "type": "string",
+          "default": "value",
+          "title": "Value Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "first_label": {
+          "type": "string",
+          "title": "First Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "second_label": {
+          "type": "string",
+          "title": "Second Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "less",
+            "greater"
+          ],
+          "default": "two-sided",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "confidence": {
+          "type": "number",
+          "default": 0.95,
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "title": "Confidence",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/variance_ratio.py",
+    "tests": [
+      "tests/test_extension58.py",
+      "tests/test_r_oracles49.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/variance_ratio.md",
+    "quality": "auto"
+  },
+  {
     "id": "variation_of_information",
     "kind": "operator",
     "title": "Variation of information",
@@ -37317,6 +37525,124 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/woolf_test.md",
+    "quality": "auto"
+  },
+  {
+    "id": "youden_index",
+    "kind": "operator",
+    "title": "Youden index",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "score_dim",
+              "default": "score"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "score_dim": {
+          "type": "string",
+          "default": "score",
+          "title": "Score Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "score_label": {
+          "type": "string",
+          "title": "Score Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "positive_label": {
+          "type": "string",
+          "title": "Positive Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/youden_index.py",
+    "tests": [
+      "tests/test_extension58.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/youden_index.md",
     "quality": "auto"
   },
   {

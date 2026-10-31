@@ -1,5 +1,13 @@
 # 权威实现对照矩阵
 
+## 0.65.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `variance_ratio` | R `stats::var.test` | `tests/test_r_oracles49.py` | x=1..5, y=2,4,6,8,10：F 0.25，df 4/4，p 0.20800000000000005，95% CI 0.026029384363481924..2.4011324711807167；每组 >=2、方差非零 |
+| `youden_index` | sklearn `roc_curve` + 手算 J | `tests/test_extension58.py` | 阈值 0.4，sens 1.0，spec 0.8，J 0.8，n_pos/n_neg 5/5；二分类标签 + 连续分数 |
+| `krippendorff_alpha` | 标准公式 + R `irr::kripp.alpha`（缺失 fixture） | `tests/test_r_oracles49.py` | 完整 nominal -0.1052631578947365、interval -0.20578778135048226；缺失 nominal -0.08130081300812986、interval -0.1192411924119241；R 0.84.1 完整数据分母 bug |
+
 ## 0.64.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
