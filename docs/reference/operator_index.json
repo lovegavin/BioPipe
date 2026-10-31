@@ -5925,6 +5925,112 @@
     "quality": "auto"
   },
   {
+    "id": "cca",
+    "kind": "operator",
+    "title": "Canonical correspondence analysis",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "response_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "predictor_dim",
+              "default": "predictor"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "response_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "Response Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "predictor_dim": {
+          "type": "string",
+          "default": "predictor",
+          "title": "Predictor Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/cca.py",
+    "tests": [
+      "tests/test_extension75.py",
+      "tests/test_r_oracles65.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/cca.md",
+    "quality": "auto"
+  },
+  {
     "id": "cell_cycle_score",
     "kind": "operator",
     "title": "Cell cycle score",
@@ -28278,6 +28384,87 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/pca_loadings.md",
+    "quality": "auto"
+  },
+  {
+    "id": "pcoa",
+    "kind": "operator",
+    "title": "Principal coordinates analysis",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "sample_b_dim",
+              "default": "sample_b"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "sample_b_dim": {
+          "type": "string",
+          "default": "sample_b",
+          "title": "Sample B Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "n_components": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 2,
+          "title": "主成分数",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/pcoa.py",
+    "tests": [
+      "tests/test_extension75.py",
+      "tests/test_r_oracles65.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/pcoa.md",
     "quality": "auto"
   },
   {

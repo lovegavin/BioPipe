@@ -312,6 +312,8 @@ export const builtinPresentation = {
   betadisper: { category: "统计分析", icon: "ChartScatter" },
   zero_inflated_negative_binomial: { category: "统计分析", icon: "ChartBar" },
   meta_regression: { category: "统计分析", icon: "ChartLine" },
+  pcoa: { category: "统计分析", icon: "ChartScatter" },
+  cca: { category: "统计分析", icon: "ChartScatter" },
 } satisfies Record<string, Pick<Operator, "category" | "icon" | "preview">>;
 
 export function presentOperator(spec: Operator): Operator {

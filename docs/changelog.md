@@ -1,3 +1,9 @@
+## 0.82.0 — 2026-10-31
+
+- 新增：377 算子 / 85 Reader / 21 route；新增主坐标分析（PCoA）与典范对应分析（CCA）两个排序算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension75.py` 5 项、`tests/test_r_oracles65.py` 2 项，合计 **7 passed**；R 对照 `vegan::cmdscale`、`vegan::cca`；registry clean；参考页 377/85；增量门 25 passed；`-W error` 11 passed；Studio 前端 323 passed。
+- 边界：PCoA 拒绝非方阵/非对称/非零对角/负距离，只保留正特征值；CCA 要求计数非负、行列为正、响应样本与解释变量样本一致，解释变量秩≥1，且样本数大于解释变量数；CCA 只输出约束轴，未约束惯量在 info 中报告。
+
 ## 0.81.0 — 2026-10-31
 
 - 新增：375 算子 / 85 Reader / 21 route；新增逆高斯回归、beta 离散度齐性检验、零膨胀负二项回归；未修改核心层。

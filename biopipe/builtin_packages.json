@@ -18391,6 +18391,175 @@
         },
         {
           "protocol_version": 1,
+          "id": "cca",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.cca:CcaStep",
+          "title": "Canonical correspondence analysis",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "response_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "Response Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "predictor_dim": {
+                "type": "string",
+                "default": "predictor",
+                "title": "Predictor Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "n_components": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 2,
+                "title": "主成分数",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "response_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "predictor_dim",
+                    "default": "predictor"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.26"
+          ],
+          "dependency_imports": [
+            "numpy"
+          ],
+          "name": "cca",
+          "module": "src.task.step.steps.cca",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Constrained correspondence analysis of a count table.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "response_dim",
+              "label": "Response Dim",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "predictor_dim",
+              "label": "Predictor Dim",
+              "type": "string",
+              "required": false,
+              "default": "predictor"
+            },
+            {
+              "key": "n_components",
+              "label": "主成分数",
+              "type": "integer",
+              "required": false,
+              "default": 2,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "response_dim": "feature",
+            "predictor_dim": "predictor",
+            "n_components": 2
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "cell_cycle_score",
           "version": "1.0.0",
           "kind": "operator",
@@ -48181,6 +48350,142 @@
             "feature_dim": "feature",
             "n_components": 10,
             "scale": true
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "pcoa",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.pcoa:PcoaStep",
+          "title": "Principal coordinates analysis",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "sample_b_dim": {
+                "type": "string",
+                "default": "sample_b",
+                "title": "Sample B Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "n_components": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 2,
+                "title": "主成分数",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "sample_b_dim",
+                    "default": "sample_b"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.26"
+          ],
+          "dependency_imports": [
+            "numpy"
+          ],
+          "name": "pcoa",
+          "module": "src.task.step.steps.pcoa",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Principal coordinates from a symmetric distance matrix.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "sample_b_dim",
+              "label": "Sample B Dim",
+              "type": "string",
+              "required": false,
+              "default": "sample_b"
+            },
+            {
+              "key": "n_components",
+              "label": "主成分数",
+              "type": "integer",
+              "required": false,
+              "default": 2,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "sample_b_dim": "sample_b",
+            "n_components": 2
           },
           "legacy_parameters": false
         },
