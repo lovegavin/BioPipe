@@ -11710,6 +11710,207 @@
         },
         {
           "protocol_version": 1,
+          "id": "aft",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.aft:AftStep",
+          "title": "Weibull accelerated failure time",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "time_label": {
+                "type": "string",
+                "title": "随访时间字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "event_label": {
+                "type": "string",
+                "title": "事件字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "covariates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "协变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "categorical": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": [],
+                "title": "分类协变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0.5,
+                "maximum": 0.999,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "time_label",
+              "event_label",
+              "covariates"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "lifelines<0.31,>=0.30"
+          ],
+          "dependency_imports": [
+            "lifelines"
+          ],
+          "name": "aft",
+          "module": "src.task.step.steps.aft",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Weibull accelerated failure time model with right censoring.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "time_label",
+              "label": "随访时间字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "event_label",
+              "label": "事件字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "covariates",
+              "label": "协变量",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "categorical",
+              "label": "分类协变量",
+              "type": "list",
+              "required": false,
+              "default": []
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95,
+              "min": 0.5,
+              "max": 0.999
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "categorical": [],
+            "confidence": 0.95
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "agglomerative",
           "version": "1.0.0",
           "kind": "operator",
@@ -68780,6 +68981,165 @@
           "runtime_defaults": {
             "variant_dim": "variant",
             "sample_dim": "sample"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "hardy_weinberg",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.hardy_weinberg:HardyWeinbergStep",
+          "title": "Hardy-Weinberg equilibrium",
+          "category": "Omics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "variant_dim": {
+                "type": "string",
+                "default": "variant",
+                "title": "Variant Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "aa_label": {
+                "type": "string",
+                "default": "AA",
+                "title": "Aa Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "ab_label": {
+                "type": "string",
+                "default": "AB",
+                "title": "Ab Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "bb_label": {
+                "type": "string",
+                "default": "BB",
+                "title": "Bb Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "variant_dim",
+                    "default": "variant"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "hardy_weinberg",
+          "module": "src.task.step.steps.hardy_weinberg",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Exact and descriptive Hardy-Weinberg statistics for biallelic variants.",
+          "parameters": [
+            {
+              "key": "variant_dim",
+              "label": "Variant Dim",
+              "type": "string",
+              "required": false,
+              "default": "variant"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "aa_label",
+              "label": "Aa Label",
+              "type": "string",
+              "required": false,
+              "default": "AA"
+            },
+            {
+              "key": "ab_label",
+              "label": "Ab Label",
+              "type": "string",
+              "required": false,
+              "default": "AB"
+            },
+            {
+              "key": "bb_label",
+              "label": "Bb Label",
+              "type": "string",
+              "required": false,
+              "default": "BB"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "variant_dim": "variant",
+            "feature_dim": "feature",
+            "aa_label": "AA",
+            "ab_label": "AB",
+            "bb_label": "BB"
           },
           "legacy_parameters": false
         },

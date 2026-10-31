@@ -6,10 +6,11 @@
 
 1. [架构总览](architecture.md) — 模块、执行流、数据流、目录地图、改哪里。
 2. [协议总集](protocol_suite.md) — Form、Reader、算子、契约、注册表、路线、扩展、测试的规范。
-3. [参考索引](reference/README.md) — 379 个算子、85 个 Reader 的逐项页面和机器索引。
+3. [参考索引](reference/README.md) — 381 个算子、85 个 Reader 的逐项页面和机器索引。
 4. [任务 SOP](route_sop.md) — 从数据到自定义路线、验证、运行、解释结果。
 5. [价值主张与设计原则](vision.md) — 为什么做、五个支撑手段、设计判断标准。
-6. [覆盖与创新点审计](coverage_audit.md) — 379 算子/85 Reader 的覆盖、增长、缺口与五支撑逐项审计。
+6. [覆盖与创新点审计](coverage_audit.md) — 381 算子/85 Reader 的覆盖、增长、缺口与五支撑逐项审计。
+7. [系统对象](reference/subjects/README.md) — Form、Task、Graph、Project、Reader、Step、Runner、Registry、SDK 的职责、边界与不变量。
 
 一句话：**`task.yaml`/Studio Graph → Reader → Form → Step 链 → 输出/图片/report**。Reader 负责忠实解析，算子负责数学处理，契约负责连接，测试负责证明。
 
@@ -63,6 +64,7 @@
 | [architecture.md](architecture.md) | 当前权威 | 仓库结构、执行流、模块边界、改哪里 |
 | [protocol_suite.md](protocol_suite.md) | 当前规范 | 数据/Reader/算子/契约的硬性约定 |
 | [reference/](reference/README.md) | 自动生成 | 每个 Reader/算子的参数、契约、源码/测试链接 |
+| [reference/subjects/](reference/subjects/README.md) | 人工维护 | 九个系统对象：职责、数据不变量、扩展边界 |
 | [route_sop.md](route_sop.md) | 当前流程 | 自定义任务的标准操作流程 |
 | [llm_guide.md](llm_guide.md) / [user_guide.md](user_guide.md) | 当前指南 | LLM/真人的操作手册 |
 | [testing.md](testing.md) | 当前流程 | 严格增量测试、静态 gate、周期全量 |
@@ -85,8 +87,8 @@
 
 ## 4. 当前版本与能力
 
-- 版本：**0.84.0**（见 [changelog](changelog.md)）
-- 379 个算子、85 个 Reader、6 个 provider 包、21 条内置路线
+- 版本：**0.85.0**（见 [changelog](changelog.md)）
+- 381 个算子、85 个 Reader、6 个 provider 包、21 条内置路线
 - 分类统一为 6 类；算子/Reader 功能预览、平台标记与 catalog integrity 检查已接入
 - 所有内置 Reader/算子参数严格（`additionalProperties: false`）
 - Reader 覆盖：CSV/TSV/TXT/Parquet、BED/GFF3/GTF/GAF、FASTA、MTX、H5AD、10x H5、VCF、PLINK1/2、BGEN、GMT、Loom、BIOM、FAM/BIM/HapMap、MOL/XYZ/GRO、PSL/genePred、MGF、HMMER domtblout、mzML/mzXML/mzTab、mzIdentML/pepXML/mzDATA/protXML 摘要、FCS/AB1

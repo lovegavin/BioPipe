@@ -5,7 +5,7 @@
 - Source: [`src/reader/readers/bcf_reader.py`](../../../src/reader/readers/bcf_reader.py)
 - Extensions: `.bcf`
 - Compression handled natively: `False`
-- Tests: [`tests/test_extension8.py`](../../../tests/test_extension8.py)
+- Tests: [`tests/test_catalog_integrity.py`](../../../tests/test_catalog_integrity.py), [`tests/test_extension8.py`](../../../tests/test_extension8.py)
 
 ## File input hints
 

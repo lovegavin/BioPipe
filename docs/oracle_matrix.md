@@ -1,3 +1,10 @@
+## 0.85.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `aft` | R `survival::survreg(Surv(time,event)~x1+x2, dist="weibull")` | `tests/test_r_oracles67.py` | seed 20261112、n=90、58 events：coef **1.24865535626414 / 0.918466782844872 / -0.434929192384358**，scale **0.913473103084374**，loglik **-120.493434256986**；coef/se/shape 容差 2e-5 |
+| `hardy_weinberg` | R `HardyWeinberg::HWExact(..., pvaluetype="selome")` | `tests/test_r_oracles67.py` | 六组 AA/AB/BB 计数，p 从 **0.07767465115912098** 到 **1.1142241805814507e-30**；相对容差 2e-10 |
+
 ## 0.84.0
 
 本轮不新增算子/Reader，也不新增外部数值 oracle；验证重点是分类、Reader 元数据、平台标记与目录完整性。新增 `tests/test_catalog_integrity.py`，并保留既有 R/Python oracle 全部通过。全量 pytest：**974 passed, 1 skipped**。

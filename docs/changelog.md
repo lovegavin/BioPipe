@@ -1,3 +1,10 @@
+## 0.85.0 — 2026-10-31
+
+- 新增：`aft`（Weibull 加速失效时间/右删失生存回归）与 `hardy_weinberg`（精确双等位 HWE 检验）；算子总数 **381**，Reader 仍 **85**。
+- 验证：`tests/test_extension77.py`/`tests/test_r_oracles67.py` 共 **6 passed**；R 对照 `survival::survreg`、`HardyWeinberg::HWExact`；增量门 **100 passed**；`-W error` **8 passed**；frontend **39 passed / 9 files**。
+- 文档：新增 9 个系统对象参考页（Form/Task/Graph/Project/Reader/Step/Runner/Registry/SDK），并接入 docs/reference 索引；未改核心执行层。
+- 修复：HWE 尾概率比较去掉绝对 epsilon（极端 p 不再被放大）；AFT 的 R 参考项 `(Intercept)` 映射。
+
 ## 0.84.0 — 2026-10-31
 
 - 重构：算子分类收敛为 **6 个英文首字母大写类别**（Data / Statistics / Machine Learning / Omics / Visualization / Quality Control）；分类在 `build_catalog` 归一，注册表保存机器分类，前端只做显示映射。

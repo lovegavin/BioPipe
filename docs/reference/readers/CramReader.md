@@ -5,7 +5,7 @@
 - Source: [`src/reader/readers/cram_reader.py`](../../../src/reader/readers/cram_reader.py)
 - Extensions: `.cram`
 - Compression handled natively: `False`
-- Tests: none found
+- Tests: [`tests/test_catalog_integrity.py`](../../../tests/test_catalog_integrity.py)
 
 ## File input hints
 

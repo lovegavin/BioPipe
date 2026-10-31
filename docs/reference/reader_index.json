@@ -120,6 +120,7 @@
     },
     "source": "src/reader/readers/bam_reader.py",
     "tests": [
+      "tests/test_catalog_integrity.py",
       "tests/test_extension7.py"
     ],
     "doc": "docs/reference/readers/BamReader.md",
@@ -186,6 +187,7 @@
     },
     "source": "src/reader/readers/bcf_reader.py",
     "tests": [
+      "tests/test_catalog_integrity.py",
       "tests/test_extension8.py"
     ],
     "doc": "docs/reference/readers/BcfReader.md",
@@ -553,6 +555,7 @@
     },
     "source": "src/reader/readers/bigwig_reader.py",
     "tests": [
+      "tests/test_catalog_integrity.py",
       "tests/test_extension7.py"
     ],
     "doc": "docs/reference/readers/BigWigReader.md",
@@ -1033,7 +1036,9 @@
       "info_open": false
     },
     "source": "src/reader/readers/cram_reader.py",
-    "tests": [],
+    "tests": [
+      "tests/test_catalog_integrity.py"
+    ],
     "doc": "docs/reference/readers/CramReader.md",
     "quality": "auto"
   },

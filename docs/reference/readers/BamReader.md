@@ -5,7 +5,7 @@
 - Source: [`src/reader/readers/bam_reader.py`](../../../src/reader/readers/bam_reader.py)
 - Extensions: `.bam`
 - Compression handled natively: `False`
-- Tests: [`tests/test_extension7.py`](../../../tests/test_extension7.py)
+- Tests: [`tests/test_catalog_integrity.py`](../../../tests/test_catalog_integrity.py), [`tests/test_extension7.py`](../../../tests/test_extension7.py)
 
 ## File input hints
 
