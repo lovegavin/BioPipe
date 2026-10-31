@@ -4,7 +4,7 @@ BioPipe 是本地生信流水线引擎 + Studio 可视化工作区 + CLI/MCP Age
 Reader 读取标准格式，用带类型契约的算子处理 `Form`，并在本地生成表格、图片和报告。
 BioPipe 本身不提供 AI 服务。
 
-当前源码版本 **0.76.0**：**366 个算子、82 个 Reader、6 个 provider 包、21 条路线**。
+当前源码版本 **0.77.0**：**369 个算子、82 个 Reader、6 个 provider 包、21 条路线**。
 
 ## 价值主张
 
@@ -146,6 +146,7 @@ docs/reference/    自动生成 Reader/算子参考页
 - 时间序列诊断：互相关函数、BDS 非线性依赖、差分符号检验。
 - 时间序列单位根/波动：Phillips-Perron、DF-GLS、Engle ARCH LM。
 - 时间序列波动/向量自回归：GARCH、VAR。
+- 功效/样本量：t 检验、两比例、单因素 ANOVA 的 achieved power。
 - 流行病学效应量：风险比、比值比、Cohen's h（2×2 表，log/Wald 置信区间）。
 - 评分者一致性：Gwet AC1、Brennan-Prediger、Conger kappa（未加权，容忍缺失评分）。
 - 有序关联：Somers' D、Goodman-Kruskal gamma、Kendall's W。
@@ -157,7 +158,7 @@ docs/reference/    自动生成 Reader/算子参考页
 
 ## 版本与更新记录
 
-- 当前：**0.76.0**，见 [CHANGELOG](docs/changelog.md)。
+- 当前：**0.77.0**，见 [CHANGELOG](docs/changelog.md)。
 - Windows 测试环境快照：[conda](windows-biopipe-conda.yml) /
   [pip](windows-biopipe-pip-freeze.txt)。
 

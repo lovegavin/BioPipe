@@ -1,3 +1,11 @@
+## 0.77.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `power_t_test` | R `pwr::pwr.t.test` | `tests/test_r_oracles61.py` | d=0.5、n=64：two-sample power 0.8014595579222542，paired/one-sample 0.9760555768876558；R 0.80145955792232759 / 0.97605557688772915，差异 <1e-12 |
+| `power_prop_test` | R `pwr::pwr.2p.test(h=ES.h(.6,.4), n=100)` | `tests/test_r_oracles61.py` | h 0.40271584158066154，power 0.8126408236244113；正态近似双侧 |
+| `power_anova` | R `pwr::pwr.anova.test(k=4,n=40,f=.25)` | `tests/test_r_oracles61.py` | power 0.7494045377009664，df 3/156；R 0.74940453777624239，差异 <1e-9 |
+
 ## 0.76.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

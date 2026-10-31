@@ -48925,6 +48925,490 @@
         },
         {
           "protocol_version": 1,
+          "id": "power_anova",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.power_anova:PowerAnovaStep",
+          "title": "ANOVA power",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "effect_size": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "title": "Effect Size",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "n_per_group": {
+                "type": "integer",
+                "minimum": 2,
+                "title": "N Per Group",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "k_groups": {
+                "type": "integer",
+                "minimum": 2,
+                "title": "K Groups",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "alpha": {
+                "type": "number",
+                "default": 0.05,
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "title": "显著性水平",
+                "x-ui-group": "advanced",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "required": [
+              "effect_size",
+              "n_per_group",
+              "k_groups"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "power_anova",
+          "module": "src.task.step.steps.power_anova",
+          "inputs_arity": 0,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Compute achieved power for a balanced one-way ANOVA.",
+          "parameters": [
+            {
+              "key": "effect_size",
+              "label": "Effect Size",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "n_per_group",
+              "label": "N Per Group",
+              "type": "integer",
+              "required": true,
+              "min": 2
+            },
+            {
+              "key": "k_groups",
+              "label": "K Groups",
+              "type": "integer",
+              "required": true,
+              "min": 2
+            },
+            {
+              "key": "alpha",
+              "label": "显著性水平",
+              "type": "number",
+              "required": false,
+              "default": 0.05
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "alpha": 0.05
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "power_prop_test",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.power_prop_test:PowerPropTestStep",
+          "title": "Two-proportion power",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "p1": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "title": "P1",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "p2": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "title": "P2",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "nobs1": {
+                "type": "integer",
+                "minimum": 2,
+                "title": "Nobs1",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "nobs2": {
+                "type": "integer",
+                "minimum": 2,
+                "title": "Nobs2",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "alpha": {
+                "type": "number",
+                "default": 0.05,
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "title": "显著性水平",
+                "x-ui-group": "advanced",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "p1",
+              "p2",
+              "nobs1",
+              "nobs2"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "power_prop_test",
+          "module": "src.task.step.steps.power_prop_test",
+          "inputs_arity": 0,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Compute achieved power for a two-sided two-proportion test.",
+          "parameters": [
+            {
+              "key": "p1",
+              "label": "P1",
+              "type": "number",
+              "required": true,
+              "min": 0,
+              "max": 1
+            },
+            {
+              "key": "p2",
+              "label": "P2",
+              "type": "number",
+              "required": true,
+              "min": 0,
+              "max": 1
+            },
+            {
+              "key": "nobs1",
+              "label": "Nobs1",
+              "type": "integer",
+              "required": true,
+              "min": 2
+            },
+            {
+              "key": "nobs2",
+              "label": "Nobs2",
+              "type": "integer",
+              "required": true,
+              "min": 2
+            },
+            {
+              "key": "alpha",
+              "label": "显著性水平",
+              "type": "number",
+              "required": false,
+              "default": 0.05
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "alpha": 0.05
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "power_t_test",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.power_t_test:PowerTTestStep",
+          "title": "t-test power",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "test": {
+                "type": "string",
+                "enum": [
+                  "two-sample",
+                  "paired",
+                  "one-sample"
+                ],
+                "default": "two-sample",
+                "title": "Test",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "effect_size": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "title": "Effect Size",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "alpha": {
+                "type": "number",
+                "default": 0.05,
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "title": "显著性水平",
+                "x-ui-group": "advanced",
+                "x-ui-order": 20
+              },
+              "nobs1": {
+                "type": "integer",
+                "minimum": 2,
+                "title": "Nobs1",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "nobs2": {
+                "type": "integer",
+                "minimum": 2,
+                "title": "Nobs2",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "ratio": {
+                "type": "number",
+                "default": 1.0,
+                "exclusiveMinimum": 0,
+                "title": "Ratio",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "alternative": {
+                "type": "string",
+                "enum": [
+                  "two-sided",
+                  "greater",
+                  "less"
+                ],
+                "default": "two-sided",
+                "title": "Alternative",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "effect_size",
+              "nobs1"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "power_t_test",
+          "module": "src.task.step.steps.power_t_test",
+          "inputs_arity": 0,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Compute achieved power for a t test from effect size and sample size.",
+          "parameters": [
+            {
+              "key": "test",
+              "label": "Test",
+              "type": "choice",
+              "required": false,
+              "default": "two-sample",
+              "options": [
+                "two-sample",
+                "paired",
+                "one-sample"
+              ]
+            },
+            {
+              "key": "effect_size",
+              "label": "Effect Size",
+              "type": "number",
+              "required": true
+            },
+            {
+              "key": "alpha",
+              "label": "显著性水平",
+              "type": "number",
+              "required": false,
+              "default": 0.05
+            },
+            {
+              "key": "nobs1",
+              "label": "Nobs1",
+              "type": "integer",
+              "required": true,
+              "min": 2
+            },
+            {
+              "key": "nobs2",
+              "label": "Nobs2",
+              "type": "integer",
+              "required": false,
+              "min": 2
+            },
+            {
+              "key": "ratio",
+              "label": "Ratio",
+              "type": "number",
+              "required": false,
+              "default": 1.0
+            },
+            {
+              "key": "alternative",
+              "label": "Alternative",
+              "type": "choice",
+              "required": false,
+              "default": "two-sided",
+              "options": [
+                "two-sided",
+                "greater",
+                "less"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "test": "two-sample",
+            "alpha": 0.05,
+            "ratio": 1.0,
+            "alternative": "two-sided"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "power_transform",
           "version": "1.0.0",
           "kind": "operator",

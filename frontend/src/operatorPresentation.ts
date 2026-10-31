@@ -303,6 +303,9 @@ export const builtinPresentation = {
   tobit: { category: "统计分析", icon: "ChartLine" },
   garch: { category: "统计分析", icon: "ChartLine" },
   var_model: { category: "统计分析", icon: "ChartScatter" },
+  power_t_test: { category: "统计分析", icon: "ChartLine" },
+  power_prop_test: { category: "统计分析", icon: "ChartBar" },
+  power_anova: { category: "统计分析", icon: "ChartScatter" },
 } satisfies Record<string, Pick<Operator, "category" | "icon" | "preview">>;
 
 export function presentOperator(spec: Operator): Operator {

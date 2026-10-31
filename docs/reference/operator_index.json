@@ -29136,6 +29136,272 @@
     "quality": "auto"
   },
   {
+    "id": "power_anova",
+    "kind": "operator",
+    "title": "ANOVA power",
+    "package": "biopipe-core",
+    "inputs_arity": 0,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "effect_size": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "title": "Effect Size",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "n_per_group": {
+          "type": "integer",
+          "minimum": 2,
+          "title": "N Per Group",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "k_groups": {
+          "type": "integer",
+          "minimum": 2,
+          "title": "K Groups",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "alpha": {
+          "type": "number",
+          "default": 0.05,
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "required": [
+        "effect_size",
+        "n_per_group",
+        "k_groups"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/power_anova.py",
+    "tests": [
+      "tests/test_extension70.py",
+      "tests/test_r_oracles61.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/power_anova.md",
+    "quality": "auto"
+  },
+  {
+    "id": "power_prop_test",
+    "kind": "operator",
+    "title": "Two-proportion power",
+    "package": "biopipe-core",
+    "inputs_arity": 0,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "p1": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "title": "P1",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "p2": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "title": "P2",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "nobs1": {
+          "type": "integer",
+          "minimum": 2,
+          "title": "Nobs1",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "nobs2": {
+          "type": "integer",
+          "minimum": 2,
+          "title": "Nobs2",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "alpha": {
+          "type": "number",
+          "default": 0.05,
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "p1",
+        "p2",
+        "nobs1",
+        "nobs2"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/power_prop_test.py",
+    "tests": [
+      "tests/test_extension70.py",
+      "tests/test_r_oracles61.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/power_prop_test.md",
+    "quality": "auto"
+  },
+  {
+    "id": "power_t_test",
+    "kind": "operator",
+    "title": "t-test power",
+    "package": "biopipe-core",
+    "inputs_arity": 0,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "test": {
+          "type": "string",
+          "enum": [
+            "two-sample",
+            "paired",
+            "one-sample"
+          ],
+          "default": "two-sample",
+          "title": "Test",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "effect_size": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "title": "Effect Size",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "alpha": {
+          "type": "number",
+          "default": 0.05,
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 20
+        },
+        "nobs1": {
+          "type": "integer",
+          "minimum": 2,
+          "title": "Nobs1",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "nobs2": {
+          "type": "integer",
+          "minimum": 2,
+          "title": "Nobs2",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "ratio": {
+          "type": "number",
+          "default": 1.0,
+          "exclusiveMinimum": 0,
+          "title": "Ratio",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "alternative": {
+          "type": "string",
+          "enum": [
+            "two-sided",
+            "greater",
+            "less"
+          ],
+          "default": "two-sided",
+          "title": "Alternative",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "effect_size",
+        "nobs1"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/power_t_test.py",
+    "tests": [
+      "tests/test_extension70.py",
+      "tests/test_r_oracles61.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/power_t_test.md",
+    "quality": "auto"
+  },
+  {
     "id": "power_transform",
     "kind": "operator",
     "title": "Power transform",

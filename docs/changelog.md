@@ -1,3 +1,9 @@
+## 0.77.0 — 2026-10-31
+
+- 新增：369 算子 / 82 Reader / 21 route；新增 t 检验、两比例检验、单因素 ANOVA 三个功效/样本量计算算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension70.py` 4 项、`tests/test_r_oracles61.py` 1 项，合计 **5 passed**；R 对照 `pwr`；registry clean；参考页 369/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 315 passed。
+- 边界：三算子只计算给定设计下的 achieved power，不反解样本量；两比例用 Cohen h 正态近似；ANOVA 只支持平衡设计；无输入计算算子。
+
 ## 0.76.0 — 2026-10-31
 
 - 新增：366 算子 / 82 Reader / 21 route；新增 GARCH 波动率模型与向量自回归（VAR）两个时间序列算子；未修改核心层。
