@@ -1,3 +1,10 @@
+## 0.74.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `cusum_chart` | R `qcc::cusum(sizes=1, decision.interval=5, se.shift=1)` | `tests/test_r_oracles58.py` | 12 点 fixture：center 13.5、sigma 1.3700838168923277；pos 末值 4.4338823529411755、neg 首值 -2.0545882352941174；逐值一致 |
+| `ewma_chart` | R `qcc::ewma(sizes=1, lambda=0.2, nsigmas=3)` | `tests/test_r_oracles58.py` | 同一 fixture：首值 12.8、末值 14.688383963136；LCL/UCL 首行 12.677949709864604 / 14.322050290135396；逐值一致 |
+
 ## 0.73.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

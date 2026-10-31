@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（360；下表为 89 个早期算子，0.8–0.73 新增见末尾证据）
+## 3. Operator（362；下表为 89 个早期算子，0.8–0.74 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -784,3 +784,13 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
 - `tests/test_extension66.py` 4 项、`tests/test_r_oracles57.py` 1 项，合计 **5 passed**；R 对照 `urca::ur.pp`、`urca::ur.ers`、`FinTS::ArchTest`。
 - 边界：Phillips-Perron 只实现 Z-tau，不实现 Z-alpha；`arch` 与 R `urca` 的 PP 长程方差带宽细节不同，统计量按 1e-6 容差比较，临界值只作参考不逐位断言；DF-GLS 固定滞后时与 R 对齐，`lags=null` 使用 arch 的 AIC 选择；ARCH LM 输入按残差处理，不拟合均值模型。
 - 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 360/82/21；参考页 360 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 306 passed。
+
+
+## 74. 0.74.0 扩展证据
+
+- 新增 2 个统计过程控制算子：`cusum_chart`（双侧 tabular CUSUM 控制图）、`ewma_chart`（EWMA 控制图）。
+- `cusum_chart`：一个单序列 `[sample,feature]`，`value_label` 指定列；`decision_interval` 默认 5，`se_shift` 默认 1；用平均移动极差 / 1.128 估计 sigma；输出 `cusum_pos,cusum_neg,center,std_dev,limit,out_of_control`。12 点 fixture `10,12,11,13,12,14,13,15,14,16,15,17`：center 13.5、sigma **1.3700838168923277**；`cusum_pos` 末值 **4.4338823529411755**，`cusum_neg` 首值 **-2.0545882352941174**；R `qcc::cusum(sizes=1,decision.interval=5,se.shift=1)` 逐值一致。
+- `ewma_chart`：同样单序列输入；`lambda` 默认 0.2、`nsigmas` 默认 3；sigma 同样由移动极差估计；输出 `ewma,center,lcl,ucl,std_dev,out_of_control`，上下限按随时间变化的 EWMA 方差计算。同一 fixture：首值 **12.8**，末值 **14.688383963136**；首行 LCL/UCL **12.677949709864604 / 14.322050290135396**；R `qcc::ewma(sizes=1,lambda=0.2,nsigmas=3)` 逐值一致。
+- `tests/test_extension67.py` 4 项、`tests/test_r_oracles58.py` 1 项，合计 **5 passed**；R 对照 `qcc::cusum`、`qcc::ewma`。
+- 边界：只处理单个 `value_label` 序列；CUSUM 的 `limit` 为决策区间 h，`se_shift` 对应 qcc 的 `se.shift`，内部取半位移 k=se_shift/2；EWMA 的限随时间收敛，不是常数限；两个算子只输出表，不直接画图；`out_of_control` 为 0/1 数值列。常数序列因移动极差为 0 被拒绝。
+- 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 362/82/21；参考页 362 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 308 passed。

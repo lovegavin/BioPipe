@@ -1,3 +1,9 @@
+## 0.74.0 — 2026-10-31
+
+- 新增：362 算子 / 82 Reader / 21 route；新增 CUSUM 与 EWMA 个体测量控制图两个统计过程控制算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension67.py` 4 项、`tests/test_r_oracles58.py` 1 项，合计 **5 passed**；R 对照 `qcc::cusum`、`qcc::ewma`；registry clean；参考页 362/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 308 passed。
+- 边界：两个算子都只处理一个 `value_label` 序列；sigma 用平均移动极差 / 1.128 估计；CUSUM 使用 `decision_interval` 与 `se_shift`，EWMA 使用 `lambda` 与 `nsigmas`；输出为表格，不直接画图；常数序列被拒绝。
+
 ## 0.73.0 — 2026-10-31
 
 - 新增：360 算子 / 82 Reader / 21 route；新增 Phillips-Perron 单位根、DF-GLS 单位根、Engle ARCH LM 波动检验三个时间序列诊断算子；未修改核心层。

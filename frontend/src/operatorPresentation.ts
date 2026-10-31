@@ -297,6 +297,8 @@ export const builtinPresentation = {
   phillips_perron: { category: "统计分析", icon: "ChartLine" },
   dfgls: { category: "统计分析", icon: "ChartLine" },
   arch_lm: { category: "统计分析", icon: "ChartScatter" },
+  cusum_chart: { category: "统计分析", icon: "ChartLine" },
+  ewma_chart: { category: "统计分析", icon: "ChartScatter" },
 } satisfies Record<string, Pick<Operator, "category" | "icon" | "preview">>;
 
 export function presentOperator(spec: Operator): Operator {
