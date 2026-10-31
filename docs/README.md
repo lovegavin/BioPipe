@@ -87,7 +87,7 @@
 
 ## 4. 当前版本与能力
 
-- 版本：**0.86.0**（见 [changelog](changelog.md)）
+- 版本：**0.87.0**（见 [changelog](changelog.md)）
 - 385 个算子、85 个 Reader、6 个 provider 包、21 条内置路线
 - 分类统一为 6 类；算子/Reader 功能预览、平台标记与 catalog integrity 检查已接入
 - 所有内置 Reader/算子参数严格（`additionalProperties: false`）
