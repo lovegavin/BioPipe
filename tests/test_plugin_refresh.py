@@ -176,8 +176,32 @@ def test_refresh_api_is_async_token_protected_and_reports_errors(tmp_path, monke
         assert manager.state() == initial
 
 
-def test_source_library_discovers_plain_author_modules_without_manifest_edits(tmp_path, monkeypatch):
+def _strip_dependency_declarations(code: str) -> str:
+    """Blank dependency declarations, including multi-line lists."""
     import re
+
+    lines = code.splitlines(keepends=True)
+    result: list[str] = []
+    index = 0
+    pattern = re.compile(r'^    (dependencies|dependency_imports) = ')
+    while index < len(lines):
+        line = lines[index]
+        match = pattern.match(line)
+        if match:
+            name = match.group(1)
+            result.append(f"    {name} = []\n")
+            if line.rstrip().endswith("["):
+                index += 1
+                while index < len(lines) and lines[index].rstrip() != "    ]":
+                    index += 1
+                index += 1
+                continue
+        result.append(line)
+        index += 1
+    return "".join(result)
+
+
+def test_source_library_discovers_plain_author_modules_without_manifest_edits(tmp_path, monkeypatch):
     from biopipe.source_library import SOURCE_DIRS
     source_root = tmp_path / 'code'
     for relative in [*SOURCE_DIRS.values(), 'src/task/operator_ui.json', 'biopipe/builtin_packages.json']:
@@ -189,7 +213,7 @@ def test_source_library_discovers_plain_author_modules_without_manifest_edits(tm
                 # hooks without downloading every optional native reader. Real
                 # dependency declarations/repairs have their own tests.
                 code = file.read_text(encoding='utf-8')
-                code = re.sub(r'(?m)^    (dependencies|dependency_imports) = .+$', r'    \1 = []', code)
+                code = _strip_dependency_declarations(code)
                 (target / file.name).write_text(code, encoding='utf-8')
         else:
             target.parent.mkdir(parents=True, exist_ok=True)

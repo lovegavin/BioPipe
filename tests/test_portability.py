@@ -7,6 +7,12 @@ import subprocess
 import sys
 import time
 
+import warnings
+from starlette.exceptions import StarletteDeprecationWarning
+
+# Starlette 1.9 still imports httpx 0.28 for TestClient and emits this
+# warning during collection; suppress third-party noise at the import.
+warnings.filterwarnings("ignore", category=StarletteDeprecationWarning)
 from fastapi.testclient import TestClient
 import httpx
 import numpy as np

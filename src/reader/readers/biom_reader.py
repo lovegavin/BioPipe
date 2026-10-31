@@ -98,14 +98,21 @@ class BiomReader(Reader):
                     data[sample, obs] = float(values[pos])
             sample_ids = [_text(v) for v in sample_group["ids"][:]]
             taxon_ids = [_text(v) for v in obs_group["ids"][:]]
+            # BIOM 2.1 stores observation metadata as a JSON-per-row
+            # dataset. QIIME 2 tables commonly carry an empty metadata
+            # *group* instead; treat that (and a missing group) as no
+            # taxonomy rather than subscripting the group with [:].
             taxonomy = None
-            if "metadata" in obs_group:
+            metadata = obs_group.get("metadata")
+            if isinstance(metadata, h5py.Dataset):
                 taxonomy = []
-                for item in obs_group["metadata"][:]:
+                for item in metadata[:]:
                     try:
                         taxonomy.append(json.loads(item).get("taxonomy"))
                     except (TypeError, ValueError, UnicodeDecodeError):
                         taxonomy.append(None)
+            elif isinstance(metadata, h5py.Group):
+                taxonomy = None
         if len(sample_ids) != data.shape[0] or len(taxon_ids) != data.shape[1]:
             raise ReaderError("BIOM identifiers do not match matrix shape")
         return data, sample_ids, taxon_ids, taxonomy

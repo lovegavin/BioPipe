@@ -1,3 +1,12 @@
+## 0.115.0 — 2026-11-01
+
+- 将 `examples/route_combinations/` 收敛为五条强代表性、高端任务：`refseq_cds_sequence_features`（FASTA）、`thousand_genomes_chr22_population`（VCF）、`leukemia_all_aml_expression`（GCT）、`pbmc3k_single_cell_atlas`（H5AD）、`qiime_moving_pictures_microbiome`（BIOM）。删除 cancer/lung/mite/diabetes/pbc/birthwt/wine/mtcars 八条 CSV-only 示例，历史保留在本文件与 SOP §104–§114。
+- 五条任务分别覆盖 FastaReader/VcfReader/GctReader/H5adReader/BiomReader，并组合序列、群体遗传、表达、单细胞与微生物组算子；不新增算子/Reader/路线，registry 仍 **402/85/21/6**。
+- 修复 `BiomReader` 对 QIIME BIOM HDF5 空 `observation/metadata` group 的处理：`h5py.Group`/缺失时 taxonomy 返回 None，只有 `h5py.Dataset` 才按 JSON 行解析；新增空 group 与 taxonomy dataset 回归测试。
+- 验证：路线组合 **11 passed**（5 check + 5 execute + 1 条目录约束）；`-W error` **24 passed**；增量门 **33 passed**；前端 **39 passed / 9 files**，构建通过；全量 pytest **1075 passed, 1 skipped**（1796.65s；唯一 skip 为 full-suite mode 分支）。
+- 测试基础设施：修正 source-library 生命周期测试对多行 `dependencies` 列表的归一化（此前 `additive_glm` 触发 `IndentationError`），并清理本地过期 `egg-info`，使 editable 包元数据与 0.115.0 一致。
+- 说明：五条示例仍只使用公开、可引用数据；没有把路线示例包装成临床/生物学结论。
+
 ## 0.114.0 — 2026-11-01
 
 - 新增第十二条公开数据路线组合示例 `pbmc3k_single_cell_atlas`：10x Genomics PBMC3k 的 Scanpy 处理版本，2,638 个细胞 × 1,838 个高变基因，8 个注释细胞类型；首次以 `H5adReader` 专用 Reader 读取并组合单细胞结构、marker 与分类算子。

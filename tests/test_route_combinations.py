@@ -11,19 +11,19 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLE_ROOT = ROOT / "examples" / "route_combinations"
 CASES = [
-    "cancer_diagnosis_ml",
-    "lung_regression_survival",
-    "mite_community_ml",
-    "diabetes_classification_regression",
-    "pbc_competing_survival",
-    "birthwt_risk_factors",
-    "wine_cultivar_classification",
-    "mtcars_regression_classification",
     "refseq_cds_sequence_features",
     "thousand_genomes_chr22_population",
     "leukemia_all_aml_expression",
     "pbmc3k_single_cell_atlas",
+    "qiime_moving_pictures_microbiome",
 ]
+THRESHOLDS = {
+    "refseq_cds_sequence_features": 11,
+    "thousand_genomes_chr22_population": 13,
+    "leukemia_all_aml_expression": 11,
+    "pbmc3k_single_cell_atlas": 12,
+    "qiime_moving_pictures_microbiome": 13,
+}
 
 
 def _run(task_dir: Path, *extra: str, timeout: int = 300) -> subprocess.CompletedProcess[str]:
@@ -34,6 +34,13 @@ def _run(task_dir: Path, *extra: str, timeout: int = 300) -> subprocess.Complete
         text=True,
         timeout=timeout,
     )
+
+
+def test_route_examples_are_curated_five() -> None:
+    dirs = sorted(path.name for path in EXAMPLE_ROOT.iterdir() if path.is_dir())
+    assert dirs == sorted(CASES)
+    for name in CASES:
+        assert (EXAMPLE_ROOT / name / "ANALYSIS.md").is_file(), f"{name} lacks ANALYSIS.md"
 
 
 @pytest.mark.parametrize("name", CASES)
@@ -57,16 +64,4 @@ def test_route_combination_executes_in_tmp(name: str, tmp_path: Path) -> None:
     assert summary_path.is_file()
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     assert summary["status"] == "complete"
-    thresholds = {
-        "mite_community_ml": 13,
-        "birthwt_risk_factors": 11,
-        "pbc_competing_survival": 8,
-        "wine_cultivar_classification": 9,
-        "mtcars_regression_classification": 13,
-        "refseq_cds_sequence_features": 11,
-        "thousand_genomes_chr22_population": 13,
-        "leukemia_all_aml_expression": 11,
-        "pbmc3k_single_cell_atlas": 12,
-        "diabetes_classification_regression": 7,
-    }
-    assert summary["n_steps"] >= thresholds.get(name, 6)
+    assert summary["n_steps"] >= THRESHOLDS[name]

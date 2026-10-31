@@ -79,6 +79,8 @@ def test_biom_json_and_hdf5_agree(tmp_path):
         sample.create_dataset("ids", data=np.array(["s1", "s2"], dtype="S2"))
         observation = handle.create_group("observation")
         observation.create_dataset("ids", data=np.array(["tax1", "tax2"], dtype="S5"))
+        # QIIME 2 BIOM files carry an empty observation/metadata group.
+        observation.create_group("metadata")
         matrix = observation.create_group("matrix")
         matrix.attrs["shape"] = (2, 2)
         matrix.create_dataset("data", data=np.array([10.0, 3.0], dtype=np.float32))
@@ -86,6 +88,30 @@ def test_biom_json_and_hdf5_agree(tmp_path):
         matrix.create_dataset("indptr", data=np.array([0, 1, 2], dtype=np.int32))
     h5_form = BiomReader().read(h5_path, ["sample", "taxon"], {})
     assert h5_form.data.tolist() == [[10.0, 0.0], [0.0, 3.0]]
+
+
+def test_biom_hdf5_taxonomy_metadata(tmp_path):
+    h5_path = tmp_path / "taxonomy.biom"
+    with h5py.File(h5_path, "w") as handle:
+        handle.attrs["shape"] = (1, 1)
+        sample = handle.create_group("sample")
+        sample.create_dataset("ids", data=np.array(["s1"], dtype="S2"))
+        observation = handle.create_group("observation")
+        observation.create_dataset("ids", data=np.array(["tax1"], dtype="S4"))
+        observation.create_dataset(
+            "metadata",
+            data=np.array([json.dumps({"taxonomy": ["Bacteria", "Firmicutes"]})], dtype="S256"),
+        )
+        matrix = observation.create_group("matrix")
+        matrix.attrs["shape"] = (1, 1)
+        matrix.create_dataset("data", data=np.array([3.0], dtype=np.float32))
+        matrix.create_dataset("indices", data=np.array([0], dtype=np.int32))
+        matrix.create_dataset("indptr", data=np.array([0, 1], dtype=np.int32))
+
+    form = BiomReader().read(
+        h5_path, ["sample", "taxon"], {}, taxonomy=True
+    )
+    assert list(form.labels["taxon"]) == ["Bacteria; Firmicutes"]
 
 
 def test_new_readers_are_registered_and_dispatch(tmp_path):
