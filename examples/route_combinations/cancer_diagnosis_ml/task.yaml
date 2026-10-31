@@ -1,0 +1,84 @@
+name: cancer_diagnosis_ml
+
+sources:
+  features:
+    path: input/breast_cancer_features.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+  labels:
+    path: input/breast_cancer_labels.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+steps:
+  - name: compare_groups
+    inputs: [features, labels]
+    params:
+      dim: feature
+      group_dim: sample
+      group_label: diagnosis
+      group_a: benign
+      group_b: malignant
+      method: welch
+      output: de_result
+
+  - name: volcano
+    inputs: [de_result]
+    params:
+      dim: feature
+      stat_dim: statistic
+      lfc_label: log2FC
+      p_label: P
+      lfc_threshold: 1.0
+      p_threshold: 0.05
+      filename: volcano.png
+      label_top: 10
+      title: "UCI breast cancer: benign vs malignant"
+
+  - name: ma_plot
+    inputs: [de_result]
+    params:
+      dim: feature
+      stat_dim: statistic
+      lfc_label: log2FC
+      mean_a_label: mean_a
+      mean_b_label: mean_b
+      p_label: P
+      p_threshold: 0.05
+      filename: ma.png
+      title: "UCI breast cancer feature means"
+
+  - name: heatmap
+    inputs: [features]
+    params:
+      dim: feature
+      other_dim: sample
+      select: variance
+      top_n: 30
+      standardize: row
+      cluster_rows: true
+      cluster_cols: true
+      filename: top30_heatmap.png
+      title: "Top 30 variable features"
+
+  - name: random_forest_classifier
+    inputs: [features, labels]
+    params:
+      sample_dim: sample
+      feature_dim: feature
+      label_dim: feature
+      target_label: diagnosis
+      valid_labels: [malignant, benign]
+      test_size: 0.25
+      cv_folds: 3
+      random_state: 7
+      n_estimators: 200
+      output: rf_report
+
+  - name: describe
+    inputs: [rf_report]

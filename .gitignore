@@ -75,3 +75,8 @@ tree_snapshot.txt
 
 # Root-level vitest cache (frontend deps live in frontend/node_modules)
 node_modules/
+
+# Route-combination example source fixtures (small deterministic data)
+!examples/route_combinations/*/input/
+!examples/route_combinations/*/input/*.csv
+examples/route_combinations/*/output/

@@ -1,8 +1,8 @@
-# BioPipe 覆盖与核心创新点审计（0.84–0.103）
+# BioPipe 覆盖与核心创新点审计（0.84–0.104）
 
 本页回答两个问题：**当前算子和 Reader 覆盖到什么程度**，以及**这些扩展是否真的在支撑 BioPipe 的核心创新点**，而不只是增加数量。
 
-审计基线：`0.84.0` 全量快照；0.85 新增 `aft`/`hardy_weinberg`，0.86 新增 `chao1`/`rarefaction`，0.87 新增 `arima`/`isotonic`，0.88 新增 `dca`/`lowess`，0.89 新增 `bai_perron`，0.90 新增 `fine_gray`，0.91 新增 `nmds`，0.92 新增 `sarima`，0.93 新增 `probit_regression`，0.94 新增 `box_cox`，0.95 新增 `spline_regression`，0.96 新增 `vecm`，0.97 新增 `gaussian_process_regressor`，0.98 新增 `additive_spline_regression`，0.99 新增 `envfit`，0.100 新增 `additive_glm`，0.101 新增 `interval_censored_regression`，0.102 新增 `conditional_logistic`，0.103 新增 `hierarchical_clustering` 后当前 **402 个算子 / 85 个 Reader / 21 条路线 / 6 个包**，注册表 `errors []`。前端按 Vitest 实际用例统计为 **39 tests / 9 files**，构建通过。下文的分类/覆盖证据以 0.84 快照为主，0.85–0.103 增量证据见 SOP §85–§103。本文只记录可核对的事实；没有把“有测试”写成“每个算子都有独立外部 oracle”。
+审计基线：`0.84.0` 全量快照；0.85 新增 `aft`/`hardy_weinberg`，0.86 新增 `chao1`/`rarefaction`，0.87 新增 `arima`/`isotonic`，0.88 新增 `dca`/`lowess`，0.89 新增 `bai_perron`，0.90 新增 `fine_gray`，0.91 新增 `nmds`，0.92 新增 `sarima`，0.93 新增 `probit_regression`，0.94 新增 `box_cox`，0.95 新增 `spline_regression`，0.96 新增 `vecm`，0.97 新增 `gaussian_process_regressor`，0.98 新增 `additive_spline_regression`，0.99 新增 `envfit`，0.100 新增 `additive_glm`，0.101 新增 `interval_censored_regression`，0.102 新增 `conditional_logistic`，0.103 新增 `hierarchical_clustering`；0.104 新增两条路线组合示例但不改变算子/Reader/路线计数，当前 **402 个算子 / 85 个 Reader / 21 条路线 / 6 个包**，注册表 `errors []`。前端按 Vitest 实际用例统计为 **39 tests / 9 files**，构建通过。下文的分类/覆盖证据以 0.84 快照为主，0.85–0.104 增量证据见 SOP §85–§104。本文只记录可核对的事实；没有把“有测试”写成“每个算子都有独立外部 oracle”。
 
 > 计数口径修正：0.83 审计曾沿用历史累计数写作“前端 325 passed”。0.84 起前端只按 `npm test -- --run` 的实际 Vitest 用例数记录；历史 changelog 中的累计口径不再作为本文证据。
 

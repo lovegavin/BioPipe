@@ -1,3 +1,10 @@
+## 0.104.0 — 2026-10-31
+
+- 新增两条基于公开数据的路线组合示例：`cancer_diagnosis_ml`（UCI Breast Cancer Wisconsin 差异分析 + 随机森林分类）与 `lung_regression_survival`（NCCTG 肺癌年龄回归 + 生存分析），放在 `examples/route_combinations/`，不新增算子、Reader 或内置路线。
+- 每个示例包含公开数据、`task.yaml`、`ANALYSIS.md`；数据来源为 UCI Breast Cancer Wisconsin (Diagnostic) 与 R `survival::cancer`；`tests/test_route_combinations.py` 对两条示例做 `--check` 与临时目录执行，**4 passed**。
+- 算子/Reader/路线数量不变：**402/85/21/6**；registry `errors []`；参考页 402/85。docs/README、README、architecture、protocol、SOP、coverage 与示例 README 已同步。
+- 验证：示例测试 **4 passed**；增量门 **19 passed（另 1 skipped）**；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
+
 ## 0.103.0 — 2026-10-31
 
 - 新增 `hierarchical_clustering` 层次聚类：一个 `[sample,feature]` 数值表，支持 single/complete/average/Ward.D2 连接与 euclidean/manhattan 距离；输出 0-based cluster 标签，info/export 提供 heights、merge 与 cophenetic correlation。

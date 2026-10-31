@@ -1,0 +1,74 @@
+name: lung_regression_survival
+
+sources:
+  features:
+    path: input/lung_ridge_features.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+  clinical:
+    path: input/lung_clinical.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+steps:
+  - name: ridge_regression
+    inputs: [features, clinical]
+    params:
+      sample_dim: sample
+      feature_dim: feature
+      label_dim: feature
+      target_label: age
+      test_size: 0.25
+      cv_folds: 3
+      random_state: 11
+      alpha: 1.0
+      output: age_report
+
+  - name: kaplan_meier
+    inputs: [clinical]
+    params:
+      time_label: time
+      event_label: event
+      group_label: sex
+      groups: ["1", "2"]
+      filename: km.png
+      title: "NCCTG lung cancer: overall survival by sex"
+      show_ci: true
+
+  - name: logrank_test
+    inputs: [clinical]
+    params:
+      time_label: time
+      event_label: event
+      group_label: sex
+      groups: ["1", "2"]
+      pairwise: false
+
+  - name: cox_regression
+    inputs: [clinical]
+    params:
+      time_label: time
+      event_label: event
+      covariates: [age, sex, ph.ecog]
+      categorical: [sex]
+      output: cox_result
+
+  - name: forest_plot
+    inputs: [cox_result]
+    params:
+      dim: covariate
+      stat_dim: statistic
+      filename: forest.png
+      title: "Cox model: age + sex + ECOG"
+      hr_label: HR
+      low_label: CI_low
+      high_label: CI_high
+      p_label: P
+
+  - name: describe
+    inputs: [cox_result]
