@@ -1,7 +1,7 @@
 # BioPipe SOP 验证矩阵
 本文件由 `src/task`/`src/reader` 与测试引用自动生成；每次新增 Reader/算子或测试后重跑生成脚本。
 
-当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**；0.41 新增 **5 passed**、增量门 **21 passed**；0.42 新增 **5 passed**、增量门 **21 passed**；0.43 新增 **6 passed**、增量门 **22 passed**；0.44 新增 **6 passed**、增量门 **22 passed**；0.45 新增 **4 passed**、增量门 **20 passed**；0.46 新增 **5 passed**、增量门 **26 passed**；0.47 新增 **5 passed**、增量门 **21 passed**；0.48 新增 **5 passed**、增量门 **21 passed**；0.49 新增 **5 passed**、增量门 **21 passed**；0.50 新增 **5 passed**、增量门 **21 passed**；0.51 新增 **5 passed**、增量门 **21 passed**；0.52 新增 **5 passed**、增量门 **21 passed**；0.53 新增 **5 passed**、增量门 **21 passed**；0.54 新增 **5 passed**、增量门 **21 passed**；0.55 新增 **5 passed**、增量门 **21 passed**；0.56 新增 **5 passed**、增量门 **21 passed**；0.57 新增 **5 passed**、增量门 **21 passed**；0.58 新增 **5 passed**、增量门 **21 passed**；0.59 新增 **5 passed**、增量门 **21 passed**；0.60 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
+当前基线：0.18 全量 pytest **606 passed / 1 skipped**（唯一 skip 为增量门在 full-suite 模式的分支）；0.19 按用户要求只跑增量，**42 passed**（新增 17 项）；0.20 按用户要求只跑增量，新增 **12 passed**、增量门 **28 passed**；0.21 按用户要求只跑增量，新增 **10 passed**、增量门 **26 passed**；0.22 新增 **8 passed**、增量门 **24 passed**；0.23 新增 **5 passed**、增量门 **21 passed**；0.24 新增 **5 passed**、增量门 **21 passed**；0.25 新增 **6 passed**、增量门 **22 passed**；0.26 新增 **5 passed**、增量门 **21 passed**；0.27 新增 **6 passed**、增量门 **22 passed**；0.28 新增 **5 passed**、增量门 **22 passed**；0.29 新增 **5 passed**、增量门 **22 passed**；0.30 新增 **5 passed**、增量门 **21 passed**；0.31 新增 **4 passed**、增量门 **20 passed**；0.32 新增 **5 passed**、增量门 **21 passed**；0.33 新增 **4 passed**、增量门 **20 passed**；0.34 新增 **4 passed**、增量门 **20 passed**；0.35 新增 **5 passed**、增量门 **21 passed**；0.36 新增 **4 passed**、增量门 **20 passed**；0.37 新增 **5 passed**、增量门 **33 passed**；0.38 新增 **5 passed**、增量门 **21 passed**；0.39 新增 **5 passed**、增量门 **21 passed**；0.40 新增 **5 passed**、增量门 **21 passed**；0.41 新增 **5 passed**、增量门 **21 passed**；0.42 新增 **5 passed**、增量门 **21 passed**；0.43 新增 **6 passed**、增量门 **22 passed**；0.44 新增 **6 passed**、增量门 **22 passed**；0.45 新增 **4 passed**、增量门 **20 passed**；0.46 新增 **5 passed**、增量门 **26 passed**；0.47 新增 **5 passed**、增量门 **21 passed**；0.48 新增 **5 passed**、增量门 **21 passed**；0.49 新增 **5 passed**、增量门 **21 passed**；0.50 新增 **5 passed**、增量门 **21 passed**；0.51 新增 **5 passed**、增量门 **21 passed**；0.52 新增 **5 passed**、增量门 **21 passed**；0.53 新增 **5 passed**、增量门 **21 passed**；0.54 新增 **5 passed**、增量门 **21 passed**；0.55 新增 **5 passed**、增量门 **21 passed**；0.56 新增 **5 passed**、增量门 **21 passed**；0.57 新增 **5 passed**、增量门 **21 passed**；0.58 新增 **5 passed**、增量门 **21 passed**；0.59 新增 **5 passed**、增量门 **21 passed**；0.60 新增 **5 passed**、增量门 **21 passed**；0.61 新增 **5 passed**、增量门 **21 passed**，均未重跑全量。独立 SOP **29** 个；14 个 verify 脚本、49 个 demo 自测通过。
 
 ## 1. 分级
 | 级别 | 含义 |
@@ -100,7 +100,7 @@
 | `Ab1Reader` | B | test_extension15_readers.py（ABIF 目录、PBAS/PCON/PLOC、FWO_ 通道映射） |
 
 Reader SOP 覆盖：CSV/TSV/TXT/Parquet → pandas；BED/GFF3/GTF → 手写解析 + 边界；FASTA → 手写解析 + NCBI 长度/GC；GAF → 手写解析；MTX → scipy.io.mmread；H5AD/10x H5 → h5py；VCF → pysam；PLINK1 → bed_reader；PLINK2 → pgenlib；BGEN → bgen_reader。
-## 3. Operator（324；下表为 89 个早期算子，0.8–0.59 新增见末尾证据）
+## 3. Operator（327；下表为 89 个早期算子，0.8–0.61 新增见末尾证据）
 | Operator | 包 | 级别 | 证据 |
 |---|---|---|---|
 | `aggregate` | biopipe-microbiome | A | verify_transform_operators.py |
@@ -659,3 +659,14 @@ for f in tasks/*_demo/test_*.py; do python "$f"; done
   - 变异信息 labels A=[1,1,1,2,2,2,3,3,3]、B=[1,1,2,2,3,3,1,2,3] → VI **1.5810937501718234**、NVI **0.83692987891500414**、MI **0.3080654135821979**、联合熵 **1.8891591637540217**。
 - 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 324/82/21；参考页 324 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 270 passed。
 - 边界：Box-Pierce 用样本自相关 `rho_k=sum((x_t-mean)(x_{t-k}-mean))/sum((x-mean)^2)`、`Q=n*sum(rho_k^2)`，要求 `lags < n`、`fitdf < lags`；Stuart-Maxwell 要求非负方形表、协方差可逆，等边际类别按 R 方式剔除；变异信息使用自然对数，NVI=VI/H(A,B)，两表按共享样本对齐，缺失标签报错。
+
+## 61. 0.61.0 扩展证据
+
+- 新增 3 个序列/评估算子：`acf`（样本自相关与 Bartlett 置信区间）、`pacf`（Yule-Walker 偏自相关与正态置信区间）、`precision_recall_curve`（二分类 precision-recall 曲线与 average precision）。
+- `tests/test_extension54.py` 4 项、`tests/test_r_oracles45.py` 1 项，合计 **5 passed**；ACF/PACF 对照 R `stats::acf`/`stats::pacf`，PR 对照 sklearn `precision_recall_curve`/`average_precision_score`。
+- R 参考值（x=[1,2,3,4,5,4,3,2,1,2,3,4]，lags=5）：
+  - ACF lag1..5 **0.55503144654088044 / -0.05974842767295601 / -0.56132075471698117 / -0.66666666666666652 / -0.33805031446540873**。
+  - PACF lag1..5 **0.55503144654088044 / -0.53156095138395143 / -0.43409697205350251 / -0.21794716741019138 / 0.0096932454921819424**。
+- PR 参考（labels [0,1,0,1,1,0,1,1]，scores [.1,.4,.2,.8,.9,.3,.7,.6]）：AP **1.0**；首点 precision **0.625**、recall 1、threshold 0.1；末点 precision 1、recall 0、threshold NaN。
+- 按用户要求未重跑全量；0.18 全量基线仍为 606 passed / 1 skipped。registry 327/82/21；参考页 327 算子 / 82 Reader；增量门 21 passed；`-W error` 7 passed；Studio 前端 273 passed。
+- 边界：ACF 要求 `lags < n` 且序列非常量，默认 `bartlett_confint=True`；PACF 使用 `method="ywm"`，置信区间为正态近似；PR 曲线要求至少 4 个共享样本且两类都存在，`drop_intermediate=False`，末尾补 NaN threshold 点。

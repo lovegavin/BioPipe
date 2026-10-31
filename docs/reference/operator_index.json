@@ -1,5 +1,104 @@
 [
   {
+    "id": "acf",
+    "kind": "operator",
+    "title": "Autocorrelation function",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "lags": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "title": "Lags",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0.001,
+          "maximum": 0.5,
+          "default": 0.05,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/acf.py",
+    "tests": [
+      "tests/test_extension54.py",
+      "tests/test_r_oracles45.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/acf.md",
+    "quality": "auto"
+  },
+  {
     "id": "ada_boost_classifier",
     "kind": "operator",
     "title": "AdaBoost classifier",
@@ -24510,6 +24609,105 @@
     "quality": "auto"
   },
   {
+    "id": "pacf",
+    "kind": "operator",
+    "title": "Partial autocorrelation function",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "value_label": {
+          "type": "string",
+          "title": "数值字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "lags": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "title": "Lags",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "alpha": {
+          "type": "number",
+          "minimum": 0.001,
+          "maximum": 0.5,
+          "default": 0.05,
+          "title": "显著性水平",
+          "x-ui-group": "advanced",
+          "x-ui-order": 40
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        }
+      },
+      "required": [
+        "value_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/pacf.py",
+    "tests": [
+      "tests/test_extension54.py",
+      "tests/test_r_oracles45.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/pacf.md",
+    "quality": "auto"
+  },
+  {
     "id": "page_test",
     "kind": "operator",
     "title": "Page test for ordered alternatives",
@@ -26261,6 +26459,124 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/power_transform.md",
+    "quality": "auto"
+  },
+  {
+    "id": "precision_recall_curve",
+    "kind": "operator",
+    "title": "Precision-recall curve",
+    "package": "biopipe-core",
+    "inputs_arity": 2,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "label_dim",
+              "default": "label"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        },
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "score_dim",
+              "default": "score"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "label_dim": {
+          "type": "string",
+          "default": "label",
+          "title": "标签维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "score_dim": {
+          "type": "string",
+          "default": "score",
+          "title": "Score Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "target_label": {
+          "type": "string",
+          "title": "目标字段",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "score_label": {
+          "type": "string",
+          "title": "Score Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "positive_label": {
+          "type": "string",
+          "title": "Positive Label",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "target_label"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/precision_recall_curve.py",
+    "tests": [
+      "tests/test_extension54.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/precision_recall_curve.md",
     "quality": "auto"
   },
   {

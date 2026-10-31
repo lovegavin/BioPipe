@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.61.0 — 2026-10-31
+
+- 新增：327 算子 / 82 Reader / 21 route；新增 ACF、PACF、precision-recall 曲线三个算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension54.py` 4 项、`tests/test_r_oracles45.py` 1 项，合计 **5 passed**；ACF/PACF 对照 R `stats::acf`/`stats::pacf`，PR 对照 sklearn；registry clean；参考页 327/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 273 passed。
+- 边界：ACF 使用 `lags < n`、非常量序列与 Bartlett 置信区间；PACF 使用 Yule-Walker `ywm` 与正态近似；PR 曲线要求至少 4 个共享样本、两类都存在，`drop_intermediate=False`，末尾补 NaN threshold 点。
+
 ## 0.60.0 — 2026-10-31
 
 - 新增：324 算子 / 82 Reader / 21 route；新增 Box-Pierce 自相关检验、Stuart-Maxwell 边际齐性检验、变异信息三个算子；未修改核心层。

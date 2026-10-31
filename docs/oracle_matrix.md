@@ -1,5 +1,13 @@
 # 权威实现对照矩阵
 
+## 0.61.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `acf` | R `stats::acf` | `tests/test_r_oracles45.py` | x=[1,2,3,4,5,4,3,2,1,2,3,4]，lag1..5 0.55503144654088044、-0.05974842767295601、-0.56132075471698117、-0.66666666666666652、-0.33805031446540873；lags<n |
+| `pacf` | R `stats::pacf` | `tests/test_r_oracles45.py` | 同一序列，lag1..5 0.55503144654088044、-0.53156095138395143、-0.43409697205350251、-0.21794716741019138、0.0096932454921819424；Yule-Walker |
+| `precision_recall_curve` | sklearn `precision_recall_curve` + `average_precision_score` | `tests/test_extension54.py` | AP 1.0；首点 precision 0.625、recall 1、threshold 0.1；末点 precision 1、recall 0、threshold NaN |
+
 ## 0.60.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

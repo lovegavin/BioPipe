@@ -9706,6 +9706,176 @@
       "descriptors": [
         {
           "protocol_version": 1,
+          "id": "acf",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.acf:AcfStep",
+          "title": "Autocorrelation function",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "value_label": {
+                "type": "string",
+                "title": "数值字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "lags": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 10,
+                "title": "Lags",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "alpha": {
+                "type": "number",
+                "minimum": 0.001,
+                "maximum": 0.5,
+                "default": 0.05,
+                "title": "显著性水平",
+                "x-ui-group": "advanced",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "value_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "acf",
+          "module": "src.task.step.steps.acf",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "value_label",
+              "label": "数值字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "lags",
+              "label": "Lags",
+              "type": "integer",
+              "required": false,
+              "default": 10,
+              "min": 1
+            },
+            {
+              "key": "alpha",
+              "label": "显著性水平",
+              "type": "number",
+              "required": false,
+              "default": 0.05,
+              "min": 0.001,
+              "max": 0.5
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "lags": 10,
+            "alpha": 0.05
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "ada_boost_classifier",
           "version": "1.0.0",
           "kind": "operator",
@@ -41689,6 +41859,176 @@
         },
         {
           "protocol_version": 1,
+          "id": "pacf",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.pacf:PacfStep",
+          "title": "Partial autocorrelation function",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "value_label": {
+                "type": "string",
+                "title": "数值字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "lags": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 10,
+                "title": "Lags",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "alpha": {
+                "type": "number",
+                "minimum": 0.001,
+                "maximum": 0.5,
+                "default": 0.05,
+                "title": "显著性水平",
+                "x-ui-group": "advanced",
+                "x-ui-order": 40
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              }
+            },
+            "required": [
+              "value_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "pacf",
+          "module": "src.task.step.steps.pacf",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "value_label",
+              "label": "数值字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "lags",
+              "label": "Lags",
+              "type": "integer",
+              "required": false,
+              "default": 10,
+              "min": 1
+            },
+            {
+              "key": "alpha",
+              "label": "显著性水平",
+              "type": "number",
+              "required": false,
+              "default": 0.05,
+              "min": 0.001,
+              "max": 0.5
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "lags": 10,
+            "alpha": 0.05
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "page_test",
           "version": "1.0.0",
           "kind": "operator",
@@ -44161,6 +44501,197 @@
             "feature_dim": "feature",
             "method": "yeo-johnson",
             "standardize": true
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "precision_recall_curve",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.precision_recall_curve:PrecisionRecallCurveStep",
+          "title": "Precision-recall curve",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "label_dim": {
+                "type": "string",
+                "default": "label",
+                "title": "标签维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "score_dim": {
+                "type": "string",
+                "default": "score",
+                "title": "Score Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "target_label": {
+                "type": "string",
+                "title": "目标字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "score_label": {
+                "type": "string",
+                "title": "Score Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "positive_label": {
+                "type": "string",
+                "title": "Positive Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "target_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "label_dim",
+                    "default": "label"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "score_dim",
+                    "default": "score"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "precision_recall_curve",
+          "module": "src.task.step.steps.precision_recall_curve",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "label_dim",
+              "label": "标签维度",
+              "type": "string",
+              "required": false,
+              "default": "label"
+            },
+            {
+              "key": "score_dim",
+              "label": "Score Dim",
+              "type": "string",
+              "required": false,
+              "default": "score"
+            },
+            {
+              "key": "target_label",
+              "label": "目标字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "score_label",
+              "label": "Score Label",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "positive_label",
+              "label": "Positive Label",
+              "type": "string",
+              "required": false
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "label_dim": "label",
+            "score_dim": "score"
           },
           "legacy_parameters": false
         },
