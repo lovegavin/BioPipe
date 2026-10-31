@@ -1,3 +1,12 @@
+## 0.102.0 — 2026-10-31
+
+- 新增 `conditional_logistic` 条件 logistic 回归：一个 `[sample,feature]` 表提供分层变量、二分类结局与一个或多个数值协变量；按层消去截距的精确条件似然，Newton-Raphson 拟合，观测信息矩阵标准误。
+- 输出 `[term,statistic]` 的 `coef,se,z,P,CI_low,CI_high,OR`；info 含 `n/n_strata/n_cases/n_controls/loglikelihood/converged/iterations/levels`；export 含 OR 与计数。
+- 算子总数 **401**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 401/85，registry `errors []`；Statistics 类别 236→237。
+- 验证：`tests/test_conditional_logistic.py` 3 项 + `tests/test_r_oracles82.py` 1 项 = **4 passed**；R `survival::clogit` 对 n=120（60 对，seed 20261123）的 coef/SE atol 1e-6、loglik atol 1e-8；增量门 **20 passed**；`-W error` **6 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：仅数值协变量；每个分层需同时有病例与对照；不实现分层精确检验、条件 Poisson、稳健方差或新样本预测；1:1 与 1:m 匹配均可。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.101.0 — 2026-10-31
 
 - 新增 `interval_censored_regression` 区间删失 Weibull AFT 回归：一个 `[sample,feature]` 表提供区间下界/上界与一个或多个数值自变量；上界 `Inf` 表示右删失、下界 0 表示左删失、上下界相等表示精确时间；Weibull AFT 区间似然，数值 Hessian 标准误。

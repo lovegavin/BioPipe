@@ -23677,6 +23677,227 @@
         },
         {
           "protocol_version": 1,
+          "id": "conditional_logistic",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.conditional_logistic:ConditionalLogisticStep",
+          "title": "Conditional logistic regression",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "stratum_label": {
+                "type": "string",
+                "title": "Stratum Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "outcome_label": {
+                "type": "string",
+                "title": "Outcome Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "covariates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "uniqueItems": true,
+                "title": "协变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "confidence": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "max_iter": {
+                "type": "integer",
+                "minimum": 10,
+                "default": 100,
+                "title": "Max Iter",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "tol": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 0.001,
+                "default": 1e-08,
+                "title": "Tol",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 80
+              }
+            },
+            "required": [
+              "stratum_label",
+              "outcome_label",
+              "covariates"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy",
+            "pandas",
+            "scipy"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "pandas",
+            "scipy"
+          ],
+          "name": "conditional_logistic",
+          "module": "src.task.step.steps.conditional_logistic",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Fit a conditional logistic model for matched case-control strata.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "stratum_label",
+              "label": "Stratum Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "outcome_label",
+              "label": "Outcome Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "covariates",
+              "label": "协变量",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "max_iter",
+              "label": "Max Iter",
+              "type": "integer",
+              "required": false,
+              "default": 100,
+              "min": 10
+            },
+            {
+              "key": "tol",
+              "label": "Tol",
+              "type": "number",
+              "required": false,
+              "default": 1e-08,
+              "max": 0.001
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "confidence": 0.95,
+            "max_iter": 100,
+            "tol": 1e-08
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "conditional_logit",
           "version": "1.0.0",
           "kind": "operator",
