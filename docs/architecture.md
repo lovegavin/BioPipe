@@ -184,6 +184,7 @@ YAML / JSON
 - 0.76.0 新增：GARCH 波动率模型与向量自回归（VAR）两个时间序列算子；核心层不变；
 - 0.77.0 新增：t 检验、两比例检验与单因素 ANOVA 的功效/样本量计算；核心层不变；
 - 0.84.0 重构：算子分类收敛为 6 类（Data/Statistics/Machine Learning/Omics/Visualization/Quality Control）；算子/Reader 元数据、功能预览、平台标记与 catalog integrity 测试；修正 Reader 发现去重；核心执行层不变；
+- 0.101.0：新增区间删失 Weibull AFT 回归（interval_censored_regression），一个 `[sample,feature]` 表提供区间下界/上界（上界 Inf 为右删失、下界 0 为左删失、上下界相等为精确时间）；Weibull AFT 区间似然，输出系数/SE/z/P/CI 与 log_scale，R `survival::survreg(..., dist="weibull")` 对照；核心层不变；
 - 0.100.0：新增可加 B 样条 GLM（additive_glm），支持 binomial/poisson 族，逐自变量三次 B 样条基 + GLM，输出线性预测/拟合/残差/标准误/CI；R `glm` + `splines::bs` 对照；核心层不变；
 - 0.99.0：新增环境向量拟合（envfit），把环境变量线性拟合到排序坐标，输出每个变量的 R² 与单位化方向向量；R `vegan::envfit` 对照；核心层不变；
 - 0.98.0：新增可加 B 样条回归（additive_spline_regression），多个自变量的三次 B 样条基 + OLS，输出拟合/残差/均值标准误/置信区间；R `splines::bs` 逐值对照；核心层不变；

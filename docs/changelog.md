@@ -1,3 +1,12 @@
+## 0.101.0 — 2026-10-31
+
+- 新增 `interval_censored_regression` 区间删失 Weibull AFT 回归：一个 `[sample,feature]` 表提供区间下界/上界与一个或多个数值自变量；上界 `Inf` 表示右删失、下界 0 表示左删失、上下界相等表示精确时间；Weibull AFT 区间似然，数值 Hessian 标准误。
+- 输出 `[term,statistic]` 的 `coef,se,z,P,CI_low,CI_high`，term 为截距、自变量与 `log_scale`；info 含 `scale/shape/loglik`、`n_exact/n_interval/n_right/n_left`、`converged/iterations`；export 含逐样本上下界与系数。
+- 算子总数 **400**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 400/85，registry `errors []`；Statistics 类别 235→236。
+- 验证：`tests/test_interval_censored_regression.py` 3 项 + `tests/test_r_oracles81.py` 1 项 = **4 passed**；R `survival::survreg(Surv(lower, upper, type="interval2") ~ x1 + x2, dist="weibull")` 对 n=160 fixture 的 coef/SE/log_scale/loglik atol 1e-5；增量门 **20 passed**；`-W error` **6 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：仅 Weibull AFT；不实现 Turnbull 非参数估计、时变协变量、frailty 或其他分布；不做新样本预测；左删失下界为 0，右删失上界为 Inf。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.100.0 — 2026-10-31
 
 - 新增 `additive_glm` 可加 B 样条 GLM：一个 `[sample,feature]` 表包含响应与 2–8 个自变量；支持 `binomial`（logit）与 `poisson`（log）族；逐自变量 `patsy.bs(..., degree=3, include_intercept=False)` 基 + 截距，`statsmodels` GLM 拟合。

@@ -20885,6 +20885,125 @@
     "quality": "auto"
   },
   {
+    "id": "interval_censored_regression",
+    "kind": "operator",
+    "title": "Interval-censored Weibull AFT",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "time_lower_label": {
+          "type": "string",
+          "title": "区间下界列",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "time_upper_label": {
+          "type": "string",
+          "title": "区间上界列",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "covariates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "title": "自变量列",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "confidence": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "default": 0.95,
+          "title": "置信水平",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "max_iter": {
+          "type": "integer",
+          "minimum": 50,
+          "maximum": 2000,
+          "default": 500,
+          "title": "最大迭代次数",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 70
+        }
+      },
+      "required": [
+        "time_lower_label",
+        "time_upper_label",
+        "covariates"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/interval_censored_regression.py",
+    "tests": [
+      "tests/test_interval_censored_regression.py",
+      "tests/test_r_oracles81.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/interval_censored_regression.md",
+    "quality": "auto"
+  },
+  {
     "id": "interval_merge",
     "kind": "operator",
     "title": "interval_merge",

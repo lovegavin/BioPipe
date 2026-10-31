@@ -39002,6 +39002,209 @@
         },
         {
           "protocol_version": 1,
+          "id": "interval_censored_regression",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.interval_censored_regression:IntervalCensoredRegressionStep",
+          "title": "Interval-censored Weibull AFT",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "time_lower_label": {
+                "type": "string",
+                "title": "区间下界列",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "time_upper_label": {
+                "type": "string",
+                "title": "区间上界列",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "covariates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "uniqueItems": true,
+                "title": "自变量列",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "confidence": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "default": 0.95,
+                "title": "置信水平",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "max_iter": {
+                "type": "integer",
+                "minimum": 50,
+                "maximum": 2000,
+                "default": 500,
+                "title": "最大迭代次数",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "time_lower_label",
+              "time_upper_label",
+              "covariates"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.24",
+            "scipy>=1.10"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "scipy"
+          ],
+          "name": "interval_censored_regression",
+          "module": "src.task.step.steps.interval_censored_regression",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Fit a Weibull AFT model to interval-censored observations.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "time_lower_label",
+              "label": "区间下界列",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "time_upper_label",
+              "label": "区间上界列",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "covariates",
+              "label": "自变量列",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "confidence",
+              "label": "置信水平",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "max_iter",
+              "label": "最大迭代次数",
+              "type": "integer",
+              "required": false,
+              "default": 500,
+              "min": 50,
+              "max": 2000
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "confidence": 0.95,
+            "max_iter": 500
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "interval_merge",
           "version": "1.0.0",
           "kind": "operator",

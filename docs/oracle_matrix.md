@@ -1,3 +1,9 @@
+## 0.101.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `interval_censored_regression` | R `survival::survreg(Surv(lower, upper, type="interval2") ~ x1 + x2, dist="weibull")` | `tests/test_r_oracles81.py` | n=160（seed 20261122）区间/右删失/左删失混合：coef/SE/log_scale/loglik 对齐 atol 1e-5；n=200 探针 R coef **1.0101216545 / 0.3235816278 / -0.2052613047**、log_scale **-0.8424**、scale **0.4307**、loglik **-316.2024**，本实现逐值一致；仅 Weibull AFT |
+
 ## 0.100.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
