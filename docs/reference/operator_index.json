@@ -6939,6 +6939,88 @@
     "quality": "auto"
   },
   {
+    "id": "cohens_h",
+    "kind": "operator",
+    "title": "Cohen's h",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "row_dim",
+              "default": "row"
+            },
+            {
+              "param": "col_dim",
+              "default": "col"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "row_dim": {
+          "type": "string",
+          "default": "row",
+          "title": "Row Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "col_dim": {
+          "type": "string",
+          "default": "col",
+          "title": "Col Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "confidence": {
+          "type": "number",
+          "default": 0.95,
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "title": "Confidence",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/cohens_h.py",
+    "tests": [
+      "tests/test_extension57.py",
+      "tests/test_r_oracles48.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/cohens_h.md",
+    "quality": "auto"
+  },
+  {
     "id": "cohens_kappa",
     "kind": "operator",
     "title": "Cohen's kappa",
@@ -24772,6 +24854,99 @@
     "quality": "auto"
   },
   {
+    "id": "odds_ratio",
+    "kind": "operator",
+    "title": "Odds ratio",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "row_dim",
+              "default": "row"
+            },
+            {
+              "param": "col_dim",
+              "default": "col"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "row_dim": {
+          "type": "string",
+          "default": "row",
+          "title": "Row Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "col_dim": {
+          "type": "string",
+          "default": "col",
+          "title": "Col Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "correction": {
+          "type": "string",
+          "enum": [
+            "none",
+            "haldane"
+          ],
+          "default": "haldane",
+          "title": "Correction",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "confidence": {
+          "type": "number",
+          "default": 0.95,
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "title": "Confidence",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/odds_ratio.py",
+    "tests": [
+      "tests/test_extension57.py",
+      "tests/test_r_oracles48.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/odds_ratio.md",
+    "quality": "auto"
+  },
+  {
     "id": "ora",
     "kind": "operator",
     "title": "Gene-set ORA",
@@ -30307,6 +30482,99 @@
       "tasks/ml_regression_route_demo/task.yaml"
     ],
     "doc": "docs/reference/operators/ridge_regression.md",
+    "quality": "auto"
+  },
+  {
+    "id": "risk_ratio",
+    "kind": "operator",
+    "title": "Risk ratio",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "row_dim",
+              "default": "row"
+            },
+            {
+              "param": "col_dim",
+              "default": "col"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "row_dim": {
+          "type": "string",
+          "default": "row",
+          "title": "Row Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "col_dim": {
+          "type": "string",
+          "default": "col",
+          "title": "Col Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "correction": {
+          "type": "string",
+          "enum": [
+            "none",
+            "haldane"
+          ],
+          "default": "haldane",
+          "title": "Correction",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "confidence": {
+          "type": "number",
+          "default": 0.95,
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "title": "Confidence",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/risk_ratio.py",
+    "tests": [
+      "tests/test_extension57.py",
+      "tests/test_r_oracles48.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/risk_ratio.md",
     "quality": "auto"
   },
   {

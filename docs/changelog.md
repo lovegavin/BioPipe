@@ -1,5 +1,11 @@
 # 更新记录
 
+## 0.64.0 — 2026-10-31
+
+- 新增：336 算子 / 82 Reader / 21 route；新增风险比、比值比、Cohen's h 三个 2×2 表效应量算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension57.py` 4 项、`tests/test_r_oracles48.py` 1 项，合计 **5 passed**；RR/OR 对照 R 公式与 `epitools`，Cohen's h 对照 `pwr::ES.h`；registry clean；参考页 336/82；增量门 21 passed；`-W error` 7 passed；Studio 前端 282 passed。
+- 边界：输入为非负 2×2 计数表；RR 第 1 行暴露、第 2 行非暴露；零格默认 Haldane +0.5，可关闭；OR 为 `a*d/(b*c)`，Cohen's h 使用独立比例的正态 CI。
+
 ## 0.63.0 — 2026-10-31
 
 - 新增：333 算子 / 82 Reader / 21 route；新增互相关函数、BDS 非线性依赖、差分符号检验三个时间序列诊断算子；未修改核心层。

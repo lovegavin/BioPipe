@@ -1,5 +1,13 @@
 # 权威实现对照矩阵
 
+## 0.64.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `risk_ratio` | R 公式 / `epitools::riskratio` | `tests/test_r_oracles48.py` | 表 `[[18,12],[10,20]]`：RR 1.8，95% CI 1.0034442222671074..3.2288790229712867；第 1 行暴露、第 2 行非暴露；零格默认 Haldane +0.5 |
+| `odds_ratio` | R 公式 / `epitools::oddsratio(method="wald")` | `tests/test_r_oracles48.py` | OR 3.0，95% CI 1.0461986908532277..8.602572416392574；Woolf log CI |
+| `cohens_h` | R `pwr::ES.h` + 正态 CI | `tests/test_r_oracles48.py` | h 0.5411948302444529，95% CI 0.035134305491788975..1.0472553549971169；独立比例 |
+
 ## 0.63.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

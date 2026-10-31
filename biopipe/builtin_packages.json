@@ -19602,6 +19602,142 @@
         },
         {
           "protocol_version": 1,
+          "id": "cohens_h",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.cohens_h:CohensHStep",
+          "title": "Cohen's h",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "row_dim": {
+                "type": "string",
+                "default": "row",
+                "title": "Row Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "col_dim": {
+                "type": "string",
+                "default": "col",
+                "title": "Col Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "confidence": {
+                "type": "number",
+                "default": 0.95,
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "row_dim",
+                    "default": "row"
+                  },
+                  {
+                    "param": "col_dim",
+                    "default": "col"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "cohens_h",
+          "module": "src.task.step.steps.cohens_h",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "row_dim",
+              "label": "Row Dim",
+              "type": "string",
+              "required": false,
+              "default": "row"
+            },
+            {
+              "key": "col_dim",
+              "label": "Col Dim",
+              "type": "string",
+              "required": false,
+              "default": "col"
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "row_dim": "row",
+            "col_dim": "col",
+            "confidence": 0.95
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "cohens_kappa",
           "version": "1.0.0",
           "kind": "operator",
@@ -42419,6 +42555,165 @@
         },
         {
           "protocol_version": 1,
+          "id": "odds_ratio",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.odds_ratio:OddsRatioStep",
+          "title": "Odds ratio",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "row_dim": {
+                "type": "string",
+                "default": "row",
+                "title": "Row Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "col_dim": {
+                "type": "string",
+                "default": "col",
+                "title": "Col Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "correction": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "haldane"
+                ],
+                "default": "haldane",
+                "title": "Correction",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "confidence": {
+                "type": "number",
+                "default": 0.95,
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "row_dim",
+                    "default": "row"
+                  },
+                  {
+                    "param": "col_dim",
+                    "default": "col"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "odds_ratio",
+          "module": "src.task.step.steps.odds_ratio",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "row_dim",
+              "label": "Row Dim",
+              "type": "string",
+              "required": false,
+              "default": "row"
+            },
+            {
+              "key": "col_dim",
+              "label": "Col Dim",
+              "type": "string",
+              "required": false,
+              "default": "col"
+            },
+            {
+              "key": "correction",
+              "label": "Correction",
+              "type": "choice",
+              "required": false,
+              "default": "haldane",
+              "options": [
+                "none",
+                "haldane"
+              ]
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "row_dim": "row",
+            "col_dim": "col",
+            "correction": "haldane",
+            "confidence": 0.95
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "order_axis",
           "version": "1.0.0",
           "kind": "operator",
@@ -49778,6 +50073,165 @@
             "random_state": 0,
             "scale": true,
             "alpha": 1.0
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "risk_ratio",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.risk_ratio:RiskRatioStep",
+          "title": "Risk ratio",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "row_dim": {
+                "type": "string",
+                "default": "row",
+                "title": "Row Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "col_dim": {
+                "type": "string",
+                "default": "col",
+                "title": "Col Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "correction": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "haldane"
+                ],
+                "default": "haldane",
+                "title": "Correction",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "confidence": {
+                "type": "number",
+                "default": 0.95,
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "row_dim",
+                    "default": "row"
+                  },
+                  {
+                    "param": "col_dim",
+                    "default": "col"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scipy>=1.11"
+          ],
+          "dependency_imports": [
+            "scipy"
+          ],
+          "name": "risk_ratio",
+          "module": "src.task.step.steps.risk_ratio",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "row_dim",
+              "label": "Row Dim",
+              "type": "string",
+              "required": false,
+              "default": "row"
+            },
+            {
+              "key": "col_dim",
+              "label": "Col Dim",
+              "type": "string",
+              "required": false,
+              "default": "col"
+            },
+            {
+              "key": "correction",
+              "label": "Correction",
+              "type": "choice",
+              "required": false,
+              "default": "haldane",
+              "options": [
+                "none",
+                "haldane"
+              ]
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "row_dim": "row",
+            "col_dim": "col",
+            "correction": "haldane",
+            "confidence": 0.95
           },
           "legacy_parameters": false
         },
