@@ -8,7 +8,7 @@ BioPipe 本身不提供 AI 服务。
 
 0.84 起算子分类归一为 6 类；每个算子与 Reader 都有功能预览，平台受限格式在界面和 manifest 中标记。
 
-0.86 新增 Chao1 与 rarefaction（个体稀疏化）两个微生物/生态多样性算子；0.87 新增 ARIMA 与保序回归（isotonic）两个统计算子；0.88 新增决策曲线分析（DCA）与 LOWESS 平滑，并将项目许可证切换为 Apache-2.0；0.89 新增 Bai-Perron 多结构突变回归；0.90 新增 Fine-Gray 竞争风险回归；0.91 新增非度量多维尺度分析（NMDS）；0.92 新增季节性 ARIMA（SARIMA）；0.93 新增概率单位回归（probit regression）；0.94 新增 Box-Cox 变换（box_cox，逐特征 MLE）；0.95 新增 B 样条回归（spline_regression，自然三次 B 样条基）。
+0.86 新增 Chao1 与 rarefaction（个体稀疏化）两个微生物/生态多样性算子；0.87 新增 ARIMA 与保序回归（isotonic）两个统计算子；0.88 新增决策曲线分析（DCA）与 LOWESS 平滑，并将项目许可证切换为 Apache-2.0；0.89 新增 Bai-Perron 多结构突变回归；0.90 新增 Fine-Gray 竞争风险回归；0.91 新增非度量多维尺度分析（NMDS）；0.92 新增季节性 ARIMA（SARIMA）；0.93 新增概率单位回归（probit regression）；0.94 新增 Box-Cox 变换（box_cox，逐特征 MLE）；0.95 新增 B 样条回归（spline_regression，三次 B 样条基）。
 
 ## 价值主张
 
