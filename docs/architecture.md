@@ -184,6 +184,7 @@ YAML / JSON
 - 0.76.0 新增：GARCH 波动率模型与向量自回归（VAR）两个时间序列算子；核心层不变；
 - 0.77.0 新增：t 检验、两比例检验与单因素 ANOVA 的功效/样本量计算；核心层不变；
 - 0.84.0 重构：算子分类收敛为 6 类（Data/Statistics/Machine Learning/Omics/Visualization/Quality Control）；算子/Reader 元数据、功能预览、平台标记与 catalog integrity 测试；修正 Reader 发现去重；核心执行层不变；
+- 0.86.0：新增 Chao1 与个体稀疏化（rarefaction）两个多样性算子；核心层不变；
 - 0.85.0：新增 Weibull AFT 生存回归与精确 Hardy-Weinberg 检验；补充 9 个系统对象参考页（Form/Task/Graph/Project/Reader/Step/Runner/Registry/SDK）；未改核心执行层；
 - 0.83.0 新增：距离基冗余分析（db-RDA）与留一研究 Meta 分析两个多元/证据综合算子；核心层不变；
 - 0.82.0 新增：主坐标分析（PCoA）与典范对应分析（CCA）两个非约束/约束排序算子；核心层不变；

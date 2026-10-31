@@ -6397,6 +6397,79 @@
     "quality": "auto"
   },
   {
+    "id": "chao1",
+    "kind": "operator",
+    "title": "Chao1 richness estimator",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/chao1.py",
+    "tests": [
+      "tests/test_extension78.py",
+      "tests/test_r_oracles68.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/chao1.md",
+    "quality": "auto"
+  },
+  {
     "id": "chi_square",
     "kind": "operator",
     "title": "Chi-square test",
@@ -32684,6 +32757,89 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/rank_transform.md",
+    "quality": "auto"
+  },
+  {
+    "id": "rarefaction",
+    "kind": "operator",
+    "title": "Individual-based rarefaction",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 1,
+          "title": "Depth",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "required": [
+        "depth"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/rarefaction.py",
+    "tests": [
+      "tests/test_extension78.py",
+      "tests/test_r_oracles68.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/rarefaction.md",
     "quality": "auto"
   },
   {

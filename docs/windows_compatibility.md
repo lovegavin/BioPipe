@@ -21,8 +21,9 @@ BioPipe 的核心 Python 代码在 Windows 和 WSL 都可运行；少数 Reader 
 
 - `pytest.importorskip("pysam")` / `pytest.importorskip("pyBigWig")` 让对应测试在
   Windows 上跳过，而不是失败。
-- 全量测试门禁以 WSL/Linux 的 **0 skip** 结果为准；Windows 的 skip 需要记录在
-  CI/本地验证说明中。
+- 最近一次全量（0.84）在 WSL/Linux 为 **974 passed, 1 skipped**；唯一 skip 是
+  增量门在 full-suite 模式的分支，不是平台跳过。Windows 本地缺 pysam/pyBigWig 时，
+  对应 Reader 测试按 `importorskip` 跳过，需要在 CI/本地验证说明中记录。
 - D 盘测试副本不要求安装 pysam/pyBigWig；BAM/CRAM/BCF/BigWig 的 smoke test 在 WSL
   完成后同步代码即可。
 

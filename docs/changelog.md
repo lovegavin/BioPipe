@@ -1,3 +1,10 @@
+## 0.86.0 — 2026-10-31
+
+- 新增：`chao1`（Chao1 物种丰富度估计）与 `rarefaction`（个体稀疏化）两个微生物/生态多样性算子；算子总数 **383**，Reader 仍 **85**。
+- 验证：`tests/test_extension78.py`/`tests/test_r_oracles68.py` 共 **6 passed**；R 对照 `vegan::estimateR`、`vegan::rarefy`；增量门 **22 passed**；`-W error` **8 passed**；frontend **39 passed / 9 files**。
+- 修复：rarefaction `depth==N` 边界；Chao1/rarefaction 严格拒绝负数和浮点计数。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.85.0 — 2026-10-31
 
 - 新增：`aft`（Weibull 加速失效时间/右删失生存回归）与 `hardy_weinberg`（精确双等位 HWE 检验）；算子总数 **381**，Reader 仍 **85**。
