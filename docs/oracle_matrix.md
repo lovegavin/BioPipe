@@ -1,5 +1,13 @@
 # 权威实现对照矩阵
 
+## 0.67.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `standardized_residuals` | R `stats::rstandard(lm)` | `tests/test_r_oracles51.py` | fixture x=1..10、y=2+0.5x+[1,-1,2,-2,0,1,-1,2,-2,0]；10 个值逐项相对误差 < 1e-6 |
+| `studentized_residuals` | R `stats::rstudent(lm)` | `tests/test_r_oracles51.py` | 同一 fixture；删除残差方差 `s_i²=(SSE-e²/(1-h))/(n-p-1)` |
+| `press` | OLS PRESS 公式 / R `hatvalues` 手算 | `tests/test_r_oracles51.py` | PRESS 29.579274620026872，RMSE 1.719862628817397；n=10，p=2 |
+
 ## 0.66.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
