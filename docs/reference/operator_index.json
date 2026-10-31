@@ -426,6 +426,131 @@
     "quality": "auto"
   },
   {
+    "id": "additive_spline_regression",
+    "kind": "operator",
+    "title": "Additive B-spline regression",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "response_label": {
+          "type": "string",
+          "title": "因变量列",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "predictors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "title": "自变量列",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        },
+        "df": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 4,
+              "maximum": 10,
+              "default": 4
+            },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "minimum": 4,
+                "maximum": 10
+              }
+            }
+          ],
+          "title": "B-spline 自由度",
+          "x-ui-group": "basic",
+          "x-ui-order": 40
+        },
+        "confidence": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1,
+          "default": 0.95,
+          "title": "置信水平",
+          "x-ui-group": "basic",
+          "x-ui-order": 50
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 60
+        }
+      },
+      "required": [
+        "response_label",
+        "predictors"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/additive_spline_regression.py",
+    "tests": [
+      "tests/test_additive_spline_regression.py",
+      "tests/test_r_oracles78.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/additive_spline_regression.md",
+    "quality": "auto"
+  },
+  {
     "id": "adf_test",
     "kind": "operator",
     "title": "Augmented Dickey-Fuller test",

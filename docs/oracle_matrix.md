@@ -1,3 +1,9 @@
+## 0.98.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `additive_spline_regression` | R `lm(y ~ splines::bs(x1, df=5) + splines::bs(x2, df=4))` | `tests/test_r_oracles78.py` | n=80（seed 20261118），df x1=5/x2=4：fitted/residual 逐值误差 **<1e-8**，R² **0.996115600178689**、adj R² **0.995616177344520**（容差 1e-12）；与 `spline_regression` 同为 `patsy.bs` 分位数节点 |
+
 ## 0.97.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

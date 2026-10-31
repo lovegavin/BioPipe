@@ -1,3 +1,11 @@
+## 0.98.0 — 2026-10-31
+
+- 新增 `additive_spline_regression` 可加 B 样条回归：多个自变量的三次 B 样条基 + OLS，输出拟合/残差/均值标准误/置信区间；支持逐特征 `df` 映射；R `splines::bs` 对照。
+- 算子总数 **397**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 397/85，registry `errors []`；Statistics 类别 232→233。
+- 验证：`tests/test_additive_spline_regression.py` 3 项 + `tests/test_r_oracles78.py` 1 项 = **4 passed**；R² **0.996115600178689**；增量门 **20 passed**；`-W error` **6 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：可加模型，不估计平滑参数；不建模交互项；2–8 个自变量；不提供新样本预测。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.97.0 — 2026-10-31
 
 - 新增 `gaussian_process_regressor` 高斯过程回归：固定 RBF 核与观测噪声，不做边际似然优化；输出观测/拟合/残差/后验标准误，info 记录 R²、RMSE 与 log marginal likelihood；闭式 GP 公式手算对照。

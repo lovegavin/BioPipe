@@ -11033,6 +11033,209 @@
         },
         {
           "protocol_version": 1,
+          "id": "additive_spline_regression",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.additive_spline_regression:AdditiveSplineRegressionStep",
+          "title": "Additive B-spline regression",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response_label": {
+                "type": "string",
+                "title": "因变量列",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "predictors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 2,
+                "maxItems": 8,
+                "uniqueItems": true,
+                "title": "自变量列",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "df": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 4,
+                    "maximum": 10,
+                    "default": 4
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "integer",
+                      "minimum": 4,
+                      "maximum": 10
+                    }
+                  }
+                ],
+                "title": "B-spline 自由度",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "confidence": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "default": 0.95,
+                "title": "置信水平",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "response_label",
+              "predictors"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.24",
+            "pandas>=2.0",
+            "patsy>=0.5",
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "pandas",
+            "patsy",
+            "statsmodels"
+          ],
+          "name": "additive_spline_regression",
+          "module": "src.task.step.steps.additive_spline_regression",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Fit an additive OLS model with one cubic B-spline per predictor.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "response_label",
+              "label": "因变量列",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "predictors",
+              "label": "自变量列",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "df",
+              "label": "B-spline 自由度",
+              "type": "json",
+              "required": false
+            },
+            {
+              "key": "confidence",
+              "label": "置信水平",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "confidence": 0.95
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "adf_test",
           "version": "1.0.0",
           "kind": "operator",
