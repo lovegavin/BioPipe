@@ -1,0 +1,7 @@
+gene	accession	cds_length	protein
+TP53	NM_000546.6	1182	cellular tumor antigen p53 isoform a
+BRCA1	NM_007294.4	5592	breast cancer type 1 susceptibility protein isoform 1
+BRCA2	NM_000059.4	10257	breast cancer type 2 susceptibility protein isoform 1
+EGFR	NM_005228.5	3633	epidermal growth factor receptor isoform a precursor
+KRAS	NM_004985.5	567	GTPase KRas isoform b
+PTEN	NM_000314.8	1212	phosphatidylinositol 3,4,5-trisphosphate 3-phosphatase and dual-specificity protein phosphatase PTEN isoform PTEN
