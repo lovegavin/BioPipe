@@ -21882,6 +21882,140 @@
         },
         {
           "protocol_version": 1,
+          "id": "covratio",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.covratio:CovratioStep",
+          "title": "COVRATIO",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response": {
+                "type": "string",
+                "title": "响应变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "required": [
+              "response"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.24"
+          ],
+          "dependency_imports": [
+            "numpy"
+          ],
+          "name": "covratio",
+          "module": "src.task.step.steps.covratio",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "response",
+              "label": "响应变量",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "cox_stuart_test",
           "version": "1.0.0",
           "kind": "operator",
@@ -24710,6 +24844,140 @@
           "description": "查看形状、标签、缺失情况与全局统计。支持分块读取。",
           "parameters": [],
           "runtime_defaults": {},
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "dfbetas",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.dfbetas:DfbetasStep",
+          "title": "Standardized DFBETAS",
+          "category": "Analysis",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response": {
+                "type": "string",
+                "title": "响应变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              }
+            },
+            "required": [
+              "response"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.24"
+          ],
+          "dependency_imports": [
+            "numpy"
+          ],
+          "name": "dfbetas",
+          "module": "src.task.step.steps.dfbetas",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "response",
+              "label": "响应变量",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature"
+          },
           "legacy_parameters": false
         },
         {
@@ -58348,6 +58616,121 @@
             "scale": true,
             "max_subpopulation": 10000,
             "max_iter": 300
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "theil_u",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.theil_u:TheilUStep",
+          "title": "Theil's uncertainty coefficient",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "row_dim": {
+                "type": "string",
+                "default": "row",
+                "title": "Row Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "column_dim": {
+                "type": "string",
+                "default": "column",
+                "title": "Column Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "row_dim",
+                    "default": "row"
+                  },
+                  {
+                    "param": "column_dim",
+                    "default": "column"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [],
+          "dependency_imports": [],
+          "name": "theil_u",
+          "module": "src.task.step.steps.theil_u",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "",
+          "parameters": [
+            {
+              "key": "row_dim",
+              "label": "Row Dim",
+              "type": "string",
+              "required": false,
+              "default": "row"
+            },
+            {
+              "key": "column_dim",
+              "label": "Column Dim",
+              "type": "string",
+              "required": false,
+              "default": "column"
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "row_dim": "row",
+            "column_dim": "column"
           },
           "legacy_parameters": false
         },

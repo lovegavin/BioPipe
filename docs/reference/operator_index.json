@@ -8701,6 +8701,88 @@
     "quality": "reviewed"
   },
   {
+    "id": "covratio",
+    "kind": "operator",
+    "title": "COVRATIO",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "response": {
+          "type": "string",
+          "title": "响应变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "required": [
+        "response"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/covratio.py",
+    "tests": [
+      "tests/test_extension65.py",
+      "tests/test_r_oracles56.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/covratio.md",
+    "quality": "auto"
+  },
+  {
     "id": "cox_regression",
     "kind": "operator",
     "title": "cox_regression",
@@ -10576,6 +10658,88 @@
     ],
     "doc": "docs/reference/operators/describe.md",
     "quality": "reviewed"
+  },
+  {
+    "id": "dfbetas",
+    "kind": "operator",
+    "title": "Standardized DFBETAS",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "sample_dim",
+              "default": "sample"
+            },
+            {
+              "param": "feature_dim",
+              "default": "feature"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "sample_dim": {
+          "type": "string",
+          "default": "sample",
+          "title": "样本维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "feature_dim": {
+          "type": "string",
+          "default": "feature",
+          "title": "特征维度",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "response": {
+          "type": "string",
+          "title": "响应变量",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 30
+        }
+      },
+      "required": [
+        "response"
+      ],
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/dfbetas.py",
+    "tests": [
+      "tests/test_extension65.py",
+      "tests/test_r_oracles56.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/dfbetas.md",
+    "quality": "auto"
   },
   {
     "id": "dffits",
@@ -35812,6 +35976,79 @@
     ],
     "demo_tasks": [],
     "doc": "docs/reference/operators/theil_sen_regressor.md",
+    "quality": "auto"
+  },
+  {
+    "id": "theil_u",
+    "kind": "operator",
+    "title": "Theil's uncertainty coefficient",
+    "package": "biopipe-core",
+    "inputs_arity": 1,
+    "output_parameter": "output",
+    "contracts": {
+      "inputs": [
+        {
+          "version": 1,
+          "numeric": true,
+          "info": {},
+          "dims": [
+            {
+              "param": "row_dim",
+              "default": "row"
+            },
+            {
+              "param": "column_dim",
+              "default": "column"
+            }
+          ],
+          "labels": [],
+          "parallel": [],
+          "ndim": 2
+        }
+      ],
+      "output": {
+        "mode": "declare",
+        "schema": {
+          "ndim": 2,
+          "numeric": true,
+          "info_open": true,
+          "axis_info_open": true
+        }
+      }
+    },
+    "parameters_schema": {
+      "type": "object",
+      "properties": {
+        "row_dim": {
+          "type": "string",
+          "default": "row",
+          "title": "Row Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 0
+        },
+        "column_dim": {
+          "type": "string",
+          "default": "column",
+          "title": "Column Dim",
+          "x-ui-group": "basic",
+          "x-ui-order": 10
+        },
+        "output": {
+          "type": "string",
+          "title": "输出名称",
+          "x-ui-group": "basic",
+          "x-ui-order": 20
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": "src/task/step/steps/theil_u.py",
+    "tests": [
+      "tests/test_extension65.py",
+      "tests/test_r_oracles56.py"
+    ],
+    "demo_tasks": [],
+    "doc": "docs/reference/operators/theil_u.md",
     "quality": "auto"
   },
   {

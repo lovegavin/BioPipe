@@ -1,3 +1,11 @@
+## 0.72.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `theil_u` | R `DescTools::UncertCoef(direction=row/column/symmetric)` | `tests/test_r_oracles56.py` | 2×2 [[10,20],[30,40]]：0.006583693 / 0.005975741 / 0.006265003；无置信区间 |
+| `dfbetas` | R `stats::dfbetas` | `tests/test_r_oracles56.py` | 8×3 y/x1/x2 fixture 与 R 逐值一致；输出 intercept + 预测变量 |
+| `covratio` | R `stats::covratio` | `tests/test_r_oracles56.py` | 8 个样本的 COVRATIO 与 R 一致；最大值在并列的 s6/s7 |
+
 ## 0.71.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |
