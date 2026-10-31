@@ -1,5 +1,7 @@
 """Public protocol, scientific defaults, and explicit lossless migration boundaries."""
 from copy import deepcopy
+import ast
+import importlib
 import json
 from pathlib import Path
 
@@ -9,9 +11,8 @@ from pydantic import ValidationError
 from biopipe.migrate import convert_documents, convert_source, convert_task, migrate, _publish
 from biopipe.packages import bundled_state
 from biopipe.plugins import PluginManager
-from biopipe_sdk.protocol import Descriptor, PackageDescriptor, catalog_entry, validate_extension
-from src.reader import READERS
-from src.task import STEPS
+from biopipe_sdk.declarations import DeclarationCompiler, source_declarations
+from biopipe_sdk.protocol import Descriptor, PackageDescriptor, catalog_entry
 from src.web.models import Graph
 
 
@@ -21,12 +22,34 @@ def graph():
          "params": {"dim": "feature"}}], "edges": [], "runtime": {"memory": {"keep": ["pcs"]}}}
 
 
-def test_every_implementation_declares_schema_without_registry_injection():
-    for cls, kind in [(cls, "operator") for cls in STEPS.values()] + [(type(r), "reader") for r in READERS]:
-        assert cls.parameters_schema is not None
-        assert not hasattr(cls, "legacy_parameters")
-        validate_extension(cls, kind)
+def test_every_implementation_declares_schema_without_registry_injection(monkeypatch):
+    # Protocol validation must work in a core-only installation. Runtime hooks
+    # are tested on execution; loading every optional scientific dependency here
+    # would defeat the manifest-first boundary this gate is intended to protect.
+    original_import = importlib.import_module
+    def reject_implementation_import(name, *args, **kwargs):
+        assert not name.startswith(("src.task.step.steps.", "src.reader.readers.")), name
+        return original_import(name, *args, **kwargs)
+    monkeypatch.setattr(importlib, "import_module", reject_implementation_import)
     canonical = bundled_state()["descriptors"]
+    root = Path(__file__).resolve().parents[1]
+    compiler = DeclarationCompiler(root)
+    expected = {d["entry_point"]: d for d in canonical}
+    observed = set()
+    for entry in expected:
+        compiler.capture(entry)
+    for module in sorted({entry.split(":")[0] for entry in expected}):
+        source = root / (module.replace(".", "/") + ".py")
+        tree = ast.parse(source.read_text(encoding="utf-8"))
+        assert not any(isinstance(n, ast.Name) and n.id == "legacy_parameters" for n in ast.walk(tree))
+        for declaration in source_declarations(source, module):
+            compiled = compiler.compile(declaration)
+            target = expected[compiled["entry_point"]]
+            assert compiled["parameters_schema"] is not None
+            assert all(target[key] == value for key, value in compiled.items())
+            observed.add(compiled["entry_point"])
+    compiler.verify()
+    assert observed == set(expected)
     removed = {"name", "module", "parameters", "runtime_defaults", "input_type", "output_type", "memory_modes", "supports_cuda", "output_contract", "legacy_parameters"}
     assert all(not (removed & d.keys()) and d["protocol_version"] == 3 for d in canonical)
 

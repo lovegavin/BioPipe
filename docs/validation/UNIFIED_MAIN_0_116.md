@@ -16,6 +16,7 @@ skip the corresponding optional tests in a smaller installation.
 | --- | --- |
 | Complete Python regression | 1,233 passed, 129 skipped, 0 failures/errors; 1,362 collected, 27 min 14 s |
 | Follow-up Markdown portability regressions | 12 passed, including two new newline/legacy-cache cases |
+| Core-only static declaration/migration gate | 13 passed; implementations cannot be imported during declaration checks |
 | Fresh Git source archive | Registry and documentation checks both report no changes or errors after the newline fix |
 | Frontend tests | 117 passed across 17 files |
 | TypeScript and production frontend build | Passed; existing bundle-size advisory remains |
@@ -51,6 +52,11 @@ canonicalizes documentation digests, preserves historical raw-byte verification
 and writes generated Markdown as LF. Its 12 focused checks and a fresh Git
 archive check passed. Only documentation/declaration hashes changed for 490
 generated pages; all operator code and execution identities remained unchanged.
+The core-only CI environment also exposed an obsolete test that imported the whole
+library to inspect schemas. That gate now compiles every declaration and compares
+it to the registered descriptor while explicitly rejecting implementation imports;
+optional scientific dependencies remain optional. Runtime execution tests remain
+separate.
 
 ## Limits
 
