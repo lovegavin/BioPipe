@@ -1,3 +1,11 @@
+## 0.88.0 — 2026-10-31
+
+- 新增：`dca`（决策曲线分析）与 `lowess`（局部加权散点平滑）两个统计算子；算子总数 **387**，Reader 仍 **85**。
+- 许可证：项目整体切换为 **Apache License 2.0**，新增 `LICENSE`/`NOTICE`，移除旧专有许可与商业授权表述；Python 与前端包元数据同步为 `Apache-2.0`。
+- 验证：`tests/test_extension80.py` 5 项 + `tests/test_r_oracles70.py` 2 项 = **7 passed**；R 对照 `dcurves::dca`、`stats::lowess`；增量门 **25 passed**；`-W error` **9 passed**；frontend **39 passed / 9 files**，构建通过。
+- 修复/边界：发现 `chow_test` 已在 0.25 引入并恢复原文件，未重复新增；DCA 阈值上限 1000、拒绝非 0/1 结局；LOWESS 拒绝少于 3 点与常数 x。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.87.0 — 2026-10-31
 
 - 新增：`arima`（非季节 ARIMA 时间序列模型）与 `isotonic`（保序/单调回归）两个统计算子；算子总数 **385**，Reader 仍 **85**。

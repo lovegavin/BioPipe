@@ -4,11 +4,11 @@ BioPipe 是本地生信流水线引擎 + Studio 可视化工作区 + CLI/MCP Age
 Reader 读取标准格式，用带类型契约的算子处理 `Form`，并在本地生成表格、图片和报告。
 BioPipe 本身不提供 AI 服务。
 
-当前源码版本 **0.87.0**：**385 个算子、85 个 Reader、6 个 provider 包、21 条路线**。
+当前源码版本 **0.88.0**：**387 个算子、85 个 Reader、6 个 provider 包、21 条路线**。
 
 0.84 起算子分类归一为 6 类；每个算子与 Reader 都有功能预览，平台受限格式在界面和 manifest 中标记。
 
-0.86 新增 Chao1 与 rarefaction（个体稀疏化）两个微生物/生态多样性算子；0.87 新增 ARIMA 与保序回归（isotonic）两个统计算子。
+0.86 新增 Chao1 与 rarefaction（个体稀疏化）两个微生物/生态多样性算子；0.87 新增 ARIMA 与保序回归（isotonic）两个统计算子；0.88 新增决策曲线分析（DCA）与 LOWESS 平滑，并将项目许可证切换为 Apache-2.0。
 
 ## 价值主张
 
@@ -36,7 +36,7 @@ BioPipe 本身不提供 AI 服务。
 | [协议总集](docs/protocol_suite.md) | Form/Reader/算子/契约/注册表/扩展/测试规范 |
 | [参考索引](docs/reference/README.md) | 每个 Reader/算子的参数、契约、源码/测试链接 |
 | [系统对象](docs/reference/subjects/README.md) | 九个核心对象：Form/Task/Graph/Project/Reader/Step/Runner/Registry/SDK |
-| [覆盖审计](docs/coverage_audit.md) | 385 算子/85 Reader 的覆盖、核心创新点落实度与缺口 |
+| [覆盖审计](docs/coverage_audit.md) | 387 算子/85 Reader 的覆盖、核心创新点落实度与缺口 |
 | [任务 SOP](docs/route_sop.md) | 从数据到自定义路线、`--check`、运行和结果解释 |
 
 按角色阅读：
@@ -166,16 +166,25 @@ docs/reference/    自动生成 Reader/算子参考页
 
 ## 版本与更新记录
 
-- 当前：**0.87.0**，见 [CHANGELOG](docs/changelog.md)。
+- 当前：**0.88.0**，见 [CHANGELOG](docs/changelog.md)。
 - Windows 测试环境快照：[conda](windows-biopipe-conda.yml) /
   [pip](windows-biopipe-pip-freeze.txt)。
 
 ## 许可证
 
-Copyright (c) 2026 Haojian Li. All rights reserved.
+本项目采用 **Apache License 2.0** 开源许可证。完整许可证文本见
+[LICENSE](LICENSE)，版权与归属声明见 [NOTICE](NOTICE)。
 
-This software is proprietary. No part of this software may be copied, modified,
-distributed, sublicensed, or used for commercial purposes without the prior
-written permission of the copyright holder.
+Copyright 2026 Haojian Li
 
-商业授权/合作：lovegavin118@outlook.com / WeChat: mylovegavin118 / 13727316173。
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
