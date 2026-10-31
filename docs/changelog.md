@@ -1,3 +1,9 @@
+## 0.89.0 — 2026-10-31
+
+- 新增 `bai_perron`（Bai-Perron 多结构突变回归）：固定断点数的动态规划分段 OLS，输出分段系数、1-based 断点、RSS 与 BIC；R `strucchange::breakpoints` 对照。
+- 算子总数 **388**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 388/85，registry `errors []`。
+- 验证：新增 4 项（3 手算 + 1 R oracle）通过；增量门 **20 passed**；`-W error` **6 passed**；frontend **39 passed / 9 files** 且构建通过。
+
 ## 0.88.0 — 2026-10-31
 
 - 新增：`dca`（决策曲线分析）与 `lowess`（局部加权散点平滑）两个统计算子；算子总数 **387**，Reader 仍 **85**。

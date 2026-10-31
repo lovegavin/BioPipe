@@ -184,6 +184,7 @@ YAML / JSON
 - 0.76.0 新增：GARCH 波动率模型与向量自回归（VAR）两个时间序列算子；核心层不变；
 - 0.77.0 新增：t 检验、两比例检验与单因素 ANOVA 的功效/样本量计算；核心层不变；
 - 0.84.0 重构：算子分类收敛为 6 类（Data/Statistics/Machine Learning/Omics/Visualization/Quality Control）；算子/Reader 元数据、功能预览、平台标记与 catalog integrity 测试；修正 Reader 发现去重；核心执行层不变；
+- 0.89.0：新增 Bai-Perron 多结构突变回归（bai_perron）；用动态规划最小化分段残差平方和，R `strucchange::breakpoints` 对照；核心层不变；
 - 0.88.0：新增决策曲线分析（dca）与 LOWESS 平滑（lowess）两个统计算子；项目许可证切换为 Apache-2.0；核心层不变；
 - 0.87.0：新增 ARIMA(p,d,q) 时间序列模型与保序回归（isotonic）两个统计算子；ARIMA 的协方差用 `cov_type="approx"` 对齐 R Hessian SE；核心层不变；
 - 0.86.0：新增 Chao1 与个体稀疏化（rarefaction）两个多样性算子；核心层不变；

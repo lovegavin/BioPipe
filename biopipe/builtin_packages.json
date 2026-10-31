@@ -14068,6 +14068,189 @@
         },
         {
           "protocol_version": 1,
+          "id": "bai_perron",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.bai_perron:BaiPerronStep",
+          "title": "Bai-Perron multiple structural breaks",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response_label": {
+                "type": "string",
+                "title": "Response Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "predictors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Predictors",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "n_breaks": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5,
+                "default": 2,
+                "title": "N Breaks",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "min_segment": {
+                "type": "number",
+                "minimum": 0.05,
+                "maximum": 0.5,
+                "default": 0.15,
+                "title": "Min Segment",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "response_label",
+              "predictors"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "name": "bai_perron",
+          "module": "src.task.step.steps.bai_perron",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Bai-Perron multiple structural breaks：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Response Label、Predictors、N Breaks、Min Segment。",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "response_label",
+              "label": "Response Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "predictors",
+              "label": "Predictors",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "n_breaks",
+              "label": "N Breaks",
+              "type": "integer",
+              "required": false,
+              "default": 2,
+              "min": 1,
+              "max": 5
+            },
+            {
+              "key": "min_segment",
+              "label": "Min Segment",
+              "type": "number",
+              "required": false,
+              "default": 0.15,
+              "min": 0.05,
+              "max": 0.5
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "n_breaks": 2,
+            "min_segment": 0.15
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "barnard_test",
           "version": "1.0.0",
           "kind": "operator",
