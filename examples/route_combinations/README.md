@@ -17,8 +17,9 @@
 | `refseq_cds_sequence_features/` | FASTA 读取 + 序列统计 + 翻译/蛋白性质 + 密码子使用 | NCBI RefSeq 六个人类癌症相关基因 CDS；用 FastaReader 读入，检查长度/GC，翻译后比较蛋白理化性质，并汇总密码子使用 |
 | `thousand_genomes_chr22_population/` | VCF 读取 + 群体质控 + PCA + FST + 亲缘关系 | 1000 Genomes Phase 3 chr22 的 200 kb 区间；用 VcfReader 读入 100 个样本，做 MAF/缺失/HWE 过滤、PCA、AFR-EUR Hudson FST 与 GRM 热图 |
 | `leukemia_all_aml_expression/` | GCT 读取 + PCA + 差异分析 + FDR 热图 + 随机森林 | GSEA Leukemia 表达谱；用 GctReader 读取 48 个 ALL/AML 样本，做 Mann-Whitney + BH、显著基因热图与分类 |
+| `pbmc3k_single_cell_atlas/` | H5AD 读取 + 单细胞 PCA/UMAP + 细胞类型聚合/热图 + 随机森林 | 10x Genomics PBMC3k 处理数据；用 H5adReader 读取 2,638 个细胞 × 1,838 个基因，按 8 个注释细胞类型做结构、marker 与分类分析 |
 
-十一个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
+十二个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
 
 ## 运行
 
@@ -35,6 +36,7 @@
     python scripts/run.py examples/route_combinations/refseq_cds_sequence_features
     python scripts/run.py examples/route_combinations/thousand_genomes_chr22_population
     python scripts/run.py examples/route_combinations/leukemia_all_aml_expression
+    python scripts/run.py examples/route_combinations/pbmc3k_single_cell_atlas
 
 只做静态校验：
 
@@ -49,6 +51,7 @@
     python scripts/run.py examples/route_combinations/refseq_cds_sequence_features --check
     python scripts/run.py examples/route_combinations/thousand_genomes_chr22_population --check
     python scripts/run.py examples/route_combinations/leukemia_all_aml_expression --check
+    python scripts/run.py examples/route_combinations/pbmc3k_single_cell_atlas --check
 
 每个示例的输出写入各自 `output/`：`figures/` 为图片，`steps/` 为每步 JSON 摘要，`run_summary.txt/json` 为运行摘要。`input/` 中的 CSV 来自公开数据集，字段经过最小化整理；示例用于演示组合方式，不构成临床或生物学结论。
 
@@ -137,6 +140,15 @@
 - 引用：Armstrong, S.A. et al. (2002). MLL translocations specify a distinct gene expression profile that distinguishes a unique leukemia. *Nature Genetics*, 30, 41–47. <https://doi.org/10.1038/ng809>。
 - 该数据用于演示 GCT 读取与表达谱分析，不是临床诊断/预后数据；ALL/AML 是强分离的经典教学数据，不能据此推断其他队列。
 
+### 10x Genomics PBMC3k（单细胞 PBMC）
+
+- 2,638 个细胞 × 1,838 个高变基因；8 个注释细胞类型：CD4 T（1,144）、CD8 T（316）、B（342）、NK（154）、CD14+ Monocytes（480）、FCGR3A+ Monocytes（150）、Dendritic cells（37）、Megakaryocytes（15）。
+- 来源：10x Genomics PBMC3k 数据集的 Scanpy 处理版本 `scanpy.datasets.pbmc3k_processed()`；原始数据由 10x Genomics 生成，处理流程见 Scanpy 教程。
+- `X` 为 log1p 归一化表达（范围约 −2.849 到 10.0），本示例**没有再次归一化**；h5ad 只保留表达矩阵、`obs` 注释和 `var` 的 `n_cells`，不携带上游 `uns`/`obsm`/`varm`/`layers`。
+- `input/pbmc3k_cells.csv` 的 `sample` 与 h5ad 细胞 barcode 对齐；`cell_type` 是短标签，`cell_type_full` 保留完整注释名。
+- 引用：Wolf, F.A., Angerer, P. & Theis, F.J. (2018). SCANPY: large-scale single-cell gene expression data analysis. *Genome Biology*, 19, 15. <https://doi.org/10.1186/s13059-017-1382-0>；原始数据：<https://www.10xgenomics.com/datasets/3-k-pbm-cs-from-a-healthy-donor-1-standard-1-1-0>。
+- 该数据用于演示 H5adReader + 单细胞算子的组合；细胞类型是上游 Louvain 注释，不是独立病理真值，不能据此推断供者、疾病或临床差异。
+
 ## 组合方式
 
 任务 YAML 是扁平的算子 DAG。示例把 route 中的算子直接展开为多个分支，而不是在 YAML 里引用 route ID：
@@ -153,12 +165,13 @@
 - `refseq_cds_sequence_features`：FastaReader 读入 6 条 RefSeq CDS；sequence_stats 检查长度/GC；translate + protein_properties 得到蛋白性质；heatmap 展示基因×性质谱；correlation + heatmap 检查性质相关；codon_usage 汇总密码子使用。
 - `thousand_genomes_chr22_population`：VcfReader 读入 100 个样本的 chr22 区间；maf/missing/hwe 做变异质控；pca 压缩变异维，boxplot 按 super_pop 展示 PC1/PC2；fst 计算 AFR-EUR Hudson FST 并用 histogram 展示分布；relatedness 计算 GRM，rename_dim 后聚类热图展示个体间结构。
 - `leukemia_all_aml_expression`：GctReader 读取 48 个样本 × 10,056 个基因；impute → pca → 两个 boxplot；compare_groups(Mann-Whitney) → select(P) → bh_adjust → filter_by(q<0.05) → heatmap（显著基因中 top-variance 40）；random_forest_classifier 在全部基因上训练，最后 describe。
+- `pbmc3k_single_cell_atlas`：H5adReader 读取 2,638 × 1,838 的 log-normalized 矩阵；pca 后按细胞类型画 PC1/PC2 箱线图；umap 后画 UMAP1/UMAP2 箱线图；aggregate 按细胞类型求均值，rename_dim 后画 16 个 marker 的聚类热图；random_forest_classifier 在全部基因上预测注释细胞类型。
 
 Studio 中可以把这些任务作为图导入，再拆分、合并或替换分支。逐步解释、指标和限制见各目录的 `ANALYSIS.md`。
 
 ## 测试
 
-`tests/test_route_combinations.py` 对十一个示例执行：
+`tests/test_route_combinations.py` 对十二个示例执行：
 
 1. `--check` 静态校验；
 2. 复制到临时目录后实际运行，检查 `output/run_summary.json` 的状态与步骤数。

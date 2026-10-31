@@ -1,3 +1,12 @@
+## 0.114.0 — 2026-11-01
+
+- 新增第十二条公开数据路线组合示例 `pbmc3k_single_cell_atlas`：10x Genomics PBMC3k 的 Scanpy 处理版本，2,638 个细胞 × 1,838 个高变基因，8 个注释细胞类型；首次以 `H5adReader` 专用 Reader 读取并组合单细胞结构、marker 与分类算子。
+- 数据与来源：`pbmc3k_processed.h5ad`（X 为 log1p 归一化；obs 含 cell_type/n_genes/percent_mito/n_counts；var 含 n_cells）与 `pbmc3k_cells.csv`；数据引用 Wolf et al. (2018) *Genome Biology* 19:15 和 10x Genomics PBMC3k 原始数据页；不重新归一化。
+- 组合：H5adReader → n_genes 箱线图；pca(20) → PC1/PC2 箱线图；umap(15 neighbors) → UMAP1/UMAP2 箱线图；aggregate + rename_dim → 16 个 marker 的聚类热图；random_forest_classifier（全部 1,838 个基因）→ describe。不新增算子/Reader/路线，registry 仍 **402/85/21/6**。
+- 结果：PCA 解释方差 PC1 0.017915、PC2 0.014291；RF 测试 accuracy 0.910606、macro F1 0.847519、AUC 0.992546，5 折 CV 0.918602±0.006876；主要错误 CD8→CD4、FcR3A→Mono、DC→Mono、NK→CD8。
+- 说明：输入已是处理后的 h5ad，不是原始 FASTQ→counts；细胞类型是上游注释，不是独立真值；类别不平衡、单供者、UMAP 轴任意，不作泛化/临床结论。
+- 验证：路线组合 **24 passed**；增量门 **39 passed**（另 1 skipped）；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
+
 ## 0.113.0 — 2026-10-31
 
 - 新增第十一条公开数据路线组合示例 `leukemia_all_aml_expression`：GSEA 示例 Leukemia GCT，48 个样本（24 ALL / 24 AML）× 10,056 个基因，首次以 `GctReader` 专用 Reader 读取。

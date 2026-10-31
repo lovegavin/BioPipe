@@ -22,6 +22,7 @@ CASES = [
     "refseq_cds_sequence_features",
     "thousand_genomes_chr22_population",
     "leukemia_all_aml_expression",
+    "pbmc3k_single_cell_atlas",
 ]
 
 
@@ -65,6 +66,7 @@ def test_route_combination_executes_in_tmp(name: str, tmp_path: Path) -> None:
         "refseq_cds_sequence_features": 11,
         "thousand_genomes_chr22_population": 13,
         "leukemia_all_aml_expression": 11,
+        "pbmc3k_single_cell_atlas": 12,
         "diabetes_classification_regression": 7,
     }
     assert summary["n_steps"] >= thresholds.get(name, 6)

@@ -1,0 +1,150 @@
+name: pbmc3k_single_cell_atlas
+
+sources:
+  expression:
+    path: input/pbmc3k_processed.h5ad
+    dims: [sample, gene]
+    labels:
+      sample: builtin
+      gene: builtin
+
+  samples:
+    path: input/pbmc3k_cells.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+
+steps:
+  - name: boxplot
+    inputs: [samples, samples]
+    params:
+      dim: feature
+      value_label: n_genes
+      group_dim: sample
+      group_label: cell_type
+      groups: ["CD4", "CD8", "B", "NK", "Mono", "FcR3A", "DC", "MK"]
+      filename: qc_genes_by_cell_type.png
+      title: "PBMC3k: detected genes by annotated cell type"
+      xlabel: cell type
+      ylabel: detected genes
+
+  - name: pca
+    inputs: [expression]
+    params:
+      dim: gene
+      n_components: 20
+      output: pcs
+
+  - name: boxplot
+    inputs: [pcs, samples]
+    params:
+      dim: component
+      value_label: PC1
+      group_dim: sample
+      group_label: cell_type
+      groups: ["CD4", "CD8", "B", "NK", "Mono", "FcR3A", "DC", "MK"]
+      filename: pca_pc1_by_cell_type.png
+      title: "PBMC3k: PC1 by annotated cell type"
+      xlabel: cell type
+      ylabel: PC1 score
+
+  - name: boxplot
+    inputs: [pcs, samples]
+    params:
+      dim: component
+      value_label: PC2
+      group_dim: sample
+      group_label: cell_type
+      groups: ["CD4", "CD8", "B", "NK", "Mono", "FcR3A", "DC", "MK"]
+      filename: pca_pc2_by_cell_type.png
+      title: "PBMC3k: PC2 by annotated cell type"
+      xlabel: cell type
+      ylabel: PC2 score
+
+  - name: umap
+    inputs: [expression]
+    params:
+      sample_dim: sample
+      feature_dim: gene
+      n_components: 2
+      n_neighbors: 15
+      min_dist: 0.1
+      metric: euclidean
+      random_state: 17
+      output: embedding
+
+  - name: boxplot
+    inputs: [embedding, samples]
+    params:
+      dim: component
+      value_label: UMAP1
+      group_dim: sample
+      group_label: cell_type
+      groups: ["CD4", "CD8", "B", "NK", "Mono", "FcR3A", "DC", "MK"]
+      filename: umap1_by_cell_type.png
+      title: "PBMC3k: UMAP1 by annotated cell type"
+      xlabel: cell type
+      ylabel: UMAP1
+
+  - name: boxplot
+    inputs: [embedding, samples]
+    params:
+      dim: component
+      value_label: UMAP2
+      group_dim: sample
+      group_label: cell_type
+      groups: ["CD4", "CD8", "B", "NK", "Mono", "FcR3A", "DC", "MK"]
+      filename: umap2_by_cell_type.png
+      title: "PBMC3k: UMAP2 by annotated cell type"
+      xlabel: cell type
+      ylabel: UMAP2
+
+  - name: aggregate
+    inputs: [expression, samples]
+    params:
+      dim: sample
+      group_col: cell_type
+      method: mean
+      output: cell_type_mean
+
+  - name: rename_dim
+    inputs: [cell_type_mean]
+    params:
+      from: feature
+      to: cell_type
+      output: cell_type_mean_labeled
+
+  - name: heatmap
+    inputs: [cell_type_mean_labeled]
+    params:
+      dim: gene
+      other_dim: cell_type
+      select: label
+      labels: [LTB, MAL, GZMK, CCL5, CD79A, MS4A1, NKG7, GNLY, S100A8, FCN1, FCGR3A, IFITM3, FCER1A, CST3, PPBP, PF4]
+      standardize: row
+      cluster_rows: true
+      cluster_cols: true
+      show_row_labels: true
+      show_col_labels: true
+      figsize: [10, 6]
+      title: "PBMC3k: canonical marker genes across annotated cell types"
+      filename: cell_type_mean_heatmap.png
+
+  - name: random_forest_classifier
+    inputs: [expression, samples]
+    params:
+      sample_dim: sample
+      feature_dim: gene
+      label_dim: feature
+      target_label: cell_type
+      valid_labels: ["CD4", "CD8", "B", "NK", "Mono", "FcR3A", "DC", "MK"]
+      n_estimators: 500
+      test_size: 0.25
+      cv_folds: 5
+      random_state: 17
+      scale: true
+      output: rf
+
+  - name: describe
+    inputs: [rf]
