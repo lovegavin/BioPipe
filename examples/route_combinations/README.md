@@ -13,8 +13,9 @@
 | `pbc_competing_survival/` | 生存分析 + 竞争风险 | `survival::pbc` 原发性胆汁性胆管炎数据；性别分层 KM、Cox、CIF 与 Fine-Gray 竞争风险模型 |
 | `birthwt_risk_factors/` | 差异比较 + 逻辑回归 + 随机森林 + PCA/相关热图 | `MASS::birthwt` 低出生体重数据；比较母亲基线、估计风险因素方向、评估分类并检查特征结构 |
 | `wine_cultivar_classification/` | 线性判别 + 随机森林 + PCA/相关热图 | UCI Wine 数据；比较 LDA 与随机森林的品种分类，检查线性判别边界、无监督分离与化学特征相关结构 |
+| `mtcars_regression_classification/` | 回归 + 分类 + 结构探索 | R datasets::mtcars 1974 年汽车数据；用重量/马力等预测油耗、判断变速箱类型，并用 PCA 与 Spearman 热图看共线结构 |
 
-七个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
+八个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
 
 ## 运行
 
@@ -27,6 +28,7 @@
     python scripts/run.py examples/route_combinations/pbc_competing_survival
     python scripts/run.py examples/route_combinations/birthwt_risk_factors
     python scripts/run.py examples/route_combinations/wine_cultivar_classification
+    python scripts/run.py examples/route_combinations/mtcars_regression_classification
 
 只做静态校验：
 
@@ -37,6 +39,7 @@
     python scripts/run.py examples/route_combinations/pbc_competing_survival --check
     python scripts/run.py examples/route_combinations/birthwt_risk_factors --check
     python scripts/run.py examples/route_combinations/wine_cultivar_classification --check
+    python scripts/run.py examples/route_combinations/mtcars_regression_classification --check
 
 每个示例的输出写入各自 `output/`：`figures/` 为图片，`steps/` 为每步 JSON 摘要，`run_summary.txt/json` 为运行摘要。`input/` 中的 CSV 来自公开数据集，字段经过最小化整理；示例用于演示组合方式，不构成临床或生物学结论。
 
@@ -91,6 +94,13 @@
 - 样本 ID 重新编号为 wine_001...wine_178；标签写为 cultivar_1/2/3，类别编码 0/1/2 单独保留。
 - 原始提供者：Forina, M. et al., PARVUS - An Extendible Package for Data Exploration, Classification and Correlation。该数据用于方法演示，不构成品种鉴定或质量控制结论。
 
+### datasets::mtcars（1974 Motor Trend 汽车数据）
+
+- 32 辆汽车、11 个变量；本示例用 9 个特征（cyl、disp、hp、drat、wt、qsec、vs、gear、carb），目标为 mpg 与 am（0=自动挡 19 辆，1=手动挡 13 辆）。
+- 来源：R datasets 包的 mtcars 数据集，<https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html>；样本 ID 使用车型名。
+- 引用：Henderson, H.V. & Velleman, P.F. (1981). Building multiple regression models interactively. Biometrics, 37(2), 391–411. 原始数据由 Motor Trend 1974 年收集。
+- 该数据是经典的小样本回归/分类教学数据；32 辆、8 辆测试集，结果只作方法演示，不作现代车辆结论。
+
 ## 组合方式
 
 任务 YAML 是扁平的算子 DAG。示例把 route 中的算子直接展开为多个分支，而不是在 YAML 里引用 route ID：
@@ -103,12 +113,13 @@
 - `birthwt_risk_factors`：`compare_groups` 比较两组母亲年龄/体重；`logistic_regression` 与 `random_forest_classifier` 共享 9 个基线特征；`pca` + `join` + `scatter` 观察分组重叠；`correlation` + `heatmap` 检查风险因素相关结构。逻辑回归的 OR 是描述性近似，不输出标准误/P 值/CI。
 
 - `wine_cultivar_classification`：`lda_classifier` 与 `random_forest_classifier` 共享同一特征/标签和固定划分；`pca` + `join` + `scatter` 检查无监督分离；`correlation` + `heatmap` 检查 13 个化学特征的共变。LDA 的 1.0 测试准确率只代表这份小数据，不当作泛化证据。
+- `mtcars_regression_classification`：compare_groups 比较自动/手动挡的 mpg、wt、hp；ridge_regression 用 9 个特征预测 mpg；logistic_regression 与 random_forest_classifier 用同一组特征预测 am；pca + join + scatter 看变速箱分组；correlation + heatmap 看 10 个变量的共线结构。
 
 Studio 中可以把这些任务作为图导入，再拆分、合并或替换分支。逐步解释、指标和限制见各目录的 `ANALYSIS.md`。
 
 ## 测试
 
-`tests/test_route_combinations.py` 对七个示例执行：
+`tests/test_route_combinations.py` 对八个示例执行：
 
 1. `--check` 静态校验；
 2. 复制到临时目录后实际运行，检查 `output/run_summary.json` 的状态与步骤数。

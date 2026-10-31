@@ -1,3 +1,10 @@
+## 0.110.0 — 2026-10-31
+
+- 新增第八条公开数据路线组合示例 `mtcars_regression_classification`：R datasets::mtcars 1974 年 Motor Trend 数据，32 辆汽车、9 个特征；组合自动/手动挡分组比较、油耗 ridge 回归、变速箱 logistic 回归、随机森林分类、PCA + join + scatter、Spearman 相关热图。
+- 结果：mpg 自动挡 17.147 vs 手动挡 24.392（P=0.00137）；ridge 测试 R² 0.8569、RMSE 2.755，但 3 折 CV R² 0.182±0.393；逻辑回归与随机森林测试 accuracy 均 1.0；PCA PC1 62.94%、PC2 21.60%；Spearman 范围 -0.9108 到 0.9277。32 辆、8 辆测试集，分类 1.0 只作演示，不作泛化证据。
+- 数据来源：R datasets::mtcars；引用 Henderson & Velleman (1981), Building multiple regression models interactively, Biometrics 37(2):391–411；原始数据由 Motor Trend 1974 年收集。不新增算子/Reader/路线，registry 仍 **402/85/21/6**。
+- 验证：`tests/test_route_combinations.py` **16 passed**；增量门 **31 passed（另 1 skipped）**；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
+
 ## 0.109.0 — 2026-10-31
 
 - 新增第七条公开数据路线组合示例 `wine_cultivar_classification`：UCI Wine 178 个样本、13 个化学特征、3 个品种（59/71/48）；组合 LDA、随机森林、PCA + join + scatter、Pearson 相关热图。

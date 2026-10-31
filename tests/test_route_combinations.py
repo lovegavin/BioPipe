@@ -18,6 +18,7 @@ CASES = [
     "pbc_competing_survival",
     "birthwt_risk_factors",
     "wine_cultivar_classification",
+    "mtcars_regression_classification",
 ]
 
 
@@ -57,6 +58,7 @@ def test_route_combination_executes_in_tmp(name: str, tmp_path: Path) -> None:
         "birthwt_risk_factors": 11,
         "pbc_competing_survival": 8,
         "wine_cultivar_classification": 9,
+        "mtcars_regression_classification": 13,
         "diabetes_classification_regression": 7,
     }
     assert summary["n_steps"] >= thresholds.get(name, 6)
