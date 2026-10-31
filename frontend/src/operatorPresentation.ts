@@ -306,6 +306,8 @@ export const builtinPresentation = {
   power_t_test: { category: "统计分析", icon: "ChartLine" },
   power_prop_test: { category: "统计分析", icon: "ChartBar" },
   power_anova: { category: "统计分析", icon: "ChartScatter" },
+  beta_regression: { category: "统计分析", icon: "ChartLine" },
+  redundancy_analysis: { category: "统计分析", icon: "ChartScatter" },
 } satisfies Record<string, Pick<Operator, "category" | "icon" | "preview">>;
 
 export function presentOperator(spec: Operator): Operator {

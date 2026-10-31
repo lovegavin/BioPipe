@@ -1,3 +1,9 @@
+## 0.78.0 — 2026-10-31
+
+- 新增：371 算子 / 82 Reader / 21 route；新增 Beta 回归与冗余分析（RDA）两个回归/约束排序算子；未修改核心层。
+- 验证：按用户要求只跑增量，`tests/test_extension71.py` 5 项、`tests/test_r_oracles62.py` 2 项，合计 **7 passed**；R 对照 `betareg`、`vegan`；registry clean；参考页 371/82；增量门 23 passed；`-W error` 9 passed；Studio 前端 317 passed。
+- 边界：Beta 回归要求响应严格在 (0,1)，均值 logit、精度 identity，SE 用 statsmodels EIM 协方差；不处理 0/1 膨胀。RDA 只做线性约束排序，不提供置换显著性；惯量除以 n−1，与 vegan 一致；响应/解释矩阵秩亏或样本不足会拒绝。
+
 ## 0.77.0 — 2026-10-31
 
 - 新增：369 算子 / 82 Reader / 21 route；新增 t 检验、两比例检验、单因素 ANOVA 三个功效/样本量计算算子；未修改核心层。

@@ -14116,6 +14116,209 @@
         },
         {
           "protocol_version": 1,
+          "id": "beta_regression",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.beta_regression:BetaRegressionStep",
+          "title": "Beta regression",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "response_label": {
+                "type": "string",
+                "title": "Response Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "predictors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Predictors",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "categorical": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": [],
+                "title": "分类协变量",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "max_iter": {
+                "type": "integer",
+                "minimum": 20,
+                "default": 500,
+                "title": "Max Iter",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "confidence": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              }
+            },
+            "required": [
+              "response_label",
+              "predictors"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "beta_regression",
+          "module": "src.task.step.steps.beta_regression",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Beta regression with a logit mean link and identity precision link.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "response_label",
+              "label": "Response Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "predictors",
+              "label": "Predictors",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "categorical",
+              "label": "分类协变量",
+              "type": "list",
+              "required": false,
+              "default": []
+            },
+            {
+              "key": "max_iter",
+              "label": "Max Iter",
+              "type": "integer",
+              "required": false,
+              "default": 500,
+              "min": 20
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "categorical": [],
+            "max_iter": 500,
+            "confidence": 0.95
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "bh_adjust",
           "version": "1.0.0",
           "kind": "operator",
@@ -52887,6 +53090,175 @@
             }
           ],
           "runtime_defaults": {},
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "redundancy_analysis",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.redundancy_analysis:RedundancyAnalysisStep",
+          "title": "Redundancy analysis",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "response_dim": {
+                "type": "string",
+                "default": "response",
+                "title": "Response Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "predictor_dim": {
+                "type": "string",
+                "default": "predictor",
+                "title": "Predictor Dim",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "n_components": {
+                "type": "integer",
+                "minimum": 1,
+                "default": 2,
+                "title": "主成分数",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              }
+            },
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "response_dim",
+                    "default": "response"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              },
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "predictor_dim",
+                    "default": "predictor"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy"
+          ],
+          "dependency_imports": [
+            "numpy"
+          ],
+          "name": "redundancy_analysis",
+          "module": "src.task.step.steps.redundancy_analysis",
+          "inputs_arity": 2,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Constrained ordination of a response matrix by explanatory variables.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "response_dim",
+              "label": "Response Dim",
+              "type": "string",
+              "required": false,
+              "default": "response"
+            },
+            {
+              "key": "predictor_dim",
+              "label": "Predictor Dim",
+              "type": "string",
+              "required": false,
+              "default": "predictor"
+            },
+            {
+              "key": "n_components",
+              "label": "主成分数",
+              "type": "integer",
+              "required": false,
+              "default": 2,
+              "min": 1
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "response_dim": "response",
+            "predictor_dim": "predictor",
+            "n_components": 2
+          },
           "legacy_parameters": false
         },
         {
