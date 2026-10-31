@@ -1,3 +1,10 @@
+## 0.87.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `arima` | R `stats::arima(order=c(1,0,0), method="ML", include.mean=TRUE)` | `tests/test_r_oracles69.py` | seed 20261113、n=100 AR(1)：R coef **1.316459716 / 0.639954023**、sigma2 **0.6130963**、loglik **-117.6956**、AIC **241.3912**；statsmodels `cov_type="approx"` 对齐；const SE R **0.213974945**；容差 coef/se 1e-4、sigma2 2e-5、loglik/AIC 1e-3 |
+| `isotonic` | R `isoreg`（递增/递减） | `tests/test_r_oracles69.py` | x 1..8、y `[1,2.2,1.8,2.7,3.1,2.9,4.2,4]`：递增 fitted `[1,2,2,2.7,3,3,4.1,4.1]`；递减全 **2.7375**；逐值容差 1e-12 |
+
 ## 0.86.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

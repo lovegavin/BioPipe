@@ -13717,6 +13717,254 @@
         },
         {
           "protocol_version": 1,
+          "id": "arima",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.arima:ArimaStep",
+          "title": "ARIMA model",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "value_label": {
+                "type": "string",
+                "title": "数值字段",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "p": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4,
+                "default": 1,
+                "title": "P",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "d": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2,
+                "default": 0,
+                "title": "D",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "q": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4,
+                "default": 0,
+                "title": "Q",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "trend": {
+                "type": "string",
+                "enum": [
+                  "c",
+                  "n"
+                ],
+                "default": "c",
+                "title": "Trend",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "confidence": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              },
+              "maxiter": {
+                "type": "integer",
+                "minimum": 10,
+                "default": 200,
+                "title": "Maxiter",
+                "x-ui-group": "basic",
+                "x-ui-order": 80
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 90
+              }
+            },
+            "required": [
+              "value_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "statsmodels>=0.14"
+          ],
+          "dependency_imports": [
+            "statsmodels"
+          ],
+          "name": "arima",
+          "module": "src.task.step.steps.arima",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Fit a non-seasonal ARIMA(p, d, q) model by maximum likelihood.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "value_label",
+              "label": "数值字段",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "p",
+              "label": "P",
+              "type": "integer",
+              "required": false,
+              "default": 1,
+              "min": 0,
+              "max": 4
+            },
+            {
+              "key": "d",
+              "label": "D",
+              "type": "integer",
+              "required": false,
+              "default": 0,
+              "min": 0,
+              "max": 2
+            },
+            {
+              "key": "q",
+              "label": "Q",
+              "type": "integer",
+              "required": false,
+              "default": 0,
+              "min": 0,
+              "max": 4
+            },
+            {
+              "key": "trend",
+              "label": "Trend",
+              "type": "choice",
+              "required": false,
+              "default": "c",
+              "options": [
+                "c",
+                "n"
+              ]
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "maxiter",
+              "label": "Maxiter",
+              "type": "integer",
+              "required": false,
+              "default": 200,
+              "min": 10
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "p": 1,
+            "d": 0,
+            "q": 0,
+            "trend": "c",
+            "confidence": 0.95,
+            "maxiter": 200
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "attach_info",
           "version": "1.0.0",
           "kind": "operator",
@@ -38576,6 +38824,193 @@
             "feature_dim": "feature",
             "n_components": 2,
             "n_neighbors": 5
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
+          "id": "isotonic",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.isotonic:IsotonicStep",
+          "title": "Isotonic regression",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "x_label": {
+                "type": "string",
+                "title": "X Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "y_label": {
+                "type": "string",
+                "title": "Y Label",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "increasing": {
+                "type": "boolean",
+                "default": true,
+                "title": "Increasing",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "out_of_bounds": {
+                "type": "string",
+                "enum": [
+                  "clip",
+                  "nan",
+                  "raise"
+                ],
+                "default": "clip",
+                "title": "Out Of Bounds",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              }
+            },
+            "required": [
+              "x_label",
+              "y_label"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "scikit-learn>=1.5"
+          ],
+          "dependency_imports": [
+            "sklearn"
+          ],
+          "name": "isotonic",
+          "module": "src.task.step.steps.isotonic",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Fit a monotone (increasing or decreasing) least-squares curve.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "x_label",
+              "label": "X Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "y_label",
+              "label": "Y Label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "increasing",
+              "label": "Increasing",
+              "type": "boolean",
+              "required": false,
+              "default": true
+            },
+            {
+              "key": "out_of_bounds",
+              "label": "Out Of Bounds",
+              "type": "choice",
+              "required": false,
+              "default": "clip",
+              "options": [
+                "clip",
+                "nan",
+                "raise"
+              ]
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "increasing": true,
+            "out_of_bounds": "clip"
           },
           "legacy_parameters": false
         },

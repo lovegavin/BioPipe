@@ -1,3 +1,10 @@
+## 0.87.0 — 2026-10-31
+
+- 新增：`arima`（非季节 ARIMA 时间序列模型）与 `isotonic`（保序/单调回归）两个统计算子；算子总数 **385**，Reader 仍 **85**。
+- 验证：`tests/test_extension79.py` 5 项 + `tests/test_r_oracles69.py` 2 项 = **7 passed**；R 对照 `stats::arima(method="ML")` 与 `isoreg`；增量门 **28 passed**；`-W error` **9 passed**；frontend **39 passed / 9 files**，构建通过。
+- 修复/边界：ARIMA 的 statsmodels 默认 OPG 标准误与 R Hessian 不一致，显式改用 `cov_type="approx"`；ARIMA 拒绝 `p+q=0`、`d>0` 带常数趋势、短序列与零方差；isotonic 拒绝重复 x、少于 3 个有限点与非零 x 范围。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.86.0 — 2026-10-31
 
 - 新增：`chao1`（Chao1 物种丰富度估计）与 `rarefaction`（个体稀疏化）两个微生物/生态多样性算子；算子总数 **383**，Reader 仍 **85**。
