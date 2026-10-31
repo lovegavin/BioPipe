@@ -31625,6 +31625,240 @@
         },
         {
           "protocol_version": 1,
+          "id": "fine_gray",
+          "version": "1.0.0",
+          "kind": "operator",
+          "entry_point": "src.task.step.steps.fine_gray:FineGrayStep",
+          "title": "Fine-Gray subdistribution regression",
+          "category": "Statistics",
+          "parameters_schema": {
+            "type": "object",
+            "properties": {
+              "sample_dim": {
+                "type": "string",
+                "default": "sample",
+                "title": "样本维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 0
+              },
+              "feature_dim": {
+                "type": "string",
+                "default": "feature",
+                "title": "特征维度",
+                "x-ui-group": "basic",
+                "x-ui-order": 10
+              },
+              "time_label": {
+                "type": "string",
+                "title": "随访时间列",
+                "x-ui-group": "basic",
+                "x-ui-order": 20
+              },
+              "event_label": {
+                "type": "string",
+                "title": "结局代码列",
+                "x-ui-group": "basic",
+                "x-ui-order": 30
+              },
+              "covariates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "协变量列",
+                "x-ui-group": "basic",
+                "x-ui-order": 40
+              },
+              "event_code": {
+                "type": "integer",
+                "default": 1,
+                "title": "目标事件代码",
+                "x-ui-group": "basic",
+                "x-ui-order": 50
+              },
+              "censor_code": {
+                "type": "integer",
+                "default": 0,
+                "title": "删失代码",
+                "x-ui-group": "basic",
+                "x-ui-order": 60
+              },
+              "confidence": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1,
+                "default": 0.95,
+                "title": "Confidence",
+                "x-ui-group": "basic",
+                "x-ui-order": 70
+              },
+              "max_iter": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000,
+                "default": 100,
+                "title": "Max Iter",
+                "x-ui-group": "basic",
+                "x-ui-order": 80
+              },
+              "output": {
+                "type": "string",
+                "title": "输出名称",
+                "x-ui-group": "basic",
+                "x-ui-order": 90
+              }
+            },
+            "required": [
+              "time_label",
+              "event_label",
+              "covariates"
+            ],
+            "additionalProperties": false
+          },
+          "contracts": {
+            "version": 1,
+            "inputs": [
+              {
+                "version": 1,
+                "numeric": true,
+                "info": {},
+                "dims": [
+                  {
+                    "param": "sample_dim",
+                    "default": "sample"
+                  },
+                  {
+                    "param": "feature_dim",
+                    "default": "feature"
+                  }
+                ],
+                "labels": [],
+                "parallel": [],
+                "ndim": 2
+              }
+            ],
+            "output": {
+              "mode": "declare",
+              "schema": {
+                "ndim": 2,
+                "numeric": true,
+                "info_open": true,
+                "axis_info_open": true
+              }
+            }
+          },
+          "resources": {
+            "memory_modes": [
+              "full"
+            ],
+            "supports_cuda": false,
+            "estimate": "estimate_memory"
+          },
+          "dependencies": [
+            "numpy>=1.24",
+            "pandas>=2.0",
+            "scipy>=1.10"
+          ],
+          "dependency_imports": [
+            "numpy",
+            "pandas",
+            "scipy"
+          ],
+          "name": "fine_gray",
+          "module": "src.task.step.steps.fine_gray",
+          "inputs_arity": 1,
+          "outputs": [],
+          "output_parameter": "output",
+          "memory_modes": [
+            "full"
+          ],
+          "supports_cuda": false,
+          "input_type": "Form",
+          "output_type": "Form",
+          "description": "Fine-Gray subdistribution hazard regression.",
+          "parameters": [
+            {
+              "key": "sample_dim",
+              "label": "样本维度",
+              "type": "string",
+              "required": false,
+              "default": "sample"
+            },
+            {
+              "key": "feature_dim",
+              "label": "特征维度",
+              "type": "string",
+              "required": false,
+              "default": "feature"
+            },
+            {
+              "key": "time_label",
+              "label": "随访时间列",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "event_label",
+              "label": "结局代码列",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "covariates",
+              "label": "协变量列",
+              "type": "list",
+              "required": true
+            },
+            {
+              "key": "event_code",
+              "label": "目标事件代码",
+              "type": "integer",
+              "required": false,
+              "default": 1
+            },
+            {
+              "key": "censor_code",
+              "label": "删失代码",
+              "type": "integer",
+              "required": false,
+              "default": 0
+            },
+            {
+              "key": "confidence",
+              "label": "Confidence",
+              "type": "number",
+              "required": false,
+              "default": 0.95
+            },
+            {
+              "key": "max_iter",
+              "label": "Max Iter",
+              "type": "integer",
+              "required": false,
+              "default": 100,
+              "min": 1,
+              "max": 1000
+            },
+            {
+              "key": "output",
+              "label": "输出名称",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "runtime_defaults": {
+            "sample_dim": "sample",
+            "feature_dim": "feature",
+            "event_code": 1,
+            "censor_code": 0,
+            "confidence": 0.95,
+            "max_iter": 100
+          },
+          "legacy_parameters": false
+        },
+        {
+          "protocol_version": 1,
           "id": "fisher_combined",
           "version": "1.0.0",
           "kind": "operator",

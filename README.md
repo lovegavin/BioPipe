@@ -4,11 +4,11 @@ BioPipe 是本地生信流水线引擎 + Studio 可视化工作区 + CLI/MCP Age
 Reader 读取标准格式，用带类型契约的算子处理 `Form`，并在本地生成表格、图片和报告。
 BioPipe 本身不提供 AI 服务。
 
-当前源码版本 **0.89.0**：**388 个算子、85 个 Reader、6 个 provider 包、21 条路线**。
+当前源码版本 **0.90.0**：**389 个算子、85 个 Reader、6 个 provider 包、21 条路线**。
 
 0.84 起算子分类归一为 6 类；每个算子与 Reader 都有功能预览，平台受限格式在界面和 manifest 中标记。
 
-0.86 新增 Chao1 与 rarefaction（个体稀疏化）两个微生物/生态多样性算子；0.87 新增 ARIMA 与保序回归（isotonic）两个统计算子；0.88 新增决策曲线分析（DCA）与 LOWESS 平滑，并将项目许可证切换为 Apache-2.0。
+0.86 新增 Chao1 与 rarefaction（个体稀疏化）两个微生物/生态多样性算子；0.87 新增 ARIMA 与保序回归（isotonic）两个统计算子；0.88 新增决策曲线分析（DCA）与 LOWESS 平滑，并将项目许可证切换为 Apache-2.0；0.89 新增 Bai-Perron 多结构突变回归；0.90 新增 Fine-Gray 竞争风险回归。
 
 ## 价值主张
 
@@ -36,7 +36,7 @@ BioPipe 本身不提供 AI 服务。
 | [协议总集](docs/protocol_suite.md) | Form/Reader/算子/契约/注册表/扩展/测试规范 |
 | [参考索引](docs/reference/README.md) | 每个 Reader/算子的参数、契约、源码/测试链接 |
 | [系统对象](docs/reference/subjects/README.md) | 九个核心对象：Form/Task/Graph/Project/Reader/Step/Runner/Registry/SDK |
-| [覆盖审计](docs/coverage_audit.md) | 388 算子/85 Reader 的覆盖、核心创新点落实度与缺口 |
+| [覆盖审计](docs/coverage_audit.md) | 389 算子/85 Reader 的覆盖、核心创新点落实度与缺口 |
 | [任务 SOP](docs/route_sop.md) | 从数据到自定义路线、`--check`、运行和结果解释 |
 
 按角色阅读：
@@ -158,6 +158,7 @@ docs/reference/    自动生成 Reader/算子参考页
 - 评分者一致性：Gwet AC1、Brennan-Prediger、Conger kappa（未加权，容忍缺失评分）。
 - GSEA 输入：`.rnk` 排名列表、`.cls`/`.grp` 表型标签；保留类别编码供分组算子直接使用。
 - 有序关联：Somers' D、Goodman-Kruskal gamma、Kendall's W。
+- 竞争风险：Fine-Gray 子分布风险回归（fine_gray），输出系数、HR、稳健 SE、CI 与事件/竞争/删失计数；R `cmprsk::crr` 对照。
 - 原生 Windows 缺 `pysam`/`pyBigWig`：BAM/CRAM/BCF/BigWig 请用 WSL/Linux；见
   [Windows 兼容性](docs/windows_compatibility.md)。
 - 尚未覆盖：原始峰列表、空间转录组、影像。
@@ -166,7 +167,7 @@ docs/reference/    自动生成 Reader/算子参考页
 
 ## 版本与更新记录
 
-- 当前：**0.89.0**，见 [CHANGELOG](docs/changelog.md)。
+- 当前：**0.90.0**，见 [CHANGELOG](docs/changelog.md)。
 - Windows 测试环境快照：[conda](windows-biopipe-conda.yml) /
   [pip](windows-biopipe-pip-freeze.txt)。
 

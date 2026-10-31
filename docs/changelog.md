@@ -1,3 +1,11 @@
+## 0.90.0 — 2026-10-31
+
+- 新增 `fine_gray`（Fine-Gray 竞争风险子分布回归）：一个 `[sample,feature]` 表，`time_label`/`event_label`/`covariates` 必填；加权子分布风险部分似然、Breslow ties、Newton + 线搜索，稳健 sandwich 协方差；输出系数、HR、SE、z/P/CI 与事件/竞争/删失计数。
+- 算子总数 **389**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 389/85，registry `errors []`。
+- 验证：`tests/test_extension82.py` 4 项 + `tests/test_r_oracles72.py` 1 项 = **5 passed**；R `cmprsk::crr` n=240 对照系数 **0.946618077 / -0.426474219**、稳健 SE **0.109809053 / 0.092094486**、loglik **-502.880098**；增量门 **21 passed**；`-W error` **7 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：只支持右删失 + 竞争风险；不提供时变协变量、分层基线或预测曲线；无竞争事件路径有测试，但不声明等价于 cause-specific Cox。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.89.0 — 2026-10-31
 
 - 新增 `bai_perron`（Bai-Perron 多结构突变回归）：固定断点数的动态规划分段 OLS，输出分段系数、1-based 断点、RSS 与 BIC；R `strucchange::breakpoints` 对照。
