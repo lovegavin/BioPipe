@@ -1,3 +1,9 @@
+## 0.100.0
+
+| 算子 | 权威实现 | 对照测试 | 结论/边界 |
+|---|---|---|---|
+| `additive_glm` | R `glm(y ~ splines::bs(x1, df=4) + splines::bs(x2, df=4), family=binomial/poisson)` | `tests/test_r_oracles80.py` | 二项 fixture n=120（seed 20261120）：fitted/link 与 R 逐值误差 **<1e-8**；泊松 fixture n=110（seed 20261121）：误差 **<1e-8**；仅比较 fitted/link，不比较 B 样条基系数顺序 |
+
 ## 0.99.0
 
 | 算子 | 权威实现 | 对照测试 | 结论/边界 |

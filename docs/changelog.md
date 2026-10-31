@@ -1,3 +1,12 @@
+## 0.100.0 — 2026-10-31
+
+- 新增 `additive_glm` 可加 B 样条 GLM：一个 `[sample,feature]` 表包含响应与 2–8 个自变量；支持 `binomial`（logit）与 `poisson`（log）族；逐自变量 `patsy.bs(..., degree=3, include_intercept=False)` 基 + 截距，`statsmodels` GLM 拟合。
+- 输出 `[sample,statistic]` 的 `y,linear_predictor,fitted,residual,se_mean,ci_low,ci_high`；info 含 `family/link/terms/confidence/n/n_basis/deviance/null_deviance/pseudo_r2/aic/converged`；export 含系数、项信息、拟合与区间。
+- 算子总数 **399**，Reader 仍 **85**，路线 **21**，provider 包 **6**；参考页 399/85，registry `errors []`；Statistics 类别 234→235。
+- 验证：`tests/test_additive_glm.py` 4 项 + `tests/test_r_oracles80.py` 2 项 = **6 passed**；R `glm(y ~ splines::bs(x1, df=4) + splines::bs(x2, df=4), family=binomial/poisson)` 对 fitted/link 逐值 atol 1e-8；增量门 **22 passed**；`-W error` **8 passed**；frontend **39 passed / 9 files**，构建通过。
+- 边界：可加模型，不估计平滑参数、不建模交互项、不提供新样本预测；仅数值自变量与二项/泊松族；二项响应必须恰有两个水平（0/1 或映射为 0/1），泊松响应必须为非负整数计数；无 R 之外的外部实现对照。
+- 说明：本版未运行全量 pytest；最近全量为 0.84 **974 passed, 1 skipped**。核心执行层不变。
+
 ## 0.99.0 — 2026-10-31
 
 - 新增 `envfit` 环境向量拟合：排序坐标 `[sample,component]` 与环境变量 `[sample,feature]` 按样本标签对齐；逐变量 OLS 得到 R²，回归系数单位化后作为环境梯度方向；输出 `r2,axis1..axisK` 与方向向量。
