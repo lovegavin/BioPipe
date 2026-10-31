@@ -1,8 +1,8 @@
-# BioPipe 覆盖与核心创新点审计（0.84–0.105）
+# BioPipe 覆盖与核心创新点审计（0.84–0.106）
 
 本页回答两个问题：**当前算子和 Reader 覆盖到什么程度**，以及**这些扩展是否真的在支撑 BioPipe 的核心创新点**，而不只是增加数量。
 
-审计基线：`0.84.0` 全量快照；0.85 新增 `aft`/`hardy_weinberg`，0.86 新增 `chao1`/`rarefaction`，0.87 新增 `arima`/`isotonic`，0.88 新增 `dca`/`lowess`，0.89 新增 `bai_perron`，0.90 新增 `fine_gray`，0.91 新增 `nmds`，0.92 新增 `sarima`，0.93 新增 `probit_regression`，0.94 新增 `box_cox`，0.95 新增 `spline_regression`，0.96 新增 `vecm`，0.97 新增 `gaussian_process_regressor`，0.98 新增 `additive_spline_regression`，0.99 新增 `envfit`，0.100 新增 `additive_glm`，0.101 新增 `interval_censored_regression`，0.102 新增 `conditional_logistic`，0.103 新增 `hierarchical_clustering`；0.104 新增两条路线组合示例；0.105 新增第三条公开数据路线组合示例（vegan::mite 泥炭沼泽甲螨）但不改变算子/Reader/路线计数，当前 **402 个算子 / 85 个 Reader / 21 条路线 / 6 个包**，注册表 `errors []`。前端按 Vitest 实际用例统计为 **39 tests / 9 files**，构建通过。下文的分类/覆盖证据以 0.84 快照为主，0.85–0.105 增量证据见 SOP §85–§105。本文只记录可核对的事实；没有把“有测试”写成“每个算子都有独立外部 oracle”。
+审计基线：`0.84.0` 全量快照；0.85 新增 `aft`/`hardy_weinberg`，0.86 新增 `chao1`/`rarefaction`，0.87 新增 `arima`/`isotonic`，0.88 新增 `dca`/`lowess`，0.89 新增 `bai_perron`，0.90 新增 `fine_gray`，0.91 新增 `nmds`，0.92 新增 `sarima`，0.93 新增 `probit_regression`，0.94 新增 `box_cox`，0.95 新增 `spline_regression`，0.96 新增 `vecm`，0.97 新增 `gaussian_process_regressor`，0.98 新增 `additive_spline_regression`，0.99 新增 `envfit`，0.100 新增 `additive_glm`，0.101 新增 `interval_censored_regression`，0.102 新增 `conditional_logistic`，0.103 新增 `hierarchical_clustering`；0.104 新增两条路线组合示例；0.105 新增第三条公开数据路线组合示例（vegan::mite 泥炭沼泽甲螨）；0.106 新增第四条公开数据路线组合示例（scikit-learn diabetes：分类 + 回归 + PCA）但不改变算子/Reader/路线计数，当前 **402 个算子 / 85 个 Reader / 21 条路线 / 6 个包**，注册表 `errors []`。前端按 Vitest 实际用例统计为 **39 tests / 9 files**，构建通过。下文的分类/覆盖证据以 0.84 快照为主，0.85–0.106 增量证据见 SOP §85–§106。本文只记录可核对的事实；没有把“有测试”写成“每个算子都有独立外部 oracle”。
 
 > 计数口径修正：0.83 审计曾沿用历史累计数写作“前端 325 passed”。0.84 起前端只按 `npm test -- --run` 的实际 Vitest 用例数记录；历史 changelog 中的累计口径不再作为本文证据。
 
@@ -18,7 +18,7 @@
 - 0.18→0.83 共 65 个版本，平均每版约 **2.9 个算子**；0.84 本轮不新增算子/Reader，集中偿还可发现性债务。
 - 算子增长远快于 Reader：0.18→0.83 算子增加 186，Reader 只增加 12。大量新算子依赖通用表，专门格式仍集中在 85 个 Reader 中。
 - 0.84 的分类、预览、Reader 元数据、平台标记与自动完整性检查，是为后续扩张降低边际成本，不是数量扩张。
-- 0.86 新增 `chao1` 与 `rarefaction` 两个多样性算子；0.87 新增 `arima` 与 `isotonic` 两个统计算子；0.88 新增 `dca` 与 `lowess` 两个统计算子，并将许可证切换为 Apache-2.0；0.89 新增 `bai_perron` 一个结构突变算子；0.90 新增 `fine_gray` 一个竞争风险算子；0.91 新增 `nmds` 一个排序算子；0.92 新增 `sarima` 一个时间序列算子；0.93 新增 `probit_regression` 一个二分类回归算子；0.94 新增 `box_cox` 一个数据变换算子；0.95 新增 `spline_regression` 一个可解释非线性回归算子；0.96 新增 `vecm` 一个多变量协整/误差修正算子；0.97 新增 `gaussian_process_regressor` 一个固定核高斯过程回归算子；0.98 新增 `additive_spline_regression` 一个可加 B 样条回归算子；Reader 数不变，分类仍为 6 类。 0.99 新增 `envfit` 一个环境向量拟合算子；0.100 新增 `additive_glm` 一个可加 B 样条 GLM 算子；0.101 新增 `interval_censored_regression` 一个区间删失 Weibull AFT 算子；0.102 新增 `conditional_logistic` 一个条件 logistic 算子；0.103 新增 `hierarchical_clustering` 一个层次聚类算子；0.104/0.105 新增路线组合示例，不改变算子/Reader/路线计数；Reader 数不变，分类仍为 6 类。
+- 0.86 新增 `chao1` 与 `rarefaction` 两个多样性算子；0.87 新增 `arima` 与 `isotonic` 两个统计算子；0.88 新增 `dca` 与 `lowess` 两个统计算子，并将许可证切换为 Apache-2.0；0.89 新增 `bai_perron` 一个结构突变算子；0.90 新增 `fine_gray` 一个竞争风险算子；0.91 新增 `nmds` 一个排序算子；0.92 新增 `sarima` 一个时间序列算子；0.93 新增 `probit_regression` 一个二分类回归算子；0.94 新增 `box_cox` 一个数据变换算子；0.95 新增 `spline_regression` 一个可解释非线性回归算子；0.96 新增 `vecm` 一个多变量协整/误差修正算子；0.97 新增 `gaussian_process_regressor` 一个固定核高斯过程回归算子；0.98 新增 `additive_spline_regression` 一个可加 B 样条回归算子；Reader 数不变，分类仍为 6 类。 0.99 新增 `envfit` 一个环境向量拟合算子；0.100 新增 `additive_glm` 一个可加 B 样条 GLM 算子；0.101 新增 `interval_censored_regression` 一个区间删失 Weibull AFT 算子；0.102 新增 `conditional_logistic` 一个条件 logistic 算子；0.103 新增 `hierarchical_clustering` 一个层次聚类算子；0.104–0.106 新增路线组合示例，不改变算子/Reader/路线计数；Reader 数不变，分类仍为 6 类。
 
 ## 2. 算子分类与可发现性
 

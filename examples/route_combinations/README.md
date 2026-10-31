@@ -9,8 +9,9 @@
 | `cancer_diagnosis_ml/` | 差异分析 + 可视化 + 机器学习分类 | UCI 乳腺癌诊断数据；比较良恶性特征差异，并用随机森林做良恶性分类 |
 | `lung_regression_survival/` | 回归 + 生存分析 + 可视化 | NCCTG 肺癌数据；用生理指标回归年龄，并做性别分层 KM、log-rank 与 Cox 分析 |
 | `mite_community_ml/` | 群落多样性 + 排序/环境拟合 + 机器学习分类 | `vegan::mite` 泥炭沼泽甲螨数据；alpha 多样性、Bray-Curtis PCoA、PERMANOVA/envfit，以及随机森林预测灌木覆盖 |
+| `diabetes_classification_regression/` | 机器学习分类 + 机器学习回归 + PCA 可视化 | scikit-learn diabetes 数据；用同一组基线特征同时预测高/低进展组与连续进展值，并用 PCA 观察分组重叠 |
 
-三个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
+四个示例都使用公开、可引用的数据集，而不是临时合成数据。数据已放在各自的 `input/` 下，便于离线复现。
 
 ## 运行
 
@@ -19,12 +20,14 @@
     python scripts/run.py examples/route_combinations/cancer_diagnosis_ml
     python scripts/run.py examples/route_combinations/lung_regression_survival
     python scripts/run.py examples/route_combinations/mite_community_ml
+    python scripts/run.py examples/route_combinations/diabetes_classification_regression
 
 只做静态校验：
 
     python scripts/run.py examples/route_combinations/cancer_diagnosis_ml --check
     python scripts/run.py examples/route_combinations/lung_regression_survival --check
     python scripts/run.py examples/route_combinations/mite_community_ml --check
+    python scripts/run.py examples/route_combinations/diabetes_classification_regression --check
 
 每个示例的输出写入各自 `output/`：`figures/` 为图片，`steps/` 为每步 JSON 摘要，`run_summary.txt/json` 为运行摘要。`input/` 中的 CSV 来自公开数据集，字段经过最小化整理；示例用于演示组合方式，不构成临床或生物学结论。
 
@@ -51,6 +54,13 @@
 - `Shrub` 原始取值为 `None`、`Few`、`Many`；`None` 在 BioPipe CSV Reader 中会被当作缺失，示例将其映射为 `NoShrub`（19/26/25 个样本）。这是读取层适配，不是原始分组变化。
 - 引用：Borcard, D., Legendre, P., & Drapeau, P. (1992). Partialling out the spatial component of ecological variation. *Ecology*, 73(3), 1045–1055. <https://doi.org/10.2307/1940179>。
 
+### scikit-learn diabetes
+
+- 442 个样本、10 个基线特征；目标为疾病进展指标；中位数 140.0，派生 `high` 223 例、`low` 219 例。
+- 来源：scikit-learn `sklearn.datasets.load_diabetes`，<https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_diabetes.html>。
+- 引用：Efron, B., Hastie, T., Johnstone, I., & Tibshirani, R. (2004). Least Angle Regression. *Annals of Statistics*, 32(2), 407–499.
+- 说明：分类标签由目标中位数派生，仅用于演示；不是独立临床诊断标签。
+
 ## 组合方式
 
 任务 YAML 是扁平的算子 DAG。示例把 route 中的算子直接展开为多个分支，而不是在 YAML 里引用 route ID：
@@ -59,11 +69,13 @@
 - `lung_regression_survival`：`ridge_regression` 回归年龄；`kaplan_meier`、`logrank_test`、`cox_regression` 共享临床表；`forest_plot` 汇总 Cox 结果。
 - `mite_community_ml`：`diversity` 与 `distance_matrix` + `reduce` 两个分支；`permanova`、`envfit` 共享距离/坐标；同一丰度矩阵再进入 `random_forest_classifier`，最后 `describe`。PCoA 图使用无着色散点，因为 `join` 输出会丢失 component 标签，`scatter` 无法安全接收带元数据的坐标。
 
+- `diabetes_classification_regression`：`random_forest_classifier` 与 `ridge_regression` 共享同一特征/标签表；`pca` + `join` + `scatter` 提供无监督分组视图。
+
 Studio 中可以把这些任务作为图导入，再拆分、合并或替换分支。逐步解释、指标和限制见各目录的 `ANALYSIS.md`。
 
 ## 测试
 
-`tests/test_route_combinations.py` 对三个示例执行：
+`tests/test_route_combinations.py` 对四个示例执行：
 
 1. `--check` 静态校验；
 2. 复制到临时目录后实际运行，检查 `output/run_summary.json` 的状态与步骤数。

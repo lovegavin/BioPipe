@@ -1,3 +1,11 @@
+## 0.106.0 — 2026-10-31
+
+- 新增第四条公开数据路线组合示例 `diabetes_classification_regression`：scikit-learn `load_diabetes` 442 样本 × 10 特征；同一组特征同时做高/低进展分类（`random_forest_classifier`）与连续进展回归（`ridge_regression`），并用 `pca` + `join` + `scatter` 观察分组重叠。
+- 结果：分类 test accuracy 0.7297、AUC 0.8430、3 折 CV 0.7220±0.0354；回归 test RMSE 53.515、R² 0.4877、3 折 CV R² 0.4780±0.0914；PCA PC1 40.24%、PC2 14.92%。
+- 数据来源：scikit-learn `load_diabetes`；引用 Efron et al. (2004), Least Angle Regression, *Annals of Statistics* 32(2):407–499。分类标签由目标中位数派生，仅用于路线演示。
+- 算子/Reader/路线数量不变：**402/85/21/6**；registry `errors []`；参考页 402/85。
+- 验证：`tests/test_route_combinations.py` **8 passed**；增量门 **23 passed（另 1 skipped）**；前端 **39 passed / 9 files**，构建通过；未运行全量 pytest，最近全量为 0.84 **974 passed, 1 skipped**。
+
 ## 0.105.0 — 2026-10-31
 
 - 新增第三条公开数据路线组合示例 `mite_community_ml`：R `vegan::mite` 泥炭沼泽甲螨 70 样本 × 35 类群 + `mite.env`；组合 `filter_min`、`diversity`、`distance_matrix`、`reduce(pcoa)`、`permanova`、`envfit`、`scatter`、`heatmap`、`random_forest_classifier` 与 `describe`。

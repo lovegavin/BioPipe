@@ -1,0 +1,78 @@
+name: diabetes_classification_regression
+
+sources:
+  features:
+    path: input/diabetes_features.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args: {reader: csv}
+  labels:
+    path: input/diabetes_labels.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    args: {reader: csv}
+
+steps:
+  - name: random_forest_classifier
+    inputs: [features, labels]
+    params:
+      sample_dim: sample
+      feature_dim: feature
+      label_dim: feature
+      target_label: high_progression
+      valid_labels: [low, high]
+      n_estimators: 300
+      test_size: 0.25
+      cv_folds: 3
+      random_state: 17
+      output: rf
+
+  - name: ridge_regression
+    inputs: [features, labels]
+    params:
+      sample_dim: sample
+      feature_dim: feature
+      label_dim: feature
+      target_label: progression
+      alpha: 1.0
+      test_size: 0.25
+      cv_folds: 3
+      random_state: 17
+      output: ridge
+
+  - name: describe
+    inputs: [rf]
+  - name: describe
+    inputs: [ridge]
+
+  - name: pca
+    inputs: [features]
+    params:
+      dim: feature
+      n_components: 2
+      output: pcs
+
+  - name: join
+    inputs: [pcs, labels]
+    params:
+      dim: sample
+      columns: [high_progression]
+      how: inner
+      prefix: "label_"
+      output: pcs_labeled
+
+  - name: scatter
+    inputs: [pcs_labeled]
+    params:
+      dim: component
+      x_label: PC1
+      y_label: PC2
+      color_label: label_high_progression
+      filename: pca_by_progression_group.png
+      title: "Diabetes: PCA colored by progression group"
+      point_size: 28
+      alpha: 0.75
