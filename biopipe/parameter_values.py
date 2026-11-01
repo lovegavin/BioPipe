@@ -2,6 +2,7 @@
 from copy import deepcopy
 import json
 from pathlib import Path
+from biopipe.bytecode import io_path
 
 
 def read_values(directory, reference):
@@ -13,7 +14,7 @@ def read_values(directory, reference):
     if not path.is_relative_to(root) or path.suffix != ".json":
         raise ValueError("parameters_file must stay inside the workflow directory")
     try:
-        value = json.loads(path.read_text(encoding="utf-8"))
+        value = json.loads(io_path(path).read_text(encoding="utf-8"))
         json.dumps(value, allow_nan=False)
     except (OSError, ValueError) as exc:
         raise ValueError(f"Cannot read parameter values: {reference}: {exc}") from exc

@@ -13,6 +13,7 @@ import uuid
 from urllib.parse import urlencode
 
 from .documents import CommandError, layout
+from .bytecode import io_path
 from src.web.models import Graph, SaveWorkflow
 from src.web.storage import FileLock, atomic_json
 from src.web.service import JobService, read_json
@@ -256,9 +257,9 @@ class TaskService:
                     'offset': end, 'eof': eof, 'reset': end < offset,
                     'done': eof and job['status'] not in ACTIVE, 'status': job['status']}
         path = backend.console_path(key) if backend is self.app.executions else self.service.jobs_dir / key / 'console.log'
-        if path.is_file():
-            with path.open('rb') as stream:
-                size = path.stat().st_size
+        if io_path(path).is_file():
+            with io_path(path).open('rb') as stream:
+                size = io_path(path).stat().st_size
                 reset = offset > size
                 stream.seek(0 if reset else offset)
                 data = stream.read(limit)

@@ -106,3 +106,12 @@ def test_unsafe_archive_is_rejected_before_writing(tmp_path):
     with pytest.raises(ValueError, match='archive path'):
         unpack_bundle(path, tmp_path / 'unpack')
     assert not (tmp_path / 'outside.py').exists()
+
+
+def test_new_library_rejects_runtime_without_shared_io(tmp_path, library_bundle, monkeypatch):
+    import biopipe
+    monkeypatch.setattr(biopipe, '__version__', '0.116.1')
+    destination = tmp_path / 'unsupported-runtime'
+    with pytest.raises(ValueError, match=r'requires BioPipe 0\.116\.2'):
+        unpack_bundle(library_bundle, destination)
+    assert not destination.exists()

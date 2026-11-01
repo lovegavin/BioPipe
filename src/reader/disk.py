@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 
 from src.core import ReaderError
+from biopipe.bytecode import io_path
 
 
 class DenseDiskWriter:
@@ -20,7 +21,7 @@ class DenseDiskWriter:
         self.blocks = OrderedDict()
         self.pressure, self.event = pressure, event or (lambda *a, **k: None)
         self.peak_bytes = 0
-        self.file = open(path, "w+b")
+        self.file = open(io_path(path), "w+b")
         np.lib.format.write_array_header_2_0(self.file, {
             "descr": np.lib.format.dtype_to_descr(self.dtype),
             "fortran_order": False, "shape": self.shape})
@@ -100,7 +101,7 @@ def accumulator(target, dtype, chunk_bytes):
     try:
         yield work
         work.close()
-        with path.open('rb') as source:
+        with io_path(path).open('rb') as source:
             np.lib.format.read_magic(source)
             np.lib.format.read_array_header_2_0(source)
             width = max(1, chunk_bytes // max(16, np.dtype(dtype).itemsize * 2))
@@ -114,4 +115,4 @@ def accumulator(target, dtype, chunk_bytes):
     finally:
         if not work.file.closed:
             work.file.close()
-        path.unlink(missing_ok=True)
+        io_path(path).unlink(missing_ok=True)

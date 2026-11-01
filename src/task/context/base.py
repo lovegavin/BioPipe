@@ -7,6 +7,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 from biopipe.run_log import RunLog
+from biopipe.bytecode import io_path
 
 from src.core import ContextError, Form
 from src.task.memory.config import MemoryConfig
@@ -28,7 +29,7 @@ class Context:
         self.written_outputs = set()
 
         self.out_dir = self.task_dir / "output"
-        self.out_dir.mkdir(parents=True, exist_ok=True)
+        io_path(self.out_dir).mkdir(parents=True, exist_ok=True)
         self._run_status = "created"
         self._run_error = None
         self.memory = None
@@ -55,7 +56,10 @@ class Context:
             register_source(self, name, self.task_dir / spec["path"])
             return
         from src.reader import read_source, pick_reader
-        path = self.task_dir / spec["path"]
+        # Job manifests use relative references back to authorized input roots.
+        # Canonicalize the logical reference before handing it to Reader APIs;
+        # redundant ../../../ components can otherwise exceed Windows MAX_PATH.
+        path = (self.task_dir / spec["path"]).resolve()
         selected_reader = pick_reader(path, spec.get('reader'))
         if hasattr(selected_reader, '_context'):
             selected_reader._context = self
@@ -79,7 +83,7 @@ class Context:
                 # The inherited probe only stats the original file; it does not
                 # need to decompress anything. Custom header probes do.
                 probe = reader.probe(path, **args)
-            probe["file_bytes"] = path.stat().st_size
+            probe["file_bytes"] = io_path(path).stat().st_size
             disk_loader = None
             if reader.supports_disk_read:
                 from biopipe_sdk.resources import validate_probe
@@ -99,7 +103,7 @@ class Context:
                     if reader.output_contract.get("values"):
                         from src.core.contracts import validate_values
                         writer.close(retain=True)
-                        with writer.path.open("rb") as source:
+                        with io_path(writer.path).open("rb") as source:
                             source.seek(writer.offset)
                             while True:
                                 values = np.fromfile(source, dtype=writer.dtype, count=max(1, chunk // writer.dtype.itemsize))
@@ -158,7 +162,7 @@ class Context:
         target = (self.out_dir / "artifacts" / path).resolve()
         if not target.is_relative_to((self.out_dir / "artifacts").resolve()):
             raise ContextError("Artifact path escapes the run")
-        target.parent.mkdir(parents=True, exist_ok=True)
+        io_path(target.parent).mkdir(parents=True, exist_ok=True)
         return target
 
     def finalize(self) -> None:
@@ -213,13 +217,13 @@ class Context:
             summary["managed_peak_bytes"] = memory_report["managed_peak_bytes"]
 
         json_path = self.out_dir / "run_summary.json"
-        with open(json_path, "w", encoding="utf-8") as f:
+        with open(io_path(json_path), "w", encoding="utf-8") as f:
             json.dump(summary, f, indent=2, ensure_ascii=False)
 
         txt_path = self.out_dir / "run_summary.txt"
-        with open(txt_path, "w", encoding="utf-8") as f:
+        with open(io_path(txt_path), "w", encoding="utf-8") as f:
             f.write(self._render_text(summary))
-        (self.run_log.run_dir / "run_summary.json").write_text(
+        io_path(self.run_log.run_dir / "run_summary.json").write_text(
             json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
         if close_error:
             raise close_error

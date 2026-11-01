@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from .errors import ValidationError
+from biopipe.bytecode import io_path
 
 
 @dataclass
@@ -21,7 +22,7 @@ class FileArtifact:
 
     @staticmethod
     def _stamp(path):
-        stat = path.stat()
+        stat = io_path(path).stat()
         return {"size": stat.st_size, "mtime_ns": stat.st_mtime_ns}
 
     @property
@@ -45,7 +46,7 @@ class FileArtifact:
             raise ValidationError("FileArtifact", "file fingerprint roles differ")
         for role, value in self.files.items():
             path = Path(value)
-            if not isinstance(role, str) or not role or not path.is_absolute() or not path.is_file():
+            if not isinstance(role, str) or not role or not path.is_absolute() or not io_path(path).is_file():
                 raise ValidationError("FileArtifact", f"missing file for role {role!r}: {value}")
             if self._stamp(path) != self.fingerprints[role]:
                 raise ValidationError("FileArtifact", f"file changed after registration: {value}")

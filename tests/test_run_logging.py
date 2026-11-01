@@ -84,6 +84,7 @@ def test_cli_records_failure_before_engine_import(tmp_path):
     shutil.copy2(ROOT / "scripts/run.py", code / "scripts/run.py")
     shutil.copy2(ROOT / "biopipe/__init__.py", code / "biopipe/__init__.py")
     shutil.copy2(ROOT / "biopipe/worker.py", code / "biopipe/worker.py")
+    shutil.copy2(ROOT / "biopipe/bytecode.py", code / "biopipe/bytecode.py")
     if (ROOT / "biopipe/run_log.py").exists():
         shutil.copy2(ROOT / "biopipe/run_log.py", code / "biopipe/run_log.py")
     (code / "src/__init__.py").write_text("", encoding="utf-8")

@@ -11,12 +11,13 @@ import threading
 
 from biopipe.targets import command, paths_for
 from biopipe.wire import Wire
+from biopipe.bytecode import io_path
 
 
 def call(state, descriptor, operation, payload, *, ctx=None, chunks=None, writer=None):
     memory = ctx.memory if ctx is not None else None
     base = memory.run_dir if memory else Path(tempfile.gettempdir())
-    with tempfile.TemporaryDirectory(prefix='ipc-', dir=base) as temporary:
+    with tempfile.TemporaryDirectory(prefix='ipc-', dir=io_path(base)) as temporary:
         directory = Path(temporary)
         def usage():
             return sum(p.stat().st_size for p in directory.iterdir() if p.is_file())

@@ -21,7 +21,7 @@ import time
 
 from packaging.utils import canonicalize_name
 from biopipe_sdk.protocol import PROTOCOL_VERSION, catalog_entry
-from src.web.storage import FileLock, atomic_json
+from src.web.storage import FileLock, atomic_json, io_path
 from biopipe.packages import bundled_manifest, bundled_state, owns_builtin_id
 from biopipe.bytecode import filesystem_path
 
@@ -132,7 +132,8 @@ class PluginManager:
     def source_root(self):
         if not self.managed_sources:
             return self._source_root
-        state = json.loads(self.registry.read_text(encoding="utf-8")) if self.registry.exists() else {}
+        registry = io_path(self.registry)
+        state = json.loads(registry.read_text(encoding="utf-8")) if registry.exists() else {}
         receipt = state.get("source_library") or {}
         relative = receipt.get("root", "library/sources/editable")
         root = (self.directory / relative).resolve()
@@ -156,12 +157,13 @@ class PluginManager:
         # atomic_json publishes a complete generation. Readers must NOT wait on
         # the installation lock while pip prepares a new environment.
         bundled = self.bundled_state()
-        if not self.registry.exists():
+        registry = io_path(self.registry)
+        if not registry.exists():
             with self.lock:
-                if not self.registry.exists():
+                if not registry.exists():
                     self._publish({"protocol_version": PROTOCOL_VERSION, "package_protocol_version": PROTOCOL_VERSION,
                                    **deepcopy(bundled), "bundled_seen": sorted(p["name"] for p in bundled["packages"])})
-        value = json.loads(self.registry.read_text(encoding="utf-8"))
+        value = json.loads(registry.read_text(encoding="utf-8"))
         require_current_state(value)
         current = {p["name"]: p for p in bundled["packages"]}
         changed = {p["name"] for p in value["packages"] if p.get("origin") == "bundled"
@@ -171,7 +173,7 @@ class PluginManager:
         additions = set() if value.get("library_detached") else set(current) - seen - {p["name"] for p in value["packages"]}
         if changed or additions:
             with self.lock:
-                value = json.loads(self.registry.read_text(encoding="utf-8"))
+                value = json.loads(registry.read_text(encoding="utf-8"))
                 additions -= set(value.get("bundled_seen", [])) | {p["name"] for p in value["packages"]}
                 value["packages"].extend(deepcopy(current[name]) for name in sorted(additions))
                 # The first metadata-only read changes the package digest policy,
@@ -262,7 +264,7 @@ class PluginManager:
             pass
         candidates = [state]
         for pattern in ("snapshots/*.json", "environments/*/lock.json"):
-            for path in sorted(self.directory.glob(pattern)):
+            for path in sorted(io_path(self.directory).glob(pattern)):
                 candidate = json.loads(path.read_text(encoding="utf-8"))
                 if candidate.get("package_protocol_version") == PROTOCOL_VERSION:
                     candidate["_runtime_root"] = str(self.directory.resolve())
@@ -273,7 +275,7 @@ class PluginManager:
         # documentation retrieval without changing the active registry.
         snapshot = self.directory / 'snapshots' / (selected['generation'] + '.json')
         with self.lock:
-            if not snapshot.exists():
+            if not io_path(snapshot).exists():
                 atomic_json(snapshot, selected)
         return selected
 
@@ -307,13 +309,13 @@ class PluginManager:
             return self.manage(canonicalize_name(remove), "remove")
         if Path(wheel).name.lower().endswith(".biopipe-library.zip"):
             from biopipe.library_bundle import install_bundle
-            return install_bundle(self, Path(wheel))
+            return install_bundle(self, io_path(wheel))
         return self.install_many([wheel])
 
     @property
     def inbox(self):
         path = self.directory / "inbox"
-        path.mkdir(parents=True, exist_ok=True)
+        io_path(path).mkdir(parents=True, exist_ok=True)
         return path
 
     def refresh(self):

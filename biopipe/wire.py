@@ -10,6 +10,7 @@ from pathlib import Path
 import uuid
 
 import numpy as np
+from biopipe.bytecode import io_path
 
 
 class Wire:
@@ -40,7 +41,7 @@ class Wire:
             np.lib.format.write_array_header_2_0(header, {'descr': np.lib.format.dtype_to_descr(value.dtype), 'fortran_order': False, 'shape': value.shape})
             header = header.getvalue()
             self.admit(int(value.nbytes) + len(header))
-            with self.path(name).open('wb') as file:
+            with io_path(self.path(name)).open('wb') as file:
                 file.write(header)
                 with np.nditer(value, flags=['external_loop', 'buffered', 'zerosize_ok'], op_flags=['readonly'], order='C',
                                buffersize=max(1, self.buffer_bytes // value.dtype.itemsize)) as blocks:
@@ -76,7 +77,7 @@ class Wire:
             artifact.validate()
             return artifact
         if kind == 'array':
-            return np.load(self.path(value['file']), allow_pickle=False, mmap_mode='c' if mmap else None)
+            return np.load(io_path(self.path(value['file'])), allow_pickle=False, mmap_mode='c' if mmap else None)
         if kind == 'float':
             return float(value['value'])
         if kind == 'path':
@@ -98,7 +99,7 @@ class Wire:
     def write(self, name, value):
         encoded = json.dumps(self.encode(value), ensure_ascii=False, allow_nan=False).encode('utf-8')
         self.admit(len(encoded))
-        self.path(name).write_bytes(encoded)
+        io_path(self.path(name)).write_bytes(encoded)
 
     def read(self, name, *, mmap=False):
-        return self.decode(json.loads(self.path(name).read_text(encoding='utf-8')), mmap=mmap)
+        return self.decode(json.loads(io_path(self.path(name)).read_text(encoding='utf-8')), mmap=mmap)

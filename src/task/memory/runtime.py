@@ -12,6 +12,7 @@ import time
 
 from src.core import ManifestError
 from biopipe.run_log import RunLog
+from biopipe.bytecode import io_path
 from .config import DiskBudgetError, MemoryBudgetError
 from .planner import LifetimePlan, NEVER, block_elements, full_estimate
 from .store import ArtifactStore
@@ -58,7 +59,7 @@ class MemoryRuntime:
         self.store.on_output = self._output_registered
         snapshot = json.dumps(manifest, indent=2, ensure_ascii=False)
         self.pipeline_hash = hashlib.sha256(snapshot.encode("utf-8")).hexdigest()
-        (self.run_dir / "pipeline.json").write_text(snapshot, encoding="utf-8")
+        io_path(self.run_dir / "pipeline.json").write_text(snapshot, encoding="utf-8")
         self.event("run_started", run_id=self.run_id, budget_bytes=config.budget_bytes,
                    available_at_start_bytes=config.available_at_start_bytes,
                    process_limit_bytes=config.process_limit_bytes, cache_dir=str(cache_root),
@@ -92,8 +93,8 @@ class MemoryRuntime:
         catalog = build_catalog(registry)
         directory = self.out_dir / "operators.json"
         temporary = self.out_dir / (".operators-" + self.run_id + ".tmp")
-        temporary.write_text(json.dumps(catalog, indent=2), encoding="utf-8")
-        os.replace(temporary, directory)
+        io_path(temporary).write_text(json.dumps(catalog, indent=2), encoding="utf-8")
+        os.replace(io_path(temporary), io_path(directory))
         self.status = "running"
         self._sample()
         if self.config.auto_spill:
@@ -303,7 +304,7 @@ class MemoryRuntime:
                            "event_log": str(self.event_path),
                            "artifacts": [self.store.describe(e) for e in self.store.entries.values()],
                            "guarantee": "estimated admission and sampled feedback; no hard RSS guarantee"}
-            (self.run_dir / "memory_report.json").write_text(json.dumps(self.report, indent=2), encoding="utf-8")
+            io_path(self.run_dir / "memory_report.json").write_text(json.dumps(self.report, indent=2), encoding="utf-8")
             with self.log_lock:
                 self._closed = True
                 self.run_log.close()

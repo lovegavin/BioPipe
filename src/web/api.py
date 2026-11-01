@@ -13,6 +13,7 @@ import uuid
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse, FileResponse, StreamingResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
+from biopipe.bytecode import io_path
 import yaml
 
 from src.core import ManifestError
@@ -347,7 +348,7 @@ def create_app(settings=None):
                 terminal = job["status"] not in ACTIVE_STATUSES and job.get("logs_complete", True)
                 batch, eof = [], True
                 for path in service.event_paths(key):
-                    with open(path, encoding="utf-8") as file:
+                    with open(io_path(path), encoding="utf-8") as file:
                         file.seek(offsets.get(path, 0))
                         for _ in range(200):
                             previous = file.tell()
@@ -391,29 +392,29 @@ def create_app(settings=None):
     def download(key: str, artifact_id: str):
         path, descriptor = result_service(key).artifact(key, artifact_id)
         suffix = ".files.json" if descriptor.get("kind") == "file" else ".npy"
-        return FileResponse(path, filename=descriptor["name"] + suffix, media_type="application/octet-stream")
+        return FileResponse(io_path(path), filename=descriptor["name"] + suffix, media_type="application/octet-stream")
 
     @app.get("/api/jobs/{key}/artifacts/{artifact_id}/files/{role}")
     def artifact_file(key: str, artifact_id: str, role: str):
         path = result_service(key).artifact_file(key, artifact_id, role)
-        return FileResponse(path, filename=path.name, media_type="application/octet-stream")
+        return FileResponse(io_path(path), filename=path.name, media_type="application/octet-stream")
 
     @app.get("/api/jobs/{key}/exports/{index}")
     def step_export(key: str, index: int):
         path = result_service(key).export_file(key, index)
-        if path.stat().st_size > 4 * 1024**2:
+        if io_path(path).stat().st_size > 4 * 1024**2:
             return {"message": "步骤报告较大，请下载查看。"}
         return safe_json(read_json(path))
 
     @app.get("/api/jobs/{key}/exports/{index}/download")
     def export_download(key: str, index: int):
         path = result_service(key).export_file(key, index)
-        return FileResponse(path, filename=path.name, media_type="application/json")
+        return FileResponse(io_path(path), filename=path.name, media_type="application/json")
 
     @app.get("/api/jobs/{key}/exports/{index}/figure")
     def figure(key: str, index: int, format: Literal["png", "pdf", "svg", "jpg", "jpeg", "webp", "tif", "tiff"] | None = None, figure_id: str | None = None):
         path = result_service(key).figure_file(key, index, format=format, **({"figure_id": figure_id} if figure_id is not None else {}))
-        return FileResponse(path, filename=path.name, content_disposition_type="inline")
+        return FileResponse(io_path(path), filename=path.name, content_disposition_type="inline")
 
     @app.get("/api/jobs/{key}/console")
     def console(key: str):
@@ -423,10 +424,10 @@ def create_app(settings=None):
             return remote_console(key)
         job = service.require(key)
         path = service.jobs_dir / key / "console.log"
-        if not path.is_file() or path.stat().st_size == 0:
+        if not io_path(path).is_file() or io_path(path).stat().st_size == 0:
             _, snapshot = service.console_snapshot(key, job)
             return PlainTextResponse(snapshot["console"])
-        return FileResponse(path, media_type="text/plain", filename="console.log")
+        return FileResponse(io_path(path), media_type="text/plain", filename="console.log")
 
     if settings.dist_dir.is_dir():
         app.mount("/", StaticFiles(directory=settings.dist_dir, html=True), name="studio")

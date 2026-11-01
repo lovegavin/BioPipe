@@ -20,6 +20,7 @@ from packaging.version import Version
 from biopipe_sdk.icons import icon_path, is_image_icon
 
 from biopipe.plugins import run_process
+from biopipe.bytecode import io_path
 
 IGNORED = {".git", ".venv", "venv", "__pycache__", ".pytest_cache", ".mypy_cache",
            ".ruff_cache", "build", "dist", "node_modules"}
@@ -59,6 +60,7 @@ def snapshot(source, target):
 
 def module_assets(source):
     """Resolve each operator's parameter JSON and optional icon without imports."""
+    source = io_path(source)
     from biopipe_sdk.declarations import source_declarations
     records = source_declarations(source, source.stem)
     assets = set()
@@ -93,6 +95,7 @@ def snapshot_module(source, target):
 
 def single_file_wheel(source, output):
     """Wrap one code module and its parameter JSON files, without build tools."""
+    source = io_path(source)
     import json
     from biopipe_sdk.declarations import source_declarations, compile_declaration, declaration_hash
     from biopipe_sdk.drift import check_source
@@ -148,9 +151,9 @@ def write_wheel(files, name, version, dependencies, output):
     record = io.StringIO(newline="")
     csv.writer(record, lineterminator="\n").writerows([*rows, [f"{info}/RECORD", "", ""]])
     files[f"{info}/RECORD"] = record.getvalue().encode()
-    output.mkdir(parents=True, exist_ok=True)
+    io_path(output).mkdir(parents=True, exist_ok=True)
     wheel = output / f"{distribution}-{version}-py3-none-any.whl"
-    with zipfile.ZipFile(wheel, "w") as archive:
+    with zipfile.ZipFile(io_path(wheel), "w") as archive:
         for path, data in files.items():
             # Fixed timestamps make a re-wrapped source byte-identical on other machines.
             entry = zipfile.ZipInfo(path, (1980, 1, 1, 0, 0, 0))
@@ -173,7 +176,7 @@ def refresh(manager, current):
     """Caller holds the installation lock. Missing inputs do not uninstall packages."""
     inbox = manager.inbox
     receipts = deepcopy(current.get("dropin_receipts", {}))
-    sources = [p for p in sorted(inbox.iterdir()) if not p.name.startswith((".", "_")) and
+    sources = [p for p in sorted(io_path(inbox).iterdir()) if not p.name.startswith((".", "_")) and
                (p.suffix.lower() in {".py", ".whl"} or p.is_dir()) and
                not (p.is_dir() and p.name in {"icons", "assets"} and not (p / "pyproject.toml").exists())]
     from biopipe.bytecode import filesystem_path

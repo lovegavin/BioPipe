@@ -8,6 +8,7 @@ import argparse
 from pathlib import Path
 
 from biopipe.run_log import RunLog  # stdlib only, before engine imports
+from biopipe.bytecode import io_path
 
 
 def main() -> None:
@@ -36,17 +37,17 @@ def main() -> None:
         plugin_lock = task_dir / "plugins.lock.json"
         # A frozen generation must not eagerly import a source file currently
         # being edited (or containing a failed hot-update candidate).
-        if plugin_lock.is_file():
+        if io_path(plugin_lock).is_file():
             os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
             import json
             from biopipe.targets import activate
-            activate(json.loads(plugin_lock.read_text(encoding='utf-8')))
+            activate(json.loads(io_path(plugin_lock).read_text(encoding='utf-8')))
         from src.task import Context, load_manifest, run
         manifest = load_manifest(task_dir / "task.yaml")
-        if plugin_lock.is_file():
+        if io_path(plugin_lock).is_file():
             import json
             from biopipe.plugins import load_runtime
-            lock = json.loads(plugin_lock.read_text(encoding="utf-8"))
+            lock = json.loads(io_path(plugin_lock).read_text(encoding="utf-8"))
             if lock.get('bundled_updates'):
                 message = 'Updated bundled source pins for this new run; historical job locks were preserved.'
                 print('[BioPipe] ' + message, flush=True)

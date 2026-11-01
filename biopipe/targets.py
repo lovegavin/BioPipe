@@ -10,6 +10,7 @@ import uuid
 
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
+from biopipe.bytecode import io_path
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -30,7 +31,7 @@ def paths_for(state, descriptor=None):
 
 def command(paths, module, args, directory):
     from biopipe.bytecode import filesystem_path
-    directory = Path(directory)
+    directory = io_path(directory)
     directory.mkdir(parents=True, exist_ok=True)
     config = directory / ('paths-' + uuid.uuid4().hex[:10] + '.json')
     config.write_text(json.dumps({'paths': list(dict.fromkeys([str(ROOT), *map(filesystem_path, paths), *base_paths()]))}), encoding='utf-8')
@@ -41,6 +42,16 @@ def invoke(paths, module, args, directory, *, timeout=180):
     from biopipe.plugins import run_process
     argv = command(paths, module, args, directory)
     try:
+        if module == 'pip' and os.name == 'nt':
+            # pip creates its own target/metadata temporary files. Keep the
+            # configured location, but preserve its native long-path alias.
+            environment = dict(os.environ)
+            for name in ('TMPDIR', 'TEMP', 'TMP'):
+                if environment.get(name):
+                    environment[name] = str(io_path(environment[name]))
+            if not any(environment.get(name) for name in ('TMPDIR', 'TEMP', 'TMP')):
+                environment['TEMP'] = str(io_path(tempfile.gettempdir()))
+            return run_process(argv, timeout=timeout, env=environment)
         return run_process(argv, timeout=timeout)
     finally:
         Path(argv[4]).unlink(missing_ok=True)
@@ -59,7 +70,8 @@ def activate(state):
 def inspect_entries(state, entries, directory):
     from collections import defaultdict
     groups = defaultdict(list)
-    Path(directory).mkdir(parents=True, exist_ok=True)
+    directory = io_path(directory)
+    directory.mkdir(parents=True, exist_ok=True)
     for entry in entries:
         groups[tuple(paths_for(state, entry))].append(entry)
     results = {}
@@ -74,7 +86,7 @@ def inspect_entries(state, entries, directory):
 
 def versions(paths):
     result = {}
-    for dist in metadata.distributions(path=[*map(str, paths), *base_paths()]):
+    for dist in metadata.distributions(path=[*[str(io_path(path)) for path in paths], *base_paths()]):
         name = dist.metadata['Name']
         if name:
             result.setdefault(canonicalize_name(name), dist.version)
@@ -88,7 +100,7 @@ class TargetBuilder:
         self.state.update(runtime_protocol=1, _runtime_root=str(manager.directory.resolve()))
         self.shared = list(state.get('shared_paths', []))
         self.prepared = {}
-        self.staging = manager.directory / 'staging'
+        self.staging = io_path(manager.directory / 'staging')
         self.staging.mkdir(parents=True, exist_ok=True)
 
     def prepare(self, dependencies):
@@ -151,7 +163,7 @@ class TargetBuilder:
                 return None
             relative = 'targets/' + uuid.uuid4().hex[:16]
             destination = self.manager.directory / relative
-            destination.mkdir(parents=True)
+            io_path(destination).mkdir(parents=True)
             artifacts = []
             for item in resolved:
                 if canonicalize_name(item['metadata']['name']) == 'biopipe-studio':
@@ -162,13 +174,13 @@ class TargetBuilder:
                 if digest and '#' not in url:
                     url += '#sha256=' + digest
                 artifacts.append(url)
-            invoke([], 'pip', ['install', '--disable-pip-version-check', '--no-deps', '--no-compile', '--target', destination, *artifacts], tmp, timeout=600)
+            invoke([], 'pip', ['install', '--disable-pip-version-check', '--no-deps', '--no-compile', '--target', io_path(destination), *artifacts], tmp, timeout=600)
             from biopipe.bytecode import precompile
             precompile(destination)
             receipt = [{'name': item['metadata']['name'], 'version': item['metadata']['version'],
                         'sha256': item['download_info'].get('archive_info', {}).get('hashes', {}).get('sha256')}
                        for item in resolved]
-            (destination / 'biopipe-target.json').write_text(json.dumps({'requirements': deps, 'resolved': receipt}, indent=2), encoding='utf-8')
+            io_path(destination / 'biopipe-target.json').write_text(json.dumps({'requirements': deps, 'resolved': receipt}, indent=2), encoding='utf-8')
             return relative
 
     def finish(self, state):

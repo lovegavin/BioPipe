@@ -5,6 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from .documents import CommandError
+from .bytecode import io_path
 
 
 class GraphRequest(BaseModel):
@@ -151,17 +152,17 @@ def mount_control(app, application, bridge):
     def artifact_file(key: str, artifact_id: str, request: Request, role: str | None = None):
         authorize(request)
         path = application.artifacts.file(key, artifact_id, role)
-        return FileResponse(path, filename=path.name)
+        return FileResponse(io_path(path), filename=path.name)
 
     @app.get('/api/v1/jobs/{key}/reports/{index}')
     def report(key: str, index: int, request: Request):
         authorize(request)
-        return FileResponse(application.artifacts.report(key, index), media_type='application/json')
+        return FileResponse(io_path(application.artifacts.report(key, index)), media_type='application/json')
 
     @app.get('/api/v1/jobs/{key}/reports/{index}/figure')
     def figure(key: str, index: int, request: Request, format: str | None = None, figure_id: str | None = None):
         authorize(request)
-        return FileResponse(application.artifacts.figure(key, index, format, figure_id), content_disposition_type='inline')
+        return FileResponse(io_path(application.artifacts.figure(key, index, format, figure_id)), content_disposition_type='inline')
 
     @app.get('/api/v1/operators')
     def search(request: Request, query: str = '', kind: str | None = None, category: str | None = None,

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import time
+from biopipe.bytecode import io_path
 
 from src.core import ContextError, StepError
 from src.task.context import Context
@@ -21,7 +22,7 @@ def run(ctx: Context, steps: list[dict]) -> None:
         if ctx.memory:
             ctx.memory.configure(steps, STEPS)
         for i, spec in enumerate(steps, start=1):
-            if (ctx.task_dir / 'cancel.requested').exists():
+            if io_path(ctx.task_dir / 'cancel.requested').exists():
                 raise StepError('Run cancelled by user')
             ctx.params = {**global_params, **spec.get("context_params", {})}
             name = spec["name"]
@@ -101,8 +102,8 @@ def run(ctx: Context, steps: list[dict]) -> None:
                 prefix = f"runs/{ctx.memory.run_id}/" if ctx.memory else ""
                 relative = f"{prefix}steps/{i:02d}_{name}.json"
                 path = ctx.out_dir / relative
-                path.parent.mkdir(parents=True, exist_ok=True)
-                with open(path, "w", encoding="utf-8") as file:
+                io_path(path.parent).mkdir(parents=True, exist_ok=True)
+                with open(io_path(path), "w", encoding="utf-8") as file:
                     json.dump(content, file, indent=2, ensure_ascii=False)
                 exports.append({"index": i, "name": name, "elapsed": round(elapsed, 4),
                                 "inputs": list(names), "params": spec.get("params", {}),

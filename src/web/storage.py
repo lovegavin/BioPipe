@@ -6,6 +6,8 @@ import tempfile
 import threading
 import time
 
+from biopipe.bytecode import io_path
+
 _states = {}
 _states_lock = threading.Lock()
 
@@ -14,7 +16,9 @@ class FileLock:
     """Reentrant within a thread; an OS lock releases even after a crash."""
     def __init__(self, path, timeout=30):
         self.path, self.timeout = Path(path), timeout
-        key = os.path.normcase(str(self.path.resolve()))
+        # Resolve the native alias before keying: logical/extended paths and
+        # symlink aliases must share one reentrant thread state and OS handle.
+        key = os.path.normcase(str(io_path(self.path).resolve()))
         with _states_lock:
             self.state = _states.setdefault(key, {"mutex": threading.RLock(), "depth": 0})
 
@@ -23,8 +27,9 @@ class FileLock:
         state["mutex"].acquire()
         try:
             if not state["depth"]:
-                self.path.parent.mkdir(parents=True, exist_ok=True)
-                handle = open(self.path, "a+b")
+                native = io_path(self.path)
+                native.parent.mkdir(parents=True, exist_ok=True)
+                handle = open(native, "a+b")
                 handle.seek(0, os.SEEK_END)
                 if not handle.tell():
                     handle.write(b"\0"); handle.flush()
@@ -66,7 +71,7 @@ class FileLock:
 
 
 def atomic_json(path, value):
-    path = Path(path)
+    path = io_path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     descriptor, temporary = tempfile.mkstemp(prefix=path.name + ".", suffix=".tmp", dir=path.parent)
     try:

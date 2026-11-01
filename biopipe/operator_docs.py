@@ -117,6 +117,7 @@ class OperatorDocs:
             raise ValueError('Invalid registry generation')
         for path in (self.manager.directory / 'snapshots' / (generation + '.json'),
                      self.manager.directory / 'environments' / generation / 'lock.json'):
+            path = _io_path(path)
             if path.is_file():
                 return json.loads(path.read_text(encoding='utf-8'))
         raise KeyError('Unknown registry generation')

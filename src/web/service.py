@@ -18,7 +18,7 @@ from biopipe.run_log import append_event
 from .graph import GraphError, compile_graph, relative_manifest
 from .models import Graph
 from .routes import RouteLibrary, expand_routes
-from .storage import FileLock, atomic_json
+from .storage import FileLock, atomic_json, io_path
 from .admission import HostAdmission, MIB, process_alive, process_identity
 
 
@@ -38,13 +38,20 @@ def safe_json(value):
 
 def read_json(path, default=None):
     try:
-        return json.loads(Path(path).read_text(encoding="utf-8"))
+        return json.loads(io_path(path).read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError):
         return default
 
 
 def write_json(path, value):
     atomic_json(path, safe_json(value))
+
+
+def _glob_paths(directory, pattern):
+    """Enumerate through native I/O, keeping service/public paths logical."""
+    directory = Path(directory)
+    native = io_path(directory)
+    return (directory / path.relative_to(native) for path in native.glob(pattern))
 
 
 @dataclass
@@ -82,8 +89,8 @@ class JobService:
             raise ValueError("Studio data directory must be inside the project")
         self.jobs_dir = self.directory / "jobs"
         self.assets_dir = self.directory / "assets"
-        self.jobs_dir.mkdir(parents=True, exist_ok=True)
-        self.assets_dir.mkdir(exist_ok=True)
+        io_path(self.jobs_dir).mkdir(parents=True, exist_ok=True)
+        io_path(self.assets_dir).mkdir(exist_ok=True)
         self.lock = FileLock(self.directory / ".jobs.lock")
         self.processes, self.threads, self.jobs = {}, {}, {}
         self._closed = threading.Event()
@@ -146,7 +153,7 @@ class JobService:
         import psutil
         records = ((self.jobs_dir / key / 'job.json' for key, value in list(self.jobs.items())
                     if value['status'] in ('queued', 'running') or value.get('logs_complete') is False)
-                   if active_only else self.jobs_dir.glob('*/job.json'))
+                   if active_only else _glob_paths(self.jobs_dir, '*/job.json'))
         for record in records:
             value = read_json(record)
             if value:
@@ -190,10 +197,10 @@ class JobService:
 
     def _demo(self):
         path = self.assets_dir / "expression-demo.csv"
-        if not path.exists():
+        if not io_path(path).exists():
             import csv, random
             rng = random.Random(42)
-            with path.open('w', newline='', encoding='utf-8') as handle:
+            with io_path(path).open('w', newline='', encoding='utf-8') as handle:
                 writer = csv.writer(handle)
                 writer.writerow(f"gene_{i+1:02d}" for i in range(24))
                 for row in range(128):
@@ -238,7 +245,7 @@ class JobService:
                 raise GraphError('Studio is shutting down; no new jobs can be submitted')
             key = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8]
             directory = self.jobs_dir / key
-            directory.mkdir()
+            io_path(directory).mkdir()
             write_json(directory / "plugins.lock.json", plugin_snapshot)
             # Keep the saved graph unchanged. Only this run receives the fixed
             # host reservation; a worker never independently claims 90% again.
@@ -248,7 +255,7 @@ class JobService:
                 memory['process_limit_mb'] = allocation['process_limit_bytes'] / MIB
             task, parameter_values = split_task(relative_manifest(manifest, directory, catalog))
             write_json(directory / "parameters.json", parameter_values)
-            (directory / "task.yaml").write_text(yaml.safe_dump(task, sort_keys=False, allow_unicode=True), encoding="utf-8")
+            io_path(directory / "task.yaml").write_text(yaml.safe_dump(task, sort_keys=False, allow_unicode=True), encoding="utf-8")
             job = {"id": key, "name": graph.name, "status": "queued", "created_at": datetime.now(timezone.utc).isoformat(),
                    "finished_at": None, "error": None, "exit_code": None, "logs_complete": False,
                    "order": order, "graph": graph.model_dump(mode="json"), "owner": self.owner,
@@ -309,10 +316,10 @@ class JobService:
             job['queued_reason'] = None
             job['progress']['phase'] = 'preparing'
             write_json(directory / 'job.json', job)
-            console = open(directory / 'console.log', 'a', encoding='utf-8')
-            temporary = directory / 'tmp'; temporary.mkdir(exist_ok=True)
+            console = open(io_path(directory / 'console.log'), 'a', encoding='utf-8')
+            temporary = directory / 'tmp'; io_path(temporary).mkdir(exist_ok=True)
             env = dict(os.environ, PYTHONUNBUFFERED='1', PYTHONIOENCODING='utf-8', PYTHONFAULTHANDLER='1',
-                       TEMP=str(temporary), TMP=str(temporary), MPLCONFIGDIR=str(self.directory / 'matplotlib'))
+                       TEMP=str(io_path(temporary)), TMP=str(io_path(temporary)), MPLCONFIGDIR=str(io_path(self.directory / 'matplotlib')))
             threads = str(job['allocation']['cpu_threads'])
             for name in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS',
                          'NUMEXPR_NUM_THREADS', 'VECLIB_MAXIMUM_THREADS', 'BLIS_NUM_THREADS', 'BIOPIPE_CPU_LIMIT'):
@@ -320,7 +327,7 @@ class JobService:
             env['BIOPIPE_AVAILABLE_AT_START_BYTES'] = str(job['allocation']['available_at_start_bytes'])
             code_root = self.settings.code_root or self.root
             python = self.plugins.python_for(read_json(directory / 'plugins.lock.json'))
-            if (code_root / 'biopipe/worker.py').is_file():
+            if io_path(code_root / 'biopipe/worker.py').is_file():
                 # Wheels have no scripts/ tree. Preserve code selection when
                 # dependency resolution chooses a different Python runtime.
                 env['PYTHONPATH'] = os.pathsep.join(part for part in (str(code_root), env.get('PYTHONPATH')) if part)
@@ -457,25 +464,25 @@ class JobService:
 
     def events_path(self, key):
         self.require(key)
-        paths = list((self.jobs_dir / key / "output/runs").glob("*/events.jsonl"))
+        paths = list(_glob_paths(self.jobs_dir / key / "output/runs", "*/events.jsonl"))
         return paths[0] if paths else None
 
     def event_paths(self, key):
         self.require(key)
         directory = self.jobs_dir / key
         return [p for p in [directory / "launcher.events.jsonl",
-                *sorted((directory / "output/runs").glob("*/events.jsonl"))] if p.is_file()]
+                *sorted(_glob_paths(directory / "output/runs", "*/events.jsonl"))] if io_path(p).is_file()]
 
     def console_snapshot(self, key, job, previous=None, limit=64 * 1024):
         """A bounded display tail; the downloadable file remains complete."""
         path = self.jobs_dir / key / "console.log"
         try:
-            stat = path.stat()
+            stat = io_path(path).stat()
             signature = (stat.st_size, stat.st_mtime_ns, job.get("status"), job.get("error"))
             if signature == previous:
                 return signature, None
             if stat.st_size:
-                with path.open("rb") as file:
+                with io_path(path).open("rb") as file:
                     file.seek(max(0, stat.st_size - limit))
                     content = file.read(limit).decode("utf-8", errors="replace")
                 return signature, {"console": content, "console_truncated": stat.st_size > limit}
@@ -516,10 +523,10 @@ class JobService:
         progress['total'] = total
         # Read a bounded journal tail, using real step indices instead of a
         # timer-derived percentage. Long-running tools remain at their step.
-        paths = sorted((self.jobs_dir / job['id'] / 'output/runs').glob('*/events.jsonl'))
+        paths = sorted(_glob_paths(self.jobs_dir / job['id'] / 'output/runs', '*/events.jsonl'))
         current = None
         if paths:
-            with paths[-1].open('rb') as stream:
+            with io_path(paths[-1]).open('rb') as stream:
                 size = stream.seek(0, os.SEEK_END)
                 stream.seek(max(0, size - 65536))
                 lines = stream.read().decode('utf-8', errors='replace').splitlines()
@@ -567,7 +574,7 @@ class JobService:
         counts = {"planned": 0, "emergency": 0, "final": 0, "correction": 0}
         path = self.events_path(key)
         if path:
-            with open(path, encoding="utf-8") as lines:
+            with open(io_path(path), encoding="utf-8") as lines:
                 for line in lines:
                     try:
                         item = json.loads(line)
@@ -737,6 +744,6 @@ class JobService:
         summary = read_json(self.jobs_dir / key / "output/run_summary.json", {})
         path = self._record_path(key, value, summary)
         directory = (self.jobs_dir / key).resolve()
-        if not path.is_relative_to(directory) or not path.is_file():
+        if not path.is_relative_to(directory) or not io_path(path).is_file():
             raise KeyError("图像路径不可用。")
         return path

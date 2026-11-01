@@ -11,6 +11,7 @@ def register_figure(context, figure_id, files, *, title=None, **metadata):
     Return a report with a flat ``figures`` list. Different formats of the same
     figure share an ID. Merge reports with ``figure_collection`` for multi-plots.
     """
+    from biopipe.bytecode import io_path
     if not isinstance(figure_id, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]*', figure_id):
         raise ValueError('Figure ID must be a nonempty portable identifier')
     if not isinstance(files, dict) or not files:
@@ -32,8 +33,10 @@ def register_figure(context, figure_id, files, *, title=None, **metadata):
         path = Path(value).resolve()
         if fmt not in FORMATS or path.suffix.lower() != '.' + fmt:
             raise ValueError('Figure format must match the saved file extension')
-        if not path.is_relative_to(base) or not path.is_file():
+        native = io_path(path)
+        if not native.is_relative_to(io_path(base)) or not native.is_file():
             raise ValueError('Figure must be a saved file inside the job output directory')
+        path = base / native.relative_to(io_path(base))
         entries.append({'id': figure_id, 'title': title or figure_id, 'format': fmt,
                         'path': str(path), 'filename': path.name, **metadata})
     return {'figures': entries}

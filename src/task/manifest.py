@@ -9,6 +9,7 @@ import yaml
 
 from src.core import ManifestError
 from src.task.memory.config import MemoryConfig
+from biopipe.bytecode import io_path
 
 
 _SOURCE_KEYS = {"path", "dims", "labels", "args", "reader"}
@@ -17,10 +18,10 @@ _LABEL_STRINGS = {"builtin", "auto"}
 
 
 def load_manifest(path: Path) -> dict:
-    if not path.exists():
+    if not io_path(path).exists():
         raise ManifestError(f"Missing manifest: {path}")
 
-    raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    raw = yaml.safe_load(io_path(path).read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
         raise ManifestError("Manifest must be a YAML mapping")
 

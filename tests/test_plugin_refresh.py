@@ -15,6 +15,7 @@ from fastapi.testclient import TestClient
 
 from biopipe.dropins import single_file_wheel, snapshot
 from biopipe.plugins import PluginManager, run_process
+from biopipe.bytecode import io_path
 from src.web.api import create_app
 from src.web.models import Graph
 from src.web.service import Settings
@@ -45,6 +46,22 @@ def test_probe_transport_preserves_unicode_and_failure_details(monkeypatch):
             'print("Resolver failed", file=sys.stderr); sys.exit(2)'])
     assert 'Dependency conflict details' in str(failure.value)
     assert 'Resolver failed' in str(failure.value)
+
+
+def test_deep_inbox_refresh_preserves_logical_directory_and_sidecars(tmp_path):
+    profile = tmp_path
+    while len(str(profile.resolve())) < 280:
+        profile /= 'nested-profile-' + 'x' * 32
+    manager = PluginManager(profile, source_root=None, manifest_only=True)
+    source = manager.inbox / 'hello.py'
+    write_extension(io_path(source), REPORT)
+    result = manager.refresh()
+    assert result['updated'] == ['hello.py']
+    assert result['directory'] == str(manager.inbox)
+    assert not result['directory'].startswith('\\\\?\\')
+    descriptor = next(d for d in manager.state()['descriptors'] if d['id'] == 'lab.hello')
+    assert descriptor['category'] == 'Quality control'
+    assert manager.refresh()['updated'] == []
 
 
 def test_single_file_wrapper_is_deterministic_and_does_not_execute(tmp_path):
@@ -115,7 +132,7 @@ def test_dropins_hot_run_update_rollback_and_retained_pins(tmp_path, monkeypatch
         [{'name': 'example.stream_sum', 'inputs': ['X']}, {'name': 'lab.hello', 'inputs': []}])
     assert report['plans'][0]['mode'] == 'stream'
     assert report['event_counts']['source_prepare_complete'] == 1
-    exported = json.loads((tmp_path / 'run/output' / summary['steps'][0]['export_path']).read_text())
+    exported = json.loads(io_path(tmp_path / 'run/output' / summary['steps'][0]['export_path']).read_text())
     assert exported['sum'] == 66
     graph = Graph.model_validate({'nodes': [{'id': 'hello', 'kind': 'operator', 'operator': 'lab.hello',
                                             'position': {'x': 0, 'y': 0}}], 'edges': []})
@@ -128,7 +145,7 @@ def test_dropins_hot_run_update_rollback_and_retained_pins(tmp_path, monkeypatch
     assert manager.snapshot(pinned)['generation'] == old['generation']
     for state, expected, name in [(old, 1, 'old'), (current, 2, 'new')]:
         _, summary = run_worker(manager, state, tmp_path / name, {}, [{'name': 'lab.hello', 'inputs': []}])
-        assert json.loads((tmp_path / name / 'output' / summary['steps'][0]['export_path']).read_text())['value'] == expected
+        assert json.loads(io_path(tmp_path / name / 'output' / summary['steps'][0]['export_path']).read_text())['value'] == expected
     manager.manage('lab-hello', 'disable')
     disabled = manager.state()
     with monkeypatch.context() as scoped:
@@ -157,7 +174,9 @@ def test_long_cached_wheel_paths_support_reinstall_and_failed_transaction(tmp_pa
     source = tmp_path / 'hello.py'
     write_extension(source, REPORT)
     wheel = single_file_wheel(source, tmp_path / 'wheel')
-    profile = tmp_path / ('profile_' + 'x' * max(1, 170 - len(str(tmp_path))))
+    profile = tmp_path
+    while len(str(profile.resolve())) < 280:
+        profile /= 'nested-profile-' + 'x' * 32
     manager = PluginManager(profile, source_root=None, manifest_only=True)
     first = manager.install(wheel)
     package = next(p for p in first['packages'] if p['origin'] == 'wheel')
@@ -166,7 +185,7 @@ def test_long_cached_wheel_paths_support_reinstall_and_failed_transaction(tmp_pa
     assert not Path(package['wheel']).is_absolute()
     assert not package['wheel'].startswith('\\\\?\\')
     assert all(not Path(path).is_absolute() for path in first['code_paths'])
-    assert Path(filesystem_path(cached)).read_bytes() == wheel.read_bytes()
+    assert Path(filesystem_path(cached)).read_bytes() == Path(filesystem_path(wheel)).read_bytes()
     assert wheel_entries(cached)[0]['expected']['id'] == 'lab.hello'
     assert execution_digest(cached) == package['execution_sha']
 
@@ -178,10 +197,11 @@ def test_long_cached_wheel_paths_support_reinstall_and_failed_transaction(tmp_pa
     with pytest.raises(ValueError, match='same ID'):
         manager.install(single_file_wheel(duplicate, tmp_path / 'duplicate-wheel'))
     assert manager.state()['generation'] == second['generation']
-    _, summary = run_worker(manager, first, tmp_path / 'retained-run', {},
+    run_directory = tmp_path / 'retained-run'
+    _, summary = run_worker(manager, first, run_directory, {},
                             [{'name': 'lab.hello', 'inputs': []}])
-    exported = tmp_path / 'retained-run/output' / summary['steps'][0]['export_path']
-    assert json.loads(exported.read_text()) == {'value': 1}
+    exported = run_directory / 'output' / summary['steps'][0]['export_path']
+    assert json.loads(io_path(exported).read_text()) == {'value': 1}
 
 
 def test_refresh_api_is_async_token_protected_and_reports_errors(tmp_path, monkeypatch):

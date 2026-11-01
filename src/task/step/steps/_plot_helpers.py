@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from biopipe.bytecode import io_path
 
 import matplotlib
 matplotlib.use("Agg")
@@ -52,11 +53,11 @@ def save_figure(fig, ctx, filename: str) -> str:
         }:
             raise ValueError("Figure filename must be an image/PDF inside the figures directory")
         path = path.with_suffix(path.suffix.lower())
-        path.parent.mkdir(parents=True, exist_ok=True)
+        io_path(path.parent).mkdir(parents=True, exist_ok=True)
         formats = list(dict.fromkeys([path.suffix[1:].lower(), "png", "pdf", "svg"]))
         original = path
         counter = 1
-        while any(path.with_suffix('.' + fmt).exists() for fmt in [*formats, "figure.json"]):
+        while any(io_path(path.with_suffix('.' + fmt)).exists() for fmt in [*formats, "figure.json"]):
             counter += 1
             path = original.with_name(f"{original.stem}-{counter}{original.suffix}")
         width, height = fig.get_size_inches() * 25.4
@@ -80,11 +81,11 @@ def save_figure(fig, ctx, filename: str) -> str:
         with matplotlib.rc_context({"pdf.fonttype": 42, "svg.fonttype": "none", "savefig.bbox": None}):
             for fmt in formats:
                 target = path.with_suffix('.' + fmt)
-                fig.savefig(target, format=fmt, dpi=dpi, bbox_inches=None,
+                fig.savefig(io_path(target), format=fmt, dpi=dpi, bbox_inches=None,
                             facecolor="white", edgecolor="white", transparent=False)
                 outputs.append({"id": "figure-" + hashlib.sha256(str(path.relative_to(directory)).encode()).hexdigest()[:16], "title": str(params.get("title") or path.stem), "format": fmt, "path": str(target), "filename": target.name,
                                 "width_mm": float(width), "height_mm": float(height), "dpi": dpi})
-        path.with_suffix('.figure.json').write_text(json.dumps(outputs, indent=2), encoding="utf-8")
+        io_path(path.with_suffix('.figure.json')).write_text(json.dumps(outputs, indent=2), encoding="utf-8")
         return str(path)
     finally:
         plt.close(fig)
@@ -93,5 +94,5 @@ def save_figure(fig, ctx, filename: str) -> str:
 def figure_report(report: dict) -> dict:
     """Expose saved files in step reports, including isolated operator workers."""
     path = Path(report.get("path") or report["figure_path"])
-    outputs = json.loads(path.with_suffix('.figure.json').read_text(encoding="utf-8"))
+    outputs = json.loads(io_path(path.with_suffix('.figure.json')).read_text(encoding="utf-8"))
     return {**report, "path": str(path), "filename": path.name, "figures": outputs}

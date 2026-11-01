@@ -17,6 +17,7 @@ import numpy as np
 
 from biopipe.remote.transfers import basename, no_symlinks, open_file, signature, sync_directory
 from biopipe.wire import Wire
+from biopipe.bytecode import io_path
 from src.core import Form
 from src.core.files import FileArtifact
 from src.web.storage import atomic_json
@@ -57,7 +58,7 @@ class ExchangeWire(Wire):
         target = self.path(name)
         self.admit(before[0])
         hasher = hashlib.sha256()
-        with open_file(source) as src, target.open('xb') as out:
+        with open_file(source) as src, io_path(target).open('xb') as out:
             while True:
                 block = src.read(self.buffer_bytes)
                 if not block:
@@ -133,8 +134,8 @@ def _export_value(ctx, name):
         store.stage_source(entry)
         if entry.disk is not None:
             if entry.kind == 'file':
-                return FileArtifact(**json.loads((entry.disk/'files.json').read_text(encoding='utf-8')))
-            data = np.load(entry.disk/'data.npy', allow_pickle=False, mmap_mode='r')
+                return FileArtifact(**json.loads(io_path(entry.disk/'files.json').read_text(encoding='utf-8')))
+            data = np.load(io_path(entry.disk/'data.npy'), allow_pickle=False, mmap_mode='r')
             if data.shape != entry.shape or data.dtype != entry.dtype:
                 raise ValueError('Run-local cache descriptor/header mismatch')
             return Form(data, **store.read_metadata(entry, mmap=True))
@@ -150,7 +151,7 @@ def export_outputs(ctx):
     if not isinstance(names, list) or any(not isinstance(name, str) or not name for name in names):
         raise ValueError('runtime.exchange_outputs must contain artifact names')
     root = no_symlinks(ctx.out_dir/'exchange')
-    root.mkdir(parents=True, exist_ok=True)
+    io_path(root).mkdir(parents=True, exist_ok=True)
     config = ctx.memory.config if ctx.memory else None
     chunk = min(config.io_buffer_bytes, max(1, config.budget_bytes//16)) if config else 65536
     if ctx.memory:
@@ -160,12 +161,12 @@ def export_outputs(ctx):
         value = _export_value(ctx, name)
         value.validate()
         temporary = root/('.partial-'+uuid.uuid4().hex[:16])
-        temporary.mkdir(mode=0o700)
+        io_path(temporary).mkdir(mode=0o700)
         allocated = 0
         def admit(count):
             nonlocal allocated
             count = int(count)
-            if shutil.disk_usage(root).free < count:
+            if shutil.disk_usage(io_path(root)).free < count:
                 raise OSError('Insufficient disk space for stage exchange')
             if ctx.memory:
                 from src.task.memory.config import DiskBudgetError
@@ -183,21 +184,21 @@ def export_outputs(ctx):
             packet = {'version': VERSION, 'value': encoded, 'contract': contract, 'audit': wire.audit}
             payload = json.dumps(packet, ensure_ascii=False, allow_nan=False).encode('utf-8')
             admit(len(payload))
-            with wire.path('value.bpform').open('xb') as output:
+            with io_path(wire.path('value.bpform')).open('xb') as output:
                 output.write(payload); output.flush(); os.fsync(output.fileno())
             final = root/uuid.uuid4().hex[:16]
-            os.replace(temporary, final); sync_directory(root)
-            files = [{'name': p.name, 'path': str(p), 'bytes': p.stat().st_size}
-                     for p in sorted(final.iterdir())]
+            os.replace(io_path(temporary), io_path(final)); sync_directory(root)
+            files = [{'name': p.name, 'path': str(final / p.name), 'bytes': p.stat().st_size}
+                     for p in sorted(io_path(final).iterdir())]
             exported[name] = {'path': str(final/'value.bpform'), 'files': files, 'contract': contract}
             ctx.event('exchange_exported', name=name, bytes=sum(item['bytes'] for item in files), path=exported[name]['path'])
         except BaseException:
             if ctx.memory:
                 ctx.memory.store.transport_disk_bytes = max(0, ctx.memory.store.transport_disk_bytes-allocated)
-            if temporary.exists():
-                for item in temporary.iterdir():
+            if io_path(temporary).exists():
+                for item in io_path(temporary).iterdir():
                     no_symlinks(item).unlink()
-                temporary.rmdir()
+                io_path(temporary).rmdir()
             raise
     aliases = ctx.manifest.get('runtime', {}).get('exchange_aliases', {})
     if not isinstance(aliases, dict) or any(not isinstance(key, str) or not isinstance(value, str)
@@ -224,7 +225,7 @@ def _array_header(path):
         if dtype.hasobject or dtype.kind not in 'biufcSU':
             raise ValueError('Object or unsupported arrays cannot cross execution environments')
         size = math.prod(shape)*dtype.itemsize
-        if handle.tell()+size != path.stat().st_size:
+        if handle.tell()+size != io_path(path).stat().st_size:
             raise ValueError('Stage array header and file size differ')
         return {'shape': shape, 'dtype': dtype, 'fortran': fortran, 'offset': handle.tell(), 'bytes': size}
 
@@ -297,7 +298,7 @@ def register_source(ctx, name, path):
             raise ValueError('Stage exchange files changed after registration')
 
     total_arrays = sum(header['bytes'] for header in arrays.values())
-    metadata_bytes = Path(path).stat().st_size*8 + 8192
+    metadata_bytes = io_path(path).stat().st_size*8 + 8192
     def loader():
         unchanged()
         if ctx.memory:

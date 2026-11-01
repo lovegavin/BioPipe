@@ -14,6 +14,11 @@ def filesystem_path(path, *, resolve=True):
     return value
 
 
+def io_path(path):
+    """Native I/O alias without following the caller's lexical symlink boundary."""
+    return Path(filesystem_path(path, resolve=False))
+
+
 def precompile(directory, *, immutable=True):
     directory = Path(directory)
     mode = (py_compile.PycInvalidationMode.UNCHECKED_HASH if immutable

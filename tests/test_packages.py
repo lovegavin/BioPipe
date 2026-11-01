@@ -156,15 +156,16 @@ def test_every_builtin_package_builds(builtin_wheels):
 
 def run_worker(manager, state, directory, sources, steps):
     import yaml
-    directory.mkdir(parents=True, exist_ok=True)
-    (directory / 'plugins.lock.json').write_text(json.dumps(state), encoding='utf-8')
+    from biopipe.bytecode import io_path
+    io_path(directory).mkdir(parents=True, exist_ok=True)
+    io_path(directory / 'plugins.lock.json').write_text(json.dumps(state), encoding='utf-8')
     manifest = {'sources': sources, 'steps': steps, 'runtime': {'memory': {'enabled': True, 'budget_mb': 4, 'chunk_mb': .01}}}
-    (directory / 'task.yaml').write_text(yaml.safe_dump(manifest), encoding='utf-8')
+    io_path(directory / 'task.yaml').write_text(yaml.safe_dump(manifest), encoding='utf-8')
     result = subprocess.run([manager.python_for(state), str(ROOT / 'scripts/run.py'), str(directory)], cwd=ROOT,
                             capture_output=True, text=True, encoding='utf-8', timeout=45)
     assert result.returncode == 0, result.stdout + result.stderr
-    summary = json.loads((directory / 'output/run_summary.json').read_text())
-    return json.loads(Path(summary['memory_report']).read_text()), summary
+    summary = json.loads(io_path(directory / 'output/run_summary.json').read_text())
+    return json.loads(io_path(summary['memory_report']).read_text()), summary
 
 
 def test_hot_builtin_wheels_preserve_disk_and_stream_and_old_lock(tmp_path, builtin_wheels):

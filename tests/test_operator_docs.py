@@ -225,7 +225,8 @@ def test_doc_only_update_reuses_environment_and_fresh_profile_runs_frozen_values
     assert state['generation'] == fresh.state()['generation']
     _, summary = run_worker(fresh, state, tmp_path / 'run', {},
                             [{'name': 'lab.documented', 'inputs': [], 'params': pinned.nodes[0].params}])
-    output = json.loads((tmp_path / 'run/output' / summary['steps'][0]['export_path']).read_text())
+    from biopipe.bytecode import io_path
+    output = json.loads(io_path(tmp_path / 'run/output' / summary['steps'][0]['export_path']).read_text())
     assert output == {'answer': 42}
 
 

@@ -26,6 +26,7 @@ from src.core.files import FileArtifact
 from .config import MemoryBudgetError, DiskBudgetError
 from .planner import NEVER
 from src.core.contracts import VERSION
+from biopipe.bytecode import io_path
 
 
 def footprint(value) -> dict[int, int]:
@@ -94,7 +95,7 @@ class Entry:
 class ArtifactStore(MutableMapping):
     def __init__(self, config, cache_root: Path, event):
         self.config, self.cache_root, self.event = config, cache_root, event
-        self.cache_root.mkdir(parents=True, exist_ok=False)
+        io_path(self.cache_root).mkdir(parents=True, exist_ok=False)
         self.aliases: dict[str, str] = {}
         self.entries: dict[str, Entry] = {}
         self.allocations: dict[int, list[int]] = {}
@@ -111,6 +112,12 @@ class ArtifactStore(MutableMapping):
         self.resident_keys = set()
         self.lock = threading.RLock()
         self.on_output = None
+
+    def _temporary_directory(self, prefix):
+        native = Path(tempfile.mkdtemp(prefix=prefix, dir=io_path(self.cache_root)))
+        # Keep committed entries, relative references and journals on one
+        # logical root; the native alias belongs only to filesystem calls.
+        return self.cache_root / native.name
 
     def __len__(self):
         return len(self.aliases)
@@ -174,13 +181,13 @@ class ArtifactStore(MutableMapping):
         if entry.disk is not None or entry.disk_loader is None:
             return
         from src.reader.disk import DenseDiskWriter
-        temporary = Path(tempfile.mkdtemp(prefix=".source-", dir=self.cache_root))
+        temporary = self._temporary_directory(".source-")
         writer = None
         try:
             required = int(entry.source_probe.get("preparation_bytes", entry.source_probe["dense_bytes"])) + 512
             if self.config.disk_limit_bytes is not None and self.disk_bytes + self.transport_disk_bytes + required > self.config.disk_limit_bytes:
                 raise DiskBudgetError("Dense source exceeds disk quota before allocation")
-            if shutil.disk_usage(self.cache_root).free < required:
+            if shutil.disk_usage(io_path(self.cache_root)).free < required:
                 raise DiskBudgetError("Insufficient disk space for dense source")
             self.staging_disk_bytes = required
             # Leave room for parser blocks and Python axis metadata. No second
@@ -213,13 +220,13 @@ class ArtifactStore(MutableMapping):
             Form(placeholder, **metadata).validate()
             metadata_size = sum(footprint(metadata).values())
             self.ensure(metadata_size + sum(map(len, blocks.values())), "source_metadata")
-            with open(temporary / "metadata.pkl", "wb") as file:
+            with open(io_path(temporary / "metadata.pkl"), "wb") as file:
                 pickle.dump(metadata, file, protocol=5)
-            written = sum(p.stat().st_size for p in temporary.iterdir())
+            written = sum(p.stat().st_size for p in io_path(temporary).iterdir())
             if self.config.disk_limit_bytes is not None and self.disk_bytes + self.transport_disk_bytes + written > self.config.disk_limit_bytes:
                 raise DiskBudgetError("Dense source metadata exceeds disk quota")
             final = self.cache_root / entry.key
-            os.replace(temporary, final)
+            os.replace(io_path(temporary), io_path(final))
             entry.disk, entry.disk_bytes = final, written
             entry.shape, entry.dtype, entry.metadata_size = shape, dtype, metadata_size
             entry.size = int(entry.source_probe["dense_bytes"]) + metadata_size + 8192
@@ -348,10 +355,10 @@ class ArtifactStore(MutableMapping):
         self.ensure(entry.size, "load_reservation")
         if entry.disk is not None:
             if entry.kind == "file":
-                entry.form = FileArtifact(**json.loads((entry.disk / "files.json").read_text(encoding="utf-8")))
+                entry.form = FileArtifact(**json.loads(io_path(entry.disk / "files.json").read_text(encoding="utf-8")))
             else:
                 payload = self.read_metadata(entry)
-                data = np.load(entry.disk / "data.npy", allow_pickle=False)
+                data = np.load(io_path(entry.disk / "data.npy"), allow_pickle=False)
                 if data.shape != entry.shape or data.dtype != entry.dtype:
                     raise ContextError("Cache descriptor/header mismatch")
                 entry.form = Form(data=data, **payload)
@@ -434,14 +441,14 @@ class ArtifactStore(MutableMapping):
     def _commit(self, entry):
         # Exclusive short temporary names avoid a needless 32-character UUID
         # pushing otherwise valid Windows cache paths over MAX_PATH.
-        temporary = Path(tempfile.mkdtemp(prefix=".pending-", dir=self.cache_root))
+        temporary = self._temporary_directory(".pending-")
         final = self.cache_root / entry.key
         written = [0]
         store = self
 
         class Writer:
             def __init__(self, path):
-                self.file = open(path, "wb")
+                self.file = open(io_path(path), "wb")
             def write(self, data):
                 if store.config.disk_limit_bytes is not None and store.disk_bytes + store.staging_disk_bytes + store.transport_disk_bytes + written[0] + len(data) > store.config.disk_limit_bytes:
                     raise DiskBudgetError("Spill quota exhausted; original RAM copy retained")
@@ -483,7 +490,7 @@ class ArtifactStore(MutableMapping):
                     writer.write(json.dumps(entry.form.to_dict(), ensure_ascii=False, allow_nan=False).encode("utf-8"))
                 finally:
                     writer.close()
-                os.replace(temporary, final)
+                os.replace(io_path(temporary), io_path(final))
                 entry.disk, entry.disk_bytes = final, written[0]
                 self.disk_bytes += written[0]
                 self.event("disk_commit", **self.describe(entry))
@@ -512,7 +519,7 @@ class ArtifactStore(MutableMapping):
                 MetadataPickler(writer, protocol=5).dump(payload)
             finally:
                 writer.close()
-            os.replace(temporary, final)
+            os.replace(io_path(temporary), io_path(final))
             entry.disk, entry.disk_bytes = final, written[0]
             # Reload can break array sharing, so reserve the serialized array sum.
             metadata_headers = sum(size for key, size in footprint(payload).items() if key >= 0)
@@ -530,8 +537,8 @@ class ArtifactStore(MutableMapping):
                 kind, filename = pid
                 if kind != "ndarray" or Path(filename).name != filename:
                     raise ContextError("Invalid run-local array reference")
-                return np.load(directory / filename, allow_pickle=False, mmap_mode="r" if mmap else None)
-        with open(directory / "metadata.pkl", "rb") as file:
+                return np.load(io_path(directory / filename), allow_pickle=False, mmap_mode="r" if mmap else None)
+        with open(io_path(directory / "metadata.pkl"), "rb") as file:
             return MetadataUnpickler(file).load()
 
     def chunks(self, entry, elements):
@@ -542,7 +549,7 @@ class ArtifactStore(MutableMapping):
                 for chunk in chunks:
                     yield chunk
         else:
-            with open(entry.disk / "data.npy", "rb") as file:
+            with open(io_path(entry.disk / "data.npy"), "rb") as file:
                 version = np.lib.format.read_magic(file)
                 if version != (2, 0):
                     raise ContextError("Unexpected cache array format")
@@ -571,8 +578,8 @@ class ArtifactStore(MutableMapping):
                     position += count
 
     def _delete_folder(self, folder):
-        folder = folder.resolve()
-        if folder.parent != self.cache_root.resolve():
+        folder = io_path(folder).resolve()
+        if folder.parent != io_path(self.cache_root).resolve():
             raise ContextError("Refusing to remove a path outside this run's cache")
         if folder.exists():
             shutil.rmtree(folder)
