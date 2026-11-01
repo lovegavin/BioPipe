@@ -9,6 +9,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
 | Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.36.1** |
+| **1.37.0** | expansion batch: ProteinMPNN per-position perplexity, Murcko scaffold diversity, embedding outlier scan, nucleotide GC profile, helix geometry |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -80,6 +81,7 @@ Examples:
 1.35.2  patch: reuse the ASCII-safe RDKit feature file in the pharmacophore oracle and drop multi-chain FASTA separators in the native-recovery scan
 1.36.0  expansion batch: dihedral secondary structure segments, contact order, BRICS fragment overlap, and ProteinMPNN design diversity
 1.36.1  patch: fall back to the repository vanilla_model_weights directory when no weights path is given
+1.37.0  expansion batch: ProteinMPNN per-position perplexity, Murcko scaffold diversity, embedding outlier scan, nucleotide GC profile, helix geometry
 1.37.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```

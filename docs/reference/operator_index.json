@@ -1560,6 +1560,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_embedding_outlier_scan",
+    "kind": "operator",
+    "title": "ESM Embedding Outlier Scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Scores every sequence embedding against the collection, using the Mahalanobis distance to the centroid or the mean distance to the k nearest neighbours, so unusual sequences surface as high scores.",
+    "doc": "src/task/step/steps/esm_embedding_outlier_scan.EsmEmbeddingOutlierScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_embedding_pca",
     "kind": "operator",
     "title": "ESM embedding PCA",
@@ -3900,6 +3910,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_perplexity",
+    "kind": "operator",
+    "title": "ProteinMPNN Perplexity",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Computes how uncertain ProteinMPNN is at every designed position. The operator runs the official conditional-probability pass and reports the effective number of amino-acid choices, the position entropy and the most likely probability.",
+    "doc": "src/task/step/steps/proteinmpnn_perplexity.ProteinmpnnPerplexityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_position_entropy",
     "kind": "operator",
     "title": "ProteinMPNN position entropy",
@@ -4260,6 +4280,16 @@
     "status": "generated"
   },
   {
+    "id": "rdkit_scaffold_diversity",
+    "kind": "operator",
+    "title": "RDKit Scaffold Diversity",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Groups a molecule collection by Murcko scaffold and reports how often each scaffold occurs, so library diversity and scaffold hopping can be inspected directly.",
+    "doc": "src/task/step/steps/rdkit_scaffold_diversity.RdkitScaffoldDiversityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "rdkit_similarity",
     "kind": "operator",
     "title": "Molecular similarity matrix",
@@ -4587,6 +4617,16 @@
     "version": "1.0.0",
     "description": "Measure protein sequence complexity with k-mer Shannon entropy, linguistic complexity and the fraction of low-complexity windows, useful for filtering repeat-rich or low-entropy designed sequences.",
     "doc": "src/task/step/steps/sequence_complexity.SequenceComplexityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_gc_profile",
+    "kind": "operator",
+    "title": "Sequence GC Profile",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Summarises nucleotide composition: GC content, third-codon GC, CpG observed/expected ratio, AT skew and the spread of a sliding GC window, which supports ORF and primer design checks.",
+    "doc": "src/task/step/steps/sequence_gc_profile.SequenceGcProfileStep.md",
     "status": "generated"
   },
   {
@@ -4927,6 +4967,16 @@
     "version": "1.0.0",
     "description": "Find backbone N-H...O=C hydrogen bonds with the Kabsch-Sander electrostatic model and summarise donors, acceptors and the strongest interaction energy per residue.",
     "doc": "src/task/step/steps/structure_hbonds.StructureHbondsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_helix_geometry",
+    "kind": "operator",
+    "title": "Structure Helix Geometry",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Detects CA helices and reports the geometric parameters of each one: axial rise per residue, helix radius, twist angle and residues per turn, which exposes over- or under-wound helical segments.",
+    "doc": "src/task/step/steps/structure_helix_geometry.StructureHelixGeometryStep.md",
     "status": "generated"
   },
   {

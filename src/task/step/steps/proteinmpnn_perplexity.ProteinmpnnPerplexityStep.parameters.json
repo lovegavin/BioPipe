@@ -1,0 +1,92 @@
+{
+  "type": "object",
+  "title": "ProteinMPNN Perplexity Parameters",
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "title": "结构文件路径",
+      "description": "带完整骨架的 PDB 文件路径。",
+      "default": ""
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "title": "ProteinMPNN 仓库路径",
+      "description": "包含 protein_mpnn_run.py 的官方仓库目录。",
+      "default": ""
+    },
+    "weights_path": {
+      "type": "string",
+      "title": "权重路径",
+      "description": "可选的权重文件；留空时使用仓库默认权重目录。",
+      "default": ""
+    },
+    "python_executable": {
+      "type": "string",
+      "title": "Python 解释器",
+      "description": "运行官方脚本的解释器；留空时使用当前解释器。",
+      "default": ""
+    },
+    "model_name": {
+      "type": "string",
+      "title": "模型名称",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "default": "v_48_020",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "title": "概率批次数",
+      "minimum": 1,
+      "maximum": 64,
+      "default": 8,
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "seed": {
+      "type": "integer",
+      "title": "随机种子",
+      "minimum": 0,
+      "default": 1,
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "chains": {
+      "type": "string",
+      "title": "链",
+      "description": "可选的链选择，例如 A 或 A,B。",
+      "default": "",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "device": {
+      "type": "string",
+      "title": "设备",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "timeout": {
+      "type": "integer",
+      "title": "超时（秒）",
+      "minimum": 1,
+      "default": 1800,
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "位点维度",
+      "default": "position",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "default": "perplexity"
+    }
+  },
+  "additionalProperties": false
+}

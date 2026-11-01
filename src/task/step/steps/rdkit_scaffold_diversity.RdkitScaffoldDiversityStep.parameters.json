@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "title": "RDKit Scaffold Diversity Parameters",
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "title": "SMILES 列表",
+      "description": "每行一个 'SMILES [名称]'，空行与 # 注释会被忽略。",
+      "default": ""
+    },
+    "scaffold_dim": {
+      "type": "string",
+      "title": "骨架维度",
+      "default": "scaffold",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "default": "scaffolds"
+    }
+  },
+  "additionalProperties": false
+}
