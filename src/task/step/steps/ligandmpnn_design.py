@@ -154,9 +154,6 @@ class LigandMpnnDesignStep(Step):
                     "numeric": True,
                     "info_open": True,
                     "axis_info_open": True,
-                    "info": {
-                        "missing_code": "Missing scalar value code stored on the output form.",
-                    },
                 },
             },
         },
