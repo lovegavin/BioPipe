@@ -1,0 +1,117 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构文件",
+      "description": "ProteinMPNN 使用的 PDB 文件路径。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 仓库",
+      "description": "含 protein_mpnn_run.py 的官方仓库目录。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录",
+      "description": "可选；官方权重目录（默认使用仓库内 vanilla_model_weights）。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "可选；默认使用当前解释器。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "model_name": {
+      "type": "string",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "default": "v_48_020",
+      "title": "模型",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 500,
+      "default": 16,
+      "title": "采样序列数",
+      "description": "采样条数，用于估计每个位点的氨基酸频率。",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "sampling_temp": {
+      "type": "string",
+      "default": "0.1",
+      "title": "采样温度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 1,
+      "title": "随机种子",
+      "description": "官方脚本把 0 解释为随机种子。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "设计链",
+      "description": "逗号分隔的链 ID；留空表示全部链。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "设备",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    },
+    "timeout": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1800,
+      "title": "超时（秒）",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位点维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 110
+    },
+    "amino_acid_dim": {
+      "type": "string",
+      "default": "amino_acid",
+      "title": "氨基酸维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 120
+    },
+    "output": {
+      "type": "string",
+      "default": "profile",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 130
+    }
+  }
+}

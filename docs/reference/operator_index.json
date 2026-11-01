@@ -3770,6 +3770,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_design_profile",
+    "kind": "operator",
+    "title": "ProteinMPNN design profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/proteinmpnn_design_profile.ProteinmpnnDesignProfileStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_ensemble_score",
     "kind": "operator",
     "title": "ProteinMPNN ensemble score",
@@ -3997,6 +4007,16 @@
     "version": "1.0.0",
     "description": "Descriptor panel plus Lipinski, Veber and Ghose pass/fail flags per molecule.",
     "doc": "src/task/step/steps/rdkit_admet_rules.RdkitAdmetRulesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_conformer_cluster",
+    "kind": "operator",
+    "title": "Conformer clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/rdkit_conformer_cluster.RdkitConformerClusterStep.md",
     "status": "generated"
   },
   {
@@ -4690,6 +4710,26 @@
     "status": "generated"
   },
   {
+    "id": "structure_amide_pi_bonds",
+    "kind": "operator",
+    "title": "Amide-pi interactions",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/structure_amide_pi_bonds.StructureAmidePiBondsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_aromatic_stacking",
+    "kind": "operator",
+    "title": "Aromatic stacking",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/structure_aromatic_stacking.StructureAromaticStackingStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_bfactor_profile",
     "kind": "operator",
     "title": "Structure B-factor Profile",
@@ -4697,6 +4737,16 @@
     "version": "1.0.0",
     "description": "Summarise crystallographic B-factors per residue (mean, maximum, atom count) with heavy-atom filtering, order residues from most to least flexible, and report the global distribution for design and model quality control.",
     "doc": "src/task/step/steps/structure_bfactor_profile.StructureBfactorProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_cation_pi",
+    "kind": "operator",
+    "title": "Cation-pi interactions",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/structure_cation_pi.StructureCationPiStep.md",
     "status": "generated"
   },
   {

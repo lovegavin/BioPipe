@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "max_distance": {
+      "type": "number",
+      "minimum": 2.0,
+      "maximum": 10.0,
+      "default": 6.0,
+      "title": "最大距离 (Å)",
+      "description": "阳离子质心到芳香环质心的距离上限。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "max_offset": {
+      "type": "number",
+      "minimum": 0.1,
+      "maximum": 5.0,
+      "default": 2.0,
+      "title": "最大平面偏移 (Å)",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "bond_dim": {
+      "type": "string",
+      "default": "bond",
+      "title": "相互作用维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "cation_pi",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  }
+}

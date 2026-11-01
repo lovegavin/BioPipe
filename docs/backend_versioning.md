@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.31.1** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.32.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -72,7 +72,8 @@ Examples:
 1.30.0  expansion batch: ProteinMPNN multi-model ensemble scoring, maximum common substructure clustering, interface hydrogen-bond networks, and PROSITE-style motif scanning
 1.31.0  expansion batch: ProteinMPNN design-position entropies, ESM embedding PCA and nearest neighbours, disulfide bonds, and salt bridges
 1.31.1  patch: default the ProteinMPNN designer interpreter to sys.executable so the operator starts on Windows
-1.32.0  next expansion batch
+1.32.0  expansion batch: ProteinMPNN design-position profiles, amide-pi and cation-pi contacts, aromatic stacking, and RDKit conformer clustering
+1.33.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
 
