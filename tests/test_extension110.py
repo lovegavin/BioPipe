@@ -174,13 +174,13 @@ def test_design_command_and_output(tmp_path):
     assert argv[argv.index("--seed") + 1] == "7"
     assert argv[argv.index("--model_name") + 1] == "v_48_020"
     assert argv[argv.index("--pdb_path_chains") + 1] == "A"
-    assert argv[argv.index("--path_to_model_weights") + 1] == str(
+    assert argv[argv.index("--path_to_model_weights") + 1] == (
         repo / "vanilla_model_weights"
-    )
+    ).as_posix()
     assert argv[argv.index("--suppress_print") + 1] == "1"
     assert captured["cwd"] == str(repo)
     assert captured["cuda"] == ""
-    assert captured["fixed"] == {str(structure): {"A": [1], "B": [2]}}
+    assert captured["fixed"] == {structure.as_posix(): {"A": [1], "B": [2]}}
 
 
 def test_fixed_positions_parameter(tmp_path):
