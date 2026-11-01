@@ -130,6 +130,16 @@
     "status": "generated"
   },
   {
+    "id": "agostino_test",
+    "kind": "operator",
+    "title": "D'Agostino skewness test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "D'Agostino's skewness test with a normal approximation of the sample skewness.",
+    "doc": "src/task/step/steps/agostino_test.AgostinoTestStep.md",
+    "status": "generated"
+  },
+  {
     "id": "aldex2",
     "kind": "operator",
     "title": "Compositional differential abundance",
@@ -237,6 +247,16 @@
     "version": "1.0.0",
     "description": "Anscombe-Glynn test for sample kurtosis.",
     "doc": "src/task/step/steps/anscombe_glynn.AnscombeGlynnStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "anscombe_test",
+    "kind": "operator",
+    "title": "Anscombe-Glynn kurtosis test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Anscombe-Glynn kurtosis test using the normal approximation of the sample kurtosis.",
+    "doc": "src/task/step/steps/anscombe_test.AnscombeTestStep.md",
     "status": "generated"
   },
   {
@@ -2720,6 +2740,16 @@
     "status": "generated"
   },
   {
+    "id": "mood_median",
+    "kind": "operator",
+    "title": "Mood two-sample scale test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Mood two-sample test of scale: compares the dispersion of two groups from the ranked pooled sample.",
+    "doc": "src/task/step/steps/mood_median.MoodMedianStep.md",
+    "status": "generated"
+  },
+  {
     "id": "mood_median_test",
     "kind": "operator",
     "title": "Mood's median test",
@@ -4287,6 +4317,16 @@
     "version": "1.0.0",
     "description": "Estimate a VAR(p) model with a deterministic OLS fit.",
     "doc": "src/task/step/steps/var_model.VarModelStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "var_test",
+    "kind": "operator",
+    "title": "Two-sample F test for variances",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "F test for equality of two variances with an exact chi-square based confidence interval for the ratio.",
+    "doc": "src/task/step/steps/var_test.VarTestStep.md",
     "status": "generated"
   },
   {
