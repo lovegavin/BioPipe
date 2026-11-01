@@ -32,7 +32,7 @@ def test_installed_wheel_runs_headless_worker_without_checkout(tmp_path):
     # must come solely from this freshly built wheel in the isolated venv.
     command([sys.executable, '-m', 'venv', '--without-pip', '--system-site-packages', runtime])
     python = runtime / ('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
-    command([sys.executable, '-m', 'pip', '--python', python, 'install', '--no-deps', '--no-index', wheel])
+    command([sys.executable, '-m', 'pip', '--python', python, 'install', '--ignore-installed', '--no-deps', '--no-index', wheel])
     probe = json.loads(command([python, '-c',
         'import json,sys,biopipe,biopipe.worker; print(json.dumps({"path":biopipe.__file__,"worker":biopipe.worker.__file__,"sys_path":sys.path}))']))
     assert Path(probe['path']).is_relative_to(runtime)
