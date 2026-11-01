@@ -260,6 +260,16 @@
     "status": "generated"
   },
   {
+    "id": "antibody_developability",
+    "kind": "operator",
+    "title": "Antibody developability panel",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "VHH/antibody developability: pI, charge at low and neutral pH, cysteines, deamidation/isomerization/glycosylation motifs, hydrophobic runs.",
+    "doc": "src/task/step/steps/antibody_developability.AntibodyDevelopabilityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "approx_entropy",
     "kind": "operator",
     "title": "Approximate entropy",
@@ -1497,6 +1507,16 @@
     "version": "1.0.0",
     "description": "Mask one position at a time and report the wild-type and mutant probabilities and their log ratio under a local ESM checkpoint.",
     "doc": "src/task/step/steps/esm_masked_marginal.EsmMaskedMarginalStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_pseudo_likelihood",
+    "kind": "operator",
+    "title": "ESM masked pseudo-likelihood",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Per-residue masked pseudo-likelihood log P(x_t | x_-t) of a protein sequence under a local ESM checkpoint; mean and total scores in info.",
+    "doc": "src/task/step/steps/esm_pseudo_likelihood.EsmPseudoLikelihoodStep.md",
     "status": "generated"
   },
   {
@@ -3540,6 +3560,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_score",
+    "kind": "operator",
+    "title": "ProteinMPNN sequence score",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score a structure/sequence pair with the official ProteinMPNN runner in --score_only mode; returns mean and global negative log-likelihood per sequence.",
+    "doc": "src/task/step/steps/proteinmpnn_score.ProteinmpnnScoreStep.md",
+    "status": "generated"
+  },
+  {
     "id": "prs",
     "kind": "operator",
     "title": "Polygenic risk score",
@@ -3727,6 +3757,16 @@
     "version": "1.0.0",
     "description": "Compute the RDKit Morgan (extended connectivity) bit fingerprint for every SMILES string and return a [molecule, bit] matrix of 0/1 values that downstream clustering or machine-learning operators can consume.",
     "doc": "src/task/step/steps/rdkit_morgan_fingerprint.RdkitMorganFingerprintStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_scaffold",
+    "kind": "operator",
+    "title": "RDKit Bemis-Murcko scaffolds",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Bemis-Murcko scaffold SMILES plus scaffold and ring-system counts per molecule.",
+    "doc": "src/task/step/steps/rdkit_scaffold.RdkitScaffoldStep.md",
     "status": "generated"
   },
   {

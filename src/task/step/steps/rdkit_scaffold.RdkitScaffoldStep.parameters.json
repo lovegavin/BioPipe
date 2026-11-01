@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "CCO ethanol\nc1ccccc1 benzene",
+      "title": "SMILES 列表",
+      "description": "每行一个 'SMILES [name]'，空行与 # 注释会被跳过。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "default": "scaffolds",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    }
+  },
+  "additionalProperties": false
+}

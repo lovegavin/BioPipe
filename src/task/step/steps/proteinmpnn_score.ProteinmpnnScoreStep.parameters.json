@@ -1,0 +1,94 @@
+{
+  "type": "object",
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构文件",
+      "description": "带原子名的蛋白质 PDB 文件（ProteinMPNN 打分依据）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "fasta_path": {
+      "type": "string",
+      "default": "",
+      "title": "待打分序列",
+      "description": "每条待打分序列一行（可带名称），链间用 / 分隔。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 仓库路径",
+      "description": "本地官方仓库检出目录，内含 protein_mpnn_run.py。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录",
+      "description": "存放 v_48_*.pt 的目录；留空使用仓库内 vanilla_model_weights。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "model_name": {
+      "type": "string",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "default": "v_48_020",
+      "title": "权重版本",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "链选择",
+      "description": "可选的链列表，如 AB；留空使用结构中的全部链。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "运行官方脚本的解释器；留空使用当前解释器。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 1,
+      "title": "随机种子",
+      "description": "官方脚本把 0 解释为随机种子；默认 1 保证打分可复现。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "计算设备",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "timeout_seconds": {
+      "type": "number",
+      "minimum": 1,
+      "default": 1800,
+      "title": "超时（秒）",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    },
+    "output": {
+      "type": "string",
+      "default": "scores",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    }
+  },
+  "additionalProperties": false
+}

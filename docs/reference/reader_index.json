@@ -770,6 +770,16 @@
     "status": "generated"
   },
   {
+    "id": "PdbqtReader",
+    "kind": "reader",
+    "title": "AutoDock PDBQT coordinate reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "ATOM/HETATM records with AutoDock partial charges and atom types.",
+    "doc": "src/reader/readers/pdbqt_reader.PdbqtReader.md",
+    "status": "generated"
+  },
+  {
     "id": "PedReader",
     "kind": "reader",
     "title": "PLINK PED reader",
