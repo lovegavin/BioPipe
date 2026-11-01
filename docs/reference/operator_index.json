@@ -2200,6 +2200,16 @@
     "status": "generated"
   },
   {
+    "id": "ld_decay",
+    "kind": "operator",
+    "title": "LD decay",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "LD decay: binned mean r^2 between variant dosages by distance.",
+    "doc": "src/task/step/steps/ld_decay.LdDecayStep.md",
+    "status": "generated"
+  },
+  {
     "id": "ld_prune",
     "kind": "operator",
     "title": "LD pruning",
@@ -2697,6 +2707,16 @@
     "version": "1.0.0",
     "description": "D'Agostino-Pearson normality test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度。",
     "doc": "src/task/step/steps/normaltest.NormaltestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "nucleotide_diversity",
+    "kind": "operator",
+    "title": "Nucleotide diversity",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Nucleotide diversity over the whole input or fixed genomic windows.",
+    "doc": "src/task/step/steps/nucleotide_diversity.NucleotideDiversityStep.md",
     "status": "generated"
   },
   {
@@ -3520,6 +3540,16 @@
     "status": "generated"
   },
   {
+    "id": "site_frequency_spectrum",
+    "kind": "operator",
+    "title": "Site frequency spectrum",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Unfolded or folded site frequency spectrum of biallelic variants.",
+    "doc": "src/task/step/steps/site_frequency_spectrum.SiteFrequencySpectrumStep.md",
+    "status": "generated"
+  },
+  {
     "id": "skillings_mack",
     "kind": "operator",
     "title": "Skillings-Mack test",
@@ -3657,6 +3687,16 @@
     "version": "1.0.0",
     "description": "Linear SVM regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
     "doc": "src/task/step/steps/svm_regressor.SvmRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "tajimas_d",
+    "kind": "operator",
+    "title": "Tajima's D",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Tajima's D over the whole input or fixed genomic windows.",
+    "doc": "src/task/step/steps/tajimas_d.TajimasDStep.md",
     "status": "generated"
   },
   {
@@ -3937,6 +3977,16 @@
     "version": "1.0.0",
     "description": "Von Neumann ratio test for serial randomness.",
     "doc": "src/task/step/steps/von_neumann.VonNeumannStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "watterson_theta",
+    "kind": "operator",
+    "title": "Watterson's theta",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Watterson's theta over the whole input or fixed genomic windows.",
+    "doc": "src/task/step/steps/watterson_theta.WattersonThetaStep.md",
     "status": "generated"
   },
   {
