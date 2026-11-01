@@ -18,6 +18,8 @@ class ExcelReader(Reader):
      'id': 'ExcelReader',
      'version': '1.0.0',
      'kind': 'reader',
+     'dependencies': ['openpyxl>=3.1'],
+     'dependency_imports': ['openpyxl'],
      'title': 'Reader for .xlsx and .xlsm workbooks',
      'category': 'Data',
      'contracts': {'version': 1,

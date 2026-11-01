@@ -7,6 +7,7 @@ class is the single declaration source. There is no hand-maintained UI registry.
 | --- | --- | --- |
 | [dropins/scale.py](dropins/scale.py) | Single-file operator, numeric schema, metadata preservation, author SVG icon | `python -m pytest tests/test_operator_images.py tests/test_plugin_refresh.py` |
 | [resource_plugin](resource_plugin/) | Stream reduction and a bounded NumPy disk Reader | `python -m biopipe plugin check examples/resource_plugin` and `python -m pytest tests/test_packages.py` |
+| [IGV handoff](igv_handoff/) | Actual genomic interval results as native BED/bedGraph file artifacts, public API handoff and portable IGV session | `python -m pytest tests/test_igv_handoff_example.py` and opt-in `scripts/accept_igv_handoff.py` |
 | [Step guide](../docs/step_extensions.md) | Complete `Operator.compute` implementation and missing-value handling | `python -m pytest tests/test_extension_guides.py` |
 | [Reader guide](../docs/reader_extensions.md) | Complete `Reader.read` implementation with labels | `python -m pytest tests/test_extension_guides.py` |
 

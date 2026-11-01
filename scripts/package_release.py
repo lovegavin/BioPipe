@@ -57,10 +57,10 @@ def main():
     shutil.copytree(root / 'frontend/dist', destination / 'frontend')
     for directory in ('src', 'biopipe', 'biopipe_sdk'):
         for source in (root / directory).rglob('*'):
-            if source.is_file() and source.suffix.lower() in {'.py', '.json', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg'}:
+            if source.is_file() and source.suffix.lower() in {'.py', '.json', '.md', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg'}:
                 copy(source, source.relative_to(root))
     for source in (root / 'tasks').rglob('*'):
-        if source.is_file() and source.suffix in {'.py', '.yaml', '.yml'} and 'output' not in source.relative_to(root).parts:
+        if source.is_file() and source.suffix in {'.py', '.yaml', '.yml', '.json'} and 'output' not in source.relative_to(root).parts:
             copy(source, source.relative_to(root))
     for source in (root / 'routes').rglob('*'):
         if source.is_file() and source.suffix in {'.json', '.yaml', '.yml'}:
@@ -71,7 +71,9 @@ def main():
         copy(source, source.name)
     for name_ in ('README.md', 'pyproject.toml'):
         copy(root / name_, name_)
-    for name_ in ('desktop_server.py', 'run.py', 'diagnose_pins.py'):
+    for name_ in ('desktop_server.py', 'run.py', 'diagnose_pins.py',
+                  'accept_igv_handoff.py', 'open_igv_handoff.ps1',
+                  'verify_release_agent.py', 'verify_release_agent.md'):
         copy(root / 'scripts' / name_, Path('scripts') / name_)
     if not args.lite:
         python = destination / 'runtime/python/python.exe'
@@ -127,7 +129,9 @@ To select an interpreter again, use BioPipe Studio.exe --select-runtime.
 The local runtime hint ~/.biopipe/runtime.json is never included in this package.
 Python and analysis dependencies are not bundled; .NET and the UI are bundled.
 User data and route registries are stored under ~/.biopipe/studio by default.
-Start Studio before connecting your own agent through MCP. See docs/agent_api.md.
+CLI and MCP can start their own local service without a desktop window.
+Open Studio when the agent should inspect your selection or edit the live canvas.
+See docs/headless_api.md and docs/agent_api.md.
 There is no bundled AI service. Graph edits do not execute analyses.
 ''', encoding='utf-8')
     if not args.lite:

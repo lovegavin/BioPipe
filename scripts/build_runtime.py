@@ -13,6 +13,16 @@ import subprocess
 import tomllib
 import tempfile
 import zipfile
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from biopipe.platforms import supported_systems
+
+
+def windows_descriptors(manifest):
+    """Keep Linux-only adapters in the catalog, not the Windows Python runtime."""
+    return [d for p in manifest['packages'] for d in p['descriptors']
+            if 'windows' in supported_systems(d)]
 
 
 def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, bundle_wheels=None):
@@ -51,8 +61,9 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
     subprocess.run([python, '-I', '-m', 'ensurepip', '--upgrade'], check=True)
     project = tomllib.loads((root / 'pyproject.toml').read_text(encoding='utf-8'))['project']
     manifest = json.loads((root / 'biopipe/builtin_packages.json').read_text(encoding='utf-8'))
+    descriptors = windows_descriptors(manifest)
     specs = sorted(set(project['dependencies'] + project['optional-dependencies']['agent'] + ['build>=1.2', 'setuptools>=69']) |
-                   {r for p in manifest['packages'] for d in p['descriptors'] for r in d.get('dependencies', [])})
+                   {r for d in descriptors for r in d.get('dependencies', [])})
     requested = destination / 'biopipe-requirements.txt'
     requested.write_text('\n'.join(specs) + '\n', encoding='utf-8')
     wheel_options = ['--find-links', str(Path(wheelhouse).resolve())] if wheelhouse else []
@@ -79,7 +90,7 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
     versions = json.loads(subprocess.check_output([python, '-I', '-c',
         'import importlib.metadata as m,json; print(json.dumps({d.metadata["Name"]:d.version for d in m.distributions()}))'], text=True))
     (destination / 'biopipe-lock.txt').write_text('\n'.join(f'{k}=={v}' for k, v in sorted(versions.items()))+'\n', encoding='utf-8')
-    imports = sorted({i for p in manifest['packages'] for d in p['descriptors'] for i in d.get('dependency_imports', [])})
+    imports = sorted({i for d in descriptors for i in d.get('dependency_imports', [])})
     subprocess.run([python, '-I', '-c', 'import importlib; ' + '; '.join(f'importlib.import_module({name!r})' for name in imports)], check=True)
     # Entry-point launchers contain absolute build paths. Studio and the SDK use
     # python -m, so omit them rather than ship launchers that break after moving.
@@ -104,6 +115,9 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
     info = {'schema_version': 1, 'python_version': '.'.join(map(str, probe[0])),
             'platform': 'windows-x86_64', 'provider': 'astral-sh/python-build-standalone',
             'bootstrap_archives': bootstrap_archives,
+            'included_extensions': sorted(d['id'] for d in descriptors),
+            'external_extensions': sorted(d['id'] for p in manifest['packages'] for d in p['descriptors']
+                                          if 'windows' not in supported_systems(d)),
             'requirements_sha256': hashlib.sha256(requested.read_bytes()).hexdigest(), 'distributions': versions}
     (destination / 'biopipe-runtime.json').write_text(json.dumps(info, indent=2)+'\n', encoding='utf-8')
     return info

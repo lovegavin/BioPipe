@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biopipe-igv-example"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["biopipe-studio>=0.116.0,<1"]
+
+[project.entry-points."biopipe.operators"]
+genome_tracks = "biopipe_igv_example.tracks:GenomeTracks"
+
+[tool.setuptools.packages.find]
+include = ["biopipe_igv_example*"]
+
+[tool.setuptools.package-data]
+biopipe_igv_example = ["*.parameters.json", "*.md"]

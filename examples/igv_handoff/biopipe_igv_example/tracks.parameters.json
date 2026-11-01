@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["assembly"],
+  "properties": {
+    "assembly": {"type": "string", "minLength": 1, "description": "Reference assembly identifier; must match the reference opened in IGV."},
+    "value_field": {"type": "string", "default": "n_intervals", "description": "Named statistic to write as the bedGraph value."},
+    "prefix": {"type": "string", "pattern": "^[a-zA-Z0-9_-]+$", "default": "genome_tracks"},
+    "output": {"type": "string", "default": "genome_tracks"}
+  }
+}
