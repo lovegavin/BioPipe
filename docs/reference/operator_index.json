@@ -1610,6 +1610,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_embedding_umap_projection",
+    "kind": "operator",
+    "title": "Embedding spectral projection",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Project an embedding Form with a kNN graph and the eigenvectors of its normalised Laplacian, giving a deterministic UMAP-style two-dimensional layout.",
+    "doc": "src/task/step/steps/esm_embedding_umap_projection.EsmEmbeddingUmapProjectionStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_if_design",
     "kind": "operator",
     "title": "ESM-IF Design",
@@ -3870,6 +3880,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_design_cluster",
+    "kind": "operator",
+    "title": "Cluster ProteinMPNN designs",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sample designs with the official ProteinMPNN runner, compute pairwise sequence identity and group the designs into single-linkage clusters.",
+    "doc": "src/task/step/steps/proteinmpnn_design_cluster.ProteinmpnnDesignClusterStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_design_diversity",
     "kind": "operator",
     "title": "ProteinMPNN design diversity",
@@ -5100,6 +5120,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_halogen_bond_scan",
+    "kind": "operator",
+    "title": "Halogen bond scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Scan a full-atom structure for halogen bonds: carbon-halogen donors against oxygen, nitrogen or sulfur acceptors using distance and C-X...Y angle criteria.",
+    "doc": "src/task/step/steps/structure_halogen_bond_scan.StructureHalogenBondScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_hbonds",
     "kind": "operator",
     "title": "Backbone Hydrogen Bonds",
@@ -5107,6 +5137,16 @@
     "version": "1.0.0",
     "description": "Find backbone N-H...O=C hydrogen bonds with the Kabsch-Sander electrostatic model and summarise donors, acceptors and the strongest interaction energy per residue.",
     "doc": "src/task/step/steps/structure_hbonds.StructureHbondsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_helix_bend",
+    "kind": "operator",
+    "title": "Helix axis bend",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Fit helical runs from CA geometry and report the overall and local bend of each helix axis together with an approximate curvature radius.",
+    "doc": "src/task/step/steps/structure_helix_bend.StructureHelixBendStep.md",
     "status": "generated"
   },
   {

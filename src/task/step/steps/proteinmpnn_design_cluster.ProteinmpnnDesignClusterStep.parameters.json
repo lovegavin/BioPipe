@@ -1,0 +1,115 @@
+{
+  "type": "object",
+  "title": "Cluster ProteinMPNN designs",
+  "description": "Sample designs and group them by pairwise sequence identity.",
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构 PDB 路径",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 仓库路径",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录（空则用仓库默认）",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器（空则当前解释器）",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "model_name": {
+      "type": "string",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "default": "v_48_020",
+      "title": "模型",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 256,
+      "default": 16,
+      "title": "采样条数",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "sampling_temp": {
+      "type": "string",
+      "default": "0.1",
+      "title": "采样温度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 1,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "chain": {
+      "type": "string",
+      "default": "",
+      "title": "设计链（空则全部）",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "设备",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    },
+    "timeout": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7200,
+      "default": 1800,
+      "title": "超时（秒）",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    },
+    "identity_threshold": {
+      "type": "number",
+      "minimum": 0.05,
+      "maximum": 1.0,
+      "default": 0.8,
+      "title": "聚类一致性阈值",
+      "x-ui-group": "basic",
+      "x-ui-order": 110
+    },
+    "cluster_dim": {
+      "type": "string",
+      "default": "design",
+      "title": "设计维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 115
+    },
+    "output": {
+      "type": "string",
+      "default": "design_clusters",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 120
+    }
+  },
+  "additionalProperties": false
+}

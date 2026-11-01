@@ -1,7 +1,7 @@
 # Unified main integration
 
 This source update establishes one current application and authoring protocol on
-`main`. Application version: **1.41.0**. SDK version: **3.1.0**. Operator protocol:
+`main`. Application version: **1.42.0**. SDK version: **3.1.0**. Operator protocol:
 **v3**. The latest previously published desktop binaries are a separate artifact;
 this integration does not claim to have rebuilt or accepted a new Windows EXE.
   release 1.38.0 adds side-chain chi angles, k-mer composition profiles, embedding PCA loadings, reaction SMARTS application and restriction-site scanning.
@@ -10,6 +10,7 @@ this integration does not claim to have rebuilt or accepted a new Windows EXE.
   release 1.40.0 adds backbone dihedral and Ramachandran classes, CA distance matrices, ring-system statistics, charge profiles and ligand burial.
   patch 1.40.1 resolves the PDB fixture path relative to the test module so the dihedral oracle runs on Windows.
   release 1.41.0 adds helix-pair geometry, ligand clash detection, Murcko scaffold fingerprints, embedding k-means silhouettes and CpG island scans.
+  release 1.42.0 adds helix bend profiles, halogen bond scans, design clustering and a spectral embedding projection.
 
 ## Source ancestry
 
@@ -21,7 +22,7 @@ this integration does not claim to have rebuilt or accepted a new Windows EXE.
 The integration preserves the desktop branch's existing 86 extensions, including
 Hi-C file artifacts, streaming and disk readers, managed execution and unified
 figure outputs. It adds 407 previously missing upstream extensions through an
-explicit conversion to v3. The combined registry contains **576 operators and
+explicit conversion to v3. The combined registry contains **580 operators and
 101 Readers**, in seven independently manageable providers, and **24 route
 templates**. Counts describe this integration, not hard limits in the software. Backend
 **1.2.0** adds the Arrow reader, seasonal decomposition and Fst-family
