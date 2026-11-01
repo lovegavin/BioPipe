@@ -1800,6 +1800,16 @@
     "status": "generated"
   },
   {
+    "id": "gsva_plage",
+    "kind": "operator",
+    "title": "GSVA PLAGE scores",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "PLAGE gene-set scores: first right singular vector of the gene-wise z-scored expression of each set (GSVA plage method).",
+    "doc": "src/task/step/steps/gsva_plage.GsvaPlageStep.md",
+    "status": "generated"
+  },
+  {
     "id": "gwet_ac1",
     "kind": "operator",
     "title": "Gwet's AC1",
@@ -2690,6 +2700,16 @@
     "status": "generated"
   },
   {
+    "id": "neighbor_joining",
+    "kind": "operator",
+    "title": "Neighbor joining tree",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Neighbor-joining tree from a symmetric pairwise distance matrix.",
+    "doc": "src/task/step/steps/neighbor_joining.NeighborJoiningStep.md",
+    "status": "generated"
+  },
+  {
     "id": "nemenyi_test",
     "kind": "operator",
     "title": "Nemenyi post-hoc test",
@@ -3400,6 +3420,16 @@
     "status": "generated"
   },
   {
+    "id": "robinson_foulds",
+    "kind": "operator",
+    "title": "Robinson-Foulds distance",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Unweighted Robinson-Foulds distance between two node x field trees.",
+    "doc": "src/task/step/steps/robinson_foulds.RobinsonFouldsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "robust_regression",
     "kind": "operator",
     "title": "Robust linear regression",
@@ -3977,6 +4007,16 @@
     "version": "1.0.0",
     "description": "Unweighted UniFrac：接收 2 个输入，输出距离矩阵；主要参数：样本维度、类群维度、节点维度、字段维度。",
     "doc": "src/task/step/steps/unweighted_unifrac.UnweightedUnifracStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "upgma",
+    "kind": "operator",
+    "title": "UPGMA tree",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "UPGMA (average linkage) tree from a symmetric pairwise distance matrix.",
+    "doc": "src/task/step/steps/upgma.UpgmaStep.md",
     "status": "generated"
   },
   {
