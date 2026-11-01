@@ -1,0 +1,71 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "x-ui-group": "Data",
+      "x-ui-order": 1
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "Feature dimension",
+      "x-ui-group": "Data",
+      "x-ui-order": 2
+    },
+    "treatment_label": {
+      "type": "string",
+      "title": "Treatment column",
+      "x-ui-group": "Model",
+      "x-ui-order": 3
+    },
+    "outcome_label": {
+      "type": "string",
+      "title": "Outcome column",
+      "x-ui-group": "Model",
+      "x-ui-order": 4
+    },
+    "covariate_labels": {
+      "type": "array",
+      "items": {"type": "string"},
+      "default": [],
+      "title": "Propensity covariates",
+      "x-ui-group": "Model",
+      "x-ui-order": 5
+    },
+    "estimand": {
+      "type": "string",
+      "enum": ["ate", "att"],
+      "default": "ate",
+      "title": "Estimand",
+      "x-ui-group": "Model",
+      "x-ui-order": 6
+    },
+    "trim": {
+      "type": "number",
+      "default": 0.0,
+      "minimum": 0.0,
+      "maximum": 0.49,
+      "title": "Propensity trimming",
+      "x-ui-group": "Model",
+      "x-ui-order": 7
+    },
+    "confidence": {
+      "type": "number",
+      "default": 0.95,
+      "minimum": 0.5,
+      "maximum": 0.999,
+      "title": "Confidence level",
+      "x-ui-group": "Inference",
+      "x-ui-order": 8
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name"
+    }
+  },
+  "required": ["treatment_label", "outcome_label"],
+  "additionalProperties": false
+}

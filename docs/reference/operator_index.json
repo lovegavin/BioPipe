@@ -2050,6 +2050,16 @@
     "status": "generated"
   },
   {
+    "id": "iptw_effect",
+    "kind": "operator",
+    "title": "IPTW treatment effect",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Inverse-probability-of-treatment weighting estimate of an average treatment effect.",
+    "doc": "src/task/step/steps/iptw_effect.IptwEffectStep.md",
+    "status": "generated"
+  },
+  {
     "id": "isolation_forest",
     "kind": "operator",
     "title": "Isolation Forest",
@@ -2077,6 +2087,16 @@
     "version": "1.0.0",
     "description": "Fit a monotone (increasing or decreasing) least-squares curve.",
     "doc": "src/task/step/steps/isotonic.IsotonicStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "iv_2sls",
+    "kind": "operator",
+    "title": "Two-stage least squares",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Two-stage least squares IV regression for a numeric table; instruments endogenous regressors.",
+    "doc": "src/task/step/steps/iv_2sls.Iv2slsStep.md",
     "status": "generated"
   },
   {
@@ -3237,6 +3257,16 @@
     "version": "1.0.0",
     "description": "Expected species richness at a fixed number of individuals.",
     "doc": "src/task/step/steps/rarefaction.RarefactionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdd",
+    "kind": "operator",
+    "title": "Regression discontinuity",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Sharp regression-discontinuity jump estimated by local linear regression near a cutoff.",
+    "doc": "src/task/step/steps/rdd.RddStep.md",
     "status": "generated"
   },
   {

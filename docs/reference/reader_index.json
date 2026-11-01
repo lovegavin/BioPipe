@@ -420,6 +420,16 @@
     "status": "generated"
   },
   {
+    "id": "H5muReader",
+    "kind": "reader",
+    "title": "MuData multimodal HDF5 reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reads one modality from a MuData .h5mu container into a sample-by-feature matrix.",
+    "doc": "src/reader/readers/h5mu_reader.H5muReader.md",
+    "status": "generated"
+  },
+  {
     "id": "HapmapReader",
     "kind": "reader",
     "title": "HapMap genotype table, returned as variant x sample dosage",

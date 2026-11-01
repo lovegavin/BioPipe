@@ -5,8 +5,8 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-The unified **v1.3.0 backend source tree** combines the tested desktop/runtime with
-the author's operator library. It includes **418 operators, 90 Readers, seven
+The unified **v1.4.0 backend source tree** combines the tested desktop/runtime with
+the author's operator library. It includes **421 operators, 91 Readers, seven
 provider packages and 24 route templates**. Operators and Readers use **protocol
 v3 / SDK 3.1**, separate parameter JSON and adjacent Markdown documentation.
 
@@ -22,7 +22,7 @@ errors and the extra token cost of generating code.
 
 The value rests on five supports:
 
-- **Contract-first operator library.** 418 operators and 90 Readers have explicit
+- **Contract-first operator library.** 421 operators and 91 Readers have explicit
   input/output contracts, parameter schemas, adjacent scientific documentation and
   regression tests; authoritative R oracles cover methods where R is the reference.
 - **First-class plugins.** Operators, Readers and ML models share one discovery,
@@ -730,7 +730,7 @@ Responsibilities:
 
 ## Built-in Readers
 
-Representative formats are shown below. The [complete searchable index](docs/reference/reader_index.json) covers all 90 Readers.
+Representative formats are shown below. The [complete searchable index](docs/reference/reader_index.json) covers all 91 Readers.
 
 | Reader | Extensions | Main layout | Notes |
 |---|---|---|---|
@@ -751,7 +751,7 @@ Representative formats are shown below. The [complete searchable index](docs/ref
 
 ## Built-in Steps
 
-These examples are a small subset of the [418-operator index](docs/reference/operator_index.json).
+These examples are a small subset of the [421-operator index](docs/reference/operator_index.json).
 
 | Category | Step |
 |---|---|
