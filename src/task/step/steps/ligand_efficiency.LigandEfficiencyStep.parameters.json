@@ -1,0 +1,49 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "CCO 1000 ethanol\nc1ccccc1 100 benzene\nCC(=O)Oc1ccccc1C(=O)O 50 aspirin",
+      "title": "分子与活性",
+      "description": "每行“SMILES 活性 [名称]”，活性为数值；以 # 开头的行会被忽略。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "description": "输出中分子维度的名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "assay_unit": {
+      "type": "string",
+      "default": "nM",
+      "enum": ["nM", "uM", "mM"],
+      "title": "活性单位",
+      "description": "活性（IC50/Kd）的单位。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "temperature": {
+      "type": "number",
+      "default": 298.15,
+      "minimum": 200.0,
+      "maximum": 400.0,
+      "title": "温度 (K)",
+      "description": "由 pActivity 换算 ΔG 使用的绝对温度。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "default": "efficiency",
+      "title": "输出名称",
+      "description": "写入上下文的 Form 名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    }
+  }
+}

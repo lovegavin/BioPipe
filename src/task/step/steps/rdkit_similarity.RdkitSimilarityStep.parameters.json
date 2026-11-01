@@ -1,0 +1,75 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "CCO ethanol\nc1ccccc1 benzene\nCC(=O)Oc1ccccc1C(=O)O aspirin",
+      "title": "分子列表",
+      "description": "每行一个“SMILES [名称]”，以 # 开头的行会被忽略。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度（行）",
+      "description": "输出矩阵行方向的维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "comparison_dim": {
+      "type": "string",
+      "default": "molecule_b",
+      "title": "分子维度（列）",
+      "description": "输出矩阵列方向的维度名称，不能与行维度相同。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "metric": {
+      "type": "string",
+      "default": "tanimoto",
+      "enum": ["tanimoto", "dice", "cosine"],
+      "title": "相似度",
+      "description": "指纹向量的相似度度量。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "radius": {
+      "type": "integer",
+      "default": 2,
+      "minimum": 1,
+      "maximum": 6,
+      "title": "Morgan 半径",
+      "description": "Morgan 指纹的原子环境半径。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "n_bits": {
+      "type": "integer",
+      "default": 2048,
+      "minimum": 64,
+      "maximum": 16384,
+      "title": "指纹位数",
+      "description": "Morgan 指纹的位向量长度。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "use_features": {
+      "type": "boolean",
+      "default": false,
+      "title": "使用药效团特征",
+      "description": "True 时使用 SMARTS 特征而不是原子编号构建指纹。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "default": "similarity",
+      "title": "输出名称",
+      "description": "写入上下文的 Form 名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    }
+  }
+}

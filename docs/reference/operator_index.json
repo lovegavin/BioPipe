@@ -2220,6 +2220,16 @@
     "status": "generated"
   },
   {
+    "id": "interface_hotspots",
+    "kind": "operator",
+    "title": "Interface hotspots",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Rank the residues of a binder-target interface by the number of cross-chain heavy-atom contacts, the closest contact distance and the solvent-accessible area they bury on complex formation.",
+    "doc": "src/task/step/steps/interface_hotspots.InterfaceHotspotsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "interval_censored_regression",
     "kind": "operator",
     "title": "Interval-censored Weibull AFT",
@@ -2577,6 +2587,16 @@
     "version": "1.0.0",
     "description": "For every ligand atom report how many distinct receptor residues lie within a heavy-atom cutoff and the nearest contact residue.",
     "doc": "src/task/step/steps/ligand_contact_profile.LigandContactProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ligand_efficiency",
+    "kind": "operator",
+    "title": "Ligand efficiency metrics",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Parse SMILES with an assay potency, convert the potency to pActivity and a binding free energy, then report ligand efficiency, lipophilic ligand efficiency and the binding efficiency index.",
+    "doc": "src/task/step/steps/ligand_efficiency.LigandEfficiencyStep.md",
     "status": "generated"
   },
   {
@@ -3200,6 +3220,16 @@
     "status": "generated"
   },
   {
+    "id": "pains_filter",
+    "kind": "operator",
+    "title": "PAINS alert filter",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Screen a list of SMILES against the RDKit PAINS catalogues and report the number of matching substructure alerts per molecule together with the alert descriptions.",
+    "doc": "src/task/step/steps/pains_filter.PainsFilterStep.md",
+    "status": "generated"
+  },
+  {
     "id": "pair_confusion_matrix",
     "kind": "operator",
     "title": "Pair confusion matrix",
@@ -3820,6 +3850,16 @@
     "status": "generated"
   },
   {
+    "id": "rdkit_similarity",
+    "kind": "operator",
+    "title": "Molecular similarity matrix",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Parse a list of SMILES, build Morgan fingerprints and report the pairwise Tanimoto, Dice or cosine similarity as a symmetric molecule-by-molecule matrix.",
+    "doc": "src/task/step/steps/rdkit_similarity.RdkitSimilarityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "reduce",
     "kind": "operator",
     "title": "PCA / PCoA / UMAP / t-SNE",
@@ -4337,6 +4377,16 @@
     "version": "1.0.0",
     "description": "Storey's q-value procedure for a column of p-values.",
     "doc": "src/task/step/steps/storey_qvalue.StoreyQvalueStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_rmsd",
+    "kind": "operator",
+    "title": "Structure RMSD",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Match atoms of a mobile and a reference PDB form by chain, residue number and atom name, fit the mobile structure with the Kabsch algorithm, and report the per-residue RMSD together with the global RMSD and the fitted rigid transform.",
+    "doc": "src/task/step/steps/structure_rmsd.StructureRmsdStep.md",
     "status": "generated"
   },
   {

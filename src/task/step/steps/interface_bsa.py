@@ -97,36 +97,10 @@ def sasa_per_atom(
 def _pick_sides(
     present: set[str], binder_text: str, target_text: str
 ) -> tuple[list[str], list[str]]:
-    binder = split_chains(binder_text)
-    target = split_chains(target_text)
-    if not binder and not target:
-        raise StepError(
-            "interface_bsa: binder_chains or target_chains must select at "
-            f"least one chain (available chains: {sorted(present)})"
-        )
-    if not binder:
-        binder = sorted(present - set(target))
-    if not target:
-        target = sorted(present - set(binder))
-    missing = sorted((set(binder) | set(target)) - present)
-    if missing:
-        raise StepError(
-            "interface_bsa: chain(s) "
-            f"{', '.join(missing)} not found in the PDB form "
-            f"(available chains: {sorted(present)})"
-        )
-    shared = sorted(set(binder) & set(target))
-    if shared:
-        raise StepError(
-            "interface_bsa: chain(s) "
-            f"{', '.join(shared)} cannot be both binder and target"
-        )
-    if not binder or not target:
-        raise StepError(
-            "interface_bsa: two chain groups are required; the structure "
-            f"only provides {sorted(present)}"
-        )
-    return binder, target
+    """Select binder and target chains, deriving the empty side when possible."""
+    from src.task.step.steps._structure_common import pick_chain_sides
+
+    return pick_chain_sides(present, binder_text, target_text, "interface_bsa")
 
 
 class InterfaceBsaStep(Step):
