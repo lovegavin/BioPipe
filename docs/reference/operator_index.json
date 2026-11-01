@@ -460,6 +460,16 @@
     "status": "generated"
   },
   {
+    "id": "bioenv",
+    "kind": "operator",
+    "title": "Bio-environment matching",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Bio-environment matching: for every subset size of the scaled environmental variables, report the largest Spearman or Pearson correlation between community distances and environmental distances, following vegan bioenv.",
+    "doc": "src/task/step/steps/bioenv.BioenvStep.md",
+    "status": "generated"
+  },
+  {
     "id": "bland_altman",
     "kind": "operator",
     "title": "Bland-Altman agreement",
@@ -2807,6 +2817,16 @@
     "version": "1.0.0",
     "description": "Moran's I spatial autocorrelation from a distance matrix.",
     "doc": "src/task/step/steps/moran.MoranStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "morisita",
+    "kind": "operator",
+    "title": "Morisita dispersal index",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Morisita index of dispersion with its clustering and uniform critical values, the standardised index and the chi-square probability for every feature, following vegan dispindmorisita.",
+    "doc": "src/task/step/steps/morisita.MorisitaStep.md",
     "status": "generated"
   },
   {

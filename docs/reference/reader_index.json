@@ -660,6 +660,16 @@
     "status": "generated"
   },
   {
+    "id": "NiftiReader",
+    "kind": "reader",
+    "title": "Read a NIfTI-1 volume",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read a single-file NIfTI-1 volume as a matrix of slices by flattened in-plane voxels, applying scl_slope/scl_inter and preserving the header geometry and affine.",
+    "doc": "src/reader/readers/nifti_reader.NiftiReader.md",
+    "status": "generated"
+  },
+  {
     "id": "NpyReader",
     "kind": "reader",
     "title": "Reader for 2D numeric .npy/.npz arrays; output is sample x feature",
@@ -667,6 +677,16 @@
     "version": "1.0.0",
     "description": "Reader for 2D numeric .npy/.npz arrays; output is sample x feature.",
     "doc": "src/reader/readers/npy_reader.NpyReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "NrrdReader",
+    "kind": "reader",
+    "title": "Read a NRRD volume",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read a NRRD volume (raw or gzip encoded, 2-D or 3-D) as a matrix of slices by flattened in-plane voxels, preserving the NRRD spacing, space origin and axis kinds.",
+    "doc": "src/reader/readers/nrrd_reader.NrrdReader.md",
     "status": "generated"
   },
   {
