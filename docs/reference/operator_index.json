@@ -2310,6 +2310,16 @@
     "status": "generated"
   },
   {
+    "id": "interface_hbond_network",
+    "kind": "operator",
+    "title": "Interface hydrogen bond network",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Detect backbone hydrogen bonds between two chain groups with the Kabsch-Sander energy model and report energy and N-O distance.",
+    "doc": "src/task/step/steps/interface_hbond_network.InterfaceHbondNetworkStep.md",
+    "status": "generated"
+  },
+  {
     "id": "interface_hotspots",
     "kind": "operator",
     "title": "Interface hotspots",
@@ -3700,6 +3710,16 @@
     "status": "generated"
   },
   {
+    "id": "prosite_scan",
+    "kind": "operator",
+    "title": "Motif scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Translate PROSITE-like patterns (letters, x, [sets], {exclusions}) into regular expressions and report hit counts and positions.",
+    "doc": "src/task/step/steps/prosite_scan.PrositeScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "protein_properties",
     "kind": "operator",
     "title": "Protein properties",
@@ -3727,6 +3747,16 @@
     "version": "1.0.0",
     "description": "Run the official ProteinMPNN protein_mpnn_run.py entry point on a PDB structure and return the designed sequences with their model scores.  Design ranges restrict which residues are redesigned.",
     "doc": "src/task/step/steps/proteinmpnn_design.ProteinMpnnDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_ensemble_score",
+    "kind": "operator",
+    "title": "ProteinMPNN ensemble score",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score a structure with several official ProteinMPNN checkpoints in --score_only mode and return the per-sequence mean negative log-likelihood matrix across models.",
+    "doc": "src/task/step/steps/proteinmpnn_ensemble_score.ProteinmpnnEnsembleScoreStep.md",
     "status": "generated"
   },
   {
@@ -3987,6 +4017,16 @@
     "version": "1.0.0",
     "description": "Parse a set of SMILES and report the maximum common substructure (RDKit rdFMCS) with per-molecule matched and unmatched heavy atom counts.",
     "doc": "src/task/step/steps/rdkit_mcs.RdkitMcsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_mcs_cluster",
+    "kind": "operator",
+    "title": "RDKit MCS cluster",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute pairwise maximum common substructure similarity with RDKit and group the molecules by single-linkage clustering.",
+    "doc": "src/task/step/steps/rdkit_mcs_cluster.RdkitMcsClusterStep.md",
     "status": "generated"
   },
   {
