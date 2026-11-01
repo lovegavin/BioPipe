@@ -1,13 +1,14 @@
 # Unified main integration
 
 This source update establishes one current application and authoring protocol on
-`main`. Application version: **1.40.0**. SDK version: **3.1.0**. Operator protocol:
+`main`. Application version: **1.40.1**. SDK version: **3.1.0**. Operator protocol:
 **v3**. The latest previously published desktop binaries are a separate artifact;
 this integration does not claim to have rebuilt or accepted a new Windows EXE.
   release 1.38.0 adds side-chain chi angles, k-mer composition profiles, embedding PCA loadings, reaction SMARTS application and restriction-site scanning.
   release 1.39.0 adds per-residue surface hydrophobicity, six-frame ORF finding, Morgan atom-environment histograms, metal coordination shells and CDR length profiles.
   patch 1.39.1 fixes metal-shell indexing for ions that are not the first atom of the structure.
   release 1.40.0 adds backbone dihedral and Ramachandran classes, CA distance matrices, ring-system statistics, charge profiles and ligand burial.
+  patch 1.40.1 resolves the PDB fixture path relative to the test module so the dihedral oracle runs on Windows.
 
 ## Source ancestry
 

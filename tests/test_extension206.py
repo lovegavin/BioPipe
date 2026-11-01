@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import pytest
 from src.core.errors import StepError
@@ -172,7 +174,8 @@ def test_phi_psi_matches_biopython() -> None:
     from Bio.PDB.Polypeptide import PPBuilder
 
     parser = PDBParser(QUIET=True)
-    structure = parser.get_structure("x", "/home/gavin/BioPipe/tests/fixtures/backbone_1bc8_c60_75.pdb")
+    fixture = Path(__file__).resolve().parent / "fixtures" / "backbone_1bc8_c60_75.pdb"
+    structure = parser.get_structure("x", str(fixture))
     peptides = PPBuilder().build_peptides(structure)
     expected = [angle for peptide in peptides for angle in peptide.get_phi_psi_list()]
     form = _form(_backbone(4))
