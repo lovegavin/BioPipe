@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.38.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.39.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -82,7 +82,8 @@ Examples:
 1.36.1  patch: fall back to the repository vanilla_model_weights directory when no weights path is given
 1.37.0  expansion batch: ProteinMPNN per-position perplexity, Murcko scaffold diversity, embedding outlier scan, nucleotide GC profile, helix geometry
 1.38.0  expansion batch: side-chain chi angles, k-mer composition profiles, embedding PCA loadings, reaction SMARTS application, and restriction-site scans
-1.39.0  next expansion batch
+1.39.0  expansion batch: per-residue surface hydrophobicity, six-frame ORF finding, Morgan atom-environment histograms, metal coordination shells, and CDR length profiles
+1.40.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
 

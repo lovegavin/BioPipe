@@ -280,6 +280,16 @@
     "status": "generated"
   },
   {
+    "id": "antibody_cdr_length_profile",
+    "kind": "operator",
+    "title": "CDR length profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Reports Kabat CDR lengths, hydrophobic fraction and CDR3 net charge per sequence.",
+    "doc": "src/task/step/steps/antibody_cdr_length_profile.AntibodyCdrLengthProfileStep.md",
+    "status": "generated"
+  },
+  {
     "id": "antibody_cdr_motifs",
     "kind": "operator",
     "title": "Antibody CDR Liability Motifs",
@@ -4150,6 +4160,16 @@
     "status": "generated"
   },
   {
+    "id": "rdkit_atom_environment_histogram",
+    "kind": "operator",
+    "title": "Atom environment histogram",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Counts hashed Morgan atom environments per molecule and reports entropy.",
+    "doc": "src/task/step/steps/rdkit_atom_environment_histogram.RdkitAtomEnvironmentHistogramStep.md",
+    "status": "generated"
+  },
+  {
     "id": "rdkit_conformer_cluster",
     "kind": "operator",
     "title": "Conformer clustering",
@@ -4670,6 +4690,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_orf_finder",
+    "kind": "operator",
+    "title": "Six-frame ORF finder",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Finds open reading frames on both strands with a minimum length.",
+    "doc": "src/task/step/steps/sequence_orf_finder.SequenceOrfFinderStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_restriction_sites",
     "kind": "operator",
     "title": "Restriction site scan",
@@ -5030,6 +5060,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_metal_coordination",
+    "kind": "operator",
+    "title": "Metal coordination shells",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Reports coordinating atoms within a distance cutoff of each metal ion.",
+    "doc": "src/task/step/steps/structure_metal_coordination.StructureMetalCoordinationStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_packing_density",
     "kind": "operator",
     "title": "Structure packing density",
@@ -5067,6 +5107,16 @@
     "version": "1.0.0",
     "description": "Assign a three-state secondary structure (helix H, strand E, coil C) from backbone phi/psi dihedral angles with a smoothing window. Rows are contiguous segments with their 1-based start, end and length; the per-residue string is stored in info.",
     "doc": "src/task/step/steps/structure_secondary_structure.StructureSecondaryStructureStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_surface_hydrophobicity",
+    "kind": "operator",
+    "title": "Per-residue surface hydrophobicity",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Multiplies per-residue solvent-accessible area by the Kyte-Doolittle scale.",
+    "doc": "src/task/step/steps/structure_surface_hydrophobicity.StructureSurfaceHydrophobicityStep.md",
     "status": "generated"
   },
   {

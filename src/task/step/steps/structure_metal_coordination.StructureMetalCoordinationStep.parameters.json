@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {"type": "string", "default": "atom", "title": "原子维度", "x-ui-group": "basic", "x-ui-order": 0},
+    "field_dim": {"type": "string", "default": "field", "title": "字段维度", "x-ui-group": "basic", "x-ui-order": 10},
+    "ion_dim": {"type": "string", "default": "metal", "title": "金属维度", "x-ui-group": "basic", "x-ui-order": 20},
+    "cutoff": {"type": "number", "minimum": 1.5, "maximum": 4.0, "default": 2.8, "title": "配位距离（Å）", "x-ui-group": "basic", "x-ui-order": 30},
+    "output": {"type": "string", "default": "metal_sites", "title": "输出名称", "x-ui-group": "basic", "x-ui-order": 40}
+  }
+}

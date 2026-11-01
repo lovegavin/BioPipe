@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {"type": "string", "default": "sequence", "title": "序列维度", "x-ui-group": "basic", "x-ui-order": 0},
+    "position_dim": {"type": "string", "default": "position", "title": "位置维度", "x-ui-group": "basic", "x-ui-order": 10},
+    "orf_dim": {"type": "string", "default": "orf", "title": "ORF 维度", "x-ui-group": "basic", "x-ui-order": 20},
+    "min_length": {
+      "type": "integer", "minimum": 3, "maximum": 1000000, "default": 30,
+      "title": "最小长度（nt）", "x-ui-group": "basic", "x-ui-order": 30
+    },
+    "require_start": {
+      "type": "boolean", "default": true,
+      "title": "要求起始密码子", "x-ui-group": "advanced", "x-ui-order": 40
+    },
+    "output": {"type": "string", "default": "orfs", "title": "输出名称", "x-ui-group": "basic", "x-ui-order": 50}
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {"type": "string", "default": "atom", "title": "原子维度", "x-ui-group": "basic", "x-ui-order": 0},
+    "field_dim": {"type": "string", "default": "field", "title": "字段维度", "x-ui-group": "basic", "x-ui-order": 10},
+    "residue_dim": {"type": "string", "default": "residue", "title": "残基维度", "x-ui-group": "basic", "x-ui-order": 20},
+    "probe_radius": {
+      "type": "number", "minimum": 1.0, "maximum": 3.0, "default": 1.4,
+      "title": "探针半径", "description": "溶剂探针半径（Å）。",
+      "x-ui-group": "advanced", "x-ui-order": 30
+    },
+    "n_points": {
+      "type": "integer", "minimum": 32, "maximum": 1024, "default": 92,
+      "title": "球面采样点数", "x-ui-group": "advanced", "x-ui-order": 40
+    },
+    "exclude_resnames": {
+      "type": "string", "default": "HOH,WAT",
+      "title": "排除残基", "description": "逗号分隔的残基名（大小写不敏感）。",
+      "x-ui-group": "advanced", "x-ui-order": 50
+    },
+    "output": {"type": "string", "default": "surface_hydrophobicity", "title": "输出名称", "x-ui-group": "basic", "x-ui-order": 60}
+  }
+}
