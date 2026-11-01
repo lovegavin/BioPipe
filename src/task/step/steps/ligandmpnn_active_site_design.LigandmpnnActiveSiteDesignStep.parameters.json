@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "LigandMPNN 活性位点设计",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构路径",
+      "description": "包含配体的 PDB 文件路径。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "ligandmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "LigandMPNN 仓库",
+      "description": "官方 LigandMPNN 代码目录（包含 run.py）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重路径",
+      "description": "可选，ligand_mpnn 模型权重文件；留空时使用仓库默认 model_params。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "运行官方脚本的解释器，留空时使用当前解释器。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "ligand_resnames": {
+      "type": "string",
+      "default": "LIG",
+      "title": "配体残基名",
+      "description": "逗号分隔的配体残基名，例如 LIG,ATP。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "设计链",
+      "description": "逗号分隔的待设计链；留空表示全部蛋白质链。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "cutoff": {
+      "type": "number",
+      "default": 8.0,
+      "exclusiveMinimum": 0,
+      "maximum": 20.0,
+      "title": "活性位点半径",
+      "description": "配体周围被视为活性位点的距离阈值（埃）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "default": 8,
+      "minimum": 1,
+      "maximum": 500,
+      "title": "序列数",
+      "description": "每个结构生成的序列数量。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "temperature": {
+      "type": "number",
+      "default": 0.1,
+      "exclusiveMinimum": 0,
+      "maximum": 5.0,
+      "title": "采样温度",
+      "description": "LigandMPNN 采样温度。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "seed": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "title": "随机种子",
+      "description": "采样随机种子；0 在官方脚本中表示随机。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "device": {
+      "type": "string",
+      "default": "cpu",
+      "enum": ["cpu", "cuda"],
+      "title": "计算设备",
+      "description": "cpu 时通过 CUDA_VISIBLE_DEVICES 强制使用 CPU。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "timeout": {
+      "type": "integer",
+      "default": 1800,
+      "minimum": 10,
+      "maximum": 86400,
+      "title": "超时（秒）",
+      "description": "官方脚本的最长运行时间。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "default": "designs",
+      "title": "输出名称",
+      "description": "输出 Form 的名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    }
+  }
+}

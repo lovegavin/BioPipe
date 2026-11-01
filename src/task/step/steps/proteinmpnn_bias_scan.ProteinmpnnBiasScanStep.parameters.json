@@ -1,0 +1,137 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "ProteinMPNN 偏好扫描",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构路径",
+      "description": "用于设计的 PDB 文件路径。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 仓库",
+      "description": "官方 ProteinMPNN 代码目录（包含 protein_mpnn_run.py）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重路径",
+      "description": "可选模型权重；留空时使用仓库默认 vanilla_model_weights。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "运行官方脚本的解释器；留空时使用当前解释器。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "model_name": {
+      "type": "string",
+      "default": "v_48_020",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "title": "模型",
+      "description": "ProteinMPNN 模型变体。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "设计链",
+      "description": "逗号分隔的待设计链；留空表示全部链。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "bias": {
+      "type": "string",
+      "default": "W:1.5,C:-0.5",
+      "title": "氨基酸偏好",
+      "description": "逗号分隔的氨基酸偏好，例如 W:1.5,C:-0.5。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "default": 32,
+      "minimum": 2,
+      "maximum": 500,
+      "title": "序列数",
+      "description": "有偏与无偏两次采样各自的序列数量。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "temperature": {
+      "type": "number",
+      "default": 0.5,
+      "exclusiveMinimum": 0,
+      "maximum": 5.0,
+      "title": "采样温度",
+      "description": "采样温度越高，频率估计越稳定。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "seed": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "title": "随机种子",
+      "description": "两次采样共用的随机种子（0 表示随机）。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "device": {
+      "type": "string",
+      "default": "cpu",
+      "enum": ["cpu", "cuda"],
+      "title": "计算设备",
+      "description": "cpu 时通过 CUDA_VISIBLE_DEVICES 强制使用 CPU。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "timeout": {
+      "type": "integer",
+      "default": 1800,
+      "minimum": 10,
+      "maximum": 86400,
+      "title": "超时（秒）",
+      "description": "单次官方脚本运行的最长时间。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位点维度",
+      "description": "输出位点维度的名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "amino_acid_dim": {
+      "type": "string",
+      "default": "amino_acid",
+      "title": "氨基酸维度",
+      "description": "输出氨基酸维度的名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "output": {
+      "type": "string",
+      "default": "shift",
+      "title": "输出名称",
+      "description": "输出 Form 的名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    }
+  }
+}

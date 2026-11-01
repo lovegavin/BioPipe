@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "RDKit SMILES 增广",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "",
+      "title": "SMILES 列表",
+      "description": "每行一个 'SMILES [名称]'，空行与 # 注释会被忽略。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "description": "输出分子维度的名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "n_variants": {
+      "type": "integer",
+      "default": 5,
+      "minimum": 1,
+      "maximum": 200,
+      "title": "变体数量",
+      "description": "每个分子生成的随机 SMILES 数量。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "seed": {
+      "type": "integer",
+      "default": 42,
+      "minimum": 0,
+      "title": "随机种子",
+      "description": "RDKit 随机 SMILES 生成器的种子。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "default": "augment",
+      "title": "输出名称",
+      "description": "输出 Form 的名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    }
+  }
+}

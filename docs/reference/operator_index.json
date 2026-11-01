@@ -1580,6 +1580,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_if_position_entropy",
+    "kind": "operator",
+    "title": "ESM-IF Position Entropy",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sample the official ESM-IF1 inverse-folding model for a fixed backbone and report per-position sequence entropy, native recovery and consensus frequency.",
+    "doc": "src/task/step/steps/esm_if_position_entropy.EsmIfPositionEntropyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_if_redesign",
     "kind": "operator",
     "title": "ESM-IF Partial Redesign",
@@ -2730,6 +2740,16 @@
     "status": "generated"
   },
   {
+    "id": "ligandmpnn_active_site_design",
+    "kind": "operator",
+    "title": "LigandMPNN Active Site Design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Find the protein residues around a bound ligand and let the official LigandMPNN redesign only those positions while the rest of the structure stays fixed.",
+    "doc": "src/task/step/steps/ligandmpnn_active_site_design.LigandmpnnActiveSiteDesignStep.md",
+    "status": "generated"
+  },
+  {
     "id": "ligandmpnn_design",
     "kind": "operator",
     "title": "LigandMPNN Design",
@@ -3760,6 +3780,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_bias_scan",
+    "kind": "operator",
+    "title": "ProteinMPNN Bias Scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sample designs with and without an amino-acid bias using the official ProteinMPNN runner and report the per-position frequency shift induced by the bias.",
+    "doc": "src/task/step/steps/proteinmpnn_bias_scan.ProteinmpnnBiasScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_design",
     "kind": "operator",
     "title": "ProteinMPNN design",
@@ -4147,6 +4177,16 @@
     "version": "1.0.0",
     "description": "Match a list of SMARTS patterns against every input molecule and report the per-molecule match counts as a [molecule, pattern] matrix.",
     "doc": "src/task/step/steps/rdkit_smarts_matches.RdkitSmartsMatchesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_smiles_augment",
+    "kind": "operator",
+    "title": "RDKit SMILES Augment",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Enumerate seeded random SMILES strings for every molecule and report how many variants are unique along with their length statistics.",
+    "doc": "src/task/step/steps/rdkit_smiles_augment.RdkitSmilesAugmentStep.md",
     "status": "generated"
   },
   {

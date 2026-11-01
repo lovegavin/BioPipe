@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "ESM-IF 位点熵",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "PDB 结构中原子维度的名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "PDB 结构中原子字段维度的名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位点维度",
+      "description": "输出位点维度的名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "chain": {
+      "type": "string",
+      "default": "A",
+      "title": "链",
+      "description": "要评估的蛋白质链。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "model_path": {
+      "type": "string",
+      "default": "",
+      "title": "ESM-IF 权重路径",
+      "description": "本地 ESM-IF1 checkpoint 的路径，例如 esm_if1_gvp4_t16_142M_UR50.pt。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "num_samples": {
+      "type": "integer",
+      "default": 16,
+      "minimum": 2,
+      "maximum": 256,
+      "title": "采样数",
+      "description": "用于估计位点熵的 ESM-IF 采样序列数量。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "temperature": {
+      "type": "number",
+      "default": 0.1,
+      "exclusiveMinimum": 0,
+      "title": "采样温度",
+      "description": "ESM-IF 采样温度，0.1 接近贪心、1.0 更随机。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "seed": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "title": "随机种子",
+      "description": "采样前设置的 torch 随机种子，用于可复现结果。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "entropy",
+      "title": "输出名称",
+      "description": "输出 Form 的名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    }
+  }
+}
