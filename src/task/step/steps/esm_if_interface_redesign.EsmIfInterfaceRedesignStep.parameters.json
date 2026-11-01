@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "ESM-IF 界面重设计",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "结构输入的原子维度名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "结构输入的字段维度名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "binder_chains": {
+      "type": "string",
+      "default": "A",
+      "title": "Binder 链",
+      "description": "要重设计的链，只能选择一个。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "target_chains": {
+      "type": "string",
+      "default": "",
+      "title": "Target 链",
+      "description": "用于定义界面的链，留空时使用除 binder 外的所有链。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "cutoff": {
+      "type": "number",
+      "default": 8.0,
+      "exclusiveMinimum": 0,
+      "maximum": 20,
+      "title": "界面截断",
+      "description": "定义界面残基的原子间距离阈值（埃）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "model_path": {
+      "type": "string",
+      "default": "",
+      "title": "ESM-IF 权重",
+      "description": "本地 ESM-IF1 权重文件路径。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "num_samples": {
+      "type": "integer",
+      "default": 4,
+      "minimum": 1,
+      "maximum": 16,
+      "title": "采样数",
+      "description": "独立设计采样条数。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "temperature": {
+      "type": "number",
+      "default": 0.1,
+      "exclusiveMinimum": 0,
+      "maximum": 2.0,
+      "title": "采样温度",
+      "description": "ESM-IF 采样温度。",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "seed": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "title": "随机种子",
+      "description": "采样种子。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "designs",
+      "title": "输出名称",
+      "description": "输出 Form 的名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}

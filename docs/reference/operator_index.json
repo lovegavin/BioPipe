@@ -300,6 +300,16 @@
     "status": "generated"
   },
   {
+    "id": "antibody_cdr_redesign",
+    "kind": "operator",
+    "title": "CDR 固定框架重设计",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "保持 Kabat CDR 不变，用 ProteinMPNN 重设计抗体框架位点。",
+    "doc": "src/task/step/steps/antibody_cdr_redesign.AntibodyCdrRedesignStep.md",
+    "status": "generated"
+  },
+  {
     "id": "antibody_developability",
     "kind": "operator",
     "title": "Antibody developability panel",
@@ -1567,6 +1577,16 @@
     "version": "1.0.0",
     "description": "Sample sequences for a fixed protein backbone with the official ESM-IF1 inverse-folding model and score every design with the same model.",
     "doc": "src/task/step/steps/esm_if_design.EsmIfDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_if_interface_redesign",
+    "kind": "operator",
+    "title": "ESM-IF 界面重设计",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "只重设计复合物 binder 侧界面残基，其余位置保持原生序列。",
+    "doc": "src/task/step/steps/esm_if_interface_redesign.EsmIfInterfaceRedesignStep.md",
     "status": "generated"
   },
   {
@@ -3830,6 +3850,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_multi_model_consensus",
+    "kind": "operator",
+    "title": "ProteinMPNN 多模型共识",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "用多个 ProteinMPNN checkpoint 采样并汇总逐位点共识频率。",
+    "doc": "src/task/step/steps/proteinmpnn_multi_model_consensus.ProteinmpnnMultiModelConsensusStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_position_entropy",
     "kind": "operator",
     "title": "ProteinMPNN position entropy",
@@ -3857,6 +3887,16 @@
     "version": "1.0.0",
     "description": "Score a structure/sequence pair with the official ProteinMPNN runner in --score_only mode; returns mean and global negative log-likelihood per sequence.",
     "doc": "src/task/step/steps/proteinmpnn_score.ProteinmpnnScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_temperature_ladder",
+    "kind": "operator",
+    "title": "ProteinMPNN 温度梯度",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "在同一骨架上扫描多个采样温度，比较序列多样性与打分。",
+    "doc": "src/task/step/steps/proteinmpnn_temperature_ladder.ProteinmpnnTemperatureLadderStep.md",
     "status": "generated"
   },
   {

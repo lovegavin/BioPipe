@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "CDR 固定框架重设计",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构文件",
+      "description": "抗体结构 PDB 的路径。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 目录",
+      "description": "官方 ProteinMPNN 仓库路径，留空时读取 BIOPIPE_PROTEINMPNN_PATH。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录",
+      "description": "模型权重目录，留空时使用仓库下的 vanilla_model_weights。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "运行官方脚本的解释器，留空时使用当前解释器。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "model_name": {
+      "type": "string",
+      "default": "v_48_020",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "title": "模型",
+      "description": "ProteinMPNN 权重版本。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "default": 8,
+      "minimum": 1,
+      "maximum": 500,
+      "title": "设计数量",
+      "description": "每个骨架生成的设计条数。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "sampling_temp": {
+      "type": "string",
+      "default": "0.1",
+      "title": "采样温度",
+      "description": "ProteinMPNN 采样温度，例如 0.1。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "seed": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "title": "随机种子",
+      "description": "采样种子，0 表示随机种子。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "chain": {
+      "type": "string",
+      "default": "A",
+      "title": "抗体链",
+      "description": "用于识别 Kabat CDR 的链。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "device": {
+      "type": "string",
+      "default": "cpu",
+      "enum": ["cpu", "cuda"],
+      "title": "设备",
+      "description": "运行设备。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "timeout": {
+      "type": "number",
+      "default": 1800,
+      "minimum": 1,
+      "title": "超时秒数",
+      "description": "子进程超时时间。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "designs",
+      "title": "输出名称",
+      "description": "输出 Form 的名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}
