@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Linear discriminant analysis",
+  "description": "Fit a linear discriminant model on labelled samples and report classes, posteriors and discriminant scores.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the sample dimension shared by features and labels.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "Feature dimension",
+      "description": "Name of the feature dimension of the measurement table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "label_dim": {
+      "type": "string",
+      "default": "label",
+      "title": "Label dimension",
+      "description": "Name of the label dimension of the label table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 2
+    },
+    "target_label": {
+      "type": "string",
+      "title": "Target label column",
+      "description": "Label column that holds the class of each sample.",
+      "x-ui-group": "Input",
+      "x-ui-order": 3
+    },
+    "tol": {
+      "type": "number",
+      "default": 0.0001,
+      "title": "Singular value tolerance",
+      "description": "Threshold below which a singular value is treated as zero.",
+      "x-ui-group": "Method",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "default": "lda",
+      "title": "Output",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 100
+    }
+  },
+  "required": ["target_label"]
+}

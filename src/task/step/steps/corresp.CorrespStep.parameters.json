@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Correspondence analysis",
+  "description": "Simple correspondence analysis of a non-negative contingency table.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "row_dim": {
+      "type": "string",
+      "default": "row",
+      "title": "Row dimension",
+      "description": "Name of the contingency-table row dimension.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "column_dim": {
+      "type": "string",
+      "default": "column",
+      "title": "Column dimension",
+      "description": "Name of the contingency-table column dimension.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "n_components": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2,
+      "title": "Components",
+      "description": "Number of correspondence-analysis components to keep.",
+      "x-ui-group": "Method",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "default": "corresp",
+      "title": "Output",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 100
+    }
+  },
+  "required": []
+}

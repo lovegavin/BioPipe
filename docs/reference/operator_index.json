@@ -1000,6 +1000,16 @@
     "status": "generated"
   },
   {
+    "id": "corresp",
+    "kind": "operator",
+    "title": "Correspondence analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Simple correspondence analysis of a non-negative contingency table; the row standard coordinates are the output and the column scores, eigenvalues and proportions are reported in info.",
+    "doc": "src/task/step/steps/corresp.CorrespStep.md",
+    "status": "generated"
+  },
+  {
     "id": "correspondence_analysis",
     "kind": "operator",
     "title": "Correspondence analysis",
@@ -2380,6 +2390,16 @@
     "status": "generated"
   },
   {
+    "id": "lda",
+    "kind": "operator",
+    "title": "Linear discriminant analysis",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Linear discriminant analysis fit on all labelled samples; reports fitted classes, posteriors class scores and LD scores.",
+    "doc": "src/task/step/steps/lda.LdaStep.md",
+    "status": "generated"
+  },
+  {
     "id": "lda_classifier",
     "kind": "operator",
     "title": "Linear Discriminant Analysis classifier",
@@ -2867,6 +2887,16 @@
     "version": "1.0.0",
     "description": "All-pairwise Nemenyi comparisons using mean ranks.",
     "doc": "src/task/step/steps/nemenyi_test.NemenyiTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "nestedness",
+    "kind": "operator",
+    "title": "NODF nestedness",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Nestedness by overlap and decreasing fill (NODF) for a binary sample-by-taxon matrix, following the vegan nestednodf definition.",
+    "doc": "src/task/step/steps/nestedness.NestednessStep.md",
     "status": "generated"
   },
   {
@@ -3597,6 +3627,16 @@
     "version": "1.0.0",
     "description": "为一个维度更换名称。",
     "doc": "src/task/step/steps/rename_dim.RenameDimStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "renyi",
+    "kind": "operator",
+    "title": "Renyi diversity profiles",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Renyi generalised entropy of each sample across taxa for a requested set of alpha orders, following vegan renyi.",
+    "doc": "src/task/step/steps/renyi.RenyiStep.md",
     "status": "generated"
   },
   {

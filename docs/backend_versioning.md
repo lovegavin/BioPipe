@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.13.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.14.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -49,7 +49,8 @@ Examples:
 1.10.0  expansion batch: exact Poisson tests, binomial confidence intervals, chi-square goodness of fit and redundancy analysis
 1.12.0  expansion batch: Lilliefors, Cox-Stuart, Mann-Kendall rank and Pearson normality tests
 1.13.0  expansion batch: Mood scale test, two-sample F test, D'Agostino skewness and Anscombe-Glynn kurtosis tests
-1.14.0  next expansion batch
+1.14.0  expansion batch: linear discriminant analysis, simple correspondence analysis, nestedness and Rényi diversity
+1.15.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
 
