@@ -260,6 +260,16 @@
     "status": "generated"
   },
   {
+    "id": "antibody_cdr_hydrophobicity",
+    "kind": "operator",
+    "title": "Antibody CDR Hydrophobicity",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Summarize each Kabat CDR loop of a VHH/VH domain with hydrophobic fraction, longest hydrophobic run, Kyte-Doolittle hydrophobic moment and net charge.",
+    "doc": "src/task/step/steps/antibody_cdr_hydrophobicity.AntibodyCdrHydrophobicityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "antibody_cdr_kabat",
     "kind": "operator",
     "title": "Kabat CDR boundaries",
@@ -1530,6 +1540,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_if_mutation_scan",
+    "kind": "operator",
+    "title": "ESM-IF Mutation Scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score every single-residue substitution of a protein chain with the official ESM-IF1 inverse-folding model and report the log-likelihood ratio of each mutant against the native residue.",
+    "doc": "src/task/step/steps/esm_if_mutation_scan.EsmIfMutationScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_if_score",
     "kind": "operator",
     "title": "ESM-IF Score",
@@ -2267,6 +2287,16 @@
     "version": "1.0.0",
     "description": "Rank the residues of a binder-target interface by the number of cross-chain heavy-atom contacts, the closest contact distance and the solvent-accessible area they bury on complex formation.",
     "doc": "src/task/step/steps/interface_hotspots.InterfaceHotspotsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interface_hydrophobic_patch",
+    "kind": "operator",
+    "title": "Interface Hydrophobic Patches",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Cluster the binder residues that contact a target chain set into patches and report each patch's size, hydrophobic content and contact count.",
+    "doc": "src/task/step/steps/interface_hydrophobic_patch.InterfaceHydrophobicPatchStep.md",
     "status": "generated"
   },
   {
@@ -3890,6 +3920,16 @@
     "status": "generated"
   },
   {
+    "id": "rdkit_esol",
+    "kind": "operator",
+    "title": "RDKit ESOL Solubility",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Estimate aqueous molar solubility from SMILES with the Delaney/ESOL linear regression over cLogP, molecular weight, rotatable bonds and aromatic proportion.",
+    "doc": "src/task/step/steps/rdkit_esol.RdkitEsolStep.md",
+    "status": "generated"
+  },
+  {
     "id": "rdkit_mcs",
     "kind": "operator",
     "title": "Maximum common substructure",
@@ -3927,6 +3967,16 @@
     "version": "1.0.0",
     "description": "Parse a list of SMILES, build Morgan fingerprints and report the pairwise Tanimoto, Dice or cosine similarity as a symmetric molecule-by-molecule matrix.",
     "doc": "src/task/step/steps/rdkit_similarity.RdkitSimilarityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_smarts_matches",
+    "kind": "operator",
+    "title": "RDKit SMARTS Matches",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Match a list of SMARTS patterns against every input molecule and report the per-molecule match counts as a [molecule, pattern] matrix.",
+    "doc": "src/task/step/steps/rdkit_smarts_matches.RdkitSmartsMatchesStep.md",
     "status": "generated"
   },
   {

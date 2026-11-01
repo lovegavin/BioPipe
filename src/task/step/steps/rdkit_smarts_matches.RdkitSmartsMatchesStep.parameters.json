@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "description": "Count SMARTS pattern matches for every molecule in a SMILES list.",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "",
+      "title": "SMILES 列表",
+      "description": "One 'SMILES [name]' entry per line. Lines starting with # are comments.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "smarts": {
+      "type": "string",
+      "default": "",
+      "title": "SMARTS 模式",
+      "description": "One SMARTS pattern per line (semicolons also separate patterns).",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "unique": {
+      "type": "boolean",
+      "default": true,
+      "title": "唯一匹配",
+      "description": "Count unique atom matches rather than every symmetry-equivalent match.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "description": "Dim name assigned to the molecule axis on the output form.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "pattern_dim": {
+      "type": "string",
+      "default": "pattern",
+      "title": "模式维度",
+      "description": "Dim name assigned to the SMARTS pattern axis on the output form.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "smarts_matches",
+      "title": "输出名称",
+      "description": "Form name registered in the execution context.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  }
+}

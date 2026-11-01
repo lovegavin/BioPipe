@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.25.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.26.0** | Current backend source tree; expands the library within the 1.x contract line. |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -65,7 +65,8 @@ Examples:
 1.24.0  expansion batch: solvent-excluded contact networks, backbone hydrogen bonds, maximum common substructures, and LigandMPNN ligand-aware design and scoring
 1.24.1  patch: move the operator output metadata into open information so runner contract validation accepts the new forms
 1.25.0  expansion batch: ESM-IF inverse-folding design and scoring, interface contact maps, CDR physicochemical profiles, and RDKit tautomer canonicalization
-1.26.0  next expansion batch
+1.26.0  expansion batch: ESM-IF mutation scans, ESOL solubility, SMARTS match matrices, interface hydrophobic patches, and CDR hydrophobicity profiles
+1.27.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
 

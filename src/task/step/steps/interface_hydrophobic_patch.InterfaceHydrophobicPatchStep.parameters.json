@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "description": "Cluster contacting binder residues into hydrophobic patches at a chain interface.",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "Dim name of the structure form's atom axis.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "Dim name of the structure form's field axis.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "patch_dim": {
+      "type": "string",
+      "default": "patch",
+      "title": "斑块维度",
+      "description": "Dim name assigned to the patch axis on the output form.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "binder_chains": {
+      "type": "string",
+      "default": "A",
+      "title": "Binder 链",
+      "description": "Comma separated chains whose contacting residues are clustered.",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "target_chains": {
+      "type": "string",
+      "default": "",
+      "title": "Target 链",
+      "description": "Comma separated target chains. Leave empty to use every remaining chain.",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "cutoff": {
+      "type": "number",
+      "default": 4.5,
+      "exclusiveMinimum": 0,
+      "maximum": 10,
+      "title": "接触距离 (Å)",
+      "description": "Heavy-atom distance below which a binder residue contacts the target.",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "ca_cutoff": {
+      "type": "number",
+      "default": 10,
+      "exclusiveMinimum": 0,
+      "maximum": 30,
+      "title": "聚类距离 (Å)",
+      "description": "Single-linkage distance between residue anchors that joins two patches.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "min_residues": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "title": "最小残基数",
+      "description": "Discard patches with fewer residues than this.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "hydrophobic_resnames": {
+      "type": "string",
+      "default": "ALA,VAL,ILE,LEU,MET,PHE,TRP,TYR,CYS",
+      "title": "疏水残基",
+      "description": "Comma separated residue names counted as hydrophobic.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "exclude_resnames": {
+      "type": "string",
+      "default": "HOH,WAT",
+      "title": "排除残基",
+      "description": "Comma separated residue names ignored before computing contacts.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    },
+    "output": {
+      "type": "string",
+      "default": "patches",
+      "title": "输出名称",
+      "description": "Form name registered in the execution context.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    }
+  }
+}
