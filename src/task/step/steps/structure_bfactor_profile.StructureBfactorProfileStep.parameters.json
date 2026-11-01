@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "exclude_resnames": {
+      "type": "string",
+      "default": "HOH,WAT",
+      "title": "排除残基名",
+      "description": "Comma-separated residue names dropped before profiling.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "default": "output",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "additionalProperties": false
+}

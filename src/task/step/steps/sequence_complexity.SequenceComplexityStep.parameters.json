@@ -1,0 +1,45 @@
+{
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "window": {
+      "type": "integer",
+      "default": 20,
+      "minimum": 5,
+      "maximum": 200,
+      "title": "低复杂度窗口",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "low_complexity_entropy": {
+      "type": "number",
+      "default": 2.0,
+      "minimum": 0.0,
+      "maximum": 4.32,
+      "title": "低复杂度阈值 (bits)",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "default": "output",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "additionalProperties": false
+}
