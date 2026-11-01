@@ -860,6 +860,16 @@
     "status": "generated"
   },
   {
+    "id": "TpedReader",
+    "kind": "reader",
+    "title": "PLINK .tped genotype reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "PLINK 1.9 .tped/.tfam hard-call genotypes.",
+    "doc": "src/reader/readers/tped_reader.TpedReader.md",
+    "status": "generated"
+  },
+  {
     "id": "TsvReader",
     "kind": "reader",
     "title": "TsvReader",

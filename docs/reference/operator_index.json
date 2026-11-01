@@ -1070,6 +1070,16 @@
     "status": "generated"
   },
   {
+    "id": "cuzick",
+    "kind": "operator",
+    "title": "Cuzick's trend test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Rank-based test for a monotone trend across ordered groups.",
+    "doc": "src/task/step/steps/cuzick.CuzickTestStep.md",
+    "status": "generated"
+  },
+  {
     "id": "cuzick_test",
     "kind": "operator",
     "title": "Cuzick trend test",
@@ -1497,6 +1507,16 @@
     "version": "1.0.0",
     "description": "Fine-Gray subdistribution hazard regression.",
     "doc": "src/task/step/steps/fine_gray.FineGrayStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fisher_alpha",
+    "kind": "operator",
+    "title": "Fisher's alpha",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Fisher's log-series alpha diversity for each sample.",
+    "doc": "src/task/step/steps/fisher_alpha.FisherAlphaStep.md",
     "status": "generated"
   },
   {
@@ -2977,6 +2997,16 @@
     "version": "1.0.0",
     "description": "PCA loadings：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、标准化。",
     "doc": "src/task/step/steps/pca_loadings.PcaLoadingsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pcnm",
+    "kind": "operator",
+    "title": "Principal coordinates of neighbourhood matrices",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Classical MDS axes of a distance matrix truncated at the PCNM threshold.",
+    "doc": "src/task/step/steps/pcnm.PcnmStep.md",
     "status": "generated"
   },
   {

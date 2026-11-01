@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Cuzick's trend test",
+  "description": "Rank-based test for a monotone trend across ordered groups.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "Feature dimension",
+      "description": "Name of the feature axis in the expression table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the sample axis.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "group_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Metadata sample dimension",
+      "description": "Name of the sample axis in the metadata table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 2
+    },
+    "group_label": {
+      "type": "string",
+      "default": "group",
+      "title": "Group column",
+      "description": "Metadata column that holds the ordered group label.",
+      "x-ui-group": "Groups",
+      "x-ui-order": 0
+    },
+    "group_order": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Group order",
+      "description": "Explicit group order; defaults to the sorted labels.",
+      "x-ui-group": "Groups",
+      "x-ui-order": 1
+    },
+    "scores": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "title": "Group scores",
+      "description": "One score per group in the group order; defaults to 1, 2, ..., k.",
+      "x-ui-group": "Options",
+      "x-ui-order": 0
+    },
+    "alternative": {
+      "type": "string",
+      "enum": ["two-sided", "greater", "less"],
+      "default": "two-sided",
+      "title": "Alternative",
+      "description": "Direction of the ordered trend.",
+      "x-ui-group": "Options",
+      "x-ui-order": 1
+    },
+    "continuity": {
+      "type": "boolean",
+      "default": false,
+      "title": "Continuity correction",
+      "description": "Shift T by 0.5 towards its expectation before computing z.",
+      "x-ui-group": "Options",
+      "x-ui-order": 2
+    },
+    "output": {
+      "type": "string",
+      "default": "cuzick",
+      "title": "Output name",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 99
+    }
+  },
+  "required": ["group_label"]
+}

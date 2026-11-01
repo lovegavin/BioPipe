@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PCNM",
+  "description": "Classical MDS axes of a distance matrix truncated at the PCNM threshold.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the first distance axis.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "sample_b_dim": {
+      "type": "string",
+      "default": "sample_b",
+      "title": "Second sample dimension",
+      "description": "Name of the second distance axis.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "threshold": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "title": "Distance threshold",
+      "description": "Longer distances are replaced by four times this value. Defaults to the largest minimum-spanning-tree edge.",
+      "x-ui-group": "Options",
+      "x-ui-order": 0
+    },
+    "n_axes": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "title": "Number of axes",
+      "description": "Maximum number of positive axes to keep; 0 keeps every positive axis.",
+      "x-ui-group": "Options",
+      "x-ui-order": 1
+    },
+    "output": {
+      "type": "string",
+      "default": "pcnm",
+      "title": "Output name",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 99
+    }
+  },
+  "required": []
+}
