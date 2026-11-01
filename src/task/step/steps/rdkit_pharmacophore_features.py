@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import os
+import shutil
+import tempfile
 
 import numpy as np
 
@@ -25,17 +27,38 @@ _FEATURES = tuple(name for name, _ in _FAMILIES) + ("total",)
 _FACTORY = None
 
 
-def _factory():
-    global _FACTORY
-    if _FACTORY is not None:
-        return _FACTORY
+def _feature_file() -> str:
+    """Return an ASCII-safe path to the RDKit feature definitions.
+
+    RDKit's C++ file reader cannot open paths that contain non-ASCII characters,
+    which happens on Windows profiles with a localized user name, so the file is
+    copied into a shared ASCII directory when needed.
+    """
     from rdkit import RDConfig
-    from rdkit.Chem import ChemicalFeatures
 
     path = os.path.join(RDConfig.RDDataDir, "BaseFeatures.fdef")
     if not os.path.isfile(path):
         raise StepError(f"rdkit_pharmacophore_features: the RDKit feature definition file was not found at '{path}'")
-    _FACTORY = ChemicalFeatures.BuildFeatureFactory(path)
+    try:
+        path.encode("ascii")
+        return path
+    except UnicodeEncodeError:
+        pass
+    base = os.environ.get("ProgramData") or os.environ.get("PUBLIC") or tempfile.gettempdir()
+    target = os.path.join(base, "biopipe", "BaseFeatures.fdef")
+    if not os.path.isfile(target):
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        shutil.copyfile(path, target)
+    return target
+
+
+def _factory():
+    global _FACTORY
+    if _FACTORY is not None:
+        return _FACTORY
+    from rdkit.Chem import ChemicalFeatures
+
+    _FACTORY = ChemicalFeatures.BuildFeatureFactory(_feature_file())
     return _FACTORY
 
 
