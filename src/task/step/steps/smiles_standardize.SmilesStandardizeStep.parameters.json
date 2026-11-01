@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "",
+      "title": "SMILES 列表",
+      "description": "每行一个 'SMILES [名称]'，空行与 # 注释会被忽略。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "keep_largest_fragment": {
+      "type": "boolean",
+      "default": true,
+      "title": "保留最大片段",
+      "description": "去除盐离子与溶剂片段，只保留原子数最多的片段。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "neutralize": {
+      "type": "boolean",
+      "default": false,
+      "title": "中和电荷",
+      "description": "为 true 时用 RDKit Uncharger 中和可电离基团。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "description": "输出分子轴的维度名。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "default": "standardized",
+      "title": "输出名",
+      "description": "写入上下文的 Form 名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    }
+  }
+}

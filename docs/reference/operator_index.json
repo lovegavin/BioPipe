@@ -1480,6 +1480,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_embedding",
+    "kind": "operator",
+    "title": "ESM embeddings",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Load a local ESM2 checkpoint with fair-esm and return the mean-pooled final-layer embedding of every protein sequence in a sequence Form, ready for clustering, regression or visualization.",
+    "doc": "src/task/step/steps/esm_embedding.EsmEmbeddingStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_masked_marginal",
     "kind": "operator",
     "title": "ESM masked marginal",
@@ -2157,6 +2167,16 @@
     "version": "1.0.0",
     "description": "Integrated discrimination improvement：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Outcome Label、Old Risk Label、New Risk Label。",
     "doc": "src/task/step/steps/integrated_discrimination_improvement.IntegratedDiscriminationImprovementStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interface_bsa",
+    "kind": "operator",
+    "title": "Interface buried area",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute the solvent accessible surface area of two chain groups alone and in complex with a Shrake-Rupley algorithm, report the buried area of every interface residue, and rank the contact hot spots of a binder-target complex.",
+    "doc": "src/task/step/steps/interface_bsa.InterfaceBsaStep.md",
     "status": "generated"
   },
   {
@@ -3690,6 +3710,26 @@
     "status": "generated"
   },
   {
+    "id": "rdkit_descriptors",
+    "kind": "operator",
+    "title": "RDKit molecular descriptors",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Parse SMILES strings with RDKit and compute twelve standard descriptors (molecular weight, Crippen logP and molar refractivity, TPSA, hydrogen-bond donors and acceptors, rotatable bonds, ring counts, heavy and hetero atom counts and the fraction of sp3 carbons).",
+    "doc": "src/task/step/steps/rdkit_descriptors.RdkitDescriptorsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_morgan_fingerprint",
+    "kind": "operator",
+    "title": "Morgan fingerprint",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute the RDKit Morgan (extended connectivity) bit fingerprint for every SMILES string and return a [molecule, bit] matrix of 0/1 values that downstream clustering or machine-learning operators can consume.",
+    "doc": "src/task/step/steps/rdkit_morgan_fingerprint.RdkitMorganFingerprintStep.md",
+    "status": "generated"
+  },
+  {
     "id": "reduce",
     "kind": "operator",
     "title": "PCA / PCoA / UMAP / t-SNE",
@@ -4097,6 +4137,16 @@
     "version": "1.0.0",
     "description": "Skillings-Mack test for an arbitrary incomplete block design.",
     "doc": "src/task/step/steps/skillings_mack.SkillingsMackTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "smiles_standardize",
+    "kind": "operator",
+    "title": "Standardize SMILES",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Optionally keep the largest fragment, neutralize charges and write canonical RDKit SMILES for every input molecule.  The output is a [molecule, statistic] Form with atom, heavy-atom, fragment and ring counts; the canonical strings are exposed in info.canonical_smiles.",
+    "doc": "src/task/step/steps/smiles_standardize.SmilesStandardizeStep.md",
     "status": "generated"
   },
   {

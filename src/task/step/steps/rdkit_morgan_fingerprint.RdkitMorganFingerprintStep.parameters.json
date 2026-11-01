@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "",
+      "title": "SMILES 列表",
+      "description": "每行一个 'SMILES [名称]'，空行与 # 注释会被忽略。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "radius": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 6,
+      "default": 2,
+      "title": "Morgan 半径",
+      "description": "圆环指纹的扩展半径，常用 2。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "n_bits": {
+      "type": "integer",
+      "minimum": 64,
+      "maximum": 16384,
+      "default": 2048,
+      "title": "指纹位数",
+      "description": "哈希指纹的位数，默认 2048。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "use_features": {
+      "type": "boolean",
+      "default": false,
+      "title": "使用药效团特征",
+      "description": "为 true 时使用 RDKit 的药效团特征指纹。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "description": "输出分子轴的维度名。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "fingerprint",
+      "title": "输出名",
+      "description": "写入上下文的 Form 名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  }
+}
