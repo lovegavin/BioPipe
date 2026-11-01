@@ -1580,6 +1580,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_embedding_pca_loadings",
+    "kind": "operator",
+    "title": "Embedding PCA loadings",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Projects embeddings on principal components and reports per-feature loadings.",
+    "doc": "src/task/step/steps/esm_embedding_pca_loadings.EsmEmbeddingPcaLoadingsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_if_design",
     "kind": "operator",
     "title": "ESM-IF Design",
@@ -4260,6 +4270,16 @@
     "status": "generated"
   },
   {
+    "id": "rdkit_reaction_smarts_apply",
+    "kind": "operator",
+    "title": "Reaction SMARTS application",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Applies one or more reaction SMARTS to a SMILES collection and counts products.",
+    "doc": "src/task/step/steps/rdkit_reaction_smarts_apply.RdkitReactionSmartsApplyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "rdkit_sa_score",
     "kind": "operator",
     "title": "RDKit Synthetic Accessibility",
@@ -4640,6 +4660,26 @@
     "status": "generated"
   },
   {
+    "id": "sequence_kmer_profile",
+    "kind": "operator",
+    "title": "K-mer composition profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Summarises k-mer entropy, distinct fraction and the dominant k-mer per sequence.",
+    "doc": "src/task/step/steps/sequence_kmer_profile.SequenceKmerProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_restriction_sites",
+    "kind": "operator",
+    "title": "Restriction site scan",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Scans DNA sequences for common type II restriction sites and reports positions.",
+    "doc": "src/task/step/steps/sequence_restriction_sites.SequenceRestrictionSitesStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_stats",
     "kind": "operator",
     "title": "sequence_stats",
@@ -4927,6 +4967,16 @@
     "version": "1.0.0",
     "description": "",
     "doc": "src/task/step/steps/structure_cation_pi.StructureCationPiStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_chi_angles",
+    "kind": "operator",
+    "title": "Side-chain chi angles",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Computes chi1, chi2 and chi3 side-chain torsion angles for every residue.",
+    "doc": "src/task/step/steps/structure_chi_angles.StructureChiAnglesStep.md",
     "status": "generated"
   },
   {
