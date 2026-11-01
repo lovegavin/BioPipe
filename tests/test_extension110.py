@@ -166,7 +166,10 @@ def test_design_command_and_output(tmp_path):
 
     captured = json.loads((repo / "captured.json").read_text())
     argv = captured["argv"]
-    assert "--pdb_path" in argv and argv[argv.index("--pdb_path") + 1] == str(structure)
+    assert "--pdb_path" in argv
+    pdb_argument = argv[argv.index("--pdb_path") + 1]
+    assert pdb_argument == structure.as_posix()
+    assert "\\" not in pdb_argument
     assert argv[argv.index("--num_seq_per_target") + 1] == "4"
     assert argv[argv.index("--seed") + 1] == "7"
     assert argv[argv.index("--model_name") + 1] == "v_48_020"
@@ -190,7 +193,10 @@ def test_fixed_positions_parameter(tmp_path):
         "num_seq_per_target": 1,
     })
     captured = json.loads((repo / "captured.json").read_text())
-    assert captured["fixed"] == {str(structure): {"A": [1, 2]}}
+    argv = captured["argv"]
+    pdb_argument = argv[argv.index("--pdb_path") + 1]
+    assert captured["fixed"] == {pdb_argument: {"A": [1, 2]}}
+    assert pdb_argument == structure.as_posix()
 
 
 def test_design_errors(tmp_path):

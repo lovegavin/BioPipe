@@ -276,13 +276,13 @@ class ProteinMpnnDesignStep(Step):
         try:
             command = [
                 command_python,
-                str(runner),
-                "--pdb_path", str(structure_path),
-                "--out_folder", str(out_dir),
+                runner.as_posix(),
+                "--pdb_path", structure_path.as_posix(),
+                "--out_folder", out_dir.as_posix(),
                 "--num_seq_per_target", str(num_sequences),
                 "--sampling_temp", sampling_temp,
                 "--seed", str(seed),
-                "--path_to_model_weights", str(weights_path),
+                "--path_to_model_weights", weights_path.as_posix(),
                 "--model_name", model_name,
                 "--suppress_print", "1",
             ]
@@ -291,13 +291,15 @@ class ProteinMpnnDesignStep(Step):
             if fixed_positions:
                 fixed_jsonl = out_dir / "fixed_positions.jsonl"
                 payload = {
-                    str(structure_path): {
+                    structure_path.as_posix(): {
                         str(chain): positions
                         for chain, positions in fixed_positions.items()
                     }
                 }
                 fixed_jsonl.write_text(json.dumps(payload) + "\n", encoding="utf-8")
-                command.extend(["--fixed_positions_jsonl", str(fixed_jsonl)])
+                command.extend(
+                    ["--fixed_positions_jsonl", fixed_jsonl.as_posix()]
+                )
 
             environment = dict(os.environ)
             if device == "cpu":
