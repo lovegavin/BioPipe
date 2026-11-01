@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.5.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.6.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -42,8 +42,8 @@ Examples:
 1.2.0  expansion batch: Arrow reader, seasonal decomposition and Fst-family statistics
 1.3.0  expansion batch: Faith PD, UniFrac distances, patristic distance and PhyloXML
 1.4.0  expansion batch: causal-inference operators and a MuData reader
-1.5.0  expansion batch: tree construction, Robinson–Foulds and PLAGE scores
-1.6.0  next expansion batch
+1.6.0  expansion batch: SIMPER, MRPP, species accumulation and cophenetic correlation
+1.7.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
 

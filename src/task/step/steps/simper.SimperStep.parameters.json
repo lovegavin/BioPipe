@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SIMPER",
+  "description": "Per-taxon decomposition of the Bray-Curtis dissimilarity between two groups.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the sample dimension in the abundance table and metadata.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "title": "Taxon dimension",
+      "description": "Name of the taxon dimension in the abundance table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "group_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Metadata sample dimension",
+      "description": "Name of the sample dimension in the metadata table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 2
+    },
+    "group_label": {
+      "type": "string",
+      "default": "group",
+      "title": "Group column",
+      "description": "Metadata column that holds the group label.",
+      "x-ui-group": "Groups",
+      "x-ui-order": 0
+    },
+    "group_a": {
+      "type": "string",
+      "title": "Group A",
+      "description": "First group label; the contribution orientation uses A as the reference.",
+      "x-ui-group": "Groups",
+      "x-ui-order": 1
+    },
+    "group_b": {
+      "type": "string",
+      "title": "Group B",
+      "description": "Second group label; must differ from group A.",
+      "x-ui-group": "Groups",
+      "x-ui-order": 2
+    },
+    "output": {
+      "type": "string",
+      "default": "simper",
+      "title": "Output name",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 99
+    }
+  },
+  "required": ["group_label", "group_a", "group_b"]
+}

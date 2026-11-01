@@ -940,6 +940,16 @@
     "status": "generated"
   },
   {
+    "id": "cophenetic_correlation",
+    "kind": "operator",
+    "title": "Cophenetic correlation",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Pearson correlation between tree patristic and observed sample distances.",
+    "doc": "src/task/step/steps/cophenetic_correlation.CopheneticCorrelationStep.md",
+    "status": "generated"
+  },
+  {
     "id": "correction",
     "kind": "operator",
     "title": "FDR",
@@ -2660,6 +2670,16 @@
     "status": "generated"
   },
   {
+    "id": "mrpp",
+    "kind": "operator",
+    "title": "MRPP",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "MRPP chance-corrected within-group agreement with a permutation p-value.",
+    "doc": "src/task/step/steps/mrpp.MrppStep.md",
+    "status": "generated"
+  },
+  {
     "id": "multinomial_logit",
     "kind": "operator",
     "title": "Multinomial logistic regression",
@@ -3660,6 +3680,16 @@
     "status": "generated"
   },
   {
+    "id": "simper",
+    "kind": "operator",
+    "title": "SIMPER",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "SIMPER decomposition of Bray-Curtis dissimilarity between two groups.",
+    "doc": "src/task/step/steps/simper.SimperStep.md",
+    "status": "generated"
+  },
+  {
     "id": "site_frequency_spectrum",
     "kind": "operator",
     "title": "Site frequency spectrum",
@@ -3707,6 +3737,16 @@
     "version": "1.0.0",
     "description": "Somers' D with the row or column variable as dependent.",
     "doc": "src/task/step/steps/somers_d.SomersDStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "specaccum",
+    "kind": "operator",
+    "title": "Species accumulation",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Exact species accumulation curve and its conditioned standard deviation.",
+    "doc": "src/task/step/steps/specaccum.SpecaccumStep.md",
     "status": "generated"
   },
   {

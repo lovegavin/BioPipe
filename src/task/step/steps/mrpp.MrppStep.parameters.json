@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MRPP",
+  "description": "Multi-response permutation procedure with chance-corrected within-group agreement.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the sample dimension in the abundance table and metadata.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "title": "Taxon dimension",
+      "description": "Name of the taxon dimension in the abundance table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "group_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Metadata sample dimension",
+      "description": "Name of the sample dimension in the metadata table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 2
+    },
+    "group_label": {
+      "type": "string",
+      "default": "group",
+      "title": "Group column",
+      "description": "Metadata column that holds the group label.",
+      "x-ui-group": "Groups",
+      "x-ui-order": 0
+    },
+    "distance": {
+      "type": "string",
+      "default": "euclidean",
+      "enum": ["euclidean", "bray", "manhattan"],
+      "title": "Distance metric",
+      "description": "Distance between samples: euclidean, bray (Bray-Curtis) or manhattan.",
+      "x-ui-group": "Model",
+      "x-ui-order": 0
+    },
+    "n_perm": {
+      "type": "integer",
+      "default": 999,
+      "minimum": 9,
+      "maximum": 20000,
+      "title": "Permutations",
+      "description": "Number of group-label permutations used for the p-value.",
+      "x-ui-group": "Model",
+      "x-ui-order": 1
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "title": "Random seed",
+      "description": "Seed for the permutation generator.",
+      "x-ui-group": "Model",
+      "x-ui-order": 2
+    },
+    "output": {
+      "type": "string",
+      "default": "mrpp",
+      "title": "Output name",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 99
+    }
+  },
+  "required": ["group_label"]
+}
