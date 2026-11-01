@@ -1760,6 +1760,16 @@
     "status": "generated"
   },
   {
+    "id": "glmm_logistic",
+    "kind": "operator",
+    "title": "Logistic mixed model",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Binary logistic regression with a random intercept fitted by Laplace approximation (lme4 glmer nAGQ=1).",
+    "doc": "src/task/step/steps/glmm_logistic.GlmmLogisticStep.md",
+    "status": "generated"
+  },
+  {
     "id": "goldfeld_quandt",
     "kind": "operator",
     "title": "Goldfeld-Quandt test",
@@ -2250,6 +2260,16 @@
     "status": "generated"
   },
   {
+    "id": "knn",
+    "kind": "operator",
+    "title": "k nearest neighbours classifier",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "k nearest neighbours classifier with uniform or distance weights; reports test predictions and accuracy.",
+    "doc": "src/task/step/steps/knn.KnnStep.md",
+    "status": "generated"
+  },
+  {
     "id": "kpss_test",
     "kind": "operator",
     "title": "KPSS stationarity test",
@@ -2547,6 +2567,16 @@
     "version": "1.0.0",
     "description": "Mann-Whitney U test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、Alternative。",
     "doc": "src/task/step/steps/mann_whitney.MannWhitneyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "manova",
+    "kind": "operator",
+    "title": "One-way MANOVA",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "One-way MANOVA for one or more numeric responses with Pillai, Wilks, Hotelling-Lawley or Roy statistics, following R stats::summary.manova approximations.",
+    "doc": "src/task/step/steps/manova.ManovaStep.md",
     "status": "generated"
   },
   {
@@ -3257,6 +3287,16 @@
     "version": "1.0.0",
     "description": "Per-sample summary metrics along a feature axis.",
     "doc": "src/task/step/steps/qc_metrics.QcMetricsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "qda",
+    "kind": "operator",
+    "title": "Quadratic discriminant analysis",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Quadratic discriminant analysis with per-class covariance; reports test predictions, accuracy and confusion matrix.",
+    "doc": "src/task/step/steps/qda.QdaStep.md",
     "status": "generated"
   },
   {

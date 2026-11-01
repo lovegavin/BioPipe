@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.8.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.9.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -45,7 +45,8 @@ Examples:
 1.6.0  expansion batch: SIMPER, MRPP, species accumulation and cophenetic correlation
 1.7.0  expansion batch: Moran's I, indicator species, pairwise alignment and PDBML
 1.8.0  expansion batch: PCoN-M, Cuzick trend test, Fisher's alpha and a TPED reader
-1.9.0  next expansion batch
+1.9.0  expansion batch: MANOVA, quadratic discriminant analysis, k nearest neighbours and a logistic mixed model
+1.10.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
 
