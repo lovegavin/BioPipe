@@ -140,7 +140,7 @@ class StructureMetalCoordinationStep(Step):
             for index in ligand_positions
         ]
         rows = coordination_shell(
-            ion_positions, ligands, coords[ion_positions], coords[ligand_positions], cutoff
+            ion_positions, ligands, coords, coords[ligand_positions], cutoff
         )
         if not rows:
             raise StepError("structure_metal_coordination: no ligand atom is within the cutoff of a metal ion")

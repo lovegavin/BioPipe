@@ -111,3 +111,15 @@ def test_errors():
         _run(StructureMetalCoordinationStep(), {}, _form(far))
     with pytest.raises(StepError, match="is required"):
         _run(StructureMetalCoordinationStep(), {"field_dim": "other"}, form)
+
+def test_ion_positioned_after_ligands():
+    # The ion is the last atom: the shell lookup must index the full coordinate array.
+    rows = [
+        _row((2.0, 0.0, 0.0), "10", "HOH", "O", "O"),
+        _row((-2.0, 0.0, 0.0), "11", "HOH", "O", "O"),
+        _row((0.0, 0.0, 0.0), "401", "ZN", "ZN", "ZN"),
+    ]
+    out, _ = _run(StructureMetalCoordinationStep(), {"cutoff": 2.8}, _form(rows))
+    assert out.data.shape == (1, 5)
+    assert out.data[0, 0] == 2
+    assert out.labels["metal"] == {"A:ZN:401": 0}
