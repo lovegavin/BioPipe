@@ -1,0 +1,118 @@
+{
+  "type": "object",
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "minLength": 1,
+      "default": "",
+      "title": "PDB 结构路径",
+      "description": "Path to the PDB file passed to ProteinMPNN (needs atom names, so it cannot come from a PdbReader table form).",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 仓库路径",
+      "description": "Checkout containing protein_mpnn_run.py. Empty falls back to BIOPIPE_PROTEINMPNN_PATH.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录",
+      "description": "Directory with v_48_*.pt. Empty uses <proteinmpnn_path>/vanilla_model_weights.",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "model_name": {
+      "type": "string",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "default": "v_48_020",
+      "title": "模型",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 8,
+      "title": "设计条数",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "sampling_temp": {
+      "type": "string",
+      "default": "0.1",
+      "title": "采样温度",
+      "description": "ProteinMPNN accepts one temperature or a space separated list.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "设计链",
+      "description": "Chain letters for --pdb_path_chains, e.g. AB. Empty designs on all chains.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "fixed_positions": {
+      "type": "string",
+      "default": "",
+      "title": "固定位置",
+      "description": "Positions to keep fixed, e.g. A:1-20,B:5. Mutually exclusive with design_ranges.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "design_ranges": {
+      "type": "string",
+      "default": "",
+      "title": "设计区间",
+      "description": "Residues to redesign, e.g. A:97-110,A:26-33 (VHH CDRs). Everything else is held fixed.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "设备",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "Interpreter used for protein_mpnn_run.py. Empty uses the current interpreter.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 110
+    },
+    "timeout_seconds": {
+      "type": "number",
+      "minimum": 1,
+      "default": 1800,
+      "title": "超时秒数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 120
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 130
+    }
+  },
+  "additionalProperties": false
+}

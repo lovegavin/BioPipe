@@ -1480,6 +1480,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_masked_marginal",
+    "kind": "operator",
+    "title": "ESM masked marginal",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Mask one position at a time and report the wild-type and mutant probabilities and their log ratio under a local ESM checkpoint.",
+    "doc": "src/task/step/steps/esm_masked_marginal.EsmMaskedMarginalStep.md",
+    "status": "generated"
+  },
+  {
     "id": "eta_squared",
     "kind": "operator",
     "title": "Eta squared",
@@ -2500,6 +2510,16 @@
     "status": "generated"
   },
   {
+    "id": "ligand_contact_profile",
+    "kind": "operator",
+    "title": "Ligand contact profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "For every ligand atom report how many distinct receptor residues lie within a heavy-atom cutoff and the nearest contact residue.",
+    "doc": "src/task/step/steps/ligand_contact_profile.LigandContactProfileStep.md",
+    "status": "generated"
+  },
+  {
     "id": "lillie_test",
     "kind": "operator",
     "title": "Lilliefors normality test",
@@ -2797,6 +2817,16 @@
     "version": "1.0.0",
     "description": "Min-max scaling：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、分析维度。",
     "doc": "src/task/step/steps/min_max_scale.MinMaxScaleStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "minibinder_interface",
+    "kind": "operator",
+    "title": "Minibinder interface residues",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Count target residues within a heavy-atom distance cutoff of each binder residue and report the closest approach.",
+    "doc": "src/task/step/steps/minibinder_interface.MinibinderInterfaceStep.md",
     "status": "generated"
   },
   {
@@ -3477,6 +3507,16 @@
     "version": "1.0.0",
     "description": "Peptide to protein rollup：接收 2 个输入，输出 Form；主要参数：Peptide Dim、样本维度、Protein Dim、方法、Min Peptides。",
     "doc": "src/task/step/steps/protein_rollup.ProteinRollupStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_design",
+    "kind": "operator",
+    "title": "ProteinMPNN design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official ProteinMPNN protein_mpnn_run.py entry point on a PDB structure and return the designed sequences with their model scores.  Design ranges restrict which residues are redesigned.",
+    "doc": "src/task/step/steps/proteinmpnn_design.ProteinMpnnDesignStep.md",
     "status": "generated"
   },
   {

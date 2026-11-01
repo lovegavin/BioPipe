@@ -1,5 +1,14 @@
 {
   "type": "object",
-  "properties": {},
+  "properties": {
+    "alphabet": {
+      "type": "string",
+      "enum": ["auto", "dna", "rna", "protein"],
+      "default": "auto",
+      "title": "Alphabet",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    }
+  },
   "additionalProperties": true
 }

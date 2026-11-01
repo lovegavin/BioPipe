@@ -169,7 +169,7 @@ def test_pdb_reader(tmp_path):
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     reader = PdbReader()
     form = reader.read(path, ["atom", "field"], {"atom": "auto", "field": "builtin"})
-    assert form.data.shape == (2, 9)
+    assert form.data.shape == (2, 12)
     assert form.data[0, 0] == 10
     assert form.data[1, 1] == 21
     assert list(form.labels["atom"]) == ["atom:1", "atom:2"]

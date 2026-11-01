@@ -11,9 +11,16 @@
 >     axis 0 = sequence, axis 1 = position.
 >
 > Sequences of different lengths are padded with NaN to the maximum
-> length found in the file. Characters are encoded as integers:
+> length found in the file. Characters are encoded as integers. For
+> nucleotide input the legacy code table is used:
 >
 >     A=0, C=1, G=2, T=3, U=3, N=4, anything else=5
+>
+> When the alphabet is ``protein`` the twenty standard residues plus
+> ``*`` use the code table shared with the sequence operators
+> (``ACDEFGHIKLMNPQRSTVWY*`` -> 0..20) and every other residue
+> (``B``, ``X``, ``Z``, ``J``, ...) is stored as ``unknown_code`` 21
+> instead of the nucleotide code 5.
 >
 > Compression is handled by the framework; this reader sees plain
 > files only.
@@ -32,7 +39,8 @@
 >
 > The alphabet is inferred from the observed characters and recorded
 > in ``info["alphabet"]`` as one of ``"dna"``, ``"rna"`` or
-> ``"protein"``.
+> ``"protein"``. Pass ``alphabet`` (``auto``/``dna``/``rna``/``protein``)
+> to override the inference.
 >
 > Reference
 > ---------
@@ -43,6 +51,8 @@
 >
 >     missing_code      np.nan
 >     alphabet          "dna" | "rna" | "protein"
+>     alphabet_map      character -> integer code
+>     unknown_code      integer code used for unlisted characters
 >
 > Reader for .fasta / .fa / .fna / .faa files.
 

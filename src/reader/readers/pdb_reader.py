@@ -9,6 +9,11 @@ from src.core import Form, ReaderError
 from src.reader.base import Reader
 from src.reader.readers._table_common import table_form
 
+_FIELDS = (
+    "x", "y", "z", "occupancy", "bfactor", "residue_number",
+    "chain", "resname", "element", "atom_name", "altloc", "insertion_code",
+)
+
 
 class PdbReader(Reader):
     provider = 'biopipe-readers'
@@ -39,7 +44,6 @@ class PdbReader(Reader):
      'excludes_siblings': [],
      'handles_compression': False,
      'file_input': {'dims': ['atom', 'field'], 'labels': {'atom': 'auto', 'field': 'builtin'}}}
-
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:
@@ -78,6 +82,9 @@ class PdbReader(Reader):
                 "chain": line[21:22].strip() or "_",
                 "resname": line[17:20].strip() or "UNK",
                 "element": line[76:78].strip() or "X",
+                "atom_name": line[12:16].strip() or "X",
+                "altloc": line[16:17].strip() or "_",
+                "insertion_code": line[26:27].strip() or "_",
             })
             ids.append(f"atom:{serial}")
         if not rows:
@@ -87,5 +94,10 @@ class PdbReader(Reader):
             frame, dims, labels, "PDB",
             encoders_cfg=args.get("encoders") or {},
             row_labels=ids,
-            info_extra={"format": "PDB", "n_atoms": len(rows), "model": wanted_model or "all"},
+            info_extra={
+                "format": "PDB",
+                "n_atoms": len(rows),
+                "model": wanted_model or "all",
+                "fields": list(_FIELDS),
+            },
         )
