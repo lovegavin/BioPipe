@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StructureLigandBurialStep parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "ligand_dim": {
+      "type": "string",
+      "default": "ligand",
+      "title": "配体维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "ligand_resnames": {
+      "type": "string",
+      "default": "LIG",
+      "title": "配体残基名",
+      "description": "逗号分隔的配体残基名（HETATM 记录）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "链过滤",
+      "description": "只统计这些链；空表示全部链。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "probe_radius": {
+      "type": "number",
+      "default": 1.4,
+      "minimum": 1.0,
+      "maximum": 3.0,
+      "title": "探针半径 (A)",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "n_points": {
+      "type": "integer",
+      "default": 92,
+      "minimum": 32,
+      "maximum": 1024,
+      "title": "球面采样点",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "default": "burial",
+      "title": "输出参数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    }
+  }
+}

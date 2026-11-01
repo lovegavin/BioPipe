@@ -4170,6 +4170,16 @@
     "status": "generated"
   },
   {
+    "id": "rdkit_charge_profile",
+    "kind": "operator",
+    "title": "RDKit charge profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Reports formal charge, charged atom counts and Gasteiger charge summaries for each molecule.",
+    "doc": "src/task/step/steps/rdkit_charge_profile.RdkitChargeProfileStep.md",
+    "status": "generated"
+  },
+  {
     "id": "rdkit_conformer_cluster",
     "kind": "operator",
     "title": "Conformer clustering",
@@ -4297,6 +4307,16 @@
     "version": "1.0.0",
     "description": "Applies one or more reaction SMARTS to a SMILES collection and counts products.",
     "doc": "src/task/step/steps/rdkit_reaction_smarts_apply.RdkitReactionSmartsApplyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_ring_systems",
+    "kind": "operator",
+    "title": "RDKit ring systems",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Counts SSSR rings, aromatic rings, fused ring systems and spiro links, and reports the largest and mean ring size.",
+    "doc": "src/task/step/steps/rdkit_ring_systems.RdkitRingSystemsStep.md",
     "status": "generated"
   },
   {
@@ -4990,6 +5010,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_ca_distance_matrix",
+    "kind": "operator",
+    "title": "CA distance matrix",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Builds a symmetric residue-by-residue CA-CA distance matrix from a full-atom PDB form, optionally restricted to selected chains.",
+    "doc": "src/task/step/steps/structure_ca_distance_matrix.StructureCaDistanceMatrixStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_cation_pi",
     "kind": "operator",
     "title": "Cation-pi interactions",
@@ -5060,6 +5090,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_ligand_burial",
+    "kind": "operator",
+    "title": "Ligand burial",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Computes solvent-accessible surface area of each ligand residue alone and in the protein complex and reports the buried fraction.",
+    "doc": "src/task/step/steps/structure_ligand_burial.StructureLigandBurialStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_metal_coordination",
     "kind": "operator",
     "title": "Metal coordination shells",
@@ -5077,6 +5117,16 @@
     "version": "1.0.0",
     "description": "Measure how tightly each residue is packed: heavy-atom neighbours inside a sphere around the residue centre, the number of distinct neighbour residues, and atoms per cubic angstrom.",
     "doc": "src/task/step/steps/structure_packing_density.StructurePackingDensityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_phi_psi",
+    "kind": "operator",
+    "title": "Backbone phi/psi and Ramachandran regions",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Computes per-residue phi and psi dihedrals from a full-atom PDB form and labels each residue with a coarse Ramachandran region.",
+    "doc": "src/task/step/steps/structure_phi_psi.StructurePhiPsiStep.md",
     "status": "generated"
   },
   {

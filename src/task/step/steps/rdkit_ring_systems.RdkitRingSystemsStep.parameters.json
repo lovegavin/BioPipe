@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RdkitRingSystemsStep parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "title": "分子 SMILES",
+      "description": "每行一个 'SMILES [名称]'，行首 # 为注释。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "default": "rings",
+      "title": "输出参数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    }
+  },
+  "required": ["smiles"]
+}

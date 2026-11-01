@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StructureCaDistanceMatrixStep parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "other_residue_dim": {
+      "type": "string",
+      "default": "residue_b",
+      "title": "第二残基维度",
+      "description": "矩阵列方向的残基维度名，必须与 residue_dim 不同。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "链过滤",
+      "description": "逗号分隔的链；空表示全部链。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "ca_distances",
+      "title": "输出参数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  }
+}
