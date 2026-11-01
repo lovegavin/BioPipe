@@ -56,6 +56,7 @@ class OffReader(Reader):
                     'labels': {'element': 'auto', 'field': 'builtin'}}}
 
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
+        path = Path(path)
         if len(dims) != 2:
             raise ReaderError(f"OFF reader requires exactly two dims, got {dims}")
         element_dim, field_dim = dims

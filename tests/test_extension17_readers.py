@@ -193,3 +193,12 @@ def test_off_rejects_bad_input(tmp_path):
         _read(OffReader(), path)
     with pytest.raises(ReaderError, match="max_faces"):
         _read(OffReader(), FIXTURES / "quad.off", max_faces=1)
+
+
+def test_mesh_readers_accept_string_paths():
+    ply = _read(PlyReader(), str(FIXTURES / "tetra_le.ply"))
+    off = _read(OffReader(), str(FIXTURES / "quad.off"))
+    assert ply.info["n_vertices"] == 4
+    assert ply.info["n_faces"] == 4
+    assert off.info["n_vertices"] == 4
+    assert off.info["n_faces"] == 2
