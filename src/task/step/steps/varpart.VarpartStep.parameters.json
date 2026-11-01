@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Variance partitioning",
+  "description": "Partition the variance of a response matrix between two predictor tables.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the shared sample dimension of all three inputs.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "response_dim": {
+      "type": "string",
+      "default": "response",
+      "title": "Response dimension",
+      "description": "Name of the response variable dimension of the first input.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "predictor_dim": {
+      "type": "string",
+      "default": "predictor",
+      "title": "Predictor dimension",
+      "description": "Name of the predictor dimension of the second input.",
+      "x-ui-group": "Input",
+      "x-ui-order": 2
+    },
+    "predictor_b_dim": {
+      "type": "string",
+      "default": "predictor_b",
+      "title": "Second predictor dimension",
+      "description": "Name of the predictor dimension of the third input.",
+      "x-ui-group": "Input",
+      "x-ui-order": 3
+    },
+    "output": {
+      "type": "string",
+      "default": "varpart",
+      "title": "Output",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 100
+    }
+  },
+  "required": []
+}

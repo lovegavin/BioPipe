@@ -15,11 +15,11 @@ operators and readers, not a new route packaging format.
 | `biopipe-genetics` | 21 | QC, PCA, regression and correction |
 | `biopipe-expression` | 13 | Expression transformations and statistical analysis |
 | `biopipe-plots` | 12 | Plots, including survival curves |
-| `biopipe-microbiome` | 19 | Abundance diversity, distances, ordination, joins, PERMANOVA, correlation and composition |
-| `biopipe-readers` | 92 | File readers, including H5AD and MTX disk preparation |
+| `biopipe-microbiome` | 24 | Abundance diversity, distances, ordination, joins, PERMANOVA, correlation and composition |
+| `biopipe-readers` | 93 | File readers, including H5AD and MTX disk preparation |
 | `biopipe-hic` | 7 | Sequencing/contact file Readers and Hi-C processing |
 
-Counts describe the 1.14.0 factory library: 459 operators and 93 Readers. Installed
+Counts describe the 1.15.0 factory library: 462 operators and 94 Readers. Installed
 profiles may add, replace or disable providers; use `biopipe plugin list` for the
 active library rather than assuming these counts at runtime.
 

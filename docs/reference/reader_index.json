@@ -560,6 +560,16 @@
     "status": "generated"
   },
   {
+    "id": "MrcReader",
+    "kind": "reader",
+    "title": "Read an MRC/CCP4 volume",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read an MRC/CCP4 electron-microscopy volume as a matrix of slices by flattened in-plane voxels, preserving the header geometry and voxel size.",
+    "doc": "src/reader/readers/mrc_reader.MrcReader.md",
+    "status": "generated"
+  },
+  {
     "id": "MtxReader",
     "kind": "reader",
     "title": "MtxReader",

@@ -410,6 +410,16 @@
     "status": "generated"
   },
   {
+    "id": "betadiver",
+    "kind": "operator",
+    "title": "Beta diversity from presence/absence",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Pairwise beta diversity between samples from a presence/absence transformation of an abundance table, following vegan betadiver.",
+    "doc": "src/task/step/steps/betadiver.BetadiverStep.md",
+    "status": "generated"
+  },
+  {
     "id": "bh_adjust",
     "kind": "operator",
     "title": "Benjamini-Hochberg FDR",
@@ -4240,6 +4250,16 @@
     "status": "generated"
   },
   {
+    "id": "tsallis",
+    "kind": "operator",
+    "title": "Tsallis diversity profiles",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Tsallis generalised entropy of each sample across taxa for a requested set of q orders, following vegan tsallis.",
+    "doc": "src/task/step/steps/tsallis.TsallisStep.md",
+    "status": "generated"
+  },
+  {
     "id": "tsne",
     "kind": "operator",
     "title": "t-SNE",
@@ -4397,6 +4417,16 @@
     "version": "1.0.0",
     "description": "Orthogonal varimax rotation, matching ``stats::varimax``.",
     "doc": "src/task/step/steps/varimax_rotation.VarimaxRotationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "varpart",
+    "kind": "operator",
+    "title": "Variance partitioning",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Variance partitioning of a response matrix between two predictor tables, reported as adjusted R2 fractions [a], [b], [c] and [d] following vegan varpart.",
+    "doc": "src/task/step/steps/varpart.VarpartStep.md",
     "status": "generated"
   },
   {
