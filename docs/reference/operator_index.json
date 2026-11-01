@@ -280,6 +280,16 @@
     "status": "generated"
   },
   {
+    "id": "antibody_cdr_motifs",
+    "kind": "operator",
+    "title": "Antibody CDR Liability Motifs",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Scan the Kabat CDR regions of a VH/VHH sequence for N-glycosylation, deamidation, isomerization, oxidation and free-cysteine motifs and report the positions and per-region counts.",
+    "doc": "src/task/step/steps/antibody_cdr_motifs.AntibodyCdrMotifsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "antibody_cdr_physchem",
     "kind": "operator",
     "title": "CDR physicochemical profile",
@@ -3950,6 +3960,26 @@
     "status": "generated"
   },
   {
+    "id": "rdkit_oral_bioavailability",
+    "kind": "operator",
+    "title": "RDKit Oral Bioavailability Rules",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Evaluate the Lipinski, Veber and Egan rule sets for oral bioavailability from SMILES and report descriptor values, violations and a combined pass flag.",
+    "doc": "src/task/step/steps/rdkit_oral_bioavailability.RdkitOralBioavailabilityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_qed",
+    "kind": "operator",
+    "title": "RDKit QED",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute the Bickerton quantitative estimate of drug-likeness (QED) from SMILES together with the descriptor values that feed its desirability terms.",
+    "doc": "src/task/step/steps/rdkit_qed.RdkitQedStep.md",
+    "status": "generated"
+  },
+  {
     "id": "rdkit_scaffold",
     "kind": "operator",
     "title": "RDKit Bemis-Murcko scaffolds",
@@ -4197,6 +4227,16 @@
     "version": "1.0.0",
     "description": "Fit a seasonal ARIMA(p, d, q)(P, D, Q)s model by maximum likelihood.",
     "doc": "src/task/step/steps/sarima.SarimaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sasa_per_residue",
+    "kind": "operator",
+    "title": "Per-Residue SASA",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute the Shrake-Rupley solvent-accessible surface area of every residue in a full-atom structure with Bondi van der Waals radii and a 1.4 A probe.",
+    "doc": "src/task/step/steps/sasa_per_residue.SasaPerResidueStep.md",
     "status": "generated"
   },
   {

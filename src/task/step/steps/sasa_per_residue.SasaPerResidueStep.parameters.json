@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "description": "Compute per-residue solvent-accessible surface area with Shrake-Rupley sampling.",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "Dim name of the atom axis on the input PDB form.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "Dim name of the field axis on the input PDB form.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "description": "Dim name assigned to the residue axis on the output form.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "probe_radius": {
+      "type": "number",
+      "default": 1.4,
+      "minimum": 1.0,
+      "maximum": 3.0,
+      "title": "探针半径",
+      "description": "Solvent probe radius in angstrom.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "n_points": {
+      "type": "integer",
+      "default": 92,
+      "minimum": 32,
+      "maximum": 1024,
+      "title": "采样点数",
+      "description": "Number of sphere sample points per atom.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "exclude_resnames": {
+      "type": "string",
+      "default": "HOH,WAT",
+      "title": "排除残基名",
+      "description": "Comma separated residue names excluded from the surface calculation.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "sasa",
+      "title": "输出名称",
+      "description": "Form name registered in the execution context.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}
