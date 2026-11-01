@@ -18,10 +18,22 @@ import time
 import uuid
 
 from src.web.storage import FileLock, atomic_json
+from biopipe.bytecode import filesystem_path
 
 CHUNK_BYTES = 256 * 1024
 MAX_CHUNK_BYTES = 1024 * 1024
 SCAN_BYTES = 4 * 1024 * 1024
+
+
+def _io(path):
+    """Extend Windows I/O paths without resolving away links or leaking prefixes."""
+    return Path(filesystem_path(path, resolve=False))
+
+
+def _children(path):
+    # Iterating an extended path yields extended children. Keep protocol paths
+    # logical; only directory enumeration itself needs the native I/O spelling.
+    return (Path(path) / item.name for item in _io(path).iterdir())
 
 
 def digest(value):
@@ -53,7 +65,7 @@ def no_symlinks(path):
     path = Path(os.path.abspath(path))
     for item in (path, *path.parents):
         try:
-            info = item.lstat()
+            info = _io(item).lstat()
         except FileNotFoundError:
             continue
         if stat.S_ISLNK(info.st_mode) or getattr(info, 'st_file_attributes', 0) & 0x400:
@@ -63,7 +75,7 @@ def no_symlinks(path):
 
 def signature(path):
     no_symlinks(path)
-    info = Path(path).stat()
+    info = _io(path).stat()
     if not stat.S_ISREG(info.st_mode):
         raise ValueError('Transfers require regular files')
     return [info.st_size, info.st_mtime_ns, info.st_ctime_ns, info.st_dev, info.st_ino]
@@ -79,7 +91,7 @@ def open_file(path, mode='rb'):
     no_symlinks(path)
     flags = os.O_RDONLY if mode == 'rb' else os.O_RDWR | os.O_CREAT
     flags |= getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NOFOLLOW', 0)
-    fd = os.open(path, flags, 0o600)
+    fd = os.open(_io(path), flags, 0o600)
     try:
         if not stat.S_ISREG(os.fstat(fd).st_mode):
             raise ValueError('Transfers require regular files')
@@ -104,9 +116,9 @@ class TransferStore:
     def __init__(self, root, *, resolve_input=None, quota_bytes=None, min_free_bytes=0,
                  chunk_bytes=MAX_CHUNK_BYTES, scan_bytes=SCAN_BYTES):
         self.root = no_symlinks(root)
-        self.root.mkdir(parents=True, exist_ok=True, mode=0o700)
+        _io(self.root).mkdir(parents=True, exist_ok=True, mode=0o700)
         for name in ('objects', 'groups'):
-            self.owned(self.root/name).mkdir(exist_ok=True, mode=0o700)
+            _io(self.owned(self.root/name)).mkdir(exist_ok=True, mode=0o700)
         self.resolve_input = resolve_input
         self.quota_bytes = None if quota_bytes is None else number(quota_bytes, 'quota')
         self.min_free_bytes = number(min_free_bytes, 'reserved space')
@@ -125,12 +137,12 @@ class TransferStore:
     def locked(self):
         with self.mutex:
             lock = self.owned(self.root/'.lock')
-            with FileLock(lock):
+            with FileLock(_io(lock)):
                 yield
 
     def object(self, sha):
         path = self.owned(self.root/'objects'/digest(sha))
-        path.mkdir(exist_ok=True, mode=0o700)
+        _io(path).mkdir(exist_ok=True, mode=0o700)
         return path
 
     def read_json(self, path):
@@ -144,33 +156,33 @@ class TransferStore:
 
     def write_json(self, path, value):
         self.owned(path)
-        atomic_json(path, value)
+        atomic_json(_io(path), value)
         sync_directory(path.parent)
 
     def capacity(self, new_size=0, writing=0):
         reserved = remaining = 0
         inodes, copies = set(), []
-        for folder in (self.root/'objects').iterdir():
+        for folder in _children(self.root/'objects'):
             self.owned(folder)
             receipt = folder/'receipt.json'
-            if receipt.exists():
+            if _io(receipt).exists():
                 item = self.read_json(receipt)
                 size = number(item['bytes'])
                 reserved += size
                 remaining += max(0, size - number(item.get('offset', size)))
                 if self.quota_bytes is not None:
                     blob = folder/'blob'
-                    if blob.exists():
+                    if _io(blob).exists():
                         stamp = signature(blob)
                         inodes.add(tuple(stamp[3:]))
                     aliases = self.owned(folder/'files')
-                    if aliases.exists():
-                        copies.extend(aliases.iterdir())
+                    if _io(aliases).exists():
+                        copies.extend(_children(aliases))
         if self.quota_bytes is not None:
-            for group in (self.root/'groups').iterdir():
+            for group in _children(self.root/'groups'):
                 self.owned(group)
-                if group.is_dir():
-                    copies.extend(group.iterdir())
+                if _io(group).is_dir():
+                    copies.extend(_children(group))
             # A filesystem without hardlinks creates real extra copies. Charge
             # those bytes to the same quota, including unpublished copy tails.
             for path in copies:
@@ -179,7 +191,7 @@ class TransferStore:
                     reserved += stamp[0]; inodes.add(inode)
         if self.quota_bytes is not None and reserved + new_size > self.quota_bytes:
             raise OSError('Transfer cache quota exceeded')
-        if shutil.disk_usage(self.root).free < max(remaining + new_size, writing) + self.min_free_bytes:
+        if shutil.disk_usage(_io(self.root)).free < max(remaining + new_size, writing) + self.min_free_bytes:
             raise OSError('Insufficient free disk space for transfer reservations')
 
     def begin(self, sha256, bytes, name):
@@ -189,7 +201,7 @@ class TransferStore:
             receipt = folder/'receipt.json'
             blob, part = folder/'blob', folder/'partial'
             self.owned(blob); self.owned(part)
-            if receipt.exists():
+            if _io(receipt).exists():
                 record = self.read_json(receipt)
                 if record['sha256'] != sha or record['bytes'] != size:
                     raise ValueError('Transfer identity conflicts with an existing receipt')
@@ -197,7 +209,7 @@ class TransferStore:
                 self.capacity(new_size=size)
                 record = {'sha256': sha, 'bytes': size, 'offset': 0, 'complete': False}
                 self.write_json(receipt, record)
-            if blob.exists():
+            if _io(blob).exists():
                 if signature(blob)[0] != size:
                     raise ValueError('Cached content size differs from its identity')
                 offset = size
@@ -205,7 +217,7 @@ class TransferStore:
                 if record.get('complete'):
                     raise ValueError('Verified transfer object is missing')
                 offset = number(record['offset'])
-                if not part.exists() and offset:
+                if not _io(part).exists() and offset:
                     raise ValueError('Acknowledged transfer prefix is missing')
                 with open_file(part, 'r+b') as handle:
                     if os.fstat(handle.fileno()).st_size < offset:
@@ -214,7 +226,7 @@ class TransferStore:
                         handle.truncate(offset)
                         handle.flush(); os.fsync(handle.fileno())
             return {'sha256': sha, 'bytes': size, 'name': name, 'offset': offset,
-                    'complete': blob.exists(), 'chunk_bytes': self.chunk_bytes}
+                    'complete': _io(blob).exists(), 'chunk_bytes': self.chunk_bytes}
 
     def chunk(self, sha256, offset, base64_data, chunk_sha256):
         sha, offset = digest(sha256), number(offset, 'offset')
@@ -234,7 +246,7 @@ class TransferStore:
             expected = number(record['offset'])
             if offset > expected or offset + len(data) > record['bytes']:
                 raise ValueError('Transfer chunk is outside the acknowledged range')
-            path = folder/('blob' if (folder/'blob').exists() else 'partial')
+            path = folder/('blob' if _io(folder/'blob').exists() else 'partial')
             if offset < expected:
                 if offset + len(data) > expected:
                     raise ValueError('Transfer chunk overlaps the acknowledged boundary')
@@ -274,7 +286,7 @@ class TransferStore:
                     sha = digest(sha256)
                     folder = self.object(sha)
                     record = self.read_json(folder/'receipt.json')
-                    target = folder/('blob' if (folder/'blob').exists() else 'partial')
+                    target = folder/('blob' if _io(folder/'blob').exists() else 'partial')
                     count = record['bytes'] if prefix_bytes is None else number(prefix_bytes)
                     if count > record['offset'] or count > record['bytes']:
                         raise ValueError('Cannot verify an unacknowledged prefix')
@@ -304,9 +316,9 @@ class TransferStore:
                 raise ValueError('Transfer verification expired; restart verification')
             state['touched'] = time.monotonic()
             # Another sender may have atomically published this same inode.
-            if state['kind'] == 'upload' and not state['path'].exists():
+            if state['kind'] == 'upload' and not _io(state['path']).exists():
                 published = self.object(state['sha256'])/'blob'
-                if published.exists():
+                if _io(published).exists():
                     state['path'] = published
                     state['reused'] = True
             if content_signature(signature(state['path'])) != content_signature(state['snapshot']):
@@ -339,7 +351,7 @@ class TransferStore:
                 blob = folder/'blob'
                 if not state['reused']:
                     self.owned(blob)
-                    os.replace(state['path'], blob)
+                    os.replace(_io(state['path']), _io(blob))
                     sync_directory(folder)
                 record = self.read_json(folder/'receipt.json')
                 record.update(sha256=actual, bytes=state['total'], offset=state['total'],
@@ -347,14 +359,14 @@ class TransferStore:
                 self.write_json(folder/'receipt.json', record)
                 # Preserve Reader extension inference without duplicating content.
                 files = self.owned(folder/'files')
-                files.mkdir(exist_ok=True, mode=0o700)
+                _io(files).mkdir(exist_ok=True, mode=0o700)
                 alias = self.owned(files/state['name'])
-                if alias.exists():
-                    if not os.path.samefile(alias, blob) and signature(alias) != record.get('aliases', {}).get(state['name']):
+                if _io(alias).exists():
+                    if not os.path.samefile(_io(alias), _io(blob)) and signature(alias) != record.get('aliases', {}).get(state['name']):
                         raise ValueError('Transfer alias checksum identity changed')
                 else:
                     try:
-                        os.link(blob, alias)
+                        os.link(_io(blob), _io(alias))
                     except OSError:
                         self.capacity(writing=state['total'])
                         token = self.token({'kind': 'alias', 'source': blob, 'snapshot': signature(blob),
@@ -392,12 +404,12 @@ class TransferStore:
             raise ValueError('Filename materialization checksum mismatch')
         alias, folder = state['path'], state['source'].parent
         record = self.read_json(folder/'receipt.json')
-        if alias.exists():
+        if _io(alias).exists():
             if signature(alias) != record.get('aliases', {}).get(alias.name):
                 raise ValueError('Transfer alias changed during publication')
-            state['temporary'].unlink()
+            _io(state['temporary']).unlink()
         else:
-            os.replace(state['temporary'], alias); sync_directory(alias.parent)
+            os.replace(_io(state['temporary']), _io(alias)); sync_directory(alias.parent)
             record.setdefault('aliases', {})[alias.name] = signature(alias)
             self.write_json(folder/'receipt.json', record)
         self.tokens.pop(token, None)
@@ -428,7 +440,7 @@ class TransferStore:
         blob = folder/'blob'
         record = self.read_json(folder/'receipt.json')
         supplied = self.owned(value['path'])
-        same_content = os.path.samefile(supplied, blob) or (
+        same_content = os.path.samefile(_io(supplied), _io(blob)) or (
             supplied.parent == folder/'files' and signature(supplied) == record.get('aliases', {}).get(supplied.name))
         if (not supplied.is_relative_to(folder) or not record.get('complete')
                 or record['bytes'] != size or not same_content
@@ -456,7 +468,7 @@ class TransferStore:
                 key = hashlib.sha256(json.dumps([{k: e[k] for k in ('name', 'sha256', 'bytes')}
                                                 for e in entries], sort_keys=True).encode()).hexdigest()
                 target = self.owned(self.root/'groups'/key)
-                if target.exists():
+                if _io(target).exists():
                     receipt = self.read_json(target.with_suffix('.json'))
                     if any(content_signature(signature(target/e['name'])) !=
                            content_signature(receipt['snapshots'].get(e['name'], [])) for e in entries):
@@ -464,7 +476,7 @@ class TransferStore:
                     return {'done': True, 'path': str(target), 'paths': {e['name']: str(target/e['name']) for e in entries},
                             'reused': True}
                 temporary = self.owned(self.root/'groups'/('.partial-'+uuid.uuid4().hex))
-                temporary.mkdir(mode=0o700)
+                _io(temporary).mkdir(mode=0o700)
                 token = self.token({'kind': 'group', 'entries': entries, 'index': 0, 'offset': 0,
                                     'target': target, 'temporary': temporary})
             state = self.tokens.get(token)
@@ -479,9 +491,9 @@ class TransferStore:
                 sig = signature(source)
                 if sig[:2] + sig[3:] != item['snapshot'][:2] + item['snapshot'][3:]:
                     raise ValueError('Companion source changed')
-                if not dest.exists():
+                if not _io(dest).exists():
                     try:
-                        os.link(source, dest)
+                        os.link(_io(source), _io(dest))
                     except OSError:
                         self.capacity(writing=item['bytes'])
                     else:
@@ -514,17 +526,17 @@ class TransferStore:
             if done:
                 temporary, target = state['temporary'], state['target']
                 snapshots = {e['name']: signature(temporary/e['name']) for e in state['entries']}
-                if not target.exists():
-                    os.replace(temporary, target); sync_directory(target.parent)
+                if not _io(target).exists():
+                    os.replace(_io(temporary), _io(target)); sync_directory(target.parent)
                     self.write_json(target.with_suffix('.json'), {'snapshots': snapshots})
                 else:
                     receipt = self.read_json(target.with_suffix('.json'))
                     if any(content_signature(signature(target/e['name'])) !=
                            content_signature(receipt['snapshots'].get(e['name'], [])) for e in state['entries']):
                         raise ValueError('Published companion content changed')
-                    for item in temporary.iterdir():
-                        self.owned(item).unlink()
-                    temporary.rmdir()
+                    for item in _children(temporary):
+                        _io(self.owned(item)).unlink()
+                    _io(temporary).rmdir()
                 self.tokens.pop(token, None)
                 result.update(path=str(target), paths={e['name']: str(target/e['name']) for e in state['entries']}, reused=False)
             return result

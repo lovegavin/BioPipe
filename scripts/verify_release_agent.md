@@ -8,7 +8,7 @@ by launching a second analysis with the same submission identity.
 It never creates a canvas session, publishes a selection, or changes an existing
 user document. Backend results and actual EXE observations are separate evidence.
 
-Use the tested package's `backend` directory as `--code-root`, its Python runtime
+Use the package root containing `biopipe`, `src` and `scripts` as `--code-root`, its Python runtime
 as `--python` (or the selected external Python for Lite), and the profile's
 `workspace` directory as `--workspace`. Obtain the non-secret instance ID from
 `biopipe --workspace <workspace> service status` or its discovery file. Do not copy

@@ -5,16 +5,29 @@ from email.parser import BytesParser
 import importlib
 import inspect
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
 import zipfile
+from urllib.parse import quote
 
 from packaging.utils import canonicalize_name
 from biopipe.targets import TargetBuilder, invoke
+from biopipe.bytecode import filesystem_path
+
+
+def _wheel_argument(wheel):
+    path = Path(filesystem_path(wheel))
+    if os.name == 'nt' and len(str(path)) >= 260:
+        # pip's native-path -> file-URL conversion removes Windows' extended
+        # prefix. Encode it explicitly, leaving the wheel filename recognizable.
+        return 'file:' + quote(str(path.parent), safe='') + '/' + quote(path.name)
+    return str(path)
 
 
 def wheel_entries(wheel):
+    wheel = Path(filesystem_path(wheel))
     with zipfile.ZipFile(wheel) as archive:
         info = next(n for n in archive.namelist() if n.endswith('.dist-info/METADATA'))
         prefix = info.rsplit('/', 1)[0]
@@ -45,6 +58,7 @@ def execution_digest(wheel):
     import hashlib
     from biopipe_sdk.documentation import archive_path
     from biopipe_sdk.declarations import declaration_hash
+    wheel = Path(filesystem_path(wheel))
     records = wheel_entries(wheel)
     with zipfile.ZipFile(wheel) as archive:
         entries = {name: archive.read(name) for name in archive.namelist() if not name.endswith('/')}
@@ -119,12 +133,12 @@ def install(manager, current, packages, generation, *, dependencies=()):
     bundled_owners = {d['id']: d['distribution'] for d in bundled['descriptors']}
     builder = TargetBuilder(manager, current)
     environment = manager.directory / 'environments' / generation
-    environment.mkdir(parents=True)
+    Path(filesystem_path(environment)).mkdir(parents=True)
     code = environment / 'code'
     wheels = [p for p in packages if p.get('origin') != 'bundled']
     if wheels:
-        invoke([], 'pip', ['install', '--disable-pip-version-check', '--no-deps', '--no-compile', '--target', code,
-                           *[manager.directory / p['wheel'] for p in wheels]], environment, timeout=600)
+        invoke([], 'pip', ['install', '--disable-pip-version-check', '--no-deps', '--no-compile', '--target', filesystem_path(code),
+                           *[_wheel_argument(manager.directory / p['wheel']) for p in wheels]], environment, timeout=600)
     if wheels:
         from biopipe.bytecode import precompile
         precompile(code)

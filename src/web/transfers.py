@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 
 from biopipe.remote.transfers import (CHUNK_BYTES, MAX_CHUNK_BYTES, basename, digest,
-                                      no_symlinks, number, open_file, signature, sync_directory)
+                                      no_symlinks, number, open_file, signature, sync_directory, _io)
 from src.web.storage import FileLock, atomic_json
 
 
@@ -27,7 +27,7 @@ class TransferClient:
     def __init__(self, rpc, cache_dir, *, chunk_bytes=CHUNK_BYTES):
         self.rpc = rpc
         self.cache_dir = no_symlinks(cache_dir)
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        _io(self.cache_dir).mkdir(parents=True, exist_ok=True)
         self.chunk_bytes = min(MAX_CHUNK_BYTES, max(1, number(chunk_bytes)))
         # Raw bytes, base64, JSON/frame construction and compression overlap.
         # Orchestration reserves this headroom alongside worker allocations.
@@ -136,7 +136,7 @@ class TransferClient:
     def download(self, reference, destination, *, cancel=None, progress=None):
         import json
         path = self.owned(destination)
-        path.parent.mkdir(parents=True, exist_ok=True)
+        _io(path.parent).mkdir(parents=True, exist_ok=True)
         basename(path.name)
         check_cancel(cancel)
         ref = self.describe(reference, cancel=cancel, progress=progress)
@@ -144,15 +144,15 @@ class TransferClient:
         partial = self.owned(path.parent/(path.name+'.biopipe-part'))
         receipt = self.owned(path.parent/(path.name+'.biopipe-receipt.json'))
         lock = self.owned(path.parent/(path.name+'.biopipe-transfer.lock'))
-        with FileLock(lock):
-            if path.exists():
+        with FileLock(_io(lock)):
+            if _io(path).exists():
                 actual, _ = self.hash_file(path, cancel=cancel, progress=progress, phase='verifying')
                 if actual != sha:
                     raise ValueError('Download destination already contains different content')
                 self.report(progress, 'resumed', size, size, path, reused=True)
                 return {'path': str(path), 'sha256': sha, 'bytes': size, 'reused': True}
             record = {'sha256': sha, 'bytes': size, 'offset': 0}
-            if receipt.exists():
+            if _io(receipt).exists():
                 with open_file(receipt) as handle:
                     payload = handle.read(65537)
                 if len(payload) > 65536:
@@ -161,7 +161,7 @@ class TransferClient:
                 if record.get('sha256') != sha or record.get('bytes') != size:
                     raise ValueError('Download receipt belongs to different content')
             offset = number(record['offset'])
-            if offset > size or (offset and not partial.exists()):
+            if offset > size or (offset and not _io(partial).exists()):
                 raise ValueError('Acknowledged download prefix is missing')
             with open_file(partial, 'r+b') as handle:
                 if os.fstat(handle.fileno()).st_size < offset:
@@ -175,7 +175,7 @@ class TransferClient:
                 if actual != remote['sha256']:
                     raise ValueError('Cached download prefix checksum mismatch')
                 self.report(progress, 'resumed', offset, size, path)
-            atomic_json(receipt, record); sync_directory(receipt.parent)
+            atomic_json(_io(receipt), record); sync_directory(receipt.parent)
             with open_file(partial, 'r+b') as handle:
                 handle.seek(offset)
                 self.report(progress, 'downloading', offset, size, path)
@@ -194,14 +194,14 @@ class TransferClient:
                         raise ValueError('Download chunk checksum mismatch')
                     handle.write(data); handle.flush(); os.fsync(handle.fileno())
                     offset += len(data); record['offset'] = offset
-                    atomic_json(receipt, record); sync_directory(receipt.parent)
+                    atomic_json(_io(receipt), record); sync_directory(receipt.parent)
                     self.report(progress, 'downloading', offset, size, path)
             actual, _ = self.hash_file(partial, cancel=cancel, progress=progress, phase='verifying')
             if actual != sha:
                 raise ValueError('Full download checksum mismatch; file was not published')
             check_cancel(cancel)
-            os.replace(partial, path); sync_directory(path.parent)
-            receipt.unlink(missing_ok=True)
+            os.replace(_io(partial), _io(path)); sync_directory(path.parent)
+            _io(receipt).unlink(missing_ok=True)
             return {'path': str(path), 'sha256': sha, 'bytes': size, 'reused': False}
 
     def materialize(self, files, *, cancel=None, progress=None):

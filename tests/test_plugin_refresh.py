@@ -150,6 +150,40 @@ def test_dropins_hot_run_update_rollback_and_retained_pins(tmp_path, monkeypatch
     assert not any(p['name'] == 'lab-hello' for p in manager.state()['packages'])
 
 
+def test_long_cached_wheel_paths_support_reinstall_and_failed_transaction(tmp_path):
+    from biopipe.bytecode import filesystem_path
+    from biopipe.install_targets import execution_digest, wheel_entries
+
+    source = tmp_path / 'hello.py'
+    write_extension(source, REPORT)
+    wheel = single_file_wheel(source, tmp_path / 'wheel')
+    profile = tmp_path / ('profile_' + 'x' * max(1, 170 - len(str(tmp_path))))
+    manager = PluginManager(profile, source_root=None, manifest_only=True)
+    first = manager.install(wheel)
+    package = next(p for p in first['packages'] if p['origin'] == 'wheel')
+    cached = manager.directory / package['wheel']
+    assert len(str(cached)) > 260
+    assert not Path(package['wheel']).is_absolute()
+    assert not package['wheel'].startswith('\\\\?\\')
+    assert all(not Path(path).is_absolute() for path in first['code_paths'])
+    assert Path(filesystem_path(cached)).read_bytes() == wheel.read_bytes()
+    assert wheel_entries(cached)[0]['expected']['id'] == 'lab.hello'
+    assert execution_digest(cached) == package['execution_sha']
+
+    # Read the cached long path again, including the declaration-only branch.
+    second = manager.install(cached)
+    assert second['code_paths'] == first['code_paths']
+    duplicate = tmp_path / 'duplicate.py'
+    write_extension(duplicate, REPORT)
+    with pytest.raises(ValueError, match='same ID'):
+        manager.install(single_file_wheel(duplicate, tmp_path / 'duplicate-wheel'))
+    assert manager.state()['generation'] == second['generation']
+    _, summary = run_worker(manager, first, tmp_path / 'retained-run', {},
+                            [{'name': 'lab.hello', 'inputs': []}])
+    exported = tmp_path / 'retained-run/output' / summary['steps'][0]['export_path']
+    assert json.loads(exported.read_text()) == {'value': 1}
+
+
 def test_refresh_api_is_async_token_protected_and_reports_errors(tmp_path, monkeypatch):
     app = create_app(Settings(tmp_path, tmp_path / 's', ROOT / 'frontend/dist', testing=True))
     manager = app.state.service.plugins

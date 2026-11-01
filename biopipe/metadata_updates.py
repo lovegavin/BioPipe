@@ -27,6 +27,7 @@ def replace_declarations(state, declarations):
         new['declaration_sha'] = declaration_hash(new)
         validate_declaration(new)
         from pathlib import Path
+        from biopipe.bytecode import filesystem_path
         from biopipe_sdk.declarations import implementation_root
         from biopipe_sdk.drift import check_source
         relative = new['entry_point'].split(':')[0].replace('.', '/')
@@ -35,7 +36,9 @@ def replace_declarations(state, declarations):
             roots.append(implementation_root(new['entry_point']))
         except ValueError:
             pass
-        source = next((p for root in roots for p in (root / (relative + '.py'), root / relative / '__init__.py') if p.is_file()), None)
+        candidates = (Path(filesystem_path(p)) for root in roots
+                      for p in (root / (relative + '.py'), root / relative / '__init__.py'))
+        source = next((p for p in candidates if p.is_file()), None)
         if source is None:
             raise ValueError('Cannot validate installed implementation: ' + new['id'])
         errors, warnings = check_source(source.read_text(encoding='utf-8'), new)

@@ -23,6 +23,7 @@ from packaging.utils import canonicalize_name
 from biopipe_sdk.protocol import PROTOCOL_VERSION, catalog_entry
 from src.web.storage import FileLock, atomic_json
 from biopipe.packages import bundled_manifest, bundled_state, owns_builtin_id
+from biopipe.bytecode import filesystem_path
 
 
 def require_current_state(value):
@@ -333,7 +334,7 @@ class PluginManager:
         packages = deepcopy(current["packages"])
         replacements = set()
         for wheel in wheels:
-            wheel = Path(wheel).resolve(strict=True)
+            wheel = Path(filesystem_path(wheel)).resolve(strict=True)
             if wheel.suffix.lower() != ".whl":
                 raise ValueError("Install a built .whl package; use plugin build for a source directory")
             with wheel.open("rb") as source:
@@ -351,14 +352,17 @@ class PluginManager:
                 raise ValueError(f"More than one input supplies package {name}; keep one version in the plugin folder")
             replacements.add(name)
             cached = self.directory / "packages" / digest / wheel.name
-            cached.parent.mkdir(parents=True, exist_ok=True)
-            if not cached.exists():
-                shutil.copy2(wheel, cached)
+            # Native Windows I/O needs the extended path; persisted wheel paths
+            # stay relative to the logical profile so archives remain portable.
+            cached_io = Path(filesystem_path(cached))
+            cached_io.parent.mkdir(parents=True, exist_ok=True)
+            if not cached_io.exists():
+                shutil.copy2(wheel, cached_io)
             previous = next((item for item in packages if item["name"] == name), {})
             from biopipe.install_targets import execution_digest
-            execution_sha = execution_digest(cached)
+            execution_sha = execution_digest(cached_io)
             from biopipe.operator_docs import cache_wheel
-            cache_wheel(self, cached)
+            cache_wheel(self, cached_io)
             packages = [item for item in packages if item["name"] != name]
             packages.append({"protocol_version": PROTOCOL_VERSION, "origin": "wheel", "enabled": previous.get("enabled", True),
                              "name": name, "version": info["Version"], "sha256": digest,

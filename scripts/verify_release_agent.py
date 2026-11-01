@@ -98,6 +98,14 @@ class Acceptance:
             self.check(tool + ' rejected', denied)
             return None
         assert not result.isError, text
+        if tool == 'biopipe_sessions':
+            # FastMCP represents a list as structured result and may emit each
+            # item in its own text block (one item is not a JSON array).
+            structured = getattr(result, 'structuredContent', None)
+            if isinstance(structured, dict) and isinstance(structured.get('result'), list):
+                return structured['result']
+            values = [json.loads(item.text) for item in result.content if hasattr(item, 'text')]
+            return values[0] if len(values) == 1 and isinstance(values[0], list) else values
         return json.loads(text)
 
     def fixture(self):
@@ -278,7 +286,7 @@ def main():
     parser.add_argument('--instance', required=True)
     parser.add_argument('--evidence', type=Path, required=True)
     parser.add_argument('--session')
-    parser.add_argument('--version', default='0.116.0')
+    parser.add_argument('--version', default='0.116.1')
     parser.add_argument('--allow-headless', action='store_true', help='Development smoke only; never label this an EXE UI test')
     args = parser.parse_args()
     try:

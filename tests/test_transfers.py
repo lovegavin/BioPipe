@@ -232,3 +232,77 @@ def test_read_and_scan_work_are_bounded(tmp_path, monkeypatch):
     assert scans[0] <= 31 and all(b-a <= 31 for a, b in zip(scans, scans[1:]))
     with pytest.raises(ValueError, match='chunk limit'):
         store.read(result['path'], signature(Path(result['path'])), 0, 18)
+
+
+def test_deep_cache_copy_fallback_receipts_and_companions(tmp_path, monkeypatch):
+    """Windows MAX_PATH must not break durable copy fallback or cache reuse."""
+    from biopipe.bytecode import filesystem_path
+    root = tmp_path / 'remote-cache'
+    while len(str(root)) < 300:
+        root /= 'nested-cache-' + 'x' * 48
+    payload = bytes(range(256)) * 3
+    original = source(tmp_path, payload, 'input.vcf.gz')
+    fallback_calls = []
+    def no_hardlinks(*args, **kwargs):
+        fallback_calls.append(args)
+        raise PermissionError('Synthetic filesystem does not support hardlinks')
+    monkeypatch.setattr(os, 'link', no_hardlinks)
+    store = TransferStore(root, resolve_input=lambda value: Path(value),
+                          chunk_bytes=127, scan_bytes=191, quota_bytes=8192)
+    client = TransferClient(store.dispatch, tmp_path / 'local-cache', chunk_bytes=113)
+    result = client.upload(original)
+    assert len(result['path']) > 260 and not result['path'].startswith('\\\\?\\')
+    assert Path(filesystem_path(result['path'], resolve=False)).read_bytes() == payload
+    assert fallback_calls
+    receipt = root / 'objects' / result['sha256'] / 'receipt.json'
+    record = json.loads(Path(filesystem_path(receipt, resolve=False)).read_text())
+    assert record['complete'] and record['offset'] == len(payload)
+    assert 'input.vcf.gz' in record['aliases']
+    # New server state must reuse durable receipts without resending chunks.
+    restarted = TransferStore(root, resolve_input=lambda value: Path(value),
+                              chunk_bytes=127, scan_bytes=191, quota_bytes=8192)
+    calls = []
+    def observed(method, params):
+        calls.append(method)
+        return restarted.dispatch(method, params)
+    client.rpc = observed
+    again = client.upload(original)
+    assert again['reused'] and again['path'] == result['path']
+    assert 'transfer_chunk' not in calls
+    files = [{'name': 'renamed.vcf.gz', 'reference': again}]
+    group = client.materialize(files)
+    assert Path(filesystem_path(group['paths']['renamed.vcf.gz'], resolve=False)).read_bytes() == payload
+    assert not group['path'].startswith('\\\\?\\')
+    assert client.materialize(files)['reused']
+    downloaded = client.download(again, 'roundtrip.vcf.gz')
+    assert Path(downloaded['path']).read_bytes() == payload
+    assert client.download(again, 'roundtrip.vcf.gz')['reused']
+    with pytest.raises(ValueError, match='owned cache'):
+        restarted.owned(tmp_path / 'outside')
+
+
+def test_deep_local_download_cache_resumes_and_reuses_receipt(tmp_path):
+    from biopipe.bytecode import filesystem_path
+    cache = tmp_path / 'downloads'
+    while len(str(cache)) < 300:
+        cache /= 'nested-download-' + 'x' * 45
+    path = source(tmp_path, bytes(range(256)) * 5, 'server-input.pairs.gz')
+    store = TransferStore(tmp_path / 'remote', resolve_input=lambda value: Path(value),
+                          chunk_bytes=127, scan_bytes=191)
+    client = TransferClient(store.dispatch, cache, chunk_bytes=97)
+    cancel = threading.Event()
+    def progress(event):
+        if event['phase'] == 'downloading' and event['bytes_done'] >= 97:
+            cancel.set()
+    with pytest.raises(TransferCancelled):
+        client.download(str(path), 'downloaded.pairs.gz', cancel=cancel, progress=progress)
+    receipt = cache / 'downloaded.pairs.gz.biopipe-receipt.json'
+    assert json.loads(Path(filesystem_path(receipt, resolve=False)).read_text())['offset'] == 97
+    restarted = TransferClient(store.dispatch, cache, chunk_bytes=97)
+    events = []
+    result = restarted.download(str(path), 'downloaded.pairs.gz', progress=events.append)
+    assert any(event['phase'] == 'resumed' and event['bytes_done'] == 97 for event in events)
+    assert not result['path'].startswith('\\\\?\\')
+    assert Path(filesystem_path(result['path'], resolve=False)).read_bytes() == path.read_bytes()
+    assert not Path(filesystem_path(receipt, resolve=False)).exists()
+    assert restarted.download(str(path), 'downloaded.pairs.gz')['reused']
