@@ -1,0 +1,62 @@
+{
+  "type": "object",
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "segment_dim": {
+      "type": "string",
+      "default": "segment",
+      "title": "片段维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "window": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 21,
+      "default": 5,
+      "title": "平滑窗口",
+      "description": "在该窗口内按最小比例投票平滑三态，并丢弃短于窗口的螺旋/折叠片段。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "min_helix_fraction": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "default": 0.6,
+      "title": "螺旋最小比例",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "min_strand_fraction": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "default": 0.5,
+      "title": "折叠最小比例",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "segments",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  },
+  "additionalProperties": false
+}

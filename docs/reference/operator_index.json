@@ -3830,6 +3830,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_design_diversity",
+    "kind": "operator",
+    "title": "ProteinMPNN design diversity",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official ProteinMPNN runner and quantify how diverse the sampled designs are: per-design mean/min/nearest identity and a single-linkage cluster identifier at an identity threshold.",
+    "doc": "src/task/step/steps/proteinmpnn_design_diversity.ProteinmpnnDesignDiversityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_design_profile",
     "kind": "operator",
     "title": "ProteinMPNN design profile",
@@ -4147,6 +4157,16 @@
     "version": "1.0.0",
     "description": "Estimate aqueous molar solubility from SMILES with the Delaney/ESOL linear regression over cLogP, molecular weight, rotatable bonds and aromatic proportion.",
     "doc": "src/task/step/steps/rdkit_esol.RdkitEsolStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_fragment_overlap",
+    "kind": "operator",
+    "title": "RDKit fragment overlap",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compare two molecule groups through their BRICS fragment sets: the output is the Jaccard overlap (shared / union) of every molecule of the first group against every molecule of the second group. Groups are given as 'SMILES [name]' lines.",
+    "doc": "src/task/step/steps/rdkit_fragment_overlap.RdkitFragmentOverlapStep.md",
     "status": "generated"
   },
   {
@@ -4870,6 +4890,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_contact_order",
+    "kind": "operator",
+    "title": "Structure contact order",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute the absolute and relative contact order of a protein from CA-CA contacts. Rows report per-residue contact counts and mean sequence separation; the info carries the absolute contact order (mean sequence separation divided by chain length) and the relative contact order.",
+    "doc": "src/task/step/steps/structure_contact_order.StructureContactOrderStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_contacts",
     "kind": "operator",
     "title": "Residue contact network",
@@ -4927,6 +4957,16 @@
     "version": "1.0.0",
     "description": "Find salt bridges from the distance between charged side-chain group centroids of ASP/GLU and LYS/ARG/HIS residues.",
     "doc": "src/task/step/steps/structure_salt_bridges.StructureSaltBridgesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_secondary_structure",
+    "kind": "operator",
+    "title": "Structure secondary structure",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Assign a three-state secondary structure (helix H, strand E, coil C) from backbone phi/psi dihedral angles with a smoothing window. Rows are contiguous segments with their 1-based start, end and length; the per-residue string is stored in info.",
+    "doc": "src/task/step/steps/structure_secondary_structure.StructureSecondaryStructureStep.md",
     "status": "generated"
   },
   {

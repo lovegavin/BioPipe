@@ -1,0 +1,51 @@
+{
+  "type": "object",
+  "properties": {
+    "smiles_a": {
+      "type": "string",
+      "default": "",
+      "title": "分子组 A",
+      "description": "每行一个 'SMILES [name]'；名称可省略。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "smiles_b": {
+      "type": "string",
+      "default": "",
+      "title": "分子组 B",
+      "description": "每行一个 'SMILES [name]'；名称可省略。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "min_fragment_size": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 4,
+      "title": "最小片段重原子数",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "molecule_a_dim": {
+      "type": "string",
+      "default": "molecule_a",
+      "title": "组 A 分子维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "molecule_b_dim": {
+      "type": "string",
+      "default": "molecule_b",
+      "title": "组 B 分子维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "fragment_overlap",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  },
+  "additionalProperties": false
+}

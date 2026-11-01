@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "cutoff": {
+      "type": "number",
+      "default": 8.0,
+      "exclusiveMinimum": 0,
+      "title": "接触截断 (Å)",
+      "description": "CA–CA 距离不超过该值视为接触。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "min_separation": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 3,
+      "title": "最小序列间隔",
+      "description": "只统计序列间隔不小于该值的残基对，避免相邻残基的平凡接触。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "contact_order",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  },
+  "additionalProperties": false
+}
