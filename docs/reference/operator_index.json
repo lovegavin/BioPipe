@@ -1440,6 +1440,16 @@
     "status": "generated"
   },
   {
+    "id": "faith_pd",
+    "kind": "operator",
+    "title": "Faith's phylogenetic diversity",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Faith's PD：接收 2 个输入，输出 Form；主要参数：样本维度、类群维度、节点维度、字段维度。",
+    "doc": "src/task/step/steps/faith_pd.FaithPdStep.md",
+    "status": "generated"
+  },
+  {
     "id": "filter_by",
     "kind": "operator",
     "title": "Filter by metrics",
@@ -2840,6 +2850,16 @@
     "status": "generated"
   },
   {
+    "id": "patristic_distance",
+    "kind": "operator",
+    "title": "Patristic distance",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Patristic distance：接收 1 个输入，输出 tip × tip 距离矩阵；主要参数：节点维度、字段维度、tip 维度。",
+    "doc": "src/task/step/steps/patristic_distance.PatristicDistanceStep.md",
+    "status": "generated"
+  },
+  {
     "id": "patterson_fst",
     "kind": "operator",
     "title": "Patterson's Fst",
@@ -3920,6 +3940,16 @@
     "status": "generated"
   },
   {
+    "id": "unweighted_unifrac",
+    "kind": "operator",
+    "title": "Unweighted UniFrac",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Unweighted UniFrac：接收 2 个输入，输出距离矩阵；主要参数：样本维度、类群维度、节点维度、字段维度。",
+    "doc": "src/task/step/steps/unweighted_unifrac.UnweightedUnifracStep.md",
+    "status": "generated"
+  },
+  {
     "id": "van_waerden",
     "kind": "operator",
     "title": "Van der Waerden test",
@@ -4027,6 +4057,16 @@
     "version": "1.0.0",
     "description": "Watterson's theta over the whole input or fixed genomic windows.",
     "doc": "src/task/step/steps/watterson_theta.WattersonThetaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "weighted_unifrac",
+    "kind": "operator",
+    "title": "Weighted UniFrac",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Weighted UniFrac：接收 2 个输入，输出距离矩阵；主要参数：样本维度、类群维度、节点维度、字段维度。",
+    "doc": "src/task/step/steps/weighted_unifrac.WeightedUnifracStep.md",
     "status": "generated"
   },
   {

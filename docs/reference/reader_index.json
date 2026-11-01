@@ -730,6 +730,16 @@
     "status": "generated"
   },
   {
+    "id": "PhyloXmlReader",
+    "kind": "reader",
+    "title": "Parse a PhyloXML tree into a node x field table",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Parse a PhyloXML tree into a node x field table.",
+    "doc": "src/reader/readers/phyloxml_reader.PhyloXmlReader.md",
+    "status": "generated"
+  },
+  {
     "id": "Plink1Reader",
     "kind": "reader",
     "title": "Plink1Reader",
