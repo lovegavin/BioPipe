@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import os
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -98,7 +99,7 @@ def designer_command(
     repo: Path, structure: Path, out_dir: Path, params: dict
 ) -> list[str]:
     """Build the official ProteinMPNN command for a sampling run."""
-    executable = params.get("python_executable") or "python3"
+    executable = params.get("python_executable") or sys.executable
     command = [
         executable,
         "protein_mpnn_run.py",
