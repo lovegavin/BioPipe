@@ -1,20 +1,20 @@
 """Visual graph compilation and real local-worker API integration."""
-from copy import deepcopy
 import json
-from pathlib import Path
 import time
+from copy import deepcopy
+from pathlib import Path
 from types import SimpleNamespace
 
-from fastapi.testclient import TestClient
 import numpy as np
+import psutil
 import pytest
 import yaml
+from fastapi.testclient import TestClient
 
-from src.task import Context, STEPS, load_manifest
+from src.task import STEPS, Context, load_manifest
 from src.task.operator_catalog import build_catalog
 from src.web.api import create_app
-from src.web.graph import GraphError, compile_graph, import_manifest
-from src.web.models import Graph
+from src.web.graph import compile_graph, import_manifest
 from src.web.service import Settings
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -148,14 +148,43 @@ def test_session_token_and_streamed_upload(studio):
 
 def test_worker_can_be_cancelled_and_second_run_is_admitted_or_queued(studio):
     client, data = studio
-    response = client.post("/api/jobs", json=data["demo"])
+    graph = deepcopy(data["demo"])
+    graph["memory"] = {"enabled": False}
+    response = client.post("/api/jobs", json=graph)
     assert response.status_code == 202
     key = response.json()["id"]
-    second = client.post("/api/jobs", json=data["demo"])
+    service = client.app.state.service
+    deadline = time.monotonic() + 10
+    while key not in service.processes:
+        job = client.get(f"/api/jobs/{key}").json()
+        if job["status"] == "queued":
+            second = client.post("/api/jobs", json=graph)
+            assert second.status_code == 202
+            assert second.json()['status'] in ('running', 'queued', 'complete')
+            response = client.post(f"/api/jobs/{key}/cancel", json={})
+            assert response.status_code == 200 and response.json()["status"] == "cancelled"
+            client.post(f"/api/jobs/{second.json()['id']}/cancel", json={})
+            return
+        if job["status"] in ("complete", "failed", "cancelled"):
+            pytest.fail(f"job reached {job['status']} before cancellation: {job.get('error')}")
+        if time.monotonic() >= deadline:
+            pytest.fail("worker did not start before cancellation")
+        time.sleep(.01)
+    process = psutil.Process(service.processes[key].pid)
+    # Freeze the worker before starting the second job. Without this, a fast
+    # demo can finish between the two HTTP calls and make the test flaky.
+    process.suspend()
+    second = client.post("/api/jobs", json=graph)
     assert second.status_code == 202
     assert second.json()['status'] in ('running', 'queued')
-    response = client.post(f"/api/jobs/{key}/cancel", json={})
-    assert response.status_code == 200 and response.json()["status"] == "cancelled"
+    try:
+        response = client.post(f"/api/jobs/{key}/cancel", json={})
+        assert response.status_code == 200 and response.json()["status"] == "cancelled"
+    finally:
+        try:
+            process.resume()
+        except psutil.NoSuchProcess:
+            pass
     deadline = time.monotonic() + 5
     while time.monotonic() < deadline and key in client.app.state.service.processes:
         time.sleep(.05)

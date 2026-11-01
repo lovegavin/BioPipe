@@ -21,7 +21,7 @@ class AlignmentReader(Reader):
                               'info': {'representation': {'type': 'string', 'enum': ['sam', 'bam']}},
                               'info_open': True}},
      'resources': {'memory_modes': ['full'], 'supports_cuda': False},
-     'extensions': ['.sam', '.bam'],
+     'extensions': ['.sam'],
      'handles_compression': False,
      'file_input': {'dims': ['file'], 'labels': {}, 'compression': []}}
 

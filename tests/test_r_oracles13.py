@@ -129,7 +129,7 @@ def test_flow_causality_and_arch_match_r(tmp_path):
         {"sample": _labels([f"t{i}" for i in range(n)]),
          "feature": {"cause": 0, "effect": 1}},
     )
-    ctx = Ctx({"cause_label": "cause", "effect_label": "effect", "max_lag": 3})
+    ctx = Ctx({"cause_label": "cause", "effect_label": "effect", "max_lag": 3, "output": "granger_causality"})
     step = GrangerCausalityStep()
     step.run(ctx, [series])
     export = step.export(ctx)
@@ -163,7 +163,7 @@ def test_flow_causality_and_arch_match_r(tmp_path):
         ["detector", "fluorochrome"],
         {"detector": _labels(["A", "B"]), "fluorochrome": _labels(["A", "B"])},
     )
-    ctx = Ctx({})
+    ctx = Ctx({"output": "flow_compensate"})
     step = FlowCompensateStep()
     step.run(ctx, [event_form, spill_form])
     assert np.allclose(ctx["flow_compensate"].data, np.asarray(r["FLOW"]), atol=2e-5)

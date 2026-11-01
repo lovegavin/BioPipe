@@ -212,7 +212,7 @@ def test_installer_receipt_cannot_bypass_changed_requirements(remote, monkeypatc
 
 def mock_daemon_lock(tmp_path, monkeypatch):
     import biopipe.remote.server as module
-    monkeypatch.setitem(sys.modules, 'fcntl', SimpleNamespace(LOCK_EX=1, flock=lambda *args: None))
+    monkeypatch.setitem(sys.modules, 'fcntl', SimpleNamespace(LOCK_EX=1, LOCK_NB=2, flock=lambda *args: None))
     monkeypatch.setattr(module, 'socket_path', lambda workspace: tmp_path / 'daemon.sock')
     monkeypatch.setattr(module.subprocess, 'Popen', forbidden)
     return module

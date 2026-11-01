@@ -10,6 +10,33 @@ the author's operator library. It includes **405 operators, 88 Readers, seven
 provider packages and 24 route templates**. Operators and Readers use **protocol
 v3 / SDK 3.1**, separate parameter JSON and adjacent Markdown documentation.
 
+
+## Why BioPipe
+
+**Core value:** a large, maintainable, validated tool library lets an agent call a
+verified analysis instead of writing analysis code — avoiding implementation logic
+errors and the extra token cost of generating code.
+
+> Other systems ask an agent to write the analysis. BioPipe asks the agent to call a
+> validated tool.
+
+The value rests on five supports:
+
+- **Contract-first operator library.** 405 operators and 88 Readers have explicit
+  input/output contracts, parameter schemas, adjacent scientific documentation and
+  regression tests; authoritative R oracles cover methods where R is the reference.
+- **First-class plugins.** Operators, Readers and ML models share one discovery,
+  validation, composition and provenance mechanism, so a new method does not need a
+  second runtime or a hand-written orchestration layer.
+- **Traceable visual workflows.** The canvas, frozen workflow values, task records
+  and original artifacts make each step inspectable and reproducible.
+- **A stable core.** Memory planning, spill, streaming Readers, resumable transfers
+  and job admission are separate from analysis code; adding a method does not
+  require changing the engine.
+- **Near-zero marginal cost.** Agent discovery returns compact contracts and loads
+  only the selected documentation, so a new analysis is a tool call rather than a
+  fresh implementation.
+
 [HTTP API, CLI and MCP](docs/headless_api.md) share workflow, task and artifact
 services. A desktop window is optional: the CLI/MCP can start an authenticated
 local background service, save/validate routes, submit work, inspect logs and

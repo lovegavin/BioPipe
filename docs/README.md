@@ -5,6 +5,16 @@ to specialist tools for interactive interpretation and figure refinement. It
 supports visual editing, human-agent collaboration and unattended execution.
 BioPipe does not supply an AI model or require a desktop for computation.
 
+
+## Core value
+
+BioPipe is not a code generator. It is a contract-first analysis platform: a large,
+maintainable, validated operator and Reader library lets an agent call a verified
+analysis instead of writing analysis code. That avoids implementation logic errors
+and the token cost of regenerating the same method. The library is the product;
+visual workflows, the application API, CLI and MCP are ways to discover, compose and
+trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
+
 ## Use BioPipe
 
 - [Installation and dependencies](installation.md)

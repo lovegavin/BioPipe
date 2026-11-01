@@ -8,7 +8,7 @@
 ## Inputs and outputs
 
 Kind: `reader`. Operator ID: `AlignmentReader`.
-This Reader opens files with extensions: `.sam`, `.bam`.
+This Reader opens files with extensions: `.sam`.
 Read the structured `contracts` section before connecting nodes. It includes
 the accepted data types, dimension constraints and output propagation rule.
 

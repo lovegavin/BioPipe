@@ -65,7 +65,7 @@ def test_flow_transform_and_gate_match_flowcore():
     values = _r_values()
     form = _form()
 
-    ctx = Ctx({"channels": ["FSC-H", "FL1-H"], "a": 0.0, "b": 1.0, "c": 5.0})
+    ctx = Ctx({"channels": ["FSC-H", "FL1-H"], "a": 0.0, "b": 1.0, "c": 5.0, "output": "flow_transform"})
     transform = FlowTransformStep()
     transform.run(ctx, [form])
     out = ctx["flow_transform"]

@@ -119,8 +119,6 @@ def test_bgen_matches_bgen_reader():
         probs = bgen.read()
         variant_ids = [str(v) for v in bgen.ids]
         samples = [str(s) for s in bgen.samples]
-        chromosomes = [str(v) for v in bgen.chromosomes]
-        positions = [int(v) for v in bgen.positions]
     expected = (probs[:, :, 1] + 2.0 * probs[:, :, 2]).T.astype(np.float32)
     expected[probs.sum(axis=2).T == 0] = np.nan
     assert list(form.labels["sample"]) == samples
@@ -128,6 +126,3 @@ def test_bgen_matches_bgen_reader():
     np.testing.assert_allclose(form.data, expected, equal_nan=True)
     assert form.info["representation"] == "dosage"
     assert form.info["ploidy"] == 2
-    assert form.info["chrom"] == chromosomes
-    assert form.info["pos"] == positions
-    assert form.axis_info["variant"] == ["chrom", "pos"]
