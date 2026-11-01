@@ -1560,6 +1560,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_embedding_kmeans_silhouette",
+    "kind": "operator",
+    "title": "Embedding k-means silhouette",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run deterministic k-means for a range of cluster counts over an embedding matrix and report inertia and silhouette scores.",
+    "doc": "src/task/step/steps/esm_embedding_kmeans_silhouette.EsmEmbeddingKmeansSilhouetteStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_embedding_neighbors",
     "kind": "operator",
     "title": "ESM embedding neighbours",
@@ -4270,6 +4280,16 @@
     "status": "generated"
   },
   {
+    "id": "rdkit_murcko_fingerprint",
+    "kind": "operator",
+    "title": "Murcko scaffold fingerprint",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Murcko scaffold extraction followed by a hashed Morgan bit fingerprint, one row per molecule.",
+    "doc": "src/task/step/steps/rdkit_murcko_fingerprint.RdkitMurckoFingerprintStep.md",
+    "status": "generated"
+  },
+  {
     "id": "rdkit_oral_bioavailability",
     "kind": "operator",
     "title": "RDKit Oral Bioavailability Rules",
@@ -4677,6 +4697,16 @@
     "version": "1.0.0",
     "description": "Measure protein sequence complexity with k-mer Shannon entropy, linguistic complexity and the fraction of low-complexity windows, useful for filtering repeat-rich or low-entropy designed sequences.",
     "doc": "src/task/step/steps/sequence_complexity.SequenceComplexityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_cpg_island",
+    "kind": "operator",
+    "title": "CpG island scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sliding-window CpG island detection using GC content and observed/expected CpG ratio, with merged island coordinates.",
+    "doc": "src/task/step/steps/sequence_cpg_island.SequenceCpgIslandStep.md",
     "status": "generated"
   },
   {
@@ -5090,6 +5120,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_helix_helix_angle",
+    "kind": "operator",
+    "title": "Helix-helix angle and spacing",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Detect helical runs from CA geometry and report pairwise axis angles, axis distances and inter-helix contact counts.",
+    "doc": "src/task/step/steps/structure_helix_helix_angle.StructureHelixHelixAngleStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_ligand_burial",
     "kind": "operator",
     "title": "Ligand burial",
@@ -5097,6 +5137,16 @@
     "version": "1.0.0",
     "description": "Computes solvent-accessible surface area of each ligand residue alone and in the protein complex and reports the buried fraction.",
     "doc": "src/task/step/steps/structure_ligand_burial.StructureLigandBurialStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_clash",
+    "kind": "operator",
+    "title": "Ligand steric clashes",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Count van der Waals overlaps between ligand heavy atoms and protein heavy atoms, with per-atom worst overlap and closest distance.",
+    "doc": "src/task/step/steps/structure_ligand_clash.StructureLigandClashStep.md",
     "status": "generated"
   },
   {

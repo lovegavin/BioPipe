@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.40.1** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.41.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -86,7 +86,8 @@ Examples:
 1.39.1  patch: index metal shells with absolute atom positions so ions that are not the first atom are found
 1.40.0  expansion batch: backbone dihedral and Ramachandran classes, CA distance matrices, ring-system statistics, charge profiles and ligand burial
 1.40.1  patch: resolve the dihedral-oracle PDB fixture relative to the test module so it runs on Windows
-1.41.0  next expansion batch
+1.41.0  expansion batch: helix-helix geometry, ligand steric clashes, Murcko scaffold fingerprints, embedding k-means silhouettes, and CpG island scans
+1.42.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
 

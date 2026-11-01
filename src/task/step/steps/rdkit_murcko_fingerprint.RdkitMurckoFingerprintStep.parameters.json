@@ -1,0 +1,59 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "title": "SMILES 列表",
+      "description": "每行一个 'SMILES [名称]'，空行与 # 注释会被忽略",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "bit_dim": {
+      "type": "string",
+      "default": "bit",
+      "title": "指纹位维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "radius": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4,
+      "default": 2,
+      "title": "指纹半径",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "n_bits": {
+      "type": "integer",
+      "minimum": 64,
+      "maximum": 4096,
+      "default": 512,
+      "title": "指纹位数",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "use_features": {
+      "type": "boolean",
+      "default": false,
+      "title": "使用药效团特征",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "scaffold_fingerprint",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}

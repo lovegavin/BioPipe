@@ -1,0 +1,68 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "island_dim": {
+      "type": "string",
+      "default": "island",
+      "title": "岛屿维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "window": {
+      "type": "integer",
+      "minimum": 20,
+      "maximum": 5000,
+      "default": 200,
+      "title": "窗口长度",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "step": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 10,
+      "title": "窗口步长",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "gc_min": {
+      "type": "number",
+      "minimum": 0.01,
+      "maximum": 1.0,
+      "default": 0.5,
+      "title": "最小 GC 含量",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "cpg_oe_min": {
+      "type": "number",
+      "minimum": 0.0,
+      "default": 0.6,
+      "title": "最小 CpG 观测/期望比",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "default": "islands",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    }
+  }
+}

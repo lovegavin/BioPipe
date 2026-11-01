@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "embedding_dim": {
+      "type": "string",
+      "default": "embedding",
+      "title": "嵌入维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "cluster_dim": {
+      "type": "string",
+      "default": "k",
+      "title": "聚类数维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "min_k": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 2,
+      "title": "最小聚类数",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "max_k": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 6,
+      "title": "最大聚类数",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "silhouette",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}
