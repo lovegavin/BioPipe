@@ -241,7 +241,7 @@ def test_sdk_requirement_checks_running_code_not_stale_build_metadata(tmp_path, 
     from importlib import metadata
     monkeypatch.setattr(metadata, "version", lambda name: "0.4.1")
     builder = TargetBuilder(PluginManager(tmp_path), {})
-    assert builder.prepare([f"biopipe-studio>={__version__},<1"])["mode"] == "shared"
+    assert builder.prepare([f"biopipe-studio>={__version__},<2"])["mode"] == "shared"
     assert builder.prepare(['biopipe-studio>=999; python_version < "0"'])["mode"] == "shared"
     with pytest.raises(ValueError, match="incompatible BioPipe SDK"):
         builder.prepare(["biopipe-studio>=999"])
