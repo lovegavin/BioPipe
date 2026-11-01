@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "description": "Score a sequence against a fixed backbone with the official ESM-IF1 inverse-folding model.",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "Dim name of the structure form's atom axis.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "Dim name of the structure form's field axis.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "description": "Dim name assigned to the scored residues on the output form.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "chain": {
+      "type": "string",
+      "default": "A",
+      "title": "打分链",
+      "description": "Chain whose backbone conditions the sequence probabilities.",
+      "minLength": 1,
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "model_path": {
+      "type": "string",
+      "default": "",
+      "title": "ESM-IF 权重路径",
+      "description": "Local ESM-IF1 checkpoint such as esm_if1_gvp4_t16_142M_UR50.pt. No weights are downloaded automatically.",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "sequence": {
+      "type": "string",
+      "default": "",
+      "title": "待打分序列",
+      "description": "One-letter sequence to score. Leave empty to score the sequence read from the structure.",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "residue_scores",
+      "title": "输出名称",
+      "description": "Form name registered in the execution context.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}

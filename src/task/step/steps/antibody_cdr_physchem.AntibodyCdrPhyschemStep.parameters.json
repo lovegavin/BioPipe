@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "description": "Input sequence dimension name.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "description": "Input position dimension name.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "region_dim": {
+      "type": "string",
+      "default": "region",
+      "title": "区域维度",
+      "description": "Output dimension for the CDR regions.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "regions": {
+      "type": "string",
+      "default": "CDR1,CDR2,CDR3",
+      "title": "CDR 区域",
+      "description": "Comma-separated CDR regions to profile.",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "ph": {
+      "type": "number",
+      "default": 7.4,
+      "minimum": 0.0,
+      "maximum": 14.0,
+      "title": "pH",
+      "description": "pH used for the net-charge statistic.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "cdr_physchem",
+      "title": "输出名称",
+      "description": "Context name of the output region-by-statistic form.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  }
+}

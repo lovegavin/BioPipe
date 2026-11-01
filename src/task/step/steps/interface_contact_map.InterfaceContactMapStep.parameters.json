@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "Input atom dimension name.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "Input field dimension name.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "binder_dim": {
+      "type": "string",
+      "default": "binder_residue",
+      "title": "结合者残基维度",
+      "description": "Output dimension for binder residues.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "target_dim": {
+      "type": "string",
+      "default": "target_residue",
+      "title": "靶点残基维度",
+      "description": "Output dimension for target residues.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "binder_chains": {
+      "type": "string",
+      "default": "A",
+      "title": "结合者链",
+      "description": "Comma-separated binder chain IDs; empty means all chains not in target_chains.",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "target_chains": {
+      "type": "string",
+      "default": "",
+      "title": "靶点链",
+      "description": "Comma-separated target chain IDs; empty means all chains not in binder_chains.",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "cutoff": {
+      "type": "number",
+      "default": 4.5,
+      "minimum": 0.5,
+      "maximum": 10.0,
+      "title": "接触截断 (Å)",
+      "description": "Maximum heavy-atom distance for a residue pair contact.",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "value": {
+      "type": "string",
+      "enum": ["binary", "min_distance"],
+      "default": "binary",
+      "title": "矩阵取值",
+      "description": "Binary contact indicator or the minimal atom-pair distance.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "exclude_resnames": {
+      "type": "string",
+      "default": "HOH,WAT",
+      "title": "排除残基",
+      "description": "Comma-separated residue names skipped before contact detection.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "output": {
+      "type": "string",
+      "default": "contact_map",
+      "title": "输出名称",
+      "description": "Context name of the output contact-map form.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    }
+  }
+}

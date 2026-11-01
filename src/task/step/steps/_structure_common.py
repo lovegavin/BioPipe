@@ -75,6 +75,7 @@ def pick_chain_sides(
 ) -> tuple[list[str], list[str]]:
     """Select binder and target chains, deriving the empty side when possible."""
 
+    present = set(present)
     binder = split_chains(binder_text)
     target = split_chains(target_text)
     if not binder and not target:

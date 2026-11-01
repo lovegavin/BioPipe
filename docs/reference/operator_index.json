@@ -270,6 +270,16 @@
     "status": "generated"
   },
   {
+    "id": "antibody_cdr_physchem",
+    "kind": "operator",
+    "title": "CDR physicochemical profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Annotate the Kabat CDR-H1/H2/H3 loops of a VH or VHH sequence and report length, molecular weight, isoelectric point, net charge at pH 7.4, hydrophobic fraction and PTM motif counts for each loop.",
+    "doc": "src/task/step/steps/antibody_cdr_physchem.AntibodyCdrPhyschemStep.md",
+    "status": "generated"
+  },
+  {
     "id": "antibody_developability",
     "kind": "operator",
     "title": "Antibody developability panel",
@@ -1510,6 +1520,26 @@
     "status": "generated"
   },
   {
+    "id": "esm_if_design",
+    "kind": "operator",
+    "title": "ESM-IF Design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sample sequences for a fixed protein backbone with the official ESM-IF1 inverse-folding model and score every design with the same model.",
+    "doc": "src/task/step/steps/esm_if_design.EsmIfDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_if_score",
+    "kind": "operator",
+    "title": "ESM-IF Score",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score a protein chain with the official ESM-IF1 inverse-folding model and report the per-residue log probability of the observed sequence given the backbone.",
+    "doc": "src/task/step/steps/esm_if_score.EsmIfScoreStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_masked_marginal",
     "kind": "operator",
     "title": "ESM masked marginal",
@@ -2217,6 +2247,16 @@
     "version": "1.0.0",
     "description": "Compute the solvent accessible surface area of two chain groups alone and in complex with a Shrake-Rupley algorithm, report the buried area of every interface residue, and rank the contact hot spots of a binder-target complex.",
     "doc": "src/task/step/steps/interface_bsa.InterfaceBsaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interface_contact_map",
+    "kind": "operator",
+    "title": "Interface contact map",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Build a binder-residue by target-residue matrix from the heavy atoms of two chain groups: a binary contact map or the minimal atom-pair distance for every contacting residue pair.",
+    "doc": "src/task/step/steps/interface_contact_map.InterfaceContactMapStep.md",
     "status": "generated"
   },
   {
@@ -3887,6 +3927,16 @@
     "version": "1.0.0",
     "description": "Parse a list of SMILES, build Morgan fingerprints and report the pairwise Tanimoto, Dice or cosine similarity as a symmetric molecule-by-molecule matrix.",
     "doc": "src/task/step/steps/rdkit_similarity.RdkitSimilarityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_tautomer",
+    "kind": "operator",
+    "title": "Tautomer canonicalization",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Enumerate the RDKit tautomers of every input SMILES, pick the canonical tautomer and report the tautomer count, whether the input changed, and the canonical hydrogen-bond donor/acceptor counts.",
+    "doc": "src/task/step/steps/rdkit_tautomer.RdkitTautomerStep.md",
     "status": "generated"
   },
   {
