@@ -1010,6 +1010,16 @@
     "status": "generated"
   },
   {
+    "id": "cox_stuart",
+    "kind": "operator",
+    "title": "Cox-Stuart trend test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cox-Stuart sign test for a monotone trend by comparing the first and second halves of a numeric series.",
+    "doc": "src/task/step/steps/cox_stuart.CoxStuartStep.md",
+    "status": "generated"
+  },
+  {
     "id": "cox_stuart_test",
     "kind": "operator",
     "title": "Cox-Stuart trend test",
@@ -2410,6 +2420,16 @@
     "status": "generated"
   },
   {
+    "id": "lilliefors_test",
+    "kind": "operator",
+    "title": "Lilliefors normality test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Lilliefors test for normality with estimated mean and standard deviation, using the Kolmogorov-Smirnov statistic.",
+    "doc": "src/task/step/steps/lilliefors_test.LillieforsTestStep.md",
+    "status": "generated"
+  },
+  {
     "id": "limma_de",
     "kind": "operator",
     "title": "Moderated t differential analysis",
@@ -3070,6 +3090,16 @@
     "status": "generated"
   },
   {
+    "id": "pearson_test",
+    "kind": "operator",
+    "title": "Pearson chi-square normality test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Pearson chi-square goodness-of-fit test for normality with equiprobable classes and estimated mean and standard deviation.",
+    "doc": "src/task/step/steps/pearson_test.PearsonTestStep.md",
+    "status": "generated"
+  },
+  {
     "id": "peptide_qvalue",
     "kind": "operator",
     "title": "Peptide q-values",
@@ -3417,6 +3447,16 @@
     "version": "1.0.0",
     "description": "Per-feature rank-biserial correlation, positive when group0 tends larger.",
     "doc": "src/task/step/steps/rank_biserial.RankBiserialStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rank_test",
+    "kind": "operator",
+    "title": "Mann-Kendall rank test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Mann-Kendall rank correlation test using the number of later observations larger than each earlier observation.",
+    "doc": "src/task/step/steps/rank_test.RankTestStep.md",
     "status": "generated"
   },
   {
