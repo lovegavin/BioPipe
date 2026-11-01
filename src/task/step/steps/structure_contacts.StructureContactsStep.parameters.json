@@ -1,0 +1,73 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "PDB Form 的原子维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "PDB Form 的字段维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "description": "输出 Form 的残基维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "cutoff": {
+      "type": "number",
+      "default": 4.5,
+      "exclusiveMinimum": 0,
+      "maximum": 10,
+      "title": "接触距离阈值 (Å)",
+      "description": "两个残基的重原子最小距离不超过该值时记为一对接触。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "include_intra": {
+      "type": "boolean",
+      "default": false,
+      "title": "包含链内接触",
+      "description": "True 时同时统计同一链上的残基接触，默认只统计跨链接触。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "min_contacts": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "title": "最少接触数",
+      "description": "只保留接触伙伴数不低于该值的残基；设为 0 时也会输出无接触的残基。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "exclude_resnames": {
+      "type": "string",
+      "default": "HOH,WAT",
+      "title": "排除残基名",
+      "description": "逗号分隔的残基名（不区分大小写），在计算接触前剔除。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "default": "contacts",
+      "title": "输出名称",
+      "description": "写入上下文的 Form 名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    }
+  }
+}

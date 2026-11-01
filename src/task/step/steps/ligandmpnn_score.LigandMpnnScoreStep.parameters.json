@@ -1,0 +1,146 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构文件路径",
+      "description": "要打分的 PDB 文件路径（需要蛋白质主链原子）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "ligandmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "LigandMPNN 目录",
+      "description": "LigandMPNN 官方仓库目录，需包含 score.py；留空时读取环境变量 BIOPIPE_LIGANDMPNN_PATH。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重文件路径",
+      "description": "官方权重文件，例如 ligandmpnn_v_32_010_25.pt 或 proteinmpnn_v_48_020.pt。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "运行 score.py 的解释器，留空时使用当前环境的 python3。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "model_type": {
+      "type": "string",
+      "default": "ligand_mpnn",
+      "enum": ["ligand_mpnn", "protein_mpnn", "soluble_mpnn"],
+      "title": "模型类型",
+      "description": "与权重文件对应的模型类型。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "chains_to_design": {
+      "type": "string",
+      "default": "",
+      "title": "打分链",
+      "description": "参与打分的链，逗号分隔；留空表示全部链。",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "batch_size": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 64,
+      "title": "批大小",
+      "description": "每次前向的序列数，用于估计 log 概率的离散度。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "number_of_batches": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 100,
+      "title": "打分批次数",
+      "description": "重复打分的次数，均值与标准差在这些批次上统计。",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "seed": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "maximum": 2147483647,
+      "title": "随机种子",
+      "description": "官方脚本把 0 视为随机种子，需要可复现结果时使用非零值。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "use_sequence": {
+      "type": "boolean",
+      "default": true,
+      "title": "使用序列信息",
+      "description": "True 时按天然序列做 teacher forcing 打分，False 只用主链信息。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    },
+    "ligand_mpnn_use_atom_context": {
+      "type": "boolean",
+      "default": true,
+      "title": "使用配体上下文",
+      "description": "ligand_mpnn 是否把非蛋白原子作为上下文。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    },
+    "ligand_mpnn_cutoff_for_score": {
+      "type": "number",
+      "default": 8.0,
+      "minimum": 0.1,
+      "maximum": 20.0,
+      "title": "配体上下文半径 (Å)",
+      "description": "配体原子参与的图半径。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 110
+    },
+    "ligand_mpnn_use_side_chain_context": {
+      "type": "boolean",
+      "default": false,
+      "title": "使用侧链上下文",
+      "description": "是否把固定残基的侧链原子也作为上下文。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 120
+    },
+    "device": {
+      "type": "string",
+      "default": "cpu",
+      "enum": ["cpu", "cuda"],
+      "title": "设备",
+      "description": "计算设备；cpu 会清空 CUDA_VISIBLE_DEVICES。",
+      "x-ui-group": "basic",
+      "x-ui-order": 130
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "default": 3600,
+      "minimum": 1,
+      "maximum": 86400,
+      "title": "超时 (秒)",
+      "description": "外部 scorer 的最长运行时间。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 140
+    },
+    "output": {
+      "type": "string",
+      "default": "output",
+      "title": "输出端口",
+      "description": "结果 Form 写入的端口名。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 150
+    }
+  }
+}

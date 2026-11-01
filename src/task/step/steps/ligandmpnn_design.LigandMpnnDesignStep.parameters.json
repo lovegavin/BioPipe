@@ -1,0 +1,180 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构文件路径",
+      "description": "含有蛋白质主链（可含配体）的 PDB 文件路径。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "ligandmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "LigandMPNN 目录",
+      "description": "LigandMPNN 官方仓库目录，需包含 run.py；留空时读取环境变量 BIOPIPE_LIGANDMPNN_PATH。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重文件路径",
+      "description": "官方权重文件，例如 ligandmpnn_v_32_010_25.pt。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "运行 run.py 的解释器，留空时使用当前环境的 python3。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "model_type": {
+      "type": "string",
+      "default": "ligand_mpnn",
+      "enum": ["ligand_mpnn", "protein_mpnn", "soluble_mpnn"],
+      "title": "模型类型",
+      "description": "ligand_mpnn 使用配体与侧链上下文，protein_mpnn / soluble_mpnn 为纯蛋白模型。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "chains_to_design": {
+      "type": "string",
+      "default": "",
+      "title": "设计链",
+      "description": "要重设计的链，逗号分隔（如 A,B）；留空表示全部链。",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "fixed_positions": {
+      "type": "string",
+      "default": "",
+      "title": "固定残基",
+      "description": "空格或逗号分隔的链+残基编号（如 A12 A13 B2），保持原序列不变。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "redesigned_residues": {
+      "type": "string",
+      "default": "",
+      "title": "仅重设计残基",
+      "description": "空格或逗号分隔的链+残基编号，只有这些位点会被重新采样；与固定残基互斥。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "omit_AA": {
+      "type": "string",
+      "default": "",
+      "title": "禁用氨基酸",
+      "description": "不允许出现的氨基酸字母，例如 CW。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "bias_AA": {
+      "type": "string",
+      "default": "",
+      "title": "氨基酸偏好",
+      "description": "全局偏置，例如 A:-1.0,P:2.0（正数提高出现概率）。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    },
+    "temperature": {
+      "type": "number",
+      "default": 0.1,
+      "minimum": 0.01,
+      "maximum": 5.0,
+      "title": "采样温度",
+      "description": "越低越接近 argmax，越高越多样。",
+      "x-ui-group": "basic",
+      "x-ui-order": 100
+    },
+    "number_of_batches": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 100,
+      "title": "采样批次数",
+      "description": "共采样多少批，序列总数 = number_of_batches × batch_size。",
+      "x-ui-group": "basic",
+      "x-ui-order": 110
+    },
+    "batch_size": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 64,
+      "title": "批大小",
+      "description": "每个批次同时采样的序列数。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 120
+    },
+    "seed": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "maximum": 2147483647,
+      "title": "随机种子",
+      "description": "官方脚本把 0 视为随机种子，需要可复现结果时使用非零值。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 130
+    },
+    "ligand_mpnn_use_atom_context": {
+      "type": "boolean",
+      "default": true,
+      "title": "使用配体上下文",
+      "description": "ligand_mpnn 是否把非蛋白原子（配体/金属）作为上下文。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 140
+    },
+    "ligand_mpnn_cutoff_for_score": {
+      "type": "number",
+      "default": 8.0,
+      "minimum": 0.1,
+      "maximum": 20.0,
+      "title": "配体上下文半径 (Å)",
+      "description": "配体原子参与的图半径。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 150
+    },
+    "ligand_mpnn_use_side_chain_context": {
+      "type": "boolean",
+      "default": false,
+      "title": "使用侧链上下文",
+      "description": "是否把固定残基的侧链原子也作为上下文。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 160
+    },
+    "device": {
+      "type": "string",
+      "default": "cpu",
+      "enum": ["cpu", "cuda"],
+      "title": "设备",
+      "description": "计算设备；cpu 会清空 CUDA_VISIBLE_DEVICES。",
+      "x-ui-group": "basic",
+      "x-ui-order": 170
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "default": 3600,
+      "minimum": 1,
+      "maximum": 86400,
+      "title": "超时 (秒)",
+      "description": "外部 runner 的最长运行时间。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 180
+    },
+    "output": {
+      "type": "string",
+      "default": "output",
+      "title": "输出端口",
+      "description": "结果 Form 写入的端口名。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 190
+    }
+  }
+}

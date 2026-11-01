@@ -1,0 +1,74 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "c1ccccc1 benzene\nCc1ccccc1 toluene",
+      "title": "分子列表",
+      "description": "每行一个“SMILES [名称]”，以 # 开头的行会被忽略；至少需要两个分子。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "description": "输出 Form 的分子维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "atom_compare": {
+      "type": "string",
+      "default": "elements",
+      "enum": ["any", "elements"],
+      "title": "原子比较",
+      "description": "any 忽略元素种类，elements 要求元素相同。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "bond_compare": {
+      "type": "string",
+      "default": "strict",
+      "enum": ["any", "strict"],
+      "title": "键比较",
+      "description": "any 忽略键级，strict 要求键级一致。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "ring_matches_ring_only": {
+      "type": "boolean",
+      "default": true,
+      "title": "环只匹配环",
+      "description": "True 时环上的原子/键只能匹配环上的原子/键。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "complete_rings_only": {
+      "type": "boolean",
+      "default": false,
+      "title": "仅完整环",
+      "description": "True 时匹配出的环必须是完整环系。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "default": 30,
+      "minimum": 1,
+      "maximum": 600,
+      "title": "超时 (秒)",
+      "description": "MCS 搜索的时间上限。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "default": "mcs",
+      "title": "输出名称",
+      "description": "写入上下文的 Form 名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    }
+  }
+}

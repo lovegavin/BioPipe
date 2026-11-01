@@ -2600,6 +2600,26 @@
     "status": "generated"
   },
   {
+    "id": "ligandmpnn_design",
+    "kind": "operator",
+    "title": "LigandMPNN Design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Design protein sequences on a fixed backbone with the official LigandMPNN runner, including ligand- and side-chain-aware context, per-residue bias, omitted residues and redesign ranges.",
+    "doc": "src/task/step/steps/ligandmpnn_design.LigandMpnnDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ligandmpnn_score",
+    "kind": "operator",
+    "title": "LigandMPNN Score",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score every residue of a structure against the native sequence with the official LigandMPNN scorer and report the mean and spread of the per-residue log-probabilities across scoring batches.",
+    "doc": "src/task/step/steps/ligandmpnn_score.LigandMpnnScoreStep.md",
+    "status": "generated"
+  },
+  {
     "id": "lillie_test",
     "kind": "operator",
     "title": "Lilliefors normality test",
@@ -3830,6 +3850,16 @@
     "status": "generated"
   },
   {
+    "id": "rdkit_mcs",
+    "kind": "operator",
+    "title": "Maximum common substructure",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Parse a set of SMILES and report the maximum common substructure (RDKit rdFMCS) with per-molecule matched and unmatched heavy atom counts.",
+    "doc": "src/task/step/steps/rdkit_mcs.RdkitMcsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "rdkit_morgan_fingerprint",
     "kind": "operator",
     "title": "Morgan fingerprint",
@@ -4377,6 +4407,26 @@
     "version": "1.0.0",
     "description": "Storey's q-value procedure for a column of p-values.",
     "doc": "src/task/step/steps/storey_qvalue.StoreyQvalueStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_contacts",
+    "kind": "operator",
+    "title": "Residue contact network",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Convert a heavy-atom PDB form into a residue contact graph: for every residue report how many partner residues lie within the cutoff (cross-chain by default) and the distance to the nearest partner.",
+    "doc": "src/task/step/steps/structure_contacts.StructureContactsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_hbonds",
+    "kind": "operator",
+    "title": "Backbone Hydrogen Bonds",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Find backbone N-H...O=C hydrogen bonds with the Kabsch-Sander electrostatic model and summarise donors, acceptors and the strongest interaction energy per residue.",
+    "doc": "src/task/step/steps/structure_hbonds.StructureHbondsStep.md",
     "status": "generated"
   },
   {
