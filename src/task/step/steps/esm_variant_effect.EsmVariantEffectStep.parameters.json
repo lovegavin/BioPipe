@@ -1,0 +1,61 @@
+{
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "model_path": {
+      "type": "string",
+      "default": "",
+      "title": "ESM 权重路径",
+      "description": "本地 ESM 检查点，例如 esm2_t6_8M_UR50D.pt（fair-esm 官方权重）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "device": {
+      "type": "string",
+      "default": "cpu",
+      "enum": ["cpu", "cuda"],
+      "title": "计算设备",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "positions": {
+      "type": "string",
+      "default": "",
+      "title": "扫描位置",
+      "description": "留空扫描整条序列；支持 1 基编号的 '12,14-16' 形式。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "batch_size": {
+      "type": "integer",
+      "default": 16,
+      "minimum": 1,
+      "maximum": 256,
+      "title": "批大小",
+      "description": "每批同时掩盖的位置数，越大越快但占用更多显存。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "variants",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  },
+  "additionalProperties": false
+}

@@ -260,6 +260,16 @@
     "status": "generated"
   },
   {
+    "id": "antibody_cdr_kabat",
+    "kind": "operator",
+    "title": "Kabat CDR boundaries",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Locate the Kabat CDR-H1/H2/H3 and framework boundaries of a VH or VHH domain from conserved framework anchors and a reference alignment.",
+    "doc": "src/task/step/steps/antibody_cdr_kabat.AntibodyCdrKabatStep.md",
+    "status": "generated"
+  },
+  {
     "id": "antibody_developability",
     "kind": "operator",
     "title": "Antibody developability panel",
@@ -1517,6 +1527,16 @@
     "version": "1.0.0",
     "description": "Per-residue masked pseudo-likelihood log P(x_t | x_-t) of a protein sequence under a local ESM checkpoint; mean and total scores in info.",
     "doc": "src/task/step/steps/esm_pseudo_likelihood.EsmPseudoLikelihoodStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_variant_effect",
+    "kind": "operator",
+    "title": "ESM variant effect scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Mask each selected residue, read the ESM distribution over the 20 standard amino acids, and score all 19 single substitutions by log-likelihood ratio.",
+    "doc": "src/task/step/steps/esm_variant_effect.EsmVariantEffectStep.md",
     "status": "generated"
   },
   {
@@ -3560,6 +3580,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_interface_design",
+    "kind": "operator",
+    "title": "ProteinMPNN interface design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Design a binder chain against a fixed partner with the official ProteinMPNN runner, including amino-acid bias, omission and tied positions.",
+    "doc": "src/task/step/steps/proteinmpnn_interface_design.ProteinmpnnInterfaceDesignStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_score",
     "kind": "operator",
     "title": "ProteinMPNN sequence score",
@@ -3737,6 +3767,26 @@
     "version": "1.0.0",
     "description": "Sharp regression-discontinuity jump estimated by local linear regression near a cutoff.",
     "doc": "src/task/step/steps/rdd.RddStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_admet_rules",
+    "kind": "operator",
+    "title": "RDKit drug-likeness rules",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Descriptor panel plus Lipinski, Veber and Ghose pass/fail flags per molecule.",
+    "doc": "src/task/step/steps/rdkit_admet_rules.RdkitAdmetRulesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_conformer_energy",
+    "kind": "operator",
+    "title": "RDKit conformer energies",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Embed ETKDGv3 conformers per molecule and report the MMFF94/UFF energy distribution.",
+    "doc": "src/task/step/steps/rdkit_conformer_energy.RdkitConformerEnergyStep.md",
     "status": "generated"
   },
   {

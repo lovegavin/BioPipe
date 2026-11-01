@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import subprocess
@@ -16,10 +17,11 @@ from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
 
+_NUMBER = r"-?(?:\d+(?:\.\d*)?|\.\d+|[nN][aA][nN]|[iI][nN][fF])"
 _HEADER = re.compile(
-    r"sample=(?P<sample>\d+),\s*score=(?P<score>-?[\d.]+),"
-    r"\s*global_score=(?P<global_score>-?[\d.]+),"
-    r"\s*seq_recovery=(?P<seq_recovery>-?[\d.]+)"
+    r"sample=(?P<sample>\d+),\s*score=(?P<score>" + _NUMBER + r"),"
+    r"\s*global_score=(?P<global_score>" + _NUMBER + r"),"
+    r"\s*seq_recovery=(?P<seq_recovery>" + _NUMBER + r")"
 )
 _RANGE = re.compile(r"^(?P<start>\d+)(?:-(?P<end>\d+))?$")
 MODELS = ("v_48_002", "v_48_010", "v_48_020", "v_48_030")
@@ -329,6 +331,16 @@ class ProteinMpnnDesignStep(Step):
                     f"{(completed.stdout or '').strip()[-400:]})"
                 )
             designs = parse_design_fasta(fasta_path)
+            if any(
+                not math.isfinite(float(record.get(key, float("nan"))))
+                for record in designs
+                for key in ("score", "global_score")
+            ):
+                raise StepError(
+                    "proteinmpnn_design: the official runner returned "
+                    "non-finite scores; check that the PDB carries N, CA, C and O "
+                    "backbone atoms for every designed residue"
+                )
             designs.sort(key=lambda record: record["sample"])
 
             context_dir = _artifact_dir(ctx, "proteinmpnn")

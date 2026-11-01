@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.21.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.22.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -60,7 +60,8 @@ Examples:
 1.20.0  expansion batch: RDKit descriptors, Morgan fingerprints and SMILES standardization, ESM sequence embeddings, interface buried area
 1.20.1  patch: make the ProteinMPNN path assertions platform-neutral so the focused suite is green on Windows
 1.21.0  expansion batch: ProteinMPNN score-only scoring, antibody developability, ESM masked-marginal pseudo-likelihoods, RDKit Murcko scaffolds and a PDBQT reader
-1.22.0  next expansion batch
+1.22.0  expansion batch: ESM variant-effect scans, interface-focused ProteinMPNN design, RDKit ADMET rules, RDKit conformer energies and Kabat-style antibody CDR annotation
+1.23.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
 

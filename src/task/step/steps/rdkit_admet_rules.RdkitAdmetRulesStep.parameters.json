@@ -1,0 +1,78 @@
+{
+  "type": "object",
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "CCO ethanol\\nc1ccccc1 benzene\\nCC(=O)Oc1ccccc1C(=O)O aspirin",
+      "title": "SMILES 列表",
+      "description": "每行一个 'SMILES [name]'，空行与 # 注释会被跳过。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "mw_max": {
+      "type": "number",
+      "default": 500,
+      "minimum": 1,
+      "title": "分子量上限",
+      "description": "Lipinski 规则的分子量上限 (Da)。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "logp_max": {
+      "type": "number",
+      "default": 5,
+      "minimum": 1,
+      "title": "LogP 上限",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "hbd_max": {
+      "type": "integer",
+      "default": 5,
+      "minimum": 0,
+      "title": "氢键供体上限",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "hba_max": {
+      "type": "integer",
+      "default": 10,
+      "minimum": 0,
+      "title": "氢键受体上限",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "tpsa_max": {
+      "type": "number",
+      "default": 140,
+      "minimum": 1,
+      "title": "TPSA 上限",
+      "description": "Veber 规则的极性表面积上限 (Å²)。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "rotatable_bonds_max": {
+      "type": "integer",
+      "default": 10,
+      "minimum": 0,
+      "title": "可旋转键上限",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "output": {
+      "type": "string",
+      "default": "rules",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    }
+  },
+  "additionalProperties": false
+}
