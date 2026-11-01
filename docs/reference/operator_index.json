@@ -1860,6 +1860,16 @@
     "status": "generated"
   },
   {
+    "id": "gower_distance",
+    "kind": "operator",
+    "title": "Gower distance",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Gower distance：数值列按极差归一、分类列按相等与否取 0/1，缺失变量在每对样本间重新归一，输出对称距离矩阵。",
+    "doc": "src/task/step/steps/gower_distance.GowerDistanceStep.md",
+    "status": "generated"
+  },
+  {
     "id": "gradient_boosting_classifier",
     "kind": "operator",
     "title": "Gradient Boosting classifier",
@@ -2910,6 +2920,16 @@
     "status": "generated"
   },
   {
+    "id": "nelson_aalen",
+    "kind": "operator",
+    "title": "Nelson-Aalen cumulative hazard",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Nelson-Aalen：接收 1 个输入，按随访时间字段与事件字段计算累计风险、风险集人数、事件数与标准误。",
+    "doc": "src/task/step/steps/nelson_aalen.NelsonAalenStep.md",
+    "status": "generated"
+  },
+  {
     "id": "nemenyi_test",
     "kind": "operator",
     "title": "Nemenyi post-hoc test",
@@ -3077,6 +3097,16 @@
     "version": "1.0.0",
     "description": "Align two sequences with affine gaps and report the alignment counts.",
     "doc": "src/task/step/steps/pairwise_alignment.PairwiseAlignmentStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pam",
+    "kind": "operator",
+    "title": "Partitioning around medoids",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "PAM（围绕中心点划分）：欧氏距离、BUILD 选取初始中心点，SWAP 以精确代价下降迭代，输出每个样本的簇编号与到中心点距离。",
+    "doc": "src/task/step/steps/pam.PamStep.md",
     "status": "generated"
   },
   {

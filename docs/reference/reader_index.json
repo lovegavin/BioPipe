@@ -690,6 +690,16 @@
     "status": "generated"
   },
   {
+    "id": "ObjReader",
+    "kind": "reader",
+    "title": "Read a Wavefront OBJ mesh",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read a Wavefront OBJ triangular mesh as one table: vertex rows carry x/y/z and face rows carry three vertex indices. Polygon faces are fan-triangulated.",
+    "doc": "src/reader/readers/obj_reader.ObjReader.md",
+    "status": "generated"
+  },
+  {
     "id": "OboReader",
     "kind": "reader",
     "title": "Reader for [Term] stanzas in OBO files; output is term x field",
@@ -867,6 +877,16 @@
     "version": "1.0.0",
     "description": "SMILES .smi reader with length and approximate heavy-atom count.",
     "doc": "src/reader/readers/smi_reader.SmiReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "StlReader",
+    "kind": "reader",
+    "title": "Read an STL triangular mesh",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read a binary or ASCII STL triangular mesh as one table: vertex rows carry x/y/z and facet rows carry three vertex indices.",
+    "doc": "src/reader/readers/stl_reader.StlReader.md",
     "status": "generated"
   },
   {

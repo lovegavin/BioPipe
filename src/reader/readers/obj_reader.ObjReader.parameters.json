@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "properties": {
+    "triangulate": {
+      "type": "boolean",
+      "default": true,
+      "title": "三角化多边形",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "max_faces": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1000000,
+      "title": "最大面数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    }
+  },
+  "additionalProperties": false
+}
