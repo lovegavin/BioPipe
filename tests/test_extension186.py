@@ -25,9 +25,9 @@ def _oracle_counts(smiles: str) -> dict[str, int]:
     from rdkit import Chem, RDConfig
     from rdkit.Chem import ChemicalFeatures
 
-    factory = ChemicalFeatures.BuildFeatureFactory(
-        __import__("os").path.join(RDConfig.RDDataDir, "BaseFeatures.fdef")
-    )
+    from src.task.step.steps.rdkit_pharmacophore_features import _feature_file
+
+    factory = ChemicalFeatures.BuildFeatureFactory(_feature_file())
     counts: dict[str, int] = {}
     for feature in factory.GetFeaturesForMol(Chem.MolFromSmiles(smiles)):
         counts[feature.GetFamily()] = counts.get(feature.GetFamily(), 0) + 1

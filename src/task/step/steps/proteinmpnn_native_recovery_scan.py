@@ -29,13 +29,13 @@ def read_records(path: Path) -> list[tuple[str, str]]:
     for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
         if line.startswith(">"):
             if header is not None:
-                records.append((header, "".join(sequence)))
+                records.append((header, "".join(sequence).replace("/", "")))
             header = line[1:].strip()
             sequence = []
         elif header is not None:
             sequence.append(line.strip())
     if header is not None:
-        records.append((header, "".join(sequence)))
+        records.append((header, "".join(sequence).replace("/", "")))
     if not records:
         raise StepError(f"proteinmpnn_native_recovery_scan: no FASTA records in '{path}'")
     return records

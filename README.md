@@ -5,7 +5,7 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-The unified **v1.35.1 backend source tree** combines the tested desktop/runtime with
+The unified **v1.35.2 backend source tree** combines the tested desktop/runtime with
 the author's operator library. It includes **547 operators, 101 Readers, seven
 provider packages and 24 route templates**. Operators and Readers use **protocol
 v3 / SDK 3.1**, separate parameter JSON and adjacent Markdown documentation.
