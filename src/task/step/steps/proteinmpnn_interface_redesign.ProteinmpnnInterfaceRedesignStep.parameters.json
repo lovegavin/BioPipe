@@ -1,0 +1,120 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构文件路径",
+      "description": "PDB 结构路径；用于确定 binder/target 链与界面残基。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 目录",
+      "description": "官方 ProteinMPNN 仓库目录（含 protein_mpnn_run.py）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "binder_chains": {
+      "type": "string",
+      "default": "A",
+      "title": "Binder 链",
+      "description": "要重设计的链，逗号分隔。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "target_chains": {
+      "type": "string",
+      "default": "",
+      "title": "Target 链",
+      "description": "保持固定的链；留空表示除 binder 外的所有链。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "cutoff": {
+      "type": "number",
+      "default": 8.0,
+      "minimum": 1.0,
+      "maximum": 20.0,
+      "title": "界面截断距离 (A)",
+      "description": "binder 重原子与 target 重原子的距离阈值。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "default": 4,
+      "minimum": 1,
+      "maximum": 500,
+      "title": "每条序列数",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "sampling_temp": {
+      "type": "string",
+      "default": "0.1",
+      "title": "采样温度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "seed": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "title": "随机种子",
+      "description": "0 在官方脚本中表示随机。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "model_name": {
+      "type": "string",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "default": "v_48_020",
+      "title": "模型",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录",
+      "description": "留空则为 <proteinmpnn_path>/vanilla_model_weights。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "设备",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "timeout": {
+      "type": "integer",
+      "default": 3600,
+      "minimum": 10,
+      "title": "超时 (秒)",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "留空使用当前解释器。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "output": {
+      "type": "string",
+      "default": "designs",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    }
+  }
+}

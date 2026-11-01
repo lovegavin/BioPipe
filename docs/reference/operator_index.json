@@ -1590,6 +1590,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_if_masked_region_scan",
+    "kind": "operator",
+    "title": "ESM-IF Masked Region Scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Slide a masked window along a chain and score ESM-IF redesigns of each window.",
+    "doc": "src/task/step/steps/esm_if_masked_region_scan.EsmIfMaskedRegionScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_if_mutation_scan",
     "kind": "operator",
     "title": "ESM-IF Mutation Scan",
@@ -3850,6 +3860,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_interface_redesign",
+    "kind": "operator",
+    "title": "Interface Redesign",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Design only binder residues at the target interface with ProteinMPNN.",
+    "doc": "src/task/step/steps/proteinmpnn_interface_redesign.ProteinmpnnInterfaceRedesignStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_multi_model_consensus",
     "kind": "operator",
     "title": "ProteinMPNN 多模型共识",
@@ -3857,6 +3877,16 @@
     "version": "1.0.0",
     "description": "用多个 ProteinMPNN checkpoint 采样并汇总逐位点共识频率。",
     "doc": "src/task/step/steps/proteinmpnn_multi_model_consensus.ProteinmpnnMultiModelConsensusStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_native_recovery_scan",
+    "kind": "operator",
+    "title": "ProteinMPNN Native Recovery Scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Per-position native recovery and dominant substitution of sampled designs.",
+    "doc": "src/task/step/steps/proteinmpnn_native_recovery_scan.ProteinmpnnNativeRecoveryScanStep.md",
     "status": "generated"
   },
   {
@@ -4167,6 +4197,16 @@
     "version": "1.0.0",
     "description": "Evaluate the Lipinski, Veber and Egan rule sets for oral bioavailability from SMILES and report descriptor values, violations and a combined pass flag.",
     "doc": "src/task/step/steps/rdkit_oral_bioavailability.RdkitOralBioavailabilityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_pharmacophore_features",
+    "kind": "operator",
+    "title": "Pharmacophore Features",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Count RDKit pharmacophore feature families for each molecule.",
+    "doc": "src/task/step/steps/rdkit_pharmacophore_features.RdkitPharmacophoreFeaturesStep.md",
     "status": "generated"
   },
   {

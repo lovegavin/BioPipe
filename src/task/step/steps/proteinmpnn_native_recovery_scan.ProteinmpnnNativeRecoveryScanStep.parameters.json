@@ -1,0 +1,104 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构文件路径",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 目录",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "链",
+      "description": "留空表示全部链。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "default": 16,
+      "minimum": 2,
+      "maximum": 500,
+      "title": "设计数",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "sampling_temp": {
+      "type": "string",
+      "default": "0.1",
+      "title": "采样温度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "seed": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "model_name": {
+      "type": "string",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "default": "v_48_020",
+      "title": "模型",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "设备",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "timeout": {
+      "type": "integer",
+      "default": 3600,
+      "minimum": 10,
+      "title": "超时 (秒)",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位点维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "output": {
+      "type": "string",
+      "default": "recovery",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    }
+  }
+}
