@@ -20,6 +20,16 @@
     "status": "generated"
   },
   {
+    "id": "ArrowReader",
+    "kind": "reader",
+    "title": "Arrow, Feather and ORC table reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reads Arrow IPC, Feather and ORC columnar tables with pyarrow.",
+    "doc": "src/reader/readers/arrow_reader.ArrowReader.md",
+    "status": "generated"
+  },
+  {
     "id": "BamReader",
     "kind": "reader",
     "title": "Binary Alignment/Map reader",

@@ -1310,6 +1310,16 @@
     "status": "generated"
   },
   {
+    "id": "dxy",
+    "kind": "operator",
+    "title": "Nei's Dxy (between-population divergence)",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Nei's Dxy: mean pairwise difference between two populations.",
+    "doc": "src/task/step/steps/dxy.DxyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "egger_test",
     "kind": "operator",
     "title": "Egger's test",
@@ -1817,6 +1827,16 @@
     "version": "1.0.0",
     "description": "矩阵热图与层次聚类",
     "doc": "src/task/step/steps/heatmap.HeatmapStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "heterozygosity",
+    "kind": "operator",
+    "title": "Heterozygosity",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Observed/expected heterozygosity and F_IS per diploid variant.",
+    "doc": "src/task/step/steps/heterozygosity.HeterozygosityStep.md",
     "status": "generated"
   },
   {
@@ -2820,6 +2840,16 @@
     "status": "generated"
   },
   {
+    "id": "patterson_fst",
+    "kind": "operator",
+    "title": "Patterson's Fst",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Patterson's Fst (Patterson 2012) from two population allele counts.",
+    "doc": "src/task/step/steps/patterson_fst.PattersonFstStep.md",
+    "status": "generated"
+  },
+  {
     "id": "pca",
     "kind": "operator",
     "title": "PCA",
@@ -3407,6 +3437,16 @@
     "version": "1.0.0",
     "description": "All-pairwise Scheffe comparisons for every feature.",
     "doc": "src/task/step/steps/scheffe_test.ScheffeTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "seasonal_decompose",
+    "kind": "operator",
+    "title": "Classical seasonal decomposition",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Classical moving-average seasonal decomposition (additive or multiplicative).",
+    "doc": "src/task/step/steps/seasonal_decompose.SeasonalDecomposeStep.md",
     "status": "generated"
   },
   {
