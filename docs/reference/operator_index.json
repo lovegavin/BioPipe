@@ -470,6 +470,16 @@
     "status": "generated"
   },
   {
+    "id": "birch",
+    "kind": "operator",
+    "title": "BIRCH clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Balanced iterative reducing and clustering using hierarchies (BIRCH).",
+    "doc": "src/task/step/steps/birch.BirchStep.md",
+    "status": "generated"
+  },
+  {
     "id": "bland_altman",
     "kind": "operator",
     "title": "Bland-Altman agreement",
@@ -1960,6 +1970,16 @@
     "status": "generated"
   },
   {
+    "id": "hdbscan",
+    "kind": "operator",
+    "title": "HDBSCAN clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Hierarchical density-based clustering with cluster membership probabilities.",
+    "doc": "src/task/step/steps/hdbscan.HdbscanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "heatmap",
     "kind": "operator",
     "title": "Heatmap",
@@ -3027,6 +3047,16 @@
     "version": "1.0.0",
     "description": "Odds ratio：接收 1 个输入，输出 Form；主要参数：Row Dim、Col Dim、Correction、Confidence。",
     "doc": "src/task/step/steps/odds_ratio.OddsRatioStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "optics",
+    "kind": "operator",
+    "title": "OPTICS clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Ordering points to identify clustering structure (OPTICS).",
+    "doc": "src/task/step/steps/optics.OpticsStep.md",
     "status": "generated"
   },
   {

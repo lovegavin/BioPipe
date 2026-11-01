@@ -1,7 +1,7 @@
 # Unified main integration
 
 This source update establishes one current application and authoring protocol on
-`main`. Application version: **1.17.0**. SDK version: **3.1.0**. Operator protocol:
+`main`. Application version: **1.18.0**. SDK version: **3.1.0**. Operator protocol:
 **v3**. The latest previously published desktop binaries are a separate artifact;
 this integration does not claim to have rebuilt or accepted a new Windows EXE.
 
@@ -15,14 +15,14 @@ this integration does not claim to have rebuilt or accepted a new Windows EXE.
 The integration preserves the desktop branch's existing 86 extensions, including
 Hi-C file artifacts, streaming and disk readers, managed execution and unified
 figure outputs. It adds 407 previously missing upstream extensions through an
-explicit conversion to v3. The combined registry contains **467 operators and
-98 Readers**, in seven independently manageable providers, and **24 route
+explicit conversion to v3. The combined registry contains **470 operators and
+100 Readers**, in seven independently manageable providers, and **24 route
 templates**. Counts describe this integration, not hard limits in the software. Backend
 **1.2.0** adds the Arrow reader, seasonal decomposition and Fst-family
 statistics, **1.3.0** adds phylogeny-aware diversity operators and a PhyloXML
 reader, and **1.4.0** adds causal-inference operators and a MuData reader, and
 **1.7.0** adds Moran's I, indicator species, affine pairwise alignment and a PDBML reader; see [the v1.7.0 release notes](releases/v1.7.0.md).
-**1.10.0** adds exact Poisson tests, binomial confidence intervals, chi-square goodness of fit and redundancy analysis; **1.11.0** adds weighted kappa, the turning point test, the raw periodogram and species-pool richness estimators; **1.12.0** adds the Lilliefors and Pearson normality tests, the Cox-Stuart trend test and the Mann-Kendall rank test; see [the v1.12.0 release notes](releases/v1.12.0.md); **1.13.0** adds the Mood two-sample scale test, the two-sample F test and the D'Agostino skewness and Anscombe-Glynn kurtosis tests; see [the v1.13.0 release notes](releases/v1.13.0.md); **1.14.0** adds linear discriminant analysis, simple correspondence analysis, nestedness (NODF) and Rényi diversity profiles; see [the v1.14.0 release notes](releases/v1.14.0.md). **1.15.0** adds 24 beta-diversity indices, Tsallis diversity, variation partitioning and a CCP4/MRC volume reader; see [the v1.15.0 release notes](releases/v1.15.0.md). **1.16.0** adds bio-environment matching, the Morisita index and NIfTI/NRRD volume readers; see [the v1.16.0 release notes](releases/v1.16.0.md). **1.17.0** adds Nelson-Aalen cumulative hazard, Gower distance, PAM clustering and STL/OBJ mesh readers; see [the v1.17.0 release notes](releases/v1.17.0.md).
+**1.10.0** adds exact Poisson tests, binomial confidence intervals, chi-square goodness of fit and redundancy analysis; **1.11.0** adds weighted kappa, the turning point test, the raw periodogram and species-pool richness estimators; **1.12.0** adds the Lilliefors and Pearson normality tests, the Cox-Stuart trend test and the Mann-Kendall rank test; see [the v1.12.0 release notes](releases/v1.12.0.md); **1.13.0** adds the Mood two-sample scale test, the two-sample F test and the D'Agostino skewness and Anscombe-Glynn kurtosis tests; see [the v1.13.0 release notes](releases/v1.13.0.md); **1.14.0** adds linear discriminant analysis, simple correspondence analysis, nestedness (NODF) and Rényi diversity profiles; see [the v1.14.0 release notes](releases/v1.14.0.md). **1.15.0** adds 24 beta-diversity indices, Tsallis diversity, variation partitioning and a CCP4/MRC volume reader; see [the v1.15.0 release notes](releases/v1.15.0.md). **1.16.0** adds bio-environment matching, the Morisita index and NIfTI/NRRD volume readers; see [the v1.16.0 release notes](releases/v1.16.0.md). **1.17.0** adds Nelson-Aalen cumulative hazard, Gower distance, PAM clustering and STL/OBJ mesh readers; see [the v1.17.0 release notes](releases/v1.17.0.md). **1.18.0** adds OPTICS, BIRCH and HDBSCAN clustering plus PLY and OFF mesh readers; see [the v1.18.0 release notes](releases/v1.18.0.md).
 
 Coordinate precision fixes from upstream are applied to the existing CSV,
 Parquet, BED, GFF3 and GTF implementations. Numeric columns retain float64 when

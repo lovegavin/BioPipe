@@ -710,6 +710,16 @@
     "status": "generated"
   },
   {
+    "id": "OffReader",
+    "kind": "reader",
+    "title": "Read an OFF polygon mesh",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read an ASCII OFF (Object File Format) polygon mesh as one table: vertex rows carry x/y/z and face rows carry three vertex indices.",
+    "doc": "src/reader/readers/off_reader.OffReader.md",
+    "status": "generated"
+  },
+  {
     "id": "PafReader",
     "kind": "reader",
     "title": "Pairwise mapping format (PAF) reader",
@@ -817,6 +827,16 @@
     "version": "1.0.0",
     "description": "",
     "doc": "src/reader/readers/plink_reader.Plink2Reader.md",
+    "status": "generated"
+  },
+  {
+    "id": "PlyReader",
+    "kind": "reader",
+    "title": "Read a PLY polygon mesh",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read an ASCII or binary PLY polygon mesh as one table: vertex rows carry x/y/z and face rows carry three vertex indices.",
+    "doc": "src/reader/readers/ply_reader.PlyReader.md",
     "status": "generated"
   },
   {

@@ -53,7 +53,8 @@ Examples:
 1.15.0  expansion batch: beta diversity (24 indices), Tsallis diversity, variation partitioning and a CCP4/MRC volume reader
 1.16.0  expansion batch: bio-environment matching, Morisita index and NIfTI/NRRD volume readers
 1.17.0  expansion batch: Nelson-Aalen, Gower distance, PAM and STL/OBJ mesh readers
-1.18.0  next expansion batch
+1.18.0  expansion batch: OPTICS, BIRCH, HDBSCAN and PLY/OFF mesh readers
+1.19.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
 

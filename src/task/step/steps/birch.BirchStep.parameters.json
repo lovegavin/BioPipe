@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "threshold": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 0.5,
+      "title": "聚类特征半径",
+      "description": "Maximum radius of a subcluster in the clustering feature tree.",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "branching_factor": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 50,
+      "title": "分支因子",
+      "description": "Maximum number of children per node in the clustering feature tree.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "n_clusters": {
+      "type": ["integer", "null"],
+      "minimum": 2,
+      "default": null,
+      "title": "最终簇数",
+      "description": "Number of final clusters; null keeps all subclusters.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    }
+  },
+  "additionalProperties": false
+}
