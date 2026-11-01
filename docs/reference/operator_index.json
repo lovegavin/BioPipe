@@ -1990,6 +1990,16 @@
     "status": "generated"
   },
   {
+    "id": "indicator_species",
+    "kind": "operator",
+    "title": "Indicator species",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Indicator species (IndVal) fidelity, specificity and product per group.",
+    "doc": "src/task/step/steps/indicator_species.IndicatorSpeciesStep.md",
+    "status": "generated"
+  },
+  {
     "id": "integrated_brier_score",
     "kind": "operator",
     "title": "Integrated Brier score (Cox)",
@@ -2650,6 +2660,16 @@
     "status": "generated"
   },
   {
+    "id": "moran",
+    "kind": "operator",
+    "title": "Moran's I",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Moran's I spatial autocorrelation from a distance matrix.",
+    "doc": "src/task/step/steps/moran.MoranStep.md",
+    "status": "generated"
+  },
+  {
     "id": "moses_test",
     "kind": "operator",
     "title": "Moses extreme reactions test",
@@ -2877,6 +2897,16 @@
     "version": "1.0.0",
     "description": "Pair-count confusion matrix behind Rand-type agreement scores.",
     "doc": "src/task/step/steps/pair_confusion_matrix.PairConfusionMatrixStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pairwise_alignment",
+    "kind": "operator",
+    "title": "Pairwise alignment",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Align two sequences with affine gaps and report the alignment counts.",
+    "doc": "src/task/step/steps/pairwise_alignment.PairwiseAlignmentStep.md",
     "status": "generated"
   },
   {

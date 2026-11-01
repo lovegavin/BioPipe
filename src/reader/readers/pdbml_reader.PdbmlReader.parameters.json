@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "properties": {
+    "model": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "title": "Model",
+      "description": "0 reads every model, otherwise only atom_site rows with this pdbx_PDB_model_num.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "encoders": {
+      "type": "object",
+      "additionalProperties": true,
+      "title": "Encoders",
+      "description": "Optional encoder overrides for the chain, resname and element columns.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    }
+  },
+  "additionalProperties": false
+}

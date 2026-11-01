@@ -1,0 +1,43 @@
+{
+  "title": "Indicator species",
+  "description": "Per-taxon IndVal fidelity, specificity and product for each group.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the sample dimension in both inputs.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "title": "Taxon dimension",
+      "description": "Name of the taxon dimension in the abundance table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "group_label": {
+      "type": "string",
+      "default": "group",
+      "title": "Group column",
+      "description": "Metadata column with the group assignment of each sample.",
+      "x-ui-group": "Input",
+      "x-ui-order": 3
+    },
+    "output": {
+      "type": "string",
+      "default": "indicator_species",
+      "title": "Output name",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 99
+    }
+  },
+  "required": [
+    "group_label"
+  ]
+}

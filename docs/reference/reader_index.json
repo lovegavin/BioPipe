@@ -710,6 +710,16 @@
     "status": "generated"
   },
   {
+    "id": "PdbmlReader",
+    "kind": "reader",
+    "title": "PDBML coordinate reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "PDBML coordinate reader with the same fields as the PDB reader.",
+    "doc": "src/reader/readers/pdbml_reader.PdbmlReader.md",
+    "status": "generated"
+  },
+  {
     "id": "PedReader",
     "kind": "reader",
     "title": "PLINK PED reader",
