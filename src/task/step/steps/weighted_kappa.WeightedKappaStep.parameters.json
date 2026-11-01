@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Weighted kappa",
+  "description": "Weighted Cohen kappa for two numeric raters, with linear or quadratic disagreement weights.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "subject_dim": {
+      "type": "string",
+      "default": "subject",
+      "title": "Subject dimension",
+      "description": "Name of the subject dimension in the ratings table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "rater_dim": {
+      "type": "string",
+      "default": "rater",
+      "title": "Rater dimension",
+      "description": "Name of the rater dimension; exactly two raters are required.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "weights": {
+      "type": "string",
+      "enum": ["linear", "quadratic"],
+      "default": "linear",
+      "title": "Disagreement weights",
+      "description": "Linear weights penalize disagreement in proportion to the rating gap; quadratic weights penalize its square.",
+      "x-ui-group": "Model",
+      "x-ui-order": 0
+    },
+    "output": {
+      "type": "string",
+      "default": "weighted_kappa",
+      "title": "Output name",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 99
+    }
+  },
+  "required": []
+}

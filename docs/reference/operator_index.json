@@ -3080,6 +3080,16 @@
     "status": "generated"
   },
   {
+    "id": "periodogram",
+    "kind": "operator",
+    "title": "Periodogram",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Raw periodogram (no taper, no smoothing) of one numeric series; matches stats::spec.pgram with taper = 0 and no kernel.",
+    "doc": "src/task/step/steps/periodogram.PeriodogramStep.md",
+    "status": "generated"
+  },
+  {
     "id": "permanova",
     "kind": "operator",
     "title": "PERMANOVA",
@@ -3890,6 +3900,16 @@
     "status": "generated"
   },
   {
+    "id": "specpool",
+    "kind": "operator",
+    "title": "Species pool estimators",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Chao, first- and second-order jackknife and bootstrap species-pool richness estimators with standard errors.",
+    "doc": "src/task/step/steps/specpool.SpecpoolStep.md",
+    "status": "generated"
+  },
+  {
     "id": "spectral_embedding",
     "kind": "operator",
     "title": "Spectral embedding",
@@ -4160,6 +4180,16 @@
     "status": "generated"
   },
   {
+    "id": "turning_point",
+    "kind": "operator",
+    "title": "Turning point test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Wald-Wolfowitz turning point test of serial randomness; tied consecutive values are removed before counting.",
+    "doc": "src/task/step/steps/turning_point.TurningPointStep.md",
+    "status": "generated"
+  },
+  {
     "id": "turning_point_test",
     "kind": "operator",
     "title": "Turning point randomness test",
@@ -4307,6 +4337,16 @@
     "version": "1.0.0",
     "description": "Watterson's theta over the whole input or fixed genomic windows.",
     "doc": "src/task/step/steps/watterson_theta.WattersonThetaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "weighted_kappa",
+    "kind": "operator",
+    "title": "Weighted kappa",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Weighted Cohen's kappa for two raters with linear or quadratic disagreement weights.",
+    "doc": "src/task/step/steps/weighted_kappa.WeightedKappaStep.md",
     "status": "generated"
   },
   {

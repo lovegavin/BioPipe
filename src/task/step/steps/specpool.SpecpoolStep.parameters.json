@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Species pool estimators",
+  "description": "Chao, jackknife and bootstrap species-pool richness estimators with standard errors.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the sample dimension in the abundance table and metadata.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "title": "Taxon dimension",
+      "description": "Name of the taxon dimension in the abundance table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "group_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "Metadata sample dimension",
+      "description": "Name of the sample dimension in the metadata table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 2
+    },
+    "group_label": {
+      "type": "string",
+      "title": "Pool column",
+      "description": "Metadata column that holds the pool label.",
+      "x-ui-group": "Pools",
+      "x-ui-order": 0
+    },
+    "smallsample": {
+      "type": "boolean",
+      "default": true,
+      "title": "Small-sample correction",
+      "description": "Use the (n - 1) / n correction for the Chao estimator.",
+      "x-ui-group": "Estimators",
+      "x-ui-order": 0
+    },
+    "output": {
+      "type": "string",
+      "default": "specpool",
+      "title": "Output name",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 99
+    }
+  },
+  "required": ["group_label"]
+}

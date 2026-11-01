@@ -11,7 +11,7 @@ operators and readers, not a new route packaging format.
 
 | Package | Entries | Purpose |
 | --- | ---: | --- |
-| `biopipe-core` | 372 | Data transformations, statistics, machine learning and domain analyses |
+| `biopipe-core` | 376 | Data transformations, statistics, machine learning and domain analyses |
 | `biopipe-genetics` | 21 | QC, PCA, regression and correction |
 | `biopipe-expression` | 13 | Expression transformations and statistical analysis |
 | `biopipe-plots` | 12 | Plots, including survival curves |
@@ -19,7 +19,7 @@ operators and readers, not a new route packaging format.
 | `biopipe-readers` | 92 | File readers, including H5AD and MTX disk preparation |
 | `biopipe-hic` | 7 | Sequencing/contact file Readers and Hi-C processing |
 
-Counts describe the 1.10.0 factory library: 443 operators and 93 Readers. Installed
+Counts describe the 1.11.0 factory library: 447 operators and 93 Readers. Installed
 profiles may add, replace or disable providers; use `biopipe plugin list` for the
 active library rather than assuming these counts at runtime.
 
