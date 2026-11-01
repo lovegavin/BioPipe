@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.42.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.43.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -88,6 +88,7 @@ Examples:
 1.40.1  patch: resolve the dihedral-oracle PDB fixture relative to the test module so it runs on Windows
 1.41.0  expansion batch: helix-helix geometry, ligand steric clashes, Murcko scaffold fingerprints, embedding k-means silhouettes, and CpG island scans
 1.42.0  expansion batch: helix bend profiles, halogen bond scans, ProteinMPNN design clustering, and spectral embedding projections
+1.43.0  expansion batch: buried cavity scans, ligand residue contact maps, scaffold trees, and tandem repeat finding
 1.43.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```

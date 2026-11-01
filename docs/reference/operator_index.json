@@ -4390,6 +4390,16 @@
     "status": "generated"
   },
   {
+    "id": "rdkit_scaffold_tree",
+    "kind": "operator",
+    "title": "Murcko scaffold tree",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Hierarchical scaffold levels shared by a molecule collection.",
+    "doc": "src/task/step/steps/rdkit_scaffold_tree.RdkitScaffoldTreeStep.md",
+    "status": "generated"
+  },
+  {
     "id": "rdkit_similarity",
     "kind": "operator",
     "title": "Molecular similarity matrix",
@@ -4770,6 +4780,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_repeat_finder",
+    "kind": "operator",
+    "title": "Tandem repeat finder",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Non-overlapping tandem repeats with period and copy counts.",
+    "doc": "src/task/step/steps/sequence_repeat_finder.SequenceRepeatFinderStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_restriction_sites",
     "kind": "operator",
     "title": "Restriction site scan",
@@ -5080,6 +5100,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_cavity_scan",
+    "kind": "operator",
+    "title": "Buried cavity scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Detect buried voids on a grid and report their volume and centroid.",
+    "doc": "src/task/step/steps/structure_cavity_scan.StructureCavityScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_chi_angles",
     "kind": "operator",
     "title": "Side-chain chi angles",
@@ -5187,6 +5217,16 @@
     "version": "1.0.0",
     "description": "Count van der Waals overlaps between ligand heavy atoms and protein heavy atoms, with per-atom worst overlap and closest distance.",
     "doc": "src/task/step/steps/structure_ligand_clash.StructureLigandClashStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_residue_map",
+    "kind": "operator",
+    "title": "Ligand residue contact map",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Contact matrix between ligand atoms and protein residues.",
+    "doc": "src/task/step/steps/structure_ligand_residue_map.StructureLigandResidueMapStep.md",
     "status": "generated"
   },
   {

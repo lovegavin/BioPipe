@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "Ligand residue contact map",
+  "description": "Contact matrix between ligand atoms and protein residues.",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "ligand_dim": {
+      "type": "string",
+      "default": "ligand_atom",
+      "title": "配体原子维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "ligand_resnames": {
+      "type": "string",
+      "default": "LIG",
+      "title": "配体残基名",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "exclude_resnames": {
+      "type": "string",
+      "default": "HOH,WAT",
+      "title": "排除残基名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "cutoff": {
+      "type": "number",
+      "minimum": 1.0,
+      "maximum": 20.0,
+      "default": 4.0,
+      "title": "接触距离 (Å)",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "value": {
+      "type": "string",
+      "enum": ["count", "min_distance"],
+      "default": "count",
+      "title": "矩阵取值",
+      "x-ui-group": "basic",
+      "x-ui-order": 80
+    },
+    "output": {
+      "type": "string",
+      "default": "contact_map",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    }
+  }
+}
