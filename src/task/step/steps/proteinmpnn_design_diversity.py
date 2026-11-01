@@ -104,7 +104,12 @@ def run_designer(params: dict, structure: Path, chain: str) -> list[str]:
             f"proteinmpnn_design_diversity: {runner} does not exist; point proteinmpnn_path at the "
             "official ProteinMPNN checkout"
         )
-    weights = Path(str(params.get("weights_path") or "")).expanduser() if params.get("weights_path") else None
+    weights_text = str(params.get("weights_path") or "").strip()
+    if weights_text:
+        weights = Path(weights_text).expanduser()
+    else:
+        candidate = repo / "vanilla_model_weights"
+        weights = candidate if candidate.is_dir() else None
     if weights is not None and not weights.exists():
         raise StepError(f"proteinmpnn_design_diversity: weights_path {weights} does not exist")
 
