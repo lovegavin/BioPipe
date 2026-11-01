@@ -1,0 +1,101 @@
+{
+  "type": "object",
+  "title": "ProteinMPNN probability profile parameters",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构路径",
+      "description": "Path to the backbone PDB file.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 路径",
+      "description": "Official ProteinMPNN checkout; empty uses BIOPIPE_PROTEINMPNN_PATH.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录",
+      "description": "Directory holding v_48_*.pt; empty uses <proteinmpnn_path>/vanilla_model_weights.",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "Interpreter that runs protein_mpnn_run.py; empty uses the current interpreter.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "model_name": {
+      "type": "string",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "default": "v_48_020",
+      "title": "模型",
+      "description": "ProteinMPNN checkpoint name.",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "链",
+      "description": "Comma separated chain identifiers passed as --pdb_path_chains; empty uses all chains.",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "设备",
+      "description": "Execution device; cpu hides CUDA from the runner.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "num_batches": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 8,
+      "title": "平均批次",
+      "description": "Number of conditional-probability batches to average (official --num_batches).",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "seed": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "title": "随机种子",
+      "description": "Seed passed to the official runner (0 means a random seed upstream).",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "timeout_seconds": {
+      "type": "number",
+      "default": 1800.0,
+      "minimum": 1.0,
+      "title": "超时 (秒)",
+      "description": "Subprocess timeout.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    },
+    "output": {
+      "type": "string",
+      "default": "probability",
+      "title": "输出",
+      "description": "Output form name.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    }
+  }
+}

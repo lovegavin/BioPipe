@@ -1,0 +1,48 @@
+{
+  "type": "object",
+  "title": "Fragment profile parameters",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "",
+      "title": "SMILES",
+      "description": "One 'SMILES [name]' per line.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "method": {
+      "type": "string",
+      "enum": ["brics", "recap"],
+      "default": "brics",
+      "title": "分解方法",
+      "description": "BRICS or RECAP retrosynthetic fragmentation.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "description": "Row dimension name.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "fragment_dim": {
+      "type": "string",
+      "default": "fragment",
+      "title": "片段维度",
+      "description": "Column dimension name.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "default": "fragments",
+      "title": "输出",
+      "description": "Output form name.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    }
+  }
+}

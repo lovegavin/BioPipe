@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "title": "Interface distance histogram parameters",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "The atom dimension of the PDB form.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "The field dimension of the PDB form.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "binder_chains": {
+      "type": "string",
+      "default": "A",
+      "title": "Binder 链",
+      "description": "Comma separated binder chain identifiers.",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "target_chains": {
+      "type": "string",
+      "default": "",
+      "title": "Target 链",
+      "description": "Comma separated target chain identifiers; empty derives them from the remaining chains.",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "cutoff": {
+      "type": "number",
+      "default": 8.0,
+      "title": "距离上限 (Å)",
+      "description": "Maximum binder-target atom distance included in the histogram.",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "bin_width": {
+      "type": "number",
+      "default": 0.5,
+      "title": "分箱宽度 (Å)",
+      "description": "Width of each histogram bin.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "histogram",
+      "title": "输出",
+      "description": "Output form name.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}

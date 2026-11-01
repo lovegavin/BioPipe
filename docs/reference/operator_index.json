@@ -2300,6 +2300,16 @@
     "status": "generated"
   },
   {
+    "id": "interface_distance_histogram",
+    "kind": "operator",
+    "title": "Interface distance histogram",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Bin the distances between binder and target heavy atoms across the interface. Pair counts are reported per distance bin together with quantile statistics.",
+    "doc": "src/task/step/steps/interface_distance_histogram.InterfaceDistanceHistogramStep.md",
+    "status": "generated"
+  },
+  {
     "id": "interface_hotspots",
     "kind": "operator",
     "title": "Interface hotspots",
@@ -3730,6 +3740,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_probability_profile",
+    "kind": "operator",
+    "title": "ProteinMPNN probability profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official ProteinMPNN runner in --conditional_probs_only mode and report the per-position amino-acid probability profile p(s_i | backbone, rest of sequence).",
+    "doc": "src/task/step/steps/proteinmpnn_probability_profile.ProteinmpnnProbabilityProfileStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_score",
     "kind": "operator",
     "title": "ProteinMPNN sequence score",
@@ -3947,6 +3967,16 @@
     "version": "1.0.0",
     "description": "Estimate aqueous molar solubility from SMILES with the Delaney/ESOL linear regression over cLogP, molecular weight, rotatable bonds and aromatic proportion.",
     "doc": "src/task/step/steps/rdkit_esol.RdkitEsolStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_fragment_profile",
+    "kind": "operator",
+    "title": "Fragment profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Decompose molecules with BRICS or RECAP and report which canonical fragments occur, as a molecule-by-fragment presence matrix with per-molecule fragment counts.",
+    "doc": "src/task/step/steps/rdkit_fragment_profile.RdkitFragmentProfileStep.md",
     "status": "generated"
   },
   {
@@ -4330,6 +4360,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_hydrophobicity_profile",
+    "kind": "operator",
+    "title": "Sequence hydrophobicity profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute a sliding-window Kyte-Doolittle hydrophobicity profile for each protein sequence and report hydrophobic segments above a threshold.",
+    "doc": "src/task/step/steps/sequence_hydrophobicity_profile.SequenceHydrophobicityProfileStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_stats",
     "kind": "operator",
     "title": "sequence_stats",
@@ -4607,6 +4647,16 @@
     "version": "1.0.0",
     "description": "Find backbone N-H...O=C hydrogen bonds with the Kabsch-Sander electrostatic model and summarise donors, acceptors and the strongest interaction energy per residue.",
     "doc": "src/task/step/steps/structure_hbonds.StructureHbondsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_packing_density",
+    "kind": "operator",
+    "title": "Structure packing density",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Measure how tightly each residue is packed: heavy-atom neighbours inside a sphere around the residue centre, the number of distinct neighbour residues, and atoms per cubic angstrom.",
+    "doc": "src/task/step/steps/structure_packing_density.StructurePackingDensityStep.md",
     "status": "generated"
   },
   {
