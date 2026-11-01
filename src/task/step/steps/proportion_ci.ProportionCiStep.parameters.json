@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {"type": "string", "title": "Sample dimension", "default": "sample", "x-ui-group": "basic", "x-ui-order": 0},
+    "feature_dim": {"type": "string", "title": "Feature dimension", "default": "feature", "x-ui-group": "basic", "x-ui-order": 10},
+    "successes_label": {"type": "string", "title": "Successes column", "x-ui-group": "basic", "x-ui-order": 20},
+    "trials_label": {"type": "string", "title": "Trials column", "x-ui-group": "basic", "x-ui-order": 30},
+    "method": {"type": "string", "title": "Interval method", "default": "wilson", "enum": ["wilson", "clopper_pearson", "agresti_coull", "jeffreys", "wald"], "x-ui-group": "basic", "x-ui-order": 40},
+    "confidence": {"type": "number", "title": "Confidence level", "default": 0.95, "minimum": 0.001, "maximum": 0.9999, "x-ui-group": "basic", "x-ui-order": 50},
+    "output": {"type": "string", "title": "Output parameter", "default": "output", "x-ui-group": "advanced", "x-ui-order": 100}
+  },
+  "required": ["successes_label", "trials_label"],
+  "additionalProperties": false
+}

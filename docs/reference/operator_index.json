@@ -700,6 +700,16 @@
     "status": "generated"
   },
   {
+    "id": "chisq_gof",
+    "kind": "operator",
+    "title": "Chi-square goodness-of-fit test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Pearson chi-square goodness-of-fit test of observed counts against uniform or user-supplied probabilities.",
+    "doc": "src/task/step/steps/chisq_gof.ChisqGofStep.md",
+    "status": "generated"
+  },
+  {
     "id": "chisq_out_test",
     "kind": "operator",
     "title": "Chi-square outlier test",
@@ -3150,6 +3160,16 @@
     "status": "generated"
   },
   {
+    "id": "poisson_test",
+    "kind": "operator",
+    "title": "Exact Poisson rate test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Exact conditional Poisson test of an observed count against a null rate, with a gamma confidence interval.",
+    "doc": "src/task/step/steps/poisson_test.PoissonTestStep.md",
+    "status": "generated"
+  },
+  {
     "id": "power_anova",
     "kind": "operator",
     "title": "ANOVA power",
@@ -3237,6 +3257,16 @@
     "version": "1.0.0",
     "description": "Procrustes analysis：接收 2 个输入，输出 Form；主要参数：样本维度、Axis Dim、标准化。",
     "doc": "src/task/step/steps/procrustes.ProcrustesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proportion_ci",
+    "kind": "operator",
+    "title": "Binomial proportion confidence interval",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Confidence intervals for binomial proportions using Wilson, Clopper-Pearson, Agresti-Coull, Jeffreys or Wald.",
+    "doc": "src/task/step/steps/proportion_ci.ProportionCiStep.md",
     "status": "generated"
   },
   {
@@ -3397,6 +3427,16 @@
     "version": "1.0.0",
     "description": "Expected species richness at a fixed number of individuals.",
     "doc": "src/task/step/steps/rarefaction.RarefactionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rda",
+    "kind": "operator",
+    "title": "Redundancy analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Constrained ordination (RDA) of a response matrix on centred predictors, returning constrained eigenvalues.",
+    "doc": "src/task/step/steps/rda.RdaStep.md",
     "status": "generated"
   },
   {

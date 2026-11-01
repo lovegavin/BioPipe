@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {"type": "string", "title": "Sample dimension", "default": "sample", "x-ui-group": "basic", "x-ui-order": 0},
+    "feature_dim": {"type": "string", "title": "Feature dimension", "default": "feature", "x-ui-group": "basic", "x-ui-order": 10},
+    "counts_label": {"type": "string", "title": "Counts column", "x-ui-group": "basic", "x-ui-order": 20},
+    "probabilities": {"type": "array", "title": "Expected probabilities", "items": {"type": "number"}, "minItems": 2, "x-ui-group": "advanced", "x-ui-order": 40},
+    "output": {"type": "string", "title": "Output parameter", "default": "output", "x-ui-group": "advanced", "x-ui-order": 100}
+  },
+  "required": ["counts_label"],
+  "additionalProperties": false
+}
