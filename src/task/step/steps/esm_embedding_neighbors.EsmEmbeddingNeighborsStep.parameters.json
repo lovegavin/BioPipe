@@ -1,0 +1,51 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "embedding_dim": {
+      "type": "string",
+      "default": "embedding",
+      "title": "嵌入维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "k": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50,
+      "default": 3,
+      "title": "邻居数",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "metric": {
+      "type": "string",
+      "enum": ["cosine", "euclidean"],
+      "default": "cosine",
+      "title": "距离度量",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "neighbor_dim": {
+      "type": "string",
+      "default": "neighbor",
+      "title": "邻居维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "output": {
+      "type": "string",
+      "default": "neighbors",
+      "title": "输出",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    }
+  }
+}

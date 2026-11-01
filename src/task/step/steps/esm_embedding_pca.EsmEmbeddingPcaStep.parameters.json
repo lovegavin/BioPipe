@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "embedding_dim": {
+      "type": "string",
+      "default": "embedding",
+      "title": "嵌入维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "n_components": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50,
+      "default": 2,
+      "title": "主成分数",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "projection",
+      "title": "输出",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    }
+  }
+}
