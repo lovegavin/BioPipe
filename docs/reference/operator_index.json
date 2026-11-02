@@ -5960,6 +5960,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_hbond_occupancy",
+    "kind": "operator",
+    "title": "MD 氢键占有率",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Detect donor-H...acceptor hydrogen bonds from topology and per-frame geometry, and report the fraction of MD frames in which each residue pair stays bonded.",
+    "doc": "src/task/step/steps/structure_md_hbond_occupancy.StructureMdHbondOccupancyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_md_salt_bridge_occupancy",
     "kind": "operator",
     "title": "MD 盐桥占有率",

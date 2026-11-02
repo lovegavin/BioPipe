@@ -278,3 +278,8 @@ to fill a batch.
 
 - Acidic/basic side-chain pair occupancies across MD frames; 4 tests
   passed; 679 operators / 101 Readers.
+
+## v1.91.0 structure_md_hbond_occupancy (verified)
+
+- Donor-H...acceptor geometry across MD frames; 1MEL real check (4074 atoms,
+  132 bonds at >= 99%); 4 tests passed; 680 operators / 101 Readers.
