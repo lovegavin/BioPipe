@@ -6,6 +6,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -73,8 +74,13 @@ def predict(
     fasta = write_fasta(sequence, workdir / "query.fasta")
     outdir = workdir / "out"
     outdir.mkdir(parents=True, exist_ok=True)
-    command = [
-        binary,
+    if binary.lower().endswith(".py"):
+        # A script runner (for example a conda entry point or a test double)
+        # cannot be executed directly on Windows; start it through Python.
+        command = [sys.executable, binary]
+    else:
+        command = [binary]
+    command += [
         fasta.as_posix(),
         outdir.as_posix(),
         "--num-models",
