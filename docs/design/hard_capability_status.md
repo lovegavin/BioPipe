@@ -169,6 +169,15 @@ nobody re-reports a blocked item as delivered.
   per-residue difference 0.000000), A plus 1 A Gaussian noise gives **0.6538
   both**, and A vs A gives **1.0000 both**.
 
+- `structure_openmm_md_rmsf`: short implicit-solvent MD (Amber14 + GB-Neck2,
+  LangevinMiddle, 2 fs) with per-residue C-alpha RMSF validated against
+  `mdtraj.rmsf` on the same trajectories. Real run on 1MEL chain A (1881
+  particles, 2000 steps / 4 ps, 20 frames): mean RMSF **0.0477 nm** (min
+  0.0241, max 0.1131), radius of gyration 1.398-1.417 nm (mean 1.408); the
+  most flexible residues are the CDR loops PRO41/GLY42 (0.113/0.111 nm) and
+  the terminal SER133, run time **156 s** on CPU. The oracle test agrees with
+  mdtraj to 1.6e-7 nm.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

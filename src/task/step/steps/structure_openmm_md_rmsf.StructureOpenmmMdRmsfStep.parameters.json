@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "短程 MD 参数",
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度名",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维度名",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "chains": {
+      "title": "链（逗号分隔，留空为全部）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "temperature": {
+      "title": "温度 (K)",
+      "type": "number",
+      "default": 300.0,
+      "minimum": 200.0,
+      "maximum": 400.0,
+      "x-ui-group": "模拟",
+      "x-ui-order": 4
+    },
+    "timestep_fs": {
+      "title": "时间步长 (fs)",
+      "type": "number",
+      "default": 2.0,
+      "minimum": 0.5,
+      "maximum": 4.0,
+      "x-ui-group": "模拟",
+      "x-ui-order": 5
+    },
+    "steps": {
+      "title": "步数",
+      "type": "integer",
+      "default": 5000,
+      "minimum": 100,
+      "maximum": 100000,
+      "x-ui-group": "模拟",
+      "x-ui-order": 6
+    },
+    "report_interval": {
+      "title": "采样间隔（步）",
+      "type": "integer",
+      "default": 50,
+      "minimum": 10,
+      "maximum": 5000,
+      "x-ui-group": "模拟",
+      "x-ui-order": 7
+    },
+    "platform": {
+      "title": "计算平台",
+      "type": "string",
+      "default": "CPU",
+      "enum": [
+        "CPU",
+        "Reference"
+      ],
+      "x-ui-group": "模拟",
+      "x-ui-order": 8
+    },
+    "residue_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "residue",
+      "x-ui-group": "输出",
+      "x-ui-order": 9
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "flexibility",
+      "x-ui-group": "输出",
+      "x-ui-order": 10
+    }
+  }
+}

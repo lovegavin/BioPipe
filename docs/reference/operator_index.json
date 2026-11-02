@@ -5910,6 +5910,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_openmm_md_rmsf",
+    "kind": "operator",
+    "title": "短程 OpenMM MD 与残基柔性 (RMSF)",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Run a short implicit-solvent molecular dynamics simulation with OpenMM and report the per-residue C-alpha root mean square fluctuation and radius of gyration.",
+    "doc": "src/task/step/steps/structure_openmm_md_rmsf.StructureOpenmmMdRmsfStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_openmm_md_stability",
     "kind": "operator",
     "title": "OpenMM 短程分子动力学稳定性",
