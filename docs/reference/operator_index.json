@@ -340,6 +340,16 @@
     "status": "generated"
   },
   {
+    "id": "antibody_numbering_kabat",
+    "kind": "operator",
+    "title": "Kabat numbering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Align a VH/VHH sequence to the Kabat reference template and return one row per residue with its Kabat number, insertion suffix and framework/CDR region assignment.",
+    "doc": "src/task/step/steps/antibody_numbering_kabat.AntibodyNumberingKabatStep.md",
+    "status": "generated"
+  },
+  {
     "id": "approx_entropy",
     "kind": "operator",
     "title": "Approximate entropy",
@@ -3990,6 +4000,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_hotspot_masked_design",
+    "kind": "operator",
+    "title": "Hotspot-masked design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Rank binder-target interface residues by contact density, keep the top hotspots as the only designable positions and run the official ProteinMPNN runner with every other residue fixed.",
+    "doc": "src/task/step/steps/proteinmpnn_hotspot_masked_design.ProteinmpnnHotspotMaskedDesignStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_interface_design",
     "kind": "operator",
     "title": "ProteinMPNN interface design",
@@ -5300,6 +5320,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_cavity_druggability",
+    "kind": "operator",
+    "title": "Cavity druggability",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Detect the largest buried cavity of a structure, measure how enclosed it is and how hydrophobic its lining is, and combine both into a 0-1 druggability score.",
+    "doc": "src/task/step/steps/structure_cavity_druggability.StructureCavityDruggabilityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_cavity_lining",
     "kind": "operator",
     "title": "Cavity lining residues",
@@ -5497,6 +5527,16 @@
     "version": "1.0.0",
     "description": "Summarise an N x N predicted-alignment-error matrix (ColabFold, AlphaFold or ESMFold) into per-residue mean and maximum PAE plus the fraction of partner residues below a confidence threshold.",
     "doc": "src/task/step/steps/structure_pae_summary.StructurePaeSummaryStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_paratope_predict",
+    "kind": "operator",
+    "title": "Paratope prediction",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Annotate the Kabat CDR spans of the binder chain(s), count antigen contacts per residue and report which CDR residues form the paratope.",
+    "doc": "src/task/step/steps/structure_paratope_predict.StructureParatopePredictStep.md",
     "status": "generated"
   },
   {
@@ -5967,6 +6007,16 @@
     "version": "1.0.0",
     "description": "Run AutoDock Vina with a PDBQT receptor and ligand, then return every docked pose as a [pose, atom, field] table together with the affinity table parsed from the Vina log.",
     "doc": "src/task/step/steps/vina_dock.VinaDockStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vina_dock_batch",
+    "kind": "operator",
+    "title": "Batch docking",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run AutoDock Vina for every listed PDBQT ligand against one receptor and report the best affinity, RMSD bounds and mode count per ligand.",
+    "doc": "src/task/step/steps/vina_dock_batch.VinaDockBatchStep.md",
     "status": "generated"
   },
   {

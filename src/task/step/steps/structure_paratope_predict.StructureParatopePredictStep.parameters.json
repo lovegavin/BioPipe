@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "抗原结合位点预测",
+  "description": "统计抗体链每个残基与抗原的接触，并标注其中的 CDR（互补决定区）残基。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "title": "原子维度",
+      "x-ui-group": "Dimension",
+      "x-ui-order": 1,
+      "description": "结构 Form 的原子维度名。",
+      "default": "atom"
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "字段维度",
+      "x-ui-group": "Dimension",
+      "x-ui-order": 2,
+      "description": "结构 Form 的字段维度名。",
+      "default": "field"
+    },
+    "binder_chains": {
+      "type": "string",
+      "title": "抗体链",
+      "x-ui-group": "Chains",
+      "x-ui-order": 3,
+      "description": "逗号或空格分隔的抗体链，留空表示除目标链外的全部链。",
+      "default": ""
+    },
+    "target_chains": {
+      "type": "string",
+      "title": "抗原链",
+      "x-ui-group": "Chains",
+      "x-ui-order": 4,
+      "description": "逗号或空格分隔的抗原链，留空表示其余链。",
+      "default": ""
+    },
+    "cutoff": {
+      "type": "number",
+      "title": "接触截断",
+      "x-ui-group": "Contacts",
+      "x-ui-order": 5,
+      "description": "重原子接触距离上限（Å）。",
+      "default": 5.0,
+      "minimum": 3.0,
+      "maximum": 10.0
+    },
+    "min_contacts": {
+      "type": "integer",
+      "title": "最少接触数",
+      "x-ui-group": "Contacts",
+      "x-ui-order": 6,
+      "description": "残基进入结果所需的最少接触原子对数。",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 20
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名",
+      "x-ui-group": "Output",
+      "x-ui-order": 9,
+      "description": "输出 Form 在上下文中的名称。",
+      "default": "paratope"
+    }
+  }
+}
