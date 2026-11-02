@@ -63,6 +63,13 @@ nobody re-reports a blocked item as delivered.
   ColabFold 1.6.3 rejects `--device`; the wrapper now selects the device
   through `CUDA_VISIBLE_DEVICES` only.
 
+- `structure_openmm_energy`: OpenMM 8.6.1 + PDBFixer build an amber14-all
+  system with the GBn2 implicit solvent for a 973-atom VHH chain. Potential
+  energy falls from **2804.88** to **-15738.28 kJ/mol** (gradient 66341.7 ->
+  5857.1 kJ/mol/nm, delta -18543.16), 1881 particles, 6 force terms, 70.6 s
+  on CPU. OpenMM itself is the oracle, and the operator recomputes both
+  energies and gradients from its own Context.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

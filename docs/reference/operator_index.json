@@ -5820,6 +5820,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_openmm_energy",
+    "kind": "operator",
+    "title": "OpenMM potential energy",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Build an OpenMM system for a protein structure and report the potential energy, optionally minimized.",
+    "doc": "src/task/step/steps/structure_openmm_energy.StructureOpenmmEnergyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_packing_density",
     "kind": "operator",
     "title": "Structure packing density",
