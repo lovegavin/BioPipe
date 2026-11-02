@@ -1660,6 +1660,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_embedding_ridge_probe",
+    "kind": "operator",
+    "title": "Embedding ridge regression probe",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Fit a cross-validated ridge regression from per-sequence embedding vectors to a continuous property (for example a fitness or stability measurement) and report per-fold R2, RMSE and MAE with a mean baseline.",
+    "doc": "src/task/step/steps/esm_embedding_ridge_probe.EsmEmbeddingRidgeProbeStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_embedding_umap_projection",
     "kind": "operator",
     "title": "Embedding spectral projection",
@@ -4120,6 +4130,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_omit_design",
+    "kind": "operator",
+    "title": "ProteinMPNN constrained design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official ProteinMPNN sampler with a global amino-acid omission set (for example cysteine-free design) and report the sampled designs.",
+    "doc": "src/task/step/steps/proteinmpnn_omit_design.ProteinmpnnOmitDesignStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_perplexity",
     "kind": "operator",
     "title": "ProteinMPNN Perplexity",
@@ -5040,6 +5060,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_signal_peptide_v2",
+    "kind": "operator",
+    "title": "Signal peptide typing",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Scan a protein sequence for a signal peptide, discriminate secretory from Tat-dependent and lipoprotein from non-lipoprotein routes, and report the most likely signal peptidase cleavage site.",
+    "doc": "src/task/step/steps/sequence_signal_peptide_v2.SequenceSignalPeptideV2Step.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_stats",
     "kind": "operator",
     "title": "sequence_stats",
@@ -5537,6 +5567,16 @@
     "version": "1.0.0",
     "description": "Contact matrix between ligand atoms and protein residues.",
     "doc": "src/task/step/steps/structure_ligand_residue_map.StructureLigandResidueMapStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_strain",
+    "kind": "operator",
+    "title": "Ligand internal strain",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute the MMFF94 (or UFF) energy of a bound ligand conformation, minimize it locally and report the strain energy that the conformation carries relative to its own minimum.",
+    "doc": "src/task/step/steps/structure_ligand_strain.StructureLigandStrainStep.md",
     "status": "generated"
   },
   {
@@ -6077,6 +6117,16 @@
     "version": "1.0.0",
     "description": "Cluster the poses returned by vina_dock with symmetry-aware heavy-atom RMSD and greedy leader clustering, reporting the cluster of every pose and the distance to its cluster representative.",
     "doc": "src/task/step/steps/vina_pose_cluster.VinaPoseClusterStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vina_pose_rmsd",
+    "kind": "operator",
+    "title": "Pose RMSD to a reference",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Superpose every docked ligand pose onto a reference pose, matching symmetry-equivalent atoms, and report the RMSD and the largest per-atom deviation.",
+    "doc": "src/task/step/steps/vina_pose_rmsd.VinaPoseRmsdStep.md",
     "status": "generated"
   },
   {

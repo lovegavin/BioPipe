@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "配体内应变参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度名",
+      "type": "string",
+      "description": "输入原子维度名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 1,
+      "default": "atom"
+    },
+    "field_dim": {
+      "title": "字段维度名",
+      "type": "string",
+      "description": "输入字段维度名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 2,
+      "default": "field"
+    },
+    "ligand_dim": {
+      "title": "配体维度名",
+      "type": "string",
+      "description": "输出配体维度名称",
+      "x-ui-group": "输出",
+      "x-ui-order": 3,
+      "default": "ligand"
+    },
+    "ligand_resname": {
+      "title": "配体残基名",
+      "type": "string",
+      "description": "需要计算应变的配体残基名",
+      "x-ui-group": "输入",
+      "x-ui-order": 4,
+      "default": "LIG"
+    },
+    "force_field": {
+      "title": "力场",
+      "type": "string",
+      "description": "用于能量计算的 RDKit 力场",
+      "x-ui-group": "模型",
+      "x-ui-order": 5,
+      "default": "MMFF94",
+      "enum": [
+        "MMFF94",
+        "UFF"
+      ]
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "description": "输出槽名称",
+      "x-ui-group": "输出",
+      "x-ui-order": 6,
+      "default": "strain"
+    }
+  }
+}

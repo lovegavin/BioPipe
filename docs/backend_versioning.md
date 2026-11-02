@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.52.1** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.53.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -99,14 +99,14 @@ Examples:
 1.48.0  expansion batch: large-resource manifest and preflight, ColabFold and ESMFold structure prediction, pLDDT profiles and PAE summaries
 1.48.1  patch: launch a script ColabFold runner through Python so Windows can execute the wrapper
 1.49.0  expansion batch: RFdiffusion design, Vina docking and pose clustering, interface core/rim, signal peptide scan
-1.49.0  expansion batch: RFdiffusion design, Vina docking and pose clustering, interface core/rim, signal peptide scan
 1.50.0  expansion batch: interface-masked ProteinMPNN scoring, Prodigal gene prediction, HMMER domain annotation, VHH humanization scoring and PDBQT ligand preparation
 1.50.1  patch: score the interface from conditional probabilities so per-residue NLL is available
 1.50.2  patch: use a registered icon for vina_pose_cluster so Studio does not render the generic placeholder
 1.51.0  expansion batch: Kabat numbering, paratope prediction, hotspot-masked design, batch docking and cavity druggability
 1.52.0  expansion batch: IMGT numbering, glycosylation sites, LigandMPNN side-chain packing, biased design matrices and humanization mutations
 1.52.1  patch: forward the per-residue bias matrix through --bias_by_res_jsonl
-1.52.1  next expansion batch
+1.53.0  expansion batch: constrained amino-acid design, signal-peptide typing, pose RMSD, ligand strain and ridge probe
+1.53.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
 
