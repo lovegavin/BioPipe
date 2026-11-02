@@ -148,6 +148,12 @@ nobody re-reports a blocked item as delivered.
   a 1.0 A noised copy gives **0.8652 both** (delta 0.0000), identity gives
   **1.000000 both**.
 
+- `esmfold_predict`: fair-esm 2.0.0 with the 2.77 GB ESMFold-3B checkpoint.
+  A 14-residue peptide on CPU: **94 atoms, 50.4 s**, mean pLDDT **73.3**
+  (58.0-82.7), 2 recycles. Requires the four compatibility fixes documented in
+  `docs/large_resources.md` (two dataclass defaults, IPA point-projection key
+  remap, and an `openfold` path that does not shadow `scripts/`).
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

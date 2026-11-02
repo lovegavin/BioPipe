@@ -122,3 +122,22 @@ def test_runner_round_trip(tmp_path, monkeypatch) -> None:
     assert ctx["structure"].info["model"] == "esmfold_3B_v1"
     assert list((tmp_path / "esmfold").rglob("*esmfold_predict*.json"))
     assert np.isfinite(ctx["structure"].info["mean_plddt"])
+
+
+
+def test_real_esmfold():
+    import os
+
+    if os.environ.get("BIOPIPE_ESMFOLD_REAL") != "1":
+        pytest.skip("set BIOPIPE_ESMFOLD_REAL=1 to run ESMFold 3B")
+    pytest.importorskip("esm")
+    from src.task.step.steps._sequence_common import encode_sequences
+
+    ctx = Context(str(Path(__file__).resolve().parent / "_esmfold_real"), {"params": {}})
+    ctx["sequence"] = encode_sequences(["MKVLAAGIVGLLLA"], "sequence", "position", "protein")
+    run(ctx, [{"name": "esmfold_predict", "inputs": ["sequence"], "params": {"output": "structure", "device": "cpu", "num_recycles": 2}}])
+    result = ctx["structure"]
+    assert result.data.shape[0] > 50
+    fields = result.labels["field"]
+    plddt = result.data[:, fields["bfactor"]]
+    assert 40.0 < float(plddt.mean()) < 95.0

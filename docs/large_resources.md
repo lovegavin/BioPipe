@@ -6,6 +6,30 @@ checkouts. Operators that need them read the shipped manifest
 environment variable overrides the search path, and exactly which files a
 dependent operator expects. Nothing is downloaded automatically.
 
+## ESMFold
+
+`esmfold_predict` uses `fair-esm`'s ESMFold-3B. The weights are a single
+2.77 GB file that `torch.hub` caches by name:
+
+```bash
+mkdir -p ~/.cache/torch/hub/checkpoints
+curl -L -o ~/.cache/torch/hub/checkpoints/esmfold_3B_v1.pt \
+  https://dl.fbaipublicfiles.com/fair-esm/models/esmfold_3B_v1.pt   # 2.77 GB
+```
+
+fair-esm 2.0.0 needs four small compatibility fixes for Python 3.12 and for
+the released checkpoint, all applied in site-packages:
+
+1. `esm/esmfold/v1/trunk.py`: `structure_module` default becomes
+   `field(default_factory=StructureModuleConfig)`.
+2. `esm/esmfold/v1/esmfold.py`: `trunk` default becomes
+   `field(default_factory=FoldingTrunkConfig)`.
+3. `esm/esmfold/v1/pretrained.py`: remap checkpoint keys by inserting
+   `.linear` into `ipa.linear_q_points.*` and `ipa.linear_kv_points.*`.
+4. OpenFold must be importable (ESMFold imports `openfold.np`); add a `.pth`
+   that points at a directory containing only the `openfold` package (not the
+   checkout root, whose `scripts/` would shadow BioPipe's).
+
 ## OpenFold
 
 OpenFold needs a checkout, the finetuning weights, and (on CPU) two small
