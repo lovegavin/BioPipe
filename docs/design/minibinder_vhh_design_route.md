@@ -88,3 +88,6 @@ Missing for a complete design stack: a packaged end-to-end route example, a
 closed design → predict → filter loop with automatic iteration, an affinity
 model beyond Vina and MPNN likelihoods, state-specific agonism, pH scoring,
 and any wet-lab feedback.
+
+Platform-level comparison and economic assessment:
+[competitive landscape](competitive_landscape.md#platform-layer-assessment).
