@@ -4060,6 +4060,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_tied_design",
+    "kind": "operator",
+    "title": "ProteinMPNN tied-position design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official ProteinMPNN runner with a tied-positions payload so that symmetry-equivalent residues receive the same amino acid, and report the design scores together with the tied payload used.",
+    "doc": "src/task/step/steps/proteinmpnn_tied_design.ProteinmpnnTiedDesignStep.md",
+    "status": "generated"
+  },
+  {
     "id": "prs",
     "kind": "operator",
     "title": "Polygenic risk score",
@@ -4840,6 +4850,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_kmer_enrichment",
+    "kind": "operator",
+    "title": "Sequence k-mer enrichment",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Compare the k-mer content of query sequences to a background set: counts, add-pseudocount log2 enrichment, two-sided Fisher exact p-values and optional Benjamini-Hochberg q-values.",
+    "doc": "src/task/step/steps/sequence_kmer_enrichment.SequenceKmerEnrichmentStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_kmer_profile",
     "kind": "operator",
     "title": "K-mer composition profile",
@@ -5250,6 +5270,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_domain_boundary",
+    "kind": "operator",
+    "title": "Structure domain boundary",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Segment a chain into domains from the CA contact graph (connected components or normalized-Laplacian spectral clustering) and report each residue's domain, the number of cross-domain contacts and whether it sits on a domain boundary.",
+    "doc": "src/task/step/steps/structure_domain_boundary.StructureDomainBoundaryStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_halogen_bond_scan",
     "kind": "operator",
     "title": "Halogen bond scan",
@@ -5317,6 +5347,16 @@
     "version": "1.0.0",
     "description": "Count van der Waals overlaps between ligand heavy atoms and protein heavy atoms, with per-atom worst overlap and closest distance.",
     "doc": "src/task/step/steps/structure_ligand_clash.StructureLigandClashStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_pose_rmsd",
+    "kind": "operator",
+    "title": "Ligand pose RMSD",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Superpose a ligand pose onto a reference pose with the Kabsch algorithm and, when requested, re-match same-element atoms with the Hungarian assignment to obtain a symmetry-corrected RMSD. Emits per-atom deviations and the matched permutation.",
+    "doc": "src/task/step/steps/structure_ligand_pose_rmsd.StructureLigandPoseRmsdStep.md",
     "status": "generated"
   },
   {

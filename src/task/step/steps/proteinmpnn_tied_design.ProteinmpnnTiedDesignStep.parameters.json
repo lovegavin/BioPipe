@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "ProteinMPNN 对称位置设计",
+  "description": "在对称等价位置之间共享氨基酸（官方 --tied_positions_jsonl），输出设计分数与 tied 载荷。",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构路径 (PDB)",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "tied_positions": {
+      "type": "string",
+      "default": "",
+      "title": "tied 位置（如 A:1,2|B:1,2）",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "设计链（空格分隔，留空为全部）",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "default": 8,
+      "title": "采样序列数",
+      "x-ui-group": "basic",
+      "x-ui-order": 40,
+      "minimum": 1,
+      "maximum": 100000
+    },
+    "sampling_temp": {
+      "type": "string",
+      "default": "0.1",
+      "title": "采样温度",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "seed": {
+      "type": "integer",
+      "default": 1,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "design_dim": {
+      "type": "string",
+      "default": "design",
+      "title": "设计维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "model_name": {
+      "type": "string",
+      "default": "v_48_020",
+      "title": "模型",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80,
+      "enum": [
+        "v_48_002",
+        "v_48_010",
+        "v_48_020",
+        "v_48_030"
+      ]
+    },
+    "device": {
+      "type": "string",
+      "default": "cpu",
+      "title": "运行设备",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90,
+      "enum": [
+        "cpu",
+        "cuda"
+      ]
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 仓库路径",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录",
+      "x-ui-group": "advanced",
+      "x-ui-order": 110
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "x-ui-group": "advanced",
+      "x-ui-order": 120
+    },
+    "timeout": {
+      "type": "integer",
+      "default": 1800,
+      "title": "超时（秒）",
+      "x-ui-group": "advanced",
+      "x-ui-order": 130,
+      "minimum": 1,
+      "maximum": 86400
+    },
+    "output": {
+      "type": "string",
+      "default": "designs",
+      "title": "输出名称",
+      "x-ui-group": "output",
+      "x-ui-order": 10
+    }
+  }
+}
