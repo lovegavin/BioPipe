@@ -360,6 +360,16 @@
     "status": "generated"
   },
   {
+    "id": "antifold_score",
+    "kind": "operator",
+    "title": "AntiFold inverse-folding scores",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Per-residue AntiFold perplexity and native log-probability for an antibody structure.",
+    "doc": "src/task/step/steps/antifold_score.AntifoldScoreStep.md",
+    "status": "generated"
+  },
+  {
     "id": "approx_entropy",
     "kind": "operator",
     "title": "Approximate entropy",

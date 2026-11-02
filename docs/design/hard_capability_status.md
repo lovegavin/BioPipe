@@ -48,9 +48,12 @@ nobody re-reports a blocked item as delivered.
   `2ee07356b125d1e3e57503c204111fd7323347fc4735d41d3caac57c2a78e116`), loaded
   with `transformers.EsmForProteinFolding`, and run on a 118-residue VHH:
   879 atoms, mean pLDDT 0.846, 33.7 s on CPU.
-- AntiFold `model.pt` is now measurable rather than hung: the OPIG host caps
-  each connection at ~15.6 KB/s, so 540 MB needs about ten hours; a partial
-  21.7 MB file is a valid resumable base.
+- `antifold_score`: AntiFold `model.pt` (566,838,063 bytes) was assembled from
+  three verified 8-connection slices (each byte-probed against the server; the
+  final checkpoint loads 489 tensors). Real run on the 1MEL VHH chain A:
+  132 residues, mean perplexity 2.707, 35 IMGT CDR residues, 5.9 s on CPU.
+  The OPIG host caps each connection at ~15.6 KB/s, so parallel ranges are
+  the only practical download path.
 - ColabFold's AlphaFold-2 parameters are only served from
   `storage.googleapis.com` at ~91 KB/s (about eleven hours for 3.47 GB); the
   GitHub release asset named in the earlier note does not exist.
