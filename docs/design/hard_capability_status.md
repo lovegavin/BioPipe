@@ -268,3 +268,8 @@ to fill a batch.
 
 - ViennaRNA RNAcofold -p -c wrapper; MFE, binding energy and five-species
   equilibrium concentrations; 3 tests passed; 677 operators / 101 Readers.
+
+## v1.89.0 structure_md_contact_occupancy (verified)
+
+- Heavy-atom residue contact occupancies across MD frames; brute-force
+  distance cross-check; 4 tests passed; 678 operators / 101 Readers.

@@ -5950,6 +5950,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_contact_occupancy",
+    "kind": "operator",
+    "title": "MD 残基接触占有率",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute per-residue-pair heavy-atom minimum distances across MD frames and report how often each pair stays in contact, with mean and minimum distances.",
+    "doc": "src/task/step/steps/structure_md_contact_occupancy.StructureMdContactOccupancyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_md_ss_occupancy",
     "kind": "operator",
     "title": "MD 轨迹二级结构占有率",
