@@ -5900,6 +5900,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_protonation_pka",
+    "kind": "operator",
+    "title": "PROPKA protonation states",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Predict per-residue pKa with PROPKA and read the resulting protonation charges at a target pH.",
+    "doc": "src/task/step/steps/structure_protonation_pka.StructureProtonationPkaStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_protonation_sites",
     "kind": "operator",
     "title": "Protonation sites",

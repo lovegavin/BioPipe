@@ -86,6 +86,15 @@ nobody re-reports a blocked item as delivered.
   seeded, so absolute values shift slightly between runs; all values within a
   run share one wt baseline, which keeps the ranking comparable.
 
+- `structure_protonation_pka`: pdb2pqr 3.8.0 with PROPKA 3.5.1. On the VHH
+  chain A the operator returns 34 titratable residues, net charge -2.81
+  (Henderson-Hasselbalch) versus -3.00 (PQR atom charges). On hen lysozyme
+  chains L/M it reproduces the classic pattern: **Glu35 pKa 6.87 / 7.03**
+  (elevated above the 4.5 model value) and Asp52 4.91 / 4.76 (normal), 74
+  residues, net charge 15.49 versus 15.00. Per-residue HH and PQR charges can
+  differ by up to ~0.5 because PDB2PQR protonates discretely while the
+  operator's HH formula is fractional.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into
