@@ -295,3 +295,8 @@ to fill a batch.
 - Backbone phi/psi and coarse Ramachandran occupancy across MD frames;
   mdtraj angle cross-check; 1MEL (132 residues, alpha 0.12, beta 0.57);
   5 tests passed; 682 operators / 101 Readers.
+
+## v1.94.0 structure_ligand_redock_qc (verified)
+
+- PoseBusters redock validation; 3PTB real check (shifted pose rmsd 3.0 /
+  fail, identity rmsd 0.0 / pass); 3 tests passed; 683 operators / 101 Readers.

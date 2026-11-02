@@ -5930,6 +5930,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_ligand_redock_qc",
+    "kind": "operator",
+    "title": "配体 redock 几何校验",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Validate a docked ligand pose against a crystal ligand and its protein with PoseBusters redock mode, reporting symmetry-aware RMSD and failed checks.",
+    "doc": "src/task/step/steps/structure_ligand_redock_qc.StructureLigandRedockQcStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_ligand_residue_map",
     "kind": "operator",
     "title": "Ligand residue contact map",
