@@ -11,6 +11,7 @@ from src.task.step.base import Step
 
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -72,6 +73,8 @@ class FoldseekSearchStep(Step):
         workdir = Path(tempfile.mkdtemp(prefix="foldseek_"))
         output = workdir / "hits.m8"
         command = foldseek_command(binary, query, database, output, workdir / "tmp", threads=int(params.get("threads", 1)), max_hits=int(params.get("max_hits", 100)))
+        if str(binary).lower().endswith(".py"):
+            command = [sys.executable] + command
         completed = subprocess.run(command, capture_output=True, text=True, timeout=int(params.get("timeout_seconds", 1800)))
         if completed.returncode != 0:
             tail = ((completed.stderr or completed.stdout).strip().splitlines() or [""])[-1]

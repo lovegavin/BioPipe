@@ -12,6 +12,7 @@ from src.task.step.base import Step
 import json
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -125,6 +126,8 @@ class BoltzPredictStep(Step):
         write_yaml(yaml_path, sequences[0], chain=str(params.get("protein_chain", "A")), ligand_smiles=str(params.get("ligand_smiles", "")), ligand_chain=str(params.get("ligand_chain", "B")), affinity=bool(params.get("affinity", False)))
         out_dir = workdir / "out"
         command = boltz_command(resolved, yaml_path, out_dir, model=str(params.get("model", "boltz2")), use_msa_server=bool(params.get("use_msa_server", True)), affinity=bool(params.get("affinity", False)), device=str(params.get("device", "cpu")), extra=str(params.get("extra_args", "")))
+        if str(resolved).lower().endswith(".py"):
+            command = [sys.executable] + command
         try:
             completed = subprocess.run(command, capture_output=True, text=True, timeout=int(params.get("timeout_seconds", 3600)), env={**__import__("os").environ, "PYTHONUNBUFFERED": "1"})
         except subprocess.TimeoutExpired:

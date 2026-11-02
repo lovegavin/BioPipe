@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.59.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.59.1** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -116,6 +116,7 @@ Examples:
 1.58.0  expansion batch: interface temperature scan, kNN density, cysteine pairing and helical hydrophobic moment
 1.58.1  patch: extension policy for hard capabilities and on-demand extension
 1.59.0  hard batch: Boltz-2 co-folding prediction and Foldseek structural search wrappers
+1.59.1  patch: launch script wrappers through the interpreter on Windows
 1.53.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
