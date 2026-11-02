@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "Boltz-2 亲和力汇总参数",
+  "properties": {
+    "affinity_path": {
+      "title": "亲和力 JSON 或输出目录",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "model_dim": {
+      "title": "预测维度名",
+      "type": "string",
+      "default": "complex",
+      "x-ui-group": "输出",
+      "x-ui-order": 2
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "affinity",
+      "x-ui-group": "输出",
+      "x-ui-order": 3
+    }
+  }
+}

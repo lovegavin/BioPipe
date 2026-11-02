@@ -115,6 +115,15 @@ nobody re-reports a blocked item as delivered.
   same release (the `end_gap_score` setter replaced the removed
   `end_insertion_score`/`end_deletion_score` attributes).
 
+- `boltz_affinity_summary`: Boltz-2 (conf 2.29 GB + affinity 2.06 GB + mols
+  1.86 GB, all fetched from `hf-mirror.com`) with an empty MSA. A 14-residue
+  peptide plus aspirin ran **structure and affinity in 40 s on CPU**, writing
+  `affinity_aff.json` with `affinity_pred_value 1.594`,
+  `affinity_probability_binary 0.359`, and two auxiliary variant heads
+  (1.726/0.204 and 1.461/0.516). The operator reproduces the table exactly
+  and marks `has_variants = 1`. No structure prediction accuracy claim is
+  made for this 14-residue toy system.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

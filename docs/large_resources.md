@@ -6,6 +6,28 @@ checkouts. Operators that need them read the shipped manifest
 environment variable overrides the search path, and exactly which files a
 dependent operator expects. Nothing is downloaded automatically.
 
+## Boltz
+
+Boltz downloads its own weights into a cache directory (default `~/.boltz`).
+Hugging Face is unreachable from some networks; the `hf-mirror.com` mirror
+serves the same files with the same names:
+
+```bash
+mkdir -p ~/.boltz
+base=https://hf-mirror.com/boltz-community
+curl -L -o ~/.boltz/ccd.pkl           $base/boltz-1/resolve/main/ccd.pkl
+curl -L -o ~/.boltz/boltz1_conf.ckpt  $base/boltz-1/resolve/main/boltz1_conf.ckpt
+curl -L -o ~/.boltz/boltz2_conf.ckpt  $base/boltz-2/resolve/main/boltz2_conf.ckpt
+curl -L -o ~/.boltz/boltz2_aff.ckpt   $base/boltz-2/resolve/main/boltz2_aff.ckpt
+curl -L -o ~/.boltz/mols.tar          $base/boltz-2/resolve/main/mols.tar
+```
+
+Sizes: ccd 330 MB, boltz1 3.6 GB, boltz2 conf 2.29 GB, boltz2 affinity
+2.06 GB, mols 1.86 GB. With the cache populated, `boltz_predict` runs offline.
+Boltz-2 affinity predictions require `properties: - affinity: {binder: B}` in
+the YAML; `boltz_affinity_summary` tabulates the resulting
+`affinity_<id>.json` files.
+
 ## AntiFold
 
 AntiFold ships its weights separately from the Python package.

@@ -610,6 +610,16 @@
     "status": "generated"
   },
   {
+    "id": "boltz_affinity_summary",
+    "kind": "operator",
+    "title": "Boltz-2 亲和力预测汇总",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Read Boltz-2 affinity_*.json files and tabulate the predicted binding affinity value and binder probability, with the best prediction in info.",
+    "doc": "src/task/step/steps/boltz_affinity_summary.BoltzAffinitySummaryStep.md",
+    "status": "generated"
+  },
+  {
     "id": "boltz_predict",
     "kind": "operator",
     "title": "Boltz co-folding prediction",
