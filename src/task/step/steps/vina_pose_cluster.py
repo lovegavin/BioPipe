@@ -124,7 +124,7 @@ class VinaPoseClusterStep(Step):
             "and the distance to its cluster representative."
         ),
         "category": "Machine Learning",
-        "icon": "SquaresFour",
+        "icon": "CirclesThree",
         "contracts": {
             "version": 1,
             "inputs": [
