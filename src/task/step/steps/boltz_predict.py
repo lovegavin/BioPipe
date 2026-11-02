@@ -16,7 +16,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-_YAML_PROTEIN = "sequences:\n  - protein:\n      id: {chain}\n      sequence: {sequence}\n"
+_YAML_PROTEIN = "version: 1\nsequences:\n  - protein:\n      id: {chain}\n      sequence: {sequence}\n"
 _YAML_LIGAND = "  - ligand:\n      id: {chain}\n      smiles: \"{smiles}\"\n"
 
 
@@ -34,7 +34,7 @@ def write_yaml(path: Path, sequence: str, *, chain: str = "A", ligand_smiles: st
     if affinity:
         if not ligand_smiles:
             raise StepError("boltz_predict: affinity requires a ligand_smiles")
-        body += f"properties:\n  - affinity:\n      binder: {chain}\n"
+        body += f"properties:\n  - affinity:\n      binder: {ligand_chain}\n"
     path.write_text(body)
 
 

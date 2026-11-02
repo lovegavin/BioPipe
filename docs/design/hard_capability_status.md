@@ -33,7 +33,14 @@ nobody re-reports a blocked item as delivered.
   1MEL query returns 5 hits (top self-hit alnTM 1.008).
 - `boltz_predict`: Boltz-1 with local weights and `msa: empty` (CPU, 25 sampling
   steps): 14-residue peptide, PDB + `confidence_*.json`, confidence_score
-  0.7321, complex_plddt 0.8852. Boltz-2 weights were not downloaded.
+  0.7321, complex_plddt 0.8852.
+- `boltz_predict` with `model: boltz2` + `affinity: true`: peptide plus
+  ethanol through the operator (CPU, 66 s). Output PDB + confidence
+  (`confidence_score 0.8012`, `complex_plddt 0.9638`, `ligand_iptm 0.1505`)
+  and `affinity_*.json` (`affinity_pred_value 1.906`,
+  `affinity_probability_binary 0.1099`). Weights `boltz2_conf.ckpt`
+  (2.29 GB), `boltz2_aff.ckpt` (2.06 GB) and `mols.tar` (1.86 GB) came from
+  `hf-mirror.com`.
 
 ## How to unblock
 
