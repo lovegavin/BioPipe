@@ -39,7 +39,7 @@ class FakeModel:
 def _fake_loader(text: str, monkeypatch):
     model = FakeModel(text)
 
-    def loader(device, chunk_size):
+    def loader(device, chunk_size, weights_dir=""):
         return model
 
     monkeypatch.setattr(esmfold_module, "_load_model", loader)

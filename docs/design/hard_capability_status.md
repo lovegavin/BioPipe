@@ -42,6 +42,19 @@ nobody re-reports a blocked item as delivered.
   (2.29 GB), `boltz2_aff.ckpt` (2.06 GB) and `mols.tar` (1.86 GB) came from
   `hf-mirror.com`.
 
+- `esmfold_predict` with `weights_dir`: the 3B checkpoint from
+  `facebook/esmfold_v1` was downloaded through `hf-mirror.com`
+  (`pytorch_model.bin` 8,442,062,570 bytes, sha256
+  `2ee07356b125d1e3e57503c204111fd7323347fc4735d41d3caac57c2a78e116`), loaded
+  with `transformers.EsmForProteinFolding`, and run on a 118-residue VHH:
+  879 atoms, mean pLDDT 0.846, 33.7 s on CPU.
+- AntiFold `model.pt` is now measurable rather than hung: the OPIG host caps
+  each connection at ~15.6 KB/s, so 540 MB needs about ten hours; a partial
+  21.7 MB file is a valid resumable base.
+- ColabFold's AlphaFold-2 parameters are only served from
+  `storage.googleapis.com` at ~91 KB/s (about eleven hours for 3.47 GB); the
+  GitHub release asset named in the earlier note does not exist.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

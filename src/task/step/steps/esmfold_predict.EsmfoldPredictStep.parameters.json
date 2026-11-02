@@ -54,6 +54,13 @@
       "title": "输出名",
       "x-ui-group": "basic",
       "x-ui-order": 10
+    },
+    "weights_dir": {
+      "title": "本地权重目录",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 4
     }
   }
 }
