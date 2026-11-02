@@ -97,6 +97,7 @@ def dock(
     seed: int = 0,
     cpu: int = 1,
     scoring: str = "vina",
+    flex_path: Path | None = None,
     workdir: Path | None = None,
 ) -> dict:
     """Run the official Vina engine and return the pose energies."""
@@ -116,7 +117,10 @@ def dock(
         centre = tuple(float(value) for value in center)
     box = tuple(float(value) for value in size)
     engine = Vina(sf_name=scoring, cpu=int(cpu), seed=int(seed), verbosity=0)
-    engine.set_receptor(str(receptor_file))
+    if flex_path is not None:
+        engine.set_receptor(str(receptor_file), str(Path(flex_path)))
+    else:
+        engine.set_receptor(str(receptor_file))
     engine.set_ligand_from_file(str(ligand_path))
     engine.compute_vina_maps(center=[round(value, 3) for value in centre], box_size=[round(value, 3) for value in box])
     engine.dock(exhaustiveness=int(exhaustiveness), n_poses=int(num_modes))
@@ -193,6 +197,12 @@ class VinaDockPythonStep(Step):
         size = tuple(float(params.get(key, 20.0)) for key in ("size_x", "size_y", "size_z"))
         field_dim = str(params.get("field_dim", "field"))
         reaction = receptor_pdbqt(form, field_dim)
+        flex_text = str(params.get("flex_path", "")).strip()
+        flex_path = None
+        if flex_text:
+            flex_path = Path(flex_text).expanduser()
+            if not flex_path.is_file():
+                raise StepError(f"vina_dock_python: flex_path {flex_path} is not a file")
         result = dock(
             reaction,
             ligand_path,
@@ -203,6 +213,7 @@ class VinaDockPythonStep(Step):
             seed=int(params.get("seed", 0)),
             cpu=int(params.get("cpu", 1)),
             scoring=str(params.get("scoring", "vina")),
+            flex_path=flex_path,
             workdir=Path(tempfile.mkdtemp(prefix="vina_")),
         )
         energies = result["energies"]
@@ -223,6 +234,7 @@ class VinaDockPythonStep(Step):
                 "center": [float(value) for value in result["center"]],
                 "size": [float(value) for value in result["size"]],
                 "ligand_path": str(ligand_path),
+                "flex_path": str(flex_path) if flex_path is not None else "",
                 "pose_file": result["pose_file"],
                 "receptor_file": result["receptor_file"],
                 "scoring": str(params.get("scoring", "vina")),

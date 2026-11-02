@@ -228,6 +228,14 @@ nobody re-reports a blocked item as delivered.
   expects `BRANCH <parent> <child>` while ADT documentation states the
   reverse; the operator follows the Vina convention.
 
+- `structure_pdbqt_flexible_receptor` + `vina_dock_python(flex_path=...)`:
+  splits the receptor into a rigid PDBQT and `BEGIN_RES` flex blocks
+  (ROOT = CB, branches along side-chain torsions, no TORSDOF inside
+  BEGIN_RES). Real run on 1MEL with VAL A:2 flexible (3 side-chain atoms,
+  one chi torsion): Vina accepts the pair and docks aspirin at
+  **-2.36 kcal/mol** (rigid receptor -2.43), torsion penalty 0.41.
+  Candidate residues: 402 of 1MEL side chains are selectable.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

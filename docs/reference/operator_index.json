@@ -6000,6 +6000,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_pdbqt_flexible_receptor",
+    "kind": "operator",
+    "title": "柔性受体 PDBQT（刚性 + 柔性残基）",
+    "category": "Docking",
+    "version": "1.0.0",
+    "description": "Split a protein structure into a rigid PDBQT receptor and a flexible-residue PDBQT file with BEGIN_RES blocks, so AutoDock Vina can sample selected side-chain torsions during docking.",
+    "doc": "src/task/step/steps/structure_pdbqt_flexible_receptor.StructurePdbqtFlexibleReceptorStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_phi_psi",
     "kind": "operator",
     "title": "Backbone phi/psi and Ramachandran regions",

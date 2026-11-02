@@ -133,6 +133,13 @@
       "default": "docking",
       "x-ui-group": "输出",
       "x-ui-order": 16
+    },
+    "flex_path": {
+      "title": "柔性残基 PDBQT 路径（可选）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 4
     }
   }
 }
