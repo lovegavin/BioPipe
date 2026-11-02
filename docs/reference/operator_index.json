@@ -1580,6 +1580,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_embedding_linear_probe",
+    "kind": "operator",
+    "title": "ESM embedding linear probe",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Fit a standardised logistic-regression probe on an embedding table with stratified k-fold cross-validation and report per-fold accuracy, the mean and standard deviation, and the majority-class baseline.",
+    "doc": "src/task/step/steps/esm_embedding_linear_probe.EsmEmbeddingLinearProbeStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_embedding_neighbors",
     "kind": "operator",
     "title": "ESM embedding neighbours",
@@ -3990,6 +4000,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_noise_robustness",
+    "kind": "operator",
+    "title": "ProteinMPNN noise robustness",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Perturb the backbone coordinates with increasing Gaussian noise, redesign every replicate with the official ProteinMPNN runner and report the mean sequence recovery and model scores per noise level as a measure of design robustness.",
+    "doc": "src/task/step/steps/proteinmpnn_noise_robustness.ProteinmpnnNoiseRobustnessStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_perplexity",
     "kind": "operator",
     "title": "ProteinMPNN Perplexity",
@@ -4870,6 +4890,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_tm_segments",
+    "kind": "operator",
+    "title": "Transmembrane helix segments",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Score a protein sequence with Kyte-Doolittle hydropathy windows, merge windows above the membrane threshold into segments and report their ranges and hydropathy.",
+    "doc": "src/task/step/steps/sequence_tm_segments.SequenceTmSegmentsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sgd_classifier",
     "kind": "operator",
     "title": "SGD classifier",
@@ -5377,6 +5407,16 @@
     "version": "1.0.0",
     "description": "Multiplies per-residue solvent-accessible area by the Kyte-Doolittle scale.",
     "doc": "src/task/step/steps/structure_surface_hydrophobicity.StructureSurfaceHydrophobicityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_zinc_sites",
+    "kind": "operator",
+    "title": "Structural zinc sites",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Find zinc ions in a PDB atom table and report the cysteine and histidine atoms within coordination distance, with ligand counts and Zn-donor distances.",
+    "doc": "src/task/step/steps/structure_zinc_sites.StructureZincSitesStep.md",
     "status": "generated"
   },
   {

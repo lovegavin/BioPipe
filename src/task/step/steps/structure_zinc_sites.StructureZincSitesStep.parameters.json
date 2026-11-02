@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Structural zinc sites",
+  "description": "Zinc coordination sites from cysteine and histidine donor geometry.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "Row dimension of the PDB atom table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "Column dimension of the PDB atom table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 10
+    },
+    "coordination_cutoff": {
+      "type": "number",
+      "minimum": 1.5,
+      "maximum": 4.0,
+      "default": 2.9,
+      "title": "配位距离上限",
+      "description": "Maximum Zn-donor distance in angstroms.",
+      "x-ui-group": "Geometry",
+      "x-ui-order": 0
+    },
+    "min_ligands": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8,
+      "default": 3,
+      "title": "最少配体数",
+      "description": "Zinc ions with fewer coordinating atoms are skipped.",
+      "x-ui-group": "Geometry",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "default": "sites",
+      "title": "输出名称",
+      "description": "Output slot name for the zinc-site table.",
+      "x-ui-group": "Output",
+      "x-ui-order": 0
+    }
+  },
+  "required": []
+}

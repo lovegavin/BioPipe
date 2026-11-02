@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.45.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.46.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -92,7 +92,8 @@ Examples:
 1.44.0  expansion batch: masked ProteinMPNN design, secondary-structure bridge networks, SMARTS functional-group counts, and GC/AT skew profiles
 1.44.1  patch: forward an explicit ProteinMPNN weights directory so masked design runs on Windows
 1.45.0  expansion batch: codon adaptation index, cavity lining residues, CDR grafting, and interface-masked ProteinMPNN design
-1.45.0  next expansion batch
+1.46.0  expansion batch: ProteinMPNN noise robustness, embedding linear probes, zinc coordination sites, and transmembrane segments
+1.46.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
 
