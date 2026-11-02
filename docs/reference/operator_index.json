@@ -1630,6 +1630,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_embedding_knn_density",
+    "kind": "operator",
+    "title": "Embedding kNN density",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/esm_embedding_knn_density.EsmEmbeddingKnnDensityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_embedding_linear_probe",
     "kind": "operator",
     "title": "ESM embedding linear probe",
@@ -4120,6 +4130,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_interface_temperature_scan",
+    "kind": "operator",
+    "title": "Interface temperature scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/proteinmpnn_interface_temperature_scan.ProteinmpnnInterfaceTemperatureScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_masked_design",
     "kind": "operator",
     "title": "Masked ProteinMPNN design",
@@ -5050,6 +5070,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_cysteine_pairing",
+    "kind": "operator",
+    "title": "Cysteine pairing",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_cysteine_pairing.SequenceCysteinePairingStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_disorder_predictor",
     "kind": "operator",
     "title": "Sequence disorder predictor",
@@ -5077,6 +5107,16 @@
     "version": "1.0.0",
     "description": "Sliding-window GC content and GC/AT skew profile of nucleotide sequences.",
     "doc": "src/task/step/steps/sequence_gc_skew_profile.SequenceGcSkewProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_hydrophobic_moment",
+    "kind": "operator",
+    "title": "Helical hydrophobic moment",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_hydrophobic_moment.SequenceHydrophobicMomentStep.md",
     "status": "generated"
   },
   {
