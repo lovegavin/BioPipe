@@ -5300,6 +5300,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_rna_duplex",
+    "kind": "operator",
+    "title": "RNA-RNA 杂交位点",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Compute the optimal and near-optimal hybridization sites between two RNA sequences with ViennaRNA RNAduplex and report the duplex energy and spans.",
+    "doc": "src/task/step/steps/sequence_rna_duplex.SequenceRnaDuplexStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_rna_ensemble",
     "kind": "operator",
     "title": "RNA 系综统计 (RNAfold -p)",

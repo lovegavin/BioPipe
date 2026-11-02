@@ -258,3 +258,8 @@ to fill a batch.
 
 - mkdssp 4.2.2 on MD frames written from the OpenMM trajectory; per-residue
   helix/strand/coil occupancy and dominant state; tests 4 passed; 675/101.
+
+## v1.87.0 sequence_rna_duplex (verified)
+
+- ViennaRNA RNAduplex wrapper; parser checked against the CLI; 4 tests passed;
+  676 operators / 101 Readers.
