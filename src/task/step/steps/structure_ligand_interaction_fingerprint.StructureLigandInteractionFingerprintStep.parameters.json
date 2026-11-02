@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "title": "原子维",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "ligand_resnames": {
+      "title": "配体残基名",
+      "type": "string",
+      "default": "LIG",
+      "x-ui-group": "检测",
+      "x-ui-order": 1
+    },
+    "cutoff": {
+      "title": "接触截断 (Å)",
+      "type": "number",
+      "default": 4.0,
+      "x-ui-group": "检测",
+      "x-ui-order": 2,
+      "minimum": 2.0,
+      "maximum": 8.0
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "default": "fingerprint",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

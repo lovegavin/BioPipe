@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "title": "样本维",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "feature_dim": {
+      "title": "特征维",
+      "type": "string",
+      "default": "embedding",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "hidden": {
+      "title": "隐藏层宽度",
+      "type": "integer",
+      "default": 8,
+      "x-ui-group": "模型",
+      "x-ui-order": 1,
+      "minimum": 2,
+      "maximum": 512
+    },
+    "latent": {
+      "title": "潜变量维",
+      "type": "integer",
+      "default": 2,
+      "x-ui-group": "模型",
+      "x-ui-order": 2,
+      "minimum": 1,
+      "maximum": 64
+    },
+    "epochs": {
+      "title": "训练轮数",
+      "type": "integer",
+      "default": 200,
+      "x-ui-group": "模型",
+      "x-ui-order": 3,
+      "minimum": 1,
+      "maximum": 5000
+    },
+    "learning_rate": {
+      "title": "学习率",
+      "type": "number",
+      "default": 0.01,
+      "x-ui-group": "模型",
+      "x-ui-order": 4,
+      "minimum": 0.0001,
+      "maximum": 1.0
+    },
+    "random_state": {
+      "title": "随机种子",
+      "type": "integer",
+      "default": 0,
+      "x-ui-group": "模型",
+      "x-ui-order": 5
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "default": "errors",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}
