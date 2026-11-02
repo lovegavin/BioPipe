@@ -1,0 +1,54 @@
+{
+ "$schema": "http://json-schema.org/draft-2020-12/schema",
+ "type": "object",
+ "title": "GC skew 剖面",
+ "description": "滑窗 GC 含量与 GC/AT skew 剖面。",
+ "additionalProperties": false,
+ "properties": {
+  "sequence_dim": {
+   "type": "string",
+   "default": "sequence",
+   "title": "序列维度",
+   "x-ui-group": "basic",
+   "x-ui-order": 10
+  },
+  "position_dim": {
+   "type": "string",
+   "default": "position",
+   "title": "位置维度",
+   "x-ui-group": "basic",
+   "x-ui-order": 20
+  },
+  "window_dim": {
+   "type": "string",
+   "default": "window",
+   "title": "窗口维度",
+   "x-ui-group": "advanced",
+   "x-ui-order": 30
+  },
+  "window": {
+   "type": "integer",
+   "default": 50,
+   "title": "窗口长度",
+   "x-ui-group": "basic",
+   "x-ui-order": 40,
+   "minimum": 2,
+   "maximum": 100000
+  },
+  "step": {
+   "type": "integer",
+   "default": 10,
+   "title": "步长",
+   "x-ui-group": "basic",
+   "x-ui-order": 50,
+   "minimum": 1
+  },
+  "output": {
+   "type": "string",
+   "default": "windows",
+   "title": "输出名称",
+   "x-ui-group": "advanced",
+   "x-ui-order": 60
+  }
+ }
+}

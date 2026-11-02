@@ -1,0 +1,37 @@
+{
+ "$schema": "http://json-schema.org/draft-2020-12/schema",
+ "type": "object",
+ "title": "官能团计数",
+ "description": "按 SMARTS 定义统计每个分子的官能团数量。",
+ "additionalProperties": false,
+ "properties": {
+  "smiles": {
+   "type": "string",
+   "default": "",
+   "title": "SMILES 列表（每行 `SMILES [名称]`）",
+   "x-ui-group": "basic",
+   "x-ui-order": 10
+  },
+  "molecule_dim": {
+   "type": "string",
+   "default": "molecule",
+   "title": "分子维度",
+   "x-ui-group": "advanced",
+   "x-ui-order": 20
+  },
+  "group_dim": {
+   "type": "string",
+   "default": "group",
+   "title": "官能团维度",
+   "x-ui-group": "advanced",
+   "x-ui-order": 30
+  },
+  "output": {
+   "type": "string",
+   "default": "groups",
+   "title": "输出名称",
+   "x-ui-group": "advanced",
+   "x-ui-order": 40
+  }
+ }
+}

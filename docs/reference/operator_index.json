@@ -3940,6 +3940,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_masked_design",
+    "kind": "operator",
+    "title": "Masked ProteinMPNN design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Redesign a structure while fixing the residues named by a mask.",
+    "doc": "src/task/step/steps/proteinmpnn_masked_design.ProteinmpnnMaskedDesignStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_multi_model_consensus",
     "kind": "operator",
     "title": "ProteinMPNN 多模型共识",
@@ -4267,6 +4277,16 @@
     "version": "1.0.0",
     "description": "Decompose molecules with BRICS or RECAP and report which canonical fragments occur, as a molecule-by-fragment presence matrix with per-molecule fragment counts.",
     "doc": "src/task/step/steps/rdkit_fragment_profile.RdkitFragmentProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_functional_group_counts",
+    "kind": "operator",
+    "title": "Functional group counts",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Count SMARTS-defined functional groups for every input molecule.",
+    "doc": "src/task/step/steps/rdkit_functional_group_counts.RdkitFunctionalGroupCountsStep.md",
     "status": "generated"
   },
   {
@@ -4747,6 +4767,16 @@
     "version": "1.0.0",
     "description": "Summarises nucleotide composition: GC content, third-codon GC, CpG observed/expected ratio, AT skew and the spread of a sliding GC window, which supports ORF and primer design checks.",
     "doc": "src/task/step/steps/sequence_gc_profile.SequenceGcProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_gc_skew_profile",
+    "kind": "operator",
+    "title": "GC skew profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sliding-window GC content and GC/AT skew profile of nucleotide sequences.",
+    "doc": "src/task/step/steps/sequence_gc_skew_profile.SequenceGcSkewProfileStep.md",
     "status": "generated"
   },
   {
@@ -5287,6 +5317,16 @@
     "version": "1.0.0",
     "description": "Assign a three-state secondary structure (helix H, strand E, coil C) from backbone phi/psi dihedral angles with a smoothing window. Rows are contiguous segments with their 1-based start, end and length; the per-residue string is stored in info.",
     "doc": "src/task/step/steps/structure_secondary_structure.StructureSecondaryStructureStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ss_bridge_network",
+    "kind": "operator",
+    "title": "SSE bridge network",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Contact network between secondary-structure elements.",
+    "doc": "src/task/step/steps/structure_ss_bridge_network.StructureSsBridgeNetworkStep.md",
     "status": "generated"
   },
   {

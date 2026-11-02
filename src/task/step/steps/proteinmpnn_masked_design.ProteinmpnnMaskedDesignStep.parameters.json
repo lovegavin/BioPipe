@@ -1,0 +1,123 @@
+{
+ "$schema": "http://json-schema.org/draft-2020-12/schema",
+ "type": "object",
+ "title": "ProteinMPNN 掩码设计",
+ "description": "固定 mask 指定的残基，对其余残基重新设计。",
+ "additionalProperties": false,
+ "properties": {
+  "structure_path": {
+   "type": "string",
+   "default": "",
+   "title": "结构路径 (PDB)",
+   "x-ui-group": "basic",
+   "x-ui-order": 10
+  },
+  "mask": {
+   "type": "string",
+   "default": "",
+   "title": "固定残基 mask（如 A:12-18,B:45）",
+   "x-ui-group": "basic",
+   "x-ui-order": 20
+  },
+  "chains": {
+   "type": "string",
+   "default": "",
+   "title": "设计的链（空 = 全部链）",
+   "x-ui-group": "basic",
+   "x-ui-order": 30
+  },
+  "proteinmpnn_path": {
+   "type": "string",
+   "default": "",
+   "title": "ProteinMPNN 仓库路径",
+   "x-ui-group": "basic",
+   "x-ui-order": 40
+  },
+  "weights_path": {
+   "type": "string",
+   "default": "",
+   "title": "模型权重目录",
+   "x-ui-group": "advanced",
+   "x-ui-order": 50
+  },
+  "python_executable": {
+   "type": "string",
+   "default": "",
+   "title": "运行设计的 Python",
+   "x-ui-group": "advanced",
+   "x-ui-order": 60
+  },
+  "model_name": {
+   "type": "string",
+   "default": "v_48_020",
+   "title": "模型名称",
+   "x-ui-group": "advanced",
+   "x-ui-order": 70,
+   "enum": [
+    "v_48_002",
+    "v_48_010",
+    "v_48_020",
+    "v_48_030"
+   ]
+  },
+  "num_seq_per_target": {
+   "type": "integer",
+   "default": 8,
+   "title": "每条链的序列数",
+   "x-ui-group": "basic",
+   "x-ui-order": 80,
+   "minimum": 1,
+   "maximum": 100000
+  },
+  "sampling_temp": {
+   "type": "number",
+   "default": 0.1,
+   "title": "采样温度",
+   "x-ui-group": "basic",
+   "x-ui-order": 90,
+   "minimum": 0.0001,
+   "maximum": 1.0
+  },
+  "seed": {
+   "type": "integer",
+   "default": 1,
+   "title": "随机种子",
+   "x-ui-group": "advanced",
+   "x-ui-order": 100,
+   "minimum": 0
+  },
+  "device": {
+   "type": "string",
+   "default": "cpu",
+   "title": "运行设备",
+   "x-ui-group": "advanced",
+   "x-ui-order": 110,
+   "enum": [
+    "cpu",
+    "cuda"
+   ]
+  },
+  "timeout": {
+   "type": "integer",
+   "default": 1800,
+   "title": "超时秒数",
+   "x-ui-group": "advanced",
+   "x-ui-order": 120,
+   "minimum": 1
+  },
+  "design_dim": {
+   "type": "string",
+   "default": "design",
+   "title": "设计维度",
+   "x-ui-group": "advanced",
+   "x-ui-order": 130
+  },
+  "output": {
+   "type": "string",
+   "default": "designs",
+   "title": "输出名称",
+   "x-ui-group": "advanced",
+   "x-ui-order": 140
+  }
+ }
+}
