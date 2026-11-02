@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "大型资源预检",
+  "description": "检查 weights、数据库与官方仓库是否就绪，并给出安装命令。",
+  "additionalProperties": false,
+  "properties": {
+    "resource": {
+      "type": "string",
+      "default": "",
+      "title": "资源名（留空检查全部）",
+      "x-ui-group": "basic",
+      "x-ui-order": 10,
+      "description": "例如 proteinmpnn、esm2、colabfold"
+    },
+    "root": {
+      "type": "string",
+      "default": "",
+      "title": "资源根目录（可选）",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "strict": {
+      "type": "boolean",
+      "default": false,
+      "title": "缺失时终止",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "resources",
+      "title": "输出名",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    }
+  }
+}

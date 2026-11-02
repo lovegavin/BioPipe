@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "ESMFold 结构预测",
+  "description": "调用 fair-esm 官方 ESMFold 折叠单条序列并读取 pLDDT。",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位点维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "device": {
+      "type": "string",
+      "default": "cpu",
+      "title": "运行设备",
+      "x-ui-group": "basic",
+      "x-ui-order": 30,
+      "enum": [
+        "cpu",
+        "cuda"
+      ]
+    },
+    "num_recycles": {
+      "type": "integer",
+      "default": 4,
+      "title": "循环次数",
+      "x-ui-group": "basic",
+      "x-ui-order": 40,
+      "minimum": 1,
+      "maximum": 48
+    },
+    "chunk_size": {
+      "type": "integer",
+      "default": 64,
+      "title": "分块大小",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50,
+      "minimum": 0,
+      "maximum": 512
+    },
+    "output": {
+      "type": "string",
+      "default": "structure",
+      "title": "输出名",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    }
+  }
+}

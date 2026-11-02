@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "ColabFold 结构预测",
+  "description": "调用官方 colabfold_batch 预测单条序列的结构并读取置信度。",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位点维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "colabfold_path": {
+      "type": "string",
+      "default": "colabfold_batch",
+      "title": "colabfold_batch 路径（默认取 PATH）",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "num_models": {
+      "type": "integer",
+      "default": 1,
+      "title": "模型数",
+      "x-ui-group": "basic",
+      "x-ui-order": 30,
+      "minimum": 1,
+      "maximum": 5
+    },
+    "num_recycles": {
+      "type": "integer",
+      "default": 3,
+      "title": "循环次数",
+      "x-ui-group": "basic",
+      "x-ui-order": 40,
+      "minimum": 1,
+      "maximum": 48
+    },
+    "msa_mode": {
+      "type": "string",
+      "default": "mmseqs2_uniref_env",
+      "title": "MSA 模式",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50,
+      "enum": [
+        "mmseqs2_uniref_env",
+        "mmseqs2_uniref",
+        "single_sequence"
+      ]
+    },
+    "device": {
+      "type": "string",
+      "default": "cpu",
+      "title": "运行设备",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60,
+      "enum": [
+        "cpu",
+        "cuda"
+      ]
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "default": 3600,
+      "title": "超时（秒）",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70,
+      "minimum": 60,
+      "maximum": 86400
+    },
+    "output": {
+      "type": "string",
+      "default": "structure",
+      "title": "输出名",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    }
+  }
+}

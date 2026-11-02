@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.47.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.48.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -96,7 +96,8 @@ Examples:
 1.46.1  patch: skip water, ion and ligand rows when deriving the masked interface, so real PDB entries build a valid protein mask
 1.46.2  patch: resolve catalog icons through the frontend registry and report a missing scikit-learn install as a step error
 1.47.0  expansion batch: ProteinMPNN tied-residue design, spectral domain boundaries, ligand pose RMSD with symmetry matching, and k-mer enrichment
-1.47.0  next expansion batch
+1.48.0  expansion batch: large-resource manifest and preflight, ColabFold and ESMFold structure prediction, pLDDT profiles and PAE summaries
+1.48.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
 
