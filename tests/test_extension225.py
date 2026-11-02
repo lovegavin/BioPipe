@@ -38,7 +38,7 @@ for index in range(1, count + 1):
 seqs = out / "seqs"
 seqs.mkdir(parents=True, exist_ok=True)
 (seqs / (pdb.stem + ".fa")).write_text("\n".join(lines) + "\n")
-(pdb.parent / "captured.json").write_text(json.dumps({"fixed": fixed, "chains": value("--pdb_path_chains")}))
+(pdb.parent / "captured.json").write_text(json.dumps({"fixed": fixed, "chains": value("--pdb_path_chains"), "weights": value("--path_to_model_weights")}))
 '''
 
 
@@ -72,6 +72,9 @@ def _repo(root: Path) -> Path:
     repo = root / "ProteinMPNN"
     repo.mkdir(parents=True, exist_ok=True)
     (repo / "protein_mpnn_run.py").write_text(FAKE_RUNNER)
+    weights = repo / "vanilla_model_weights"
+    weights.mkdir(exist_ok=True)
+    (weights / "v_48_020.pt").write_text("stub")
     return repo
 
 
@@ -111,6 +114,9 @@ def test_step_writes_masked_designs(tmp_path: Path) -> None:
     assert out.info["sequences"] == ["ACDEFG", "ACDEFG"]
     captured = json.loads((tmp_path / "captured.json").read_text())
     assert captured["fixed"] == {"complex": {"A": [1, 3], "B": [1, 2]}}
+    assert captured["weights"].replace("\\", "/").endswith(
+        "ProteinMPNN/vanilla_model_weights"
+    )
     assert step.export(ctx)["n_fixed_residues"] == 4
 
 

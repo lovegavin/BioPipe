@@ -47,9 +47,12 @@ def run_masked_designer(params: dict, structure: Path, chain_text: str, payload:
             "official ProteinMPNN checkout"
         )
     weights_text = str(params.get("weights_path") or "").strip()
-    weights = Path(weights_text).expanduser() if weights_text else None
-    if weights is not None and not weights.exists():
-        raise StepError(f"proteinmpnn_masked_design: weights_path {weights} does not exist")
+    weights = Path(weights_text).expanduser() if weights_text else repo / "vanilla_model_weights"
+    if not weights.is_dir():
+        raise StepError(
+            f"proteinmpnn_masked_design: weights directory {weights} does not exist; "
+            "set weights_path to the directory holding v_48_*.pt"
+        )
 
     model_name = str(params.get("model_name") or "v_48_020")
     count = int(params.get("num_seq_per_target") if params.get("num_seq_per_target") is not None else 8)
@@ -87,9 +90,9 @@ def run_masked_designer(params: dict, structure: Path, chain_text: str, payload:
         model_name,
         "--fixed_positions_jsonl",
         fixed_path.as_posix(),
+        "--path_to_model_weights",
+        weights.as_posix(),
     ]
-    if weights is not None:
-        command.extend(["--path_to_model_weights", weights.as_posix()])
     if chain_text:
         command.extend(["--pdb_path_chains", chain_text])
 
