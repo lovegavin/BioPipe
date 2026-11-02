@@ -128,7 +128,7 @@ def run_bias_designer(
             "1",
             "--model_name",
             str(params.get("model_name", "v_48_020")),
-            "--bias_AA_per_residue",
+            "--bias_by_res_jsonl",
             bias_path.as_posix(),
             "--path_to_model_weights",
             weights.as_posix(),

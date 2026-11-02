@@ -26,8 +26,8 @@ pdb = Path(sys.argv[sys.argv.index("--pdb_path") + 1])
 header = ">T=" + pdb.stem + ", sample=1, score=1.1, global_score=1.2, seq_recovery=0.5"
 (out / "seqs" / (pdb.stem + ".fa")).write_text(chr(10).join([header, "AAAA", ""]))
 bias = ""
-if "--bias_AA_per_residue" in sys.argv:
-    bias = Path(sys.argv[sys.argv.index("--bias_AA_per_residue") + 1]).read_text()
+if "--bias_by_res_jsonl" in sys.argv:
+    bias = Path(sys.argv[sys.argv.index("--bias_by_res_jsonl") + 1]).read_text()
 Path(os.environ["BIOPIPE_BIAS_CAPTURE"]).write_text(json.dumps({"argv": sys.argv[1:], "bias": bias}))
 """
 
