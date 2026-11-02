@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -103,9 +105,13 @@ def test_validation_errors():
         module.AntifoldScoreStep().run(Ctx({"output": "s"}), [])
     with pytest.raises(StepError, match="is not a file"):
         module.AntifoldScoreStep().run(Ctx({"output": "s", "structure_path": "/nope.pdb", "chains": "A"}), [])
+    import tempfile
+
+    pdb_path = Path(tempfile.mkdtemp()) / "one.pdb"
+    pdb_path.write_text("ATOM      1  CA  ALA A   1       0.000   0.000   0.000\nEND\n")
     with pytest.raises(StepError, match="weights_path is required"):
         module.AntifoldScoreStep().run(
-            Ctx({"output": "s", "structure_path": "/home/gavin/BioPipe/tests/fixtures/vhh_1mel.pdb", "chains": "A"}),
+            Ctx({"output": "s", "structure_path": str(pdb_path), "chains": "A"}),
             [],
         )
 
