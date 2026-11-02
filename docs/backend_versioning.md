@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.63.1** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.64.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -125,6 +125,7 @@ Examples:
 1.62.0  batch: real ESMFold inference through transformers weights_dir, with checksum-verified 3B weights
 1.63.0  batch: AntiFold inverse-folding scoring with verified 540 MB weights and a real 1MEL run
 1.63.1  patch: platform-neutral fixture path in the AntiFold validation test
+1.64.0  batch: ColabFold single-sequence inference against real AlphaFold-2 parameters, device flag removed
 1.53.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```

@@ -54,9 +54,14 @@ nobody re-reports a blocked item as delivered.
   132 residues, mean perplexity 2.707, 35 IMGT CDR residues, 5.9 s on CPU.
   The OPIG host caps each connection at ~15.6 KB/s, so parallel ranges are
   the only practical download path.
-- ColabFold's AlphaFold-2 parameters are only served from
-  `storage.googleapis.com` at ~91 KB/s (about eleven hours for 3.47 GB); the
-  GitHub release asset named in the earlier note does not exist.
+- `colabfold_predict`: the official AlphaFold-2 parameter tar (3,722,752,000
+  bytes) was fetched from `storage.googleapis.com` with 64 parallel range
+  connections at ~9.7 MB/s aggregate (683 s), extracted into
+  `~/.cache/colabfold/params/`, and a 118-residue VHH was folded with
+  `--msa-mode single_sequence` in 15 s on CPU (pLDDT 32, pTM 0.252). The
+  operator run returned mean pLDDT 31.94, pTM 0.210, max PAE 29.33 in 18.5 s.
+  ColabFold 1.6.3 rejects `--device`; the wrapper now selects the device
+  through `CUDA_VISIBLE_DEVICES` only.
 
 ## How to unblock
 

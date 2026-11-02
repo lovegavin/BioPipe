@@ -89,13 +89,13 @@ def predict(
         str(num_recycles),
         "--msa-mode",
         msa_mode,
-        "--device",
-        device,
         "--overwrite",
     ]
     environment = dict(os.environ)
     if device == "cpu":
         environment["CUDA_VISIBLE_DEVICES"] = ""
+    elif device == "cuda":
+        environment.setdefault("CUDA_VISIBLE_DEVICES", "0")
     try:
         completed = subprocess.run(
             command,

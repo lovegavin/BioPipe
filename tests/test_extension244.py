@@ -106,7 +106,7 @@ def test_prediction_parses_structure_and_scores(tmp_path, monkeypatch) -> None:
     recorded = json.loads(capture.read_text())
     assert recorded["sequence"] == SEQUENCE
     argv = recorded["argv"]
-    assert "--device" in argv and argv[argv.index("--device") + 1] == "cpu"
+    assert "--msa-mode" in argv and "--num-recycle" in argv
     assert "--num-models" in argv and argv[argv.index("--num-models") + 1] == "1"
     assert "--num-recycle" in argv and argv[argv.index("--num-recycle") + 1] == "2"
 
