@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.78.1** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.79.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -142,6 +142,7 @@ Examples:
 1.77.0  batch: per-residue lDDT with the 15 A inclusion radius and four thresholds
 1.78.0  batch: short OpenMM implicit-solvent MD with per-residue C-alpha RMSF
 1.78.1  patch: skip the MD integration tests when OpenMM or PDBFixer is absent
+1.79.0  batch: PoseBusters protein-ligand pose validation
 1.53.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```

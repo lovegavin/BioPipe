@@ -5860,6 +5860,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_ligand_pose_qc",
+    "kind": "operator",
+    "title": "配体姿态 PoseBusters 体检",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Run the official PoseBusters validation suite on a protein-ligand complex: sanitisation, bond lengths and angles, internal strain, ring flatness and protein-ligand volume overlap, reported as one row per check.",
+    "doc": "src/task/step/steps/structure_ligand_pose_qc.StructureLigandPoseQcStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_ligand_pose_rmsd",
     "kind": "operator",
     "title": "Ligand pose RMSD",

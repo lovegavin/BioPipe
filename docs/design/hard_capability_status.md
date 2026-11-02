@@ -178,6 +178,16 @@ nobody re-reports a blocked item as delivered.
   the terminal SER133, run time **156 s** on CPU. The oracle test agrees with
   mdtraj to 1.6e-7 nm.
 
+- `structure_ligand_pose_qc`: wraps the official PoseBusters suite (0.6.5,
+  `dock` and `mol` configs). Real runs on a synthetic aspirin complex: 22
+  checks; a far pose passes bond lengths and volume overlap but fails
+  `minimum_distance_to_protein` (the dock config expects a pocket pose), a
+  superimposed pose additionally fails `volume_overlap_with_protein`, and a
+  stretched atom fails `all_atoms_connected` and `internal_steric_clash`.
+  Bond-length checks only fire when the ligand block is chemically
+  parseable (the operator prefers an RDKit SDF round trip and falls back to
+  the raw PDB).
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into
