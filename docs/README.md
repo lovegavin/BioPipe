@@ -37,6 +37,7 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 
 ## Design notes
 
+- [Extension policy and on-demand extension](design/extension_policy.md)
 - [Minibinder and VHH design route](design/minibinder_vhh_design_route.md)
 - [Competitive landscape and moat analysis](design/competitive_landscape.md)
 
