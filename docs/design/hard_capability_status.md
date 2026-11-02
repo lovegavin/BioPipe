@@ -154,6 +154,15 @@ nobody re-reports a blocked item as delivered.
   `docs/large_resources.md` (two dataclass defaults, IPA point-projection key
   remap, and an `openfold` path that does not shadow `scripts/`).
 
+- `structure_dockq`: own CAPRI DockQ implementation (native contact fraction at
+  5 A, interface backbone iRMSD at 10 A, receptor-superposed ligand RMSD,
+  DockQ = (Fnat + 1/(1+(iRMSD/1.5)^2) + 1/(1+(LRMSD/8.5)^2))/3). Validated
+  against the official `DockQ` CLI on 1MEL: identical complex gives DockQ
+  **1.000**; a +2 A/+1 A rigid shift of chains A/B gives ours **0.8145**
+  (fnat 0.75, iRMSD 0.858, LRMSD 2.150) versus official AL **0.8040**
+  (fnat 0.716, iRMSD 0.843, LRMSD 2.236), a 0.0105 gap that comes from the
+  heavy-atom contact set.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

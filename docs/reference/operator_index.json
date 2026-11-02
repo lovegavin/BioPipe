@@ -5710,6 +5710,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_dockq",
+    "kind": "operator",
+    "title": "DockQ 复合物质量评分",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute the CAPRI DockQ score for a protein-protein model against a native complex: native contact fraction, interface RMSD, ligand RMSD and their combination.",
+    "doc": "src/task/step/steps/structure_dockq.StructureDockqStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_domain_boundary",
     "kind": "operator",
     "title": "Structure domain boundary",
