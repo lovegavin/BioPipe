@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "配体几何质检参数",
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度名",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维度名",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "ligand_resname": {
+      "title": "配体残基名（逗号分隔）",
+      "type": "string",
+      "default": "LIG",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "clash_cutoff": {
+      "title": "碰撞距离阈值 (Å)",
+      "type": "number",
+      "default": 2.0,
+      "minimum": 1.0,
+      "maximum": 4.0,
+      "x-ui-group": "检测",
+      "x-ui-order": 4
+    },
+    "ligand_dim": {
+      "title": "输出配体维度名",
+      "type": "string",
+      "default": "ligand",
+      "x-ui-group": "输出",
+      "x-ui-order": 5
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "qc",
+      "x-ui-group": "输出",
+      "x-ui-order": 6
+    },
+    "bond_tolerance": {
+      "title": "键长容差 (Å)",
+      "type": "number",
+      "default": 0.05,
+      "minimum": 0.0,
+      "maximum": 0.5,
+      "x-ui-group": "检测",
+      "x-ui-order": 5
+    }
+  }
+}

@@ -133,6 +133,14 @@ nobody re-reports a blocked item as delivered.
   guard, dummy template CIF) in `docs/large_resources.md`. No accuracy claim
   is made without an experimental reference.
 
+- `structure_ligand_geometry_qc`: RDKit covalent-radii bounds plus a cKDTree
+  protein-clash scan. Aspirin from SMILES (21 atoms, 19-21 perceived bonds)
+  passes with 0 outliers; a synthetic protein atom 1.2 A from the ligand gives
+  **3 clashes** and a minimum distance of **1.2 A**. Known boundary: the PDB
+  round trip re-perceives connectivity from distances, so a severely stretched
+  bond can drop out of the perceived graph instead of being flagged; a template
+  SMILES comparison is the next refinement.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into
