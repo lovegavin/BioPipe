@@ -2550,6 +2550,16 @@
     "status": "generated"
   },
   {
+    "id": "interface_alanine_scan",
+    "kind": "operator",
+    "title": "Interface alanine scan",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Computational alanine scanning of interface residues with single-point MM/GBSA energy differences.",
+    "doc": "src/task/step/steps/interface_alanine_scan.InterfaceAlanineScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "interface_bsa",
     "kind": "operator",
     "title": "Interface buried area",

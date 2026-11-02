@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.67.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.68.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -129,6 +129,7 @@ Examples:
 1.65.0  batch: real Pfam/HMMER domain scan against a pressed Pfam-A 38 and an env-neutral test
 1.66.0  batch: OpenMM potential-energy and minimization operator verified on a VHH
 1.67.0  batch: MM/GBSA binding-energy estimate with bonded/nonbonded/GB term decomposition
+1.68.0  batch: computational alanine scanning of interface residues with MM/GBSA delta-delta-G
 1.53.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```

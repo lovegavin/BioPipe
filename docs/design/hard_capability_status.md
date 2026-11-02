@@ -77,6 +77,15 @@ nobody re-reports a blocked item as delivered.
   exactly 0.00 — the bonded cancellation is the internal consistency check.
   4.8 s on CPU.
 
+- `interface_alanine_scan`: computational alanine scanning on the same 1MEL
+  complex. The scan re-uses `mmgbsa_terms`, truncates each interface residue to
+  N/CA/C/O/CB, rebuilds hydrogens with PDBFixer, and reports
+  `mutant_delta - wt_delta`. Five target-side residues in 28.2 s: wt delta
+  115.55 kJ/mol, mutants 112.09 / 61.00 / 73.09 / 98.41 / 54.71, delta-delta
+-3.47 / -54.55 / -42.46 / -17.14 / -60.84 kJ/mol. Hydrogen placement is not
+  seeded, so absolute values shift slightly between runs; all values within a
+  run share one wt baseline, which keeps the ranking comparable.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into
