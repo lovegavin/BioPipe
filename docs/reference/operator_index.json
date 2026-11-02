@@ -340,6 +340,16 @@
     "status": "generated"
   },
   {
+    "id": "antibody_numbering_imgt",
+    "kind": "operator",
+    "title": "IMGT numbering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Align a VH/VHH sequence to the reference template and return one row per residue with its IMGT number, insertion suffix and FR/CDR region assignment.",
+    "doc": "src/task/step/steps/antibody_numbering_imgt.AntibodyNumberingImgtStep.md",
+    "status": "generated"
+  },
+  {
     "id": "antibody_numbering_kabat",
     "kind": "operator",
     "title": "Kabat numbering",
@@ -2920,6 +2930,16 @@
     "status": "generated"
   },
   {
+    "id": "ligandmpnn_side_chain_packing",
+    "kind": "operator",
+    "title": "LigandMPNN side-chain packing",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official LigandMPNN side-chain packer on a backbone PDB and return the packed structure as an atom table.  The packer needs the LigandMPNN repository and its side-chain checkpoint.",
+    "doc": "src/task/step/steps/ligandmpnn_side_chain_packing.LigandmpnnSideChainPackingStep.md",
+    "status": "generated"
+  },
+  {
     "id": "lillie_test",
     "kind": "operator",
     "title": "Lilliefors normality test",
@@ -3937,6 +3957,16 @@
     "version": "1.0.0",
     "description": "Peptide to protein rollup：接收 2 个输入，输出 Form；主要参数：Peptide Dim、样本维度、Protein Dim、方法、Min Peptides。",
     "doc": "src/task/step/steps/protein_rollup.ProteinRollupStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_bias_matrix",
+    "kind": "operator",
+    "title": "ProteinMPNN bias matrix",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Build a per-residue amino-acid bias matrix for the official ProteinMPNN runner and return the designs it produces.  Selected positions are pushed towards the favor residues and away from the avoid residues.",
+    "doc": "src/task/step/steps/proteinmpnn_bias_matrix.ProteinmpnnBiasMatrixStep.md",
     "status": "generated"
   },
   {
@@ -5400,6 +5430,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_glycosylation_sites",
+    "kind": "operator",
+    "title": "Glycosylation sites",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Report N-X-S/T (and optionally O-linked Ser/Thr) sequons of every protein chain together with the mean per-atom solvent exposure of the acceptor residue.",
+    "doc": "src/task/step/steps/structure_glycosylation_sites.StructureGlycosylationSitesStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_halogen_bond_scan",
     "kind": "operator",
     "title": "Halogen bond scan",
@@ -5977,6 +6017,16 @@
     "version": "1.0.0",
     "description": "Estimate a VECM and expose the Johansen trace/eigen diagnostics.",
     "doc": "src/task/step/steps/vecm.VecmStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vhh_humanization_mutations",
+    "kind": "operator",
+    "title": "VHH humanization mutations",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compare the Kabat frameworks of a VHH with the human IGHV3-23/IGHJ4 reference and return every mismatch together with the reference-substituted sequence.",
+    "doc": "src/task/step/steps/vhh_humanization_mutations.VhhHumanizationMutationsStep.md",
     "status": "generated"
   },
   {

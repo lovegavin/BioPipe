@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度",
+      "description": "输入序列维度名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 1,
+      "default": "sequence"
+    },
+    "position_dim": {
+      "title": "位置维度",
+      "description": "输入序列位置维度名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 2,
+      "default": "position"
+    },
+    "mutation_dim": {
+      "title": "突变维度",
+      "description": "输出突变维度名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 3,
+      "default": "mutation"
+    },
+    "output": {
+      "title": "输出参数",
+      "description": "写入突变表的参数名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 4,
+      "default": "mutations"
+    }
+  },
+  "x-ui-order": [
+    "sequence_dim",
+    "position_dim",
+    "mutation_dim",
+    "output"
+  ]
+}

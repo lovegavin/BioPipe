@@ -1,0 +1,181 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "title": "结构文件",
+      "description": "设计所用 PDB 文件路径",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 1,
+      "default": ""
+    },
+    "positions": {
+      "title": "偏置位点",
+      "description": "需要偏置的残基，如 A:10-12,B:35",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 2,
+      "default": ""
+    },
+    "chains": {
+      "title": "链",
+      "description": "参与设计的链（空格分隔），留空取 positions 中的链",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 3,
+      "default": ""
+    },
+    "favor": {
+      "title": "偏好氨基酸",
+      "description": "在这些位点提高这些残基的概率",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 4,
+      "default": "WYFH"
+    },
+    "avoid": {
+      "title": "回避氨基酸",
+      "description": "在这些位点降低这些残基的概率",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 5,
+      "default": ""
+    },
+    "strength": {
+      "title": "偏置强度",
+      "description": "偏置矩阵数值幅度",
+      "type": "number",
+      "x-ui-group": "输入",
+      "x-ui-order": 6,
+      "default": 1.0,
+      "minimum": 0.01,
+      "maximum": 100.0
+    },
+    "num_seq_per_target": {
+      "title": "每目标序列数",
+      "description": "生成的设计数量",
+      "type": "integer",
+      "x-ui-group": "输入",
+      "x-ui-order": 7,
+      "default": 8,
+      "minimum": 1,
+      "maximum": 256
+    },
+    "sampling_temp": {
+      "title": "采样温度",
+      "description": "ProteinMPNN 采样温度",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 8,
+      "default": "0.1"
+    },
+    "seed": {
+      "title": "随机种子",
+      "description": "设计随机种子",
+      "type": "integer",
+      "x-ui-group": "输入",
+      "x-ui-order": 9,
+      "default": 1,
+      "minimum": 0,
+      "maximum": 100000
+    },
+    "model_name": {
+      "title": "模型",
+      "description": "官方 ProteinMPNN 模型",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 10,
+      "default": "v_48_020",
+      "enum": [
+        "v_48_002",
+        "v_48_010",
+        "v_48_020",
+        "v_48_030"
+      ]
+    },
+    "device": {
+      "title": "设备",
+      "description": "运行设备",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 11,
+      "default": "cpu",
+      "enum": [
+        "cpu",
+        "cuda"
+      ]
+    },
+    "proteinmpnn_path": {
+      "title": "ProteinMPNN 目录",
+      "description": "官方仓库路径（含 protein_mpnn_run.py）",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 12,
+      "default": ""
+    },
+    "weights_path": {
+      "title": "权重目录",
+      "description": "v_48_*.pt 所在目录，留空取仓库 vanilla_model_weights",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 13,
+      "default": ""
+    },
+    "python_executable": {
+      "title": "Python 解释器",
+      "description": "运行官方脚本的解释器，留空用当前解释器",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 14,
+      "default": ""
+    },
+    "timeout_seconds": {
+      "title": "超时",
+      "description": "子进程超时（秒）",
+      "type": "integer",
+      "x-ui-group": "输入",
+      "x-ui-order": 15,
+      "default": 1800,
+      "minimum": 30,
+      "maximum": 86400
+    },
+    "design_dim": {
+      "title": "设计维度",
+      "description": "输出设计维度名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 16,
+      "default": "design"
+    },
+    "output": {
+      "title": "输出参数",
+      "description": "写入设计的参数名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 17,
+      "default": "designs"
+    }
+  },
+  "x-ui-order": [
+    "structure_path",
+    "positions",
+    "chains",
+    "favor",
+    "avoid",
+    "strength",
+    "num_seq_per_target",
+    "sampling_temp",
+    "seed",
+    "model_name",
+    "device",
+    "proteinmpnn_path",
+    "weights_path",
+    "python_executable",
+    "timeout_seconds",
+    "design_dim",
+    "output"
+  ]
+}

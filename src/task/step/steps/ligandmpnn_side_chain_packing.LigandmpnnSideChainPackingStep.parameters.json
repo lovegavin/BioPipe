@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "title": "结构文件",
+      "description": "需要装包的骨架 PDB 路径",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 1,
+      "default": ""
+    },
+    "ligandmpnn_path": {
+      "title": "LigandMPNN 目录",
+      "description": "官方仓库路径（含 run.py）",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 2,
+      "default": ""
+    },
+    "weights_path": {
+      "title": "权重目录",
+      "description": "存放 model_params 的目录，留空取仓库 model_params",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 3,
+      "default": ""
+    },
+    "checkpoint": {
+      "title": "设计权重",
+      "description": "LigandMPNN 设计权重文件名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 4,
+      "default": "ligandmpnn_v_32_010_25.pt"
+    },
+    "sc_checkpoint": {
+      "title": "侧链权重",
+      "description": "侧链装包权重文件名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 5,
+      "default": "ligandmpnn_sc_v_32_002_16.pt"
+    },
+    "model_type": {
+      "title": "模型类型",
+      "description": "官方 LigandMPNN 模型类型",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 6,
+      "default": "ligand_mpnn",
+      "enum": [
+        "protein_mpnn",
+        "ligand_mpnn",
+        "per_residue_label_membrane_mpnn",
+        "global_label_membrane_mpnn",
+        "soluble_mpnn"
+      ]
+    },
+    "chains": {
+      "title": "链",
+      "description": "仅解析这些链（逗号或空格分隔），留空为全部",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 7,
+      "default": ""
+    },
+    "number_of_packs_per_design": {
+      "title": "装包次数",
+      "description": "每个设计的独立装包采样数",
+      "type": "integer",
+      "x-ui-group": "输入",
+      "x-ui-order": 8,
+      "default": 1,
+      "minimum": 1,
+      "maximum": 16
+    },
+    "repack_everything": {
+      "title": "全部重装",
+      "description": "连固定残基的侧链也重新装包",
+      "type": "boolean",
+      "x-ui-group": "输入",
+      "x-ui-order": 9,
+      "default": false
+    },
+    "packed_suffix": {
+      "title": "装包后缀",
+      "description": "输出 PDB 文件名后缀",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 10,
+      "default": "_packed"
+    },
+    "seed": {
+      "title": "随机种子",
+      "description": "装包随机种子",
+      "type": "integer",
+      "x-ui-group": "输入",
+      "x-ui-order": 11,
+      "default": 0,
+      "minimum": 0,
+      "maximum": 100000
+    },
+    "device": {
+      "title": "设备",
+      "description": "运行设备",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 12,
+      "default": "cpu",
+      "enum": [
+        "cpu",
+        "cuda"
+      ]
+    },
+    "python_executable": {
+      "title": "Python 解释器",
+      "description": "运行官方脚本的解释器，留空用当前解释器",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 13,
+      "default": ""
+    },
+    "timeout_seconds": {
+      "title": "超时",
+      "description": "子进程超时（秒）",
+      "type": "integer",
+      "x-ui-group": "输入",
+      "x-ui-order": 14,
+      "default": 1800,
+      "minimum": 30,
+      "maximum": 86400
+    },
+    "output": {
+      "title": "输出参数",
+      "description": "写入装包结构的参数名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 15,
+      "default": "packed"
+    }
+  },
+  "x-ui-order": [
+    "structure_path",
+    "ligandmpnn_path",
+    "weights_path",
+    "checkpoint",
+    "sc_checkpoint",
+    "model_type",
+    "chains",
+    "number_of_packs_per_design",
+    "repack_everything",
+    "packed_suffix",
+    "seed",
+    "device",
+    "python_executable",
+    "timeout_seconds",
+    "output"
+  ]
+}
