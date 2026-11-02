@@ -3020,6 +3020,16 @@
     "status": "generated"
   },
   {
+    "id": "ligand_pdbqt_flexible",
+    "kind": "operator",
+    "title": "柔性配体 PDBQT 准备（扭转树）",
+    "category": "Docking",
+    "version": "1.0.0",
+    "description": "Convert SMILES into a flexible AutoDock PDBQT ligand: build a 3D conformer with RDKit, emit a ROOT/BRANCH/ENDBRANCH torsion tree and set TORSDOF from the rotatable single bonds.",
+    "doc": "src/task/step/steps/ligand_pdbqt_flexible.LigandPdbqtFlexibleStep.md",
+    "status": "generated"
+  },
+  {
     "id": "ligand_pdbqt_prepare",
     "kind": "operator",
     "title": "Ligand PDBQT preparation",

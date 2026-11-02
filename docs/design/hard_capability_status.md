@@ -219,6 +219,15 @@ nobody re-reports a blocked item as delivered.
   affinity **-3.0 kcal/mol** (poses -3.00, -2.98, -2.84, -2.83, -2.81).
   The ligand preparer now emits `ROOT`/`ENDROOT`, which Vina requires.
 
+- `ligand_pdbqt_flexible`: builds a ROOT/BRANCH/ENDBRANCH torsion tree from
+  RDKit rotatable single bonds (both atoms heavy with degree >= 2, acyclic,
+  amide bonds excluded) and sets TORSDOF accordingly. Verified against the
+  Vina engine: aspirin (3 torsions, 3 BRANCH blocks) docks flexibly into
+  1MEL with best affinity **-2.43 kcal/mol** (rigid ligand -3.00), torsion
+  penalty 0.43, internal strain -0.37. Note that Vina 1.2.7 writes and
+  expects `BRANCH <parent> <child>` while ADT documentation states the
+  reverse; the operator follows the Vina convention.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

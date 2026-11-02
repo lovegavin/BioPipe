@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "柔性配体 PDBQT 参数",
+  "properties": {
+    "smiles": {
+      "title": "SMILES",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "seed": {
+      "title": "构象随机种子",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "x-ui-group": "构象",
+      "x-ui-order": 2
+    },
+    "optimize": {
+      "title": "MMFF 优化构象",
+      "type": "boolean",
+      "default": true,
+      "x-ui-group": "构象",
+      "x-ui-order": 3
+    },
+    "output_path": {
+      "title": "输出 PDBQT 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输出",
+      "x-ui-order": 4
+    },
+    "atom_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "ligand",
+      "x-ui-group": "输出",
+      "x-ui-order": 5
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "ligand",
+      "x-ui-group": "输出",
+      "x-ui-order": 6
+    }
+  }
+}
