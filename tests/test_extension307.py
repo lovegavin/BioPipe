@@ -38,6 +38,8 @@ def test_rmsf_matches_mdtraj_on_a_real_short_run(tmp_path):
 
 
 def test_run_writes_flexibility_table(tmp_path):
+    pytest.importorskip("openmm")
+    pytest.importorskip("pdbfixer")
     ctx = Context(str(tmp_path / "task"), {"params": {}})
     ctx["pdb"] = read_source(str(FIXTURE), ["atom", "field"], {"atom": "auto", "field": "builtin"})
     run(ctx, [{"name": "structure_openmm_md_rmsf", "inputs": ["pdb"], "params": {"output": "flexibility", "chains": "A", "steps": 200, "report_interval": 50}}])
@@ -49,6 +51,8 @@ def test_run_writes_flexibility_table(tmp_path):
 
 
 def test_errors(tmp_path):
+    pytest.importorskip("openmm")
+    pytest.importorskip("pdbfixer")
     ctx = Context(str(tmp_path / "task"), {"params": {}})
     ctx["pdb"] = read_source(str(FIXTURE), ["atom", "field"], {"atom": "auto", "field": "builtin"})
     with pytest.raises(StepError, match="not in the structure"):
