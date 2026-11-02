@@ -5960,6 +5960,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_salt_bridge_occupancy",
+    "kind": "operator",
+    "title": "MD 盐桥占有率",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Track acidic (ASP/GLU) and basic (LYS/ARG/HIS) side-chain atom pairs across MD frames and report the fraction of frames in which each pair stays within the salt-bridge cutoff, with mean and minimum distances.",
+    "doc": "src/task/step/steps/structure_md_salt_bridge_occupancy.StructureMdSaltBridgeOccupancyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_md_ss_occupancy",
     "kind": "operator",
     "title": "MD 轨迹二级结构占有率",

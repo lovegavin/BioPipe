@@ -273,3 +273,8 @@ to fill a batch.
 
 - Heavy-atom residue contact occupancies across MD frames; brute-force
   distance cross-check; 4 tests passed; 678 operators / 101 Readers.
+
+## v1.90.0 structure_md_salt_bridge_occupancy (verified)
+
+- Acidic/basic side-chain pair occupancies across MD frames; 4 tests
+  passed; 679 operators / 101 Readers.
