@@ -5810,6 +5810,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_lddt",
+    "kind": "operator",
+    "title": "lDDT 局部距离差异检验",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute per-residue local Distance Difference Test scores for a model against a reference structure using C-alpha atoms in a 15 A inclusion radius and the 0.5/1/2/4 A thresholds.",
+    "doc": "src/task/step/steps/structure_lddt.StructureLddtStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_ligand_burial",
     "kind": "operator",
     "title": "Ligand burial",

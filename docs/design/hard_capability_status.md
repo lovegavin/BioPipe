@@ -163,6 +163,12 @@ nobody re-reports a blocked item as delivered.
   (fnat 0.716, iRMSD 0.843, LRMSD 2.236), a 0.0105 gap that comes from the
   heavy-atom contact set.
 
+- `structure_lddt`: own per-residue lDDT (15 A inclusion radius, 0.5/1/2/4 A
+  thresholds, C-alpha atoms) validated against OpenFold's differentiable
+  `lddt()` implementation on 1MEL: copies A vs B mean **0.9673 both** (max
+  per-residue difference 0.000000), A plus 1 A Gaussian noise gives **0.6538
+  both**, and A vs A gives **1.0000 both**.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into
