@@ -4650,6 +4650,16 @@
     "status": "generated"
   },
   {
+    "id": "rfdiffusion_design",
+    "kind": "operator",
+    "title": "RFdiffusion backbone design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official RFdiffusion run_inference.py for a contig expression and return the generated backbones as a [design, atom, field] all-atom table.",
+    "doc": "src/task/step/steps/rfdiffusion_design.RfdiffusionDesignStep.md",
+    "status": "generated"
+  },
+  {
     "id": "ridge_regression",
     "kind": "operator",
     "title": "Ridge regression",
@@ -4927,6 +4937,16 @@
     "version": "1.0.0",
     "description": "Scans DNA sequences for common type II restriction sites and reports positions.",
     "doc": "src/task/step/steps/sequence_restriction_sites.SequenceRestrictionSitesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_signal_peptide",
+    "kind": "operator",
+    "title": "Signal peptide detection",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Detect an N-terminal signal peptide with a SignalP-style heuristic: a positively charged n-region, a 7-15 residue hydrophobic h-region, a small residue at the -1 and -3 positions and a reported cleavage site.",
+    "doc": "src/task/step/steps/sequence_signal_peptide.SequenceSignalPeptideStep.md",
     "status": "generated"
   },
   {
@@ -5357,6 +5377,16 @@
     "version": "1.0.0",
     "description": "Detect helical runs from CA geometry and report pairwise axis angles, axis distances and inter-helix contact counts.",
     "doc": "src/task/step/steps/structure_helix_helix_angle.StructureHelixHelixAngleStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_interface_core",
+    "kind": "operator",
+    "title": "Interface core residues",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute the per-residue buried surface area of a protein complex and classify interface residues as rim or core by the fraction of their isolated SASA that becomes buried on complex formation.",
+    "doc": "src/task/step/steps/structure_interface_core.StructureInterfaceCoreStep.md",
     "status": "generated"
   },
   {
@@ -5877,6 +5907,26 @@
     "version": "1.0.0",
     "description": "Variance inflation factor：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度。",
     "doc": "src/task/step/steps/vif.VifStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vina_dock",
+    "kind": "operator",
+    "title": "AutoDock Vina docking",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run AutoDock Vina with a PDBQT receptor and ligand, then return every docked pose as a [pose, atom, field] table together with the affinity table parsed from the Vina log.",
+    "doc": "src/task/step/steps/vina_dock.VinaDockStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vina_pose_cluster",
+    "kind": "operator",
+    "title": "Docking pose clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Cluster the poses returned by vina_dock with symmetry-aware heavy-atom RMSD and greedy leader clustering, reporting the cluster of every pose and the distance to its cluster representative.",
+    "doc": "src/task/step/steps/vina_pose_cluster.VinaPoseClusterStep.md",
     "status": "generated"
   },
   {
