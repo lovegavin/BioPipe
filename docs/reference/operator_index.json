@@ -1610,6 +1610,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_embedding_isolation_forest",
+    "kind": "operator",
+    "title": "Embedding isolation forest",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/esm_embedding_isolation_forest.EsmEmbeddingIsolationForestStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_embedding_kmeans_silhouette",
     "kind": "operator",
     "title": "Embedding k-means silhouette",
@@ -5000,6 +5010,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_beta_propensity",
+    "kind": "operator",
+    "title": "Beta-sheet propensity",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_beta_propensity.SequenceBetaPropensityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_codon_adaptation",
     "kind": "operator",
     "title": "Codon adaptation index",
@@ -5067,6 +5087,16 @@
     "version": "1.0.0",
     "description": "Compute a sliding-window Kyte-Doolittle hydrophobicity profile for each protein sequence and report hydrophobic segments above a threshold.",
     "doc": "src/task/step/steps/sequence_hydrophobicity_profile.SequenceHydrophobicityProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_isoelectric_point",
+    "kind": "operator",
+    "title": "Isoelectric point",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_isoelectric_point.SequenceIsoelectricPointStep.md",
     "status": "generated"
   },
   {
@@ -5767,6 +5797,16 @@
     "version": "1.0.0",
     "description": "Aggregate the B-factor column of a predicted structure (ESMFold, ColabFold or AlphaFold write pLDDT there) into one row per residue with mean, minimum and maximum confidence and the number of contributing atoms.",
     "doc": "src/task/step/steps/structure_plddt_profile.StructurePlddtProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_protonation_sites",
+    "kind": "operator",
+    "title": "Protonation sites",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/structure_protonation_sites.StructureProtonationSitesStep.md",
     "status": "generated"
   },
   {

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "title": "原子维",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "ph": {
+      "title": "pH",
+      "type": "number",
+      "default": 7.4,
+      "x-ui-group": "检测",
+      "x-ui-order": 1,
+      "minimum": 0.0,
+      "maximum": 14.0
+    },
+    "cutoff": {
+      "title": "邻居截断 (Å)",
+      "type": "number",
+      "default": 6.0,
+      "x-ui-group": "检测",
+      "x-ui-order": 2,
+      "minimum": 2.0,
+      "maximum": 20.0
+    },
+    "shift": {
+      "title": "pKa 位移",
+      "type": "number",
+      "default": 0.4,
+      "x-ui-group": "检测",
+      "x-ui-order": 3,
+      "minimum": 0.0,
+      "maximum": 2.0
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "default": "sites",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}
