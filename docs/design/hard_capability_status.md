@@ -70,7 +70,13 @@ nobody re-reports a blocked item as delivered.
 2. Fetch AntiFold `model.pt` from OPIG on a faster link and place it under the
    AntiFold package `models/` directory, or pass a checkpoint path when the
    operator grows one.
-3. Place `Pfam-A.hmm` (pressed) locally and run `hmmer_domains`.
+3. `hmmer_domains`: verified. `Pfam-A.hmm.gz` (418,160,514 bytes) was fetched
+   from `ftp.ebi.ac.uk` with 32 parallel ranges (~1.2 MB/s), decompressed to a
+   2.1 GB HMM and pressed with `hmmpress` (h3f 508 MB, h3i 2.9 MB, h3m 886 MB,
+   h3p 1.1 GB). A 132-residue VHH scan completes in 0.42 s and returns four
+   domains: `V-set`, `I-set`, `I-set`, `Ig_3` — the expected immunoglobulin
+   superfamily assignment. Test 253 now clears `BIOPIPE_PFAM_HMM` for the
+   validation branch so the suite is environment-neutral.
 
 Until then these stay documented as gated; no easy substitute operator is added
 to fill a batch.

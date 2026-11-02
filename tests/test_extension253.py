@@ -73,7 +73,8 @@ def test_run(tmp_path) -> None:
     assert out.info["domains"][0]["target"] == "PF00069.20"
 
 
-def test_run_errors(tmp_path) -> None:
+def test_run_errors(tmp_path, monkeypatch) -> None:
+    monkeypatch.delenv("BIOPIPE_PFAM_HMM", raising=False)
     form = encode_sequences(["MKV"], "sequence", "position", "protein")
     ctx = Context(str(tmp_path / "task"), {"params": {}})
     ctx["protein"] = form
@@ -87,3 +88,40 @@ def test_run_errors(tmp_path) -> None:
     empty.write_text("import pathlib, sys\nargs = sys.argv[1:]\npathlib.Path(args[args.index('--domtblout') + 1]).write_text('')\n", encoding="utf-8")
     with pytest.raises(StepError, match="no domain above"):
         run(ctx, [{"name": "hmmer_domains", "inputs": ["protein"], "params": {"hmm_path": str(hmm), "hmmscan_path": str(empty)}}])
+
+
+def test_real_hmmscan_when_available():
+    import os
+    import shutil
+
+    binary = shutil.which("hmmscan")
+    hmm = os.environ.get("BIOPIPE_PFAM_HMM", "")
+    if not binary or not hmm or not os.path.isfile(hmm):
+        pytest.skip("BIOPIPE_PFAM_HMM or hmmscan is not available")
+
+    from src.task.context import Context
+    from src.task.runner import run
+    from src.task.step.steps._sequence_common import encode_sequences
+
+    sequence = (
+        "VQLQASGGGSVQAGGSLRLSCAASGYTIGPYCMGWFRQAPGKEREGVAAINMGGGITYYYADSVKGRFTISRDNAKSTVYLQMNSLKPEDTAIYYCAADSTIYSTTYWGQGTQVTVSS"
+    )
+    form = encode_sequences([sequence], "sequence", "position", "protein")
+    import tempfile
+
+    ctx = Context(tempfile.mkdtemp(), {"params": {}})
+    ctx["sequence"] = form
+    run(
+        ctx,
+        [
+            {
+                "name": "hmmer_domains",
+                "inputs": ["sequence"],
+                "params": {"output": "domains", "hmm_path": hmm, "hmmscan_path": binary, "cpu": 2},
+            }
+        ],
+    )
+    result = ctx["domains"]
+    assert result.data.shape[0] >= 1
+    labels = list(result.labels["domain"])
+    assert any(label.startswith(("V-set", "I-set", "Ig_")) for label in labels)
