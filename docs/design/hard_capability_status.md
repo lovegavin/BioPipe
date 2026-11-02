@@ -283,3 +283,9 @@ to fill a batch.
 
 - Donor-H...acceptor geometry across MD frames; 1MEL real check (4074 atoms,
   132 bonds at >= 99%); 4 tests passed; 680 operators / 101 Readers.
+
+## v1.92.0 structure_md_sasa_occupancy (verified)
+
+- Per-residue Shrake-Rupley SASA across MD frames; analytic single-atom
+  oracle 120.76 A^2; 1MEL real check (551 residues, mean 39.8 A^2);
+  5 tests passed; 681 operators / 101 Readers.

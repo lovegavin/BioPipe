@@ -5980,6 +5980,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_sasa_occupancy",
+    "kind": "operator",
+    "title": "MD 残留溶剂可及面积统计",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute per-residue solvent-accessible surface area for every MD frame with mdtraj Shrake-Rupley and report mean, minimum, maximum and exposed fraction.",
+    "doc": "src/task/step/steps/structure_md_sasa_occupancy.StructureMdSasaOccupancyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_md_ss_occupancy",
     "kind": "operator",
     "title": "MD 轨迹二级结构占有率",

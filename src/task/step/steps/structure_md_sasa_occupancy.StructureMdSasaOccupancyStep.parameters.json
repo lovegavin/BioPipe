@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MD 残基 SASA 参数",
+  "properties": {
+    "trajectory_path": {
+      "title": "轨迹文件 (.npy, nm)",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "topology_path": {
+      "title": "拓扑 PDB",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "probe_radius": {
+      "title": "探针半径 (Å)",
+      "type": "number",
+      "default": 1.4,
+      "minimum": 0.5,
+      "maximum": 5.0,
+      "x-ui-group": "SASA",
+      "x-ui-order": 3
+    },
+    "n_sphere_points": {
+      "title": "球面采样点",
+      "type": "integer",
+      "default": 92,
+      "minimum": 100,
+      "maximum": 1024,
+      "x-ui-group": "SASA",
+      "x-ui-order": 4
+    },
+    "exposed_threshold": {
+      "title": "暴露阈值 (Å²)",
+      "type": "number",
+      "default": 1.0,
+      "minimum": 0.0,
+      "maximum": 100.0,
+      "x-ui-group": "SASA",
+      "x-ui-order": 5
+    },
+    "stride": {
+      "title": "采样间隔（帧）",
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 100,
+      "x-ui-group": "采样",
+      "x-ui-order": 6
+    },
+    "residue_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "residue",
+      "x-ui-group": "输出",
+      "x-ui-order": 7
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "sasa",
+      "x-ui-group": "输出",
+      "x-ui-order": 8
+    }
+  }
+}
