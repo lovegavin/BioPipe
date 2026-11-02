@@ -1,0 +1,51 @@
+<!-- biopipe:generated -->
+# Codon adaptation index
+
+## Purpose
+
+> Codon adaptation index (CAI) of coding sequences.
+>
+> The CAI (Sharp & Li, 1987) is the geometric mean of the relative adaptiveness
+> ``w`` of every codon in a target coding sequence, where ``w`` comes from the
+> codon counts of a reference coding set.  The definition follows Biopython's
+> ``Bio.SeqUtils.CodonAdaptationIndex``: codons absent from the reference get the
+> paper's 0.5 pseudo-count, ATG and TGG are excluded from the mean, and stop
+> codons are included only when the reference defines them.
+
+## Inputs and outputs
+
+Kind: `operator`. Operator ID: `sequence_codon_adaptation`.
+Input count: `2`.
+Read the structured `contracts` section before connecting nodes. It includes
+the accepted data types, dimension constraints and output propagation rule.
+
+## Parameter guidance
+
+The adjacent parameter JSON owns defaults, valid choices, ranges and required
+fields. Request the generated `parameters` section and `parameters_schema` for
+the exact interface; do not infer parameter names from prose.
+Saved routes keep their own parameter values independently of current defaults.
+
+## Interpretation
+
+Check output metadata and labels before downstream analysis. The declared output
+contract describes the representation; it does not establish biological validity
+or statistical assumptions for a particular dataset.
+
+## Limitations
+
+Declared memory modes: full. BioPipe retains the existing planner, disk-backed
+inputs and emergency spill behavior; full-mode operators still require their
+declared working set. This generated reference has not been independently
+scientifically reviewed.
+
+## Examples
+
+Use the registry to discover compatible Readers and validate a complete workflow
+before execution. This generated page does not claim an executable scientific
+example. Add a tested example and replace this generated page with authored
+guidance when extending this operator.
+
+## Source
+
+Implementation: `src/task/step/steps/sequence_codon_adaptation.py` (`SequenceCodonAdaptationStep`).

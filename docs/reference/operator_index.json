@@ -260,6 +260,16 @@
     "status": "generated"
   },
   {
+    "id": "antibody_cdr_graft",
+    "kind": "operator",
+    "title": "CDR grafting",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Graft donor CDR-H1/H2/H3 loops onto an acceptor VH/VHH framework using conserved-anchor Kabat boundaries.",
+    "doc": "src/task/step/steps/antibody_cdr_graft.AntibodyCdrGraftStep.md",
+    "status": "generated"
+  },
+  {
     "id": "antibody_cdr_hydrophobicity",
     "kind": "operator",
     "title": "Antibody CDR Hydrophobicity",
@@ -3950,6 +3960,16 @@
     "status": "generated"
   },
   {
+    "id": "proteinmpnn_masked_interface_design",
+    "kind": "operator",
+    "title": "Interface-masked ProteinMPNN design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Redesign the interface residues of a binder/target complex with official ProteinMPNN; the interface mask is derived from heavy-atom contacts instead of a residue list.",
+    "doc": "src/task/step/steps/proteinmpnn_masked_interface_design.ProteinmpnnMaskedInterfaceDesignStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proteinmpnn_multi_model_consensus",
     "kind": "operator",
     "title": "ProteinMPNN 多模型共识",
@@ -4740,6 +4760,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_codon_adaptation",
+    "kind": "operator",
+    "title": "Codon adaptation index",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Codon adaptation index of coding DNA sequences relative to a reference coding set (Sharp & Li 1987).",
+    "doc": "src/task/step/steps/sequence_codon_adaptation.SequenceCodonAdaptationStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_complexity",
     "kind": "operator",
     "title": "Sequence Complexity",
@@ -5127,6 +5157,16 @@
     "version": "1.0.0",
     "description": "",
     "doc": "src/task/step/steps/structure_cation_pi.StructureCationPiStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_cavity_lining",
+    "kind": "operator",
+    "title": "Cavity lining residues",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Residues lining the largest buried cavity of a structure, with their nearest distance to the cavity volume.",
+    "doc": "src/task/step/steps/structure_cavity_lining.StructureCavityLiningStep.md",
     "status": "generated"
   },
   {
