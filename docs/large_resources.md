@@ -211,3 +211,19 @@ prodigal -v
 The default path is `prodigal` on `PATH`; override it with the operator's
 `prodigal_path` parameter. `BIOPIPE_PRODIGAL_REAL=1` enables the real genome
 check in `tests/test_extension252.py`.
+
+## Pfam
+
+`hmmer_domains` needs a pressed HMM database. The full Pfam-A release is about
+418 MB compressed and 2.2 GB after decompression.
+
+```bash
+mkdir -p ~/db && cd ~/db
+curl -LO https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz
+gunzip Pfam-A.hmm.gz
+hmmpress Pfam-A.hmm
+export BIOPIPE_PFAM_HMM=~/db/Pfam-A.hmm
+```
+
+The real check in `tests/test_extension253.py` runs only when
+`BIOPIPE_PFAM_HMM` points at the pressed database.

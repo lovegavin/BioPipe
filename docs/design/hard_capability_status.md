@@ -311,3 +311,9 @@ to fill a batch.
 - apt-installed Prodigal 2.6.3; real run on phage lambda (48 502 bp):
   61 CDS, first CDS 191-736 (+), identical to the CLI GFF output.
 - Real test gated by BIOPIPE_PRODIGAL_REAL=1 in tests/test_extension252.py.
+
+## hmmer_domains (verified, Pfam-A)
+
+- Pfam-A.hmm (418 MB gz, 2.2 GB unpacked) pressed with hmmpress; real scan
+  of chicken lysozyme returned 3 domains, top hit 'Lys' with full score 166
+  in 0.7 s; real test gated by BIOPIPE_PFAM_HMM.
