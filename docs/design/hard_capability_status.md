@@ -141,6 +141,13 @@ nobody re-reports a blocked item as delivered.
   bond can drop out of the perceived graph instead of being flagged; a template
   SMILES comparison is the next refinement.
 
+- `structure_tm_score`: own implementation of the length-normalised TM-score
+  (d0 = 1.24*cbrt(L-15)-1.8, iterative 4.5 A distance weighting) validated
+  against `tmtools` (TM-align port) as the authoritative oracle: 1MEL copies
+  A vs B give **0.9865 both** (132 C-alpha pairs, RMSD 0.51 A, all aligned),
+  a 1.0 A noised copy gives **0.8652 both** (delta 0.0000), identity gives
+  **1.000000 both**.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

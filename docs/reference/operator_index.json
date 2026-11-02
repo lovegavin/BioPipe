@@ -6020,6 +6020,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_tm_score",
+    "kind": "operator",
+    "title": "TM-score 结构相似度",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Superpose a model structure onto a reference by C-alpha atoms and report the length-normalised TM-score with iterative distance weighting.",
+    "doc": "src/task/step/steps/structure_tm_score.StructureTmScoreStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_zinc_sites",
     "kind": "operator",
     "title": "Structural zinc sites",
