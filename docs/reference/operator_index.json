@@ -5990,6 +5990,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_pocket_detect",
+    "kind": "operator",
+    "title": "fpocket 口袋检测",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Detect surface pockets with the fpocket alpha-sphere method and report the pocket score, druggability, volume, alpha-sphere radius, lining residue count and centroid for every pocket that passes the filters.",
+    "doc": "src/task/step/steps/structure_pocket_detect.StructurePocketDetectStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_protonation_pka",
     "kind": "operator",
     "title": "PROPKA protonation states",

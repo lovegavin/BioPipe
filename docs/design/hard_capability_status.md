@@ -188,6 +188,14 @@ nobody re-reports a blocked item as delivered.
   parseable (the operator prefers an RDKit SDF round trip and falls back to
   the raw PDB).
 
+- `structure_pocket_detect`: wraps fpocket 4.0, built from source at
+  `/home/gavin/tools/fpocket` (GitHub `Discngine/fpocket`, `make`; binary
+  `bin/fpocket`). Real run on 1MEL (heavy atoms rewritten, 21 pockets
+  detected, 5 kept): top score **0.317**, druggability 0.005, volume
+  517 A^3, 52 alpha spheres, 17 lining residues, 0.7 s; another cavity
+  reaches druggability **0.405** with volume 634 A^3. Pocket parsing
+  distinguishes `Volume :` from the `Volume score:` line.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into
