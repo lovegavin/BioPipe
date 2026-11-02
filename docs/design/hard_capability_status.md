@@ -300,3 +300,8 @@ to fill a batch.
 
 - PoseBusters redock validation; 3PTB real check (shifted pose rmsd 3.0 /
   fail, identity rmsd 0.0 / pass); 3 tests passed; 683 operators / 101 Readers.
+
+## v1.95.0 structure_md_ligand_rmsd (verified)
+
+- Receptor-superposed ligand displacement across MD frames; 3PTB real check
+  (1.0 A shift -> 1.000 A); 5 tests passed; 684 operators / 101 Readers.

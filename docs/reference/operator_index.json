@@ -5990,6 +5990,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_ligand_rmsd",
+    "kind": "operator",
+    "title": "MD 配体位移 RMSD",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Superpose each MD frame on the first frame using receptor CA atoms and report the ligand RMSD after superposition, summarising mean, maximum and final values.",
+    "doc": "src/task/step/steps/structure_md_ligand_rmsd.StructureMdLigandRmsdStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_md_salt_bridge_occupancy",
     "kind": "operator",
     "title": "MD 盐桥占有率",
