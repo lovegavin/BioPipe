@@ -28,7 +28,7 @@ class WeightedUnifracStep(Step):
         'kind': 'operator',
         'title': 'Weighted UniFrac',
         'category': 'Omics',
-        'icon': 'TreePine',
+        'icon': 'TreeStructure',
         'contracts': {
             'version': 1,
             'inputs': [

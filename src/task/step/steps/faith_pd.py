@@ -28,7 +28,7 @@ class FaithPdStep(Step):
         'kind': 'operator',
         'title': "Faith's phylogenetic diversity",
         'category': 'Omics',
-        'icon': 'TreePine',
+        'icon': 'TreeStructure',
         'contracts': {
             'version': 1,
             'inputs': [

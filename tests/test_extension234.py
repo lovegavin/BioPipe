@@ -16,6 +16,8 @@ from src.task.step.steps.esm_embedding_linear_probe import (
     validate_input,
 )
 
+pytest.importorskip("sklearn")
+
 
 def _embedding(
     values, labels: list[str] | None = None

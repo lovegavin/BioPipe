@@ -22,7 +22,7 @@ class PatristicDistanceStep(Step):
         'kind': 'operator',
         'title': 'Patristic distance',
         'category': 'Omics',
-        'icon': 'TreePine',
+        'icon': 'TreeStructure',
         'contracts': {
             'version': 1,
             'inputs': [

@@ -114,7 +114,7 @@ class ProteinmpnnMaskedInterfaceDesignStep(Step):
             "contacts instead of a residue list."
         ),
         "category": "Machine Learning",
-        "icon": "Protein",
+        "icon": "Intersect",
         "contracts": {
             "version": 1,
             "inputs": [

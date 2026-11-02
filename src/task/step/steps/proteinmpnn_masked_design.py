@@ -134,7 +134,7 @@ class ProteinmpnnMaskedDesignStep(Step):
         "title": "Masked ProteinMPNN design",
         "description": "Redesign a structure while fixing the residues named by a mask.",
         "category": "Machine Learning",
-        "icon": "Wand2",
+        "icon": "MagicWand",
         "contracts": {
             "version": 1,
             "inputs": [],

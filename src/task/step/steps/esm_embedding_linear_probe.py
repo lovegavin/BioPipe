@@ -79,10 +79,17 @@ def probe_rows(
 ) -> tuple[list[tuple[float, float]], dict]:
     """Return per-fold accuracy rows and a summary dictionary."""
 
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.model_selection import StratifiedKFold
-    from sklearn.pipeline import make_pipeline
-    from sklearn.preprocessing import StandardScaler
+    try:
+        from sklearn.linear_model import LogisticRegression
+        from sklearn.model_selection import StratifiedKFold
+        from sklearn.pipeline import make_pipeline
+        from sklearn.preprocessing import StandardScaler
+    except ImportError as error:
+        raise StepError(
+            "esm_embedding_linear_probe: scikit-learn is required for the "
+            "logistic-regression probe; install it with "
+            "'python -m pip install scikit-learn'"
+        ) from error
 
     values = np.asarray(labels, dtype=object)
     classes, counts = np.unique(values, return_counts=True)

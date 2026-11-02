@@ -67,7 +67,7 @@ class ManovaStep(Step):
         "kind": "operator",
         "title": "One-way MANOVA",
         "category": "Statistics",
-        "icon": "ChartColumn",
+        "icon": "ChartBar",
         "contracts": {
             "version": 1,
             "inputs": [

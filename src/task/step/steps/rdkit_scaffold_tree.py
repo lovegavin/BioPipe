@@ -71,7 +71,7 @@ class RdkitScaffoldTreeStep(Step):
         "title": "Murcko scaffold tree",
         "description": "Hierarchical scaffold levels shared by a molecule collection.",
         "category": "Machine Learning",
-        "icon": "TreePine",
+        "icon": "TreeStructure",
         "contracts": {
             "version": 1,
             "inputs": [],

@@ -96,7 +96,7 @@ class LigandEfficiencyStep(Step):
             'ligand efficiency and the binding efficiency index.'
         ),
         'category': 'Machine Learning',
-        'icon': 'Scale',
+        'icon': 'Scales',
         'contracts': {
             'version': 1,
             'inputs': [],
