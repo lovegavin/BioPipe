@@ -67,7 +67,10 @@ class FoldseekSearchStep(Step):
         database = Path(str(params.get("database_path", ""))).expanduser()
         if not database.exists():
             raise StepError(f"foldseek_search: database_path {database} does not exist; download a Foldseek database first")
-        binary = shutil.which(str(params.get("foldseek_path") or "foldseek"))
+        candidate = str(params.get("foldseek_path") or "foldseek")
+        binary = shutil.which(candidate)
+        if binary is None and Path(candidate).is_file():
+            binary = candidate
         if binary is None:
             raise StepError("foldseek_search: 'foldseek' was not found on PATH; download the static binary from the Foldseek release page")
         workdir = Path(tempfile.mkdtemp(prefix="foldseek_"))

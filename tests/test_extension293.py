@@ -49,9 +49,8 @@ def test_command_and_parse():
 
 
 def test_run_roundtrip(tmp_path):
-    script = tmp_path / "foldseek"
-    script.write_text("#!" + sys.executable + "\n" + FAKE)
-    script.chmod(0o755)
+    script = tmp_path / "foldseek.py"
+    script.write_text(FAKE)
     query = tmp_path / "query.pdb"
     query.write_text("ATOM")
     database = tmp_path / "db"

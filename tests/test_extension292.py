@@ -61,9 +61,8 @@ def test_command_and_parsing(tmp_path):
 
 
 def test_run_roundtrip(tmp_path):
-    script = tmp_path / "boltz"
-    script.write_text("#!" + sys.executable + "\n" + FAKE)
-    script.chmod(0o755)
+    script = tmp_path / "boltz.py"
+    script.write_text(FAKE)
     ctx = Context(str(tmp_path / "task"), {"params": {}})
     ctx["sequence"] = encode_sequences(["MKVLA"], "sequence", "position", "protein")
     params = {"output": "structure", "boltz_path": str(script), "ligand_smiles": "CCO", "affinity": True, "use_msa_server": False}
