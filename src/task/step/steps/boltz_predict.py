@@ -36,12 +36,47 @@ def write_yaml(path: Path, sequence: str, *, chain: str = "A", ligand_smiles: st
     path.write_text(body)
 
 
-def boltz_command(binary: str, yaml_path: Path, out_dir: Path, *, model: str = "boltz2", use_msa_server: bool = True, affinity: bool = False, device: str = "cpu", extra: str = "") -> list[str]:
-    command = [binary, "predict", str(yaml_path), "--out_dir", str(out_dir), "--model", model, "--device", device]
+def boltz_command(
+    binary: str,
+    yaml_path: Path,
+    out_dir: Path,
+    *,
+    model: str = "boltz2",
+    use_msa_server: bool = True,
+    device: str = "cpu",
+    output_format: str = "pdb",
+    sampling_steps: int = 200,
+    diffusion_samples: int = 1,
+    num_workers: int = 1,
+    no_kernels: bool = False,
+    extra: str = "",
+) -> list[str]:
+    """Build the official `boltz predict` invocation."""
+
+    accelerator = "gpu" if str(device).lower() in {"cuda", "gpu"} else "cpu"
+    command = [
+        binary,
+        "predict",
+        str(yaml_path),
+        "--out_dir",
+        str(out_dir),
+        "--model",
+        model,
+        "--accelerator",
+        accelerator,
+        "--output_format",
+        output_format,
+        "--sampling_steps",
+        str(sampling_steps),
+        "--diffusion_samples",
+        str(diffusion_samples),
+        "--num_workers",
+        str(num_workers),
+    ]
     if use_msa_server:
         command.append("--use_msa_server")
-    if affinity:
-        command.append("--affinity")
+    if no_kernels:
+        command.append("--no_kernels")
     if extra.strip():
         command.extend(extra.split())
     return command
@@ -125,7 +160,20 @@ class BoltzPredictStep(Step):
         yaml_path = workdir / "input.yaml"
         write_yaml(yaml_path, sequences[0], chain=str(params.get("protein_chain", "A")), ligand_smiles=str(params.get("ligand_smiles", "")), ligand_chain=str(params.get("ligand_chain", "B")), affinity=bool(params.get("affinity", False)))
         out_dir = workdir / "out"
-        command = boltz_command(resolved, yaml_path, out_dir, model=str(params.get("model", "boltz2")), use_msa_server=bool(params.get("use_msa_server", True)), affinity=bool(params.get("affinity", False)), device=str(params.get("device", "cpu")), extra=str(params.get("extra_args", "")))
+        command = boltz_command(
+            resolved,
+            yaml_path,
+            out_dir,
+            model=str(params.get("model", "boltz2")),
+            use_msa_server=bool(params.get("use_msa_server", True)),
+            device=str(params.get("device", "cpu")),
+            output_format=str(params.get("output_format", "pdb")),
+            sampling_steps=int(params.get("sampling_steps", 200)),
+            diffusion_samples=int(params.get("diffusion_samples", 1)),
+            num_workers=int(params.get("num_workers", 1)),
+            no_kernels=bool(params.get("no_kernels", False)),
+            extra=str(params.get("extra_args", "")),
+        )
         if str(resolved).lower().endswith(".py"):
             command = [sys.executable] + command
         try:

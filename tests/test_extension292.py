@@ -28,7 +28,7 @@ base = out / "boltz_results_input" / "predictions" / "input"
 base.mkdir(parents=True, exist_ok=True)
 (base / "input_model_0.pdb").write_text("ATOM      1  CA  ALA A   1       0.000   0.000   0.000  1.00  0.00           C" + chr(10))
 (base / "confidence_input_model_0.json").write_text(json.dumps({"confidence_score": 0.81, "ptm": 0.72, "iptm": 0.63, "complex_plddt": 0.9}))
-if "--affinity" in args:
+if "--use_msa_server" in args:
     (base / "affinity_input_model_0.json").write_text(json.dumps({"affinity_pred_value": -1.25, "affinity_probability_binary": 0.77}))
 """
 
@@ -48,6 +48,7 @@ def test_write_yaml(tmp_path):
 def test_command_and_parsing(tmp_path):
     command = boltz_command("boltz", tmp_path / "i.yaml", tmp_path / "out")
     assert command[:2] == ["boltz", "predict"]
+    assert "--accelerator" in command and "cpu" in command
     assert "--use_msa_server" in command
     base = tmp_path / "out" / "r" / "p" / "x"
     base.mkdir(parents=True)
@@ -65,7 +66,7 @@ def test_run_roundtrip(tmp_path):
     script.write_text(FAKE)
     ctx = Context(str(tmp_path / "task"), {"params": {}})
     ctx["sequence"] = encode_sequences(["MKVLA"], "sequence", "position", "protein")
-    params = {"output": "structure", "boltz_path": str(script), "ligand_smiles": "CCO", "affinity": True, "use_msa_server": False}
+    params = {"output": "structure", "boltz_path": str(script), "ligand_smiles": "CCO", "affinity": True, "use_msa_server": True}
     run(ctx, [{"name": "boltz_predict", "inputs": ["sequence"], "params": params}])
     result = ctx["structure"]
     assert result.data.shape == (1, 6)

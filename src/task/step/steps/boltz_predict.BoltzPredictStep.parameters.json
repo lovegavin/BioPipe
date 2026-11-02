@@ -103,6 +103,51 @@
       "default": "structure",
       "x-ui-group": "输出",
       "x-ui-order": 1
+    },
+    "output_format": {
+      "title": "输出格式",
+      "type": "string",
+      "default": "pdb",
+      "enum": [
+        "pdb",
+        "mmcif"
+      ],
+      "x-ui-group": "模型",
+      "x-ui-order": 5
+    },
+    "sampling_steps": {
+      "title": "采样步数",
+      "type": "integer",
+      "default": 200,
+      "minimum": 1,
+      "maximum": 1000,
+      "x-ui-group": "模型",
+      "x-ui-order": 6
+    },
+    "diffusion_samples": {
+      "title": "扩散样本数",
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 32,
+      "x-ui-group": "模型",
+      "x-ui-order": 7
+    },
+    "num_workers": {
+      "title": "数据线程",
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "maximum": 16,
+      "x-ui-group": "模型",
+      "x-ui-order": 8
+    },
+    "no_kernels": {
+      "title": "禁用 kernel",
+      "type": "boolean",
+      "default": false,
+      "x-ui-group": "模型",
+      "x-ui-order": 9
     }
   }
 }
