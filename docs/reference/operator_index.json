@@ -3630,6 +3630,16 @@
     "status": "generated"
   },
   {
+    "id": "openfold_predict",
+    "kind": "operator",
+    "title": "OpenFold 结构预测",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run OpenFold (AlphaFold-2 weights) inference for one protein sequence with precomputed single-sequence alignments and return the predicted structure with pLDDT statistics.",
+    "doc": "src/task/step/steps/openfold_predict.OpenfoldPredictStep.md",
+    "status": "generated"
+  },
+  {
     "id": "optics",
     "kind": "operator",
     "title": "OPTICS clustering",

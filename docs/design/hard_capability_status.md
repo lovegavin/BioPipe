@@ -124,6 +124,15 @@ nobody re-reports a blocked item as delivered.
   and marks `has_variants = 1`. No structure prediction accuracy claim is
   made for this 14-residue toy system.
 
+- `openfold_predict`: OpenFold `finetuning_ptm_2` (358 MB, from the public
+  `openfold` S3 bucket) on a 14-residue peptide with single-sequence
+  alignments: **94 atoms, 36.8 s on CPU**, pLDDT mean **68.7**
+  (52.4-80.2) — the expected low confidence for a one-sequence peptide.
+  The official code imports its CUDA attention kernel unconditionally; the
+  operator documents the three small CPU patches (softmax fallback, TensorRT
+  guard, dummy template CIF) in `docs/large_resources.md`. No accuracy claim
+  is made without an experimental reference.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

@@ -6,6 +6,28 @@ checkouts. Operators that need them read the shipped manifest
 environment variable overrides the search path, and exactly which files a
 dependent operator expects. Nothing is downloaded automatically.
 
+## OpenFold
+
+OpenFold needs a checkout, the finetuning weights, and (on CPU) two small
+patches because the official code imports its CUDA attention kernel
+unconditionally.
+
+```bash
+git clone https://github.com/aqlaboratory/openfold /home/gavin/tools/openfold
+python -m pip install dllogger ml-collections biotite modelcif einops   # dllogger may need git+https://github.com/NVIDIA/dllogger.git
+curl -L -o /home/gavin/models/openfold/finetuning_ptm_2.pt \
+  https://openfold.s3.amazonaws.com/openfold_params/finetuning_ptm_2.pt   # 358 MB
+```
+
+CPU patches applied to the checkout (GPU installs with a built kernel do not
+need them): wrap `attn_core_inplace_cuda = importlib.import_module(...)` in
+try/except in `openfold/utils/kernel/attention_core.py` and
+`openfold/model/structure_module.py`, replace the in-place softmax calls with
+`torch.softmax`/`self.softmax` when the kernel is absent, and wrap the
+TensorRT import in `openfold/utils/script_utils.py`. Templates need a
+directory with at least one `.cif`; the operator writes a dummy file when no
+template directory is given.
+
 ## Boltz
 
 Boltz downloads its own weights into a cache directory (default `~/.boltz`).
