@@ -590,6 +590,16 @@
     "status": "generated"
   },
   {
+    "id": "boltz_predict",
+    "kind": "operator",
+    "title": "Boltz co-folding prediction",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/boltz_predict.BoltzPredictStep.md",
+    "status": "generated"
+  },
+  {
     "id": "bonett_seier",
     "kind": "operator",
     "title": "Bonett-Seier Geary kurtosis test",
@@ -2047,6 +2057,16 @@
     "version": "1.0.0",
     "description": "Flow cytometry arcsinh transform：接收 1 个输入，输出 Form；主要参数：Event Dim、Channel Dim、Channels、A、B、C。",
     "doc": "src/task/step/steps/flow_transform.FlowTransformStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "foldseek_search",
+    "kind": "operator",
+    "title": "Foldseek structural search",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/foldseek_search.FoldseekSearchStep.md",
     "status": "generated"
   },
   {
