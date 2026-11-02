@@ -95,6 +95,14 @@ nobody re-reports a blocked item as delivered.
   differ by up to ~0.5 because PDB2PQR protonates discretely while the
   operator's HH formula is fractional.
 
+- `structure_openmm_md_stability`: OpenMM 8.6.1 + PDBFixer. VHH chain A
+  (1881 particles, 907 constraints) minimised, heated to 300 K and run for
+  500 equilibration + 1000 production steps (2 ps, 2 fs step) in 162 s on
+  CPU: temperature rises **250 → 295 K** during production, RMSD stays
+  **≈1.0 Å** from the minimised structure and the radius of gyration is flat
+  (14.26 Å, change 0.01 Å). Trajectories are not bitwise reproducible
+  because the CPU platform sums in parallel.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

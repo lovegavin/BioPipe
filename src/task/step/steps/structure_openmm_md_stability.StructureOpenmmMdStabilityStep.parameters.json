@@ -1,0 +1,131 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "OpenMM 短程分子动力学稳定性参数",
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度名",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维度名",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "ph": {
+      "title": "质子化 pH",
+      "type": "number",
+      "default": 7.0,
+      "minimum": 0.0,
+      "maximum": 14.0,
+      "x-ui-group": "体系",
+      "x-ui-order": 3
+    },
+    "temperature": {
+      "title": "温度 (K)",
+      "type": "number",
+      "default": 300.0,
+      "minimum": 250.0,
+      "maximum": 450.0,
+      "x-ui-group": "积分",
+      "x-ui-order": 4
+    },
+    "friction": {
+      "title": "Langevin 摩擦系数 (1/ps)",
+      "type": "number",
+      "default": 1.0,
+      "minimum": 0.1,
+      "maximum": 50.0,
+      "x-ui-group": "积分",
+      "x-ui-order": 5
+    },
+    "step_size_fs": {
+      "title": "步长 (fs)",
+      "type": "number",
+      "default": 2.0,
+      "minimum": 0.5,
+      "maximum": 4.0,
+      "x-ui-group": "积分",
+      "x-ui-order": 6
+    },
+    "steps": {
+      "title": "积分步数",
+      "type": "integer",
+      "default": 500,
+      "minimum": 10,
+      "maximum": 200000,
+      "x-ui-group": "积分",
+      "x-ui-order": 7
+    },
+    "sample_every": {
+      "title": "采样间隔 (步)",
+      "type": "integer",
+      "default": 50,
+      "minimum": 1,
+      "maximum": 10000,
+      "x-ui-group": "积分",
+      "x-ui-order": 8
+    },
+    "minimize_iterations": {
+      "title": "能量最小化迭代上限",
+      "type": "integer",
+      "default": 500,
+      "minimum": 0,
+      "maximum": 100000,
+      "x-ui-group": "积分",
+      "x-ui-order": 9
+    },
+    "seed": {
+      "title": "随机种子",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 1000000,
+      "x-ui-group": "积分",
+      "x-ui-order": 10
+    },
+    "forcefield": {
+      "title": "力场文件（逗号分隔）",
+      "type": "string",
+      "default": "amber14-all.xml,implicit/gbn2.xml",
+      "x-ui-group": "体系",
+      "x-ui-order": 11
+    },
+    "frame_dim": {
+      "title": "帧维度名",
+      "type": "string",
+      "default": "frame",
+      "x-ui-group": "输出",
+      "x-ui-order": 12
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "frames",
+      "x-ui-group": "输出",
+      "x-ui-order": 13
+    },
+    "remove_water": {
+      "title": "去除水分子",
+      "type": "boolean",
+      "default": true,
+      "x-ui-group": "体系",
+      "x-ui-order": 12
+    },
+    "equilibrate_steps": {
+      "title": "预平衡步数",
+      "type": "integer",
+      "default": 500,
+      "minimum": 0,
+      "maximum": 100000,
+      "x-ui-group": "积分",
+      "x-ui-order": 9
+    }
+  }
+}

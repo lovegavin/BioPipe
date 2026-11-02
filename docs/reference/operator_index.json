@@ -5850,6 +5850,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_openmm_md_stability",
+    "kind": "operator",
+    "title": "OpenMM 短程分子动力学稳定性",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Minimise an implicit-solvent system with OpenMM and run a short Langevin trajectory, reporting temperature, potential energy, RMSD and radius of gyration per sampled frame.",
+    "doc": "src/task/step/steps/structure_openmm_md_stability.StructureOpenmmMdStabilityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_packing_density",
     "kind": "operator",
     "title": "Structure packing density",
