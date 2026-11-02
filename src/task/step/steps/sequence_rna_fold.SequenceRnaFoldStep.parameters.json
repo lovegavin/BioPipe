@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "RNA 折叠参数",
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度名",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度名",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "rnafold_path": {
+      "title": "RNAfold 路径",
+      "type": "string",
+      "default": "RNAfold",
+      "x-ui-group": "依赖",
+      "x-ui-order": 3
+    },
+    "temperature": {
+      "title": "温度 (°C)",
+      "type": "number",
+      "default": 37.0,
+      "minimum": 0.0,
+      "maximum": 100.0,
+      "x-ui-group": "折叠",
+      "x-ui-order": 4
+    },
+    "dangles": {
+      "title": "悬垂碱基模型",
+      "type": "integer",
+      "default": 2,
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "x-ui-group": "折叠",
+      "x-ui-order": 5
+    },
+    "no_lonely_pairs": {
+      "title": "禁止孤立碱基对",
+      "type": "boolean",
+      "default": false,
+      "x-ui-group": "折叠",
+      "x-ui-order": 6
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 600,
+      "minimum": 10,
+      "maximum": 7200,
+      "x-ui-group": "依赖",
+      "x-ui-order": 7
+    },
+    "sequence_output_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输出",
+      "x-ui-order": 8
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "folds",
+      "x-ui-group": "输出",
+      "x-ui-order": 9
+    }
+  }
+}

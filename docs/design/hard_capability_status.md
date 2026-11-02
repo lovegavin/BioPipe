@@ -196,6 +196,14 @@ nobody re-reports a blocked item as delivered.
   reaches druggability **0.405** with volume 634 A^3. Pocket parsing
   distinguishes `Volume :` from the `Volume score:` line.
 
+- `sequence_rna_fold`: wraps ViennaRNA 2.5.1 (`apt install vienna-rna`,
+  `/usr/bin/RNAfold`) for minimum-free-energy RNA secondary structure.
+  Real runs: yeast tRNA-Phe (76 nt) folds to a cloverleaf-like structure
+  with MFE **-22.40 kcal/mol** and 21 base pairs, byte-identical to the
+  direct CLI output; the hairpin `GGGAAACCC` gives -1.20 kcal/mol and
+  `(((....)))`; two sequences fold in 0.01 s. T is normalised to U and
+  non-nucleotide characters are rejected.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

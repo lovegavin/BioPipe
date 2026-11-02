@@ -5290,6 +5290,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_rna_fold",
+    "kind": "operator",
+    "title": "RNA 二级结构折叠 (ViennaRNA)",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Fold RNA sequences with the official ViennaRNA RNAfold implementation and report the minimum free energy structure, energy, ensemble energy, base-pair count and GC content.",
+    "doc": "src/task/step/steps/sequence_rna_fold.SequenceRnaFoldStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_signal_peptide",
     "kind": "operator",
     "title": "Signal peptide detection",
