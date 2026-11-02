@@ -70,6 +70,13 @@ nobody re-reports a blocked item as delivered.
   on CPU. OpenMM itself is the oracle, and the operator recomputes both
   energies and gradients from its own Context.
 
+- `interface_mmgbsa_delta`: single-point MM/GBSA on the 1MEL A/B (VHH) versus
+  L/M (lysozyme) complex, three OpenMM systems (7596 / 3762 / 3834 particles).
+  Complex 8194.76, binder 9318.68, target -1198.10 kJ/mol, **delta 74.18**;
+  nonbonded delta -4700.40, GB delta +4774.58 (desolvation), bonded delta
+  exactly 0.00 — the bonded cancellation is the internal consistency check.
+  4.8 s on CPU.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

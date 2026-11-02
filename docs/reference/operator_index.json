@@ -2610,6 +2610,16 @@
     "status": "generated"
   },
   {
+    "id": "interface_mmgbsa_delta",
+    "kind": "operator",
+    "title": "MM/GBSA binding energy",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Single-point OpenMM MM/GBSA binding-energy estimate with bonded, nonbonded and GB term decomposition.",
+    "doc": "src/task/step/steps/interface_mmgbsa_delta.InterfaceMmgbsaDeltaStep.md",
+    "status": "generated"
+  },
+  {
     "id": "interval_censored_regression",
     "kind": "operator",
     "title": "Interval-censored Weibull AFT",
