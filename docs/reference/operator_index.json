@@ -360,6 +360,16 @@
     "status": "generated"
   },
   {
+    "id": "antifold_design",
+    "kind": "operator",
+    "title": "AntiFold 抗体逆折叠设计",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official AntiFold antibody inverse-folding model on a PDB structure, returning sampled sequences with scores and a per-residue log-probability profile.",
+    "doc": "src/task/step/steps/antifold_design.AntifoldDesignStep.md",
+    "status": "generated"
+  },
+  {
     "id": "antifold_score",
     "kind": "operator",
     "title": "AntiFold inverse-folding scores",

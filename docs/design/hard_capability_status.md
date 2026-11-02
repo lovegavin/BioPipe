@@ -103,6 +103,18 @@ nobody re-reports a blocked item as delivered.
   (14.26 Å, change 0.01 Å). Trajectories are not bitwise reproducible
   because the CPU platform sums in parallel.
 
+- `antifold_design`: antifold 0.3.1 with the OPIG `model.pt` weights (566 MB,
+  downloaded from `opig.stats.ox.ac.uk`). On the 1MEL VHH/lysozyme complex
+  (chains A against L, CDR1-3) the wild-type score is **1.5146**; five sampled
+  designs at T=0.2 give recovery **0.857-0.865** with 12-13 substitutions each,
+  and **67-69%** of the substitutions fall inside the Kabat CDRs (CDRs cover
+  35% of the domain, so the model concentrates edits where expected). The
+  per-residue profile covers 259 residues, 112 preferring a different residue,
+  mean perplexity 3.71. Real inference takes about 5 s per structure on CPU.
+  Biopython 1.88 compatibility for the shared Kabat aligner was fixed in the
+  same release (the `end_gap_score` setter replaced the removed
+  `end_insertion_score`/`end_deletion_score` attributes).
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

@@ -43,8 +43,12 @@ def _aligner():
     aligner.substitution_matrix = Align.substitution_matrices.load("BLOSUM62")
     aligner.open_gap_score = -10.0
     aligner.extend_gap_score = -0.5
-    aligner.end_insertion_score = 0.0
-    aligner.end_deletion_score = 0.0
+    # Free end gaps. Biopython renamed these attributes over time and its
+    # getter can raise when left and right end scores differ, so set blindly.
+    try:
+        aligner.end_gap_score = 0.0
+    except (AttributeError, ValueError):
+        pass
     return aligner
 
 

@@ -6,6 +6,21 @@ checkouts. Operators that need them read the shipped manifest
 environment variable overrides the search path, and exactly which files a
 dependent operator expects. Nothing is downloaded automatically.
 
+## AntiFold
+
+AntiFold ships its weights separately from the Python package.
+
+```bash
+python -m pip install antifold==0.3.1
+mkdir -p "$(python -c 'import antifold, pathlib; print(pathlib.Path(antifold.__file__).parent)')"/trained_models
+curl -L -o "$(python -c 'import antifold, pathlib; print(pathlib.Path(antifold.__file__).parent)')"/trained_models/model.pt \
+  https://opig.stats.ox.ac.uk/data/downloads/AntiFold/models/model.pt
+```
+
+The file is 566 838 063 bytes (566 MB). The `antifold_design` operator runs the
+official `antifold.main` entry point; without the weights it fails with the
+package's own error, and the gated real test stays skipped.
+
 ## Workflow: download once, verify, then run
 
 1. Download the resource once, outside the project tree.
