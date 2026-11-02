@@ -41,7 +41,7 @@ def _form():
 
 
 def test_command_and_parse():
-    command = foldseek_command("foldseek", Path("q.pdb"), Path("db"), Path("o.m8"), Path("tmp"), threads=4, max_hits=10)
+    command = foldseek_command("foldseek", Path("q.pdb"), Path("db"), Path("o.m8"), Path("tmp"), threads=4)
     assert command[:2] == ["foldseek", "easy-search"]
     hits = parse_m8("q\ttA\t1e-10\t200\t0.99\t0.95\t0.94\t0.93\nq\ttB\t1e-5\t150\t0.9\t0.8\t0.81\t0.79\n")
     assert [hit["target"] for hit in hits] == ["tA", "tB"]
@@ -62,6 +62,26 @@ def test_run_roundtrip(tmp_path):
     result = ctx["hits"]
     assert result.data.shape == (2, 6)
     assert result.info["targets"][0] == "targetA"
+
+
+def test_real_run_when_installed(tmp_path):
+    import os
+    import shutil
+
+    binary = os.environ.get("BIOPIPE_FOLDSEEK_BIN") or shutil.which("foldseek")
+    database = os.environ.get("BIOPIPE_FOLDSEEK_DB", "")
+    if not binary or not database or not Path(database).exists():
+        pytest.skip("set BIOPIPE_FOLDSEEK_BIN and BIOPIPE_FOLDSEEK_DB to run the real search")
+    fixture = Path(__file__).parent / "fixtures" / "vhh_1mel.pdb"
+    from src.reader import read_source
+
+    ctx = Context(str(tmp_path / "task"), {"params": {}})
+    ctx["pdb"] = read_source(str(fixture), dims=["atom", "field"], labels={"atom": "auto", "field": "builtin"})
+    params = {"output": "hits", "query_path": str(fixture), "database_path": database, "foldseek_path": binary, "max_hits": 3}
+    run(ctx, [{"name": "foldseek_search", "inputs": ["pdb"], "params": params}])
+    result = ctx["hits"]
+    assert result.data.shape[0] >= 1
+    assert result.info["n_hits"] >= 1
 
 
 def test_errors(tmp_path):

@@ -18,8 +18,8 @@ from pathlib import Path
 _FORMAT = "query,target,evalue,bits,prob,alntmscore,qtmscore,ttmscore"
 
 
-def foldseek_command(binary: str, query: Path, database: Path, output: Path, tmp: Path, *, threads: int = 1, max_hits: int = 100) -> list[str]:
-    return [binary, "easy-search", str(query), str(database), str(output), str(tmp), "--format-output", _FORMAT, "--threads", str(threads), "--max-hits", str(max_hits)]
+def foldseek_command(binary: str, query: Path, database: Path, output: Path, tmp: Path, *, threads: int = 1) -> list[str]:
+    return [binary, "easy-search", str(query), str(database), str(output), str(tmp), "--format-output", _FORMAT, "--threads", str(threads)]
 
 
 def parse_m8(text: str) -> list[dict]:
@@ -75,14 +75,14 @@ class FoldseekSearchStep(Step):
             raise StepError("foldseek_search: 'foldseek' was not found on PATH; download the static binary from the Foldseek release page")
         workdir = Path(tempfile.mkdtemp(prefix="foldseek_"))
         output = workdir / "hits.m8"
-        command = foldseek_command(binary, query, database, output, workdir / "tmp", threads=int(params.get("threads", 1)), max_hits=int(params.get("max_hits", 100)))
+        command = foldseek_command(binary, query, database, output, workdir / "tmp", threads=int(params.get("threads", 1)))
         if str(binary).lower().endswith(".py"):
             command = [sys.executable] + command
         completed = subprocess.run(command, capture_output=True, text=True, timeout=int(params.get("timeout_seconds", 1800)))
         if completed.returncode != 0:
             tail = ((completed.stderr or completed.stdout).strip().splitlines() or [""])[-1]
             raise StepError(f"foldseek_search: Foldseek failed with exit code {completed.returncode}: {tail}")
-        hits = parse_m8(output.read_text() if output.is_file() else "")
+        hits = parse_m8(output.read_text() if output.is_file() else "")[: int(params.get("max_hits", 100))]
         if not hits:
             raise StepError("foldseek_search: no structural hit was reported")
         data = np.asarray([[hit["evalue"], hit["bits"], hit["prob"], hit["alntmscore"], hit["qtmscore"], hit["ttmscore"]] for hit in hits], dtype=np.float32)

@@ -97,3 +97,20 @@ pip install "colabfold[alphafold]"
   resource is already installed locally.
 * Operators that consume a resource validate it up front, so a typo in a path
   surfaces before any expensive computation starts.
+
+## Foldseek
+
+Foldseek is a static binary and needs a database that the user builds or
+downloads; the operator does not download anything.
+
+```bash
+mkdir -p /home/gavin/tools/foldseek && cd /home/gavin/tools/foldseek
+curl -sL -o fs.tar.gz https://github.com/steineggerlab/foldseek/releases/download/10-941cd33/foldseek-linux-avx2.tar.gz
+tar xzf fs.tar.gz          # ./foldseek/bin/foldseek
+mkdir -p db && cp *.pdb db/
+/absolute/path/foldseek/bin/foldseek createdb db mydb
+```
+
+Then set `foldseek_path=/absolute/path/foldseek/bin/foldseek` and
+`database_path=/absolute/path/mydb`. To run the real integration test set
+`BIOPIPE_FOLDSEEK_BIN` and `BIOPIPE_FOLDSEEK_DB`; otherwise the test skips.
