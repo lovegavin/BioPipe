@@ -50,12 +50,16 @@ def value(flag):
     return args[args.index(flag) + 1]
 
 pdb = pathlib.Path(value("--pdb_path"))
-folder = pathlib.Path(value("--out_folder")) / "score_only"
+folder = pathlib.Path(value("--out_folder")) / "conditional_probs_only"
 folder.mkdir(parents=True, exist_ok=True)
 import os
 text = os.environ.get("FAKE_SCORES", "0.5,1.0,2.0,3.0")
-scores = np.asarray([float(item) for item in text.split(",")], dtype=np.float64)
-np.savez(folder / (pdb.stem + "_fasta_1.npz"), score=scores, global_score=np.asarray([1.5]), seq_str="AGST")
+nll = [float(item) for item in text.split(",")]
+log_p = np.full((1, len(nll), 21), -9.0, dtype=np.float64)
+native = np.arange(len(nll), dtype=int)
+for index, value_nll in enumerate(nll):
+    log_p[0, index, native[index]] = -value_nll
+np.savez(folder / (pdb.stem + ".npz"), log_p=log_p, S=native)
 '''
 
 
@@ -92,9 +96,13 @@ def test_helpers(tmp_path) -> None:
         sequential_index({"A": [1]}, "A:ALA:7")
 
     npz = tmp_path / "scores.npz"
-    np.savez(npz, score=np.asarray([1.0, 2.0, 3.0, 4.0]), seq_str="ABC")
+    log_p = np.full((1, 4, 21), -9.0, dtype=np.float64)
+    native = np.asarray([0, 1, 2, 3])
+    for index, value_nll in enumerate((1.0, 2.0, 3.0, 4.0)):
+        log_p[0, index, index] = -value_nll
+    np.savez(npz, log_p=log_p, S=native)
     scores, sequence = load_scores(npz)
-    assert sequence == "ABC"
+    assert sequence == "ACDE"
     assert summary(scores, [1, 3], "interface") == (2.0, 1.0, 3.0, 2)
     with pytest.raises(StepError, match="no residue falls"):
         summary(scores, [], "interface")

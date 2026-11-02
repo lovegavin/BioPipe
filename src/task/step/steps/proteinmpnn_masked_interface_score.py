@@ -32,17 +32,32 @@ from src.task.step.steps.proteinmpnn_masked_interface_design import (
 _STATISTICS = ("mean_nll", "min_nll", "max_nll", "n_residues")
 
 
+_ALPHABET = "ACDEFGHIKLMNPQRSTVWYX"
+
+
 def load_scores(path: Path) -> tuple[np.ndarray, str]:
-    """Return the per-residue negative log-likelihood vector and the sequence."""
+    """Return per-residue NLL values from a ``conditional_probs_only`` archive."""
 
     with np.load(path, allow_pickle=True) as archive:
-        scores = np.asarray(archive["score"], dtype=np.float64).ravel()
-        sequence = str(archive["seq_str"]) if "seq_str" in archive else ""
-    if scores.size == 0:
+        if "log_p" not in archive or "S" not in archive:
+            raise StepError(
+                "proteinmpnn_masked_interface_score: the archive carries no "
+                "log_p/S arrays; run with --conditional_probs_only"
+            )
+        log_p = np.asarray(archive["log_p"], dtype=np.float64)
+        native = np.asarray(archive["S"], dtype=int).ravel()
+    if log_p.ndim != 3 or log_p.shape[0] != 1 or log_p.shape[1] != native.size:
         raise StepError(
-            "proteinmpnn_masked_interface_score: the official runner produced no "
-            "per-residue scores"
+            "proteinmpnn_masked_interface_score: unexpected log_p shape "
+            f"{log_p.shape} for {native.size} residues"
         )
+    rows = np.arange(native.size)
+    clipped = np.clip(native, 0, log_p.shape[2] - 1)
+    scores = -log_p[0, rows, clipped]
+    sequence = "".join(
+        _ALPHABET[int(code)] if 0 <= int(code) < len(_ALPHABET) else "X"
+        for code in native
+    )
     if not np.all(np.isfinite(scores)):
         raise StepError(
             "proteinmpnn_masked_interface_score: the per-residue scores contain "
@@ -60,7 +75,8 @@ def sequential_indices(chains: dict[str, list[int]]) -> dict[str, int]:
 
     mapping: dict[str, int] = {}
     position = 0
-    for chain, numbers in chains.items():
+    for chain in sorted(chains):
+        numbers = chains[chain]
         for number in numbers:
             position += 1
             mapping[f"{chain}:{int(number)}"] = position
@@ -109,7 +125,7 @@ def summary(scores: np.ndarray, indices: list[int], name: str) -> tuple[float, f
 
 
 def score_interface(params, repo: Path, weights: Path, structure: Path) -> tuple[list[float], str, list[str]]:
-    """Run the official runner in --score_only mode and return the scores."""
+    """Run the official runner in --conditional_probs_only mode."""
 
     python = str(params.get("python_executable", "") or "").strip() or sys.executable
     timeout = float(params.get("timeout_seconds", 1800.0))
@@ -135,7 +151,7 @@ def score_interface(params, repo: Path, weights: Path, structure: Path) -> tuple
             model,
             "--suppress_print",
             "1",
-            "--score_only",
+            "--conditional_probs_only",
             "1",
             "--path_to_model_weights",
             weights.as_posix(),
@@ -167,12 +183,12 @@ def score_interface(params, repo: Path, weights: Path, structure: Path) -> tuple
                 "proteinmpnn_masked_interface_score: the scorer failed with exit "
                 f"code {completed.returncode}: {message}"
             )
-        folder = out_dir / "score_only"
-        candidates = sorted(folder.glob(f"{structure.stem}_fasta_1*"))
+        folder = out_dir / "conditional_probs_only"
+        candidates = sorted(folder.glob(f"{structure.stem}*.npz")) or sorted(folder.glob("*.npz"))
         if not candidates:
             raise StepError(
                 "proteinmpnn_masked_interface_score: the scorer produced no "
-                f"score_only npz under '{folder}'"
+                f"conditional_probs_only npz under '{folder}'"
             )
         scores, sequence = load_scores(candidates[0])
     return scores.tolist(), sequence, command
@@ -328,12 +344,13 @@ class ProteinmpnnMaskedInterfaceScoreStep(Step):
         interface = _protein_hits(binder_hits, "binder") | _protein_hits(target_hits, "target")
 
         scores, sequence, _command = score_interface(params, repo, weights, structure)
-        if sequence and len(sequence) != len(scores):
+        author = pdb_chains(structure)
+        total = sum(len(numbers) for numbers in author.values())
+        if len(scores) != total:
             raise StepError(
                 "proteinmpnn_masked_interface_score: the runner reported "
-                f"{len(sequence)} residues but {len(scores)} scores"
+                f"{len(scores)} residues but the structure file holds {total}"
             )
-        author = pdb_chains(structure)
         index_of = {label: sequential_index(author, label) for label in interface}
         interface_indices = sorted(set(index_of.values()))
         other_indices = [
