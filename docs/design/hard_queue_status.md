@@ -28,6 +28,8 @@ Snapshot: **671 operators / 101 Readers** (v1.82.0).
 
 ## Resource-gated but honest
 
+- `vina_dock_python`: verified end to end with the `vina` Python engine
+  (see `hard_capability_status.md`); the CLI wrappers remain resource-gated.
 - `vina_dock`, `vina_dock_batch`, `vina_pose_cluster`, `vina_pose_rmsd`:
   AutoDock Vina is **not installed** (`vina` missing from PATH). The wrappers
   are contract-tested with a runner double and report a clear error; installing

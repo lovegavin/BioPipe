@@ -211,6 +211,14 @@ nobody re-reports a blocked item as delivered.
   frequency **0.0607** and ensemble diversity **23.38**, exactly matching
   the CLI frequency line; 0.01 s per sequence.
 
+- `vina_dock_python`: drives the official AutoDock Vina Python engine
+  (`vina 1.2.7`). The operator writes a rigid PDBQT receptor from the atom
+  Form (AD4 atom types, zero charges), uses the prepared ligand PDBQT, and
+  reports every pose's scoring terms. Real run: aspirin into 1MEL, box at
+  the ligand centroid, exhaustiveness 8, 5 modes in **2.0 s**, best
+  affinity **-3.0 kcal/mol** (poses -3.00, -2.98, -2.84, -2.83, -2.81).
+  The ligand preparer now emits `ROOT`/`ENDROOT`, which Vina requires.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

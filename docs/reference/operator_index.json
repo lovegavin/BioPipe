@@ -6520,6 +6520,16 @@
     "status": "generated"
   },
   {
+    "id": "vina_dock_python",
+    "kind": "operator",
+    "title": "AutoDock Vina 对接 (Python 绑定)",
+    "category": "Docking",
+    "version": "1.0.0",
+    "description": "Dock a prepared ligand PDBQT into a protein receptor with the official AutoDock Vina Python engine and report the per-pose scoring terms.",
+    "doc": "src/task/step/steps/vina_dock_python.VinaDockPythonStep.md",
+    "status": "generated"
+  },
+  {
     "id": "vina_pose_cluster",
     "kind": "operator",
     "title": "Docking pose clustering",

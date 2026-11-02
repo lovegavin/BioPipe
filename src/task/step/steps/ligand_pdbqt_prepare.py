@@ -94,7 +94,7 @@ def pdbqt_lines(molecule, *, name: str = "LIG") -> list[str]:
     from rdkit import Chem
 
     conformer = molecule.GetConformer()
-    lines: list[str] = []
+    lines: list[str] = ["ROOT"]
     for index, atom in enumerate(molecule.GetAtoms(), start=1):
         position = conformer.GetAtomPosition(atom.GetIdx())
         charge = float(atom.GetProp("_GasteigerCharge")) if atom.HasProp("_GasteigerCharge") else 0.0
@@ -114,6 +114,7 @@ def pdbqt_lines(molecule, *, name: str = "LIG") -> list[str]:
                 atype=ad4_type(atom),
             )
         )
+    lines.append("ENDROOT")
     lines.append("TORSDOF 0")
     Chem.SanitizeMol(molecule)
     return lines
