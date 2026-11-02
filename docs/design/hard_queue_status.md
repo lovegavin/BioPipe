@@ -6,7 +6,7 @@ the current environment. It complements `hard_capability_status.md`, which
 tracks the individual operator evidence, and `extension_policy.md`, which
 defines what is accepted into the core library.
 
-Snapshot: **671 operators / 101 Readers** (v1.82.0).
+Snapshot: **673 operators / 101 Readers** (v1.84.0).
 
 ## Verified end to end
 
@@ -18,6 +18,8 @@ Snapshot: **671 operators / 101 Readers** (v1.82.0).
 | Structure prediction (OpenFold) | `openfold_predict` | finetuning_ptm_2 weights, 36.8 s CPU, pLDDT 68.7 |
 | Inverse folding (anti-body) | `antifold_design` | OPIG model.pt 566 MB, CDR-focused designs |
 | Structural search | `foldseek_search` | Foldseek 10-941cd33, local DB, 5 hits on 1MEL |
+| Flexible docking | `vina_dock_python` | Vina 1.2.7 engine, aspirin -2.43 to -3.00 kcal/mol |
+| Ligand preparation | `ligand_pdbqt_prepare`, `ligand_pdbqt_flexible` | ROOT/BRANCH trees accepted by Vina |
 | Pocket detection | `structure_pocket_detect` | fpocket 4.0 built from source, 21 pockets on 1MEL |
 | MD flexibility | `structure_openmm_md_rmsf` | OpenMM GB-Neck2, RMSF agrees with mdtraj to 1.6e-7 nm |
 | MM/GBSA and alanine scan | `interface_mmgbsa_delta`, `interface_alanine_scan` | OpenMM force-group decomposition, hand-checked |
@@ -28,8 +30,9 @@ Snapshot: **671 operators / 101 Readers** (v1.82.0).
 
 ## Resource-gated but honest
 
-- `vina_dock_python`: verified end to end with the `vina` Python engine
-  (see `hard_capability_status.md`); the CLI wrappers remain resource-gated.
+- `vina_dock`: verified end to end through `vina_dock_python` (official Vina
+  Python engine); the CLI wrappers remain resource-gated because the standalone
+  binary is not installed.
 - `vina_dock`, `vina_dock_batch`, `vina_pose_cluster`, `vina_pose_rmsd`:
   AutoDock Vina is **not installed** (`vina` missing from PATH). The wrappers
   are contract-tested with a runner double and report a clear error; installing
