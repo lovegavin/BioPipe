@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "RNA 二聚体共折叠参数",
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度名",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度名",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "concentration_a": {
+      "title": "链 A 浓度 (µM)",
+      "type": "number",
+      "default": 1.0,
+      "minimum": 1e-06,
+      "maximum": 1000000.0,
+      "x-ui-group": "平衡",
+      "x-ui-order": 3
+    },
+    "concentration_b": {
+      "title": "链 B 浓度 (µM)",
+      "type": "number",
+      "default": 1.0,
+      "minimum": 1e-06,
+      "maximum": 1000000.0,
+      "x-ui-group": "平衡",
+      "x-ui-order": 4
+    },
+    "no_lonely_pairs": {
+      "title": "禁止孤立碱基对",
+      "type": "boolean",
+      "default": false,
+      "x-ui-group": "模型",
+      "x-ui-order": 5
+    },
+    "rnacofold_path": {
+      "title": "RNAcofold 路径",
+      "type": "string",
+      "default": "RNAcofold",
+      "x-ui-group": "依赖",
+      "x-ui-order": 6
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 120,
+      "minimum": 5,
+      "maximum": 3600,
+      "x-ui-group": "依赖",
+      "x-ui-order": 7
+    },
+    "dimer_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "dimer",
+      "x-ui-group": "输出",
+      "x-ui-order": 8
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "cofold",
+      "x-ui-group": "输出",
+      "x-ui-order": 9
+    }
+  }
+}

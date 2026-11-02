@@ -5300,6 +5300,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_rna_cofold",
+    "kind": "operator",
+    "title": "RNA 二聚体共折叠平衡",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Cofold two RNA strands with ViennaRNA RNAcofold and report the dimer MFE, ensemble energy, binding free energy, MFE frequency and equilibrium concentrations of the five dimer and monomer species.",
+    "doc": "src/task/step/steps/sequence_rna_cofold.SequenceRnaCofoldStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_rna_duplex",
     "kind": "operator",
     "title": "RNA-RNA 杂交位点",

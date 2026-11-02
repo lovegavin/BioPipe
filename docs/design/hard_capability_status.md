@@ -263,3 +263,8 @@ to fill a batch.
 
 - ViennaRNA RNAduplex wrapper; parser checked against the CLI; 4 tests passed;
   676 operators / 101 Readers.
+
+## v1.88.0 sequence_rna_cofold (verified)
+
+- ViennaRNA RNAcofold -p -c wrapper; MFE, binding energy and five-species
+  equilibrium concentrations; 3 tests passed; 677 operators / 101 Readers.
