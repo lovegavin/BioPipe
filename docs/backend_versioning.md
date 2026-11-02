@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.53.2** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.54.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -107,7 +107,8 @@ Examples:
 1.52.1  patch: forward the per-residue bias matrix through --bias_by_res_jsonl
 1.53.0  expansion batch: constrained amino-acid design, signal-peptide typing, pose RMSD, ligand strain and ridge probe
 1.53.1  patch: version bump only; the design documents and test fixtures were published in 1.53.2
-1.53.2  patch: publish the minibinder/VHH design route and competitive landscape, and correct the pending v1.54.0 test fixtures
+1.53.2  patch: publish the minibinder/VHH design route and competitive landscape
+1.54.0  expansion batch: MLP embedding probe, B-factor disorder profile, transmembrane topology, liability scan and pairwise reaction enumeration
 1.53.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
