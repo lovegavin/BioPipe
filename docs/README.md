@@ -35,6 +35,11 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 - [Operator discovery index](reference/operator_index.json)
 - [Reader discovery index](reference/reader_index.json)
 
+## Design notes
+
+- [Minibinder and VHH design route](design/minibinder_vhh_design_route.md)
+- [Competitive landscape and moat analysis](design/competitive_landscape.md)
+
 ## Extend and maintain
 
 - [SDK quickstart](sdk_quickstart.md) and [SDK reference](sdk_reference.md)

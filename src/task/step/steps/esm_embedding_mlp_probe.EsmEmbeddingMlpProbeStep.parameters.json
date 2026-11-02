@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "ESM 嵌入 MLP 探针参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "title": "样本维度",
+      "type": "string",
+      "description": "嵌入表第一维（序列）名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 1,
+      "default": "sequence"
+    },
+    "feature_dim": {
+      "title": "特征维度",
+      "type": "string",
+      "description": "嵌入表第二维名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 2,
+      "default": "embedding"
+    },
+    "labels": {
+      "title": "标签",
+      "type": "string",
+      "description": "逗号分隔的样本标签；留空读取 info['labels']",
+      "x-ui-group": "输入",
+      "x-ui-order": 3,
+      "default": ""
+    },
+    "cv_folds": {
+      "title": "交叉验证折数",
+      "type": "integer",
+      "description": "分层 K 折数量",
+      "x-ui-group": "模型",
+      "x-ui-order": 4,
+      "default": 5,
+      "minimum": 2,
+      "maximum": 10
+    },
+    "hidden": {
+      "title": "隐藏层宽度",
+      "type": "integer",
+      "description": "单隐藏层神经元数量",
+      "x-ui-group": "模型",
+      "x-ui-order": 5,
+      "default": 32,
+      "minimum": 2,
+      "maximum": 512
+    },
+    "alpha": {
+      "title": "L2 正则",
+      "type": "number",
+      "description": "MLP 的 L2 惩罚系数",
+      "x-ui-group": "模型",
+      "x-ui-order": 6,
+      "default": 0.001,
+      "exclusiveMinimum": 0
+    },
+    "max_iter": {
+      "title": "迭代上限",
+      "type": "integer",
+      "description": "训练迭代次数上限",
+      "x-ui-group": "模型",
+      "x-ui-order": 7,
+      "default": 600,
+      "minimum": 10,
+      "maximum": 20000
+    },
+    "random_state": {
+      "title": "随机种子",
+      "type": "integer",
+      "description": "交叉验证与初始化的随机种子",
+      "x-ui-group": "模型",
+      "x-ui-order": 8,
+      "default": 0
+    },
+    "output": {
+      "title": "输出槽",
+      "type": "string",
+      "description": "输出 Form 的槽名",
+      "x-ui-group": "输出",
+      "x-ui-order": 9,
+      "default": "probe"
+    }
+  }
+}

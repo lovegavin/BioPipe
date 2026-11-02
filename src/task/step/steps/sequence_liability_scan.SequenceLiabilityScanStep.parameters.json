@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "序列风险位点参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度",
+      "type": "string",
+      "description": "序列编码 Form 的序列维度",
+      "x-ui-group": "输入",
+      "x-ui-order": 1,
+      "default": "sequence"
+    },
+    "position_dim": {
+      "title": "位置维度",
+      "type": "string",
+      "description": "序列编码 Form 的位置维度",
+      "x-ui-group": "输入",
+      "x-ui-order": 2,
+      "default": "position"
+    },
+    "include_oxidation": {
+      "title": "包含氧化位点",
+      "type": "boolean",
+      "description": "是否报告 Met/Trp 氧化风险",
+      "x-ui-group": "检测",
+      "x-ui-order": 3,
+      "default": true
+    },
+    "context": {
+      "title": "上下文长度",
+      "type": "integer",
+      "description": "每个位点两侧输出的残基数",
+      "x-ui-group": "检测",
+      "x-ui-order": 4,
+      "default": 3,
+      "minimum": 0,
+      "maximum": 20
+    },
+    "output": {
+      "title": "输出槽",
+      "type": "string",
+      "description": "输出 Form 的槽名",
+      "x-ui-group": "输出",
+      "x-ui-order": 5,
+      "default": "liabilities"
+    }
+  }
+}

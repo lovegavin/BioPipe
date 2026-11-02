@@ -1620,6 +1620,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_embedding_mlp_probe",
+    "kind": "operator",
+    "title": "ESM embedding MLP probe",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Fit a standardised multi-layer perceptron on an embedding table with stratified k-fold cross-validation and report per-fold accuracy, the mean and standard deviation, and the majority-class baseline against the linear probe.",
+    "doc": "src/task/step/steps/esm_embedding_mlp_probe.EsmEmbeddingMlpProbeStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_embedding_neighbors",
     "kind": "operator",
     "title": "ESM embedding neighbours",
@@ -4540,6 +4550,16 @@
     "status": "generated"
   },
   {
+    "id": "rdkit_reaction_pairwise_enumerate",
+    "kind": "operator",
+    "title": "Pairwise reaction enumeration",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Apply a two-component reaction SMARTS to the cross product of two SMILES libraries, deduplicate the products and report heavy-atom count and molecular weight per product.",
+    "doc": "src/task/step/steps/rdkit_reaction_pairwise_enumerate.RdkitReactionPairwiseEnumerateStep.md",
+    "status": "generated"
+  },
+  {
     "id": "rdkit_reaction_smarts_apply",
     "kind": "operator",
     "title": "Reaction SMARTS application",
@@ -5020,6 +5040,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_liability_scan",
+    "kind": "operator",
+    "title": "Sequence liability scan",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Scan a protein sequence for curated developability liabilities (Asn deamidation, Asp isomerisation, Met/Trp oxidation, N-linked glycosylation sequons and N-terminal pyroglutamate) and report each site with its severity code.",
+    "doc": "src/task/step/steps/sequence_liability_scan.SequenceLiabilityScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_orf_finder",
     "kind": "operator",
     "title": "Six-frame ORF finder",
@@ -5087,6 +5117,16 @@
     "version": "1.0.0",
     "description": "Score a protein sequence with Kyte-Doolittle hydropathy windows, merge windows above the membrane threshold into segments and report their ranges and hydropathy.",
     "doc": "src/task/step/steps/sequence_tm_segments.SequenceTmSegmentsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_transmembrane_topology",
+    "kind": "operator",
+    "title": "Transmembrane topology",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Detect transmembrane segments with the Kyte-Doolittle window and assign each one to the inside or outside face using the positive-inside rule on the flanking loops.",
+    "doc": "src/task/step/steps/sequence_transmembrane_topology.SequenceTransmembraneTopologyStep.md",
     "status": "generated"
   },
   {
@@ -5437,6 +5477,16 @@
     "version": "1.0.0",
     "description": "Convert a heavy-atom PDB form into a residue contact graph: for every residue report how many partner residues lie within the cutoff (cross-chain by default) and the distance to the nearest partner.",
     "doc": "src/task/step/steps/structure_contacts.StructureContactsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_disorder_profile",
+    "kind": "operator",
+    "title": "Structure disorder profile",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Report one row per residue with the mean B-factor, its per-chain z-score, the number of unmodelled residues that follow it, and a combined disorder score.",
+    "doc": "src/task/step/steps/structure_disorder_profile.StructureDisorderProfileStep.md",
     "status": "generated"
   },
   {
