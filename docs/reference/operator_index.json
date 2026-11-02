@@ -5930,6 +5930,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_ss_occupancy",
+    "kind": "operator",
+    "title": "MD 轨迹二级结构占有率",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Run DSSP on sampled MD frames and report per-residue helix, strand and coil occupancies together with the dominant secondary-structure state.",
+    "doc": "src/task/step/steps/structure_md_ss_occupancy.StructureMdSsOccupancyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_metal_coordination",
     "kind": "operator",
     "title": "Metal coordination shells",

@@ -253,3 +253,8 @@ nobody re-reports a blocked item as delivered.
 
 Until then these stay documented as gated; no easy substitute operator is added
 to fill a batch.
+
+## v1.86.0 structure_md_ss_occupancy (verified)
+
+- mkdssp 4.2.2 on MD frames written from the OpenMM trajectory; per-residue
+  helix/strand/coil occupancy and dominant state; tests 4 passed; 675/101.

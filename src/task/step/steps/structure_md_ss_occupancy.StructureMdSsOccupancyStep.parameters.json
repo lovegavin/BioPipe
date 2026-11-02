@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MD 二级结构占有率参数",
+  "properties": {
+    "trajectory_path": {
+      "title": "轨迹文件 (.npy, nm)",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "topology_path": {
+      "title": "拓扑 PDB",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "stride": {
+      "title": "采样间隔（帧）",
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 100,
+      "x-ui-group": "采样",
+      "x-ui-order": 3
+    },
+    "dssp_path": {
+      "title": "mkdssp 路径",
+      "type": "string",
+      "default": "mkdssp",
+      "x-ui-group": "依赖",
+      "x-ui-order": 4
+    },
+    "timeout_seconds": {
+      "title": "单帧超时 (秒)",
+      "type": "integer",
+      "default": 300,
+      "minimum": 10,
+      "maximum": 3600,
+      "x-ui-group": "依赖",
+      "x-ui-order": 5
+    },
+    "residue_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "residue",
+      "x-ui-group": "输出",
+      "x-ui-order": 6
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "occupancy",
+      "x-ui-group": "输出",
+      "x-ui-order": 7
+    }
+  }
+}
