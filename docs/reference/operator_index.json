@@ -1680,6 +1680,16 @@
     "status": "generated"
   },
   {
+    "id": "esm_embedding_pca_reconstruction",
+    "kind": "operator",
+    "title": "Embedding PCA reconstruction",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/esm_embedding_pca_reconstruction.EsmEmbeddingPcaReconstructionStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_embedding_ridge_probe",
     "kind": "operator",
     "title": "Embedding ridge regression probe",
@@ -4980,6 +4990,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_aggregation_propensity",
+    "kind": "operator",
+    "title": "Aggregation propensity",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_aggregation_propensity.SequenceAggregationPropensityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_codon_adaptation",
     "kind": "operator",
     "title": "Codon adaptation index",
@@ -5077,6 +5097,16 @@
     "version": "1.0.0",
     "description": "Scan a protein sequence for curated developability liabilities (Asn deamidation, Asp isomerisation, Met/Trp oxidation, N-linked glycosylation sequons and N-terminal pyroglutamate) and report each site with its severity code.",
     "doc": "src/task/step/steps/sequence_liability_scan.SequenceLiabilityScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_net_charge",
+    "kind": "operator",
+    "title": "Protein net charge",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_net_charge.SequenceNetChargeStep.md",
     "status": "generated"
   },
   {
@@ -5537,6 +5567,16 @@
     "version": "1.0.0",
     "description": "Segment a chain into domains from the CA contact graph (connected components or normalized-Laplacian spectral clustering) and report each residue's domain, the number of cross-domain contacts and whether it sits on a domain boundary.",
     "doc": "src/task/step/steps/structure_domain_boundary.StructureDomainBoundaryStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_dssp_segments",
+    "kind": "operator",
+    "title": "DSSP secondary-structure segments",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/structure_dssp_segments.StructureDsspSegmentsStep.md",
     "status": "generated"
   },
   {
