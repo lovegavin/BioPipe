@@ -170,6 +170,25 @@ def test_binder_mask_runner(tmp_path) -> None:
     assert form.info["fixed_positions"] == {"A": [3], "B": [1, 2]}
 
 
+def test_non_protein_interface_rows_are_ignored(tmp_path) -> None:
+    rows = ROWS + [(0.0, 0.0, 2.2, 5, "HOH", "A", "O", "O")]
+    ctx = Context(str(tmp_path / "design-water"), {"params": {}})
+    ctx["complex"] = _pdb_form(rows)
+    run(
+        ctx,
+        [
+            {
+                "name": "proteinmpnn_masked_interface_design",
+                "inputs": ["complex"],
+                "params": _params(tmp_path, structure_path=str(_complex(tmp_path / "mini4.pdb"))),
+            }
+        ],
+    )
+    form = ctx["designs"]
+    assert form.info["interface_residues"] == {"A": [1, 2]}
+    assert form.info["n_interface_residues"] == 2
+
+
 def test_target_mask_runner(tmp_path) -> None:
     ctx = Context(str(tmp_path / "design"), {"params": {}})
     ctx["complex"] = _pdb_form(ROWS)

@@ -26,9 +26,23 @@ from src.task.step.steps._protein_common import (
 )
 from src.task.step.steps._structure_common import pick_chain_sides
 from src.task.step.steps.proteinmpnn_design import pdb_chains
+from src.task.step.steps.proteinmpnn_interface_redesign import _THREE_TO_ONE
 from src.task.step.steps.proteinmpnn_masked_design import mask_payload, run_masked_designer
 
 _STATISTICS = ("score", "global_score")
+
+
+def _protein_hits(hits: set[str], side: str) -> set[str]:
+    """Drop water, ion and ligand rows before they reach the protein mask."""
+
+    kept = {label for label in hits if label.split(":")[1] in _THREE_TO_ONE}
+    if not kept:
+        raise StepError(
+            "proteinmpnn_masked_interface_design: no protein residue was found on the "
+            f"{side} side of the interface"
+        )
+    return kept
+
 _SIDES = ("binder", "target", "both")
 
 
@@ -206,6 +220,8 @@ class ProteinmpnnMaskedInterfaceDesignStep(Step):
                 "proteinmpnn_masked_interface_design: no heavy-atom contact was found "
                 f"between {binder} and {target} at {cutoff} A"
             )
+        binder_hits = _protein_hits(binder_hits, "binder")
+        target_hits = _protein_hits(target_hits, "target")
 
         if side == "binder":
             interface = binder_hits
