@@ -9,8 +9,14 @@
       "url": "https://github.com/dauparas/ProteinMPNN",
       "install": "git clone https://github.com/dauparas/ProteinMPNN.git && download the v_48_* weights into vanilla_model_weights/",
       "env": "BIOPIPE_PROTEINMPNN_PATH",
-      "roots": ["/home/gavin/tools/ProteinMPNN", "D:/tools/ProteinMPNN"],
-      "files": ["protein_mpnn_run.py", "vanilla_model_weights/v_48_020.pt"]
+      "roots": [
+        "/home/gavin/tools/ProteinMPNN",
+        "D:/tools/ProteinMPNN"
+      ],
+      "files": [
+        "protein_mpnn_run.py",
+        "vanilla_model_weights/v_48_020.pt"
+      ]
     },
     {
       "id": "ligandmpnn",
@@ -19,8 +25,14 @@
       "url": "https://github.com/dauparas/LigandMPNN",
       "install": "git clone https://github.com/dauparas/LigandMPNN.git && download model_params/ligandmpnn_v_32_010_25.pt",
       "env": "BIOPIPE_LIGANDMPNN_PATH",
-      "roots": ["/home/gavin/tools/LigandMPNN", "D:/tools/LigandMPNN"],
-      "files": ["run.py", "model_params/ligandmpnn_v_32_010_25.pt"]
+      "roots": [
+        "/home/gavin/tools/LigandMPNN",
+        "D:/tools/LigandMPNN"
+      ],
+      "files": [
+        "run.py",
+        "model_params/ligandmpnn_v_32_010_25.pt"
+      ]
     },
     {
       "id": "esm2",
@@ -29,8 +41,13 @@
       "url": "https://dl.fbaipublicfiles.com/fair-esm/models/esm2_t6_8M_UR50D.pt",
       "install": "curl -L https://dl.fbaipublicfiles.com/fair-esm/models/esm2_t6_8M_UR50D.pt -o esm2_t6_8M_UR50D.pt",
       "env": "BIOPIPE_ESM_MODEL_DIR",
-      "roots": ["/home/gavin/models", "D:/models"],
-      "files": ["esm2_t6_8M_UR50D.pt"]
+      "roots": [
+        "/home/gavin/models",
+        "D:/models"
+      ],
+      "files": [
+        "esm2_t6_8M_UR50D.pt"
+      ]
     },
     {
       "id": "esm_if1",
@@ -39,8 +56,13 @@
       "url": "https://dl.fbaipublicfiles.com/fair-esm/models/esm_if1_gvp4_t16_142M_UR50.pt",
       "install": "curl -L https://dl.fbaipublicfiles.com/fair-esm/models/esm_if1_gvp4_t16_142M_UR50.pt -o esm_if1_gvp4_t16_142M_UR50.pt",
       "env": "BIOPIPE_ESM_MODEL_DIR",
-      "roots": ["/home/gavin/models", "D:/models"],
-      "files": ["esm_if1_gvp4_t16_142M_UR50.pt"]
+      "roots": [
+        "/home/gavin/models",
+        "D:/models"
+      ],
+      "files": [
+        "esm_if1_gvp4_t16_142M_UR50.pt"
+      ]
     },
     {
       "id": "esmfold",
@@ -49,8 +71,13 @@
       "url": "https://dl.fbaipublicfiles.com/fair-esm/models/esmfold_3B_v1.pt",
       "install": "python -c \"import esm; esm.pretrained.esmfold_v1()\" (downloads about 2.5 GB on first use)",
       "env": "BIOPIPE_ESMFOLD_WEIGHTS",
-      "roots": ["/home/gavin/.cache/torch/hub/checkpoints", "C:/Users/Public/.cache/torch/hub/checkpoints"],
-      "files": ["esmfold_3B_v1.pt"]
+      "roots": [
+        "/home/gavin/.cache/torch/hub/checkpoints",
+        "C:/Users/Public/.cache/torch/hub/checkpoints"
+      ],
+      "files": [
+        "esmfold_3B_v1.pt"
+      ]
     },
     {
       "id": "colabfold",
@@ -59,8 +86,14 @@
       "url": "https://github.com/sokrypton/ColabFold",
       "install": "pip install \"colabfold[alphafold]\" && download the MMseqs2/UniRef databases as described in docs/large_resources.md",
       "env": "BIOPIPE_COLABFOLD_PATH",
-      "roots": ["/home/gavin/tools/colabfold", "/usr/local/bin", "D:/tools/colabfold"],
-      "files": ["colabfold_batch"]
+      "roots": [
+        "/home/gavin/tools/colabfold",
+        "/usr/local/bin",
+        "D:/tools/colabfold"
+      ],
+      "files": [
+        "colabfold_batch"
+      ]
     },
     {
       "id": "alphafold2",
@@ -69,8 +102,13 @@
       "url": "https://github.com/google-deepmind/alphafold",
       "install": "download the AF2 parameter bundle and the BFD/UniRef/MGnify databases into the AlphaFold data directory",
       "env": "BIOPIPE_ALPHAFOLD_DATA",
-      "roots": ["/home/gavin/alphafold", "D:/alphafold"],
-      "files": ["params/params_model_1_ptm.npz"]
+      "roots": [
+        "/home/gavin/alphafold",
+        "D:/alphafold"
+      ],
+      "files": [
+        "params/params_model_1_ptm.npz"
+      ]
     },
     {
       "id": "rfdiffusion",
@@ -79,8 +117,46 @@
       "url": "https://github.com/RosettaCommons/RFdiffusion",
       "install": "git clone https://github.com/RosettaCommons/RFdiffusion.git && download the model weights into models/",
       "env": "BIOPIPE_RFDIFFUSION_PATH",
-      "roots": ["/home/gavin/tools/RFdiffusion", "D:/tools/RFdiffusion"],
-      "files": ["scripts/run_inference.py", "models/Complex_beta_ckpt.pt"]
+      "roots": [
+        "/home/gavin/tools/RFdiffusion",
+        "D:/tools/RFdiffusion"
+      ],
+      "files": [
+        "scripts/run_inference.py",
+        "models/Complex_beta_ckpt.pt"
+      ]
+    },
+    {
+      "id": "prodigal",
+      "title": "Prodigal gene predictor",
+      "kind": "binary",
+      "url": "https://github.com/hyattpd/Prodigal",
+      "install": "conda install -c bioconda prodigal  (or build from the official source)",
+      "env": "BIOPIPE_PRODIGAL_PATH",
+      "roots": [
+        "/usr/local/bin",
+        "/usr/bin",
+        "D:/tools/prodigal"
+      ],
+      "files": [
+        "prodigal"
+      ]
+    },
+    {
+      "id": "pfam",
+      "title": "Pfam-A HMM database",
+      "kind": "database",
+      "url": "https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz",
+      "install": "curl -O https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz && gunzip Pfam-A.hmm.gz && hmmpress Pfam-A.hmm",
+      "env": "BIOPIPE_PFAM_HMM",
+      "roots": [
+        "/home/gavin/db",
+        "/home/gavin/databases",
+        "D:/db"
+      ],
+      "files": [
+        "Pfam-A.hmm"
+      ]
     }
   ]
 }

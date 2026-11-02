@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "配体 PDBQT 准备",
+  "description": "用 RDKit 将 SMILES 嵌入 3D、计算 Gasteiger 电荷与 AutoDock 4 原子类型，返回原子表并可写出 PDBQT 文件。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "title": "SMILES",
+      "description": "配体 SMILES",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "resname": {
+      "type": "string",
+      "title": "残基名",
+      "description": "写出的残基名（三位）",
+      "default": "LIG",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "seed": {
+      "type": "integer",
+      "title": "随机种子",
+      "description": "ETKDG 嵌入随机种子",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 65535,
+      "x-ui-group": "构象",
+      "x-ui-order": 1
+    },
+    "optimize": {
+      "type": "boolean",
+      "title": "力场优化",
+      "description": "是否进行 MMFF/UFF 优化",
+      "default": true,
+      "x-ui-group": "构象",
+      "x-ui-order": 2
+    },
+    "output_path": {
+      "type": "string",
+      "title": "输出路径",
+      "description": "可选的 PDBQT 输出文件路径",
+      "default": "",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名",
+      "description": "输出 Form 名称",
+      "default": "ligand",
+      "x-ui-group": "输出",
+      "x-ui-order": 2
+    }
+  }
+}

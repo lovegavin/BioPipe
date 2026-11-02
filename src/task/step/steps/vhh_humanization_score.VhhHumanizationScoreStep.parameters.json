@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VHH 人源化评分",
+  "description": "将每个序列的 Kabat FR1-FR4 与人源 IGHV3-23*01 / IGHJ4*01 比对，给出逐框架错配比例与人源化分数。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "title": "序列维",
+      "description": "输入序列维名称",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "位置维",
+      "description": "输入位置维名称",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名",
+      "description": "输出 Form 名称",
+      "default": "humanization",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

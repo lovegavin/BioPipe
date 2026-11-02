@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HMMER 结构域注释",
+  "description": "调用官方 hmmscan 将蛋白序列比对到 Pfam/HMM 数据库，每个结构域命中一行。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "title": "序列维",
+      "description": "输入序列维名称",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "位置维",
+      "description": "输入位置维名称",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "hmm_path": {
+      "type": "string",
+      "title": "HMM 数据库",
+      "description": "已 hmmpress 的 Pfam-A.hmm 路径；留空读 BIOPIPE_PFAM_HMM",
+      "default": "",
+      "x-ui-group": "数据库",
+      "x-ui-order": 1
+    },
+    "hmmscan_path": {
+      "type": "string",
+      "title": "hmmscan 路径",
+      "description": "hmmscan 二进制路径；留空使用 PATH",
+      "default": "hmmscan",
+      "x-ui-group": "运行",
+      "x-ui-order": 1
+    },
+    "cpu": {
+      "type": "integer",
+      "title": "CPU 线程",
+      "description": "传给 --cpu 的线程数",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 64,
+      "x-ui-group": "运行",
+      "x-ui-order": 2
+    },
+    "timeout_seconds": {
+      "type": "number",
+      "title": "超时 (秒)",
+      "description": "子进程超时时间",
+      "default": 1800,
+      "minimum": 30,
+      "maximum": 14400,
+      "x-ui-group": "运行",
+      "x-ui-order": 3
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名",
+      "description": "输出 Form 名称",
+      "default": "domains",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

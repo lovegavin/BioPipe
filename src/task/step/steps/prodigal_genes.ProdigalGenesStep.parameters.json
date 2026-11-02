@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Prodigal 基因预测",
+  "description": "调用官方 Prodigal 预测原核基因，返回基因区间、链方向、部分标记与蛋白序列。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "title": "序列维",
+      "description": "输入序列维名称",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "位置维",
+      "description": "输入位置维名称",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "prodigal_path": {
+      "type": "string",
+      "title": "Prodigal 路径",
+      "description": "官方二进制路径；留空读 BIOPIPE_PRODIGAL_PATH 或 PATH 上的 prodigal",
+      "default": "",
+      "x-ui-group": "运行",
+      "x-ui-order": 1
+    },
+    "mode": {
+      "type": "string",
+      "title": "运行模式",
+      "description": "single 用于完整基因组，meta 用于宏基因组片段",
+      "default": "single",
+      "enum": [
+        "single",
+        "meta"
+      ],
+      "x-ui-group": "运行",
+      "x-ui-order": 2
+    },
+    "timeout_seconds": {
+      "type": "number",
+      "title": "超时 (秒)",
+      "description": "子进程超时时间",
+      "default": 600,
+      "minimum": 10,
+      "maximum": 7200,
+      "x-ui-group": "运行",
+      "x-ui-order": 3
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名",
+      "description": "输出 Form 名称",
+      "default": "genes",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

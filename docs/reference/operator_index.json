@@ -2300,6 +2300,16 @@
     "status": "generated"
   },
   {
+    "id": "hmmer_domains",
+    "kind": "operator",
+    "title": "HMMER domain annotation",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Annotate protein sequences with Pfam/HMMER domains through the official hmmscan binary and return one row per domain hit.",
+    "doc": "src/task/step/steps/hmmer_domains.HmmerDomainsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "holm_adjust",
     "kind": "operator",
     "title": "Holm adjustment",
@@ -2857,6 +2867,16 @@
     "version": "1.0.0",
     "description": "Parse SMILES with an assay potency, convert the potency to pActivity and a binding free energy, then report ligand efficiency, lipophilic ligand efficiency and the binding efficiency index.",
     "doc": "src/task/step/steps/ligand_efficiency.LigandEfficiencyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ligand_pdbqt_prepare",
+    "kind": "operator",
+    "title": "Ligand PDBQT preparation",
+    "category": "Ligand",
+    "version": "1.0.0",
+    "description": "Embed a SMILES ligand in 3D with RDKit, assign Gasteiger charges and AutoDock 4 atom types, return the atom table and optionally write a PDBQT file ready for vina_dock.",
+    "doc": "src/task/step/steps/ligand_pdbqt_prepare.LigandPdbqtPrepareStep.md",
     "status": "generated"
   },
   {
@@ -3860,6 +3880,16 @@
     "status": "generated"
   },
   {
+    "id": "prodigal_genes",
+    "kind": "operator",
+    "title": "Prodigal gene prediction",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Predict prokaryotic genes with the official Prodigal binary; returns gene spans, strand, partial flags and the predicted protein sequences.",
+    "doc": "src/task/step/steps/prodigal_genes.ProdigalGenesStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proportion_ci",
     "kind": "operator",
     "title": "Binomial proportion confidence interval",
@@ -3997,6 +4027,16 @@
     "version": "1.0.0",
     "description": "Redesign the interface residues of a binder/target complex with official ProteinMPNN; the interface mask is derived from heavy-atom contacts instead of a residue list.",
     "doc": "src/task/step/steps/proteinmpnn_masked_interface_design.ProteinmpnnMaskedInterfaceDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_masked_interface_score",
+    "kind": "operator",
+    "title": "ProteinMPNN interface score",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score an existing structure/sequence pair with the official ProteinMPNN runner in --score_only mode and split the per-residue negative log-likelihood into interface and non-interface residues.",
+    "doc": "src/task/step/steps/proteinmpnn_masked_interface_score.ProteinmpnnMaskedInterfaceScoreStep.md",
     "status": "generated"
   },
   {
@@ -5897,6 +5937,16 @@
     "version": "1.0.0",
     "description": "Estimate a VECM and expose the Johansen trace/eigen diagnostics.",
     "doc": "src/task/step/steps/vecm.VecmStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vhh_humanization_score",
+    "kind": "operator",
+    "title": "VHH humanization score",
+    "category": "Antibody",
+    "version": "1.0.0",
+    "description": "Score VHH framework humanness by aligning the Kabat FR1-FR4 of each sequence to the human IGHV3-23*01 and IGHJ4*01 germline references and reporting per-framework mismatch fractions.",
+    "doc": "src/task/step/steps/vhh_humanization_score.VhhHumanizationScoreStep.md",
     "status": "generated"
   },
   {
