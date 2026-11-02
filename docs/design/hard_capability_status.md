@@ -204,6 +204,13 @@ nobody re-reports a blocked item as delivered.
   `(((....)))`; two sequences fold in 0.01 s. T is normalised to U and
   non-nucleotide characters are rejected.
 
+- `sequence_rna_ensemble`: runs `RNAfold -p` (ViennaRNA 2.5.1) and reports
+  the MFE energy, ensemble free energy, MEA energy and diversity, MFE
+  frequency and ensemble diversity. Real run: yeast tRNA-Phe 76 nt gives
+  MFE **-22.40**, ensemble **-24.13**, MEA **-3.01** (d=16.21), MFE
+  frequency **0.0607** and ensemble diversity **23.38**, exactly matching
+  the CLI frequency line; 0.01 s per sequence.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into

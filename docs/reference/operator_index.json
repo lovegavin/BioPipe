@@ -5290,6 +5290,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_rna_ensemble",
+    "kind": "operator",
+    "title": "RNA 系综统计 (RNAfold -p)",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Run the ViennaRNA partition function (RNAfold -p) and report the MFE energy, ensemble free energy, maximum expected accuracy structure and energy, the frequency of the MFE structure and the ensemble diversity.",
+    "doc": "src/task/step/steps/sequence_rna_ensemble.SequenceRnaEnsembleStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_rna_fold",
     "kind": "operator",
     "title": "RNA 二级结构折叠 (ViennaRNA)",
