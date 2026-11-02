@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.95.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.95.1** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -159,6 +159,7 @@ Examples:
 1.93.0  batch: MD backbone phi/psi Ramachandran occupancy
 1.94.0  batch: redock pose validation through PoseBusters
 1.95.0  batch: ligand displacement after receptor superposition along MD frames
+1.95.1  patch: real Prodigal verification on the phage lambda genome
 1.53.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```

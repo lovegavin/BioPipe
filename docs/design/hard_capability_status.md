@@ -305,3 +305,9 @@ to fill a batch.
 
 - Receptor-superposed ligand displacement across MD frames; 3PTB real check
   (1.0 A shift -> 1.000 A); 5 tests passed; 684 operators / 101 Readers.
+
+## prodigal_genes (verified, 2.6.3)
+
+- apt-installed Prodigal 2.6.3; real run on phage lambda (48 502 bp):
+  61 CDS, first CDS 191-736 (+), identical to the CLI GFF output.
+- Real test gated by BIOPIPE_PRODIGAL_REAL=1 in tests/test_extension252.py.

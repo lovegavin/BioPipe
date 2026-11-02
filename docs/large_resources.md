@@ -197,3 +197,17 @@ mkdir -p db && cp *.pdb db/
 Then set `foldseek_path=/absolute/path/foldseek/bin/foldseek` and
 `database_path=/absolute/path/mydb`. To run the real integration test set
 `BIOPIPE_FOLDSEEK_BIN` and `BIOPIPE_FOLDSEEK_DB`; otherwise the test skips.
+
+## Prodigal
+
+Install the gene predictor from the distribution packages; no database is
+required.
+
+```bash
+sudo apt-get install -y prodigal   # Debian/Ubuntu, Prodigal 2.6.3
+prodigal -v
+```
+
+The default path is `prodigal` on `PATH`; override it with the operator's
+`prodigal_path` parameter. `BIOPIPE_PRODIGAL_REAL=1` enables the real genome
+check in `tests/test_extension252.py`.

@@ -91,3 +91,32 @@ def test_run_errors(tmp_path) -> None:
         run(ctx, [{"name": "prodigal_genes", "inputs": ["dna"], "params": {"prodigal_path": str(binary)}}])
     with pytest.raises((StepError, ValueError)):
         run(ctx, [{"name": "prodigal_genes", "inputs": ["dna"], "params": {"mode": "weird"}}])
+
+
+def test_real_lambda_genome(tmp_path):
+    """Real Prodigal run on the phage lambda genome (48 502 bp)."""
+
+    import os
+    import shutil
+
+    if os.environ.get("BIOPIPE_PRODIGAL_REAL") != "1":
+        pytest.skip("set BIOPIPE_PRODIGAL_REAL=1 to run the real Prodigal check")
+    if shutil.which("prodigal") is None:
+        pytest.skip("prodigal is not installed")
+    from src.task.step.steps._sequence_common import encode_sequences
+
+    fixture = Path(__file__).resolve().parent / "fixtures" / "lambda_genome.fa"
+    sequence = "".join(line.strip() for line in fixture.read_text().splitlines() if not line.startswith(">"))
+    form = encode_sequences([sequence], "sequence", "position", "dna")
+    ctx = Context(str(tmp_path / "task"), {"params": {}})
+    ctx["genome"] = form
+    run(ctx, [{"name": "prodigal_genes", "inputs": ["genome"], "params": {"output": "genes"}}])
+    table = ctx["genes"]
+    assert table.info["n_genes"] == 61
+    assert table.info["n_partial"] == 0
+    labels = sorted(table.labels["gene"], key=table.labels["gene"].get)
+    row = table.data[0]
+    assert float(row[0]) == pytest.approx(191, abs=0.5)
+    assert float(row[1]) == pytest.approx(736, abs=0.5)
+    assert float(row[2]) == pytest.approx(1)
+    assert len(labels) == 61
