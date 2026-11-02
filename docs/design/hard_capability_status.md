@@ -289,3 +289,9 @@ to fill a batch.
 - Per-residue Shrake-Rupley SASA across MD frames; analytic single-atom
   oracle 120.76 A^2; 1MEL real check (551 residues, mean 39.8 A^2);
   5 tests passed; 681 operators / 101 Readers.
+
+## v1.93.0 structure_md_dihedral_occupancy (verified)
+
+- Backbone phi/psi and coarse Ramachandran occupancy across MD frames;
+  mdtraj angle cross-check; 1MEL (132 residues, alpha 0.12, beta 0.57);
+  5 tests passed; 682 operators / 101 Readers.

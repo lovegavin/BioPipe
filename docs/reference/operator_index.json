@@ -5960,6 +5960,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_dihedral_occupancy",
+    "kind": "operator",
+    "title": "MD 主链二面角占有率",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute backbone phi/psi for every MD frame, classify each frame into coarse Ramachandran regions and report per-residue region occupancies and means.",
+    "doc": "src/task/step/steps/structure_md_dihedral_occupancy.StructureMdDihedralOccupancyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_md_hbond_occupancy",
     "kind": "operator",
     "title": "MD 氢键占有率",
