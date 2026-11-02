@@ -20,13 +20,15 @@ _YAML_PROTEIN = "sequences:\n  - protein:\n      id: {chain}\n      sequence: {s
 _YAML_LIGAND = "  - ligand:\n      id: {chain}\n      smiles: \"{smiles}\"\n"
 
 
-def write_yaml(path: Path, sequence: str, *, chain: str = "A", ligand_smiles: str = "", ligand_chain: str = "B", affinity: bool = False) -> None:
+def write_yaml(path: Path, sequence: str, *, chain: str = "A", ligand_smiles: str = "", ligand_chain: str = "B", affinity: bool = False, msa_mode: str = "server") -> None:
     """Write a Boltz-2 input YAML for one protein and an optional ligand."""
 
     clean = "".join(residue for residue in str(sequence).upper() if residue.isalpha())
     if not clean:
         raise StepError("boltz_predict: the protein sequence is empty")
     body = _YAML_PROTEIN.format(chain=chain, sequence=clean)
+    if msa_mode == "empty":
+        body += "      msa: empty\n"
     if ligand_smiles:
         body += _YAML_LIGAND.format(chain=ligand_chain, smiles=str(ligand_smiles).strip())
     if affinity:
@@ -158,14 +160,23 @@ class BoltzPredictStep(Step):
             raise StepError("boltz_predict: 'boltz' was not found on PATH; install it with 'python -m pip install boltz' and download the weights")
         workdir = Path(tempfile.mkdtemp(prefix="boltz_"))
         yaml_path = workdir / "input.yaml"
-        write_yaml(yaml_path, sequences[0], chain=str(params.get("protein_chain", "A")), ligand_smiles=str(params.get("ligand_smiles", "")), ligand_chain=str(params.get("ligand_chain", "B")), affinity=bool(params.get("affinity", False)))
+        msa_mode = str(params.get("msa_mode", "server"))
+        write_yaml(
+            yaml_path,
+            sequences[0],
+            chain=str(params.get("protein_chain", "A")),
+            ligand_smiles=str(params.get("ligand_smiles", "")),
+            ligand_chain=str(params.get("ligand_chain", "B")),
+            affinity=bool(params.get("affinity", False)),
+            msa_mode=msa_mode,
+        )
         out_dir = workdir / "out"
         command = boltz_command(
             resolved,
             yaml_path,
             out_dir,
             model=str(params.get("model", "boltz2")),
-            use_msa_server=bool(params.get("use_msa_server", True)),
+            use_msa_server=bool(params.get("use_msa_server", True)) and msa_mode == "server",
             device=str(params.get("device", "cpu")),
             output_format=str(params.get("output_format", "pdb")),
             sampling_steps=int(params.get("sampling_steps", 200)),
@@ -174,6 +185,9 @@ class BoltzPredictStep(Step):
             no_kernels=bool(params.get("no_kernels", False)),
             extra=str(params.get("extra_args", "")),
         )
+        cache_dir = str(params.get("cache_dir", "") or "")
+        if cache_dir:
+            command.extend(["--cache", cache_dir])
         if str(resolved).lower().endswith(".py"):
             command = [sys.executable] + command
         try:

@@ -38,8 +38,9 @@ def test_write_yaml(tmp_path):
     write_yaml(path, "MKVLA", chain="A")
     text = path.read_text()
     assert "protein:" in text and "sequence: MKVLA" in text
-    write_yaml(path, "MKVLA", ligand_smiles="CCO", affinity=True)
+    write_yaml(path, "MKVLA", ligand_smiles="CCO", affinity=True, msa_mode="empty")
     text = path.read_text()
+    assert "msa: empty" in text
     assert "ligand:" in text and "CCO" in text and "affinity:" in text
     with pytest.raises(StepError, match="affinity requires a ligand_smiles"):
         write_yaml(path, "MKVLA", affinity=True)

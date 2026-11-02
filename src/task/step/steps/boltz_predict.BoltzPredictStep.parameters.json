@@ -148,6 +148,24 @@
       "default": false,
       "x-ui-group": "模型",
       "x-ui-order": 9
+    },
+    "msa_mode": {
+      "title": "MSA 模式",
+      "type": "string",
+      "default": "server",
+      "enum": [
+        "server",
+        "empty"
+      ],
+      "x-ui-group": "模型",
+      "x-ui-order": 10
+    },
+    "cache_dir": {
+      "title": "权重缓存目录",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 3
     }
   }
 }

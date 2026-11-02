@@ -27,6 +27,14 @@ nobody re-reports a blocked item as delivered.
 | OpenFold / AlphaFold-2 parameters | Parameter bundles are hosted on storage that is unreachable here; no local copy. |
 | `hmmer_domains` real scan | `Pfam-A.hmm` (GB scale) is not present locally and its download source is unreachable. |
 
+## Verified real runs
+
+- `foldseek_search`: Foldseek `10-941cd33`, local database from two fixtures,
+  1MEL query returns 5 hits (top self-hit alnTM 1.008).
+- `boltz_predict`: Boltz-1 with local weights and `msa: empty` (CPU, 25 sampling
+  steps): 14-residue peptide, PDB + `confidence_*.json`, confidence_score
+  0.7321, complex_plddt 0.8852. Boltz-2 weights were not downloaded.
+
 ## How to unblock
 
 1. Provide network access to `huggingface.co` (or mirror the Boltz weights into
