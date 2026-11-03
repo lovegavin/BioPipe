@@ -242,7 +242,7 @@ def _ensure_isolated_environments(prefix):
             if subprocess.run(install, check=False).returncode:
                 ok = False
         if requirements:
-            install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, *requirements]
+            install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--prefer-binary', *PIP_INDEX, *requirements]
             if subprocess.run(install, check=False).returncode:
                 ok = False
                 continue
