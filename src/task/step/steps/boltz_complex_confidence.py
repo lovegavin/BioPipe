@@ -6,6 +6,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -48,8 +49,9 @@ def complex_yaml(chains: list[tuple[str, str]]) -> str:
 def boltz_command(binary: str, yaml_path: Path, out_dir: Path, *, model: str, device: str, sampling_steps: int, diffusion_samples: int, cache_dir: str = "") -> list[str]:
     """Build the Boltz prediction command."""
 
+    launcher = [sys.executable, binary] if binary.lower().endswith(".py") else [binary]
     command = [
-        binary,
+        *launcher,
         "predict",
         str(yaml_path),
         "--out_dir",

@@ -62,7 +62,7 @@ def test_interface_rows(tmp_path):
 
 def test_run_round_trip(tmp_path, monkeypatch):
     form = encode_sequences(["MKVLA", "GGGS"], "sequence", "position", "protein")
-    script = tmp_path / "boltz"
+    script = tmp_path / "boltz.py"
     script.write_text(
         "#!" + sys.executable + "\n"
         "import json, pathlib, sys\n"
