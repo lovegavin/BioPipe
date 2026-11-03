@@ -43,9 +43,12 @@
         "esm.sdk.api"
       ],
       "requirements": [
-        "torch>=2.11,<2.12",
-        "transformers<5",
+        "torch==2.6.0",
+        "transformers<4.48.2",
+        "tokenizers",
         "huggingface_hub",
+        "httpx",
+        "requests",
         "cloudpathlib",
         "einops",
         "safetensors",
@@ -64,9 +67,9 @@
         "cython"
       ],
       "no_deps": [
-        "esm @ git+https://github.com/evolutionaryscale/esm.git"
+        "esm @ git+https://github.com/evolutionaryscale/esm.git@v3.2.2"
       ],
-      "notes": "ESM 3.4 requires Python >= 3.12 and torch >= 2.11. The bridge runs all esm3_* operators in this interpreter. On hosts whose glibc predates 2.28 (for example the CentOS-7 class server licai-srv-node80, glibc 2.17) the torch 2.9/2.11 manylinux_2_28 wheels are rejected, so this environment cannot be built there; ESM-3 then runs on a modern host.",
+      "notes": "Verified on licai-srv-node80 (glibc 2.17): Python 3.12, torch 2.6.0, ESM 3.2.2. torch >= 2.9 wheels need manylinux_2_28 and cannot be installed on this OS, so the bridge pins the newest compatible torch. ESM 3.4 requires torch >= 2.11 and is not installable there; the operator surface is unchanged.",
       "wired": true
     }
   }
