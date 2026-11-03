@@ -42,6 +42,7 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 - [Hard-capability status](design/hard_capability_status.md)
 - [Minibinder and VHH design route](design/minibinder_vhh_design_route.md)
 - [Competitive landscape and moat analysis](design/competitive_landscape.md)
+- [Agent working notes](design/agent_working_notes.md)
 
 ## Extend and maintain
 

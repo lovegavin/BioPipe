@@ -24,3 +24,7 @@ main is historical source, not a second runtime or authoring protocol.
    alone must not change execution identity or require users to repin workflows.
 8. Keep product paths portable and technical documentation in English. Do not
    commit credentials, local runtime state, generated jobs or private datasets.
+
+Related process notes: remote installs and repair in
+`docs/agent_environment_repair.md`, agent process rules and token
+discipline in `docs/design/agent_working_notes.md`.

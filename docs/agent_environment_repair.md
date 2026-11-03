@@ -5,6 +5,48 @@ dependency or a missing weight/database, and has to repair the host before the
 task can run. It is deliberately command-oriented: every step below is a
 command the agent can execute and verify.
 
+## 快速检查：服务器能否连上并安装
+
+桌面端连接远程服务器时，先在**能上网的机器**上确认 SSH（Windows 用户直接用系统
+ssh，不要经过 WSL）：
+
+```bash
+ssh -o ConnectTimeout=15 <user>@<host> 'echo SSH_OK'
+```
+
+看到 `SSH_OK` 说明 22 端口可用。若使用密钥，确保私钥 ACL 只允许当前用户读取。
+BioPipe 只在这台服务器上写 `~/.local/share/biopipe/managed-v1/`（可用
+`--base` 覆盖），不要求 root、Conda 或预装编译器。
+
+安装完成后检查：
+
+```bash
+ls ~/.local/share/biopipe/managed-v1/                 # micromamba-2.10.0, env-*, setup-*.log
+ls ~/.local/share/biopipe/managed-v1/env-*/biopipe-ready.json
+tail -40 ~/.local/share/biopipe/managed-v1/setup-*.log
+~/.local/share/biopipe/managed-v1/env-*/bin/python -m pip check
+```
+
+`biopipe-ready.json` 存在且 `pip check` 无输出即安装成功；日志里应出现
+`BioPipe and Hi-C environment ready`。探测阶段若提示
+`Optional OpenMM extras are not installed`，安装依然成功，只是 MD/能量算子需要
+额外安装 conda-forge 的 `openmm`、`pdbfixer`（命令见下文）。
+
+### 已知环境限制（按报错定位）
+
+| 报错 | 根因 | 处理 |
+| --- | --- | --- |
+| `No matching distribution found for pdbfixer` | 该包只发 conda-forge | 不进入默认 pip 解析；按需 conda 安装 |
+| `openmm 8.1.1` + `numpy.core.multiarray failed to import` | PyPI 的 openmm wheel 是 NumPy 1 ABI | 同上，conda-forge 提供 NumPy 2 构建 |
+| `Failed building wheel for libcst` / `can't find Rust compiler` | 新版本 sdist 需要 Rust | 约束 `libcst<1.8`（cp311 wheel） |
+| `Failed to build 'pyarrow'` | 新版本走 Arrow C++ 源码 | 约束 `pyarrow<22` |
+| `No matching distribution found for pysam` | wheel 需 glibc ≥ 2.28 | 安装完成后由 conda-forge/bioconda 补 `pysam=0.22.1` |
+| `No matching distribution found for cooltools` | 只有 sdist，且是纯 Python | 允许 sdist 的第二次安装即可覆盖 |
+| `No module named 'packaging'` | 裸 venv 没有 packaging | 安装器会先自动补 packaging |
+| `Install curl or wget ...` | 主机缺少下载工具 | 安装 curl 或 wget 后重试 |
+
+## 开启 OpenMM 算子
+
 ## Decision tree
 
 1. **Is the Python package installed?** `python -c "import biopipe"` and
