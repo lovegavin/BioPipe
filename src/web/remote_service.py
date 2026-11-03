@@ -139,7 +139,7 @@ class RemoteManager:
             if install or not _has_dependency_status(info):
                 try:
                     report('正在核对依赖状态')
-                    info = self.refresh(key)
+                    info = self.refresh(key, verify_all=True)
                     report('依赖状态已更新')
                 except RemoteError as exc:
                     report(f'依赖状态将在刷新后更新：{exc}')
