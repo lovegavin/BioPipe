@@ -245,3 +245,21 @@ The cache lands under `~/.cache/huggingface/hub/models--EvolutionaryScale--esm3-
 ## Provisioning
 
 `python scripts/provision_resources.py --root <dir> [--only ID] [--mirror URL] [--jobs N] [--from-dir STAGING] [--offline]` downloads, copies or verifies the declared files with resume, retries and SHA-256 checks. See [the agent guide](agent_environment_repair.md) for the decision tree and the slow-uplink workflow.
+
+## Dedicated operator environments
+
+Operators whose upstream pins conflict with the shared scientific runtime use a
+dedicated interpreter instead of downgrading NumPy/Torch:
+
+```bash
+python -m biopipe.environments            # status of every declared environment
+python -m biopipe.environments --json
+```
+
+AntiFold (`antifold_design`) lives in `<prefix>/external/antifold`; the managed
+installer creates it, installs `antifold==0.3.1` with `--no-deps` plus its
+runtime pins, and the operator resolves that interpreter automatically. Override
+with `BIOPIPE_ENV_ANTIFOLD=/path/to/python` or the `python_executable` parameter.
+Place the 541 MB weights at
+`<prefix>/external/antifold/lib/python3.11/site-packages/antifold/trained_models/model.pt`
+(download URL in `biopipe/environments.json`).

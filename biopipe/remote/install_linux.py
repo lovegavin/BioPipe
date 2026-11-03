@@ -211,6 +211,12 @@ def _ensure_isolated_environments(prefix):
         pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, *entry.get('requirements', [])]
         if subprocess.run(pip, check=False).returncode:
             ok = False
+            continue
+        no_deps = entry.get('no_deps') or []
+        if no_deps:
+            pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, '--no-deps', *no_deps]
+            if subprocess.run(pip, check=False).returncode:
+                ok = False
     return ok
 
 
