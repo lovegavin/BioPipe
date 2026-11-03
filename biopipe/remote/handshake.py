@@ -287,6 +287,7 @@ class ManifestHandshake:
         from biopipe import __version__
         tools = self.tool_snapshot()
         dependencies = self.persist()
+        dependencies = self._apply_installation_receipt(dependencies)
         value = {
             'protocol_version': VERSION, 'version': __version__, 'system': platform.system().lower(),
             'python': sys.executable, 'workspace': str(self.service.root),
