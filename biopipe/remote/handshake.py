@@ -117,6 +117,22 @@ def runtime_identity():
     }
 
 
+def runtime_compatible(installed, current):
+    """Compare a saved runtime identity without the mutable library directory stamp.
+
+    ``environment`` records the mtime of ``site-packages``, which changes whenever
+    any package, ``*.pth`` or editable-install hook is written. That drift must
+    not discard installer probe results on the first connection; the interpreter
+    stamp, version and prefix still pin the actual runtime.
+    """
+    if not isinstance(installed, dict) or not isinstance(current, dict):
+        return False
+    for key in ('python', 'version', 'prefix', 'base_prefix', 'base_paths'):
+        if installed.get(key) != current.get(key):
+            return False
+    return True
+
+
 def _installation_key(entry):
     return digest({'r': entry.get('resources', {}).get('r'), **{key: entry.get(key) for key in
                    ('id', 'kind', 'version', 'entry_point', 'code_sha', 'dependencies', 'dependency_imports')}})
@@ -156,7 +172,8 @@ class ManifestHandshake:
         if self.saved.get('version') != 1:
             self.saved = {}
         self.installed = _read(Path(sys.prefix) / 'biopipe-ready.json').get('dependency_readiness', {})
-        if not isinstance(self.installed, dict) or self.installed.get('version') != 1 or self.installed.get('runtime') != self.runtime:
+        if (not isinstance(self.installed, dict) or self.installed.get('version') != 1
+                or not runtime_compatible(self.installed.get('runtime'), self.runtime)):
             self.installed = {}
         self.installation_key = digest(self.installed)
         self.invalidated_installation = self.saved.get('invalidated_installation')

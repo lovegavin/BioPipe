@@ -3,6 +3,30 @@
 从零到"前端发起运行"的最短路径。命令默认在仓库根目录执行，平台示例以 Windows 为主，
 Linux/macOS 把激活脚本换成 `source .venv/bin/activate` 即可。
 
+## English quick reference
+
+0. **Preflight**: `wsl -d Ubuntu-24.04`, `cd /home/gavin/BioPipe`, `git status --short`;
+   conda env `biopipe`, `python -m biopipe registry check` (expect `errors []`).
+1. **Backend**: `python -m pip install -e . --no-deps --no-build-isolation`
+   and `python -m biopipe registry check`.
+2. **Frontend**: `cd frontend && pnpm install && pnpm run build`; start Studio with
+   `python -m biopipe web` (or the packaged desktop app).
+3. **MCP (DeepSeek Harness first)**: add a `dsh-mcp-client` entry pointing at
+   `mcp --allow-run` in `~/.dsh/profiles/desktop/cordis.patch.yml`, restart DSH,
+   then start a new agent conversation with the single line
+   `Please read docs/agent_bootstrap.md and prepare for the next task.`
+4. **First run**: give the agent a natural-language goal (for example
+   "Inspect PDB 1MEL and design a VHH binder to the lysozyme interface"),
+   approve the execution permission, then read the job in the finished-jobs list.
+5. **Remote server**: fill host/user/port/key in Studio, test the connection,
+   install the server if prompted; the dependency counter must be non-zero on the
+   first connect (709 operators, 101 Readers).
+6. **Canvas**: agent edits appear as one undoable transaction; `biopipe_open`
+   replaces or appends into the current document; `biopipe_set_execution`
+   switches local/remote.
+7. **Results**: previews show labelled, paginated tables; download the artifact
+   from the same row.
+
 ## 0. 预检
 
 ```text
@@ -112,12 +136,6 @@ DSH 的 MCP 客户端配置在 `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch
 ### 首轮开场白（复制即用）
 
 配置好 MCP、新开一个 agent 对话后，第一条消息只需要：
-
-```text
-请阅读 docs/agent_bootstrap.zh.md，准备后续工作。
-```
-
-英文版：
 
 ```text
 Please read docs/agent_bootstrap.md and prepare for the next task.
