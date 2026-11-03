@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "MD 界面占据率参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "trajectory_path": {
+      "title": "轨迹坐标文件 (.npy)",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "topology_path": {
+      "title": "拓扑 PDB",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "binder_chains": {
+      "title": "结合方链",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "界面",
+      "x-ui-order": 1
+    },
+    "target_chains": {
+      "title": "目标方链",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "界面",
+      "x-ui-order": 2
+    },
+    "cutoff": {
+      "title": "接触阈值 (Å)",
+      "type": "number",
+      "default": 5.0,
+      "minimum": 2.0,
+      "maximum": 12.0,
+      "x-ui-group": "界面",
+      "x-ui-order": 3
+    },
+    "residue_dim": {
+      "title": "输出维度",
+      "type": "string",
+      "default": "residue",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "interface",
+      "x-ui-group": "输出",
+      "x-ui-order": 2
+    }
+  }
+}
