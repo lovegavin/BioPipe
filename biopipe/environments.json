@@ -79,10 +79,12 @@
         "boltz"
       ],
       "requirements": [],
-      "notes": "The shared runtime already carries a validated Boltz stack; the installer clones it into an isolated environment so Boltz's strict metadata pins cannot block the shared `pip check`. Weights stay in ~/.boltz.",
+      "notes": "A venv with --system-site-packages inherits the validated shared stack and adds only Boltz itself; its strict metadata pins stay inside the venv and cannot break the shared pip check. Weights stay in ~/.boltz.",
       "wired": true,
-      "clone_shared": true,
-      "no_deps": []
+      "no_deps": [
+        "boltz==2.2.1"
+      ],
+      "venv_shared": true
     }
   }
 }

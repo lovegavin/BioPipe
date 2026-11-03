@@ -198,11 +198,13 @@ def _ensure_isolated_environments(prefix):
             continue
         target = root / name
         print(f'Preparing isolated environment {name} at {target}', flush=True)
-        if not mamba.is_file():
+        if not entry.get('venv_shared') and not mamba.is_file():
             ok = False
             continue
         env = dict(os.environ, MAMBA_ROOT_PREFIX=str(prefix.parent / 'mamba-cache'))
-        if entry.get('clone_shared'):
+        if entry.get('venv_shared'):
+            create = [str(Path(sys.executable)), '-m', 'venv', '--system-site-packages', str(target)]
+        elif entry.get('clone_shared'):
             create = [str(mamba), 'create', '-y', '-p', str(target), '--clone', str(prefix)]
         else:
             create = [str(mamba), 'create', '-y', '-p', str(target), '-c', 'conda-forge',

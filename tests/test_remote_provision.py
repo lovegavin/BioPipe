@@ -113,6 +113,7 @@ def test_installer_repairs_transitive_dependencies_without_reinstalling_healthy_
     monkeypatch.setattr(installer, '_ensure_python_extras', lambda *a, **k: True)
     monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: True)
     monkeypatch.setattr(installer, '_ensure_isolated_extras', lambda *a, **k: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_environments', lambda *a, **k: True)
     installer.ensure_requirements(['parent==1.0'], tmp_path/'requirements.txt')
     assert bool(installs) == broken
     if broken:
@@ -160,6 +161,7 @@ def test_installer_prefers_mirror_wheels_and_falls_back_to_source(monkeypatch, t
     monkeypatch.setattr(installer, '_ensure_python_extras', lambda *a, **k: True)
     monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: True)
     monkeypatch.setattr(installer, '_ensure_isolated_extras', lambda *a, **k: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_environments', lambda *a, **k: True)
     monkeypatch.setattr(installer.shutil, 'which', lambda name: '/opt/env/bin/' + name)
     installer.ensure_requirements(['pyarrow==21.0.0'], tmp_path / 'requirements.txt')
     assert len(calls) == 2
@@ -202,6 +204,7 @@ def test_installer_skips_conda_only_packages_and_pins_build_fragile_sdists(monke
     monkeypatch.setattr(installer, '_ensure_python_extras', lambda *a, **k: True)
     monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: True)
     monkeypatch.setattr(installer, '_ensure_isolated_extras', lambda *a, **k: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_environments', lambda *a, **k: True)
     installer.ensure_requirements(['pyarrow>=14'], tmp_path / 'requirements.txt')
     assert len(calls) == 1
     assert 'pyarrow<22' in constraints_seen[0]
@@ -227,6 +230,7 @@ def test_installer_source_fallback_prefers_binaries_and_keeps_constraints(monkey
     monkeypatch.setattr(installer, '_ensure_python_extras', lambda *a, **k: True)
     monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: True)
     monkeypatch.setattr(installer, '_ensure_isolated_extras', lambda *a, **k: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_environments', lambda *a, **k: True)
     installer.ensure_requirements(['pyarrow>=14'], tmp_path / 'requirements.txt')
     assert len(calls) == 2
     assert '--only-binary=:all:' in calls[0]
