@@ -1,2 +1,2 @@
 """BioPipe application interfaces. Public extension API: biopipe_sdk."""
-__version__ = "1.109.0"
+__version__ = "1.110.0"

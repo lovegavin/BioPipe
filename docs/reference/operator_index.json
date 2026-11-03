@@ -6080,6 +6080,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_dssp_transitions",
+    "kind": "operator",
+    "title": "二级结构状态转换",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Run DSSP on every trajectory frame, map codes onto helix/strand/coil, and report per-residue populations, transition counts and dwell times plus the global coarse transition matrix.",
+    "doc": "src/task/step/steps/structure_md_dssp_transitions.StructureMdDsspTransitionsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_md_free_energy_landscape",
     "kind": "operator",
     "title": "自由能景观",
