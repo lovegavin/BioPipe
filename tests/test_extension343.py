@@ -18,6 +18,31 @@ from src.task.step.steps.esm3_secondary_structure import (
 from src.task.step.steps._sequence_common import encode_sequences
 
 
+def _install_esm_stub(monkeypatch):
+    """Register minimal esm modules so generation works without the package."""
+
+    esm = types.ModuleType("esm")
+    sdk = types.ModuleType("esm.sdk")
+    api = types.ModuleType("esm.sdk.api")
+
+    class ESMProtein:
+        def __init__(self, sequence=None, **kwargs):
+            self.sequence = sequence
+
+    class GenerationConfig:
+        def __init__(self, track="sequence", num_steps=None, **kwargs):
+            self.track = track
+            self.num_steps = num_steps
+
+    api.ESMProtein = ESMProtein
+    api.GenerationConfig = GenerationConfig
+    sdk.api = api
+    esm.sdk = sdk
+    monkeypatch.setitem(__import__("sys").modules, "esm", esm)
+    monkeypatch.setitem(__import__("sys").modules, "esm.sdk", sdk)
+    monkeypatch.setitem(__import__("sys").modules, "esm.sdk.api", api)
+
+
 def test_state_codes_and_summary():
     assert [state_code(c) for c in "HGBEITS "] == [0, 0, 1, 1, 0, 2, 2, 2]
     summary = ss_summary("HHHEE")
@@ -40,12 +65,14 @@ class _FakeModel:
         return types.SimpleNamespace(secondary_structure=self.text)
 
 
-def test_predict_parses_generated_track():
+def test_predict_parses_generated_track(monkeypatch):
+    _install_esm_stub(monkeypatch)
     model = _FakeModel("HHHEEGTT")
     assert predict_secondary_structure(model, "ACDEFGHIK", num_steps=4) == "HHHEEGTT "
 
 
-def test_run_round_trip():
+def test_run_round_trip(monkeypatch):
+    _install_esm_stub(monkeypatch)
     form = encode_sequences(["ACDEFGHIK"], "sequence", "position", "protein")
     original = module.load_model
     module.load_model = lambda name, device: _FakeModel("HHHEEGTT")
