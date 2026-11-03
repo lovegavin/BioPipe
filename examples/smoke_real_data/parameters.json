@@ -1,0 +1,42 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "complex": {},
+    "sequence": {}
+  },
+  "steps": [
+    {
+      "name": "structure_interface_core",
+      "inputs": [
+        "complex"
+      ],
+      "params": {
+        "atom_dim": "atom",
+        "field_dim": "field",
+        "binder_chains": "A,B",
+        "target_chains": "L,M",
+        "core_fraction": 0.5,
+        "probe_radius": 1.4,
+        "output": "iface",
+        "n_points": 92
+      },
+      "context_params": {}
+    },
+    {
+      "name": "sequence_liability_scan",
+      "inputs": [
+        "sequence"
+      ],
+      "params": {
+        "sequence_dim": "sequence",
+        "position_dim": "position",
+        "include_oxidation": true,
+        "context": 3,
+        "output": "liabilities"
+      },
+      "context_params": {}
+    }
+  ]
+}
