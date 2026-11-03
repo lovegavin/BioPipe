@@ -98,7 +98,7 @@ class BoltzAffinitySummaryStep(Step):
             "inputs": [],
             "output": {"mode": "declare", "schema": {"ndim": 2, "numeric": True, "info_open": True, "axis_info_open": False}},
         },
-        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory"},
+        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory", "environment": "boltz"},
         "dependencies": [],
         "dependency_imports": [],
         "inputs_arity": 0,
