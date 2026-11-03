@@ -45,23 +45,40 @@ python scripts/studio.py --profile-dir biopipe-v3-test
 打开 <http://127.0.0.1:8765>。首次启动会生成演示工作流。默认 profile 是
 `~/.biopipe/studio`；`--profile-dir` 用于隔离，避免影响已发布的桌面配置。
 
-## 4. 连接 MCP
+## 4. 连接 MCP（首选 DeepSeek Harness）
 
-MCP 是"给 agent 用的接口"，不是模型本身。最小配置（单独 profile）：
+DSH 的 MCP 客户端配置在 `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch.yml`，
+BioPipe 条目形如：
 
-```json
-{"mcpServers":{"biopipe":{"command":"biopipe","args":["--profile-dir","~/biopipe-v3-test","mcp","--allow-run"]}}}
+```yaml
+- id: mcp-biopipe
+  name: "@deepseek-ai/dsh-mcp-client"
+  config:
+    serverName: "biopipe"
+    transport: "stdio"
+    command: "C:\\Users\\<you>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    args:
+      - "-m"
+      - "biopipe"
+      - "--workspace"
+      - "C:\\Users\\<you>\\.biopipe\\studio\\workspace"
+      - "--data-dir"
+      - "C:\\Users\\<you>\\.biopipe\\studio\\workspace\\.studio"
+      - "mcp"
+      - "--allow-run"
 ```
 
-- 去掉 `--allow-run`：只能读和准备，不能提交运行。
-- 加 `--read-only`：连画布编辑也禁止。
-- 加 `--allow-plugins`：允许安装本地 wheel 插件。
+- `--allow-run` 才允许 agent 提交运行；只读调试去掉它，加 `--read-only` 连编辑也禁止。
+- `--workspace`/`--data-dir` 必须与 Studio 的启动参数一致。
+- 修改后重启 DSH 与 Studio 生效；在 DSH 里让 agent 调 `biopipe_operator_search` 验证。
 
-Studio 里 **Agent 面板** 会用当前解释器和 profile 生成可直接粘贴的配置，并列出已连接
-客户端、可撤销 token。配置改完后重启 agent 客户端。
+其他 MCP 客户端（Cursor、Claude Desktop 等）用等价的 `mcpServers` JSON：
 
-验证：让 agent 调用 `biopipe_operator_search`（返回算子摘要，不加载实现），再调用
-`biopipe_operator_describe` 取契约与参数 schema。
+```json
+{"mcpServers":{"biopipe":{"command":"biopipe","args":["mcp","--allow-run"]}}}
+```
+
+Studio 的 **Agent 面板** 会按当前解释器和 profile 生成可直接粘贴的配置，并显示已连接客户端。
 
 ## 5. 连接你自己的 Agent
 
@@ -133,3 +150,21 @@ python scripts/run.py <task 目录或工作流 JSON>           # 真正执行
 | 服务器算子提示缺 openmm/antifold | 按 `agent_environment_repair.md` 安装可选依赖 |
 | 端口被占用 | `scripts/studio.py --port 8766` |
 | 想隔离实验 | `--profile-dir <name>` + `--workspace <dir>` 同时指定 |
+
+## 11. 从零干净验收（最终测试）
+
+需求：最终验收必须是本地前端从零向服务器发起的一次安装；已测试环境可以保留，但测试
+环境必须干净。
+
+1. backend 更新到最新 `D:\BioPipe`（版本号见 `biopipe/__init__.py`）。
+2. 选一个全新 base 目录（连接服务器时填写），例如 `~/biopipe-clean-test`，不要复用
+   已有 `managed-v1`。也可以保留 base 但删除测试用环境：
+   `rm -rf <base>/env-*`（保留 `mamba-cache`、`~/.cache/pip` 可以加速，不影响"干净"）。
+3. 确认干净：`ls <base>/env-*/biopipe-ready.json` 不存在，且没有旧 `server.json`
+   指向已装环境。
+4. 在本地前端连接服务器，观察安装进度；首次下载约 8–12 GB。
+5. 通过标志：`biopipe-ready.json` 存在、`pip check` 无输出、日志末尾
+   `BioPipe and Hi-C environment ready`。
+6. 记录版本、registry 计数、耗时、env 大小与日志尾部，作为验收证据。
+
+注意：不要预先 `register` 环境；手工部署的环境只作为缓存与证据，不参与本次验收。
