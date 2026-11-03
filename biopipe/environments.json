@@ -34,6 +34,33 @@
         }
       ],
       "notes": "AntiFold pins NumPy 1.26 and Torch 2.3.1, incompatible with the shared NumPy 2 / Torch 2.6 runtime; pygam has no wheel and is not required for inference."
+    },
+    "esm3": {
+      "title": "ESM-3 sequence and structure generation",
+      "python": "3.12",
+      "imports": [
+        "esm",
+        "esm.sdk.api"
+      ],
+      "requirements": [
+        "torch>=2.11,<2.12",
+        "huggingface_hub",
+        "cloudpathlib",
+        "einops",
+        "safetensors",
+        "dataclasses-json",
+        "zstd",
+        "accelerate",
+        "attrs",
+        "meson-python",
+        "ninja",
+        "cython"
+      ],
+      "no_deps": [
+        "esm @ git+https://github.com/evolutionaryscale/esm.git"
+      ],
+      "notes": "ESM 3.4 requires Python >= 3.12 and torch >= 2.11; the shared 3.11/torch 2.6 runtime cannot host it. The environment is declared so the installer can prepare it; in-process operators still need a subprocess execution bridge before they can use it.",
+      "wired": false
     }
   }
 }
