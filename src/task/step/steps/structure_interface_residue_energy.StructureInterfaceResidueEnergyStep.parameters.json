@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "界面残基能量分解参数",
+  "properties": {
+    "structure_path": {
+      "title": "结构 PDB 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "binder_chains": {
+      "title": "Binder 链",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "界面",
+      "x-ui-order": 2
+    },
+    "target_chains": {
+      "title": "Target 链",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "界面",
+      "x-ui-order": 3
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "energies",
+      "x-ui-group": "输出",
+      "x-ui-order": 4
+    }
+  }
+}

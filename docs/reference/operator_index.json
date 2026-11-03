@@ -5920,6 +5920,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_interface_residue_energy",
+    "kind": "operator",
+    "title": "界面残基能量分解",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Decompose the vacuum Coulomb + Lennard-Jones interaction energy of a protein-protein interface into per-residue contributions, with an exact sum identity against the side totals.",
+    "doc": "src/task/step/steps/structure_interface_residue_energy.StructureInterfaceResidueEnergyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_lddt",
     "kind": "operator",
     "title": "lDDT 局部距离差异检验",
