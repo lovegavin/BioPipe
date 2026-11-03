@@ -39,6 +39,13 @@ def probe_environment(entry_id, environment, imports):
 def probe(entries):
     results = {}
     for entry in entries:
+        tools = (entry.get('resources') or {}).get('external_tools') or []
+        if tools:
+            import shutil
+            missing = [name for name in tools if shutil.which(name) is None]
+            results[entry['id']] = {'status': 'failed' if missing else 'passed',
+                                    'error': ', '.join(f'{name}: not on PATH' for name in missing)}
+            continue
         environment = (entry.get('resources') or {}).get('environment')
         if environment:
             results[entry['id']] = probe_environment(entry['id'], environment,

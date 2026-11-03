@@ -38,6 +38,10 @@ def resolve(name: str) -> Path | None:
         candidates.append(Path(os.environ[env_var]).expanduser())
     base = root() / name
     candidates.extend([base / 'bin/python', base / 'Scripts/python.exe'])
+    managed = Path(sys.prefix).resolve().parent
+    for candidate in sorted(managed.glob(f'env-*/external/{name}/bin/python')):
+        candidates.append(candidate)
+    candidates.append(managed / 'external' / name / 'bin/python')
     for path in candidates:
         if path.is_file() and os.access(path, os.X_OK):
             return path
