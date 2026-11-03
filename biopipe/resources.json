@@ -157,6 +157,33 @@
       "files": [
         "Pfam-A.hmm"
       ]
+    },
+    {
+      "id": "boltz",
+      "title": "Boltz structure and affinity models",
+      "kind": "weights",
+      "url": "https://huggingface.co/boltz-community/boltz-1",
+      "install": "python scripts/provision_resources.py --root <dir> --only boltz",
+      "env": "BIOPIPE_BOLTZ_CACHE",
+      "roots": [
+        "/home/gavin/.boltz",
+        "D:/tools/.boltz"
+      ],
+      "files": [
+        "ccd.pkl",
+        "boltz1_conf.ckpt"
+      ],
+      "downloads": {
+        "ccd.pkl": "https://hf-mirror.com/boltz-community/boltz-1/resolve/main/ccd.pkl",
+        "boltz1_conf.ckpt": "https://hf-mirror.com/boltz-community/boltz-1/resolve/main/boltz1_conf.ckpt"
+      },
+      "sha256": {
+        "ccd.pkl": "2d3b2f03a3c5665944adba51e33263511e51b21c9cd05d902f9c4b7c1e58d2f4"
+      },
+      "sizes": {
+        "ccd.pkl": 345859128,
+        "boltz1_conf.ckpt": 3595352714
+      }
     }
   ]
 }

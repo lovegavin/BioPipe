@@ -241,3 +241,7 @@ python -c "import torch; from esm.models.esm3 import ESM3; ESM3.from_pretrained(
 
 The cache lands under `~/.cache/huggingface/hub/models--EvolutionaryScale--esm3-sm-open-v1`.
 `BIOPIPE_ESM3_REAL=1` enables the real check in `tests/test_extension325.py`.
+
+## Provisioning
+
+`python scripts/provision_resources.py --root <dir> [--only ID] [--mirror URL] [--jobs N] [--from-dir STAGING] [--offline]` downloads, copies or verifies the declared files with resume, retries and SHA-256 checks. See [the agent guide](agent_environment_repair.md) for the decision tree and the slow-uplink workflow.

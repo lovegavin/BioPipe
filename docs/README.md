@@ -22,6 +22,7 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 - [Input formats and explicit Readers](input_formats.md)
 - [Saved workflow parameters](workflow_parameters.md)
 - [Memory, streaming and spill](resource_runtime.md)
+- [Repairing the environment and provisioning resources](agent_environment_repair.md)
 - [Execution environments and concurrent jobs](EXECUTION_ENVIRONMENTS.md)
 - [SSH execution](REMOTE_EXECUTION.md) and [server handshake](SERVER_HANDSHAKE.md)
 - [Hi-C workflows](HIC.md) and [16S microbiome](microbiome.md)
