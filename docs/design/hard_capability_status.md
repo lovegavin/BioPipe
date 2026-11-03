@@ -323,3 +323,9 @@ to fill a batch.
 - ESM-3 open 1.40 B model loaded from the hf-mirror cache; per-residue
   embeddings (1, 14, 1536) in 6.0 s on CPU; real test gated by
   BIOPIPE_ESM3_REAL; 685 operators / 101 Readers.
+
+## esm3_inverse_folding (verified)
+
+- ESM-3 open model, coordinates-only generation on 1MEL chain A (132 res,
+  10 steps, CPU): recovery 0.788 in 20.2 s; real test gated by
+  BIOPIPE_ESM3_REAL; 686 operators / 101 Readers.
