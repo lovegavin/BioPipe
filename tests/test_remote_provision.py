@@ -93,8 +93,12 @@ def test_deployment_requirements_include_all_current_provider_dependencies():
     assert {'build_contacts', 'analyze_contacts', 'align_reads'} <= {d['id'] for d in entries}
     from packaging.requirements import Requirement
     conda_provided = {name.lower() for name in installer.CONDA_PROVIDED}
+    shared = [entry for entry in entries if not (entry.get('resources') or {}).get('environment')]
+    isolated = [entry['id'] for entry in entries if (entry.get('resources') or {}).get('environment')]
+    assert {'boltz_predict', 'antifold_design', 'esm3_fold'} <= set(isolated)
     assert all({dep for dep in entry.get('dependencies', [])
-                if Requirement(dep).name.lower() not in conda_provided} <= set(specs) for entry in entries)
+                if Requirement(dep).name.lower() not in conda_provided} <= set(specs) for entry in shared)
+    assert not any('boltz' in spec or 'antifold' in spec for spec in specs)
 
 
 @pytest.mark.parametrize('broken', [False, True])
