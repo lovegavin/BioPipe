@@ -2,6 +2,7 @@ import {
   ArrowsDownUp,
   ArrowsIn,
   Atom,
+  BatteryFull,
   Brain,
   ChartBar,
   ChartLine,
@@ -11,6 +12,8 @@ import {
   Columns,
   Database,
   Dna,
+  File,
+  File,
   Funnel,
   Intersect,
   ListBullets,
@@ -43,6 +46,7 @@ import type { IconProps } from "@phosphor-icons/react";
 import type { ComponentType } from "react";
 import { categoryLabel } from "./operatorPresentation";
 const icons: Record<string, ComponentType<IconProps>> = {  Atom,
+  BatteryFull,
   Brain,
   Cube,
   Flask,
