@@ -257,7 +257,7 @@ def ensure_requirements(specs, request, bundle=None):
             raise RuntimeError('pip install failed after the wheel and source attempts:\n' + tail)
     if not _ensure_python_extras(constraints):
         print('some light operator extras could not be installed', flush=True)
-    if not _ensure_isolated_environments(prefix):
+    if not _ensure_isolated_environments(Path(sys.prefix).resolve()):
         print('an isolated operator environment could not be prepared', flush=True)
     if not _ensure_isolated_extras():
         print(
