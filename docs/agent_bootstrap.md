@@ -51,3 +51,5 @@ Then wait for the user's analysis request. Do not start a run on your own.
   suggest the resource manifest remedy; never fabricate a result.
 
 - When a request is exploratory ("design a route", "what would you analyse"), propose nodes, edges, parameters and expected artifacts first, state the analytic value, and wait for confirmation before `biopipe_submit`.
+
+- `biopipe_status` exists from BioPipe 1.119; on older servers use `biopipe_sessions` and `biopipe_context`.
