@@ -87,11 +87,14 @@ def test_setup_status_remains_responsive_while_connect_is_busy(tmp_path):
 
 
 def test_deployment_requirements_include_all_current_provider_dependencies():
-    from biopipe.remote.install_linux import requirements
-    specs, entries = requirements(ROOT)
+    from biopipe.remote import install_linux as installer
+    specs, entries = installer.requirements(ROOT)
     assert {'pairtools==1.1.2', 'cooltools==0.7.1', 'pandas==2.2.3'} <= set(specs)
     assert {'build_contacts', 'analyze_contacts', 'align_reads'} <= {d['id'] for d in entries}
-    assert all(set(entry.get('dependencies', [])) <= set(specs) for entry in entries)
+    from packaging.requirements import Requirement
+    conda_provided = {name.lower() for name in installer.CONDA_PROVIDED}
+    assert all({dep for dep in entry.get('dependencies', [])
+                if Requirement(dep).name.lower() not in conda_provided} <= set(specs) for entry in entries)
 
 
 @pytest.mark.parametrize('broken', [False, True])
@@ -166,3 +169,53 @@ def test_native_bootstrap_installs_a_cxx_toolchain():
     source = Path(module.__file__).read_text()
     assert 'gxx_linux-64' in source
     assert 'cmake' in source and 'make' in source
+
+def test_installer_skips_conda_only_packages_and_pins_build_fragile_sdists(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    from biopipe.remote import install_linux as installer
+
+    specs, _ = installer.requirements(ROOT)
+    assert not any(spec.lower().startswith('pdbfixer') for spec in specs)
+
+    monkeypatch.setattr(installer.metadata, 'version', lambda name: '1.0')
+    calls = []
+    constraints_seen = []
+
+    def run(command, **kwargs):
+        if 'check' in command:
+            return SimpleNamespace(returncode=1, stdout='', stderr='')
+        calls.append(list(command))
+        if '--constraint' in command:
+            constraints_seen.append(Path(command[command.index('--constraint') + 1]).read_text())
+        return SimpleNamespace(returncode=0, stdout='', stderr='')
+
+    monkeypatch.setattr(installer.subprocess, 'run', run)
+    installer.ensure_requirements(['pyarrow>=14'], tmp_path / 'requirements.txt')
+    assert len(calls) == 1
+    assert 'pyarrow<22' in constraints_seen[0]
+    assert 'libcst<1.8' in constraints_seen[0]
+
+
+def test_installer_source_fallback_prefers_binaries_and_keeps_constraints(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    from biopipe.remote import install_linux as installer
+
+    monkeypatch.setattr(installer.metadata, 'version', lambda name: '1.0')
+    calls = []
+
+    def run(command, **kwargs):
+        if 'check' in command:
+            return SimpleNamespace(returncode=1, stdout='', stderr='')
+        calls.append(list(command))
+        if '--only-binary=:all:' in command:
+            return SimpleNamespace(returncode=1, stdout='no wheel', stderr='')
+        return SimpleNamespace(returncode=0, stdout='', stderr='')
+
+    monkeypatch.setattr(installer.subprocess, 'run', run)
+    installer.ensure_requirements(['pyarrow>=14'], tmp_path / 'requirements.txt')
+    assert len(calls) == 2
+    assert '--only-binary=:all:' in calls[0]
+    assert '--prefer-binary' in calls[1]
+    assert '--only-binary=:all:' not in calls[1]
+    for command in calls:
+        assert '--constraint' in command

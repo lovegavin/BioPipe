@@ -9,6 +9,8 @@ import subprocess
 import sys
 import tomllib
 
+from packaging.requirements import Requirement
+
 PIP_INDEX = (
     '-i', 'https://pypi.tuna.tsinghua.edu.cn/simple',
     '--trusted-host', 'pypi.tuna.tsinghua.edu.cn',
@@ -17,6 +19,11 @@ PIP_TRANSFER = (
     '--disable-pip-version-check', '--progress-bar', 'off',
     '--retries', '5', '--timeout', '60',
 )
+PIP_CONSTRAINTS = (
+    'pyarrow<22',   # newer sdists drop the cp311 wheel and need Arrow C++
+    'libcst<1.8',   # newer sdists are Rust builds; 1.7 ships cp311 wheels
+)
+CONDA_PROVIDED = frozenset({'pdbfixer'})  # conda-only package, no PyPI release
 
 
 def requirements(code):
@@ -24,16 +31,23 @@ def requirements(code):
     manifest = json.loads((code / 'biopipe/builtin_packages.json').read_text(encoding='utf-8'))
     entries = [d for p in manifest['packages'] for d in p['descriptors']]
     specs = sorted(set(project['dependencies']) | {r for d in entries for r in d.get('dependencies', [])})
+    # pdbfixer is published on conda-forge only; installing it with pip aborts
+    # the whole resolve. The managed micromamba environment provides it.
+    specs = [spec for spec in specs if Requirement(spec).name.lower() not in CONDA_PROVIDED]
     hic = [line.strip() for line in (code / 'requirements-hic-linux.txt').read_text().splitlines()
            if line.strip() and not line.startswith('#')]
     return specs + hic, entries
 
 
-def pip_command(request, wheel_only):
+def pip_command(request, wheel_only, constraints=None):
     """Build a mirror-first pip command, optionally restricted to wheels."""
     command = [sys.executable, '-I', '-m', 'pip', '--isolated', 'install', *PIP_TRANSFER, *PIP_INDEX]
     if wheel_only:
         command.append('--only-binary=:all:')
+    else:
+        command.append('--prefer-binary')
+    if constraints is not None:
+        command.extend(['--constraint', str(constraints)])
     command.extend(['-r', str(request)])
     return command
 
@@ -55,8 +69,8 @@ def compiler_environment():
     return environment
 
 
-def _install(request, wheel_only, environment):
-    command = pip_command(request, wheel_only)
+def _install(request, wheel_only, environment, constraints=None):
+    command = pip_command(request, wheel_only, constraints)
     result = subprocess.run(command, capture_output=True, text=True, env=environment)
     if result.returncode:
         tail = (getattr(result, 'stdout', '') or '') + (getattr(result, 'stderr', '') or '')
@@ -78,6 +92,8 @@ def ensure_requirements(specs, request):
         except metadata.PackageNotFoundError:
             missing.append(spec)
     request.write_text('\n'.join(specs) + '\n', encoding='utf-8')
+    constraints = request.with_name('pip-constraints.txt')
+    constraints.write_text('\n'.join(PIP_CONSTRAINTS) + '\n', encoding='utf-8')
     health = subprocess.run([sys.executable, '-I', '-m', 'pip', 'check'], capture_output=True, text=True)
     if missing or health.returncode:
         print(f'Repairing dependencies ({len(missing)} direct requirements missing or incompatible)', flush=True)
@@ -85,13 +101,13 @@ def ensure_requirements(specs, request):
         # NumPy-1 Hi-C builds then replace NumPy underneath their binary ABI.
         # micromamba supplies Python, native tools and the build compilers.
         environment = compiler_environment()
-        status, tail = _install(request, True, environment)
+        status, tail = _install(request, True, environment, constraints)
         if status:
             print('No prebuilt wheel for the whole requirement set; '
                   'retrying with the bundled C/C++ toolchain', flush=True)
             if tail:
                 print(tail, flush=True)
-            status, tail = _install(request, False, environment)
+            status, tail = _install(request, False, environment, constraints)
         if status:
             raise RuntimeError('pip install failed after the wheel and source attempts:\n' + tail)
 
