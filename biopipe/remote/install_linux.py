@@ -25,6 +25,8 @@ PIP_CONSTRAINTS = (
 # pdbfixer needs openmm>=8.2, and PyPI ships openmm 8.1.1 wheels built for NumPy 1;
 # MD/energy operators are an optional conda-forge extra (see docs/agent_environment_repair.md).
 CONDA_PROVIDED = frozenset({'pdbfixer', 'openmm'})
+# Missing imports for these extras are reported, not fatal for the install.
+OPTIONAL_MODULES = ('pdbfixer', 'openmm')
 
 
 def requirements(code):
@@ -107,6 +109,18 @@ def _requirement_class():
     return Requirement
 
 
+
+def split_failures(results):
+    """Separate mandatory dependency failures from missing optional extras."""
+    failed = {key: value['error'] for key, value in results.items() if value['status'] != 'passed'}
+    optional = {
+        key: error for key, error in failed.items()
+        if any(name in error.lower() for name in OPTIONAL_MODULES)
+    }
+    required = {key: error for key, error in failed.items() if key not in optional}
+    return required, optional
+
+
 def ensure_requirements(specs, request, bundle=None):
     """Repair the complete dependency graph, including missing transitive libraries."""
     Requirement = _requirement_class()
@@ -163,9 +177,15 @@ def main():
     subprocess.run([sys.executable, '-I', '-m', 'pip', 'check'], check=True)
     from biopipe.dependencies import probe
     results = probe(entries)
-    failed = {k: v['error'] for k, v in results.items() if v['status'] != 'passed'}
-    if failed:
-        raise ValueError('Operator dependency checks failed: ' + json.dumps(failed))
+    required, optional = split_failures(results)
+    if required:
+        raise ValueError('Operator dependency checks failed: ' + json.dumps(required))
+    if optional:
+        print(
+            'Optional OpenMM extras are not installed; MD/energy operators need '
+            'the conda-forge openmm and pdbfixer packages',
+            flush=True,
+        )
     for name, command, allowed in [
         ('bwa', ['bwa'], (1,)), ('samtools', ['samtools', '--version'], (0,)),
         ('pairtools', ['pairtools', '--version'], (0,)), ('cooler', ['cooler', '--version'], (0,)),

@@ -221,3 +221,16 @@ def test_installer_source_fallback_prefers_binaries_and_keeps_constraints(monkey
     assert '--only-binary=:all:' not in calls[1]
     for command in calls:
         assert '--constraint' in command
+
+def test_split_failures_keeps_openmm_extras_non_fatal():
+    from biopipe.remote.install_linux import split_failures
+
+    results = {
+        'structure_openmm_energy': {'status': 'failed', 'error': "No module named 'openmm'"},
+        'structure_md_rmsf': {'status': 'failed', 'error': "No module named 'pdbfixer'"},
+        'sequence_net_charge': {'status': 'passed', 'error': ''},
+        'structure_rmsd': {'status': 'failed', 'error': 'numpy missing'},
+    }
+    required, optional = split_failures(results)
+    assert list(required) == ['structure_rmsd']
+    assert set(optional) == {'structure_openmm_energy', 'structure_md_rmsf'}
