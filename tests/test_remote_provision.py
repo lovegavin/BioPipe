@@ -133,7 +133,8 @@ def test_native_bootstrap_does_not_mix_conda_and_pip_scientific_abis(monkeypatch
     result = module.provision(None, {}, lambda text: None, threading.Event(), ROOT)
     script = next(data.decode() for name, data in uploaded.items() if name.endswith('.sh'))
     native = next(line for line in script.splitlines() if '"$bp_action"' in line)
-    assert 'python=3.11' in native and 'samtools=1.22.1' in native
+    assert '--strict-channel-priority python=3.11 pip bwa=0.7.19 samtools=1.22.1' in native
+    assert '"python=3.11 pip' not in native and "'python=3.11 pip" not in native
     assert 'gxx_linux-64' not in native and 'pdbfixer' not in native
     assert 'cooltools=' not in native and 'numpy=' not in native and 'pandas=' not in native
     assert 'PATH=' in script and 'install_linux.py' in script
