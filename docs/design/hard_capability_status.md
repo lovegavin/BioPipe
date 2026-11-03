@@ -344,7 +344,13 @@ to fill a batch.
 
 ## Open incompatibility: ESM-3 on the managed server runtime
 
-ESM-3 (`esm3_sequence_generation`) requires Python >= 3.12 and torch >= 2.11.
+ESM-3 now runs through the dedicated-environment bridge
+(`biopipe.env_worker` + `proxy_step`): the runner never imports the model in the
+host interpreter, and `tests/test_environments.py` covers the bridge. A real
+generation was verified locally through the bridge
+(`MKTAYIAKQR________` + 2 steps -> `MKTAYIAKQRLLLIALTL`, 18 residues).
+
+`esm3_sequence_generation` requires Python >= 3.12 and torch >= 2.11.
 The managed server environment is Python 3.11 with torch 2.6, so the operator
 cannot share it. AntiFold had the same class of conflict and is now solved with
 a dedicated interpreter (`resources.environment = "antifold"`, resolved by

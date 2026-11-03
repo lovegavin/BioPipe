@@ -44,7 +44,7 @@
       ],
       "requirements": [
         "torch>=2.11,<2.12",
-        "triton==3.6.*; sys_platform == 'linux' and platform_machine == 'x86_64'",
+        "transformers<5",
         "huggingface_hub",
         "cloudpathlib",
         "einops",
@@ -57,6 +57,8 @@
         "pandas",
         "scipy",
         "tqdm",
+        "brotli",
+        "msgpack-numpy",
         "meson-python",
         "ninja",
         "cython"
@@ -64,7 +66,7 @@
       "no_deps": [
         "esm @ git+https://github.com/evolutionaryscale/esm.git"
       ],
-      "notes": "ESM 3.4 requires Python >= 3.12 and torch >= 2.11; the shared 3.11/torch 2.6 runtime cannot host it. The environment is declared so the installer can prepare it; in-process operators still need a subprocess execution bridge before they can use it.",
+      "notes": "ESM 3.4 requires Python >= 3.12 and torch >= 2.11. The bridge runs all esm3_* operators in this interpreter. On hosts whose glibc predates 2.28 (for example the CentOS-7 class server licai-srv-node80, glibc 2.17) the torch 2.9/2.11 manylinux_2_28 wheels are rejected, so this environment cannot be built there; ESM-3 then runs on a modern host.",
       "wired": true
     }
   }
