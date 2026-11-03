@@ -6010,6 +6010,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_communication_path",
+    "kind": "operator",
+    "title": "动态通讯路径",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Build a dynamic cross-correlation matrix from a trajectory and extract the shortest allosteric communication path between two residues.",
+    "doc": "src/task/step/steps/structure_md_communication_path.StructureMdCommunicationPathStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_md_conformational_clusters",
     "kind": "operator",
     "title": "构象聚类",
