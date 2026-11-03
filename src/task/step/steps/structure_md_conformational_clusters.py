@@ -61,7 +61,7 @@ class StructureMdConformationalClustersStep(Step):
             "distance cutoff; report cluster membership and distance to cluster centre."
         ),
         "category": "Structure",
-        "icon": "SquaresFour",
+        "icon": "CirclesThree",
         "contracts": {
             "version": 1,
             "inputs": [],
