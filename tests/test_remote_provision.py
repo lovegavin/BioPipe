@@ -131,7 +131,8 @@ def test_native_bootstrap_does_not_mix_conda_and_pip_scientific_abis(monkeypatch
     result = module.provision(None, {}, lambda text: None, threading.Event(), ROOT)
     script = next(data.decode() for name, data in uploaded.items() if name.endswith('.sh'))
     native = next(line for line in script.splitlines() if '"$bp_action"' in line)
-    assert 'c-compiler' in native and 'samtools=1.22.1' in native
+    assert 'python=3.11' in native and 'samtools=1.22.1' in native
+    assert 'gxx_linux-64' not in native and 'pdbfixer' not in native
     assert 'cooltools=' not in native and 'numpy=' not in native and 'pandas=' not in native
     assert 'run -p' in script and 'install_linux.py' in script
     assert result['workspace'] == '/home/test/.local/share/biopipe/workspace'
@@ -163,19 +164,22 @@ def test_installer_prefers_mirror_wheels_and_falls_back_to_source(monkeypatch, t
     assert 'CC' in (installer.compiler_environment())
 
 
-def test_native_bootstrap_installs_a_cxx_toolchain():
-    from biopipe.remote import provision as module
+def test_cxx_toolchain_is_installed_only_for_source_builds():
+    from biopipe.remote import install_linux as module
 
     source = Path(module.__file__).read_text()
     assert 'gxx_linux-64' in source
     assert 'cmake' in source and 'make' in source
+    assert 'BIOPIPE_MAMBA' in source
 
 def test_installer_skips_conda_only_packages_and_pins_build_fragile_sdists(monkeypatch, tmp_path):
     from types import SimpleNamespace
     from biopipe.remote import install_linux as installer
 
     specs, _ = installer.requirements(ROOT)
-    assert not any(spec.lower().startswith('pdbfixer') for spec in specs)
+    assert any(spec.lower().startswith('pdbfixer') for spec in specs)
+    bundled = ROOT / 'biopipe' / 'bundled'
+    assert any(bundled.glob('pdbfixer-*.whl'))
 
     monkeypatch.setattr(installer.metadata, 'version', lambda name: '1.0')
     calls = []

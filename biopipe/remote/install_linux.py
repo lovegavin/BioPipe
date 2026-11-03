@@ -9,7 +9,6 @@ import subprocess
 import sys
 import tomllib
 
-from packaging.requirements import Requirement
 
 PIP_INDEX = (
     '-i', 'https://pypi.tuna.tsinghua.edu.cn/simple',
@@ -23,7 +22,8 @@ PIP_CONSTRAINTS = (
     'pyarrow<22',   # newer sdists drop the cp311 wheel and need Arrow C++
     'libcst<1.8',   # newer sdists are Rust builds; 1.7 ships cp311 wheels
 )
-CONDA_PROVIDED = frozenset({'pdbfixer'})  # conda-only package, no PyPI release
+# pdbfixer has no PyPI release: a pure-Python wheel is published in biopipe/bundled.
+CONDA_PROVIDED = frozenset()
 
 
 def requirements(code):
@@ -33,13 +33,12 @@ def requirements(code):
     specs = sorted(set(project['dependencies']) | {r for d in entries for r in d.get('dependencies', [])})
     # pdbfixer is published on conda-forge only; installing it with pip aborts
     # the whole resolve. The managed micromamba environment provides it.
-    specs = [spec for spec in specs if Requirement(spec).name.lower() not in CONDA_PROVIDED]
     hic = [line.strip() for line in (code / 'requirements-hic-linux.txt').read_text().splitlines()
            if line.strip() and not line.startswith('#')]
     return specs + hic, entries
 
 
-def pip_command(request, wheel_only, constraints=None):
+def pip_command(request, wheel_only, constraints=None, bundle=None):
     """Build a mirror-first pip command, optionally restricted to wheels."""
     command = [sys.executable, '-I', '-m', 'pip', '--isolated', 'install', *PIP_TRANSFER, *PIP_INDEX]
     if wheel_only:
@@ -48,6 +47,8 @@ def pip_command(request, wheel_only, constraints=None):
         command.append('--prefer-binary')
     if constraints is not None:
         command.extend(['--constraint', str(constraints)])
+    if bundle is not None and Path(bundle).is_dir():
+        command.extend(['--find-links', str(bundle)])
     command.extend(['-r', str(request)])
     return command
 
@@ -69,8 +70,8 @@ def compiler_environment():
     return environment
 
 
-def _install(request, wheel_only, environment, constraints=None):
-    command = pip_command(request, wheel_only, constraints)
+def _install(request, wheel_only, environment, constraints=None, bundle=None):
+    command = pip_command(request, wheel_only, constraints, bundle)
     result = subprocess.run(command, capture_output=True, text=True, env=environment)
     if result.returncode:
         tail = (getattr(result, 'stdout', '') or '') + (getattr(result, 'stderr', '') or '')
@@ -78,9 +79,34 @@ def _install(request, wheel_only, environment, constraints=None):
     return 0, ''
 
 
-def ensure_requirements(specs, request):
+def _ensure_compilers():
+    """Install the conda-forge toolchain only when a source build is needed."""
+    mamba = os.environ.get('BIOPIPE_MAMBA')
+    if not mamba or not Path(mamba).is_file():
+        return
+    subprocess.run(
+        [mamba, '--no-rc', 'install', '-y', '-p', sys.prefix, '--override-channels',
+         '-c', 'conda-forge', 'gxx_linux-64', 'cmake', 'make'],
+        check=False,
+    )
+
+
+def _requirement_class():
+    """Return packaging.Requirement, installing packaging when the venv is bare."""
+    try:
+        from packaging.requirements import Requirement
+    except ImportError:
+        subprocess.run(
+            [sys.executable, '-I', '-m', 'pip', '--isolated', 'install', *PIP_TRANSFER, *PIP_INDEX, 'packaging'],
+            check=True,
+        )
+        from packaging.requirements import Requirement
+    return Requirement
+
+
+def ensure_requirements(specs, request, bundle=None):
     """Repair the complete dependency graph, including missing transitive libraries."""
-    from packaging.requirements import Requirement
+    Requirement = _requirement_class()
     missing = []
     for spec in specs:
         req = Requirement(spec)
@@ -101,13 +127,15 @@ def ensure_requirements(specs, request):
         # NumPy-1 Hi-C builds then replace NumPy underneath their binary ABI.
         # micromamba supplies Python, native tools and the build compilers.
         environment = compiler_environment()
-        status, tail = _install(request, True, environment, constraints)
+        status, tail = _install(request, True, environment, constraints, bundle)
         if status:
             print('No prebuilt wheel for the whole requirement set; '
                   'retrying with the bundled C/C++ toolchain', flush=True)
             if tail:
                 print(tail, flush=True)
-            status, tail = _install(request, False, environment, constraints)
+            _ensure_compilers()
+            environment = compiler_environment()
+            status, tail = _install(request, False, environment, constraints, bundle)
         if status:
             raise RuntimeError('pip install failed after the wheel and source attempts:\n' + tail)
 
@@ -123,7 +151,7 @@ def main():
     if sys.platform != 'linux' or not prefix.name.startswith('env-') or prefix.parent.name != 'managed-v1':
         raise ValueError('Installer only writes to a BioPipe managed Linux environment')
     specs, entries = requirements(code)
-    ensure_requirements(specs, prefix / 'biopipe-requirements.txt')
+    ensure_requirements(specs, prefix / 'biopipe-requirements.txt', code / 'biopipe' / 'bundled')
     # Install the SDK distribution metadata (without altering the dependency plan).
     receipt = prefix / 'biopipe-ready.json'
     previous = json.loads(receipt.read_text()) if receipt.exists() else {}
