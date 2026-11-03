@@ -37,10 +37,6 @@ EXTRA_PIP = ('pdb2pqr', 'ViennaRNA')
 # distributions without forcing their resolver into the environment, then let
 # the dependency probe import them.
 EXTRA_NO_DEPS = ()  # conflicting model packages live in declared environments
-# Large model packages whose pins over-constrain shared runtimes: install the
-# distributions without forcing their resolver into the environment, then let
-# the dependency probe import them.
-EXTRA_NO_DEPS = ()  # conflicting model packages live in declared environments
 
 
 def requirements(code):
@@ -48,7 +44,11 @@ def requirements(code):
     manifest = json.loads((code / 'biopipe/builtin_packages.json').read_text(encoding='utf-8'))
     entries = [d for p in manifest['packages'] for d in p['descriptors']]
     Requirement = _requirement_class()
-    specs = sorted(set(project['dependencies']) | {r for d in entries for r in d.get('dependencies', [])})
+    # Operators with a declared environment own their dependency pins; installing them
+    # into the shared interpreter is exactly what breaks `pip check` (Boltz pins
+    # pyyaml/requests/scipy, AntiFold pins NumPy 1.26).
+    shared = [d for d in entries if not (d.get('resources') or {}).get('environment')]
+    specs = sorted(set(project['dependencies']) | {r for d in shared for r in d.get('dependencies', [])})
     specs = [spec for spec in specs if Requirement(spec).name.lower() not in CONDA_PROVIDED]
     # pdbfixer is published on conda-forge only; installing it with pip aborts
     # the whole resolve. The managed micromamba environment provides it.
