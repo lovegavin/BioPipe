@@ -350,7 +350,10 @@ host interpreter, and `tests/test_environments.py` covers the bridge. A real
 generation was verified locally through the bridge
 (`MKTAYIAKQR________` + 2 steps -> `MKTAYIAKQRLLLIALTL`, 18 residues).
 
-`esm3_sequence_generation` requires Python >= 3.12 and torch >= 2.11.
+`esm3_sequence_generation` requires Python >= 3.12. On the CentOS-7 class
+server the newest installable torch is 2.6.0 (manylinux_2_17), so the bridge
+pins **Python 3.12 + torch 2.6.0 + ESM 3.2.2** there; ESM 3.4's `torch>=2.11`
+pin is not satisfiable on that OS.
 The managed server environment is Python 3.11 with torch 2.6, so the operator
 cannot share it. AntiFold had the same class of conflict and is now solved with
 a dedicated interpreter (`resources.environment = "antifold"`, resolved by
