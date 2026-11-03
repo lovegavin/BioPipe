@@ -341,3 +341,13 @@ to fill a batch.
 - GNM/ANM implemented in NumPy and cross-checked against ProDy on 1MEL chain A
   (132 CA): GNM MSF agreement 1e-5, ANM 1e-4; ANM 6 rigid-body zero modes;
   689 operators / 101 Readers.
+
+## Open incompatibility: ESM-3 on the managed server runtime
+
+ESM-3 (`esm3_sequence_generation`) requires Python >= 3.12 and torch >= 2.11.
+The managed server environment is Python 3.11 with torch 2.6, so the operator
+cannot share it. AntiFold had the same class of conflict and is now solved with
+a dedicated interpreter (`resources.environment = "antifold"`, resolved by
+`biopipe.environments`). ESM-3 needs the same mechanism plus a subprocess
+execution bridge for in-process operators; until that ships the dependency probe
+correctly reports it as unavailable instead of hiding it behind a warning.
