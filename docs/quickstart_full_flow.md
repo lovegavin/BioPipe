@@ -93,7 +93,8 @@ Studio 里 **Agent 面板** 会用当前解释器和 profile 生成可直接粘�
 环境目录：`~/.local/share/biopipe/managed-v1/`（或连接时指定的 base），
 日志 `setup-*.log`，完成标志 `env-*/biopipe-ready.json`。
 
-首次安装需要下载 Python 依赖，耗时与网络有关；之后连接复用已有环境。服务器上
+首次安装需要下载约 8–12 GB 的 Python 依赖（PyTorch 等），上行 1–3 MB/s 时
+约 1–2 小时；断线重跑会复用 `~/.cache/pip`，之后连接直接复用已有环境。服务器上
 `openmm`/`pdbfixer`（MD/能量算子）与 `antifold`（NumPy 1.26 冲突）是可选附加，
 未安装时算子会给明确提示，不影响其余流程。
 

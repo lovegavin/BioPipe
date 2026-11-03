@@ -5,6 +5,19 @@ dependency or a missing weight/database, and has to repair the host before the
 task can run. It is deliberately command-oriented: every step below is a
 command the agent can execute and verify.
 
+## 安装规模与耗时
+
+首次托管的 Linux 安装会下载完整的 Python 依赖（PyTorch、科学计算栈、模型封装
+等），**下载量约 8–12 GB**。在服务器上行 1–3 MB/s 时通常需要 1–2 小时；桌面端
+断线不会丢失进度，重连或重跑安装会复用 `~/.cache/pip` 缓存。
+
+- 进度看缓存增长：`du -sh ~/.cache/pip`（目标环境 `site-packages` 在下载阶段
+  结束后才快速增长）。
+- 不要清理 `~/.cache/pip` 或 `managed-v1/mamba-cache`，否则重装会从头下载。
+- 需要更快时，可在桌面端用离线方式预置 wheel 目录（`--from-dir`），或让服务器
+  管理员提供内网 PyPI 镜像，然后在安装器里替换 `-i` 索引地址。
+- 安装完成后 `env-*/` 约 6–9 GB（含 CUDA 版 PyTorch）。
+
 ## 快速检查：服务器能否连上并安装
 
 桌面端连接远程服务器时，先在**能上网的机器**上确认 SSH（Windows 用户直接用系统
