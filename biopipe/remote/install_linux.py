@@ -226,6 +226,7 @@ def _ensure_isolated_environments(prefix):
             if subprocess.run(install, env=env, check=False).returncode:
                 ok = False
         requirements = entry.get('requirements') or []
+        direct = entry.get('pip_pypi') or []
         if entry.get('torch_cpu'):
             install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, 'torch',
                        '--index-url', 'https://download.pytorch.org/whl/cpu']
@@ -240,7 +241,6 @@ def _ensure_isolated_environments(prefix):
             install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--only-binary=:all:', *PIP_INDEX, *wheels]
             if subprocess.run(install, check=False).returncode:
                 ok = False
-        direct = entry.get('pip_pypi') or []
         if requirements:
             install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, *requirements]
             if subprocess.run(install, check=False).returncode:
