@@ -64,13 +64,14 @@ def test_run_round_trip(tmp_path, monkeypatch):
     form = encode_sequences(["MKVLA", "GGGS"], "sequence", "position", "protein")
     script = tmp_path / "boltz.py"
     script.write_text(
-        "#!" + sys.executable + "\n"
+        "#!/usr/bin/env python\n"
         "import json, pathlib, sys\n"
         "out = pathlib.Path(sys.argv[sys.argv.index('--out_dir') + 1])\n"
         "pred = out / 'predictions' / 'job'\n"
         "pred.mkdir(parents=True)\n"
         "(pred / 'job_model_0.pdb').write_text(" + repr(_FIXTURE) + ")\n"
-        "(pred / 'confidence_job_model_0.json').write_text(json.dumps({'iptm': 0.5, 'ptm': 0.4, 'complex_plddt': 0.8, 'pair_chains_iptm': {'0': {'1': 0.5}}}))\n"
+        "(pred / 'confidence_job_model_0.json').write_text(json.dumps({'iptm': 0.5, 'ptm': 0.4, 'complex_plddt': 0.8, 'pair_chains_iptm': {'0': {'1': 0.5}}}))\n",
+        encoding="utf-8",
     )
     script.chmod(0o755)
     ctx = Context(str(tmp_path / "task"), {"params": {}})
