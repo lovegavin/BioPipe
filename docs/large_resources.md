@@ -263,3 +263,42 @@ with `BIOPIPE_ENV_ANTIFOLD=/path/to/python` or the `python_executable` parameter
 Place the 541 MB weights at
 `<prefix>/external/antifold/lib/python3.11/site-packages/antifold/trained_models/model.pt`
 (download URL in `biopipe/environments.json`).
+
+## Multi-environment operators (resolution and overrides)
+
+Operators whose upstream pins cannot coexist with the shared runtime declare
+`resources.environment = "<name>"`; the list lives in `biopipe/environments.json`.
+
+Resolution order for `<name>`:
+
+1. `BIOPIPE_ENV_<NAME>` — absolute path to that interpreter.
+2. `BIOPIPE_ENVIRONMENTS_ROOT` / `<name>` (defaults to `<prefix>/external/<name>`),
+   using `bin/python` on POSIX and `Scripts/python.exe` on Windows.
+
+The runner resolves the environment before importing the operator, then executes
+it through `biopipe.env_worker` in that interpreter: input Forms are written as
+`.npy` plus JSON metadata (label encoders as mappings), the worker returns the
+output Form the same way, and the host process never imports the conflicting
+modules. The child process receives `PYTHONPATH=<BIOPIPE_CODE_ROOT or detected
+source tree>` and `HF_ENDPOINT` (default `https://hf-mirror.com`) so weight
+downloads work behind a blocked Hugging Face.
+
+Inspect and verify:
+
+```bash
+python -m biopipe.environments --json
+python -m biopipe.environments            # OK/FAIL per environment
+```
+
+Per-operator table (generated pages also print the environment):
+
+| Operator | Environment | Interpreter pins | Weight / data |
+| --- | --- | --- | --- |
+| `antifold_design`, `antifold_score` | `antifold` | Python 3.11, NumPy 1.26.4, Torch 2.3.1, Biotite 0.38, Biopython 1.83 | `antifold/trained_models/model.pt` (541 MB) |
+| `esm3_embedding`, `esm3_inverse_folding`, `esm3_fold`, `esm3_sequence_generation`, `esm3_secondary_structure`, `esm3_sasa_prediction` | `esm3` | Python 3.12, Torch 2.6+ (the bridge tolerates 3.2.2 with torch 2.6), transformers, ESM from GitHub | ESM-3 open weights via HF mirror |
+| `foldseek_align`, `foldseek_cluster` | shared | binary `foldseek` on `PATH` (`resources.external_tools`) | local database |
+| `boltz_predict`, `boltz_complex_confidence`, `boltz_affinity_summary` | shared | `boltz` package | `~/.boltz/{ccd.pkl,boltz1_conf.ckpt,boltz2_*.ckpt,mols.tar}` |
+
+`python scripts/check_resources.py` prints large-data status; `python -m
+biopipe.environments` prints interpreter status. A missing environment is a hard
+failure for its operators, never a silent fallback.

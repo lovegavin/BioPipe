@@ -90,8 +90,25 @@ import numpy as np
 
 
 def code_root() -> Path:
+    """Locate the checkout that provides both ``biopipe`` and ``src``.
+
+    Managed installs copy the package into ``site-packages`` while the sources
+    live in a sibling ``code-<digest>`` directory, so the package parent alone is
+    not enough for the worker's ``PYTHONPATH``.
+    """
+    import os
+    import sys
+    candidates = []
+    if os.environ.get("BIOPIPE_CODE_ROOT"):
+        candidates.append(Path(os.environ["BIOPIPE_CODE_ROOT"]))
     import biopipe
-    return Path(biopipe.__file__).resolve().parent.parent
+    candidates.append(Path(biopipe.__file__).resolve().parent.parent)
+    candidates.extend(Path(prefix) for prefix in sys.path if prefix)
+    candidates.extend(Path(sys.prefix).resolve().parent.glob("code-*"))
+    for candidate in candidates:
+        if (candidate / "src/task").is_dir() and (candidate / "biopipe").is_dir():
+            return candidate
+    raise RuntimeError("cannot locate the BioPipe source tree for the environment bridge")
 
 
 def _write_form(directory: Path, index: int, form) -> dict:

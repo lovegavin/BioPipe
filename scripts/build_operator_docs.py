@@ -22,6 +22,9 @@ def render(source, cls, declaration, module_doc=None):
     purpose = '\n'.join('> ' + line if line else '>' for line in purpose.splitlines())
     count = declaration.get('inputs_arity', 0)
     memory = ', '.join(declaration.get('resources', {}).get('memory_modes', ['full']))
+    environment = declaration.get('resources', {}).get('environment')
+    environment = ('This operator executes in the dedicated `' + environment + '` interpreter; see docs/large_resources.md for resolution and overrides.'
+                   if environment else 'Runs in the shared BioPipe interpreter.')
     return f'''<!-- biopipe:generated -->
 # {declaration.get('title') or name}
 
@@ -48,6 +51,10 @@ Saved routes keep their own parameter values independently of current defaults.
 Check output metadata and labels before downstream analysis. The declared output
 contract describes the representation; it does not establish biological validity
 or statistical assumptions for a particular dataset.
+
+## Runtime environment
+
+{environment}
 
 ## Limitations
 
