@@ -12,7 +12,6 @@
         "torch==2.3.1",
         "numpy==1.26.4",
         "pandas==2.2.3",
-        "biopython",
         "tqdm",
         "scipy==1.13.1"
       ],
@@ -29,6 +28,11 @@
       "conda_packages": [
         "numpy=1.26",
         "scikit-learn=1.6"
+      ],
+      "pip_wheels": [
+        "biotite==0.38",
+        "torch-geometric==2.4.0",
+        "biopython==1.83"
       ]
     },
     "esm3": {
@@ -63,11 +67,20 @@
         "ninja",
         "cython"
       ],
-      "no_deps": [
-        "esm @ git+https://github.com/evolutionaryscale/esm.git@v3.2.2"
-      ],
+      "no_deps": [],
       "notes": "Verified on licai-srv-node80 (glibc 2.17): Python 3.12, torch 2.6.0, ESM 3.2.2. torch >= 2.9 wheels need manylinux_2_28 and cannot be installed on this OS, so the bridge pins the newest compatible torch. ESM 3.4 requires torch >= 2.11 and is not installable there; the operator surface is unchanged.",
-      "wired": true
+      "wired": true,
+      "pip_wheels": [
+        "setuptools",
+        "wheel",
+        "flit-core",
+        "hatchling",
+        "tenacity",
+        "torchvision"
+      ],
+      "no_build_isolation": [
+        "esm @ git+https://github.com/evolutionaryscale/esm.git@v3.2.2"
+      ]
     },
     "boltz": {
       "title": "Boltz structure and affinity prediction",

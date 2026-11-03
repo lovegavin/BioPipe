@@ -246,6 +246,12 @@ def _ensure_isolated_environments(prefix):
             if subprocess.run(install, check=False).returncode:
                 ok = False
                 continue
+        no_build = entry.get('no_build_isolation') or []
+        if no_build:
+            pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX,
+                   '--no-build-isolation', '--no-deps', *no_build]
+            if subprocess.run(pip, check=False).returncode:
+                ok = False
         no_deps = entry.get('no_deps') or []
         if no_deps:
             pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, '--no-deps', *no_deps]
