@@ -11,6 +11,7 @@ from hashlib import sha256
 import importlib
 from importlib import metadata
 import json
+import os
 import subprocess
 from pathlib import Path
 import sys
@@ -31,8 +32,10 @@ def probe_environment(entry_id, environment, imports):
     script = ';'.join(f'import {name}' for name in names) or 'pass'
     result = subprocess.run([str(python), '-c', script], capture_output=True, text=True, timeout=300)
     if result.returncode:
-        tail = (result.stderr or result.stdout).strip().splitlines()[-1:] or ['import failed']
-        return {'status': 'failed', 'error': f'{environment}: {tail[0]}'}
+        tail = (result.stderr or result.stdout).strip().splitlines()[-3:] or ['import failed']
+        return {'status': 'failed', 'error': f'{environment}: ' + ' | '.join(tail),
+                'environment_python': str(python), 'command': f'{python} -c {script!r}',
+                'stderr': result.stderr[-2000:]}
     return {'status': 'passed', 'error': '', 'environment': str(python)}
 
 
@@ -137,10 +140,23 @@ class DependencySession:
                     output.write(json.dumps(record, ensure_ascii=False) + '\n')
 
     def _inspect(self, state, entries):
+        self._log_round(state, entries)
         if state.get('runtime_protocol') == 1:
             from biopipe.targets import inspect_entries
             return inspect_entries(state, entries, self.manager.directory / 'staging')
         return self.inspector(self.manager.python_for(state), entries, self.manager.directory / 'staging')
+
+    def _log_round(self, state, entries):
+        try:
+            python = self.manager.python_for(state)
+        except Exception:
+            python = 'unknown'
+        path = self.log.parent / 'dependency-checks.log'
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open('a', encoding='utf-8') as handle:
+            handle.write(json.dumps({'time': datetime.now(timezone.utc).isoformat(),
+                                     'python': str(python),
+                                     'ids': [entry['id'] for entry in entries]}, ensure_ascii=False) + '\n')
 
     def check(self, *, repair=True, repair_r=None):
         # Shared with source/wheel transactions so the runtime cannot change
@@ -207,4 +223,13 @@ class DependencySession:
 
 if __name__ == '__main__':
     request, response = map(Path, sys.argv[1:])
-    response.write_text(json.dumps(probe(json.loads(request.read_text(encoding='utf-8'))), ensure_ascii=False), encoding='utf-8')
+    entries = json.loads(request.read_text(encoding='utf-8'))
+    results = probe(entries)
+    log = Path(os.environ.get('BIOPIPE_DEPENDENCY_LOG', response.with_suffix('.log')))
+    log.parent.mkdir(parents=True, exist_ok=True)
+    with log.open('a', encoding='utf-8') as handle:
+        handle.write(json.dumps({'time': datetime.now(timezone.utc).isoformat(),
+                                 'python': sys.executable, 'entries': len(entries)}, ensure_ascii=False) + '\n')
+        for entry in entries:
+            handle.write(json.dumps({'id': entry['id'], **results.get(entry['id'], {})}, ensure_ascii=False) + '\n')
+    response.write_text(json.dumps(results, ensure_ascii=False), encoding='utf-8')
