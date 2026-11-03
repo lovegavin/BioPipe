@@ -24,11 +24,13 @@ PIP_CONSTRAINTS = (
 )
 # pysam wheels need glibc >= 2.28 on manylinux, so old HPC hosts get it from
 # conda-forge/bioconda together with the rest of the native stack.
+# antifold 0.3.x pins numpy==1.26.*, which conflicts with pydeseq2>=0.5 (numpy>=2);
+# it lives in a dedicated environment and is selected with python_executable.
 # pdbfixer needs openmm>=8.2, and PyPI ships openmm 8.1.1 wheels built for NumPy 1;
 # MD/energy operators are an optional conda-forge extra (see docs/agent_environment_repair.md).
-CONDA_PROVIDED = frozenset({'pdbfixer', 'openmm', 'pysam'})
+CONDA_PROVIDED = frozenset({'pdbfixer', 'openmm', 'pysam', 'antifold'})
 # Missing imports for these extras are reported, not fatal for the install.
-OPTIONAL_MODULES = ('pdbfixer', 'openmm')
+OPTIONAL_MODULES = ('pdbfixer', 'openmm', 'antifold')
 
 
 def requirements(code):

@@ -45,6 +45,21 @@ tail -40 ~/.local/share/biopipe/managed-v1/setup-*.log
 | `No module named 'packaging'` | 裸 venv 没有 packaging | 安装器会先自动补 packaging |
 | `Install curl or wget ...` | 主机缺少下载工具 | 安装 curl 或 wget 后重试 |
 
+## 可选的 antifold（独立环境）
+
+`antifold` 0.3.x 固定 `numpy==1.26.*`，而 `pydeseq2>=0.5` 需要 `numpy>=2`，两者
+无法在同一个解析里共存。默认安装不包含 antipfold；需要 AntiFold 逆向折叠时，
+单独建一个环境并把算子的 `python_executable` 指向它：
+
+```bash
+python -m venv ~/antifold-env
+~/antifold-env/bin/pip install numpy==1.26.* torch 'antifold==0.3.1'
+~/antifold-env/bin/python -m antifold.main --help   # 确认权重已随包下载
+```
+
+`antifold_design` 的 `python_executable` 填 `~/antifold-env/bin/python` 即可，其余
+链、采样参数不变。
+
 ## 开启 OpenMM 算子
 
 ## Decision tree
