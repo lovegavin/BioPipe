@@ -188,7 +188,7 @@ export PATH={q(env + '/bin')}:"$PATH"
 export PYTHONNOUSERSITE=1
 unset PYTHONPATH PYTHONHOME
 export BIOPIPE_MAMBA={q(mamba)}
-{q(mamba)} --no-rc run -p {q(env)} {q(python)} -I {q(installer)} --code {q(code)} --digest {q(digest)}
+PATH={q(env)}/bin:"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Users/梦天曦/.dsh/profiles/desktop/node_modules/@dsh-ops/bash-win32-x64/ucrt64/bin:/mnt/c/Users/梦天曦/.dsh/profiles/desktop/node_modules/@dsh-ops/bash-win32-x64/usr/bin:/mnt/c/Users/梦天曦/bin:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Users/梦天曦/AppData/Local/Programs/Python/Python310/Scripts/:/mnt/c/Users/梦天曦/AppData/Local/Programs/Python/Python310/:/mnt/c/Users/梦天曦/AppData/Local/Microsoft/WindowsApps:/mnt/c/Windows/System32:/mnt/d/PyCharm 2026.2.2/bin:/snap/bin" {q(python)} -I {q(installer)} --code {q(code)} --digest {q(digest)}
 '''
     # Redirect noisy resolver output on the server, but show bounded live lines.
     # The lock prevents two desktops from mutating the same target environment.

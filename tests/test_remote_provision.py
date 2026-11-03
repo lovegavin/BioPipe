@@ -134,7 +134,7 @@ def test_native_bootstrap_does_not_mix_conda_and_pip_scientific_abis(monkeypatch
     assert 'python=3.11' in native and 'samtools=1.22.1' in native
     assert 'gxx_linux-64' not in native and 'pdbfixer' not in native
     assert 'cooltools=' not in native and 'numpy=' not in native and 'pandas=' not in native
-    assert 'run -p' in script and 'install_linux.py' in script
+    assert 'PATH=' in script and 'install_linux.py' in script
     assert result['workspace'] == '/home/test/.local/share/biopipe/workspace'
 
 def test_installer_prefers_mirror_wheels_and_falls_back_to_source(monkeypatch, tmp_path):
