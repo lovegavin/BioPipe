@@ -45,10 +45,37 @@ python scripts/studio.py --profile-dir biopipe-v3-test
 打开 <http://127.0.0.1:8765>。首次启动会生成演示工作流。默认 profile 是
 `~/.biopipe/studio`；`--profile-dir` 用于隔离，避免影响已发布的桌面配置。
 
-## 4. 连接 MCP（首选 DeepSeek Harness）
+## 4. 连接远程服务器（可选，约 5 分钟准备）
 
-DSH 的 MCP 客户端配置在 `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch.yml`，
-BioPipe 条目形如：
+本机跑得动就跳过本节。远程服务器只需一次性准备：能 SSH 登录、有 Python 3.11+（托管模式不需要预装）。
+
+进入 **执行环境 / 服务器** 页面，按下表填写；连接成功后才会确认指纹、上传源码并安装环境。
+
+| 字段 | 含义 | 必填 / 默认 | 示例 |
+| --- | --- | --- | --- |
+| 名称 | 本机列表显示名 | 必填 | `计算服务器` |
+| 主机 | IP 或域名 | 必填 | `172.22.148.93` |
+| 端口 | SSH 端口 | 默认 `22` | `22` |
+| 用户名 | Linux 账号 | 必填 | `lihj` |
+| 服务器环境 | 托管=BioPipe 装独立环境；手动=复用已有环境 | 默认托管 | `已安装的 BioPipe 服务端` |
+| 安装目录 | 托管模式根目录；换目录即全新环境 | 可选，绝对路径 | `/public/home/lihj/biopipe-accept` |
+| BioPipe 目录 | 手动模式代码根（含 `src/`、`pyproject.toml`） | 手动必填 | `/opt/biopipe` |
+| Python | 手动模式解释器 | 手动必填，默认 `python3` | `/opt/conda/envs/biopipe/bin/python` |
+| 运行目录 | 远端任务与产物根 | 手动必填；托管留空自动创建 | `/public/home/lihj/biopipe-work` |
+| 认证方式 | 密码 / 私钥文件 / SSH Agent | 默认密码 | `私钥文件` |
+| 密码 | 仅本次会话，不落盘 | 密码认证时填 | — |
+| 本机私钥路径 | 运行前端的本机私钥，不是服务器路径 | 私钥认证时填 | `C:/Users/you/.ssh/id_rsa` |
+| 私钥口令 | 私钥口令 | 可选 | — |
+| SSH 网关 | 普通 SSH / 交互式网关 | 默认普通 | `普通 SSH` |
+| 实例编号 | 交互式网关的菜单编号 | 网关模式填 | `0` |
+
+- 路径必须为绝对 Linux 路径且不含 `..`；端口 `1–65535`。
+- 首次连接会显示主机指纹，确认后才上传源码、安装 micromamba 与依赖；完成标志 `env-*/biopipe-ready.json`，日志 `setup-*.log`。
+- 验收用全新 `安装目录`，不要复用已测环境。
+
+## 5. 连接 MCP（首选 DeepSeek Harness）
+
+DSH 的 MCP 客户端配置在 `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch.yml`：
 
 ```yaml
 - id: mcp-biopipe
@@ -56,104 +83,54 @@ BioPipe 条目形如：
   config:
     serverName: "biopipe"
     transport: "stdio"
-    command: "C:\\Users\\<you>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe"
+    command: "C:\Users\<you>\AppData\Local\Programs\Python\Python312\python.exe"
     args:
       - "-m"
       - "biopipe"
       - "--workspace"
-      - "C:\\Users\\<you>\\.biopipe\\studio\\workspace"
+      - "C:\Users\<you>\BioPipe"
       - "--data-dir"
-      - "C:\\Users\\<you>\\.biopipe\\studio\\workspace\\.studio"
+      - "C:\Users\<you>\BioPipe\.studio"
       - "mcp"
       - "--allow-run"
 ```
 
-- `--allow-run` 才允许 agent 提交运行；只读调试去掉它，加 `--read-only` 连编辑也禁止。
-- `--workspace`/`--data-dir` 必须与 Studio 的启动参数一致。
-- 修改后重启 DSH 与 Studio 生效；在 DSH 里让 agent 调 `biopipe_operator_search` 验证。
-
-其他 MCP 客户端（Cursor、Claude Desktop 等）用等价的 `mcpServers` JSON：
-
-```json
-{"mcpServers":{"biopipe":{"command":"biopipe","args":["mcp","--allow-run"]}}}
-```
-
-### 在 DeepSeek Harness 中选择工作区与权限
-
 | 项 | 建议 | 说明 |
 | --- | --- | --- |
-| 工作区 | BioPipe 代码目录（如 `D:\BioPipe`）；只做数据分析时可用专用数据目录（如 `D:\biopipe-work`） | agent 会读写该目录；不要把 `C:\Windows`、`C:\Program Files`、盘符根目录或整个用户目录设为工作区 |
-| 文件权限 | 保持默认的 workspace-write | 只允许写工作区与临时目录；不要为常规分析开启 danger-full-access |
-| MCP 权限 | `mcp --allow-run` | 允许发现算子、校验并提交运行；只读排查时去掉该参数，禁止编辑时再加 `--read-only` |
-| 插件 | 默认不加 | 只有明确安装受信插件时才加 `--allow-plugins` |
+| 工作区 | BioPipe 仓库根（如 `C:\Users\<you>\BioPipe`）或专用数据目录 | 下文的示例路线用相对路径，必须选仓库根；不要把 `C:\Windows`、盘符根、整个用户目录设为工作区 |
+| 文件权限 | 默认 `workspace-write` | 只写工作区与临时目录；不要为常规分析开 `danger-full-access` |
+| MCP 权限 | `mcp --allow-run` | 允许校验与提交运行；只读排查去掉；禁止编辑再加 `--read-only` |
+| 插件 | 默认不加 | 仅安装受信插件时加 `--allow-plugins` |
 
-- `--workspace` 与 `--data-dir` 必须指向同一套 Studio profile，否则 agent 看到的路线与画布不一致。
-- 画布协作时，先让 agent 调用 `biopipe_context` 读取当前选区；无画布（headless）时可直接提交 workflow，不需要伪造会话。
-- 数据集与产物放在工作区内；不要把 `.studio`、`tasks`、私钥或凭据放进工作区之外的路径。
+- `--workspace` 与 `--data-dir` 必须与 Studio 的启动参数一致，否则 agent 与画布看到的路由不同。
+- 改完重启 DSH 与 Studio；在 DSH 里让 agent 调 `biopipe_operator_search` 验证。
+- 其他客户端（Cursor/Claude Desktop）用等价 JSON：`{"mcpServers":{"biopipe":{"command":"biopipe","args":["mcp","--allow-run"]}}}`；Studio 的 **Agent 面板** 会按当前解释器生成可直接粘贴的配置。
 
-### 最小示例提示词
+## 6. 跑通第一条示例（真实数据，约 3 秒）
 
-把下面这段直接粘给 DSH，即可验证 MCP 全链路（搜索 → 校验 → 提交 → 查结果）：
+示例在 `examples/smoke_real_data/`：真实 1MEL 结构 + 真实 VHH 序列，无权重、无下载。
+先在终端确认环境（可选）：
 
-```text
-用 BioPipe MCP 完成一次最小验证：
-1) biopipe_operator_search 查询 "single cell" 相关算子；
-2) biopipe_workflow_prepare 校验一个只含读入与一个算子的路线，参数用默认值；
-3) biopipe_submit 提交，request_id 固定为 demo-001；
-4) 用 biopipe_job 与 biopipe_artifacts 汇报状态和产物。
-不要修改任何画布，不要更换参数。
+```bash
+python -m biopipe --workspace <BioPipe 根目录> run examples/smoke_real_data/route.json --request-id demo-001
+python -m biopipe --workspace <BioPipe 根目录> jobs get <job-id>
 ```
 
-若希望 agent 直接操作当前画布，把第 1 步换成 `biopipe_context`（读取选区与 revision），
-并明确要求“每次编辑一个事务、不自动运行”。
+然后在 DSH 中粘贴下面这段，让它用 MCP 完整跑一遍（前提：第 5 节工作区选 BioPipe 仓库根）：
 
-Studio 的 **Agent 面板** 会按当前解释器和 profile 生成可直接粘贴的配置，并显示已连接客户端。
+```text
+用 BioPipe MCP 跑通示例数据，按顺序执行：
+1) 读取工作区里的 examples/smoke_real_data/route.json；
+2) 调用 biopipe_workflow_prepare，graph 用该文件内容，require_files=true；
+3) 调用 biopipe_submit 提交，request_id 固定为 demo-001；
+4) 用 biopipe_job 轮询直到完成，再用 biopipe_artifacts 列出产物；
+5) 汇报：界面残基总数、core/rim 数量、liability 总数及分类。
+不要修改画布，不要改动任何参数。
+```
 
-## 5. 连接你自己的 Agent
+预期结果（实现回归基线）：界面残基 **99**（core **58**、rim **41**），序列 liability **10**（氧化 5、异构化 3、脱酰胺 2），总耗时约 3 秒。若数字不同，多半是工作区选错或参数被改动。
 
-把第 4 步的 JSON 放进 agent 客户端的 MCP 配置（Claude Desktop、Cursor、Continue 等
-都支持 `mcpServers`）。推荐工作流：
-
-1. `biopipe_operator_search` 找算子；
-2. `biopipe_operator_describe` 看 `inputs`/`params`（只取需要的 section）；
-3. `biopipe_workflow_save` 保存工作流；
-4. `biopipe_workflow_prepare` 校验；
-5. `biopipe_submit` 提交运行（需要 `--allow-run`）；
-6. `biopipe_jobs` / `biopipe_job` / `biopipe_logs` / `biopipe_artifacts` 跟踪与取结果。
-
-画布相关工具读取用户在 Studio 里的真实选择，按 revision 检查批量应用，每批一个撤销点。
-编辑不会自动开始运行；提交是单独动作。
-
-## 6. 连接远程服务器
-
-这一页保存的是“如何 SSH 到那台机器”。连接成功后才会上传源码、准备环境；字段本身不会触发安装。
-
-| 字段 | 含义 | 必填 / 默认 | 示例 |
-| --- | --- | --- | --- |
-| 名称 | 本机列表里显示的名字，只影响界面 | 必填 | `计算服务器` |
-| 主机 | 服务器 IP 或域名（IPv4、IPv6、主机名均可） | 必填 | `172.22.148.93` |
-| 端口 | SSH 端口 | 默认 `22` | `22` |
-| 用户名 | 登录用的 Linux 账号 | 必填 | `lihj` |
-| 服务器环境 | `已安装的 BioPipe 服务端` 由 BioPipe 在服务器用户目录安装/复用托管环境；`手动指定环境` 复用服务器上已有的 BioPipe 代码与解释器 | 默认托管 | `已安装的 BioPipe 服务端` |
-| 安装目录 · 可选 | 仅托管模式。托管环境根目录，留空为 `~/.local/share/biopipe`；换目录即全新环境，不复用旧环境 | 可选，绝对路径 | `/public/home/lihj/biopipe-accept` |
-| BioPipe 目录 | 仅手动模式。服务器上已有代码根目录（含 `pyproject.toml`、`src/`） | 手动模式必填，绝对路径 | `/opt/biopipe` |
-| Python | 仅手动模式。该环境解释器，可为绝对路径或命令名 | 手动模式必填，默认 `python3` | `/opt/conda/envs/biopipe/bin/python` |
-| 运行目录 | 远端任务与产物的根目录；托管模式可留空，默认在安装目录下创建 | 手动模式必填，绝对路径 | `/public/home/lihj/biopipe-work` |
-| 认证方式 | `密码`、`私钥文件`、`SSH Agent` | 默认密码 | `私钥文件` |
-| 密码 | 仅用于本次会话，不写入磁盘 | 密码认证时填 | — |
-| 本机私钥路径 | 运行前端那台机器上的私钥文件路径（不是服务器路径） | 私钥认证时填 | `C:/Users/you/.ssh/id_rsa` |
-| 私钥口令 | 私钥有口令时填，可留空 | 可选 | — |
-| SSH 网关 → 登录方式 | `普通 SSH` 直连；`交互式网关` 用于跳板机/带编号菜单的登录 | 默认普通 | `普通 SSH` |
-| 实例编号 | 仅交互式网关：菜单里要选的编号 | 网关模式填 | `0` |
-
-要点：
-
-- 托管模式只需 `主机 / 端口 / 用户名 / 认证`，其余留空即可；首次连接会确认主机指纹，然后上传源码、安装 micromamba 与 Python 依赖。
-- 手动模式必须提供 `BioPipe 目录`、`Python`、`运行目录`；BioPipe 不会改动该环境之外的系统路径。
-- 更换 `安装目录` 等于新建一套环境；想让新旧互不影响就填不同目录。
-- 路径字段必须是绝对 Linux 路径，不允许 `..`；所有字段禁止控制字符，端口范围 `1–65535`。
-- 已保存的连接可在“服务端维护 → 安装 / 升级服务端”里重跑安装或升级；断线重跑会复用 `~/.cache/pip`。
-- 安装完成后标志是 `env-*/biopipe-ready.json`，日志为 `setup-*.log`；验收测试请用全新目录，避免复用已测环境。
+画布场景：让 agent 先调 `biopipe_context` 读取当前选区与 revision，再按“每次编辑一个事务、不自动运行”的约定操作。
 
 ## 7. 编辑画布
 
