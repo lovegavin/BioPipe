@@ -6060,6 +6060,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_hbond_lifetime",
+    "kind": "operator",
+    "title": "氢键寿命",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Detect hydrogen bonds per frame and report residence statistics: occupancy, mean and maximum continuous lifetime, transitions and picosecond conversion.",
+    "doc": "src/task/step/steps/structure_md_hbond_lifetime.StructureMdHbondLifetimeStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_md_hbond_occupancy",
     "kind": "operator",
     "title": "MD 氢键占有率",
