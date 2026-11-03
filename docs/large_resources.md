@@ -297,7 +297,7 @@ Per-operator table (generated pages also print the environment):
 | `antifold_design`, `antifold_score` | `antifold` | Python 3.11, NumPy 1.26.4, Torch 2.3.1, Biotite 0.38, Biopython 1.83 | `antifold/trained_models/model.pt` (541 MB) |
 | `esm3_embedding`, `esm3_inverse_folding`, `esm3_fold`, `esm3_sequence_generation`, `esm3_secondary_structure`, `esm3_sasa_prediction` | `esm3` | Python 3.12, Torch 2.6+ (the bridge tolerates 3.2.2 with torch 2.6), transformers, ESM from GitHub | ESM-3 open weights via HF mirror |
 | `foldseek_align`, `foldseek_cluster` | shared | binary `foldseek` on `PATH` (`resources.external_tools`) | local database |
-| `boltz_predict`, `boltz_complex_confidence`, `boltz_affinity_summary` | shared | `boltz` package | `~/.boltz/{ccd.pkl,boltz1_conf.ckpt,boltz2_*.ckpt,mols.tar}` |
+| `boltz_predict`, `boltz_complex_confidence`, `boltz_affinity_summary` | `boltz` (validated clone of the shared stack) | same versions as the shared runtime | `~/.boltz/{ccd.pkl,boltz1_conf.ckpt,boltz2_*.ckpt,mols.tar}` |
 
 `python scripts/check_resources.py` prints large-data status; `python -m
 biopipe.environments` prints interpreter status. A missing environment is a hard
