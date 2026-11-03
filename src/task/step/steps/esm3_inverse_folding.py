@@ -114,7 +114,7 @@ class Esm3InverseFoldingStep(Step):
             "inputs": [],
             "output": {"mode": "declare", "schema": {"ndim": 2, "numeric": True, "info_open": True, "axis_info_open": False}},
         },
-        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory"},
+        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory", "environment": "esm3"},
         "dependencies": [],
         "dependency_imports": ["esm"],
         "inputs_arity": 0,

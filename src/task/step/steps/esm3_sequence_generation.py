@@ -124,7 +124,7 @@ class Esm3SequenceGenerationStep(Step):
                 },
             },
         },
-        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory"},
+        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory", "environment": "esm3"},
         "dependencies": ["torch", "esm"],
         "dependency_imports": ["torch", "esm"],
         "inputs_arity": 0,

@@ -92,7 +92,7 @@ class Esm3SasaPredictionStep(Step):
                 "schema": {"ndim": 2, "numeric": True, "info_open": True, "axis_info_open": True},
             },
         },
-        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory"},
+        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory", "environment": "esm3"},
         "dependencies": [],
         "dependency_imports": ["esm", "torch"],
         "inputs_arity": 1,

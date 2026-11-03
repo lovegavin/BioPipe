@@ -79,3 +79,104 @@ def main() -> int:
 
 if __name__ == '__main__':
     raise SystemExit(main())
+
+import json
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+import numpy as np
+
+
+def code_root() -> Path:
+    import biopipe
+    return Path(biopipe.__file__).resolve().parent.parent
+
+
+def _write_form(directory: Path, index: int, form) -> dict:
+    data_path = directory / f"input{index}.npy"
+    np.save(data_path, np.asarray(form.data))
+    meta = {"dims": list(form.dims), "labels": {k: dict(v) for k, v in form.labels.items()},
+            "info": _jsonable(form.info)}
+    (directory / f"input{index}.json").write_text(json.dumps(meta), encoding="utf-8")
+    return meta
+
+
+def _jsonable(value):
+    if hasattr(value, "mapping") and hasattr(value, "inverse"):
+        return {"__labelencoder__": dict(value.mapping)}
+    if isinstance(value, dict):
+        return {str(k): _jsonable(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_jsonable(v) for v in value]
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, float) and not np.isfinite(value):
+        return None
+    return value
+
+
+def run_step(descriptor: dict, inputs, params: dict, python: Path, *, timeout: int = 3600):
+    """Execute one step in ``python`` and return (form, export, console tail)."""
+    from src.core.errors import StepError
+    directory = Path(tempfile.mkdtemp(prefix="envbridge-"))
+    request = {"entry_point": descriptor["entry_point"], "params": params, "inputs": []}
+    for index, form in enumerate(inputs):
+        request["inputs"].append(_write_form(directory, index, form))
+    (directory / "request.json").write_text(json.dumps(request), encoding="utf-8")
+    command = [str(python), "-m", "biopipe.env_worker", str(directory)]
+    import os
+    env = {
+        "PYTHONPATH": str(code_root()),
+        "PATH": "/usr/bin:/bin",
+        "PYTHONNOUSERSITE": "1",
+        # Isolated weight downloads use the reachable mirror by default.
+        "HF_ENDPOINT": os.environ.get("HF_ENDPOINT", "https://hf-mirror.com"),
+        "HF_HOME": os.environ.get("HF_HOME", str(Path.home() / ".cache/huggingface")),
+    }
+    completed = subprocess.run(command, capture_output=True, text=True, timeout=timeout, env=env)
+    if completed.returncode:
+        tail = (completed.stderr or completed.stdout).strip().splitlines()[-6:]
+        raise StepError("environment bridge failed with exit code " + str(completed.returncode) + ": " + " | ".join(tail))
+    message = json.loads((directory / "result.json").read_text(encoding="utf-8"))
+    if "error" in message:
+        raise StepError(message["error"])
+    from src.core.forms import Form
+    data = np.load(directory / "output.npy", allow_pickle=False)
+    form = Form(data=data, dims=message["dims"], labels=message["labels"], info=message.get("info", {}))
+    return form, message.get("export", {}), "\n".join((completed.stderr or "").strip().splitlines()[-4:])
+
+
+def proxy_step(descriptor: dict):
+    """Build a Step-compatible proxy that executes in the environment interpreter."""
+    from src.task.step.base import Step
+    from src.core.errors import StepError
+
+    class EnvironmentStep(Step):
+        name = descriptor["id"]
+        input_contracts = descriptor["contracts"]["inputs"]
+        output_contract = descriptor["contracts"]["output"]
+        supports_streaming = False
+        _environment = (descriptor.get("resources") or {}).get("environment")
+
+        def __init__(self):
+            self._export_data = {}
+
+        def run(self, ctx, inputs):
+            python = resolve(self._environment)
+            if python is None:
+                raise StepError(f"{descriptor['id']}: isolated environment {self._environment!r} is not installed")
+            form, export, tail = run_step(descriptor, inputs, dict(ctx.step_params), python,
+                                          timeout=int(ctx.step_params.get("timeout_seconds", 3600)) + 60)
+            ctx[ctx.step_params["output"]] = form
+            self._export_data = export
+            if tail:
+                print(tail, file=sys.stderr)
+
+        def export(self, ctx):
+            return self._export_data
+
+    return EnvironmentStep

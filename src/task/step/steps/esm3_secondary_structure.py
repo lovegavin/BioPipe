@@ -125,7 +125,7 @@ class Esm3SecondaryStructureStep(Step):
                 },
             },
         },
-        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory"},
+        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory", "environment": "esm3"},
         "dependencies": [],
         "dependency_imports": ["esm", "torch"],
         "inputs_arity": 1,
