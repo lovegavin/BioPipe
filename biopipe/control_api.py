@@ -144,9 +144,17 @@ def mount_control(app, application, bridge):
         return application.artifacts.metadata(key, artifact_id)
 
     @app.get('/api/v1/jobs/{key}/artifacts/{artifact_id}/preview')
-    def preview(key: str, artifact_id: str, request: Request):
+    def preview(key: str, artifact_id: str, request: Request, offset: int = 0, limit: int = 100):
         authorize(request)
-        return application.artifacts.preview(key, artifact_id)
+        return application.artifacts.preview(key, artifact_id, offset=offset, limit=limit)
+
+    @app.get('/api/v1/jobs/{key}/artifacts/{artifact_id}/table')
+    def artifact_table(key: str, artifact_id: str, request: Request, offset: int = 0, limit: int = 100):
+        authorize(request)
+        value = application.artifacts.preview(key, artifact_id, offset=offset, limit=limit)
+        return {'artifact_id': artifact_id, 'columns': value.get('columns', []), 'rows': value.get('rows', []),
+                'row_labels': value.get('row_labels', []), 'total': value.get('total', 0),
+                'offset': value.get('offset', offset), 'limit': value.get('limit', limit), 'descriptor': value.get('descriptor')}
 
     @app.get('/api/v1/jobs/{key}/artifacts/{artifact_id}/file')
     def artifact_file(key: str, artifact_id: str, request: Request, role: str | None = None):

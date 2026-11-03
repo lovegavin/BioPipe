@@ -92,6 +92,16 @@ class Bridge:
             self.connections.pop(payload.get("id"), None)
             return {"revoked": True}
 
+        @app.get("/api/agent/remote")
+        def remote_status(request: Request):
+            self.actor(request, "context")
+            return service.remotes.status()
+
+        @app.post("/api/agent/remote/{key}/ensure")
+        def remote_ensure(key: str, request: Request, payload: dict | None = None):
+            self.actor(request, "run")
+            return service.remotes.ensure(key)
+
         @app.get("/api/agent/sessions")
         def sessions(request: Request):
             self.actor(request, "context")

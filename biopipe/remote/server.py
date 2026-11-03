@@ -156,7 +156,8 @@ class RemoteService:
             value = json.loads(path.read_text(encoding='utf-8'))
             return value
         if method == 'preview':
-            return service.preview(params['job_id'], params['artifact_id'])
+            return service.preview(params['job_id'], params['artifact_id'],
+                                   offset=params.get('offset', 0), limit=params.get('limit', 20))
         if method == 'output_file':
             key = params['job_id']; kind = params['kind']
             if kind == 'artifact':

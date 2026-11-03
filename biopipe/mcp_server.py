@@ -99,6 +99,22 @@ def create_server(client):
         return client.request(path)
 
     @server.tool()
+    def biopipe_artifact_table(job_id: str, artifact_id: str, offset: int = 0, limit: int = 100) -> dict:
+        """Paginated artifact table with column and row labels; works for local and ssh jobs."""
+        return client.request('/v1/jobs/' + quote(job_id, safe='') + '/artifacts/' + quote(artifact_id, safe='') + '/table?'
+                              + urlencode({'offset': offset, 'limit': limit}))
+
+    @server.tool()
+    def biopipe_remote_status() -> dict:
+        """List SSH execution profiles with their connected state."""
+        return client.request('/remote')
+
+    @server.tool()
+    def biopipe_remote_ensure(profile_id: str) -> dict:
+        """Idempotently reconnect a key/agent SSH profile before validate/prepare/run."""
+        return client.request('/remote/' + quote(profile_id, safe='') + '/ensure', {})
+
+    @server.tool()
     def biopipe_validate(graph: dict) -> dict:
         """Validate a complete route without running it. Missing node positions are automatically laid out."""
         return client.request("/validate", {"graph": graph})
