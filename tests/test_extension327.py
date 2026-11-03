@@ -79,6 +79,7 @@ def test_run_round_trip(monkeypatch, tmp_path):
     import src.task.step.steps.esm3_fold as module
 
     monkeypatch.setattr(module, "load_model", lambda name, device: _FakeModel())
+    _install_esm_stub(monkeypatch)
     form = encode_sequences(["AC"], "sequence", "position", "protein")
     ctx = Context(str(tmp_path / "task"), {"params": {}})
     ctx["sequence"] = form
