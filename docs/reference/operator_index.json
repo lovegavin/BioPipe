@@ -6150,6 +6150,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_rotamer_states",
+    "kind": "operator",
+    "title": "侧链旋转异构状态",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Classify chi1 side-chain rotamers over a trajectory and report populations, rotamer entropy and the number of state transitions.",
+    "doc": "src/task/step/steps/structure_md_rotamer_states.StructureMdRotamerStatesStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_md_salt_bridge_occupancy",
     "kind": "operator",
     "title": "MD 盐桥占有率",

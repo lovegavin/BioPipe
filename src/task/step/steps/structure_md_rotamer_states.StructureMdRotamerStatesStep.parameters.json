@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "侧链旋转异构状态参数",
+  "properties": {
+    "trajectory_path": {
+      "title": "轨迹 .npy 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "topology_path": {
+      "title": "拓扑 PDB 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "n_residues": {
+      "title": "输出残基数（0=全部）",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 5000,
+      "x-ui-group": "输出",
+      "x-ui-order": 3
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "rotamers",
+      "x-ui-group": "输出",
+      "x-ui-order": 4
+    }
+  }
+}
