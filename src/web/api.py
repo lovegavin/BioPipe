@@ -127,7 +127,7 @@ def create_app(settings=None):
     def bootstrap():
         import sys
         import platform
-        agent_args = ["-m", "biopipe", "--workspace", str(service.root), "--data-dir", str(service.directory), "mcp"]
+        agent_args = ["-m", "biopipe", "--workspace", str(service.root), "--data-dir", str(service.directory), "mcp", "--allow-run"]
         return {"token": token, "catalog": catalog, "demo": service.demo,
                 "system": platform.system().lower().replace('darwin', 'macos'),
                 "automatic_memory_fraction": AUTO_BUDGET_FRACTION,
