@@ -22,7 +22,8 @@ from packaging.requirements import Requirement
 def probe(entries):
     results = {}
     for entry in entries:
-        errors = []
+        errors, warnings = [], []
+        direct = {Requirement(value).name for value in entry.get('dependencies', [])}
         queue = list(entry.get('dependencies', []))
         seen = set()
         while queue:
@@ -36,7 +37,8 @@ def probe(entries):
             try:
                 version = metadata.version(req.name)
                 if req.specifier and not req.specifier.contains(version, prereleases=True):
-                    errors.append(f'{req}: installed {version}')
+                    target = errors if req.name in direct else warnings
+                    target.append(f'{req}: installed {version}')
                 # Validate enabled extras and transitive metadata without
                 # importing arbitrary parsers in the HTTP process.
                 for child in metadata.requires(req.name) or []:
@@ -52,7 +54,8 @@ def probe(entries):
                     importlib.import_module(name)
                 except Exception as exc:
                     errors.append(f'{name}: {type(exc).__name__}: {exc}')
-        results[entry['id']] = {'status': 'failed' if errors else 'passed', 'error': '\n'.join(errors)}
+        results[entry['id']] = {'status': 'failed' if errors else 'passed', 'error': '\n'.join(errors),
+                                'warnings': '\n'.join(warnings)}
     return results
 
 

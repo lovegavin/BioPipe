@@ -33,6 +33,14 @@ CONDA_PROVIDED = frozenset({'pdbfixer', 'openmm', 'pysam', 'antifold'})
 OPTIONAL_MODULES = ('pdbfixer', 'openmm', 'antifold', 'boltz', 'foldseek')
 # Light pure-Python or wheel-only operator extras installed after the main solve.
 EXTRA_PIP = ('pdb2pqr', 'ViennaRNA')
+# Large model packages whose pins over-constrain shared runtimes: install the
+# distributions without forcing their resolver into the environment, then let
+# the dependency probe import them.
+EXTRA_NO_DEPS = ('boltz', 'antifold')
+# Large model packages whose pins over-constrain shared runtimes: install the
+# distributions without forcing their resolver into the environment, then let
+# the dependency probe import them.
+EXTRA_NO_DEPS = ('boltz', 'antifold')
 
 
 def requirements(code):
@@ -157,6 +165,28 @@ def _ensure_python_extras(constraints=None):
 
 
 
+
+def _ensure_isolated_extras():
+    """Install large model packages without letting their pins rewrite NumPy/Torch."""
+    command = [
+        sys.executable, '-I', '-m', 'pip', '--isolated', 'install',
+        *PIP_TRANSFER, *PIP_INDEX, '--no-deps', *EXTRA_NO_DEPS,
+    ]
+    result = subprocess.run(command, check=False)
+    return result.returncode == 0
+
+
+
+def _ensure_isolated_extras():
+    """Install large model packages without letting their pins rewrite NumPy/Torch."""
+    command = [
+        sys.executable, '-I', '-m', 'pip', '--isolated', 'install',
+        *PIP_TRANSFER, *PIP_INDEX, '--no-deps', *EXTRA_NO_DEPS,
+    ]
+    result = subprocess.run(command, check=False)
+    return result.returncode == 0
+
+
 def ensure_requirements(specs, request, bundle=None):
     """Repair the complete dependency graph, including missing transitive libraries."""
     Requirement = _requirement_class()
@@ -194,6 +224,18 @@ def ensure_requirements(specs, request, bundle=None):
             raise RuntimeError('pip install failed after the wheel and source attempts:\n' + tail)
     if not _ensure_python_extras(constraints):
         print('some light operator extras could not be installed', flush=True)
+    if not _ensure_isolated_extras():
+        print(
+            'optional model packages (boltz, antifold) could not be installed; '
+            'structure-prediction operators stay gated',
+            flush=True,
+        )
+    if not _ensure_isolated_extras():
+        print(
+            'optional model packages (boltz, antifold) could not be installed; '
+            'structure-prediction operators stay gated',
+            flush=True,
+        )
     if not _ensure_conda_extras():
         print(
             'pysam could not be installed; BAM/CRAM/VCF Readers need the '
