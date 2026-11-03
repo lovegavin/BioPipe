@@ -17,6 +17,7 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 
 ## Use BioPipe
 
+- [End-to-end quick start](quickstart_full_flow.md)
 - [Installation and dependencies](installation.md)
 - [Desktop application](desktop.md)
 - [Input formats and explicit Readers](input_formats.md)
