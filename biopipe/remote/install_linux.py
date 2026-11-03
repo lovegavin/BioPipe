@@ -124,12 +124,19 @@ def _requirement_class():
 
 
 
-def split_failures(results):
-    """Separate mandatory dependency failures from missing optional extras."""
+def split_failures(results, entries=()):
+    """Separate mandatory failures from optional extras and environment-backed operators.
+
+    An operator that declares a dedicated environment must not abort the whole
+    deployment when that interpreter could not be built on the host: the shared
+    installation is still valid and the operator reports the missing environment
+    at run time.
+    """
+    isolated = {entry['id'] for entry in entries if (entry.get('resources') or {}).get('environment')}
     failed = {key: value['error'] for key, value in results.items() if value['status'] != 'passed'}
     optional = {
         key: error for key, error in failed.items()
-        if any(name in error.lower() for name in OPTIONAL_MODULES)
+        if key in isolated or any(name in error.lower() for name in OPTIONAL_MODULES)
     }
     required = {key: error for key, error in failed.items() if key not in optional}
     return required, optional
@@ -222,6 +229,10 @@ def _ensure_isolated_environments(prefix):
             pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, '--no-deps', *no_deps]
             if subprocess.run(pip, check=False).returncode:
                 ok = False
+        from biopipe.environments import probe as probe_environment
+        passed, interpreter, error = probe_environment(name)
+        print(f'isolated environment {name}: ' + ('ready' if passed else 'unavailable: ' + error), flush=True)
+        ok = ok and passed
     return ok
 
 
@@ -304,7 +315,7 @@ def main():
     subprocess.run([sys.executable, '-I', '-m', 'pip', 'check'], check=True)
     from biopipe.dependencies import probe
     results = probe(entries)
-    required, optional = split_failures(results)
+    required, optional = split_failures(results, entries)
     if required:
         raise ValueError('Operator dependency checks failed: ' + json.dumps(required))
     if optional:
