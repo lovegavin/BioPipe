@@ -30,7 +30,9 @@ PIP_CONSTRAINTS = (
 # MD/energy operators are an optional conda-forge extra (see docs/agent_environment_repair.md).
 CONDA_PROVIDED = frozenset({'pdbfixer', 'openmm', 'pysam', 'antifold'})
 # Missing imports for these extras are reported, not fatal for the install.
-OPTIONAL_MODULES = ('pdbfixer', 'openmm', 'antifold')
+OPTIONAL_MODULES = ('pdbfixer', 'openmm', 'antifold', 'boltz', 'foldseek')
+# Light pure-Python or wheel-only operator extras installed after the main solve.
+EXTRA_PIP = ('pdb2pqr', 'ViennaRNA')
 
 
 def requirements(code):
@@ -142,6 +144,18 @@ def _ensure_conda_extras():
     return result.returncode == 0
 
 
+def _ensure_python_extras(constraints=None):
+    """Install light operator extras that are not part of the policy requirement set."""
+    command = [
+        sys.executable, '-I', '-m', 'pip', '--isolated', 'install',
+        *PIP_TRANSFER, *PIP_INDEX, '--prefer-binary', *EXTRA_PIP,
+    ]
+    if constraints is not None:
+        command.extend(['--constraint', str(constraints)])
+    result = subprocess.run(command, check=False)
+    return result.returncode == 0
+
+
 
 def ensure_requirements(specs, request, bundle=None):
     """Repair the complete dependency graph, including missing transitive libraries."""
@@ -178,12 +192,14 @@ def ensure_requirements(specs, request, bundle=None):
             status, tail = _install(request, False, environment, constraints, bundle)
         if status:
             raise RuntimeError('pip install failed after the wheel and source attempts:\n' + tail)
-        if not _ensure_conda_extras():
-            print(
-                'pysam could not be installed; BAM/CRAM/VCF Readers need the '
-                'bioconda pysam package',
-                flush=True,
-            )
+    if not _ensure_python_extras(constraints):
+        print('some light operator extras could not be installed', flush=True)
+    if not _ensure_conda_extras():
+        print(
+            'pysam could not be installed; BAM/CRAM/VCF Readers need the '
+            'bioconda pysam package',
+            flush=True,
+        )
 
 
 def main():

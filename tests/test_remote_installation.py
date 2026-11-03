@@ -134,3 +134,14 @@ def test_conda_extras_install_pysam_after_pip(monkeypatch, tmp_path):
     monkeypatch.delitem(sys.modules, 'pysam')
     assert install_linux._ensure_conda_extras() is True
     assert calls and 'pysam=0.22.1' in calls[0]
+
+def test_python_extras_install_light_operator_packages(monkeypatch, tmp_path):
+    from biopipe.remote import install_linux
+
+    calls = []
+    monkeypatch.setattr(install_linux.subprocess, 'run', lambda command, **kwargs: calls.append(command) or type('R', (), {'returncode': 0})())
+    constraints = tmp_path / 'c.txt'
+    constraints.write_text('pyarrow<22\n')
+    assert install_linux._ensure_python_extras(constraints) is True
+    joined = ' '.join(calls[0])
+    assert 'pdb2pqr' in joined and 'ViennaRNA' in joined and str(constraints) in joined
