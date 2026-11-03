@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.118.3** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.118.4** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -208,6 +208,7 @@ Examples:
 1.118.1  patch: resolve routes from the managed code dir when BioPipe is installed into site-packages
 1.118.2  patch: pair env-<digest> with code-<digest> for route discovery, grant MCP run permission by default, and document every remote-connection field
 1.118.3  patch: register BatteryFull, File and CirclesThree so no operator or reader falls back to the placeholder icon
+1.118.4  docs: specify the DeepSeek Harness workspace, permission level and a minimal example prompt
 1.53.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```

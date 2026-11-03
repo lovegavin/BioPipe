@@ -78,6 +78,35 @@ BioPipe 条目形如：
 {"mcpServers":{"biopipe":{"command":"biopipe","args":["mcp","--allow-run"]}}}
 ```
 
+### 在 DeepSeek Harness 中选择工作区与权限
+
+| 项 | 建议 | 说明 |
+| --- | --- | --- |
+| 工作区 | BioPipe 代码目录（如 `D:\BioPipe`）；只做数据分析时可用专用数据目录（如 `D:\biopipe-work`） | agent 会读写该目录；不要把 `C:\Windows`、`C:\Program Files`、盘符根目录或整个用户目录设为工作区 |
+| 文件权限 | 保持默认的 workspace-write | 只允许写工作区与临时目录；不要为常规分析开启 danger-full-access |
+| MCP 权限 | `mcp --allow-run` | 允许发现算子、校验并提交运行；只读排查时去掉该参数，禁止编辑时再加 `--read-only` |
+| 插件 | 默认不加 | 只有明确安装受信插件时才加 `--allow-plugins` |
+
+- `--workspace` 与 `--data-dir` 必须指向同一套 Studio profile，否则 agent 看到的路线与画布不一致。
+- 画布协作时，先让 agent 调用 `biopipe_context` 读取当前选区；无画布（headless）时可直接提交 workflow，不需要伪造会话。
+- 数据集与产物放在工作区内；不要把 `.studio`、`tasks`、私钥或凭据放进工作区之外的路径。
+
+### 最小示例提示词
+
+把下面这段直接粘给 DSH，即可验证 MCP 全链路（搜索 → 校验 → 提交 → 查结果）：
+
+```text
+用 BioPipe MCP 完成一次最小验证：
+1) biopipe_operator_search 查询 "single cell" 相关算子；
+2) biopipe_workflow_prepare 校验一个只含读入与一个算子的路线，参数用默认值；
+3) biopipe_submit 提交，request_id 固定为 demo-001；
+4) 用 biopipe_job 与 biopipe_artifacts 汇报状态和产物。
+不要修改任何画布，不要更换参数。
+```
+
+若希望 agent 直接操作当前画布，把第 1 步换成 `biopipe_context`（读取选区与 revision），
+并明确要求“每次编辑一个事务、不自动运行”。
+
 Studio 的 **Agent 面板** 会按当前解释器和 profile 生成可直接粘贴的配置，并显示已连接客户端。
 
 ## 5. 连接你自己的 Agent
