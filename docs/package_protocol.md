@@ -19,7 +19,7 @@ operators and readers, not a new route packaging format.
 | `biopipe-readers` | 97 | File readers, including H5AD and MTX disk preparation |
 | `biopipe-hic` | 7 | Sequencing/contact file Readers and Hi-C processing |
 
-Counts describe the 1.120.0 factory library: 709 operators and 101 Readers. Installed
+Counts describe the 1.120.1 factory library: 709 operators and 101 Readers. Installed
 profiles may add, replace or disable providers; use `biopipe plugin list` for the
 active library rather than assuming these counts at runtime.
 
