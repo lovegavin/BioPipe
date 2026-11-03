@@ -177,7 +177,7 @@ if ! test -f {q(env + '/biopipe-ready.json')} || ! test -x {q(env + '/bin/bwa')}
     bp_action=install
     if ! test -x {q(env + '/bin/bwa')} || ! test -x {q(env + '/bin/samtools')} || ! test -x {q(python)}; then bp_repair=--force-reinstall; fi
   fi
-  {q(mamba)} --no-rc "$bp_action" $bp_repair -y -p {q(env)} --override-channels -c conda-forge -c bioconda --strict-channel-priority python=3.11 pip bwa=0.7.19 samtools=1.22.1 c-compiler cxx-compiler
+  {q(mamba)} --no-rc "$bp_action" $bp_repair -y -p {q(env)} --override-channels -c conda-forge -c bioconda --strict-channel-priority python=3.11 pip bwa=0.7.19 samtools=1.22.1 c-compiler cxx-compiler gxx_linux-64 cmake make
 fi
 export PATH={q(env + '/bin')}:"$PATH"
 export PYTHONNOUSERSITE=1

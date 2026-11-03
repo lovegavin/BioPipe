@@ -132,3 +132,37 @@ def test_native_bootstrap_does_not_mix_conda_and_pip_scientific_abis(monkeypatch
     assert 'cooltools=' not in native and 'numpy=' not in native and 'pandas=' not in native
     assert 'run -p' in script and 'install_linux.py' in script
     assert result['workspace'] == '/home/test/.local/share/biopipe/workspace'
+
+def test_installer_prefers_mirror_wheels_and_falls_back_to_source(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    from biopipe.remote import install_linux as installer
+
+    monkeypatch.setattr(installer.metadata, 'version', lambda name: '1.0')
+    calls = []
+
+    def run(command, **kwargs):
+        if 'check' in command:
+            return SimpleNamespace(returncode=1, stdout='', stderr='')
+        calls.append(list(command))
+        if '--only-binary=:all:' in command:
+            return SimpleNamespace(returncode=1, stdout='no wheel for pyarrow', stderr='')
+        return SimpleNamespace(returncode=0, stdout='', stderr='')
+
+    monkeypatch.setattr(installer.subprocess, 'run', run)
+    monkeypatch.setattr(installer.shutil, 'which', lambda name: '/opt/env/bin/' + name)
+    installer.ensure_requirements(['pyarrow==21.0.0'], tmp_path / 'requirements.txt')
+    assert len(calls) == 2
+    assert '--only-binary=:all:' in calls[0]
+    assert '--only-binary=:all:' not in calls[1]
+    for command in calls:
+        assert 'https://pypi.tuna.tsinghua.edu.cn/simple' in command
+        assert '--trusted-host' in command
+    assert 'CC' in (installer.compiler_environment())
+
+
+def test_native_bootstrap_installs_a_cxx_toolchain():
+    from biopipe.remote import provision as module
+
+    source = Path(module.__file__).read_text()
+    assert 'gxx_linux-64' in source
+    assert 'cmake' in source and 'make' in source
