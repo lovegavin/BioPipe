@@ -1660,6 +1660,16 @@
     "status": "generated"
   },
   {
+    "id": "esm3_sasa_prediction",
+    "kind": "operator",
+    "title": "ESM-3 solvent accessibility prediction",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Predict per-residue solvent-accessible surface area for one protein sequence with the ESM-3 SASA track.",
+    "doc": "src/task/step/steps/esm3_sasa_prediction.Esm3SasaPredictionStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm3_secondary_structure",
     "kind": "operator",
     "title": "ESM-3 secondary structure prediction",
