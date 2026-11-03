@@ -50,11 +50,13 @@ def test_chain_pdb_and_native(tmp_path):
     assert sequence.startswith("V")
 
 
-def test_run_round_trip(monkeypatch, tmp_path):
-    import src.task.step.steps.esm3_inverse_folding as module
+def _install_esm_stub(monkeypatch):
+    """Provide esm, esm.sdk and esm.sdk.api modules for platforms without esm."""
 
-    monkeypatch.setattr(module, "load_model", lambda name, device: _FakeModel())
-    class _FakeESMProtein:
+    import sys
+    import types
+
+    class _ESMProtein:
         def __init__(self, sequence=None):
             self.sequence = sequence
 
@@ -66,7 +68,23 @@ def test_run_round_trip(monkeypatch, tmp_path):
         def __init__(self, **kwargs):
             self.kwargs = kwargs
 
-    monkeypatch.setitem(__import__("sys").modules, "esm.sdk.api", type("M", (), {"ESMProtein": _FakeESMProtein, "GenerationConfig": _Config}))
+    api = types.ModuleType("esm.sdk.api")
+    api.ESMProtein = _ESMProtein
+    api.GenerationConfig = _Config
+    sdk = types.ModuleType("esm.sdk")
+    package = types.ModuleType("esm")
+    package.sdk = sdk
+    monkeypatch.setitem(sys.modules, "esm", package)
+    monkeypatch.setitem(sys.modules, "esm.sdk", sdk)
+    monkeypatch.setitem(sys.modules, "esm.sdk.api", api)
+    return _ESMProtein, _Config
+
+
+def test_run_round_trip(monkeypatch, tmp_path):
+    import src.task.step.steps.esm3_inverse_folding as module
+
+    monkeypatch.setattr(module, "load_model", lambda name, device: _FakeModel())
+    _install_esm_stub(monkeypatch)
     ctx = Context(str(tmp_path / "task"), {"params": {}})
     run(ctx, [{"name": "esm3_inverse_folding", "params": {"output": "designs", "structure_path": str(FIXTURES / "vhh_1mel.pdb"), "chain": "A", "num_steps": 2}}])
     table = ctx["designs"]

@@ -37,18 +37,38 @@ class _FakeModel:
         return _FakeProtein()
 
 
-def test_fold_sequence_writes_pdb(monkeypatch):
+def _install_esm_stub(monkeypatch):
+    """Provide esm, esm.sdk and esm.sdk.api modules for platforms without esm."""
+
     import sys
+    import types
 
     class _ESMProtein:
         def __init__(self, sequence=None):
             self.sequence = sequence
 
+        @classmethod
+        def from_pdb(cls, path):
+            return cls(sequence="X")
+
     class _Config:
         def __init__(self, **kwargs):
             self.kwargs = kwargs
 
-    monkeypatch.setitem(sys.modules, "esm.sdk.api", type("M", (), {"ESMProtein": _ESMProtein, "GenerationConfig": _Config}))
+    api = types.ModuleType("esm.sdk.api")
+    api.ESMProtein = _ESMProtein
+    api.GenerationConfig = _Config
+    sdk = types.ModuleType("esm.sdk")
+    package = types.ModuleType("esm")
+    package.sdk = sdk
+    monkeypatch.setitem(sys.modules, "esm", package)
+    monkeypatch.setitem(sys.modules, "esm.sdk", sdk)
+    monkeypatch.setitem(sys.modules, "esm.sdk.api", api)
+    return _ESMProtein, _Config
+
+
+def test_fold_sequence_writes_pdb(monkeypatch):
+    _install_esm_stub(monkeypatch)
     result, path = fold_sequence(_FakeModel(), "AC", num_steps=2)
     assert path.is_file()
     assert "ATOM" in path.read_text()
