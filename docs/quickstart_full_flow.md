@@ -106,31 +106,37 @@ DSH 的 MCP 客户端配置在 `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch
 - 改完重启 DSH 与 Studio；在 DSH 里让 agent 调 `biopipe_operator_search` 验证。
 - 其他客户端（Cursor/Claude Desktop）用等价 JSON：`{"mcpServers":{"biopipe":{"command":"biopipe","args":["mcp","--allow-run"]}}}`；Studio 的 **Agent 面板** 会按当前解释器生成可直接粘贴的配置。
 
-## 6. 跑通第一条示例（真实数据，约 3 秒）
+## 6. 让 Agent 设计并运行第一条路线（真实数据）
 
-示例在 `examples/smoke_real_data/`：真实 1MEL 结构 + 真实 VHH 序列，无权重、无下载。
-先在终端确认环境（可选）：
+示例目录 `examples/smoke_real_data/input/` 只有两个真实文件，**没有现成路线**：
 
-```bash
-python -m biopipe --workspace <BioPipe 根目录> run examples/smoke_real_data/route.json --request-id demo-001
-python -m biopipe --workspace <BioPipe 根目录> jobs get <job-id>
-```
+- `vhh_1mel.pdb`：RCSB 1MEL，3908 原子，VHH `A/B` + 溶菌酶 `L/M`；
+- `vhh.fasta`：从该结构链 `A` 提取的 132 aa VHH 序列。
 
-然后在 DSH 中粘贴下面这段，让它用 MCP 完整跑一遍（前提：第 5 节工作区选 BioPipe 仓库根）：
+这一步同时验证 Agent 的四项能力：从算子目录设计路线、按你的指令微调画布、校验、提交运行。
+在 DSH 中粘贴：
 
 ```text
-用 BioPipe MCP 跑通示例数据，按顺序执行：
-1) 读取工作区里的 examples/smoke_real_data/route.json；
-2) 调用 biopipe_workflow_prepare，graph 用该文件内容，require_files=true；
-3) 调用 biopipe_submit 提交，request_id 固定为 demo-001；
-4) 用 biopipe_job 轮询直到完成，再用 biopipe_artifacts 列出产物；
-5) 汇报：界面残基总数、core/rim 数量、liability 总数及分类。
-不要修改画布，不要改动任何参数。
+工作区 examples/smoke_real_data/input/ 下有一个真实结构 vhh_1mel.pdb（VHH 链 A/B 与溶菌酶 L/M）和一个真实 VHH 序列 vhh.fasta。
+请把它设计成一条可运行路线：
+1) 先用 biopipe_operator_search 找“结构界面分析”和“序列风险位点”两类算子，再用 biopipe_operator_describe 读取参数与输入输出契约；
+2) 自行组图：两个输入源分别接一个算子，链与参数由你根据契约决定；调用 biopipe_validate 和 biopipe_workflow_prepare（require_files=true）；
+3) 把节点、边、参数摘要发给我确认，并说明你为何选这些算子；
+4) 我会让你微调（例如只保留界面核心残基、调整 cutoff、增加一步筛选或排序）。每次修改作为一个事务，改完复述改动并重新校验；
+5) 我确认后再用 request_id demo-001 调 biopipe_submit 提交，轮询 biopipe_job，完成后用 biopipe_artifacts 汇报；
+6) 最终汇报：界面残基总数及 core/rim 数量、liability 总数及分类。
+不要读取或复用仓库里任何现成 route.json / task.yaml；路线必须由你从算子目录设计。
 ```
 
-预期结果（实现回归基线）：界面残基 **99**（core **58**、rim **41**），序列 liability **10**（氧化 5、异构化 3、脱酰胺 2），总耗时约 3 秒。若数字不同，多半是工作区选错或参数被改动。
+参考基线（用于判断结果是否合理）：界面残基 **99**（core **58**、rim **41**），
+序列 liability **10**（氧化 5、异构化 3、脱酰胺 2），CPU 约 3 秒。数值偏差通常来自
+链选择或 cutoff 不同——先看 Agent 的参数摘要，再决定是否让它调整。
 
-画布场景：让 agent 先调 `biopipe_context` 读取当前选区与 revision，再按“每次编辑一个事务、不自动运行”的约定操作。
+回归自检（仅开发者用，不属于练习）：
+
+```bash
+python -m biopipe --workspace <BioPipe 根目录> workflow validate tests/fixtures/smoke_route/route.json --require-files
+```
 
 ## 7. 编辑画布
 
