@@ -335,3 +335,9 @@ to fill a batch.
 - ESM-3 structure track on 1MEL chain A (132 res, 10 steps, CPU): 527 atoms,
   pLDDT 0.900, pTM 0.836, CA RMSD 1.97 A vs crystal, 21 s; real test gated
   by BIOPIPE_ESM3_REAL; 687 operators / 101 Readers.
+
+## Elastic network models (verified)
+
+- GNM/ANM implemented in NumPy and cross-checked against ProDy on 1MEL chain A
+  (132 CA): GNM MSF agreement 1e-5, ANM 1e-4; ANM 6 rigid-body zero modes;
+  689 operators / 101 Readers.

@@ -5670,6 +5670,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_anm_modes",
+    "kind": "operator",
+    "title": "ANM 模式分析",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Build an anisotropic network model Hessian from CA atoms and report per-residue mean-square fluctuations, slowest eigenvalues and collectivity.",
+    "doc": "src/task/step/steps/structure_anm_modes.StructureAnmModesStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_aromatic_stacking",
     "kind": "operator",
     "title": "Aromatic stacking",
@@ -5827,6 +5837,16 @@
     "version": "1.0.0",
     "description": "Report N-X-S/T (and optionally O-linked Ser/Thr) sequons of every protein chain together with the mean per-atom solvent exposure of the acceptor residue.",
     "doc": "src/task/step/steps/structure_glycosylation_sites.StructureGlycosylationSitesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_gnm_flexibility",
+    "kind": "operator",
+    "title": "GNM 柔性分析",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Build a Gaussian network model from CA atoms and report per-residue mean-square fluctuations, the slowest mode weights and its collectivity.",
+    "doc": "src/task/step/steps/structure_gnm_flexibility.StructureGnmFlexibilityStep.md",
     "status": "generated"
   },
   {
