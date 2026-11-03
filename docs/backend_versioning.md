@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.97.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.98.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -164,6 +164,7 @@ Examples:
 1.96.0  batch: per-residue ESM-3 embeddings from the official open model
 1.96.1  patch: keep ESM-3 contract tests runnable without the esm package installed
 1.97.0  batch: ESM-3 structure-conditioned inverse folding
+1.98.0  batch: ESM-3 sequence-to-structure prediction with pLDDT and pTM
 1.53.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```

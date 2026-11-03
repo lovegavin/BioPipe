@@ -329,3 +329,9 @@ to fill a batch.
 - ESM-3 open model, coordinates-only generation on 1MEL chain A (132 res,
   10 steps, CPU): recovery 0.788 in 20.2 s; real test gated by
   BIOPIPE_ESM3_REAL; 686 operators / 101 Readers.
+
+## esm3_fold (verified)
+
+- ESM-3 structure track on 1MEL chain A (132 res, 10 steps, CPU): 527 atoms,
+  pLDDT 0.900, pTM 0.836, CA RMSD 1.97 A vs crystal, 21 s; real test gated
+  by BIOPIPE_ESM3_REAL; 687 operators / 101 Readers.

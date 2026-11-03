@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "ESM-3 结构预测参数",
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度名",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度名",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "num_steps": {
+      "title": "生成步数",
+      "type": "integer",
+      "default": 20,
+      "minimum": 1,
+      "maximum": 200,
+      "x-ui-group": "生成",
+      "x-ui-order": 3
+    },
+    "device": {
+      "title": "计算设备",
+      "type": "string",
+      "default": "cpu",
+      "enum": [
+        "cpu",
+        "cuda"
+      ],
+      "x-ui-group": "模型",
+      "x-ui-order": 4
+    },
+    "output_path": {
+      "title": "保存 PDB 路径（可选）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输出",
+      "x-ui-order": 5
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "structure",
+      "x-ui-group": "输出",
+      "x-ui-order": 6
+    }
+  }
+}

@@ -1640,6 +1640,16 @@
     "status": "generated"
   },
   {
+    "id": "esm3_fold",
+    "kind": "operator",
+    "title": "ESM-3 结构预测",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Predict a protein structure from sequence with the official ESM-3 open model and return the annotated atom table together with pLDDT and pTM summaries.",
+    "doc": "src/task/step/steps/esm3_fold.Esm3FoldStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm3_inverse_folding",
     "kind": "operator",
     "title": "ESM-3 逆折叠序列设计",
