@@ -126,7 +126,7 @@ class FoldseekClusterStep(Step):
         "title": "Foldseek structural clustering",
         "description": "Cluster a directory of structures with Foldseek and report cluster membership, size and representatives.",
         "category": "Structure",
-        "icon": "SquaresFour",
+        "icon": "TreeStructure",
         "contracts": {
             "version": 1,
             "inputs": [],
