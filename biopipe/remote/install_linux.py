@@ -220,7 +220,28 @@ def _ensure_isolated_environments(prefix):
             ok = False
             continue
         python = target / 'bin/python'
-        pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, *entry.get('requirements', [])]
+        conda_packages = entry.get('conda_packages') or []
+        if conda_packages:
+            install = [str(mamba), 'install', '-y', '-p', str(target), '-c', 'conda-forge', '--override-channels', *conda_packages]
+            if subprocess.run(install, env=env, check=False).returncode:
+                ok = False
+        requirements = entry.get('requirements') or []
+        if entry.get('torch_cpu'):
+            install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, 'torch',
+                       '--index-url', 'https://download.pytorch.org/whl/cpu']
+            if subprocess.run(install, check=False).returncode:
+                ok = False
+        wheels = entry.get('pip_wheels') or []
+        if wheels:
+            install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--only-binary=:all:', *PIP_INDEX, *wheels]
+            if subprocess.run(install, check=False).returncode:
+                ok = False
+        direct = entry.get('pip_pypi') or []
+        if direct:
+            install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--index-url', 'https://pypi.org/simple', *direct]
+            if subprocess.run(install, check=False).returncode:
+                ok = False
+        pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, *requirements]
         if subprocess.run(pip, check=False).returncode:
             ok = False
             continue
@@ -277,14 +298,8 @@ def ensure_requirements(specs, request, bundle=None):
         print('an isolated operator environment could not be prepared', flush=True)
     if not _ensure_isolated_extras():
         print(
-            'optional model packages (boltz, antifold) could not be installed; '
-            'structure-prediction operators stay gated',
-            flush=True,
-        )
-    if not _ensure_isolated_extras():
-        print(
-            'optional model packages (boltz, antifold) could not be installed; '
-            'structure-prediction operators stay gated',
+            'optional model packages could not be installed; '
+            'the affected operators report the missing environment at run time',
             flush=True,
         )
     if not _ensure_conda_extras():

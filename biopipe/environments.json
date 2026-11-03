@@ -78,13 +78,42 @@
       "imports": [
         "boltz"
       ],
+      "conda_packages": [
+        "rdkit",
+        "pillow",
+        "tqdm",
+        "numba",
+        "scipy",
+        "scikit-learn",
+        "gemmi",
+        "dm-tree"
+      ],
+      "torch_cpu": true,
+      "pip_wheels": [
+        "wandb==0.18.7",
+        "lightning-utilities",
+        "torchmetrics",
+        "pytorch-lightning",
+        "hydra-core",
+        "omegaconf",
+        "mashumaro",
+        "modelcif==1.6",
+        "einx",
+        "chembl_structure_pipeline",
+        "ihm",
+        "einops",
+        "biopython",
+        "frozendict"
+      ],
+      "pip_pypi": [
+        "fairscale==0.4.13"
+      ],
       "requirements": [],
-      "notes": "A venv with --system-site-packages inherits the validated shared stack and adds only Boltz itself; its strict metadata pins stay inside the venv and cannot break the shared pip check. Weights stay in ~/.boltz.",
-      "wired": true,
       "no_deps": [
         "boltz==2.2.1"
       ],
-      "venv_shared": true
+      "wired": true,
+      "notes": "Standalone micromamba env: conda supplies rdkit/gemmi/dm-tree (no wheels on this host) and the CPU torch wheel comes from download.pytorch.org; Boltz itself is installed with --no-deps because its strict scipy/wandb pins would otherwise downgrade the shared stack. Verified on glibc 2.17: `import boltz.main` succeeds."
     }
   }
 }
