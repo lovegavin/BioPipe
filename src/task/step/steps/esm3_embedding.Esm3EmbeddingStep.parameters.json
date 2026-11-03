@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "ESM-3 蛋白嵌入参数",
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度名",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度名",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "model_name": {
+      "title": "模型",
+      "type": "string",
+      "default": "esm3-sm-open-v1",
+      "enum": [
+        "esm3-sm-open-v1"
+      ],
+      "x-ui-group": "模型",
+      "x-ui-order": 3
+    },
+    "device": {
+      "title": "计算设备",
+      "type": "string",
+      "default": "cpu",
+      "enum": [
+        "cpu",
+        "cuda"
+      ],
+      "x-ui-group": "模型",
+      "x-ui-order": 4
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "embeddings",
+      "x-ui-group": "输出",
+      "x-ui-order": 5
+    }
+  }
+}

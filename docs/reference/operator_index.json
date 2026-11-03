@@ -1630,6 +1630,16 @@
     "status": "generated"
   },
   {
+    "id": "esm3_embedding",
+    "kind": "operator",
+    "title": "ESM-3 蛋白嵌入",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute per-residue ESM-3 embeddings for protein sequences with the official EvolutionaryScale open model loaded from a local Hugging Face cache.",
+    "doc": "src/task/step/steps/esm3_embedding.Esm3EmbeddingStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_embedding",
     "kind": "operator",
     "title": "ESM embeddings",

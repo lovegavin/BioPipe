@@ -317,3 +317,9 @@ to fill a batch.
 - Pfam-A.hmm (418 MB gz, 2.2 GB unpacked) pressed with hmmpress; real scan
   of chicken lysozyme returned 3 domains, top hit 'Lys' with full score 166
   in 0.7 s; real test gated by BIOPIPE_PFAM_HMM.
+
+## esm3_embedding (verified)
+
+- ESM-3 open 1.40 B model loaded from the hf-mirror cache; per-residue
+  embeddings (1, 14, 1536) in 6.0 s on CPU; real test gated by
+  BIOPIPE_ESM3_REAL; 685 operators / 101 Readers.

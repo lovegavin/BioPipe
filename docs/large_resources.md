@@ -227,3 +227,17 @@ export BIOPIPE_PFAM_HMM=~/db/Pfam-A.hmm
 
 The real check in `tests/test_extension253.py` runs only when
 `BIOPIPE_PFAM_HMM` points at the pressed database.
+
+## ESM-3
+
+Install the official package (PyPI does not carry it) and fetch the open
+weights through a reachable Hugging Face endpoint:
+
+```bash
+python -m pip install "esm @ git+https://github.com/evolutionaryscale/esm.git"
+export HF_ENDPOINT=https://hf-mirror.com
+python -c "import torch; from esm.models.esm3 import ESM3; ESM3.from_pretrained('esm3_sm_open_v1', device=torch.device('cpu'))"
+```
+
+The cache lands under `~/.cache/huggingface/hub/models--EvolutionaryScale--esm3-sm-open-v1`.
+`BIOPIPE_ESM3_REAL=1` enables the real check in `tests/test_extension325.py`.
