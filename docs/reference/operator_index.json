@@ -2150,6 +2150,16 @@
     "status": "generated"
   },
   {
+    "id": "foldseek_align",
+    "kind": "operator",
+    "title": "Foldseek structural alignment",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Align two structures with Foldseek structurealign and report TM-score, RMSD, lDDT, identity and coverage.",
+    "doc": "src/task/step/steps/foldseek_align.FoldseekAlignStep.md",
+    "status": "generated"
+  },
+  {
     "id": "foldseek_search",
     "kind": "operator",
     "title": "Foldseek structural search",
