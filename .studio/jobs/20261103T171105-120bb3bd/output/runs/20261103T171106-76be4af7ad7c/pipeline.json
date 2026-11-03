@@ -1,0 +1,74 @@
+{
+  "name": "真实数据冒烟：1MEL 界面 + VHH 序列风险",
+  "sources": {
+    "complex": {
+      "path": "../../../examples/smoke_real_data/input/vhh_1mel.pdb",
+      "dims": [
+        "atom",
+        "field"
+      ],
+      "labels": {
+        "atom": "auto",
+        "field": "builtin"
+      },
+      "args": {
+        "model": 0
+      }
+    },
+    "sequence": {
+      "path": "../../../examples/smoke_real_data/input/vhh.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {
+        "sequence": "builtin",
+        "position": "auto"
+      },
+      "args": {
+        "alphabet": "auto"
+      }
+    }
+  },
+  "steps": [
+    {
+      "name": "structure_interface_core",
+      "inputs": [
+        "complex"
+      ],
+      "params": {
+        "atom_dim": "atom",
+        "field_dim": "field",
+        "binder_chains": "A,B",
+        "target_chains": "L,M",
+        "core_fraction": 0.5,
+        "probe_radius": 1.4,
+        "n_points": 92,
+        "output": "iface"
+      }
+    },
+    {
+      "name": "sequence_liability_scan",
+      "inputs": [
+        "sequence"
+      ],
+      "params": {
+        "sequence_dim": "sequence",
+        "position_dim": "position",
+        "include_oxidation": true,
+        "context": 3,
+        "output": "liabilities"
+      }
+    }
+  ],
+  "runtime": {
+    "submission_key": "f28a69eb42cad0ffddb14e3a05433ca5ada76d73a7b0d45f8b36ab854f10c972",
+    "memory": {
+      "enabled": true,
+      "auto_spill": true,
+      "budget_mb": 25396.9619140625,
+      "process_limit_mb": 25652.9619140625
+    }
+  },
+  "params": {}
+}

@@ -1,0 +1,49 @@
+{
+  "task_dir": "/home/gavin/BioPipe/.studio/jobs/20261103T171111-098ee769",
+  "generated_at": "2026-11-03T17:11:15.277257+00:00",
+  "n_steps": 2,
+  "total_elapsed": 3.2052,
+  "steps": [
+    {
+      "index": 1,
+      "name": "structure_interface_core",
+      "elapsed": 3.2048,
+      "inputs": [
+        "complex"
+      ],
+      "params": {
+        "atom_dim": "atom",
+        "field_dim": "field",
+        "binder_chains": "A,B",
+        "target_chains": "L,M",
+        "core_fraction": 0.5,
+        "probe_radius": 1.4,
+        "n_points": 92,
+        "output": "iface"
+      },
+      "export_path": "runs/20261103T171111-7d2334d42a29/steps/01_structure_interface_core.json"
+    },
+    {
+      "index": 2,
+      "name": "sequence_liability_scan",
+      "elapsed": 0.0004,
+      "inputs": [
+        "sequence"
+      ],
+      "params": {
+        "sequence_dim": "sequence",
+        "position_dim": "position",
+        "include_oxidation": true,
+        "context": 3,
+        "output": "liabilities"
+      },
+      "export_path": "runs/20261103T171111-7d2334d42a29/steps/02_sequence_liability_scan.json"
+    }
+  ],
+  "status": "complete",
+  "error": null,
+  "run_id": "20261103T171111-7d2334d42a29",
+  "event_log": "/home/gavin/BioPipe/.studio/jobs/20261103T171111-098ee769/output/runs/20261103T171111-7d2334d42a29/events.jsonl",
+  "memory_report": "/home/gavin/BioPipe/.studio/jobs/20261103T171111-098ee769/output/runs/20261103T171111-7d2334d42a29/memory_report.json",
+  "managed_peak_bytes": 814339
+}

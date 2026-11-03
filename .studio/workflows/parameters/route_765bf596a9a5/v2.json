@@ -1,0 +1,150 @@
+{
+  "format": "biopipe.graph-parameters",
+  "schema_version": 1,
+  "params": {},
+  "nodes": {
+    "expr": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "matrix": "matrix"
+      }
+    },
+    "markers": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {}
+    },
+    "meta": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "header": true
+      }
+    },
+    "qc_metrics_1": {
+      "kind": "operator",
+      "operator": "qc_metrics",
+      "params": {
+        "feature_dim": "gene",
+        "sample_dim": "cell",
+        "metrics": [
+          {
+            "name": "total",
+            "op": "sum"
+          },
+          {
+            "name": "n_detected",
+            "op": "nonzero"
+          }
+        ],
+        "output": "qc"
+      },
+      "context_params": {}
+    },
+    "normalize_2": {
+      "kind": "operator",
+      "operator": "normalize",
+      "params": {
+        "target_sum": 1000000.0,
+        "dim": "cell",
+        "method": "cpm",
+        "output": "cpm"
+      },
+      "context_params": {}
+    },
+    "log_transform_3": {
+      "kind": "operator",
+      "operator": "log_transform",
+      "params": {
+        "base": 2,
+        "pseudocount": 1,
+        "output": "logged"
+      },
+      "context_params": {}
+    },
+    "transpose_4": {
+      "kind": "operator",
+      "operator": "transpose",
+      "params": {
+        "order": [
+          "cell",
+          "gene"
+        ],
+        "output": "cells_by_gene"
+      },
+      "context_params": {}
+    },
+    "doublet_detect_5": {
+      "kind": "operator",
+      "operator": "doublet_detect",
+      "params": {
+        "cell_dim": "cell",
+        "gene_dim": "gene",
+        "expected_doublet_rate": 0.06,
+        "random_state": 0,
+        "threshold": 0.25,
+        "n_prin_comps": 10,
+        "output": "doublets"
+      },
+      "context_params": {}
+    },
+    "pseudobulk_6": {
+      "kind": "operator",
+      "operator": "pseudobulk",
+      "params": {
+        "cell_dim": "cell",
+        "gene_dim": "gene",
+        "method": "sum",
+        "group_label": "group",
+        "output": "pseudobulk"
+      },
+      "context_params": {}
+    },
+    "marker_score_7": {
+      "kind": "operator",
+      "operator": "marker_score",
+      "params": {
+        "cell_dim": "cell",
+        "gene_dim": "gene",
+        "gene_set_dim": "gene_set",
+        "min_genes": 5,
+        "ctrl_size": 50,
+        "n_bins": 25,
+        "random_state": 0,
+        "output": "scores"
+      },
+      "context_params": {}
+    },
+    "describe_8": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "describe_9": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "describe_10": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "describe_11": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    }
+  }
+}

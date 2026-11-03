@@ -1,0 +1,137 @@
+{
+  "format": "biopipe.graph-parameters",
+  "schema_version": 1,
+  "params": {},
+  "nodes": {
+    "ccre": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {}
+    },
+    "reg": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {}
+    },
+    "interval_stats_1": {
+      "kind": "operator",
+      "operator": "interval_stats",
+      "params": {
+        "region_dim": "region",
+        "field_dim": "field",
+        "chrom_field": "chrom",
+        "start_field": "chromStart",
+        "end_field": "chromEnd",
+        "output": "stats"
+      },
+      "context_params": {}
+    },
+    "describe_2": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "interval_merge_3": {
+      "kind": "operator",
+      "operator": "interval_merge",
+      "params": {
+        "region_dim": "region",
+        "field_dim": "field",
+        "chrom_field": "chrom",
+        "start_field": "chromStart",
+        "end_field": "chromEnd",
+        "min_overlap": 0,
+        "output": "merged"
+      },
+      "context_params": {}
+    },
+    "describe_4": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "interval_overlap_5": {
+      "kind": "operator",
+      "operator": "interval_overlap",
+      "params": {
+        "a_region_dim": "region",
+        "a_field_dim": "field",
+        "a_chrom_field": "chrom",
+        "a_start_field": "chromStart",
+        "a_end_field": "chromEnd",
+        "b_region_dim": "region",
+        "b_field_dim": "field",
+        "b_chrom_field": "chrom",
+        "b_start_field": "chromStart",
+        "b_end_field": "chromEnd",
+        "min_overlap": 1,
+        "max_output": 5000000,
+        "output": "pairs"
+      },
+      "context_params": {}
+    },
+    "describe_6": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "histogram_7": {
+      "kind": "operator",
+      "operator": "histogram",
+      "params": {
+        "dim": "statistic",
+        "bins": 30,
+        "log_y": false,
+        "ylabel": "Count",
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "n_intervals_per_chrom.png",
+        "title": "cCRE count per chromosome",
+        "value_label": "n_intervals",
+        "xlabel": "Interval count"
+      },
+      "context_params": {}
+    },
+    "histogram_8": {
+      "kind": "operator",
+      "operator": "histogram",
+      "params": {
+        "dim": "statistic",
+        "bins": 50,
+        "log_y": false,
+        "ylabel": "Count",
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "merged_length_hist.png",
+        "title": "Merged cCRE region lengths",
+        "value_label": "length",
+        "xlabel": "Length (bp)"
+      },
+      "context_params": {}
+    },
+    "histogram_9": {
+      "kind": "operator",
+      "operator": "histogram",
+      "params": {
+        "dim": "statistic",
+        "bins": 50,
+        "log_y": false,
+        "ylabel": "Count",
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "overlap_length_hist.png",
+        "title": "Overlap length (cCRE vs regulatory)",
+        "value_label": "overlap_length",
+        "xlabel": "Overlap (bp)"
+      },
+      "context_params": {}
+    }
+  }
+}

@@ -1,0 +1,18 @@
+============================================================
+Run summary
+============================================================
+task      : /home/gavin/BioPipe/.studio/jobs/20261103T171105-120bb3bd
+generated : 2026-11-03T17:11:09.729012+00:00
+steps     : 2
+elapsed   : 3.019s
+status    : complete
+
+------------------------------------------------------------
+#   step                   elapsed   export
+------------------------------------------------------------
+1   structure_interface_core    3.019s   runs/20261103T171106-76be4af7ad7c/steps/01_structure_interface_core.json
+2   sequence_liability_scan    0.000s   runs/20261103T171106-76be4af7ad7c/steps/02_sequence_liability_scan.json
+
+============================================================
+Per-step details are at the export paths above. This file is an index only.
+============================================================

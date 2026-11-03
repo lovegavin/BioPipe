@@ -1,0 +1,367 @@
+{
+  "id": "route_2eabc2569192",
+  "version": 2,
+  "updated_at": "2026-11-03T17:10:56.052583+00:00",
+  "graph": {
+    "schema_version": 2,
+    "name": "Single-cell batch correction",
+    "base_dir": "routes/single_cell_batch",
+    "nodes": [
+      {
+        "id": "expr",
+        "kind": "source",
+        "operator": null,
+        "title": "expr",
+        "position": {
+          "x": 70.0,
+          "y": 100.0
+        },
+        "source": {
+          "reader": "H5adReader",
+          "path": "input/batch_cells.h5ad",
+          "dims": [
+            "cell",
+            "gene"
+          ],
+          "labels": {
+            "cell": "builtin",
+            "gene": "builtin"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "markers",
+        "kind": "source",
+        "operator": null,
+        "title": "markers",
+        "position": {
+          "x": 70.0,
+          "y": 310.0
+        },
+        "source": {
+          "reader": "GmtReader",
+          "path": "input/markers.gmt",
+          "dims": [
+            "gene",
+            "gene_set"
+          ],
+          "labels": {
+            "gene": "builtin",
+            "gene_set": "builtin"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "meta",
+        "kind": "source",
+        "operator": null,
+        "title": "meta",
+        "position": {
+          "x": 70.0,
+          "y": 520.0
+        },
+        "source": {
+          "reader": "CsvReader",
+          "path": "input/meta.csv",
+          "dims": [
+            "cell",
+            "feature"
+          ],
+          "labels": {
+            "cell": {
+              "feature": 0
+            },
+            "feature": "builtin"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "normalize_1",
+        "kind": "operator",
+        "operator": "normalize",
+        "title": "归一化",
+        "position": {
+          "x": 360.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "log_transform_2",
+        "kind": "operator",
+        "operator": "log_transform",
+        "title": "Log",
+        "position": {
+          "x": 650.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "combat_3",
+        "kind": "operator",
+        "operator": "combat",
+        "title": "Batch correction",
+        "position": {
+          "x": 940.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 2,
+        "route": null
+      },
+      {
+        "id": "transpose_4",
+        "kind": "operator",
+        "operator": "transpose",
+        "title": "维度转置",
+        "position": {
+          "x": 1230.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "marker_score_5",
+        "kind": "operator",
+        "operator": "marker_score",
+        "title": "Signature score",
+        "position": {
+          "x": 1520.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 2,
+        "route": null
+      },
+      {
+        "id": "describe_6",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 1810.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "heatmap_7",
+        "kind": "operator",
+        "operator": "heatmap",
+        "title": "Heatmap",
+        "position": {
+          "x": 1810.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      }
+    ],
+    "edges": [
+      {
+        "id": "expr-normalize_1-0",
+        "source": "expr",
+        "target": "normalize_1",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "normalize_1-log_transform_2-0",
+        "source": "normalize_1",
+        "target": "log_transform_2",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "log_transform_2-combat_3-0",
+        "source": "log_transform_2",
+        "target": "combat_3",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "meta-combat_3-1",
+        "source": "meta",
+        "target": "combat_3",
+        "sourceHandle": "out",
+        "targetHandle": "in-1"
+      },
+      {
+        "id": "combat_3-transpose_4-0",
+        "source": "combat_3",
+        "target": "transpose_4",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "transpose_4-marker_score_5-0",
+        "source": "transpose_4",
+        "target": "marker_score_5",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "markers-marker_score_5-1",
+        "source": "markers",
+        "target": "marker_score_5",
+        "sourceHandle": "out",
+        "targetHandle": "in-1"
+      },
+      {
+        "id": "marker_score_5-describe_6-0",
+        "source": "marker_score_5",
+        "target": "describe_6",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "marker_score_5-heatmap_7-0",
+        "source": "marker_score_5",
+        "target": "heatmap_7",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      }
+    ],
+    "runtime": {},
+    "manifest_extra": {},
+    "interface": {
+      "version": 1,
+      "inputs": [
+        {
+          "node_id": "expr",
+          "label": "expr",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "cell",
+              "gene"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        },
+        {
+          "node_id": "markers",
+          "label": "markers",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "gene",
+              "gene_set"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        },
+        {
+          "node_id": "meta",
+          "label": "meta",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "cell",
+              "feature"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "node_id": "marker_score_5",
+          "handle": "out",
+          "label": "Signature score",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "axis_info": {},
+            "info_open": false,
+            "axis_info_open": false,
+            "ndim": 2,
+            "numeric": true
+          }
+        }
+      ]
+    },
+    "plugin_lock": {}
+  },
+  "parameters_file": "parameters/route_2eabc2569192/v2.json",
+  "execution_file": "execution/route_2eabc2569192/v2.json"
+}

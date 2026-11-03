@@ -1,0 +1,97 @@
+{
+  "format": "biopipe.graph-parameters",
+  "schema_version": 1,
+  "params": {},
+  "nodes": {
+    "counts": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "header": true
+      }
+    },
+    "sets": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {}
+    },
+    "filter_min_1": {
+      "kind": "operator",
+      "operator": "filter_min",
+      "params": {
+        "min_value": 10,
+        "min_samples": 3,
+        "dim": "gene",
+        "output": "filtered"
+      },
+      "context_params": {}
+    },
+    "normalize_2": {
+      "kind": "operator",
+      "operator": "normalize",
+      "params": {
+        "target_sum": 1000000.0,
+        "dim": "sample",
+        "method": "cpm",
+        "output": "cpm"
+      },
+      "context_params": {}
+    },
+    "log_transform_3": {
+      "kind": "operator",
+      "operator": "log_transform",
+      "params": {
+        "base": 2,
+        "pseudocount": 1,
+        "output": "logged"
+      },
+      "context_params": {}
+    },
+    "ssgsea_4": {
+      "kind": "operator",
+      "operator": "ssgsea",
+      "params": {
+        "feature_dim": "gene",
+        "sample_dim": "sample",
+        "gene_dim": "gene",
+        "gene_set_dim": "gene_set",
+        "alpha": 0.25,
+        "min_size": 3,
+        "normalize": true,
+        "output": "scores"
+      },
+      "context_params": {}
+    },
+    "heatmap_5": {
+      "kind": "operator",
+      "operator": "heatmap",
+      "params": {
+        "dim": "sample",
+        "other_dim": "gene_set",
+        "select": "all",
+        "standardize": "none",
+        "cmap": "RdBu_r",
+        "nan_color": "#DDDDDD",
+        "top_n": 50,
+        "cluster_rows": true,
+        "cluster_cols": false,
+        "show_row_labels": false,
+        "show_col_labels": true,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "ssgsea_heatmap.png"
+      },
+      "context_params": {}
+    },
+    "describe_6": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    }
+  }
+}

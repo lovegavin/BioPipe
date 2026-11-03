@@ -1,0 +1,260 @@
+{
+  "id": "route_bf78f7a6e12f",
+  "version": 5,
+  "updated_at": "2026-11-03T17:10:58.301197+00:00",
+  "graph": {
+    "schema_version": 2,
+    "name": "生存分析",
+    "base_dir": ".studio/builtin-inputs/survival",
+    "nodes": [
+      {
+        "id": "clinical",
+        "kind": "source",
+        "operator": null,
+        "title": "clinical",
+        "position": {
+          "x": 70.0,
+          "y": 100.0
+        },
+        "source": {
+          "reader": null,
+          "path": "input/tcga_brca_clinical_raw.tsv",
+          "dims": [
+            "sample",
+            "feature"
+          ],
+          "labels": {
+            "feature": "builtin",
+            "sample": {
+              "feature": 0
+            }
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "kaplan_meier_1",
+        "kind": "operator",
+        "operator": "kaplan_meier",
+        "title": "KM",
+        "position": {
+          "x": 360.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "logrank_test_2",
+        "kind": "operator",
+        "operator": "logrank_test",
+        "title": "Log-rank",
+        "position": {
+          "x": 360.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "cox_regression_3",
+        "kind": "operator",
+        "operator": "cox_regression",
+        "title": "Cox",
+        "position": {
+          "x": 360.0,
+          "y": 520.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "forest_plot_4",
+        "kind": "operator",
+        "operator": "forest_plot",
+        "title": "Forest plot",
+        "position": {
+          "x": 650.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "describe_5",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 650.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      }
+    ],
+    "edges": [
+      {
+        "id": "clinical-kaplan_meier_1-0",
+        "source": "clinical",
+        "target": "kaplan_meier_1",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "clinical-logrank_test_2-0",
+        "source": "clinical",
+        "target": "logrank_test_2",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "clinical-cox_regression_3-0",
+        "source": "clinical",
+        "target": "cox_regression_3",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "cox_regression_3-forest_plot_4-0",
+        "source": "cox_regression_3",
+        "target": "forest_plot_4",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "logrank_test_2-describe_5-0",
+        "source": "logrank_test_2",
+        "target": "describe_5",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      }
+    ],
+    "runtime": {},
+    "manifest_extra": {},
+    "interface": {
+      "version": 1,
+      "inputs": [
+        {
+          "node_id": "clinical",
+          "label": "clinical",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "sample",
+              "feature"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "node_id": "logrank_test_2",
+          "handle": "out",
+          "label": "Log-rank",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "comparison",
+              "statistic"
+            ],
+            "labels": {
+              "comparison": null,
+              "statistic": [
+                "chi2",
+                "df",
+                "P"
+              ]
+            },
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "representation": {
+                "type": "string",
+                "const": "logrank_test"
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "axis_info": {}
+          }
+        },
+        {
+          "node_id": "cox_regression_3",
+          "handle": "out",
+          "label": "Cox",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "covariate",
+              "statistic"
+            ],
+            "labels": {
+              "covariate": null,
+              "statistic": [
+                "coef",
+                "HR",
+                "se",
+                "z",
+                "P",
+                "CI_low",
+                "CI_high"
+              ]
+            },
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "representation": {
+                "type": "string",
+                "const": "cox_regression"
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "axis_info": {}
+          }
+        }
+      ]
+    },
+    "plugin_lock": {}
+  },
+  "parameters_file": "parameters/route_bf78f7a6e12f/v5.json",
+  "execution_file": "execution/route_bf78f7a6e12f/v5.json"
+}

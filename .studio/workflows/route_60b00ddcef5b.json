@@ -1,0 +1,203 @@
+{
+  "id": "route_60b00ddcef5b",
+  "version": 2,
+  "updated_at": "2026-11-03T17:10:56.860457+00:00",
+  "graph": {
+    "schema_version": 2,
+    "name": "GO enrichment",
+    "base_dir": ".studio/builtin-inputs/go_enrichment",
+    "nodes": [
+      {
+        "id": "gaf",
+        "kind": "source",
+        "operator": null,
+        "title": "gaf",
+        "position": {
+          "x": 70.0,
+          "y": 100.0
+        },
+        "source": {
+          "reader": "GafReader",
+          "path": "input/goa_human.gaf.gz",
+          "dims": [
+            "annotation",
+            "field"
+          ],
+          "labels": {
+            "annotation": "auto",
+            "field": "builtin"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "pivot_1",
+        "kind": "operator",
+        "operator": "pivot",
+        "title": "pivot",
+        "position": {
+          "x": 360.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "gene_list_to_hits_2",
+        "kind": "operator",
+        "operator": "gene_list_to_hits",
+        "title": "gene_list_to_hits",
+        "position": {
+          "x": 650.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "enrich_go_3",
+        "kind": "operator",
+        "operator": "enrich_go",
+        "title": "enrich_go",
+        "position": {
+          "x": 940.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 2,
+        "route": null
+      },
+      {
+        "id": "enrichment_plot_4",
+        "kind": "operator",
+        "operator": "enrichment_plot",
+        "title": "enrichment_plot",
+        "position": {
+          "x": 1230.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "describe_5",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 1230.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      }
+    ],
+    "edges": [
+      {
+        "id": "gaf-pivot_1-0",
+        "source": "gaf",
+        "target": "pivot_1",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "pivot_1-gene_list_to_hits_2-0",
+        "source": "pivot_1",
+        "target": "gene_list_to_hits_2",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "gene_list_to_hits_2-enrich_go_3-0",
+        "source": "gene_list_to_hits_2",
+        "target": "enrich_go_3",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "pivot_1-enrich_go_3-1",
+        "source": "pivot_1",
+        "target": "enrich_go_3",
+        "sourceHandle": "out",
+        "targetHandle": "in-1"
+      },
+      {
+        "id": "enrich_go_3-enrichment_plot_4-0",
+        "source": "enrich_go_3",
+        "target": "enrichment_plot_4",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "enrich_go_3-describe_5-0",
+        "source": "enrich_go_3",
+        "target": "describe_5",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      }
+    ],
+    "runtime": {},
+    "manifest_extra": {},
+    "interface": {
+      "version": 1,
+      "inputs": [
+        {
+          "node_id": "gaf",
+          "label": "gaf",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "annotation",
+              "field"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "node_id": "enrich_go_3",
+          "handle": "out",
+          "label": "enrich_go",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {},
+            "axis_info": {},
+            "info_open": true,
+            "axis_info_open": true,
+            "ndim": 2,
+            "numeric": true
+          }
+        }
+      ]
+    },
+    "plugin_lock": {}
+  },
+  "parameters_file": "parameters/route_60b00ddcef5b/v2.json",
+  "execution_file": "execution/route_60b00ddcef5b/v2.json"
+}

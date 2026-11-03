@@ -14,6 +14,8 @@ Steps:
 | `structure_interface_core` | PDB Reader, 12-column structure Form, SASA-based interface core/rim |
 | `sequence_liability_scan` | FASTA Reader, sequence Form, motif liabilities |
 
+Studio/headless graph: `route.json` (same two steps, relative paths from the repository root).
+
 Run:
 
 ```bash
