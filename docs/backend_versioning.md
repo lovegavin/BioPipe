@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.115.0** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.116.0** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -186,6 +186,8 @@ Examples:
 1.113.1  patch: launch script Boltz runners through Python so Windows can run the test double
 1.113.2  patch: write the Boltz test double with UTF-8 so non-ASCII Windows temp paths work
 1.114.0  batch: Foldseek pairwise structural alignment
+1.115.0  batch: resource provisioning engine and agent environment-repair guide
+1.116.0  batch: Foldseek structural clustering
 1.53.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```
