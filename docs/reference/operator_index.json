@@ -620,6 +620,16 @@
     "status": "generated"
   },
   {
+    "id": "boltz_complex_confidence",
+    "kind": "operator",
+    "title": "Boltz complex prediction confidence",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Predict a two-chain protein complex with Boltz and report per-residue confidence plus interface confidence.",
+    "doc": "src/task/step/steps/boltz_complex_confidence.BoltzComplexConfidenceStep.md",
+    "status": "generated"
+  },
+  {
     "id": "boltz_predict",
     "kind": "operator",
     "title": "Boltz co-folding prediction",
