@@ -46,11 +46,15 @@ def encode_batch(model, sequences: list[str], device: str) -> list[np.ndarray]:
     """Return per-residue embeddings (L, D) for each sequence."""
 
     import torch
-    from esm.sdk.api import ESMProtein
+
+    try:
+        from esm.sdk.api import ESMProtein
+    except ImportError:
+        ESMProtein = None  # tests may inject a lightweight model
 
     values = []
     for sequence in sequences:
-        protein = ESMProtein(sequence=sequence)
+        protein = ESMProtein(sequence=sequence) if ESMProtein is not None else sequence
         tokens = model.encode(protein)
         with torch.no_grad():
             output = model.forward(sequence_tokens=tokens.sequence.unsqueeze(0))

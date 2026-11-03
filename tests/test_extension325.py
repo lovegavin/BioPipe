@@ -28,7 +28,8 @@ class _FakeModel:
 
                 self.sequence = torch.zeros(len(sequence) + 2, dtype=torch.long)
 
-        return _Tokens(protein.sequence)
+        sequence = protein.sequence if hasattr(protein, "sequence") else protein
+        return _Tokens(sequence)
 
     def forward(self, *, sequence_tokens=None):
         import torch
