@@ -5330,6 +5330,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_rna_accessibility",
+    "kind": "operator",
+    "title": "RNA 可及性",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Compute the Boltzmann ensemble base-pair probabilities with ViennaRNA and report per-base unpaired probabilities plus accessible single-stranded segments.",
+    "doc": "src/task/step/steps/sequence_rna_accessibility.SequenceRnaAccessibilityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_rna_cofold",
     "kind": "operator",
     "title": "RNA 二聚体共折叠平衡",
