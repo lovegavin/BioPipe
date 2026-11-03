@@ -1660,6 +1660,16 @@
     "status": "generated"
   },
   {
+    "id": "esm3_secondary_structure",
+    "kind": "operator",
+    "title": "ESM-3 secondary structure prediction",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Predict DSSP-style secondary structure for one protein sequence with the ESM-3 secondary-structure track.",
+    "doc": "src/task/step/steps/esm3_secondary_structure.Esm3SecondaryStructureStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_embedding",
     "kind": "operator",
     "title": "ESM embeddings",
