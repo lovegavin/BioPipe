@@ -15,6 +15,8 @@ MAMBA_URL = 'https://conda.anaconda.org/conda-forge/linux-64/micromamba-2.10.0-0
 # Native helpers only: Python, pip and the two Hi-C command line tools.
 # Compilers are added on demand when a source build is actually required.
 CONDA_PACKAGES = 'python=3.11 pip bwa=0.7.19 samtools=1.22.1'
+# Shell-safe tokens: each spec must reach micromamba as its own argument.
+CONDA_SPECS = ' '.join(spec for spec in CONDA_PACKAGES.split() if spec)
 CONDA_MARKER = '.biopipe-conda-packages'
 MAMBA_ARCHIVE_SHA = '9a97976244929bbae28fb1fae504e74a3e7e6d1932870e3a03321f01b7fbd07b'
 MAMBA_SHA = '701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd'
@@ -174,15 +176,15 @@ if ! printf '%s  %s\\n' {q(MAMBA_SHA)} {q(mamba)} | sha256sum -c - >/dev/null 2>
   chmod 700 {q(mamba + '.new')}; mv -- {q(mamba + '.new')} {q(mamba)}
 fi
 export MAMBA_ROOT_PREFIX={q(managed + '/mamba-cache')}
-if ! test -f {q(env + '/biopipe-ready.json')} || ! test -x {q(env + '/bin/bwa')} || ! test -x {q(env + '/bin/samtools')} || test "$(cat {q(env + '/.biopipe-conda-packages')} 2>/dev/null)" != {q(CONDA_PACKAGES)}; then
+if ! test -f {q(env + '/biopipe-ready.json')} || ! test -x {q(env + '/bin/bwa')} || ! test -x {q(env + '/bin/samtools')} || test "$(cat {q(env + '/.biopipe-conda-packages')} 2>/dev/null)" != {CONDA_SPECS}; then
   echo 'Preparing Python and native Hi-C dependencies'
   bp_action=create; bp_repair=''
   if test -d {q(env + '/conda-meta')}; then
     bp_action=install
     if ! test -x {q(env + '/bin/bwa')} || ! test -x {q(env + '/bin/samtools')} || ! test -x {q(python)}; then bp_repair=--force-reinstall; fi
   fi
-  {q(mamba)} --no-rc "$bp_action" $bp_repair -y -p {q(env)} --override-channels -c conda-forge -c bioconda --strict-channel-priority {q(CONDA_PACKAGES)}
-  printf '%s' {q(CONDA_PACKAGES)} > {q(env + '/.biopipe-conda-packages')}
+  {q(mamba)} --no-rc "$bp_action" $bp_repair -y -p {q(env)} --override-channels -c conda-forge -c bioconda --strict-channel-priority {CONDA_SPECS}
+  printf '%s' {CONDA_SPECS} > {q(env + '/.biopipe-conda-packages')}
 fi
 export PATH={q(env + '/bin')}:"$PATH"
 export PYTHONNOUSERSITE=1
