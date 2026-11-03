@@ -5,12 +5,35 @@
       "title": "AntiFold antibody inverse folding",
       "python": "3.11",
       "imports": [
-        "antifold"
+        "antifold",
+        "antifold.main"
       ],
       "requirements": [
+        "numpy==1.26.4",
+        "torch==2.3.1",
+        "biotite==0.38",
+        "biopython==1.83",
+        "torch-geometric==2.4.0",
+        "pandas",
+        "scikit-learn",
+        "tqdm",
+        "matplotlib",
+        "meson-python",
+        "ninja",
+        "cython",
+        "setuptools",
+        "wheel"
+      ],
+      "no_deps": [
         "antifold==0.3.1"
       ],
-      "notes": "AntiFold pins NumPy 1.26 and Torch 2.3.1, which conflict with the shared scientific runtime."
+      "weights": [
+        {
+          "path": "antifold/trained_models/model.pt",
+          "url": "https://opig.stats.ox.ac.uk/data/downloads/AntiFold/models/model.pt"
+        }
+      ],
+      "notes": "AntiFold pins NumPy 1.26 and Torch 2.3.1, incompatible with the shared NumPy 2 / Torch 2.6 runtime; pygam has no wheel and is not required for inference."
     }
   }
 }
