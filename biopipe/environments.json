@@ -100,13 +100,13 @@
         "modelcif==1.6",
         "einx",
         "chembl_structure_pipeline",
-        "ihm",
         "einops",
         "biopython",
         "frozendict"
       ],
       "pip_pypi": [
-        "fairscale==0.4.13"
+        "fairscale==0.4.13",
+        "ihm"
       ],
       "requirements": [],
       "no_deps": [
