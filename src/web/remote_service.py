@@ -136,7 +136,14 @@ class RemoteManager:
                 for job in info.get('history', []): self.wrap_job(key, job)
                 self.persist()
                 report('已连接')
-                return info
+            if install or not _has_dependency_status(info):
+                try:
+                    report('正在核对依赖状态')
+                    info = self.refresh(key)
+                    report('依赖状态已更新')
+                except RemoteError as exc:
+                    report(f'依赖状态将在刷新后更新：{exc}')
+            return info
         except HostKeyRequired as exc:
             with self.lock:
                 self.pending_keys[key] = exc.key
