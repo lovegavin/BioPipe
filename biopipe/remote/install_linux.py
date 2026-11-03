@@ -202,8 +202,11 @@ def _ensure_isolated_environments(prefix):
             ok = False
             continue
         env = dict(os.environ, MAMBA_ROOT_PREFIX=str(prefix.parent / 'mamba-cache'))
-        create = [str(mamba), 'create', '-y', '-p', str(target), '-c', 'conda-forge',
-                  '--override-channels', 'python=' + str(entry.get('python', '3.11')), 'pip']
+        if entry.get('clone_shared'):
+            create = [str(mamba), 'create', '-y', '-p', str(target), '--clone', str(prefix)]
+        else:
+            create = [str(mamba), 'create', '-y', '-p', str(target), '-c', 'conda-forge',
+                      '--override-channels', 'python=' + str(entry.get('python', '3.11')), 'pip']
         if subprocess.run(create, env=env, check=False).returncode:
             ok = False
             continue

@@ -78,11 +78,11 @@
       "imports": [
         "boltz"
       ],
-      "requirements": [
-        "boltz==2.2.1"
-      ],
-      "notes": "Boltz 2.2.1 pins pyyaml==6.0.2, requests==2.32.3, scikit-learn==1.6.1 and scipy==1.13.1, which conflict with the shared runtime. It runs in its own interpreter; weights stay in ~/.boltz and are downloaded through the manifest.",
-      "wired": true
+      "requirements": [],
+      "notes": "The shared runtime already carries a validated Boltz stack; the installer clones it into an isolated environment so Boltz's strict metadata pins cannot block the shared `pip check`. Weights stay in ~/.boltz.",
+      "wired": true,
+      "clone_shared": true,
+      "no_deps": []
     }
   }
 }
