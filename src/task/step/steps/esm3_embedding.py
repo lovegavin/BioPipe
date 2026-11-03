@@ -91,7 +91,7 @@ class Esm3EmbeddingStep(Step):
             "inputs": [{"version": 1, "numeric": True, "dims": [{"param": "sequence_dim"}, {"param": "position_dim"}], "labels": [], "parallel": [], "ndim": 2}],
             "output": {"mode": "declare", "schema": {"ndim": 3, "numeric": True, "info_open": True, "axis_info_open": False}},
         },
-        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory"},
+        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory", "environment": "esm3"},
         "dependencies": [],
         "dependency_imports": ["esm"],
         "inputs_arity": 1,
