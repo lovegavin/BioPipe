@@ -231,20 +231,21 @@ def _ensure_isolated_environments(prefix):
                        '--index-url', 'https://download.pytorch.org/whl/cpu']
             if subprocess.run(install, check=False).returncode:
                 ok = False
+        if direct:
+            install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--index-url', 'https://pypi.org/simple', *direct]
+            if subprocess.run(install, check=False).returncode:
+                ok = False
         wheels = entry.get('pip_wheels') or []
         if wheels:
             install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--only-binary=:all:', *PIP_INDEX, *wheels]
             if subprocess.run(install, check=False).returncode:
                 ok = False
         direct = entry.get('pip_pypi') or []
-        if direct:
-            install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--index-url', 'https://pypi.org/simple', *direct]
+        if requirements:
+            install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, *requirements]
             if subprocess.run(install, check=False).returncode:
                 ok = False
-        pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, *requirements]
-        if subprocess.run(pip, check=False).returncode:
-            ok = False
-            continue
+                continue
         no_deps = entry.get('no_deps') or []
         if no_deps:
             pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, '--no-deps', *no_deps]
