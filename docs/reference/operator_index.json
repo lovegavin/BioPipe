@@ -5350,6 +5350,16 @@
     "status": "generated"
   },
   {
+    "id": "sequence_rna_cofold_ensemble",
+    "kind": "operator",
+    "title": "RNA 双链系综",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Run the ViennaRNA two-strand partition function and split each base's pairing probability into unpaired, intra-strand and inter-strand parts, with the MFE cofold structure and the interface bases.",
+    "doc": "src/task/step/steps/sequence_rna_cofold_ensemble.SequenceRnaCofoldEnsembleStep.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_rna_duplex",
     "kind": "operator",
     "title": "RNA-RNA 杂交位点",
