@@ -209,6 +209,11 @@ class SequenceLiabilityScanStep(Step):
             "n_liabilities": len(rows),
             "kinds": kinds,
             "include_oxidation": include_oxidation,
+            "sites": [
+                {"position": int(row["position"]), "kind": row["kind"], "residue": row["residue"],
+                 "motif": row["motif"], "context": row["context"], "severity": row["severity"]}
+                for row in rows
+            ],
         }
 
     def export(self, ctx: Context) -> dict:

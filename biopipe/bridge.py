@@ -134,7 +134,8 @@ class Bridge:
 
         @app.post("/api/agent/sessions/{session}/open")
         def open_graph(session: str, request: Request, payload: dict):
-            return hub.open(session, payload["graph"], payload["expected_revision"], self.actor(request, "edit"))
+            return hub.open(session, payload["graph"], payload["expected_revision"], self.actor(request, "edit"),
+                            document_id=payload.get("document_id"), mode=payload.get("mode", "append"))
 
         @app.post("/api/agent/sessions/{session}/undo")
         def undo(session: str, request: Request, payload: dict):

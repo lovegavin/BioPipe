@@ -74,6 +74,14 @@
       "default": "core",
       "x-ui-group": "输出",
       "x-ui-order": 1
+    },
+    "include_nonpolymer": {
+      "title": "包含非聚合物",
+      "type": "boolean",
+      "default": false,
+      "x-ui-group": "参数",
+      "x-ui-order": 6,
+      "description": "默认只统计蛋白质残基；水、离子与配体默认排除并在 n_nonpolymer 中计数。"
     }
   }
 }

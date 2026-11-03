@@ -49,6 +49,12 @@ class PdbReader(Reader):
         if len(dims) != 2:
             raise ReaderError(f"PDB reader requires exactly two dims, got {dims}")
         wanted_model = int(args.get("model", 0))
+        records = str(args.get("records", "all")).strip().lower()
+        if records not in ("atom", "hetatm", "all"):
+            raise ReaderError("PDB reader: records must be atom, hetatm or all")
+        exclude_solvent = bool(args.get("exclude_solvent", False))
+        solvent = {"HOH", "WAT", "DOD", "H2O"}
+        skipped = 0
         model = 0
         rows = []
         ids = []
@@ -62,7 +68,14 @@ class PdbReader(Reader):
             if line.startswith("ENDMDL"):
                 model = 0
                 continue
-            if not (line.startswith("ATOM  ") or line.startswith("HETATM")):
+            is_atom = line.startswith("ATOM  ")
+            is_hetero = line.startswith("HETATM")
+            if not (is_atom or is_hetero):
+                continue
+            if (records == "atom" and not is_atom) or (records == "hetatm" and not is_hetero):
+                continue
+            if exclude_solvent and line[17:20].strip() in solvent:
+                skipped += 1
                 continue
             if wanted_model and model != wanted_model:
                 continue
@@ -97,6 +110,9 @@ class PdbReader(Reader):
             info_extra={
                 "format": "PDB",
                 "n_atoms": len(rows),
+                "records": records,
+                "exclude_solvent": exclude_solvent,
+                "n_excluded_solvent": skipped,
                 "model": wanted_model or "all",
                 "fields": list(_FIELDS),
             },
