@@ -185,6 +185,18 @@ class StructureInterfaceCoreStep(Step):
             for value in _column(atoms, field_dim, "chain")
         ]
         labels = _residue_labels(atoms, field_dim)
+        resnames = [_decode(atoms, field_dim, "resname", value) for value in _column(atoms, field_dim, "resname")]
+        from src.task.step.steps.proteinmpnn_interface_redesign import _THREE_TO_ONE
+        polymer = np.array([name.upper() in _THREE_TO_ONE for name in resnames])
+        include_nonpolymer = bool(params.get("include_nonpolymer", False))
+        keep = np.ones(len(elements), dtype=bool) if include_nonpolymer else polymer
+        n_nonpolymer = int((~polymer).sum())
+        if not keep.any():
+            raise StepError("structure_interface_core: the structure has no polymer atoms; pass include_nonpolymer=true for a ligand-only complex")
+        elements = [value for value, flag in zip(elements, keep) if flag]
+        chains = [value for value, flag in zip(chains, keep) if flag]
+        labels = [value for value, flag in zip(labels, keep) if flag]
+        coordinates = coordinates[keep]
         heavy = np.array([element.upper() not in {"H", "D"} for element in elements])
         if heavy.sum() < 2:
             raise StepError("structure_interface_core: the structure has no heavy atoms")
@@ -258,6 +270,13 @@ class StructureInterfaceCoreStep(Step):
                 "core_fraction": core_fraction,
                 "probe_radius": probe_radius,
                 "sides": [row["side"] for row in rows],
+                "n_nonpolymer": n_nonpolymer,
+                "include_nonpolymer": include_nonpolymer,
+                "core_by_side": {"binder": sum(1 for row in rows if row["is_core"] and row["side"] == "binder"),
+                                  "target": sum(1 for row in rows if row["is_core"] and row["side"] == "target")},
+                "rim_by_side": {"binder": sum(1 for row in rows if not row["is_core"] and row["side"] == "binder"),
+                                 "target": sum(1 for row in rows if not row["is_core"] and row["side"] == "target")},
+                "chain_counts": {chain: sum(1 for row in rows if row["residue"][0] == chain) for chain in sorted({row["residue"][0] for row in rows})},
             },
         )
         ctx[out_name] = form
@@ -269,4 +288,11 @@ class StructureInterfaceCoreStep(Step):
             "operator": "structure_interface_core",
             "n_interface": int(form.info["n_interface"]),
             "n_core": int(form.info["n_core"]),
+            "n_rim": int(form.info["n_rim"]),
+            "sides": list(form.info["sides"]),
+            "core_by_side": dict(form.info["core_by_side"]),
+            "rim_by_side": dict(form.info["rim_by_side"]),
+            "chain_counts": dict(form.info["chain_counts"]),
+            "n_nonpolymer": int(form.info["n_nonpolymer"]),
+            "residues": list(form.labels["residue"].keys()),
         }

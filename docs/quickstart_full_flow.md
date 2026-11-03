@@ -103,6 +103,9 @@ DSH 的 MCP 客户端配置在 `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch
 | 插件 | 默认不加 | 仅安装受信插件时加 `--allow-plugins` |
 
 - `--workspace` 与 `--data-dir` 必须与 Studio 的启动参数一致，否则 agent 与画布看到的路由不同。
+- 画布工具：`biopipe_open(document_id=…)` 写入已有标签页（`mode=replace` 覆盖、`append` 新开），
+  `biopipe_apply({op:"set_graph"})` 整图替换，`biopipe_set_execution(...)` 切换本地/服务器执行设备，
+  `biopipe_status()` 查看连接、权限、版本与会话。
 - 改完重启 DSH 与 Studio；在 DSH 里让 agent 调 `biopipe_operator_search` 验证。
 - 其他客户端（Cursor/Claude Desktop）用等价 JSON：`{"mcpServers":{"biopipe":{"command":"biopipe","args":["mcp","--allow-run"]}}}`；Studio 的 **Agent 面板** 会按当前解释器生成可直接粘贴的配置。
 
