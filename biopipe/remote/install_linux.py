@@ -122,6 +122,24 @@ def split_failures(results):
     required = {key: error for key, error in failed.items() if key not in optional}
     return required, optional
 
+def _ensure_conda_extras():
+    """Add conda-only binaries after pip: pysam is needed by several Readers."""
+    try:
+        import pysam  # noqa: F401
+        return True
+    except ImportError:
+        pass
+    mamba = os.environ.get('BIOPIPE_MAMBA')
+    if not mamba or not Path(mamba).is_file():
+        return False
+    result = subprocess.run(
+        [mamba, '--no-rc', 'install', '-y', '-p', sys.prefix, '--override-channels',
+         '-c', 'conda-forge', '-c', 'bioconda', '--strict-channel-priority', 'pysam=0.22.1'],
+        check=False,
+    )
+    return result.returncode == 0
+
+
 
 def ensure_requirements(specs, request, bundle=None):
     """Repair the complete dependency graph, including missing transitive libraries."""
@@ -158,6 +176,12 @@ def ensure_requirements(specs, request, bundle=None):
             status, tail = _install(request, False, environment, constraints, bundle)
         if status:
             raise RuntimeError('pip install failed after the wheel and source attempts:\n' + tail)
+        if not _ensure_conda_extras():
+            print(
+                'pysam could not be installed; BAM/CRAM/VCF Readers need the '
+                'bioconda pysam package',
+                flush=True,
+            )
 
 
 def main():

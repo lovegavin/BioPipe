@@ -14,7 +14,7 @@ import uuid
 MAMBA_URL = 'https://conda.anaconda.org/conda-forge/linux-64/micromamba-2.10.0-0.tar.bz2'
 # Native helpers only: Python, pip and the two Hi-C command line tools.
 # Compilers are added on demand when a source build is actually required.
-CONDA_PACKAGES = 'python=3.11 pip bwa=0.7.19 samtools=1.22.1 pysam=0.22.1'
+CONDA_PACKAGES = 'python=3.11 pip bwa=0.7.19 samtools=1.22.1'
 CONDA_MARKER = '.biopipe-conda-packages'
 MAMBA_ARCHIVE_SHA = '9a97976244929bbae28fb1fae504e74a3e7e6d1932870e3a03321f01b7fbd07b'
 MAMBA_SHA = '701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd'

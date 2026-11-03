@@ -1,6 +1,7 @@
 """Separate server discovery from installation across desktop versions."""
 from copy import deepcopy
 import json
+import sys
 import threading
 from types import SimpleNamespace
 
@@ -117,3 +118,19 @@ def test_managed_transport_invokes_only_requested_install_action(monkeypatch, in
     assert calls == ['install' if install else 'locate']
     assert '/shared/app' in sent[-1].decode()
     connection.close()
+
+def test_conda_extras_install_pysam_after_pip(monkeypatch, tmp_path):
+    from biopipe.remote import install_linux
+
+    calls = []
+    monkeypatch.setattr(install_linux.subprocess, 'run', lambda command, **kwargs: calls.append(command) or type('R', (), {'returncode': 0})())
+    monkeypatch.setattr(install_linux.sys, 'prefix', str(tmp_path / 'env-test'))
+    mamba = tmp_path / 'micromamba'
+    mamba.write_text('#!/bin/sh\n')
+    monkeypatch.setenv('BIOPIPE_MAMBA', str(mamba))
+    monkeypatch.setitem(sys.modules, 'pysam', type(sys)('pysam'))
+    assert install_linux._ensure_conda_extras() is True
+    assert not calls
+    monkeypatch.delitem(sys.modules, 'pysam')
+    assert install_linux._ensure_conda_extras() is True
+    assert calls and 'pysam=0.22.1' in calls[0]
