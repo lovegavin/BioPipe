@@ -138,7 +138,7 @@ class AntifoldScoreStep(Step):
                 },
             },
         },
-        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory"},
+        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory", "environment": "antifold"},
         "dependencies": [],
         "dependency_imports": ["antifold", "pandas", "torch"],
         "inputs_arity": 0,
