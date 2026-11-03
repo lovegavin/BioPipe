@@ -6110,6 +6110,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_markov_states",
+    "kind": "operator",
+    "title": "马尔可夫状态模型",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Cluster trajectory frames by CA RMSD, estimate a transition matrix at a chosen lag with pseudo counts, and report state populations, dwell times and implied timescales.",
+    "doc": "src/task/step/steps/structure_md_markov_states.StructureMdMarkovStatesStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_md_pca",
     "kind": "operator",
     "title": "轨迹主成分分析",

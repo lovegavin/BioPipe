@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "马尔可夫状态模型参数",
+  "properties": {
+    "trajectory_path": {
+      "title": "轨迹 .npy 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "topology_path": {
+      "title": "拓扑 PDB 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "cutoff": {
+      "title": "聚类 RMSD 阈值（Å）",
+      "type": "number",
+      "default": 1.5,
+      "minimum": 0.1,
+      "maximum": 20.0,
+      "x-ui-group": "聚类",
+      "x-ui-order": 3
+    },
+    "max_states": {
+      "title": "最大状态数",
+      "type": "integer",
+      "default": 8,
+      "minimum": 2,
+      "maximum": 100,
+      "x-ui-group": "聚类",
+      "x-ui-order": 4
+    },
+    "lag_frames": {
+      "title": "滞后帧数",
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 100,
+      "x-ui-group": "动力学",
+      "x-ui-order": 5
+    },
+    "frame_time_ps": {
+      "title": "帧间隔（ps）",
+      "type": "number",
+      "default": 0.2,
+      "minimum": 0.001,
+      "maximum": 100.0,
+      "x-ui-group": "动力学",
+      "x-ui-order": 6
+    },
+    "pseudo_count": {
+      "title": "伪计数",
+      "type": "number",
+      "default": 0.0,
+      "minimum": 0.0,
+      "maximum": 10.0,
+      "x-ui-group": "动力学",
+      "x-ui-order": 7
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "states",
+      "x-ui-group": "输出",
+      "x-ui-order": 8
+    }
+  }
+}
