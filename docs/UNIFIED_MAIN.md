@@ -1,7 +1,7 @@
 # Unified main integration
 
 This source update establishes one current application and authoring protocol on
-`main`. Application version: **1.119.0**. SDK version: **3.1.0**. Operator protocol:
+`main`. Application version: **1.119.1**. SDK version: **3.1.0**. Operator protocol:
 **v3**. The latest previously published desktop binaries are a separate artifact;
 this integration does not claim to have rebuilt or accepted a new Windows EXE.
   release 1.38.0 adds side-chain chi angles, k-mer composition profiles, embedding PCA loadings, reaction SMARTS application and restriction-site scanning.

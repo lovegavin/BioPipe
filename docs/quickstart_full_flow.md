@@ -131,6 +131,25 @@ DSH 的 MCP 客户端配置在 `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch
 不要读取或复用仓库里任何现成 route.json / task.yaml；路线必须由你从算子目录设计。
 ```
 
+数据位置二选一：
+- **本地**：`examples/smoke_real_data/input/vhh_1mel.pdb` 与 `vhh.fasta`（工作区为仓库根）
+- **服务器**：`/public/home/lihj/biopipe-work/smoke_real_data/vhh_1mel.pdb` 与 `vhh.fasta`
+  （先把执行设备切到服务器 profile；agent 会调用 `biopipe_remote_ensure` 自检连接）
+
+本地任务提示词：
+
+```text
+用工作区里的 examples/smoke_real_data/input 做一条路线：结构做界面 core/rim，序列做 liability；
+链 A,B 对 L,M，参数用默认值。先给我节点、参数和预计产物，我确认后再运行。
+```
+
+服务器任务提示词：
+
+```text
+用服务器 licai-srv-node80 上的 /public/home/lihj/biopipe-work/smoke_real_data 做同样的路线；
+执行设备切到该服务器，先 ensure 连接并校验，再给我摘要等待确认。
+```
+
 参考基线（用于判断结果是否合理）：界面残基 **99**（core **58**、rim **41**），
 序列 liability **10**（氧化 5、异构化 3、脱酰胺 2），CPU 约 3 秒。数值偏差通常来自
 链选择或 cutoff 不同——先看 Agent 的参数摘要，再决定是否让它调整。
