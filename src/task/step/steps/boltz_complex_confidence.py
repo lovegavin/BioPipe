@@ -205,7 +205,7 @@ class BoltzComplexConfidenceStep(Step):
                 "schema": {"ndim": 2, "numeric": True, "info_open": True, "axis_info_open": True},
             },
         },
-        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory"},
+        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory", "environment": "boltz"},
         "dependencies": [],
         "dependency_imports": ["boltz"],
         "inputs_arity": 1,

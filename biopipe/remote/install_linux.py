@@ -36,11 +36,11 @@ EXTRA_PIP = ('pdb2pqr', 'ViennaRNA')
 # Large model packages whose pins over-constrain shared runtimes: install the
 # distributions without forcing their resolver into the environment, then let
 # the dependency probe import them.
-EXTRA_NO_DEPS = ('boltz', 'antifold')
+EXTRA_NO_DEPS = ()  # conflicting model packages live in declared environments
 # Large model packages whose pins over-constrain shared runtimes: install the
 # distributions without forcing their resolver into the environment, then let
 # the dependency probe import them.
-EXTRA_NO_DEPS = ('boltz', 'antifold')
+EXTRA_NO_DEPS = ()  # conflicting model packages live in declared environments
 
 
 def requirements(code):

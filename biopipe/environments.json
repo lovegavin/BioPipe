@@ -71,6 +71,18 @@
       ],
       "notes": "Verified on licai-srv-node80 (glibc 2.17): Python 3.12, torch 2.6.0, ESM 3.2.2. torch >= 2.9 wheels need manylinux_2_28 and cannot be installed on this OS, so the bridge pins the newest compatible torch. ESM 3.4 requires torch >= 2.11 and is not installable there; the operator surface is unchanged.",
       "wired": true
+    },
+    "boltz": {
+      "title": "Boltz structure and affinity prediction",
+      "python": "3.11",
+      "imports": [
+        "boltz"
+      ],
+      "requirements": [
+        "boltz==2.2.1"
+      ],
+      "notes": "Boltz 2.2.1 pins pyyaml==6.0.2, requests==2.32.3, scikit-learn==1.6.1 and scipy==1.13.1, which conflict with the shared runtime. It runs in its own interpreter; weights stay in ~/.boltz and are downloaded through the manifest.",
+      "wired": true
     }
   }
 }

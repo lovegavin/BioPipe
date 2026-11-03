@@ -27,7 +27,7 @@ or statistical assumptions for a particular dataset.
 
 ## Runtime environment
 
-Runs in the shared BioPipe interpreter.
+This operator executes in the dedicated `boltz` interpreter; see docs/large_resources.md for resolution and overrides.
 
 ## Limitations
 
