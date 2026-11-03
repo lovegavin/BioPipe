@@ -5,6 +5,18 @@ from pathlib import Path
 from biopipe import registry
 
 
+def test_default_route_roots_pairs_env_with_its_code_dir(monkeypatch, tmp_path):
+    prefix = tmp_path / "managed-v1" / "env-abc"
+    prefix.mkdir(parents=True)
+    paired = tmp_path / "managed-v1" / "code-abc" / "routes"
+    paired.mkdir(parents=True)
+    other = tmp_path / "managed-v1" / "code-old" / "routes"
+    other.mkdir(parents=True)
+    monkeypatch.setattr("sys.prefix", str(prefix))
+    monkeypatch.delenv("BIOPIPE_ROUTES", raising=False)
+    assert registry.default_route_roots(tmp_path / "site-packages") == [paired.resolve()]
+
+
 def test_default_route_roots_falls_back_to_managed_code_dir(monkeypatch, tmp_path):
     prefix = tmp_path / "managed-v1" / "env-abc"
     prefix.mkdir(parents=True)
@@ -13,7 +25,7 @@ def test_default_route_roots_falls_back_to_managed_code_dir(monkeypatch, tmp_pat
     monkeypatch.setattr("sys.prefix", str(prefix))
     monkeypatch.delenv("BIOPIPE_ROUTES", raising=False)
     roots = registry.default_route_roots(tmp_path / "site-packages")
-    assert code.resolve() in roots
+    assert roots == [code.resolve()]
 
 
 def test_default_route_roots_prefers_env_override(monkeypatch, tmp_path):

@@ -81,25 +81,27 @@ def package_manifest(descriptors, previous):
 
 
 def default_route_roots(root=ROOT):
-    """Return route directories that exist for source and installed layouts."""
+    """Return the route directory for source, installed and managed layouts."""
     import sys as _sys
 
-    candidates = []
     override = os.environ.get("BIOPIPE_ROUTES")
     if override:
-        candidates.append(Path(override))
-    candidates.append(Path(root) / "routes")
+        return [Path(override).resolve()]
+    candidates = [Path(root) / "routes"]
     prefix = Path(_sys.prefix)
+    short = prefix.name[4:] if prefix.name.startswith("env-") else ""
+    if short:
+        candidates.append(prefix.parent / ("code-" + short) / "routes")
     candidates.append(prefix / "routes")
-    for managed in {prefix.parent, prefix.parent.parent}:
-        candidates.extend(sorted(managed.glob("code-*/routes")))
-    seen, roots = set(), []
     for candidate in candidates:
-        resolved = candidate.resolve()
-        if resolved.is_dir() and resolved not in seen:
-            seen.add(resolved)
-            roots.append(resolved)
-    return roots
+        if candidate.is_dir():
+            return [candidate.resolve()]
+    managed = sorted(
+        (path for path in prefix.parent.glob("code-*/routes") if path.is_dir()),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    )
+    return [managed[0].resolve()] if managed else [Path(root) / "routes"]
 
 
 def route_sources(root, route_roots=None):
