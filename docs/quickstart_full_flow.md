@@ -109,6 +109,27 @@ DSH 的 MCP 客户端配置在 `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch
 - 改完重启 DSH 与 Studio；在 DSH 里让 agent 调 `biopipe_operator_search` 验证。
 - 其他客户端（Cursor/Claude Desktop）用等价 JSON：`{"mcpServers":{"biopipe":{"command":"biopipe","args":["mcp","--allow-run"]}}}`；Studio 的 **Agent 面板** 会按当前解释器生成可直接粘贴的配置。
 
+### 首轮开场白（复制即用）
+
+配置好 MCP、新开一个 agent 对话后，第一条消息只需要：
+
+```text
+请阅读 docs/agent_bootstrap.zh.md，准备后续工作。
+```
+
+英文版：
+
+```text
+Please read docs/agent_bootstrap.md and prepare for the next task.
+```
+
+agent 会先调用 `biopipe_status`、`biopipe_context` 读环境与画布，然后等你提出需求；
+之后正常说话即可，不需要记工具名。
+
+控制台与结果：无论任务由前端、agent 还是终端发起，都会进入 **已执行任务** 列表；
+本地与 ssh 任务都能预览、分页查看带标签表格（`biopipe_artifact_table` 同源）并下载到本地。
+任务在准入额度内可并行；前端发起的运行不会因 agent 或终端提交新任务而丢失结果预览。
+
 ## 6. 让 Agent 设计并运行第一条路线（真实数据）
 
 示例目录 `examples/smoke_real_data/input/` 只有两个真实文件，**没有现成路线**：
