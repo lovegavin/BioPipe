@@ -187,6 +187,33 @@ def _ensure_isolated_extras():
     return result.returncode == 0
 
 
+def _ensure_isolated_environments(prefix):
+    """Create one interpreter per declared operator environment (AntiFold, ...)."""
+    from biopipe.environments import load, resolve
+    mamba = prefix.parent / 'micromamba-2.10.0'
+    root = prefix / 'external'
+    ok = True
+    for name, entry in load().items():
+        if resolve(name):
+            continue
+        target = root / name
+        print(f'Preparing isolated environment {name} at {target}', flush=True)
+        if not mamba.is_file():
+            ok = False
+            continue
+        env = dict(os.environ, MAMBA_ROOT_PREFIX=str(prefix.parent / 'mamba-cache'))
+        create = [str(mamba), 'create', '-y', '-p', str(target), '-c', 'conda-forge',
+                  '--override-channels', 'python=' + str(entry.get('python', '3.11')), 'pip']
+        if subprocess.run(create, env=env, check=False).returncode:
+            ok = False
+            continue
+        python = target / 'bin/python'
+        pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, *entry.get('requirements', [])]
+        if subprocess.run(pip, check=False).returncode:
+            ok = False
+    return ok
+
+
 def ensure_requirements(specs, request, bundle=None):
     """Repair the complete dependency graph, including missing transitive libraries."""
     Requirement = _requirement_class()
@@ -224,6 +251,8 @@ def ensure_requirements(specs, request, bundle=None):
             raise RuntimeError('pip install failed after the wheel and source attempts:\n' + tail)
     if not _ensure_python_extras(constraints):
         print('some light operator extras could not be installed', flush=True)
+    if not _ensure_isolated_environments(prefix):
+        print('an isolated operator environment could not be prepared', flush=True)
     if not _ensure_isolated_extras():
         print(
             'optional model packages (boltz, antifold) could not be installed; '

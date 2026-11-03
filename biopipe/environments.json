@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "environments": {
+    "antifold": {
+      "title": "AntiFold antibody inverse folding",
+      "python": "3.11",
+      "imports": [
+        "antifold"
+      ],
+      "requirements": [
+        "antifold==0.3.1"
+      ],
+      "notes": "AntiFold pins NumPy 1.26 and Torch 2.3.1, which conflict with the shared scientific runtime."
+    }
+  }
+}

@@ -125,6 +125,10 @@ def antifold_command(
 ) -> list[str]:
     """Build the official AntiFold command line."""
 
+    if not python_executable:
+        from biopipe.environments import resolve
+        resolved = resolve('antifold')
+        python_executable = str(resolved) if resolved else ''
     launcher = python_executable or sys.executable
     entry = [str(runner_path)] if runner_path else ["-m", "antifold.main"]
     command = [
@@ -198,7 +202,7 @@ class AntifoldDesignStep(Step):
             "inputs": [],
             "output": {"mode": "declare", "schema": {"ndim": 2, "numeric": True, "info_open": True, "axis_info_open": False}},
         },
-        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory"},
+        "resources": {"memory_modes": ["full"], "estimate": "estimate_memory", "environment": "antifold"},
         "dependencies": ["antifold", "torch"],
         "dependency_imports": ["antifold"],
         "inputs_arity": 0,
