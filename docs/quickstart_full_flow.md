@@ -155,20 +155,22 @@ agent 会先调用 `biopipe_status`、`biopipe_context` 读环境与画布，然
 - `vhh_1mel.pdb`：RCSB 1MEL，3908 原子，VHH `A/B` + 溶菌酶 `L/M`；
 - `vhh.fasta`：从该结构链 `A` 提取的 132 aa VHH 序列。
 
-这一步同时验证 Agent 的四项能力：从算子目录设计路线、按你的指令微调画布、校验、提交运行。
+这一步验证 Agent 的完整闭环：从算子目录设计路线、**先给方案等你确认**、按指令微调、校验、提交。
 在 DSH 中粘贴：
 
 ```text
-工作区 examples/smoke_real_data/input/ 下有一个真实结构 vhh_1mel.pdb（VHH 链 A/B 与溶菌酶 L/M）和一个真实 VHH 序列 vhh.fasta。
-请把它设计成一条可运行路线：
-1) 先用 biopipe_operator_search 找“结构界面分析”和“序列风险位点”两类算子，再用 biopipe_operator_describe 读取参数与输入输出契约；
-2) 自行组图：两个输入源分别接一个算子，链与参数由你根据契约决定；调用 biopipe_validate 和 biopipe_workflow_prepare（require_files=true）；
-3) 把节点、边、参数摘要发给我确认，并说明你为何选这些算子；
-4) 我会让你微调（例如只保留界面核心残基、调整 cutoff、增加一步筛选或排序）。每次修改作为一个事务，改完复述改动并重新校验；
-5) 我确认后再用 request_id demo-001 调 biopipe_submit 提交，轮询 biopipe_job，完成后用 biopipe_artifacts 汇报；
-6) 最终汇报：界面残基总数及 core/rim 数量、liability 总数及分类。
-不要读取或复用仓库里任何现成 route.json / task.yaml；路线必须由你从算子目录设计。
+用工作区里的 examples/smoke_real_data/input 做一条路线，不限方向，我需要有极具价值的分析。
+先给我节点、参数和预计产物，我确认后再运行。
 ```
+
+这里的两个真实输入是：
+
+- `vhh_1mel.pdb`：RCSB 1MEL，3908 原子，VHH `A/B` + 溶菌酶 `L/M`；
+- `vhh.fasta`：从该结构链 `A` 提取的 132 aa VHH 序列。
+
+Agent 应先用 `biopipe_operator_search`/`biopipe_operator_describe` 选算子，给出节点、边、
+参数与预计产物，并说明分析价值；你确认后它才 `biopipe_submit`。不要读取或复用仓库里任何
+现成 route.json / task.yaml，路线必须由它从算子目录设计。
 
 数据位置二选一：
 - **本地**：`examples/smoke_real_data/input/vhh_1mel.pdb` 与 `vhh.fasta`（工作区为仓库根）
@@ -185,8 +187,8 @@ agent 会先调用 `biopipe_status`、`biopipe_context` 读环境与画布，然
 服务器任务提示词：
 
 ```text
-用服务器 licai-srv-node80 上的 /public/home/lihj/biopipe-work/smoke_real_data 做同样的路线；
-执行设备切到该服务器，先 ensure 连接并校验，再给我摘要等待确认。
+用服务器 licai-srv-node80 上的 /public/home/lihj/biopipe-work/smoke_real_data 做一条路线，不限方向，
+我需要有极具价值的分析。先给我节点、参数和预计产物，我确认后再运行；执行设备切到该服务器。
 ```
 
 参考基线（用于判断结果是否合理）：界面残基 **99**（core **58**、rim **41**），
