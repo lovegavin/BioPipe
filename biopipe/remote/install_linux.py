@@ -22,9 +22,11 @@ PIP_CONSTRAINTS = (
     'pyarrow<22',   # newer sdists drop the cp311 wheel and need Arrow C++
     'libcst<1.8',   # newer sdists are Rust builds; 1.7 ships cp311 wheels
 )
+# pysam wheels need glibc >= 2.28 on manylinux, so old HPC hosts get it from
+# conda-forge/bioconda together with the rest of the native stack.
 # pdbfixer needs openmm>=8.2, and PyPI ships openmm 8.1.1 wheels built for NumPy 1;
 # MD/energy operators are an optional conda-forge extra (see docs/agent_environment_repair.md).
-CONDA_PROVIDED = frozenset({'pdbfixer', 'openmm'})
+CONDA_PROVIDED = frozenset({'pdbfixer', 'openmm', 'pysam'})
 # Missing imports for these extras are reported, not fatal for the install.
 OPTIONAL_MODULES = ('pdbfixer', 'openmm')
 
@@ -147,9 +149,10 @@ def ensure_requirements(specs, request, bundle=None):
         status, tail = _install(request, True, environment, constraints, bundle)
         if status:
             print('No prebuilt wheel for the whole requirement set; '
-                  'retrying with the bundled C/C++ toolchain', flush=True)
-            if tail:
-                print(tail, flush=True)
+                  'retrying with source distributions', flush=True)
+            status, tail = _install(request, False, environment, constraints, bundle)
+        if status:
+            print('A source build needs the bundled C/C++ toolchain; retrying', flush=True)
             _ensure_compilers()
             environment = compiler_environment()
             status, tail = _install(request, False, environment, constraints, bundle)
