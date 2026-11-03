@@ -112,6 +112,7 @@ def test_installer_repairs_transitive_dependencies_without_reinstalling_healthy_
     monkeypatch.setattr(installer.subprocess, 'run', run)
     monkeypatch.setattr(installer, '_ensure_python_extras', lambda *a, **k: True)
     monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_extras', lambda *a, **k: True)
     installer.ensure_requirements(['parent==1.0'], tmp_path/'requirements.txt')
     assert bool(installs) == broken
     if broken:
@@ -133,9 +134,9 @@ def test_native_bootstrap_does_not_mix_conda_and_pip_scientific_abis(monkeypatch
     result = module.provision(None, {}, lambda text: None, threading.Event(), ROOT)
     script = next(data.decode() for name, data in uploaded.items() if name.endswith('.sh'))
     native = next(line for line in script.splitlines() if '"$bp_action"' in line)
-    assert '--strict-channel-priority python=3.11 pip bwa=0.7.19 samtools=1.22.1' in native
+    assert '--strict-channel-priority python=3.11 pip bwa=0.7.19 samtools=1.22.1 openmm pdbfixer' in native
     assert '"python=3.11 pip' not in native and "'python=3.11 pip" not in native
-    assert 'gxx_linux-64' not in native and 'pdbfixer' not in native
+    assert 'gxx_linux-64' not in native and 'openmm pdbfixer' in native
     assert 'cooltools=' not in native and 'numpy=' not in native and 'pandas=' not in native
     assert 'PATH=' in script and 'install_linux.py' in script
     assert result['workspace'] == '/home/test/.local/share/biopipe/workspace'
@@ -158,6 +159,7 @@ def test_installer_prefers_mirror_wheels_and_falls_back_to_source(monkeypatch, t
     monkeypatch.setattr(installer.subprocess, 'run', run)
     monkeypatch.setattr(installer, '_ensure_python_extras', lambda *a, **k: True)
     monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_extras', lambda *a, **k: True)
     monkeypatch.setattr(installer.shutil, 'which', lambda name: '/opt/env/bin/' + name)
     installer.ensure_requirements(['pyarrow==21.0.0'], tmp_path / 'requirements.txt')
     assert len(calls) == 2
@@ -199,6 +201,7 @@ def test_installer_skips_conda_only_packages_and_pins_build_fragile_sdists(monke
     monkeypatch.setattr(installer.subprocess, 'run', run)
     monkeypatch.setattr(installer, '_ensure_python_extras', lambda *a, **k: True)
     monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_extras', lambda *a, **k: True)
     installer.ensure_requirements(['pyarrow>=14'], tmp_path / 'requirements.txt')
     assert len(calls) == 1
     assert 'pyarrow<22' in constraints_seen[0]
@@ -223,6 +226,7 @@ def test_installer_source_fallback_prefers_binaries_and_keeps_constraints(monkey
     monkeypatch.setattr(installer.subprocess, 'run', run)
     monkeypatch.setattr(installer, '_ensure_python_extras', lambda *a, **k: True)
     monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_extras', lambda *a, **k: True)
     installer.ensure_requirements(['pyarrow>=14'], tmp_path / 'requirements.txt')
     assert len(calls) == 2
     assert '--only-binary=:all:' in calls[0]

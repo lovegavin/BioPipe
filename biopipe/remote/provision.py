@@ -14,7 +14,7 @@ import uuid
 MAMBA_URL = 'https://conda.anaconda.org/conda-forge/linux-64/micromamba-2.10.0-0.tar.bz2'
 # Native helpers only: Python, pip and the two Hi-C command line tools.
 # Compilers are added on demand when a source build is actually required.
-CONDA_PACKAGES = 'python=3.11 pip bwa=0.7.19 samtools=1.22.1'
+CONDA_PACKAGES = 'python=3.11 pip bwa=0.7.19 samtools=1.22.1 openmm pdbfixer'
 # Shell-safe tokens: each spec must reach micromamba as its own argument.
 CONDA_SPECS = ' '.join(spec for spec in CONDA_PACKAGES.split() if spec)
 CONDA_MARKER = '.biopipe-conda-packages'
