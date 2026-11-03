@@ -113,7 +113,7 @@ DSH 的 MCP 客户端配置在 `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch
 配置好 MCP、新开一个 agent 对话后，第一条消息只需要：
 
 ```text
-Please read docs/agent_bootstrap.md and prepare for the next task.
+请阅读 docs/agent_bootstrap.md，准备后续工作。
 ```
 
 agent 会先调用 `biopipe_status`、`biopipe_context` 读环境与画布，然后等你提出需求；
