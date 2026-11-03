@@ -21,6 +21,27 @@ from datetime import datetime, timezone
 from packaging.requirements import Requirement
 
 
+def find_tool(name):
+    """Resolve an external tool from PATH or any managed environment bin directory."""
+    import shutil
+    found = shutil.which(name)
+    if found:
+        return found
+    from pathlib import Path
+    import sys
+    roots = [Path(sys.prefix) / 'bin', Path(sys.prefix) / 'Scripts']
+    managed = Path(sys.prefix).resolve().parent
+    roots.extend(sorted(managed.glob('env-*/bin')))
+    roots.extend(sorted(managed.glob('env-*/Scripts')))
+    for root in roots:
+        candidate = root / name
+        if candidate.is_file():
+            import os
+            if os.access(candidate, os.X_OK):
+                return str(candidate)
+    return None
+
+
 def probe_environment(entry_id, environment, imports):
     """Check an operator that declares a dedicated interpreter environment."""
     from biopipe.environments import resolve
@@ -44,8 +65,7 @@ def probe(entries):
     for entry in entries:
         tools = (entry.get('resources') or {}).get('external_tools') or []
         if tools:
-            import shutil
-            missing = [name for name in tools if shutil.which(name) is None]
+            missing = [name for name in tools if find_tool(name) is None]
             results[entry['id']] = {'status': 'failed' if missing else 'passed',
                                     'error': ', '.join(f'{name}: not on PATH' for name in missing)}
             continue
