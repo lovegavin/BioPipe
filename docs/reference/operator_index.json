@@ -6050,6 +6050,26 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_pca",
+    "kind": "operator",
+    "title": "轨迹主成分分析",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Superpose trajectory frames on CA atoms, build the coordinate covariance matrix and report essential-dynamics modes with variance fractions.",
+    "doc": "src/task/step/steps/structure_md_pca.StructureMdPcaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_quasiharmonic_entropy",
+    "kind": "operator",
+    "title": "准谐振熵",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Estimate configurational entropy from the quasiharmonic covariance matrix of a trajectory (Schlitter formula), with per-mode contributions.",
+    "doc": "src/task/step/steps/structure_md_quasiharmonic_entropy.StructureMdQuasiharmonicEntropyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_md_salt_bridge_occupancy",
     "kind": "operator",
     "title": "MD 盐桥占有率",
