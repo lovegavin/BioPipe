@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "构象聚类参数",
+  "properties": {
+    "trajectory_path": {
+      "title": "轨迹 .npy 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "topology_path": {
+      "title": "拓扑 PDB 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "cutoff": {
+      "title": "聚类 RMSD 阈值（Å）",
+      "type": "number",
+      "default": 1.5,
+      "minimum": 0.1,
+      "maximum": 20.0,
+      "x-ui-group": "聚类",
+      "x-ui-order": 3
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "clusters",
+      "x-ui-group": "输出",
+      "x-ui-order": 4
+    }
+  }
+}
