@@ -22,13 +22,10 @@ from pathlib import Path
 
 
 def descriptors() -> list[dict]:
-    from biopipe.plugins import bundled_entries
+    import biopipe
 
-    entries = []
-    for kind in ("operator", "reader"):
-        for declaration, _module in bundled_entries(kind):
-            entries.append(declaration)
-    return entries
+    data = json.loads((Path(biopipe.__file__).parent / "builtin_packages.json").read_text())
+    return [descriptor for package in data.get("packages", []) for descriptor in package.get("descriptors", [])]
 
 
 def describe(entry: dict) -> dict:
@@ -69,7 +66,8 @@ def main() -> int:
             record["host_python"] = sys.executable
             environment = record["environment"]
             if record["external_tools"]:
-                missing = [name for name in record["external_tools"] if shutil.which(name) is None]
+                from biopipe.dependencies import find_tool
+                missing = [name for name in record["external_tools"] if find_tool(name) is None]
                 record.update(status="failed" if missing else "passed",
                               error=", ".join(f"{name}: not on PATH" for name in missing),
                               command="which " + " ".join(record["external_tools"]))
