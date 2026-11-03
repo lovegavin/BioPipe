@@ -8,7 +8,7 @@ It is the version in `pyproject.toml` and `biopipe/__init__.py`, reported by
 
 | Axis | Owner | Declared in | Current |
 | --- | --- | --- | --- |
-| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.117.2** |
+| Backend application | backend maintainer | `pyproject.toml`, `biopipe/__init__.py` | **1.117.3** |
 | Frontend / desktop package | frontend maintainer | `frontend/package.json` | 0.116.2 (independent) |
 | Authoring protocol and SDK | protocol maintainer | `protocol_version` 3, `biopipe_sdk` 3.1.0 | v3 / 3.1.0 |
 | Operator library bundle | release tooling | `.biopipe-library.zip` build | tracks a build, not this version |
@@ -192,6 +192,8 @@ Examples:
 1.116.2  patch: repair existing managed environments that lack the C++ toolchain
 1.117.0  batch: MD interface contact occupancy
 1.117.1  patch: install pdbfixer from conda and keep build-fragile sdists off the pip solve
+1.117.2  patch: ship a bundled pdbfixer wheel and prepare compilers only for source builds
+1.117.3  patch: keep pdbfixer and openmm out of the default pip solve (optional conda extra)
 1.53.0  next expansion batch
 2.0.0  breaking change to plugin compatibility or operator IDs
 ```

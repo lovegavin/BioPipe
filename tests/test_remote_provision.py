@@ -177,9 +177,7 @@ def test_installer_skips_conda_only_packages_and_pins_build_fragile_sdists(monke
     from biopipe.remote import install_linux as installer
 
     specs, _ = installer.requirements(ROOT)
-    assert any(spec.lower().startswith('pdbfixer') for spec in specs)
-    bundled = ROOT / 'biopipe' / 'bundled'
-    assert any(bundled.glob('pdbfixer-*.whl'))
+    assert not any(spec.lower().startswith(('pdbfixer', 'openmm')) for spec in specs)
 
     monkeypatch.setattr(installer.metadata, 'version', lambda name: '1.0')
     calls = []

@@ -22,15 +22,18 @@ PIP_CONSTRAINTS = (
     'pyarrow<22',   # newer sdists drop the cp311 wheel and need Arrow C++
     'libcst<1.8',   # newer sdists are Rust builds; 1.7 ships cp311 wheels
 )
-# pdbfixer has no PyPI release: a pure-Python wheel is published in biopipe/bundled.
-CONDA_PROVIDED = frozenset()
+# pdbfixer needs openmm>=8.2, and PyPI ships openmm 8.1.1 wheels built for NumPy 1;
+# MD/energy operators are an optional conda-forge extra (see docs/agent_environment_repair.md).
+CONDA_PROVIDED = frozenset({'pdbfixer', 'openmm'})
 
 
 def requirements(code):
     project = tomllib.loads((code / 'pyproject.toml').read_text(encoding='utf-8'))['project']
     manifest = json.loads((code / 'biopipe/builtin_packages.json').read_text(encoding='utf-8'))
     entries = [d for p in manifest['packages'] for d in p['descriptors']]
+    Requirement = _requirement_class()
     specs = sorted(set(project['dependencies']) | {r for d in entries for r in d.get('dependencies', [])})
+    specs = [spec for spec in specs if Requirement(spec).name.lower() not in CONDA_PROVIDED]
     # pdbfixer is published on conda-forge only; installing it with pip aborts
     # the whole resolve. The managed micromamba environment provides it.
     hic = [line.strip() for line in (code / 'requirements-hic-linux.txt').read_text().splitlines()
