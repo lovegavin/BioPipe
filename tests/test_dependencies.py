@@ -193,3 +193,17 @@ def test_installer_uses_bundled_wheel_when_selected_python_has_no_pip(tmp_path):
                             capture_output=True, text=True, timeout=30)
     assert result.returncode == 0, result.stderr
     assert '.whl' in result.stdout and 'pip ' in result.stdout
+
+
+def test_probe_uses_isolated_environment_for_declared_operator(monkeypatch, tmp_path):
+    from biopipe import dependencies as module
+    fake = tmp_path / 'bin/python'
+    fake.parent.mkdir(parents=True)
+    fake.write_text('#!/bin/sh\nexit 0\n')
+    fake.chmod(0o755)
+    monkeypatch.setattr('biopipe.environments.resolve', lambda name: fake)
+    monkeypatch.setattr(module.subprocess, 'run', lambda *a, **k: type('R', (), {'returncode': 0, 'stdout': '', 'stderr': ''})())
+    entry = {**descriptor('isolated'), 'resources': {'environment': 'antifold'}, 'dependency_imports': ['antifold']}
+    result = module.probe([entry])['isolated']
+    assert result['status'] == 'passed'
+    assert result['environment'] == str(fake)

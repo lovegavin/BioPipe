@@ -11,6 +11,7 @@ from hashlib import sha256
 import importlib
 from importlib import metadata
 import json
+import subprocess
 from pathlib import Path
 import sys
 import threading
@@ -19,11 +20,31 @@ from datetime import datetime, timezone
 from packaging.requirements import Requirement
 
 
+def probe_environment(entry_id, environment, imports):
+    """Check an operator that declares a dedicated interpreter environment."""
+    from biopipe.environments import resolve
+    python = resolve(environment)
+    if python is None:
+        return {'status': 'failed',
+                'error': f'isolated environment {environment!r} is not installed; run scripts/install_environments.py'}
+    names = imports or []
+    script = ';'.join(f'import {name}' for name in names) or 'pass'
+    result = subprocess.run([str(python), '-c', script], capture_output=True, text=True, timeout=300)
+    if result.returncode:
+        tail = (result.stderr or result.stdout).strip().splitlines()[-1:] or ['import failed']
+        return {'status': 'failed', 'error': f'{environment}: {tail[0]}'}
+    return {'status': 'passed', 'error': '', 'environment': str(python)}
+
+
 def probe(entries):
     results = {}
     for entry in entries:
-        errors, warnings = [], []
-        direct = {Requirement(value).name for value in entry.get('dependencies', [])}
+        environment = (entry.get('resources') or {}).get('environment')
+        if environment:
+            results[entry['id']] = probe_environment(entry['id'], environment,
+                                                     entry.get('dependency_imports', []))
+            continue
+        errors = []
         queue = list(entry.get('dependencies', []))
         seen = set()
         while queue:
@@ -37,8 +58,7 @@ def probe(entries):
             try:
                 version = metadata.version(req.name)
                 if req.specifier and not req.specifier.contains(version, prereleases=True):
-                    target = errors if req.name in direct else warnings
-                    target.append(f'{req}: installed {version}')
+                    errors.append(f'{req}: installed {version}')
                 # Validate enabled extras and transitive metadata without
                 # importing arbitrary parsers in the HTTP process.
                 for child in metadata.requires(req.name) or []:
@@ -54,8 +74,7 @@ def probe(entries):
                     importlib.import_module(name)
                 except Exception as exc:
                     errors.append(f'{name}: {type(exc).__name__}: {exc}')
-        results[entry['id']] = {'status': 'failed' if errors else 'passed', 'error': '\n'.join(errors),
-                                'warnings': '\n'.join(warnings)}
+        results[entry['id']] = {'status': 'failed' if errors else 'passed', 'error': '\n'.join(errors)}
     return results
 
 
