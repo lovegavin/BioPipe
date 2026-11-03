@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "ESM-3 序列生成",
+  "properties": {
+    "prompt": {
+      "type": "string",
+      "default": "MKTAYIAKQR________",
+      "title": "提示序列",
+      "description": "标准氨基酸字母；下划线表示需要生成的位点。",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "num_steps": {
+      "type": "integer",
+      "default": 8,
+      "minimum": 1,
+      "maximum": 64,
+      "title": "采样步数",
+      "x-ui-group": "模型",
+      "x-ui-order": 1
+    },
+    "temperature": {
+      "type": "number",
+      "default": 0.7,
+      "minimum": 0.05,
+      "maximum": 2.0,
+      "title": "采样温度",
+      "x-ui-group": "模型",
+      "x-ui-order": 2
+    },
+    "seed": {
+      "type": "integer",
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-group": "模型",
+      "x-ui-order": 3
+    },
+    "model": {
+      "type": "string",
+      "default": "esm3_sm_open_v1",
+      "title": "模型名称",
+      "x-ui-group": "模型",
+      "x-ui-order": 4
+    },
+    "device": {
+      "type": "string",
+      "default": "cpu",
+      "enum": [
+        "cpu",
+        "cuda"
+      ],
+      "title": "设备",
+      "x-ui-group": "模型",
+      "x-ui-order": 5
+    },
+    "output": {
+      "type": "string",
+      "default": "generation",
+      "title": "输出",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

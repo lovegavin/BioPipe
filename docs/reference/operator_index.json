@@ -1690,6 +1690,16 @@
     "status": "generated"
   },
   {
+    "id": "esm3_sequence_generation",
+    "kind": "operator",
+    "title": "ESM-3 序列生成",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sample protein sequences from an ESM-3 masked prompt on CPU or CUDA.",
+    "doc": "src/task/step/steps/esm3_sequence_generation.Esm3SequenceGenerationStep.md",
+    "status": "generated"
+  },
+  {
     "id": "esm_embedding",
     "kind": "operator",
     "title": "ESM embeddings",
