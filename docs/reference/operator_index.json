@@ -6170,6 +6170,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_md_tica",
+    "kind": "operator",
+    "title": "TICA 慢成分分析",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Solve the time-lagged independent component analysis eigenproblem on superposed CA coordinates and report eigenvalues with implied timescales.",
+    "doc": "src/task/step/steps/structure_md_tica.StructureMdTicaStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_metal_coordination",
     "kind": "operator",
     "title": "Metal coordination shells",
