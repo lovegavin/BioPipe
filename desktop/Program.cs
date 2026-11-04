@@ -336,6 +336,8 @@ internal sealed class StudioWindow : Form
             catch (Exception error)
             {
                 Log("Backend cleanup: " + error.Message);
+                Log(backend.HasExited ? "Backend process already exited; code=" + backend.ExitCode
+                                      : "Backend process still running; pid=" + backend.Id);
                 try { if (!backend.HasExited) backend.Kill(true); } catch (InvalidOperationException) { }
             }
         }

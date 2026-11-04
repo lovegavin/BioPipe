@@ -53,37 +53,25 @@ def run_process(args, *, timeout=180, env=None):
     options = dict(cwd=ROOT, env=child_env, stdin=subprocess.DEVNULL,
                    text=True, encoding='utf-8', errors='replace',
                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
-    if cancel is None:
-        result = subprocess.run(list(map(str, args)), capture_output=True, timeout=timeout, **options)
-    else:
-        if cancel.is_set():
-            raise ValueError('Dependency preparation cancelled: Studio is closing')
-        with subprocess.Popen(list(map(str, args)), stdout=subprocess.PIPE, stderr=subprocess.PIPE, **options) as child:
-            deadline = time.monotonic() + timeout
+    if cancel is not None and cancel.is_set():
+        raise ValueError('Dependency preparation cancelled: Studio is closing')
+    from biopipe.processes import owned_process
+    with owned_process(list(map(str, args)), stdout=subprocess.PIPE, stderr=subprocess.PIPE, **options) as child:
+        deadline = time.monotonic() + timeout
+        while True:
+            if cancel is not None and cancel.is_set():
+                raise ValueError('Dependency preparation cancelled: Studio is closing')
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                if cancel is not None:
+                    raise ValueError('Dependency preparation cancelled or timed out')
+                raise subprocess.TimeoutExpired(args, timeout)
             try:
-                while True:
-                    if cancel.is_set() or time.monotonic() >= deadline:
-                        raise ValueError('Dependency preparation cancelled or timed out')
-                    try:
-                        stdout, stderr = child.communicate(timeout=.2)
-                        result = subprocess.CompletedProcess(args, child.returncode, stdout, stderr)
-                        break
-                    except subprocess.TimeoutExpired:
-                        continue
-            except BaseException:
-                import psutil
-                descendants = []
-                try:
-                    descendants = psutil.Process(child.pid).children(recursive=True)
-                    for descendant in reversed(descendants):
-                        try: descendant.kill()
-                        except psutil.Error: pass
-                except psutil.Error:
-                    pass
-                if child.poll() is None: child.kill()
-                child.communicate()
-                psutil.wait_procs(descendants, timeout=5)
-                raise
+                stdout, stderr = child.communicate(timeout=min(.2, remaining))
+                result = subprocess.CompletedProcess(args, child.returncode, stdout, stderr)
+                break
+            except subprocess.TimeoutExpired:
+                continue
     if result.returncode:
         # pip writes dependency-conflict details to stdout and its error to stderr.
         raise ValueError((result.stdout + "\n" + result.stderr).strip()[-6000:])

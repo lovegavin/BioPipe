@@ -77,6 +77,15 @@ def bind_loopback(preferred_port: int = 0) -> socket.socket:
     return listener
 
 
+def report_stalled_shutdown(finished, delay=3):
+    """Leave actionable thread evidence before the host's fallback deadline."""
+    if not finished.wait(delay):
+        import faulthandler
+        print('[BioPipe shutdown] Backend still closing; active Python threads:',
+              file=sys.stderr, flush=True)
+        faulthandler.dump_traceback(file=sys.stderr, all_threads=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", type=Path, help="Explicit isolated workspace")
@@ -142,6 +151,7 @@ def main():
                         break
             finally:
                 server.should_exit = True
+                report_stalled_shutdown(finished)
 
         threading.Thread(target=announce, daemon=True).start()
         threading.Thread(target=watch_host, daemon=True).start()

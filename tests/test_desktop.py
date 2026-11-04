@@ -14,11 +14,83 @@ from fastapi.testclient import TestClient
 import httpx
 import pytest
 
-from scripts.desktop_server import bind_loopback
+from scripts.desktop_server import bind_loopback, report_stalled_shutdown
 from src.web.api import create_app
 from src.web.service import Settings
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_stalled_shutdown_reports_threads_only_until_backend_finishes(monkeypatch, capsys):
+    calls = []
+    monkeypatch.setattr('faulthandler.dump_traceback', lambda **kwargs: calls.append(kwargs))
+    finished = threading.Event()
+    report_stalled_shutdown(finished, delay=0)
+    assert len(calls) == 1 and calls[0]['all_threads']
+    assert '[BioPipe shutdown]' in capsys.readouterr().err
+    finished.set()
+    report_stalled_shutdown(finished, delay=0)
+    assert len(calls) == 1 and not capsys.readouterr().err
+
+
+def test_backend_shutdown_cancels_install_with_orphaned_child(tmp_path):
+    import psutil
+    pid_file = tmp_path / 'installer-child.pid'
+    child_code = ('import os,sys,time; from pathlib import Path; '
+                  'Path(sys.argv[1]).write_text(str(os.getpid())); time.sleep(60)')
+    parent_code = ('import subprocess,sys,time; from pathlib import Path; '
+                   'subprocess.Popen([sys.executable,"-c",sys.argv[1],sys.argv[2]]); '
+                   'p=Path(sys.argv[2]); '
+                   '\nwhile not p.exists(): time.sleep(.01)\n')
+    bootstrap = tmp_path / 'installing_backend.py'
+    bootstrap.write_text(f'''
+import sys
+sys.path.insert(0, {str(ROOT)!r})
+from biopipe.dependencies import DependencySession
+from biopipe.plugins import run_process
+import biopipe.install_targets
+DependencySession._inspect = lambda self, state, entries: {{
+    item['id']: {{'status': 'failed', 'error': 'Synthetic missing dependency'}} for item in entries}}
+def repair(manager, state, entries):
+    run_process([sys.executable, '-c', {parent_code!r}, {child_code!r}, {str(pid_file)!r}])
+    return state
+biopipe.install_targets.repair_entries = repair
+from scripts.desktop_server import main
+main()
+''', encoding='utf-8')
+    environment = dict(os.environ, BIOPIPE_DEPENDENCY_SCOPE='esm_embedding',
+                       BIOPIPE_RUNTIME_CONFIG=str(tmp_path / 'runtime.json'),
+                       BIOPIPE_ADMISSION_DIR=str(tmp_path / 'admission'), PYTHONUTF8='1')
+    log_path = tmp_path / 'shutdown.log'
+    with log_path.open('w', encoding='utf-8') as log:
+        process = subprocess.Popen([sys.executable, '-u', str(bootstrap), '--workspace',
+                                    str(tmp_path / 'workspace'), '--wait-for-host'],
+                                   env=environment, stdin=subprocess.PIPE, stdout=log, stderr=log, text=True)
+        try:
+            process.stdin.write('start\n')
+            process.stdin.flush()
+            deadline = time.monotonic() + 30
+            while not pid_file.exists() and time.monotonic() < deadline:
+                assert process.poll() is None, log_path.read_text(encoding='utf-8')
+                time.sleep(.05)
+            assert pid_file.exists(), log_path.read_text(encoding='utf-8')
+            time.sleep(.3)
+            process.stdin.write('shutdown\n')
+            process.stdin.close()
+            assert process.wait(timeout=5) == 0, log_path.read_text(encoding='utf-8')
+            assert not psutil.pid_exists(int(pid_file.read_text()))
+            assert 'Application shutdown complete.' in log_path.read_text(encoding='utf-8')
+        finally:
+            if pid_file.exists():
+                try:
+                    child = psutil.Process(int(pid_file.read_text()))
+                    if str(pid_file) in child.cmdline():
+                        child.kill()
+                except psutil.NoSuchProcess:
+                    pass
+            if process.poll() is None:
+                process.kill()
+                process.wait(timeout=5)
 
 
 def desktop_settings(workspace):

@@ -311,7 +311,7 @@ def main():
     parser.add_argument('--instance', required=True)
     parser.add_argument('--evidence', type=Path, required=True)
     parser.add_argument('--session')
-    parser.add_argument('--version', default='2.0.2')
+    parser.add_argument('--version', default='2.0.3')
     parser.add_argument('--allow-headless', action='store_true', help='Development smoke only; never label this an EXE UI test')
     args = parser.parse_args()
     try:

@@ -31,6 +31,17 @@ these dedicated environments into the shared Windows Python. Configure their
 declared interpreter or use the server environment repair workflow; a missing
 environment remains unavailable with its diagnostic visible. During shutdown,
 dependency repair cancels current work and does not start another installation.
+Installer subprocesses and their descendants are owned as one operation: a
+Windows job object (attached before execution) or a POSIX process group. Cancel
+and timeout clean up that group even if the installer parent already exited.
+This prevents inherited output pipes from trapping the dependency worker during
+shutdown. No process is selected by executable name.
+
+If a desktop backend is still closing after three seconds, its log records the
+active Python thread stacks. A host fallback also records whether the backend
+process is still alive or has already exited. Keep these diagnostics when
+reporting an exit timeout; an `installing` dependency entry alone does not locate
+the blocked operation.
 Vina's Python bindings require Linux/macOS; its separate Windows command-line
 executable does not provide those bindings. See the
 [upstream installation guide](https://autodock-vina.readthedocs.io/en/latest/installation.html).
