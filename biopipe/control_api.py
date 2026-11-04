@@ -3,6 +3,7 @@ from fastapi import Request
 from fastapi.responses import FileResponse, Response, JSONResponse
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from typing import Literal
 
 from .documents import CommandError
 from .bytecode import io_path
@@ -43,6 +44,7 @@ class DescribeRequest(BaseModel):
     ids: list[str] = Field(min_length=1, max_length=20)
     sections: list[str] | None = Field(default=None, max_length=30)
     generation: str | None = None
+    view: Literal['schema', 'docs', 'full'] = 'full'
 
 
 def mount_control(app, application, bridge):
@@ -62,8 +64,31 @@ def mount_control(app, application, bridge):
     def capabilities(request: Request):
         authorize(request)
         return {'api_version': 1, 'operator_protocol': 3, 'headless': bool(getattr(app.state, 'headless', False)),
-                'capabilities': ['workflows', 'tasks', 'artifacts', 'operator-docs', 'canvas-sessions'],
+                'capabilities': ['workflows', 'tasks', 'artifacts', 'operator-docs', 'canvas-sessions', 'agent-guides', 'brief-views'],
+                'guides_href': '/api/v1/guides', 'openapi_href': '/api/v1/openapi.json',
                 'permission_scopes': ['context', 'edit', 'run', 'plugins']}
+
+    @app.get('/api/v1/guides')
+    def guides(request: Request):
+        authorize(request)
+        from .guidance import guide
+        return guide('index')
+
+    @app.get('/api/v1/guides/{topic}')
+    def guide_topic(topic: str, request: Request, if_sha256: str | None = None):
+        authorize(request)
+        from .guidance import guide
+        return guide(topic, if_sha256=if_sha256)
+
+    @app.get('/api/v1/openapi.json', include_in_schema=False)
+    def api_schema(request: Request):
+        authorize(request)
+        from copy import deepcopy
+        schema = deepcopy(app.openapi())
+        schema['paths'] = {path: value for path, value in schema['paths'].items() if path.startswith('/api/v1/')}
+        schema.setdefault('components', {}).setdefault('securitySchemes', {})['BioPipeToken'] = {'type': 'http', 'scheme': 'bearer'}
+        schema['security'] = [{'BioPipeToken': []}]
+        return schema
 
     @app.get('/api/v1/workflows')
     def workflows(request: Request):
@@ -108,9 +133,10 @@ def mount_control(app, application, bridge):
         return application.jobs.list()
 
     @app.get('/api/v1/jobs/{key}')
-    def job(key: str, request: Request):
+    def job(key: str, request: Request, view: Literal['brief', 'full'] = 'full'):
         authorize(request)
-        return application.jobs.details(key)
+        from .agent_views import job_view
+        return job_view(application.jobs.details(key), view)
 
     @app.post('/api/v1/jobs/{key}/cancel')
     def cancel(key: str, request: Request):
@@ -118,9 +144,11 @@ def mount_control(app, application, bridge):
         return application.jobs.cancel(key)
 
     @app.get('/api/v1/jobs/{key}/logs')
-    def logs(key: str, request: Request, offset: int = 0, limit: int = 65536):
+    def logs(key: str, request: Request, offset: int = 0, limit: int = 65536,
+             encoding: Literal['text', 'base64', 'both'] = 'both'):
         authorize(request)
-        return application.jobs.logs(key, offset=offset, limit=limit)
+        from .agent_views import log_view
+        return log_view(application.jobs.logs(key, offset=offset, limit=limit), encoding)
 
     @app.get('/api/v1/jobs/{key}/parameters')
     def parameters(key: str, request: Request):
@@ -166,14 +194,14 @@ def mount_control(app, application, bridge):
 
     @app.get('/api/v1/operators')
     def search(request: Request, query: str = '', kind: str | None = None, category: str | None = None,
-               limit: int = 20, offset: int = 0):
+               limit: int = 20, offset: int = 0, view: Literal['brief', 'full'] = 'full'):
         authorize(request)
-        return application.operator_docs.search(query, kind=kind, category=category, limit=limit, offset=offset)
+        return application.operator_docs.search(query, kind=kind, category=category, limit=limit, offset=offset, view=view)
 
     @app.post('/api/v1/operators/describe')
     def describe(request: Request, payload: DescribeRequest):
         authorize(request)
-        return application.operator_docs.describe(payload.ids, sections=payload.sections, generation=payload.generation)
+        return application.operator_docs.describe(payload.ids, sections=payload.sections, generation=payload.generation, view=payload.view)
 
     @app.get('/api/v1/resources')
     def resources(request: Request):

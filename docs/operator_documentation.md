@@ -94,6 +94,13 @@ Typical agent sequence: search candidates, request their contracts and relevant
 guidance, inspect the data, validate a workflow, execute, inspect artifacts. UI
 selection is optional; these queries work through the standalone service.
 
+MCP/CLI now default to five relevance-ranked `brief` search summaries and the
+`schema` describe view. Use `view=docs` / `--view docs` for selected Markdown without
+repeating schemas; `full` retains the original complete descriptor. HTTP and the
+Python service default to full for existing integrations. Search is lexical and
+supports declared title aliases, not arbitrary translation. See the
+[agent operating guide](agent_operations.md) for task-level retrieval and caching.
+
 ## Repository maintenance
 
 ```text

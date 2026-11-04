@@ -12,6 +12,9 @@ All three use the same workflow store, worker scheduler, parameter snapshots,
 memory admission, spill store and SSH coordinator. MCP is not an AI provider.
 Graph editing and task execution remain separate operations.
 
+For a complete connection-to-result example, see the [third-party API tutorial](api_quickstart.md).
+For agents, use the [installed three-layer guide](agent_operations.md).
+
 ## Run without a desktop window
 
 Install BioPipe normally; install the `agent` extra when MCP is required. There
@@ -118,6 +121,8 @@ are local secrets and must not be copied into agent prompts.
 
 | Endpoint | Required capability | Purpose |
 | --- | --- | --- |
+| `GET /guides`, `/guides/{topic}` | context | Installed operating topics, version and conditional content hash |
+| `GET /openapi.json` | context | Machine-readable application reference with Bearer authentication |
 | `GET /capabilities` | context | API version and supported services |
 | `GET /workflows`, `GET /workflows/{id}` | context | Saved workflows |
 | `POST /workflows/prepare`, `/validate`, `/export` | context | Prepare, check, portable ZIP export |
@@ -155,6 +160,13 @@ The index also exposes every registered figure ID/format with its original-file
 link, physical dimensions and producing step. It uses figure metadata already
 recorded in the run summary, without downloading reports merely to populate the
 list. Historical jobs lacking that metadata retain their original report links.
+
+HTTP defaults remain full for compatibility. `GET /operators?view=brief` returns
+ranked compact summaries. Describe accepts `view=schema|docs|full`. Job reads accept
+`view=brief|full`; logs accept `encoding=text|base64|both`. MCP/CLI use compact
+discovery/status and text-only logs by default. `biopipe_job(wait_seconds=30)` and
+`biopipe jobs wait <id> --timeout 30` wait without repeated model calls. Timeouts
+never cancel or duplicate a submitted task.
 
 ## MCP without a canvas
 

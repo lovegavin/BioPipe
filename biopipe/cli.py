@@ -22,15 +22,9 @@ def read_graph_file(path):
     return value.get('graph', value)
 
 
-def _wait_job(client, job, timeout):
-    deadline = time.monotonic() + timeout if timeout > 0 else None
-    receipt = {key: job[key] for key in ('request_id', 'reused') if key in job}
-    while job['status'] in {'queued', 'preparing', 'uploading', 'running', 'waiting_connection'}:
-        if deadline is not None and time.monotonic() >= deadline:
-            return {**job, **receipt, 'wait_timed_out': True}
-        time.sleep(.25)
-        job = client.request('/v1/jobs/' + quote(job['id'], safe=''))
-    return {**job, **receipt}
+def _wait_job(client, job, timeout, *, view='full'):
+    from .agent_views import wait_job
+    return wait_job(client, job, timeout, view=view)
 
 
 def parser():
@@ -41,7 +35,11 @@ def parser():
     root.add_argument("--instance")
     root.add_argument("--session")
     root.add_argument("--json", action="store_true", help="JSON is the default output format")
+    root.add_argument('--compact', action='store_true', help='Print JSON without indentation')
     commands = root.add_subparsers(dest="command", required=True)
+    guide = commands.add_parser('help', aliases=['guide'], help='Read an installed operating guide without starting a service')
+    guide.add_argument('topic', nargs='?', default='start')
+    guide.add_argument('--if-sha256', help='Omit guide text if this content hash is unchanged')
     serve = commands.add_parser('serve', help='Run the application API without a desktop window')
     serve.add_argument('--port', type=int, default=0, help='Loopback port; 0 selects an available port')
     commands.add_parser('service').add_argument('action', choices=['start', 'status', 'stop'])
@@ -65,10 +63,11 @@ def parser():
     operators.add_argument('--query', default='')
     operators.add_argument('--kind', choices=['operator', 'reader'])
     operators.add_argument('--category')
-    operators.add_argument('--limit', type=int, default=20)
+    operators.add_argument('--limit', type=int, default=5)
     operators.add_argument('--offset', type=int, default=0)
     operators.add_argument('--section', action='append', help='Documentation section; * includes the complete Markdown')
     operators.add_argument('--generation', help='Pinned job plugin generation')
+    operators.add_argument('--view', choices=['brief', 'schema', 'docs', 'full'], help='Search defaults to brief; describe defaults to schema')
     workflow = commands.add_parser('workflow', help='Saved workflows independent of canvas sessions')
     workflow.add_argument('action', choices=['list', 'get', 'save', 'prepare', 'validate', 'export'])
     workflow.add_argument('value', nargs='?', help='Workflow ID for get; file path for save/prepare/validate/export')
@@ -93,14 +92,19 @@ def parser():
     run.add_argument('--request-id', help='Stable idempotency key for retrying the same submission')
     run.add_argument('--wait', action='store_true')
     run.add_argument('--timeout', type=float, default=0, help='Maximum wait seconds; 0 waits until terminal')
+    run.add_argument('--brief', action='store_true', help='Return status/receipt without the full graph and report')
     run.add_argument("--document")
     run.add_argument("--expected-revision", type=int)
     jobs = commands.add_parser("jobs")
-    jobs.add_argument("action", choices=["list", "get", "cancel", 'logs'])
+    jobs.add_argument("action", choices=["list", "get", "cancel", 'logs', 'wait'])
     jobs.add_argument("id", nargs='?')
     jobs.add_argument('--offset', type=int, default=0)
-    jobs.add_argument('--limit', type=int, default=65536)
+    jobs.add_argument('--limit', type=int, default=4096)
     jobs.add_argument('--follow', action='store_true')
+    jobs.add_argument('--encoding', choices=['text', 'base64', 'both'], default='text')
+    jobs.add_argument('--view', choices=['brief', 'full'], default='brief')
+    jobs.add_argument('--brief', action='store_true', help='Explicitly select the default brief status view')
+    jobs.add_argument('--timeout', type=float, default=30, help='jobs wait timeout; 0 waits until terminal, never cancels')
     artifacts = commands.add_parser('artifacts')
     artifacts.add_argument('action', choices=['list', 'get', 'preview', 'copy', 'report', 'figure'])
     artifacts.add_argument('job')
@@ -129,6 +133,13 @@ def parser():
 
 
 def execute(args):
+    if args.command == 'run' or args.command == 'jobs' and args.action == 'wait':
+        import math
+        if not math.isfinite(args.timeout) or args.timeout < 0:
+            raise ValueError('timeout must be a finite non-negative number')
+    if args.command in ('help', 'guide'):
+        from .guidance import guide
+        return guide(args.topic, if_sha256=args.if_sha256)
     if args.command == 'serve':
         from .headless import serve
         return serve(profile_dir=args.profile_dir, workspace=args.workspace, data_dir=args.data_dir, port=args.port)
@@ -211,7 +222,14 @@ def execute(args):
                 return client.download('/v1/workflows/export', args.output, payload)
             if args.action == 'validate':
                 payload['require_files'] = args.require_files
-            return client.request('/v1/workflows/' + args.action, payload)
+            result = client.request('/v1/workflows/' + args.action, payload)
+            if args.action == 'prepare':
+                client.request('/v1/workflows/validate', {'graph': result, 'require_files': args.require_files})
+                if args.output:
+                    from src.web.storage import atomic_json
+                    args.output.parent.mkdir(parents=True, exist_ok=True)
+                    atomic_json(args.output, result)
+            return result
         if args.command == 'run' and (args.file or args.workflow):
             if args.document or (args.file and args.workflow):
                 raise ValueError('Choose a file, a saved workflow, or a canvas document, not multiple sources')
@@ -219,7 +237,9 @@ def execute(args):
             if args.request_id:
                 payload['request_id'] = args.request_id
             job = client.request('/v1/jobs', payload)
-            return _wait_job(client, job, args.timeout) if args.wait else job
+            from .agent_views import job_view
+            view = 'brief' if args.brief else 'full'
+            return _wait_job(client, job, args.timeout, view=view) if args.wait else job_view(job, view)
         if args.command == 'run' and not args.document:
             raise ValueError('run requires a workflow file, --workflow, or --document with --expected-revision')
         if args.command == 'artifacts':
@@ -260,12 +280,13 @@ def execute(args):
             if args.action == 'describe':
                 if not args.id:
                     raise ValueError('operators describe requires an operator/Reader ID')
-                result = client.request('/v1/operators/describe', {'ids': args.id.split(','), 'sections': args.section, 'generation': args.generation})
+                result = client.request('/v1/operators/describe', {'ids': args.id.split(','), 'sections': args.section,
+                                        'generation': args.generation, 'view': args.view or 'schema'})
                 if len(result['items']) == 1:
                     item = result['items'][0]
                     return {**item['descriptor'], 'documentation': item['documentation'], 'generation': result['generation']}
                 return result
-            query = {'query': args.query or (args.id or ''), 'limit': args.limit, 'offset': args.offset}
+            query = {'query': args.query or (args.id or ''), 'limit': args.limit, 'offset': args.offset, 'view': args.view or 'brief'}
             query.update({k: v for k, v in {'kind': args.kind, 'category': args.category}.items() if v})
             return client.request('/v1/operators?' + urlencode(query))
         if args.command == "context":
@@ -279,7 +300,7 @@ def execute(args):
             if args.action == 'logs':
                 cursor = args.offset
                 while True:
-                    value = client.request(path + '/logs?' + urlencode({'offset': cursor, 'limit': args.limit}))
+                    value = client.request(path + '/logs?' + urlencode({'offset': cursor, 'limit': args.limit, 'encoding': args.encoding}))
                     if not args.follow:
                         return value
                     print(json.dumps(value, ensure_ascii=False), flush=True)
@@ -287,7 +308,12 @@ def execute(args):
                     if value['done']:
                         return None
                     time.sleep(.4)
-            return client.request(path + ('/cancel' if args.action == 'cancel' else ''), {} if args.action == 'cancel' else None)
+            from .agent_views import job_view
+            view = 'brief' if args.brief else args.view
+            if args.action == 'cancel':
+                return job_view(client.request(path + '/cancel', {}), view)
+            job = client.request(path + '?view=' + view)
+            return _wait_job(client, job, args.timeout, view=view) if args.action == 'wait' else job
         if args.command == "graph" and args.action == "validate":
             return client.request("/validate", {"graph": read_graph_file(args.file)})
         session = client.session(args.session)
@@ -315,7 +341,9 @@ def execute(args):
             if args.request_id:
                 payload['request_id'] = args.request_id
             job = client.request(f"/sessions/{session}/run", payload)
-            return _wait_job(client, job, args.timeout) if args.wait else job
+            from .agent_views import job_view
+            view = 'brief' if args.brief else 'full'
+            return _wait_job(client, job, args.timeout, view=view) if args.wait else job_view(job, view)
         if args.action == "open":
             payload["graph"] = read_graph_file(args.file)
         elif args.action == "apply":
@@ -340,7 +368,7 @@ def main(argv=None):
         item = argv[index]
         if item in ("--profile-dir", "--workspace", "--data-dir", "--instance", "--session") and index + 1 < len(argv):
             global_args.extend(argv[index:index+2]); index += 2
-        elif item == "--json":
+        elif item in ('--json', '--compact'):
             global_args.append(item); index += 1
         else:
             rest.append(item); index += 1
@@ -354,10 +382,11 @@ def main(argv=None):
             with redirect_stdout(sys.stderr):
                 result = execute(args)
         if result is not None:
-            print(json.dumps(result, ensure_ascii=False, allow_nan=False, indent=2))
+            print(json.dumps(result, ensure_ascii=False, allow_nan=False, indent=None if args.compact else 2,
+                             **({'separators': (',', ':')} if args.compact else {})))
             if args.command == "registry" and (result["errors"] or (args.action == "check" and result["changed"])):
                 raise SystemExit(1)
-            if args.command == 'run' and args.wait:
+            if args.command == 'run' and args.wait or args.command == 'jobs' and args.action == 'wait':
                 if result.get('wait_timed_out'):
                     raise SystemExit(124)
                 if result.get('status') not in ('complete',):

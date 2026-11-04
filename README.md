@@ -18,6 +18,11 @@ undoable edits when open. [Operator discovery](docs/operator_documentation.md)
 returns compact search results and loads selected contracts, parameters and
 Markdown sections on demand without importing implementations.
 
+Start with `biopipe help` or MCP `biopipe_guide` for the installed
+[three-layer operating guide](docs/agent_operations.md). External applications
+can follow the [API tutorial and runnable client](docs/api_quickstart.md) to
+submit work and hand native results to specialist tools without a desktop or AI.
+
 Existing memory planning, emergency spill, disk-backed/streaming Readers,
 independent frozen workflow values, resumable SSH uploads, concurrent task
 admission and publication figure artifacts are preserved. Newly integrated

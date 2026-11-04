@@ -316,6 +316,10 @@ def test_real_cli_autostart_and_mcp_no_window(environment):
         assert len(search['items']) <= 2 and search['total'] >= 1
         described = cli('operators', 'describe', 'describe', '--section', 'parameters')
         assert described['id'] == 'describe' and 'parameters' in described['documentation']['content']
+        prepared_path = root / 'prepared.json'
+        prepared = cli('workflow', 'prepare', str(source), '--require-files', '--output', str(prepared_path))
+        assert json.loads(prepared_path.read_text(encoding='utf-8')) == prepared
+        assert prepared['plugin_lock'] and prepared['memory']['enabled']
         started = cli('run', str(source), '--request-id', 'cli-actual-worker')
         assert started['id']
         assert instances(directory) and all(i.get('headless') for i in instances(directory))
@@ -323,6 +327,9 @@ def test_real_cli_autostart_and_mcp_no_window(environment):
         assert control.sessions() == []
         result = wait_job(lambda key: control.request('/v1/jobs/' + key), started['id'])
         assert result['status'] == 'complete', result.get('error')
+        waited = cli('jobs', 'wait', started['id'], '--timeout', '5', '--brief')
+        assert waited['status'] == 'complete' and 'graph' not in waited
+        assert 'graph' in cli('jobs', 'get', started['id'], '--view', 'full')
         assert cli('run', str(source), '--request-id', 'cli-actual-worker')['id'] == started['id']
         assert cli('jobs', 'logs', started['id'])['text']
         report = cli('artifacts', 'list', started['id'])
@@ -330,6 +337,17 @@ def test_real_cli_autostart_and_mcp_no_window(environment):
         cli('artifacts', 'report', started['id'], '0', '--output', str(target))
         assert json.loads(target.read_text(encoding='utf-8'))['global']['mean'] == 2.5
         assert report['reports']
+        # The tutorial is also usable as a real external process, not only as
+        # an imported function in a TestClient fixture. Reuse the retained job.
+        copied = root / 'external-summary.json'
+        external = subprocess.run([sys.executable, str(ROOT / 'examples/api_client/run_workflow.py'),
+                                   '--workspace', str(root), '--job', started['id'],
+                                   '--href', report['reports'][0]['href'], '--output', str(copied)],
+                                  cwd=ROOT, env={**os.environ, 'PYTHONPATH': str(ROOT)},
+                                  capture_output=True, encoding='utf-8', timeout=30)
+        assert external.returncode == 0, external.stderr
+        assert json.loads(external.stdout)['job']['id'] == started['id']
+        assert json.loads(copied.read_text(encoding='utf-8'))['global']['mean'] == 2.5
 
         async def mcp_roundtrip(allow_run):
             from mcp import ClientSession, StdioServerParameters

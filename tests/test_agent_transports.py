@@ -53,8 +53,14 @@ def test_cli_and_mcp_share_context_transactions_and_permissions(tmp_path):
                                                cwd=str(root), env={**os.environ, "PYTHONIOENCODING": "utf-8"})
                 async with stdio_client(config) as (reader, writer):
                     async with ClientSession(reader, writer) as client:
-                        await client.initialize()
+                        initialized = await client.initialize()
+                        assert 'biopipe_guide' in initialized.instructions
                         assert "biopipe_apply" in {t.name for t in (await client.list_tools()).tools}
+                        guidance = await client.call_tool('biopipe_guide', {'topic': 'canvas'})
+                        assert not guidance.isError
+                        assert json.loads(guidance.content[0].text)['topic'] == 'canvas'
+                        guide_resource = await client.read_resource('biopipe://guide/workflow')
+                        assert json.loads(guide_resource.contents[0].text)['topic'] == 'workflow'
                         value = await client.call_tool("biopipe_context", {"session_id": session})
                         assert not value.isError
                         assert json.loads(value.content[0].text)["selection"]["nodes"] == ["pca"]

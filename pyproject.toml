@@ -21,7 +21,7 @@ biopipe = "biopipe.cli:main"
 include = ["biopipe*", "src*"]
 
 [tool.setuptools.package-data]
-"biopipe" = ["builtin_packages.json", "bundled_history.json"]
+"biopipe" = ["builtin_packages.json", "bundled_history.json", "guides/*.md"]
 "src.web" = ["builtin_routes.json"]
 "biopipe_sdk" = ["schemas/*.json"]
 "src.task.step.steps" = ["*.md", "*.parameters.json", "*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.svg", "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.webp", "**/*.gif", "**/*.svg"]

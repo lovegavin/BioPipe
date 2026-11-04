@@ -122,7 +122,9 @@ class OperatorDocs:
                 return json.loads(path.read_text(encoding='utf-8'))
         raise KeyError('Unknown registry generation')
 
-    def search(self, query='', *, kind=None, category=None, limit=20, offset=0):
+    def search(self, query='', *, kind=None, category=None, limit=20, offset=0, view='full'):
+        if view not in ('brief', 'full'):
+            raise ValueError('view must be brief or full')
         if kind not in (None, 'operator', 'reader'):
             raise ValueError('kind must be operator or reader')
         if not isinstance(query, str) or len(query) > 1000:
@@ -147,17 +149,43 @@ class OperatorDocs:
             # Publish a complete generation in one assignment. Concurrent API
             # requests must never observe a half-built or mixed-generation index.
             self._index_cache = (state['generation'], index)
-        terms = query.casefold().split()
-        def match(term, item):
-            text = ' '.join(str(item.get(key) or '') for key in ('id', 'title', 'description', 'summary', 'category', 'aliases')).casefold()
-            return term in text or len(term) > 3 and term.endswith('s') and term[:-1] in text
-        matches = [item for item in index
-                   if (not kind or item['kind'] == kind) and (not category or item['category'] == category)
-                   and all(match(term, item) for term in terms)]
-        return {'items': deepcopy(matches[offset:offset+limit]), 'total': len(matches),
-                'offset': offset, 'limit': limit, 'generation': state['generation']}
+        terms = re.findall(r'[^\W_]+', query.casefold())
+        def score(item):
+            total = 0
+            for term in terms:
+                best = 0
+                forms = {term, term[:-1]} if len(term) > 3 and term.endswith('s') else {term}
+                for field, weight in (('id', 12), ('title', 10), ('aliases', 10),
+                                      ('category', 4), ('summary', 2), ('description', 1)):
+                    text = str(item.get(field) or '').casefold()
+                    words = set(re.findall(r'[^\W_]+', text))
+                    # Word matching avoids liability matching reliability; allow
+                    # substrings for scripts that do not delimit words by spaces.
+                    if forms & words or not term.isascii() and term in text:
+                        best = max(best, weight)
+                if not best:
+                    return -1
+                total += best
+            if query.strip().casefold() == item['id'].casefold():
+                total += 1000
+            elif query.strip().casefold() == str(item.get('title', '')).casefold():
+                total += 100
+            return total
+        ranked = [(score(item), item) for item in index
+                  if (not kind or item['kind'] == kind) and (not category or item['category'] == category)]
+        matches = [item for rank, item in sorted(ranked, key=lambda pair: (-pair[0], pair[1]['id'])) if rank >= 0]
+        items = deepcopy(matches[offset:offset+limit])
+        if view == 'brief':
+            items = [{**{key: item[key] for key in ('id', 'kind', 'title', 'category', 'documentation_status')},
+                      'summary': (item.get('summary') or '')[:240],
+                      **({'summary_truncated': True} if len(item.get('summary') or '') > 240 else {})} for item in items]
+        return {'items': items, 'total': len(matches), 'offset': offset, 'limit': limit,
+                'next_offset': offset + limit if offset + limit < len(matches) else None,
+                'generation': state['generation']}
 
-    def describe(self, ids, *, sections=None, generation=None):
+    def describe(self, ids, *, sections=None, generation=None, view='full'):
+        if view not in ('schema', 'docs', 'full'):
+            raise ValueError('view must be schema, docs or full')
         if (not isinstance(ids, list) or not 1 <= len(ids) <= 20 or any(not isinstance(i, str) for i in ids)):
             raise ValueError('Request 1..20 operator or Reader IDs')
         if sections is not None and (not isinstance(sections, list) or len(sections) > 30 or any(not isinstance(s, str) for s in sections)):
@@ -188,5 +216,18 @@ class OperatorDocs:
                     raise ValueError('Unknown documentation sections: ' + ', '.join(missing))
                 doc['content'] = {name: parts[name] for name in requested}
             doc['sections'] = list(dict.fromkeys([*metadata.get('sections', []), 'parameters', 'contracts']))
+            if view != 'full':
+                keys = {'id', 'kind', 'title', 'description', 'version'}
+                if view == 'schema':
+                    keys.update(('parameters_schema', 'contracts', 'resources', 'inputs_arity', 'outputs',
+                                 'output_parameter', 'extensions', 'requires_siblings', 'excludes_siblings',
+                                 'handles_compression', 'file_input'))
+                spec = {key: value for key, value in spec.items() if key in keys}
+                if view == 'schema':
+                    from .platforms import supported_systems, systems_status
+                    spec['supported_systems'] = supported_systems(descriptor)
+                    spec['systems_status'] = systems_status(descriptor)
+                doc = {key: value for key, value in doc.items() if key in
+                       ('available', 'status', 'sections', 'sha256', 'content')}
             items.append({'descriptor': spec, 'documentation': doc})
         return {'items': items, 'generation': state['generation']}

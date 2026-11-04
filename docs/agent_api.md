@@ -5,6 +5,11 @@ chat service or API-key store. Ask questions in your own agent client. An agent 
 read the currently selected nodes, edit the graph and, when separately enabled,
 start analysis jobs.
 
+For the operating sequence and small-response defaults, start with the
+[three-layer agent guide](agent_operations.md), available in every installation
+as `biopipe help` / `biopipe_guide`. For a non-agent application use the
+[API tutorial](api_quickstart.md).
+
 ## Setup
 
 Install the repository package in the Studio environment:
@@ -170,6 +175,7 @@ change; a local backup is retained if the 20-tab limit prevents recovery.
 
 | Tools | Purpose |
 | --- | --- |
+| `biopipe_guide` | One installed task guide, topic index or conditional cached read |
 | `biopipe_sessions`, `biopipe_context`, `biopipe_graph` | Choose a window and read state |
 | `biopipe_catalog`, `biopipe_validate` | Discover schemas and validate a graph |
 | `biopipe_open`, `biopipe_apply`, `biopipe_undo` | New tab, transactional edit, undo/redo |
@@ -181,7 +187,8 @@ change; a local backup is retained if the 20-tab limit prevents recovery.
 | `biopipe_submit`, `biopipe_jobs`, `biopipe_logs`, `biopipe_artifacts` | Headless execution, status, log cursors and result links |
 
 Resources: `biopipe://selection`, `biopipe://sessions/{session_id}/selection`,
-`biopipe://catalog`. Commands share the CLI's HTTP service and validations.
+`biopipe://catalog`, `biopipe://guide`, `biopipe://guide/{topic}`.
+Commands share the CLI's HTTP service and validations.
 MCP stdout is reserved for JSON-RPC; logs stay on stderr.
 
 ## Local HTTP gateway

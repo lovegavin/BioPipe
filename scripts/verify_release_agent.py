@@ -168,6 +168,7 @@ class Acceptance:
             assert time.monotonic() < deadline, result
             await asyncio.sleep(.3)
         assert result['status'] == 'complete', result.get('error')
+        result = self.cli('jobs', 'get', job['id'], '--view', 'full')
         write(self.evidence / 'job.json', result)
         self.check('Real packaged scientific worker completed', {'job': job['id'], 'steps': [row['name'] for row in result['summary']['steps']]})
         parameters = self.control.request('/v1/jobs/' + job['id'] + '/parameters')
@@ -184,7 +185,7 @@ class Acceptance:
             cursor, log = 0, bytearray()
             import base64
             while True:
-                chunk = await self.call(session, 'biopipe_logs', {'job_id': job['id'], 'offset': cursor, 'limit': 127})
+                chunk = await self.call(session, 'biopipe_logs', {'job_id': job['id'], 'offset': cursor, 'limit': 127, 'encoding': 'base64'})
                 block = base64.b64decode(chunk['base64']); assert len(block) <= 127
                 log.extend(block); cursor = chunk['offset']
                 if chunk['done']: break

@@ -19,6 +19,8 @@ BioPipe does not supply an AI model or require a desktop for computation.
 
 ## Automate and integrate
 
+- [Three-layer agent operating guide](agent_operations.md)
+- [Third-party API tutorial and runnable client](api_quickstart.md)
 - [Application API, headless CLI and MCP](headless_api.md)
 - [Canvas collaboration and permissions](agent_api.md)
 - [Operator documentation and on-demand retrieval](operator_documentation.md)

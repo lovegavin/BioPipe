@@ -3,6 +3,11 @@
 BioPipe has one current implementation on `main`. The archived pre-integration
 main is historical source, not a second runtime or authoring protocol.
 
+For operating the software, start with `biopipe help` (or MCP `biopipe_guide`),
+then request only the needed task topic and operator schemas/document sections.
+See `docs/agent_operations.md`; third-party application authors should use
+`docs/api_quickstart.md` and its tested client example.
+
 1. Read `README.md`, then the relevant page in `docs/README.md`. Search the
    operator catalog before opening implementations. Retrieve selected schemas
    and Markdown sections rather than loading the entire library into context.
