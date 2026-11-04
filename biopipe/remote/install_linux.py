@@ -335,7 +335,11 @@ def main():
     if previous.get('source_sha256') != args.digest:
         subprocess.run([sys.executable, '-I', '-m', 'pip', '--isolated', 'install', '--no-deps', str(code)], check=True)
     subprocess.run([sys.executable, '-I', '-m', 'pip', 'check'], check=True)
-    from biopipe.dependencies import probe
+    from biopipe.dependencies import probe, scope
+    allowed = scope()
+    if allowed:
+        entries = [entry for entry in entries if entry['id'] in allowed]
+        print(f'dependency scope active: checking {len(entries)} entries', flush=True)
     results = probe(entries)
     required, optional = split_failures(results, entries)
     if required:
