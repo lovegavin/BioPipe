@@ -42,6 +42,27 @@ def find_tool(name):
     return None
 
 
+def scope():
+    """Temporarily restrict dependency checks to a declared id list.
+
+    ``BIOPIPE_DEPENDENCY_SCOPE`` (comma separated) wins; otherwise
+    ``~/.config/biopipe/dependency_scope.json`` (list of ids) is used. An empty
+    or missing scope means the full library.
+    """
+    import os
+    value = os.environ.get('BIOPIPE_DEPENDENCY_SCOPE', '').strip()
+    if value:
+        return {item.strip() for item in value.split(',') if item.strip()}
+    path = Path(os.path.expanduser('~/.config/biopipe/dependency_scope.json'))
+    if path.is_file():
+        try:
+            data = json.loads(path.read_text(encoding='utf-8'))
+            return {str(item) for item in data if str(item).strip()}
+        except Exception:
+            return set()
+    return set()
+
+
 def probe_environment(entry_id, environment, imports):
     """Check an operator that declares a dedicated interpreter environment."""
     from biopipe.environments import resolve
@@ -144,6 +165,9 @@ class DependencySession:
                     'dependencies': descriptor.get('dependencies', []),
                     'dependency_imports': descriptor.get('dependency_imports', []),
                     'r': descriptor.get('resources', {}).get('r')}
+            allowed = scope()
+            if allowed:
+                current = {key: value for key, value in current.items() if key in allowed}
             self.entries = current
 
     def snapshot(self):
