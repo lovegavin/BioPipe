@@ -160,6 +160,16 @@
     "status": "generated"
   },
   {
+    "id": "amrfinder_plus",
+    "kind": "operator",
+    "title": "AMRFinderPlus resistance genes",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Detect antimicrobial resistance and virulence genes with the official AMRFinderPlus binary; returns gene family, class, coordinates, identity and coverage.",
+    "doc": "src/task/step/steps/amrfinder_plus.AmrfinderPlusStep.md",
+    "status": "generated"
+  },
+  {
     "id": "analyze_contacts",
     "kind": "operator",
     "title": "Hi-C structure analysis",
@@ -377,6 +387,16 @@
     "version": "1.0.0",
     "description": "Per-residue AntiFold perplexity and native log-probability for an antibody structure.",
     "doc": "src/task/step/steps/antifold_score.AntifoldScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antismash_bgc",
+    "kind": "operator",
+    "title": "antiSMASH biosynthetic gene clusters",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Detect biosynthetic gene clusters with the official antiSMASH binary; returns region spans, products, gene counts and per-region gene tables.",
+    "doc": "src/task/step/steps/antismash_bgc.AntismashBgcStep.md",
     "status": "generated"
   },
   {
@@ -5020,6 +5040,16 @@
     "status": "generated"
   },
   {
+    "id": "rfam_scan",
+    "kind": "operator",
+    "title": "Rfam ncRNA family scan",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Scan nucleotide sequences against the Rfam covariance models with Infernal cmscan; returns family, coordinates, strand, score and E-value.",
+    "doc": "src/task/step/steps/rfam_scan.RfamScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "rfdiffusion_design",
     "kind": "operator",
     "title": "RFdiffusion backbone design",
@@ -6637,6 +6667,16 @@
     "version": "1.0.0",
     "description": "调整命名维度的排列顺序。",
     "doc": "src/task/step/steps/transpose.TransposeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "trnascan_se",
+    "kind": "operator",
+    "title": "tRNAscan-SE tRNA genes",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Detect tRNA genes with the official tRNAscan-SE binary; returns coordinates, isotype, anticodon, intron bounds and score.",
+    "doc": "src/task/step/steps/trnascan_se.TrnascanSeStep.md",
     "status": "generated"
   },
   {

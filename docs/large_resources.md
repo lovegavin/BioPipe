@@ -302,3 +302,20 @@ Per-operator table (generated pages also print the environment):
 `python scripts/check_resources.py` prints large-data status; `python -m
 biopipe.environments` prints interpreter status. A missing environment is a hard
 failure for its operators, never a silent fallback.
+
+## Genome annotation databases
+
+| Resource | Operator | Install | Environment / default |
+| --- | --- | --- | --- |
+| antiSMASH 8 module databases | `antismash_bgc` | `conda install -c conda-forge -c bioconda antismash=8.0.4`, then `download-antismash-databases --database-dir ~/tools/antismash_db` | `BIOPIPE_ANTISMASH_DB`, default `~/tools/antismash_db` |
+| Rfam covariance models | `rfam_scan` | download `Rfam.cm.gz`, `gunzip Rfam.cm.gz`, then `cmpress Rfam.cm` | `BIOPIPE_RFAM_DB`, default `~/tools/rfam` |
+| AMRFinderPlus database | `amrfinder_plus` | `amrfinder_update -d ~/tools/amrfinder_db` | `BIOPIPE_AMRFINDER_DB`, default `~/tools/amrfinder_db/<version>` |
+| tRNAscan-SE 2.x | `trnascan_se` | `apt install trnascan-se` (or a bioconda environment) | binary on `PATH` |
+
+The antiSMASH conda package deliberately ships **no** databases; run the official
+downloader once (about 900 MB, ClusterBlast is the largest component). Rfam.cm is
+about 330 MB after pressing, and the AMRFinderPlus database is versioned, so point
+the environment variable at the version directory that contains `AMRProt.fa` and
+`AMR.LIB`. All four operators prepend the resolved tool's own `bin` directory to
+`PATH`, so helper binaries (`diamond`, `blastp`, `hmmpfam2` for antiSMASH and
+`blastp` for AMRFinderPlus) resolve inside a conda environment without activating it.

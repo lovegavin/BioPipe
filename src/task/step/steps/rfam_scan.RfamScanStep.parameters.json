@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "Rfam ncRNA 家族扫描参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "cmscan_path": {
+      "title": "cmscan 可执行文件",
+      "type": "string",
+      "default": "cmscan",
+      "x-ui-group": "依赖",
+      "x-ui-order": 1
+    },
+    "rfam_cm": {
+      "title": "Rfam.cm 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 2
+    },
+    "database_dir": {
+      "title": "Rfam 数据库目录",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 3
+    },
+    "evalue": {
+      "title": "E-value 阈值",
+      "type": "number",
+      "default": 1e-05,
+      "minimum": 1e-20,
+      "maximum": 10,
+      "x-ui-group": "参数",
+      "x-ui-order": 1
+    },
+    "cpu": {
+      "title": "CPU 线程",
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 64,
+      "x-ui-group": "参数",
+      "x-ui-order": 2
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 1800,
+      "minimum": 30,
+      "maximum": 21600,
+      "x-ui-group": "参数",
+      "x-ui-order": 3
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "hits",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

@@ -184,6 +184,61 @@
         "ccd.pkl": 345859128,
         "boltz1_conf.ckpt": 3595352714
       }
+    },
+    {
+      "id": "rfam",
+      "title": "Rfam covariance models",
+      "kind": "database",
+      "url": "https://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/Rfam.cm.gz",
+      "install": "download Rfam.cm.gz, gunzip it, then run 'cmpress Rfam.cm' in the same directory",
+      "env": "BIOPIPE_RFAM_DB",
+      "roots": [
+        "/home/gavin/tools/rfam",
+        "D:/tools/rfam"
+      ],
+      "files": [
+        "Rfam.cm",
+        "Rfam.cm.i1f",
+        "Rfam.cm.i1i",
+        "Rfam.cm.i1m",
+        "Rfam.cm.i1p"
+      ]
+    },
+    {
+      "id": "amrfinder",
+      "title": "AMRFinderPlus database",
+      "kind": "database",
+      "url": "https://ftp.ncbi.nlm.nih.gov/pathogen/Antimicrobial_resistance/AMRFinderPlus/database/latest/",
+      "install": "amrfinder_update -d /path/to/amrfinder_db (installed with the amrfinder binary)",
+      "env": "BIOPIPE_AMRFINDER_DB",
+      "roots": [
+        "/home/gavin/tools/amrfinder_db/2026-10-29.1",
+        "D:/tools/amrfinder_db/2026-10-29.1"
+      ],
+      "files": [
+        "AMRProt.fa",
+        "AMR.LIB",
+        "AMRProt-mutation.tsv",
+        "AMR_CDS.fa",
+        "version.txt"
+      ]
+    },
+    {
+      "id": "antismash",
+      "title": "antiSMASH module databases",
+      "kind": "database",
+      "url": "https://dl.secondarymetabolites.org/releases/",
+      "install": "download-antismash-databases --database-dir /path/to/antismash_db (the conda package ships no databases)",
+      "env": "BIOPIPE_ANTISMASH_DB",
+      "roots": [
+        "/home/gavin/tools/antismash_db",
+        "D:/tools/antismash_db"
+      ],
+      "files": [
+        "mite/1.3/metadata.json",
+        "resfam/Resfams.hmm",
+        "tigrfam/TIGRFam.hmm"
+      ]
     }
   ]
 }
