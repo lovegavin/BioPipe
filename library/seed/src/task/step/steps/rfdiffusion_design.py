@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 import subprocess
 import tempfile
+import shutil
+from biopipe.bytecode import io_path
 from pathlib import Path
 
 import numpy as np
@@ -14,6 +16,7 @@ from src.core.forms.form import Form
 from src.reader import read_source
 from src.task.step.base import Step
 from src.task.step.steps._resources_common import require
+from src.task.step.steps._native_results import output_directory, result_file, remember_native
 
 _CONTOG = re.compile(r"^[A-Za-z0-9/,()\- ]*$")
 
@@ -204,6 +207,14 @@ class RfdiffusionDesignStep(Step):
                     f"rfdiffusion_design: the designer produced no PDB under {outdir}"
                 )
             data, labels, extra = stack_designs(paths)
+            saved_dir = output_directory(ctx, 'rfdiffusion')
+            self._result_files = []
+            for index, path in enumerate(paths, start=1):
+                destination = saved_dir / path.name
+                shutil.copyfile(io_path(path), io_path(destination))
+                self._result_files.append(result_file(f'design-{index}', destination, 'pdb',
+                                                       f'Backbone {index}'))
+            remember_native(ctx, out_name, self._result_files)
 
         form = Form(
             data,
@@ -225,6 +236,7 @@ class RfdiffusionDesignStep(Step):
         form = self._export_data
         return {
             "operator": "rfdiffusion_design",
+            "result_files": self._result_files,
             "n_designs": int(form.info["n_designs"]),
             "designs": form.info["designs"],
         }

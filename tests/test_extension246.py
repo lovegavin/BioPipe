@@ -154,6 +154,16 @@ def test_run(tmp_path) -> None:
     assert form.dims == ["design", "atom", "field"]
     assert form.data.shape == (2, 4, 12)
     assert form.info["n_designs"] == 2
+    # The tool's temporary directory is gone; preserved PDBs must remain usable.
+    from src.task.step.steps.export_results import ExportResultsStep
+    files = ctx.artifacts['native_results']['designs']['files']
+    assert len(files) == 2
+    assert all(Path(item['path']).read_text() == _pdb_text() for item in files)
+    ctx.step_params = {'output': 'saved', 'format': 'pdb', '_input_names': ['designs']}
+    ExportResultsStep().run(ctx, [form])
+    assert set(ctx['saved'].files.values()) == {item['path'] for item in files}
+    assert len(ctx['saved'].info['reused_roles']) == 2
+    ctx.finalize()
 
 
 def test_run_errors(tmp_path) -> None:

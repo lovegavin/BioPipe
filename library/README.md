@@ -2,6 +2,10 @@
 
 This directory is independently owned and versioned from the BioPipe application.
 
+Library 2026.11.5.1 adds `export_results`: a single parameterized output operator
+for intermediate branches, native-file reuse and CSV/TSV/NPY/FASTA/PDB/mmCIF
+exports. See its [operator guide](seed/src/task/step/steps/export_results.ExportResultsStep.md).
+
 - `seed/src/task/step/steps/`: operator Python, parameter JSON, Markdown and assets.
 - `seed/src/reader/readers/`: Reader implementations and their sidecars.
 - `seed/biopipe/builtin_packages.json`: statically compiled v3 provider manifest.

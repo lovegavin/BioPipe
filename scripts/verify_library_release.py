@@ -103,8 +103,10 @@ def verify(source, bundle, work):
                      if d['id'] == 'resource_preflight')
     # Reuse the author's parser/adapter tests, but import the INSTALLED wheel.
     # The source checkout and its conftest are deliberately absent from sys.path.
-    for number in (155, 199, 200, 203, 207, 254, 279, *range(350, 357)):
-        original = source / f'tests/test_extension{number}.py'
+    test_files = [f'test_extension{number}.py' for number in
+                  (110, 155, 199, 200, 203, 207, 246, 254, 279, *range(350, 357))]
+    for filename in [*test_files, 'test_export_results.py']:
+        original = source / 'tests' / filename
         content = original.read_text(encoding='utf-8').replace('src.task.step.steps', namespace)
         (cases / original.name).write_text(content, encoding='utf-8')
     lock = work / 'lock.json'

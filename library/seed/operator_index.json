@@ -2020,6 +2020,16 @@
     "status": "generated"
   },
   {
+    "id": "export_results",
+    "kind": "operator",
+    "title": "Export results",
+    "category": "data",
+    "version": "1.0.0",
+    "description": "Export a branch as native files, a labelled table, NPY or FASTA while other branches continue.",
+    "doc": "src/task/step/steps/export_results.ExportResultsStep.md",
+    "status": "authored"
+  },
+  {
     "id": "extra_trees_classifier",
     "kind": "operator",
     "title": "Extra Trees classifier",
@@ -4277,7 +4287,7 @@
     "version": "1.0.0",
     "description": "Run the official ProteinMPNN protein_mpnn_run.py entry point on a PDB structure and return the designed sequences with their model scores.  Design ranges restrict which residues are redesigned.",
     "doc": "src/task/step/steps/proteinmpnn_design.ProteinMpnnDesignStep.md",
-    "status": "generated"
+    "status": "authored"
   },
   {
     "id": "proteinmpnn_design_cluster",
@@ -5087,7 +5097,7 @@
     "version": "1.0.0",
     "description": "Run the official RFdiffusion run_inference.py for a contig expression and return the generated backbones as a [design, atom, field] all-atom table.",
     "doc": "src/task/step/steps/rfdiffusion_design.RfdiffusionDesignStep.md",
-    "status": "generated"
+    "status": "authored"
   },
   {
     "id": "ridge_regression",

@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import json
+import csv
+from biopipe.bytecode import io_path
 import math
 import os
 import re
@@ -16,6 +18,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.task.step.steps._native_results import output_directory, result_file, remember_native
 
 _NUMBER = r"-?(?:\d+(?:\.\d*)?|\.\d+|[nN][aA][nN]|[iI][nN][fF])"
 _HEADER = re.compile(
@@ -344,10 +347,22 @@ class ProteinMpnnDesignStep(Step):
             designs.sort(key=lambda record: record["sample"])
 
             context_dir = _artifact_dir(ctx, "proteinmpnn")
+            result_files = []
             if context_dir is not None:
                 import shutil
 
-                shutil.copytree(out_dir, context_dir, dirs_exist_ok=True)
+                shutil.copytree(io_path(out_dir), io_path(context_dir), dirs_exist_ok=True)
+                saved_fasta = context_dir / fasta_path.relative_to(out_dir)
+                score_path = context_dir / 'scores.csv'
+                with io_path(score_path).open('w', encoding='utf-8', newline='') as handle:
+                    writer = csv.writer(handle)
+                    writer.writerow(['design', 'sequence', 'score', 'global_score', 'seq_recovery'])
+                    for record in designs:
+                        writer.writerow([f"design_{record['sample']}", record['sequence'],
+                                         record['score'], record['global_score'], record['seq_recovery']])
+                result_files = [result_file('sequences', saved_fasta, 'fasta', 'ProteinMPNN sequences'),
+                                result_file('scores', score_path, 'csv', 'Design scores')]
+                remember_native(ctx, out_name, result_files)
 
             data = np.array(
                 [[record["score"], record["global_score"], record["seq_recovery"]]
@@ -381,9 +396,11 @@ class ProteinMpnnDesignStep(Step):
                     "design_positions": design_positions,
                     "command": command,
                 },
+                axis_info={"design": ["sequences", "headers"]},
             )
             elapsed = time.monotonic() - started
             self._export_data = {
+                "result_files": result_files,
                 "command": command,
                 "model_name": model_name,
                 "num_seq_per_target": num_sequences,
@@ -420,12 +437,7 @@ def _artifact_dir(ctx: Context, name: str) -> Path | None:
     getter = getattr(ctx, "artifact_path", None)
     if getter is None:
         return None
-    try:
-        path = Path(getter(name))
-    except Exception:
-        return None
-    path.mkdir(parents=True, exist_ok=True)
-    return path
+    return output_directory(ctx, name)
 
 
 def _cuda_available() -> bool:

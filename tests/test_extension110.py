@@ -113,6 +113,30 @@ def test_parse_positions_hand():
         parse_positions("97-110")
 
 
+def test_saved_native_files_and_sequence_axis(tmp_path):
+    from src.task.context import Context
+    from src.task.runner import run
+    structure, repo = _write_pdb(tmp_path), _fake_repo(tmp_path)
+    ctx = Context(tmp_path / 'native-task', {})
+    try:
+        run(ctx, [
+            {'name': 'proteinmpnn_design', 'inputs': [], 'params': {
+                'output': 'designs', 'structure_path': str(structure),
+                'proteinmpnn_path': str(repo), 'device': 'cpu'}},
+            {'name': 'export_results', 'inputs': ['designs'], 'params': {
+                'output': 'native', 'format': 'native'}}])
+        files = ctx.artifacts['native_results']['designs']['files']
+        assert {item['format'] for item in files} == {'fasta', 'csv'}
+        assert set(ctx['native'].files.values()) == {item['path'] for item in files}
+        assert len(ctx['native'].info['reused_roles']) == 2
+        fasta = Path(next(item['path'] for item in files if item['format'] == 'fasta')).read_text()
+        assert '>native, score=1.9000' in fasta and 'ACDEYG/HIKLMN' in fasta
+        selected = ctx['designs'].subset_axis('design', [1])
+        assert selected.info['sequences'] == ['ACDEFG/WWWWWW']
+    finally:
+        ctx.finalize()
+
+
 def test_pdb_chains_hand(tmp_path):
     path = _write_pdb(tmp_path)
     assert pdb_chains(path) == {"A": [1, 2, 3], "B": [1, 2]}

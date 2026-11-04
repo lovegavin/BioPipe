@@ -1,4 +1,3 @@
-<!-- biopipe:generated -->
 # ProteinMPNN design
 
 ## Purpose
@@ -11,6 +10,18 @@
 
 Kind: `operator`. Operator ID: `proteinmpnn_design`.
 Input count: `0`.
+The numeric design-score Form remains available for downstream analysis.
+Sequences and original headers are declared as design-axis metadata so
+`subset_axis` keeps them aligned when selecting or reordering designs.
+
+Original ProteinMPNN FASTA and a `scores.csv` table (design, sequence, score,
+global_score, seq_recovery) are preserved under the task's artifact directory.
+Add an `export_results` branch directly from this operator: `format: native`
+exposes both files, `format: fasta` selects sequences and `format: csv` selects
+scores. With an empty filename these same-task files are referenced without
+another copy. Native FASTA preserves reference records and chain encoding from
+the official tool. Further calculations can continue from the Form in parallel.
+
 Read the structured `contracts` section before connecting nodes. It includes
 the accepted data types, dimension constraints and output propagation rule.
 
@@ -35,8 +46,8 @@ Runs in the shared BioPipe interpreter.
 
 Declared memory modes: full. BioPipe retains the existing planner, disk-backed
 inputs and emergency spill behavior; full-mode operators still require their
-declared working set. This generated reference has not been independently
-scientifically reviewed.
+declared working set. Export adapter tests use synthetic tool outputs and do not
+establish the biological quality of generated sequences.
 
 ## Examples
 

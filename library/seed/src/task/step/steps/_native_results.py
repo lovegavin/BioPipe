@@ -1,0 +1,22 @@
+"""JSON report descriptors for original tool outputs (no new SDK dependency)."""
+from pathlib import Path
+from uuid import uuid4
+from biopipe.bytecode import io_path
+
+
+def output_directory(ctx, name):
+    directory = Path(ctx.artifact_path(f'{name}/{uuid4().hex}'))
+    io_path(directory).mkdir(parents=True, exist_ok=True)
+    return directory
+
+
+def result_file(file_id, path, format, title=None):
+    path = Path(path)
+    return {'id': file_id, 'path': str(path), 'filename': path.name,
+            'format': format, 'title': title or path.name, 'bytes': io_path(path).stat().st_size}
+
+
+def remember_native(ctx, output_name, files):
+    """Small per-run index; the producer report remains the isolation fallback."""
+    ctx.artifacts.setdefault('native_results', {})[output_name] = {
+        'index': len(ctx.artifacts.get('exports', [])) + 1, 'files': files}

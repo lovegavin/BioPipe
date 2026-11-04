@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "format": {"type": "string", "enum": ["auto", "native", "csv", "tsv", "npy", "fasta", "pdb", "cif"], "default": "auto", "title": "Output format", "description": "Auto reuses original producer files; otherwise writes a 2D table as CSV or other tensors as NPY. PDB/mmCIF require an original file.", "x-ui-group": "basic", "x-ui-order": 10},
+    "filename": {"type": "string", "default": "", "title": "Filename stem", "description": "Optional basename without extension. Leave empty to reuse same-task original files without copying.", "x-ui-group": "basic", "x-ui-order": 20},
+    "include_labels": {"type": "boolean", "default": true, "title": "Include table labels", "description": "CSV/TSV header and row labels. NPY preserves array dtype and shape; labels remain in the workflow data.", "x-ui-group": "advanced", "x-ui-order": 30},
+    "buffer_mb": {"type": "number", "exclusiveMinimum": 0, "default": 1, "title": "Write buffer (MiB)", "description": "NPY writing buffer; does not replace the execution memory budget.", "x-ui-group": "advanced", "x-ui-order": 40}
+  }
+}

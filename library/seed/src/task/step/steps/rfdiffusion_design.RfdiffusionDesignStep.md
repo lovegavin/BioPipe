@@ -1,4 +1,3 @@
-<!-- biopipe:generated -->
 # RFdiffusion backbone design
 
 ## Purpose
@@ -11,6 +10,13 @@
 
 Kind: `operator`. Operator ID: `rfdiffusion_design`.
 Input count: `0`.
+Original generated PDB files are preserved in the task artifact directory before
+the temporary tool directory is removed. The `[design, atom, field]` Form remains
+available for further calculations. Add an `export_results` branch directly from
+this operator with `format: pdb` or `format: native` to expose all backbones.
+Leave the filename empty to reuse those files without copying. This retains PDB
+annotations that cannot safely be reconstructed from the numeric table alone.
+
 Read the structured `contracts` section before connecting nodes. It includes
 the accepted data types, dimension constraints and output propagation rule.
 
@@ -35,8 +41,8 @@ Runs in the shared BioPipe interpreter.
 
 Declared memory modes: full. BioPipe retains the existing planner, disk-backed
 inputs and emergency spill behavior; full-mode operators still require their
-declared working set. This generated reference has not been independently
-scientifically reviewed.
+declared working set. Export adapter tests use synthetic tool outputs and do not
+establish the biological quality of generated backbones.
 
 ## Examples
 
