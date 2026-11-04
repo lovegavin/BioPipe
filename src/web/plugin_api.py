@@ -42,6 +42,9 @@ def mount_plugins(app, service):
             else:
                 await asyncio.to_thread(service.plugins.install, wheel, remove=remove)
             await asyncio.to_thread(service.dependencies.check, repair=not service.settings.testing)
+            if service.dependencies.cancel.is_set():
+                operations[key].update(status="failed", error="Studio is closing")
+                return
             service.refresh_catalog()
             operations[key].update(status="complete")
         except Exception as exc:

@@ -32,6 +32,43 @@ class Manager:
         return state
 
 
+def test_dedicated_environment_failure_never_repairs_shared_python(tmp_path, monkeypatch):
+    manager = Manager(tmp_path)
+    manager.value['descriptors'][1]['resources'] = {'environment': 'antifold'}
+    repairs = []
+    def inspector(python, entries, directory):
+        return {e['id']: {'status': 'passed' if e['id'] == 'a' else 'failed',
+                         'error': '' if e['id'] == 'a' else 'isolated environment is not installed'} for e in entries}
+    def install(*args):
+        repairs.append(args[2][0]['id'])
+        raise ValueError('Shared pip must not provision a dedicated interpreter')
+    monkeypatch.setattr('biopipe.install_targets.repair_entries', install)
+    session = DependencySession(manager, inspector=inspector)
+    state = session.check()
+    assert repairs == []
+    assert state['entries'][1]['status'] == 'failed'
+    assert 'isolated environment' in state['entries'][1]['error']
+
+
+def test_shutdown_during_repair_does_not_start_the_next_install(tmp_path, monkeypatch):
+    manager = Manager(tmp_path)
+    manager.value['descriptors'].append(descriptor('c', ['another-missing>=1']))
+    def inspector(python, entries, directory):
+        return {e['id']: {'status': 'passed' if e['id'] == 'a' else 'failed', 'error': 'missing'} for e in entries}
+    session = DependencySession(manager, inspector=inspector)
+    repairs = []
+    def install(*args):
+        repairs.append(args[2][0]['id'])
+        session.cancel.set()
+        raise ValueError('Dependency preparation cancelled: Studio is closing')
+    monkeypatch.setattr('biopipe.install_targets.repair_entries', install)
+    state = session.check()
+    assert repairs == ['b']
+    assert state['running'] is False
+    assert state['entries'][0]['status'] == 'passed'
+    assert 'cancelled' in state['entries'][2]['error']
+
+
 def test_success_is_cached_failures_retry_new_entries_checked_and_restart_resets(tmp_path):
     manager = Manager(tmp_path)
     calls = []

@@ -56,6 +56,7 @@ class Application:
         return {**result, 'graph': graph.model_dump(mode='json')}
 
     def shutdown(self):
+        self.service.dependencies.cancel.set()
         self.executions.shutdown()
         self.service.shutdown()
 

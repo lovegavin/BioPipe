@@ -211,9 +211,13 @@ class DependencySession:
     def check(self, *, repair=True, repair_r=None):
         # Shared with source/wheel transactions so the runtime cannot change
         # between probing and committing a repair. HTTP reads remain lock-free.
+        if self.cancel.is_set():
+            return self.snapshot()
         repair_r = repair if repair_r is None else repair_r
         self.manager.state()
         with self.manager.lock:
+            if self.cancel.is_set():
+                return self.snapshot()
             state = self.manager.state()
             self.sync(state)
             with self.lock:
@@ -238,6 +242,13 @@ class DependencySession:
                 if repair:
                     from biopipe.install_targets import repair_entries
                     for entry in failed:
+                        if self.cancel.is_set():
+                            raise ValueError('Dependency preparation cancelled: Studio is closing')
+                        # A named interpreter has its own Python version and
+                        # dependency pins. Shared pip targets cannot repair it.
+                        # Retain the probe's actionable environment error.
+                        if (entry.get('resources') or {}).get('environment'):
+                            continue
                         if not entry['dependencies']:
                             continue
                         self._update([entry['id']], 'installing')
@@ -255,6 +266,8 @@ class DependencySession:
                 from biopipe.r_runtime import RRuntime
                 r_runtime = RRuntime(self.manager.directory.parent / 'runtimes/r')
                 for entry in pending:
+                    if self.cancel.is_set():
+                        raise ValueError('Dependency preparation cancelled: Studio is closing')
                     if entry.get('r') is not None and self.entries[entry['id']]['status'] in ('passed', 'checking'):
                         self._update([entry['id']], 'installing' if repair_r else 'checking')
                         try:

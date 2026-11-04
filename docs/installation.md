@@ -21,12 +21,16 @@ Already-bundled CPU analyses do not require downloads. New extensions may need
 internet access; package availability, OS support and GPU drivers still matter.
 Windows x64, macOS, Linux and Windows ARM need separate tested distributions.
 
-The 2.0.1 release integrates the author's 2.0.0 library (709 operators and 101
+The 2.0.2 release integrates the author's 2.0.0 library (709 operators and 101
 Readers). The runtime receipt lists Python dependency coverage, not a claim that
 every model or external executable is preinstalled. Large model weights,
 databases, Linux tools and declared dedicated environments remain separate.
 AntiFold, ESM-3 and Boltz retain their own environment requirements and dependency
-status. They are not installed into the shared Windows Python by the builder.
+status. Neither the builder nor automatic shared dependency repair installs
+these dedicated environments into the shared Windows Python. Configure their
+declared interpreter or use the server environment repair workflow; a missing
+environment remains unavailable with its diagnostic visible. During shutdown,
+dependency repair cancels current work and does not start another installation.
 Vina's Python bindings require Linux/macOS; its separate Windows command-line
 executable does not provide those bindings. See the
 [upstream installation guide](https://autodock-vina.readthedocs.io/en/latest/installation.html).
