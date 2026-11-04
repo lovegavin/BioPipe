@@ -67,4 +67,4 @@ verification run.
   invocation and parsing contract with a fake runner, and the release note says
   which of the two was used.
 - The capability is listed in `docs/large_resources.md` and
-  `biopipe/resources.json` when it needs downloadable assets.
+  `src/task/step/steps/resources.json` when it needs downloadable assets.

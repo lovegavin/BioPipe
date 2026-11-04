@@ -23,6 +23,7 @@ def gasteiger_charges(molecule) -> list[float]:
     """Return per-atom Gasteiger charges (zeros for atoms RDKit cannot type)."""
     from rdkit import Chem
     from rdkit.Chem import AllChem
+
     probe = Chem.Mol(molecule)
     AllChem.ComputeGasteigerCharges(probe)
     charges: list[float] = []

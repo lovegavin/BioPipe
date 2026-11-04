@@ -83,7 +83,7 @@ No installation drive or username is hard-coded.
 
 ## Bundled routes and library management
 
-First launch registers five templates from `src/web/builtin_routes.json`:
+First launch registers five templates from `library/seed/src/web/builtin_routes.json`:
 
 | Route | Inputs | Outputs | Internal nodes |
 | --- | ---: | ---: | ---: |

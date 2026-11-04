@@ -4,8 +4,10 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import shutil
 import sys
 import time
+import zipfile
 
 import pytest
 
@@ -15,6 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_installed_wheel_runs_headless_worker_without_checkout(tmp_path):
     if importlib.util.find_spec('build') is None:
         pytest.skip('Install the dev extra for wheel acceptance')
+    from biopipe.bytecode import io_path
+    tmp_path = io_path(tmp_path)
     env = dict(os.environ, PYTHONPATH='', PYTHONNOUSERSITE='1', PYTHONUTF8='1',
                PYTHONIOENCODING='utf-8', BIOPIPE_ADMISSION_DIR=str(tmp_path / 'admission'),
                TEMP=str(tmp_path), TMP=str(tmp_path))
@@ -24,23 +28,37 @@ def test_installed_wheel_runs_headless_worker_without_checkout(tmp_path):
         assert result.returncode == 0, (result.stdout + '\n' + result.stderr)[-12000:]
         return result.stdout
 
+    # Build from clean source, never a stale setuptools build/lib containing
+    # implementation files removed by the application/library split.
+    source = tmp_path / 'source'; source.mkdir()
+    for name in ('biopipe', 'biopipe_sdk', 'src'):
+        shutil.copytree(ROOT / name, source / name,
+                        ignore=shutil.ignore_patterns('build', '*.egg-info', '__pycache__', '*.pyc'))
+    for name in ('pyproject.toml', 'README.md'):
+        shutil.copy2(ROOT / name, source / name)
     output = tmp_path / 'dist'
-    command([sys.executable, '-m', 'build', '--wheel', '--no-isolation', '--outdir', output], cwd=ROOT)
-    wheel = next(output.glob('*.whl'))
+    command([sys.executable, '-m', 'build', '--wheel', '--no-isolation', '--outdir', output], cwd=source)
+    wheel = next(output.glob('biopipe_studio-*.whl'))
+    with zipfile.ZipFile(wheel) as archive:
+        assert not any(name.endswith('.parameters.json') for name in archive.namelist())
+        assert not any(name.endswith('builtin_packages.json') for name in archive.namelist())
+    command([sys.executable, '-m', 'build', '--wheel', '--no-isolation', '--outdir', output], cwd=ROOT / 'library')
+    seed = next(output.glob('biopipe_builtin_library-*.whl'))
     runtime = tmp_path / 'runtime'
     # Reuse already installed third-party libraries; the BioPipe package itself
     # must come solely from this freshly built wheel in the isolated venv.
     command([sys.executable, '-m', 'venv', '--without-pip', '--system-site-packages', runtime])
     python = runtime / ('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
-    command([sys.executable, '-m', 'pip', '--python', python, 'install', '--ignore-installed', '--no-deps', '--no-index', wheel])
+    command([sys.executable, '-m', 'pip', '--python', python, 'install', '--ignore-installed', '--no-deps', '--no-index', wheel, seed])
     probe = json.loads(command([python, '-c',
         'import json,sys,biopipe,biopipe.worker; print(json.dumps({"path":biopipe.__file__,"worker":biopipe.worker.__file__,"sys_path":sys.path}))']))
     assert Path(probe['path']).is_relative_to(runtime)
     assert Path(probe['worker']).is_relative_to(runtime)
     assert all(Path(path or tmp_path).resolve() != ROOT for path in probe['sys_path'])
     installed_root = Path(probe['path']).parent.parent
-    for resource in ('resources.json', 'environments.json', 'guides/start.md'):
+    for resource in ('guides/start.md',):
         assert (installed_root / 'biopipe' / resource).is_file(), resource
+    assert (installed_root / 'biopipe_builtin_library/biopipe/environments.json').is_file()
     assert not (installed_root / 'scripts/run.py').exists()
     assert not (installed_root / 'frontend/dist').exists()
 

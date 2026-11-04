@@ -1,4 +1,7 @@
-# Application/library separation audit
+# Historical application/library separation audit
+
+This records the pre-2.3.0 audit. The implemented boundary is documented in
+[Application/library separation](application_library_boundary.md).
 
 Inspected author `main`: `d872773243aa7212e3f1f66dd13d30a253ac638b`
 (source version 2.2.2, GitHub head verified on 2026-11-04). The independent library

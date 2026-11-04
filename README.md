@@ -1,12 +1,19 @@
 # BioPipe
 
+## Application and library releases
+
+The application and operator library have separate source ownership, versions and
+release artifacts. See [Application/library boundary](docs/application_library_boundary.md).
+Operators, Readers, their parameter JSON and route templates live in `library/seed/`.
+
+
 BioPipe is a local bioinformatics pipeline engine with a visual desktop workspace,
 typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-The unified **v2.0.4 integrated desktop and backend source tree** combines the tested desktop/runtime with
-the author's operator library. It includes **709 operators, 101 Readers, seven
+The **v2.3.0 application** and independently versioned **2026.11.5 operator library**
+share this repository. The reference library includes **716 operators, 101 Readers, seven
 provider packages and 24 route templates**. Operators and Readers use **protocol
 v3 / SDK 3.1**, separate parameter JSON and adjacent Markdown documentation.
 
@@ -22,7 +29,7 @@ errors and the extra token cost of generating code.
 
 The value rests on five supports:
 
-- **Contract-first operator library.** 709 operators and 101 Readers have explicit
+- **Contract-first operator library.** 716 operators and 101 Readers have explicit
   input/output contracts, parameter schemas, adjacent scientific documentation and
   regression tests; authoritative R oracles cover methods where R is the reference.
 - **First-class plugins.** Operators, Readers and ML models share one discovery,
@@ -225,7 +232,7 @@ python -m biopipe registry discover --source-ref origin/main
 ```
 
 The tool discovers new Step/Reader modules and route YAML, validates protocols and
-DAG interfaces, and generates both JSON indexes. Routes come from `routes/**/task.yaml`
+DAG interfaces, and generates both JSON indexes. Routes come from `library/seed/routes/**/task.yaml`
 or `task.yml`; no route-name list is hardcoded in the generator. Invalid declarations
 leave the existing indexes intact. See [registry maintenance](docs/registry_maintenance.md).
 
@@ -581,7 +588,7 @@ class Reader(ABC):
 ### Routing and auto-discovery
 
 `src/reader/__init__.py` loads explicit entry points from
-`biopipe/builtin_packages.json`. The full Reader catalog spans the provider
+`library/seed/biopipe/builtin_packages.json`. The full Reader catalog spans the provider
 packages; hot-installed replacements use the same IDs and resource contracts.
 Scanning is an explicit maintenance command (`python -m biopipe registry build`),
 not a runtime registration mechanism.
@@ -735,7 +742,7 @@ Responsibilities:
 
 ## Built-in Readers
 
-Representative formats are shown below. The [complete searchable index](docs/reference/reader_index.json) covers all 101 Readers.
+Representative formats are shown below. The [complete searchable index](library/seed/reader_index.json) covers all 101 Readers.
 
 | Reader | Extensions | Main layout | Notes |
 |---|---|---|---|
@@ -756,7 +763,7 @@ Representative formats are shown below. The [complete searchable index](docs/ref
 
 ## Built-in Steps
 
-These examples are a small subset of the [425-operator index](docs/reference/operator_index.json).
+These examples are a small subset of the [425-operator index](library/seed/operator_index.json).
 
 | Category | Step |
 |---|---|

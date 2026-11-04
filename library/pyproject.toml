@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biopipe-builtin-library"
+version = "2026.11.5"
+description = "Independent BioPipe reference operators, Readers and route templates"
+requires-python = ">=3.11"
+
+[tool.setuptools]
+packages = ["biopipe_builtin_library"]
+package-dir = {biopipe_builtin_library = "seed"}
+include-package-data = false
+
+[tool.setuptools.package-data]
+biopipe_builtin_library = ["operator_index.json", "reader_index.json", "src/**/*.py", "src/**/*.json", "src/**/*.md", "src/**/*.png", "src/**/*.jpg", "src/**/*.jpeg", "src/**/*.svg", "src/**/*.webp", "src/**/*.gif", "biopipe/*.json", "routes/**/*.json", "routes/**/*.yaml", "routes/**/*.yml"]

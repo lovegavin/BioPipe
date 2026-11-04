@@ -19,11 +19,15 @@ SOURCE_DIRS = {"operator": "src/task/step/steps", "reader": "src/reader/readers"
 def directories(root=ROOT):
     if root is None:
         return {}
+    from .library_location import source_root
+    root = source_root(root)
     return {kind: root / relative for kind, relative in SOURCE_DIRS.items()}
 
 
 def snapshot_sources(root, staged):
     from biopipe.dropins import snapshot
+    from .library_location import source_root
+    root = source_root(root)
     digest = hashlib.sha256()
     for relative in [*SOURCE_DIRS.values(), "biopipe/builtin_packages.json"]:
         source = root / relative
@@ -47,6 +51,8 @@ def seed_sources(seed, target):
 
 
 def provider_wheel(package, root, output):
+    from .library_location import source_root
+    root = source_root(root)
     from biopipe.dropins import write_wheel
     from packaging.version import Version
     name, version = package["name"], str(Version(package["version"]))

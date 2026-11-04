@@ -177,6 +177,6 @@ After provisioning, record in the task report:
 - do not install Linux NVIDIA drivers inside WSL, and do not assume a GPU is
   available — `device=cpu` must remain a supported path;
 - do not write new defaults or absolute local paths into operator JSON; use the
-  resource manifest (`biopipe/resources.json`) and environment variables;
+  resource manifest (`src/task/step/steps/resources.json`) and environment variables;
 - do not claim a resource works until a minimal real run succeeded; otherwise
   report it as gated, as `docs/design/hard_capability_status.md` does.

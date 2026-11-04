@@ -79,6 +79,8 @@ Implementation: `{source}` (`{cls.name}`).
 def build(root, *, check=False):
     from biopipe_sdk.declarations import source_declarations
     from biopipe_sdk.documentation import relative_path
+    from biopipe.library_location import source_root
+    root = source_root(root)
     changed, preserved, pages, errors = [], [], [], []
     indexes = {'operator': [], 'reader': []}
     for folder in ('src/task/step/steps', 'src/reader/readers'):
@@ -124,7 +126,7 @@ def build(root, *, check=False):
             except (OSError, ValueError, KeyError, SyntaxError) as error:
                 errors.append({'source': relative, 'error': str(error)})
     for kind, entries in indexes.items():
-        destination = root / 'docs/reference' / (kind + '_index.json')
+        destination = root / (kind + '_index.json')
         text = json.dumps(sorted(entries, key=lambda entry: entry['id']), indent=2, ensure_ascii=False) + '\n'
         if not destination.is_file() or destination.read_text(encoding='utf-8') != text:
             changed.append(destination.relative_to(root).as_posix())

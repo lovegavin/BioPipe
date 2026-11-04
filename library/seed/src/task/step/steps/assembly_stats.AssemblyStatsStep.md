@@ -1,16 +1,14 @@
 <!-- biopipe:generated -->
-# Large-resource preflight
+# Assembly quality metrics (QUAST)
 
 ## Purpose
 
-> Report whether the large resources of ``biopipe/resources.json`` are installed.
->
-> Check the files of one or all large resources and report remedies.
+> Assembly quality metrics through the official QUAST report.
 
 ## Inputs and outputs
 
-Kind: `operator`. Operator ID: `resource_preflight`.
-Input count: `0`.
+Kind: `operator`. Operator ID: `assembly_stats`.
+Input count: `1`.
 Read the structured `contracts` section before connecting nodes. It includes
 the accepted data types, dimension constraints and output propagation rule.
 
@@ -47,4 +45,4 @@ guidance when extending this operator.
 
 ## Source
 
-Implementation: `src/task/step/steps/resource_preflight.py` (`ResourcePreflightStep`).
+Implementation: `src/task/step/steps/assembly_stats.py` (`AssemblyStatsStep`).

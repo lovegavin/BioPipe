@@ -1,5 +1,9 @@
 # Contributing to BioPipe
 
+Operator/Reader-only updates follow [independent library releases](docs/library_releases.md).
+Use a `library-v…` tag and update `library/release.json`; do not bump the Studio
+application or rebuild an EXE unless new engine/SDK behavior is required.
+
 Read [the documentation index](docs/README.md), then search the existing catalog
 before adding another operator. The current source lives on `main`; historical
 release branches and the legacy archive are not alternative authoring protocols.
@@ -20,7 +24,7 @@ release branches and the legacy archive are not alternative authoring protocols.
    `biopipe plugin install <package>`; Studio and headless services share it.
 
 For bundled extensions, use the existing provider and add code, parameter JSON
-and Markdown under `src/task/step/steps/` or `src/reader/readers/`. Private helper
+and Markdown under `library/seed/src/task/step/steps/` or `library/seed/src/reader/readers/`. Private helper
 files start with `_`. Run `python scripts/build_operator_docs.py` and
 `python -m biopipe registry build`, then `python -m biopipe registry check`.
 Maintenance reads static declarations; startup does not execute every module.

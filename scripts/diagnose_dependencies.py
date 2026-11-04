@@ -22,9 +22,9 @@ from pathlib import Path
 
 
 def descriptors() -> list[dict]:
-    import biopipe
+    from biopipe.packages import bundled_manifest
 
-    data = json.loads((Path(biopipe.__file__).parent / "builtin_packages.json").read_text())
+    data = bundled_manifest()
     return [descriptor for package in data.get("packages", []) for descriptor in package.get("descriptors", [])]
 
 

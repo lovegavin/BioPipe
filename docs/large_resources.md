@@ -2,7 +2,7 @@
 
 BioPipe does not ship model weights, sequence databases or third-party
 checkouts. Operators that need them read the shipped manifest
-`biopipe/resources.json`, which records where each resource may live, which
+`src/task/step/steps/resources.json`, which records where each resource may live, which
 environment variable overrides the search path, and exactly which files a
 dependent operator expects. Nothing is downloaded automatically.
 
@@ -37,9 +37,10 @@ patches because the official code imports its CUDA attention kernel
 unconditionally.
 
 ```bash
-git clone https://github.com/aqlaboratory/openfold ~/tools/openfold
+mkdir -p "$HOME/tools" "$HOME/models/openfold"
+git clone https://github.com/aqlaboratory/openfold "$HOME/tools/openfold"
 python -m pip install dllogger ml-collections biotite modelcif einops   # dllogger may need git+https://github.com/NVIDIA/dllogger.git
-curl -L -o ~/models/openfold/finetuning_ptm_2.pt \
+curl -L -o "$HOME/models/openfold/finetuning_ptm_2.pt" \
   https://openfold.s3.amazonaws.com/openfold_params/finetuning_ptm_2.pt   # 358 MB
 ```
 
@@ -118,7 +119,7 @@ per expected file with its presence and size and records the remedy in
 
 ### proteinmpnn — ProteinMPNN official checkout
 
-* root: `BIOPIPE_PROTEINMPNN_PATH` (defaults `~/.biopipe/resources/proteinmpnn`, `~/.biopipe/resources/proteinmpnn`)
+* root: `BIOPIPE_PROTEINMPNN_PATH` (default `~/.local/share/biopipe/resources/proteinmpnn`)
 * files: `protein_mpnn_run.py`, `vanilla_model_weights/v_48_020.pt`
 
 ```bash
@@ -134,7 +135,7 @@ cd ProteinMPNN && curl -L -o vanilla_model_weights/v_48_020.pt \
 
 ### esm2 / esm_if1 — Meta ESM checkpoints
 
-* root: `BIOPIPE_ESM_MODEL_DIR` (defaults `~/models`, `~/models`)
+* root: `BIOPIPE_ESM_MODEL_DIR` (defaults to the respective `esm2` or `esm_if1` directory below `~/.local/share/biopipe/resources`)
 * files: `esm2_t6_8M_UR50D.pt`, `esm_if1_gvp4_t16_142M_UR50.pt`
 
 ```bash
@@ -187,7 +188,7 @@ Foldseek is a static binary and needs a database that the user builds or
 downloads; the operator does not download anything.
 
 ```bash
-mkdir -p ~/tools/foldseek && cd ~/tools/foldseek
+mkdir -p "$HOME/tools/foldseek" && cd "$HOME/tools/foldseek"
 curl -sL -o fs.tar.gz https://github.com/steineggerlab/foldseek/releases/download/10-941cd33/foldseek-linux-avx2.tar.gz
 tar xzf fs.tar.gz          # ./foldseek/bin/foldseek
 mkdir -p db && cp *.pdb db/
@@ -262,12 +263,12 @@ runtime pins, and the operator resolves that interpreter automatically. Override
 with `BIOPIPE_ENV_ANTIFOLD=/path/to/python` or the `python_executable` parameter.
 Place the 541 MB weights at
 `<prefix>/external/antifold/lib/python3.11/site-packages/antifold/trained_models/model.pt`
-(download URL in `biopipe/environments.json`).
+(download URL in `library/seed/biopipe/environments.json`).
 
 ## Multi-environment operators (resolution and overrides)
 
 Operators whose upstream pins cannot coexist with the shared runtime declare
-`resources.environment = "<name>"`; the list lives in `biopipe/environments.json`.
+`resources.environment = "<name>"`; the list lives in `library/seed/biopipe/environments.json`.
 
 Resolution order for `<name>`:
 
@@ -302,3 +303,38 @@ Per-operator table (generated pages also print the environment):
 `python scripts/check_resources.py` prints large-data status; `python -m
 biopipe.environments` prints interpreter status. A missing environment is a hard
 failure for its operators, never a silent fallback.
+
+## Genome annotation databases
+
+| Resource | Operator | Install | Environment / default |
+| --- | --- | --- | --- |
+| antiSMASH 8 module databases | `antismash_bgc` | `conda install -c conda-forge -c bioconda antismash=8.0.4`, then `download-antismash-databases --database-dir ~/tools/antismash_db` | `BIOPIPE_ANTISMASH_DB`, default `~/tools/antismash_db` |
+| Rfam covariance models | `rfam_scan` | download `Rfam.cm.gz`, `gunzip Rfam.cm.gz`, then `cmpress Rfam.cm` | `BIOPIPE_RFAM_DB`, default `~/tools/rfam` |
+| AMRFinderPlus database | `amrfinder_plus` | `amrfinder_update -d ~/tools/amrfinder_db` | `BIOPIPE_AMRFINDER_DB`, default `~/tools/amrfinder_db/<version>` |
+| tRNAscan-SE 2.x | `trnascan_se` | `apt install trnascan-se` (or a bioconda environment) | binary on `PATH` |
+
+The antiSMASH conda package deliberately ships **no** databases; run the official
+downloader once (about 900 MB, ClusterBlast is the largest component). Rfam.cm is
+about 330 MB after pressing, and the AMRFinderPlus database is versioned, so point
+the environment variable at the version directory that contains `AMRProt.fa` and
+`AMR.LIB`. All four operators prepend the resolved tool's own `bin` directory to
+`PATH`, so helper binaries (`diamond`, `blastp`, `hmmpfam2` for antiSMASH and
+`blastp` for AMRFinderPlus) resolve inside a conda environment without activating it.
+
+## Genome assembly tools
+
+The assembly operators call the official command-line tools and do not ship
+binaries. Install them into a dedicated environment and put its `bin` on
+`PATH` (or point `flye_path` / `quast_path` / `minced_path` at the executable):
+
+```bash
+conda create -n assembly -c conda-forge -c bioconda \
+  flye=2.9.6 quast=5.3.0 minced=0.4.2 minimap2 openjdk=17
+conda activate assembly
+```
+
+- `flye_assemble` needs `flye` plus `minimap2` on PATH.
+- `assembly_stats` runs `quast` (QUAST 5.3); pass `reference_path` for
+  reference-based metrics such as genome fraction and NGA50.
+- `crispr_array_detect` runs `minced`, a Java program; the operator adds the
+  tool directory to PATH so a bundled `java` is found.

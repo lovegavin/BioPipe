@@ -92,7 +92,7 @@ def test_static_parameter_drift_and_independent_hashes():
     from biopipe_sdk.drift import check_source
     from biopipe_sdk.declarations import declaration_hash
     d = next(d for p in bundled_manifest()['packages'] for d in p['descriptors'] if d['id'] == 'pca')
-    text = (ROOT / 'src/task/step/steps/pca.py').read_text(encoding='utf-8')
+    text = (ROOT / 'library/seed/src/task/step/steps/pca.py').read_text(encoding='utf-8')
     assert not check_source(text, d)[0]
     bad = text.replace('def run(self, ctx:', 'def run(self, ctx:')
     # A fixture with an alias also exercises .get() and dynamic-key warnings.
@@ -216,9 +216,9 @@ def test_source_parameter_refresh_and_unrelated_install_preserve_metadata(tmp_pa
     from biopipe.developer import scaffold, build
     source = tmp_path / 'checkout'
     for folder in ('src/task/step/steps', 'src/reader/readers'):
-        shutil.copytree(ROOT / folder, source / folder, ignore=shutil.ignore_patterns('__pycache__'))
+        shutil.copytree(ROOT / 'library/seed' / folder, source / folder, ignore=shutil.ignore_patterns('__pycache__'))
     (source / 'biopipe').mkdir()
-    shutil.copy2(ROOT / 'biopipe/builtin_packages.json', source / 'biopipe/builtin_packages.json')
+    shutil.copy2(ROOT / 'library/seed/biopipe/builtin_packages.json', source / 'biopipe/builtin_packages.json')
     manager = PluginManager(tmp_path / 'profile', source_root=source)
     before = manager.state()
     parameter = source / 'src/task/step/steps/pca.parameters.json'

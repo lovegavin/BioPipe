@@ -57,7 +57,7 @@ def figure_collection(*reports):
 
 def save_matplotlib(context, figure, filename, *, figure_id=None, title=None):
     """Save a Matplotlib figure using BioPipe publication defaults, then close it."""
-    from src.task.step.steps._plot_helpers import save_figure, figure_report
+    from ._matplotlib import save_figure, figure_report
     report = figure_report({'path': save_figure(figure, context, filename)})
     entries = report['figures']
     return register_figure(context, figure_id or entries[0]['id'],
@@ -67,5 +67,5 @@ def save_matplotlib(context, figure, filename, *, figure_id=None, title=None):
 
 def publication_style(context=None):
     """Apply the shared static publication theme; never inherit the Studio theme."""
-    from src.task.step.steps._plot_helpers import setup_style
+    from ._matplotlib import setup_style
     setup_style(context)

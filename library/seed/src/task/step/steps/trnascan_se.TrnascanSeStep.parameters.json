@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "tRNAscan-SE tRNA 基因参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "trnascan_path": {
+      "title": "tRNAscan-SE 可执行文件",
+      "type": "string",
+      "default": "tRNAscan-SE",
+      "x-ui-group": "依赖",
+      "x-ui-order": 1
+    },
+    "mode": {
+      "title": "搜索模式",
+      "type": "string",
+      "enum": ["general", "bacterial", "archaeal", "eukaryotic"],
+      "default": "general",
+      "x-ui-group": "参数",
+      "x-ui-order": 1
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 900,
+      "minimum": 30,
+      "maximum": 21600,
+      "x-ui-group": "参数",
+      "x-ui-order": 2
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "trnas",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

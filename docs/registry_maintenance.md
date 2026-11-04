@@ -60,7 +60,7 @@ the user's active plugin registry.
 
 ## Adding an operator or Reader
 
-1. Add a Python module and its own parameter JSON under `src/task/step/steps/` or `src/reader/readers/`.
+1. Add a Python module and its own parameter JSON under `library/seed/src/task/step/steps/` or `library/seed/src/reader/readers/`.
 2. Put parameter schema in the adjacent JSON and a literal `definition` with contracts, stable ID, output
    ports and actual resource capabilities. A Step producing a Form must declare
    `definition["output_parameter"] = "output"` or fixed `outputs`.
@@ -92,7 +92,7 @@ must have real implementations; installation probes validate callable hooks in t
 
 ## Adding a route without editing Python
 
-Place a `task.yaml` or `task.yml` anywhere under `routes/`. The directory is
+Place a `task.yaml` or `task.yml` anywhere under `library/seed/routes/`. The directory is
 recursively discovered. Each file is a normal engine task with `sources` and
 `steps`. No route-name list exists in the generator.
 
@@ -119,8 +119,8 @@ generated graph changes. Source hashes use normalized text, so LF/CRLF checkouts
 produce the same result. Input paths must be relative; research data is not read
 or embedded. The generated files are:
 
-- `biopipe/builtin_packages.json`: all Python providers and descriptors.
-- `src/web/builtin_routes.json`: reusable graph snapshots and source provenance.
+- `library/seed/biopipe/builtin_packages.json`: all Python providers and descriptors.
+- `library/seed/src/web/builtin_routes.json`: reusable graph snapshots and source provenance.
 
 Deleting a local route definition removes it from the next shipped bundle. It
 does not delete users' saved or registered graphs. Startup seeds previously unseen
@@ -136,11 +136,11 @@ python -m biopipe registry discover --source-ref origin/main
 ```
 
 This compares local indexed IDs with Step/Reader classes and `tasks/**/task.yaml`
-or `routes/**/task.yaml` in a locally fetched Git commit. It reports missing local
+or `library/seed/routes/**/task.yaml` in a locally fetched Git commit. It reports missing local
 sources, changed implementation text and route dependencies. It does not import
 upstream code, merge changes, install dependencies or register every operator demo
 as a production route. Review/adapt selected source modules, then place published
-route definitions under `routes/` and build locally. `--source-ref` is deliberately
+route definitions under `library/seed/routes/` and build locally. `--source-ref` is deliberately
 limited to `discover`.
 
 ## CI and verification

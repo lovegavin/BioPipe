@@ -61,3 +61,15 @@ dist/
 build/
 /rna.ps
 *.ps
+# Windows reserved device names (never commit these)
+/nul
+/con
+/prn
+/aux
+
+# Runtime state and build output must never be committed
+/.studio/
+jobs/
+transfers/
+*.pyc
+node_modules/

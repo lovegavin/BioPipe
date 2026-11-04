@@ -55,14 +55,14 @@ def main():
         (destination / 'runtime/webview2.json').write_text(json.dumps({'source': url,
             'sha256': hashlib.sha256(bootstrapper.read_bytes()).hexdigest()}), encoding='utf-8')
     shutil.copytree(root / 'frontend/dist', destination / 'frontend')
-    for directory in ('src', 'biopipe', 'biopipe_sdk'):
+    for directory in ('src', 'biopipe', 'biopipe_sdk', 'library/seed'):
         for source in (root / directory).rglob('*'):
             if source.is_file() and source.suffix.lower() in {'.py', '.json', '.md', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg'}:
                 copy(source, source.relative_to(root))
     for source in (root / 'tasks').rglob('*'):
         if source.is_file() and source.suffix in {'.py', '.yaml', '.yml', '.json'} and 'output' not in source.relative_to(root).parts:
             copy(source, source.relative_to(root))
-    for source in (root / 'routes').rglob('*'):
+    for source in (root / 'library/seed/routes').rglob('*'):
         if source.is_file() and source.suffix in {'.json', '.yaml', '.yml'}:
             copy(source, source.relative_to(root))
     for source in root.glob('requirements*.txt'):
@@ -71,6 +71,9 @@ def main():
         copy(source, source.name)
     for name_ in ('README.md', 'pyproject.toml'):
         copy(root / name_, name_)
+    for name_ in ('release.json', 'pyproject.toml', 'README.md'):
+        if (root / 'library' / name_).is_file():
+            copy(root / 'library' / name_, Path('library') / name_)
     for name_ in ('desktop_server.py', 'run.py', 'diagnose_pins.py',
                   'accept_igv_handoff.py', 'open_igv_handoff.ps1',
                   'verify_release_agent.py', 'verify_release_agent.md',
@@ -81,7 +84,7 @@ def main():
         # Use the shipped interpreter, never the packaging host's Python tag.
         subprocess.run([python, '-I', '-m', 'compileall', '-q', '-f',
                         '--invalidation-mode', 'unchecked-hash', '-s', str(destination),
-                        *[str(destination / p) for p in ('src', 'biopipe', 'biopipe_sdk', 'scripts')]], check=True)
+                        *[str(destination / p) for p in ('src', 'biopipe', 'biopipe_sdk', 'scripts', 'library/seed')]], check=True)
     shutil.copytree(root / 'docs', destination / 'docs')
     # Ship the small SDK examples referenced by the extension guides.
     shutil.copytree(root / 'examples', destination / 'examples',

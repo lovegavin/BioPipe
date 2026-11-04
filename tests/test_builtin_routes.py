@@ -19,7 +19,7 @@ from src.web.routes import RouteLibrary
 from src.web.service import Settings
 
 ROOT = Path(__file__).resolve().parents[1]
-BUNDLE = json.loads((ROOT / "src/web/builtin_routes.json").read_text(encoding="utf-8"))["routes"]
+BUNDLE = json.loads((ROOT / "library/seed/src/web/builtin_routes.json").read_text(encoding="utf-8"))["routes"]
 
 
 def test_builtin_install_library_controls_and_persisted_removal(tmp_path):

@@ -241,7 +241,7 @@ class ManifestHandshake:
                 descriptor = descriptors[name]
                 installed = _entries(self.installed).get(name, {})
                 if (entry['status'] == 'unchecked' and descriptor.get('origin') == 'bundled'
-                        and self.installed.get('runtime') == self.runtime
+                        and runtime_compatible(self.installed.get('runtime'), self.runtime)
                         and not state.get('code_paths') and not state.get('shared_paths')
                         and entry.get('execution', {}).get('mode', 'shared') == 'shared'
                         and installed.get('declaration_key') == _installation_key(descriptor)

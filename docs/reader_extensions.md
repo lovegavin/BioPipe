@@ -81,7 +81,7 @@ private dependency directories and an independent process using the same Python.
 ## File-backed Reader example
 
 For large disk datasets, the Hi-C Readers demonstrate metadata-only loading:
-`src/reader/readers/fastq_reader.py` declares the file contract and
+`library/seed/src/reader/readers/fastq_reader.py` declares the file contract and
 `fastq.parameters.json` owns the mate-path and quality-encoding schema. Runtime
 returns `FileArtifact`, and `sequence_stats` consumes it record by record. The
 existing numeric Reader disk protocol and streaming methods are unchanged.

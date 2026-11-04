@@ -1,5 +1,9 @@
 name: Protocol and registry
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore: ['library/**', 'maintenance/independent-library-releases']
+    tags-ignore: ['library-v*']
+  pull_request:
 jobs:
   installer-processes-linux:
     runs-on: ubuntu-latest

@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "antiSMASH 生物合成基因簇参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "antismash_path": {
+      "title": "antiSMASH 可执行文件",
+      "type": "string",
+      "default": "antismash",
+      "x-ui-group": "依赖",
+      "x-ui-order": 1
+    },
+    "database_dir": {
+      "title": "antiSMASH 数据库目录",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 2
+    },
+    "taxon": {
+      "title": "分类域",
+      "type": "string",
+      "enum": ["bacteria", "fungi"],
+      "default": "bacteria",
+      "x-ui-group": "参数",
+      "x-ui-order": 1
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 3600,
+      "minimum": 60,
+      "maximum": 21600,
+      "x-ui-group": "参数",
+      "x-ui-order": 2
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "regions",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

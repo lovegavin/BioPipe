@@ -10,14 +10,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_reference_indexes_cover_catalog():
-    operators = json.loads((ROOT / "docs/reference/operator_index.json").read_text(encoding="utf-8"))
-    readers = json.loads((ROOT / "docs/reference/reader_index.json").read_text(encoding="utf-8"))
+    operators = json.loads((ROOT / "library/seed/operator_index.json").read_text(encoding="utf-8"))
+    readers = json.loads((ROOT / "library/seed/reader_index.json").read_text(encoding="utf-8"))
     from biopipe.packages import bundled_manifest
     descriptors = [descriptor for package in bundled_manifest()['packages'] for descriptor in package['descriptors']]
     assert {entry['id'] for entry in operators} == {d['id'] for d in descriptors if d['kind'] == 'operator'}
     assert {entry['id'] for entry in readers} == {d['id'] for d in descriptors if d['kind'] == 'reader'}
     for entry in operators + readers:
-        page = ROOT / entry["doc"]
+        page = ROOT / "library/seed" / entry["doc"]
         assert page.is_file(), entry["doc"]
         assert "## Purpose" in page.read_text(encoding="utf-8"), entry["doc"]
         descriptor = next(d for d in descriptors if d['id'] == entry['id'])

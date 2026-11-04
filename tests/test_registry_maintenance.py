@@ -19,8 +19,9 @@ ROOT = Path(__file__).resolve().parents[1]
 def checkout(tmp_path):
     root = tmp_path / "checkout"
     root.mkdir()
-    for name in ("src", "biopipe", "biopipe_sdk", "routes", "scripts"):
+    for name in ("src", "biopipe", "biopipe_sdk", "scripts"):
         shutil.copytree(ROOT / name, root / name, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+    shutil.copytree(ROOT / "library/seed", root / "library/seed", ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     return root
 
 
@@ -46,18 +47,18 @@ class Probe(Step):
 
 
 def add_extension(root, source=NEW_OPERATOR):
-    path = root / "src/task/step/steps/example_probe.py"
+    path = root / "library/seed/src/task/step/steps/example_probe.py"
     write_extension(path, source)
     return path
 
 
 def indexes(root):
-    return [(root / path).read_bytes() for path in ("biopipe/builtin_packages.json", "src/web/builtin_routes.json")]
+    return [(root / "library/seed" / path).read_bytes() for path in ("biopipe/builtin_packages.json", "src/web/builtin_routes.json")]
 
 
 def test_discover_build_check_new_operator_and_unlisted_route(checkout):
     add_extension(checkout)
-    path = checkout / "routes/custom/nested/task.yml"
+    path = checkout / "library/seed/routes/custom/nested/task.yml"
     path.parent.mkdir(parents=True)
     path.write_text('''name: Custom report
 sources:
@@ -79,7 +80,7 @@ steps:
     operator_count = sum(d["kind"] == "operator" for d in bundled_state()["descriptors"])
     route_count = len(json.loads(before[1])['routes'])
     assert code == 0 and built["operators"] == operator_count + 1 and built["routes"] == route_count + 1
-    manifest = json.loads((checkout / "biopipe/builtin_packages.json").read_text(encoding="utf-8"))
+    manifest = json.loads((checkout / "library/seed/biopipe/builtin_packages.json").read_text(encoding="utf-8"))
     descriptor = next(d for p in manifest["packages"] for d in p["descriptors"] if d["id"] == "example.probe")
     assert descriptor["category"] == "analysis" and descriptor["icon"] == "Sigma"
     code, check = cli(checkout, "check")
@@ -94,7 +95,7 @@ def test_sdk_operator_is_discovered_and_missing_startup_index_can_be_rebuilt(che
                   .replace('    def run(self, ctx, inputs):', '    output_parameter = None\n    def compute(self, inputs, params, context):'))
     code, result = cli(checkout, "discover")
     assert code == 0 and any(e['id'] == 'example.probe' and e['kind'] == 'operator' for e in result['extensions'])
-    index = checkout / 'biopipe/builtin_packages.json'
+    index = checkout / 'library/seed/biopipe/builtin_packages.json'
     value = json.loads(index.read_text(encoding='utf-8'))
     # A removed module referenced by an old startup index must not block repair.
     entry = deepcopy(next(d for p in value['packages'] for d in p['descriptors'] if d['id'] == 'diversity'))
@@ -126,7 +127,7 @@ def test_invalid_extension_does_not_publish_partial_indexes(checkout, source, ex
 def test_missing_route_operator_does_not_publish_and_custom_root_works(checkout):
     custom = checkout / "extra_routes/new"
     custom.mkdir(parents=True)
-    source = (checkout / "routes/microbiome/task.yaml").read_text(encoding="utf-8")
+    source = (checkout / "library/seed/routes/microbiome/task.yaml").read_text(encoding="utf-8")
     (custom / "task.yaml").write_text(source.replace("name: diversity", "name: missing.operator"), encoding="utf-8")
     before = indexes(checkout)
     code, report = cli(checkout, "build", "--route-root", "extra_routes")

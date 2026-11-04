@@ -33,7 +33,8 @@ def document_bytes(manager, state, descriptor):
     cache = _io_path(manager.directory / 'documentation' / (metadata['sha256'] + '.md'))
     roots = [manager.directory / relative for relative in state.get('code_paths', [])]
     from biopipe.plugins import ROOT
-    roots.append(ROOT)
+    from biopipe.library_location import source_root
+    roots.append(source_root() or ROOT)
     candidates = [cache, *[_io_path(_markdown_path(root, descriptor)) for root in roots]]
     for path in candidates:
         if path.is_file():

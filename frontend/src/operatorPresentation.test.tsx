@@ -1,4 +1,4 @@
-import manifest from "../../biopipe/builtin_packages.json";
+import manifest from "../../library/seed/biopipe/builtin_packages.json";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { OperatorArtwork, OperatorPreview } from "./OperatorArtwork";

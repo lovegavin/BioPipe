@@ -181,13 +181,16 @@ def test_runtime_identity_change_invalidates_durable_passed_entries(remote, monk
         reopened.service.shutdown()
 
 
-def test_managed_install_receipt_seeds_matching_base_dependencies(remote, monkeypatch):
+@pytest.mark.parametrize('site_changed', [False, True])
+def test_managed_install_receipt_seeds_matching_base_dependencies(remote, monkeypatch, site_changed):
     import biopipe.remote.handshake as module
     from biopipe.packages import bundled_manifest
     original_read = module._read
     descriptors = [entry for package in bundled_manifest()['packages'] for entry in package['descriptors']]
     results = {entry['id']: {'status': 'passed', 'error': ''} for entry in descriptors}
     receipt = {'dependency_readiness': installation_readiness(descriptors, results)}
+    if site_changed:
+        receipt['dependency_readiness']['runtime']['environment'] = [['directory stamp before unrelated pytest install']]
     monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'biopipe-ready.json' else original_read(path))
     reopened = module.ManifestHandshake(remote.service, remote.memory)
     assert all(entry['status'] == 'passed' for entry in entries(reopened.response(request())).values())

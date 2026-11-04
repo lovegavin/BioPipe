@@ -13,12 +13,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_bundled_route_graphs_are_identical_across_build_roots(tmp_path):
     catalog = catalog_from_descriptors(bundled_state(manifest_only=True)['descriptors'])
-    previous = json.loads((ROOT / 'src/web/builtin_routes.json').read_text(encoding='utf-8'))
+    previous = json.loads((ROOT / 'library/seed/src/web/builtin_routes.json').read_text(encoding='utf-8'))
     operators = {item['id']: item for item in catalog['operators']}
     results = []
     for name in ('first-installation', 'relocated-installation'):
         root = tmp_path / name
-        shutil.copytree(ROOT / 'routes', root / 'routes')
+        shutil.copytree(ROOT / 'library/seed/routes', root / 'routes')
         if not results:
             # Whether a template's input happens to exist must not affect its
             # published path. Its payload deliberately is not valid CSV.

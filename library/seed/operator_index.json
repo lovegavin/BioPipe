@@ -160,6 +160,16 @@
     "status": "generated"
   },
   {
+    "id": "amrfinder_plus",
+    "kind": "operator",
+    "title": "AMRFinderPlus resistance genes",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Detect antimicrobial resistance and virulence genes with the official AMRFinderPlus binary; returns gene family, class, coordinates, identity and coverage.",
+    "doc": "src/task/step/steps/amrfinder_plus.AmrfinderPlusStep.md",
+    "status": "generated"
+  },
+  {
     "id": "analyze_contacts",
     "kind": "operator",
     "title": "Hi-C structure analysis",
@@ -380,6 +390,16 @@
     "status": "generated"
   },
   {
+    "id": "antismash_bgc",
+    "kind": "operator",
+    "title": "antiSMASH biosynthetic gene clusters",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Detect biosynthetic gene clusters with the official antiSMASH binary; returns region spans, products, gene counts and per-region gene tables.",
+    "doc": "src/task/step/steps/antismash_bgc.AntismashBgcStep.md",
+    "status": "generated"
+  },
+  {
     "id": "approx_entropy",
     "kind": "operator",
     "title": "Approximate entropy",
@@ -417,6 +437,16 @@
     "version": "1.0.0",
     "description": "Fit a non-seasonal ARIMA(p, d, q) model by maximum likelihood.",
     "doc": "src/task/step/steps/arima.ArimaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "assembly_stats",
+    "kind": "operator",
+    "title": "Assembly quality metrics (QUAST)",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Run the official QUAST report on contigs and return assembly metrics, optionally against a reference genome.",
+    "doc": "src/task/step/steps/assembly_stats.AssemblyStatsStep.md",
     "status": "generated"
   },
   {
@@ -1267,6 +1297,16 @@
     "version": "1.0.0",
     "description": "Per-feature two-sample Cramer-von Mises test.",
     "doc": "src/task/step/steps/cramer_von_mises.CramerVonMisesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "crispr_array_detect",
+    "kind": "operator",
+    "title": "CRISPR array detection",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Detect CRISPR arrays with the official minced tool and report repeat counts, repeat/spacer lengths and consensus repeats.",
+    "doc": "src/task/step/steps/crispr_array_detect.CrisprArrayDetectStep.md",
     "status": "generated"
   },
   {
@@ -2157,6 +2197,16 @@
     "version": "1.0.0",
     "description": "Flow cytometry arcsinh transform：接收 1 个输入，输出 Form；主要参数：Event Dim、Channel Dim、Channels、A、B、C。",
     "doc": "src/task/step/steps/flow_transform.FlowTransformStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "flye_assemble",
+    "kind": "operator",
+    "title": "Flye de novo assembly",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Assemble long reads de novo with the official Flye binary and report contig lengths, coverage and circularity.",
+    "doc": "src/task/step/steps/flye_assemble.FlyeAssembleStep.md",
     "status": "generated"
   },
   {
@@ -4995,7 +5045,7 @@
     "title": "Large-resource preflight",
     "category": "Data",
     "version": "1.0.0",
-    "description": "Verify that the weights, databases and official checkouts listed in biopipe/resources.json are installed. Emits one row per expected file with its presence and size, and records the installation command for anything missing.",
+    "description": "Verify that the weights, databases and official checkouts listed in src/task/step/steps/resources.json are installed. Emits one row per expected file with its presence and size, and records the installation command for anything missing.",
     "doc": "src/task/step/steps/resource_preflight.ResourcePreflightStep.md",
     "status": "generated"
   },
@@ -5017,6 +5067,16 @@
     "version": "1.0.0",
     "description": "Reverse complement：接收 1 个输入，输出 Form；主要参数：序列维度、位置维度。",
     "doc": "src/task/step/steps/reverse_complement.ReverseComplementStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rfam_scan",
+    "kind": "operator",
+    "title": "Rfam ncRNA family scan",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Scan nucleotide sequences against the Rfam covariance models with Infernal cmscan; returns family, coordinates, strand, score and E-value.",
+    "doc": "src/task/step/steps/rfam_scan.RfamScanStep.md",
     "status": "generated"
   },
   {
@@ -6637,6 +6697,16 @@
     "version": "1.0.0",
     "description": "调整命名维度的排列顺序。",
     "doc": "src/task/step/steps/transpose.TransposeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "trnascan_se",
+    "kind": "operator",
+    "title": "tRNAscan-SE tRNA genes",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Detect tRNA genes with the official tRNAscan-SE binary; returns coordinates, isotype, anticodon, intron bounds and score.",
+    "doc": "src/task/step/steps/trnascan_se.TrnascanSeStep.md",
     "status": "generated"
   },
   {

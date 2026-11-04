@@ -175,10 +175,19 @@ class SSHConnection:
             try:
                 transmit({'id': identity, 'method': method, 'params': params or {}}, 'Q',
                          lambda part: self.channel.sendall(part.encode()), self._line)
-                decoder = Decoder('R'); deadline=time.monotonic()+100
+                decoder = Decoder('R')
+                hard_deadline = time.monotonic() + 1800
+                deadline = time.monotonic() + 100
+                progress = 0
                 while True:
                     try: response = decoder.feed(self._line(deadline))
                     except ValueError: continue  # No receipt; sender retries a damaged frame.
+                    # A large catalog may take longer than 100 seconds over an
+                    # acknowledged PTY gateway. Only new valid frames renew the
+                    # inactivity deadline; duplicate/noisy traffic cannot do so.
+                    if decoder.progress > progress:
+                        progress = decoder.progress
+                        deadline = min(hard_deadline, time.monotonic() + 100)
                     if decoder.ack: self.channel.sendall(decoder.ack.encode())
                     if response is None or response.get('id') != identity: continue
                     if not response.get('ok'):

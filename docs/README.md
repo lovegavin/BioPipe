@@ -37,8 +37,9 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 - [Application API, headless CLI and MCP](headless_api.md)
 - [Canvas collaboration and permissions](agent_api.md)
 - [Operator documentation and on-demand retrieval](operator_documentation.md)
-- [Operator discovery index](reference/operator_index.json)
-- [Reader discovery index](reference/reader_index.json)
+- [Operator discovery index](../library/seed/operator_index.json)
+- [Reader discovery index](../library/seed/reader_index.json)
+- [Application and operator-library boundary](application_library_boundary.md)
 
 ## Design notes
 
@@ -54,6 +55,7 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 - [Operator protocol](operator_protocol.md) and [package protocol](package_protocol.md)
 - [Reader extensions](reader_extensions.md) and [step extensions](step_extensions.md)
 - [Library installation and maintenance](plugins.md)
+- [Independent software and operator-library releases](library_releases.md)
 - [Static registry maintenance](registry_maintenance.md)
 - [Backend versioning](backend_versioning.md)
 - [Selective frontend integration](FRONTEND_MERGE.md)
@@ -63,3 +65,5 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 Pages under `releases/`, previous validation reports and `UPSTREAM_REVIEW_*` describe
 their named historical versions. Current schemas, source declarations and CLI
 help take precedence over historical counts and examples.
+
+- [Application and library ownership, packaging and updates](application_library_boundary.md)

@@ -35,7 +35,7 @@ def _revive(value):
         if set(value) == {"__float__"}:
             return float(value['__float__'])
         if set(value) == {"__labelencoder__"}:
-            from src.reader.readers._encoder import LabelEncoder
+            from src.core.encoding import LabelEncoder
             encoder = LabelEncoder()
             encoder.mapping = {k: int(v) for k, v in value["__labelencoder__"].items()}
             encoder.inverse = {code: label for label, code in encoder.mapping.items()}

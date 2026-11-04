@@ -96,7 +96,7 @@ def test_builtin_cache_tracks_edits_and_manifest_without_restart(tmp_path, monke
     manifest = {'packages': [{'name': 'example', 'version': '1.0', 'origin': 'bundled',
         'descriptors': [{'id': 'example', 'entry_point': 'src.task.step.steps.example:Example', 'code_sha': '0' * 64, 'declaration_sha': '1' * 64}]}]}
     index.write_text(json.dumps(manifest), encoding='utf-8')
-    monkeypatch.setattr(packages, '__file__', str(root / 'biopipe/packages.py'))
+    monkeypatch.setattr('biopipe.library_location.source_root', lambda candidate=None: root if candidate is None else Path(candidate))
     first = packages.bundled_state()
     assert packages.bundled_state() is first
     # Newlines are not an implementation change, including Windows Git checkouts.

@@ -79,6 +79,9 @@ maintainers can still explicitly pass a repository root to `PluginManager`.
 ## Independent library releases
 
 The application version and the managed source library version are independent.
+Official library releases use `library-v…` tags; software releases use `v…`.
+See the [release guide](library_releases.md) for tested compatibility, publishing
+and user update instructions. Operator-only changes do not bump the application.
 **Import package** accepts a `.biopipe-library.zip` for the complete managed
 source library, or `.whl` for one provider. Import validates checksums, protocol,
 minimum application version and source/wheel consistency before preparing the

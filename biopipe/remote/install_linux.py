@@ -49,14 +49,18 @@ def conda_environment():
 
 def requirements(code):
     project = tomllib.loads((code / 'pyproject.toml').read_text(encoding='utf-8'))['project']
-    manifest = json.loads((code / 'biopipe/builtin_packages.json').read_text(encoding='utf-8'))
+    from biopipe.library_location import source_root
+    library = source_root(code)
+    index = library / 'biopipe/builtin_packages.json'
+    manifest = json.loads(index.read_text(encoding='utf-8')) if index.is_file() else {'packages': []}
     entries = [d for p in manifest['packages'] for d in p['descriptors']]
     Requirement = _requirement_class()
     # Operators with a declared environment own their dependency pins; installing them
     # into the shared interpreter is exactly what breaks `pip check` (Boltz pins
     # pyyaml/requests/scipy, AntiFold pins NumPy 1.26).
-    shared = [d for d in entries if not (d.get('resources') or {}).get('environment')]
-    specs = sorted(set(project['dependencies']) | {r for d in shared for r in d.get('dependencies', [])})
+    # The server is an application installation, not an eager installation of
+    # every optional model/tool in the independently maintained library.
+    specs = sorted(set(project['dependencies']))
     specs = [spec for spec in specs if Requirement(spec).name.lower() not in CONDA_PROVIDED]
     # pdbfixer is published on conda-forge only; installing it with pip aborts
     # the whole resolve. The managed micromamba environment provides it.
@@ -132,7 +136,7 @@ def _requirement_class():
 
 
 
-def split_failures(results, entries=()):
+def split_failures(results, entries=(), *, required_ids=None):
     """Separate base-runtime failures from unavailable library capabilities.
 
     Dedicated environments and external tools belong to library capabilities.
@@ -143,6 +147,9 @@ def split_failures(results, entries=()):
                     if any((entry.get('resources') or {}).get(key)
                            for key in ('environment', 'external_tools'))}
     failed = {key: value['error'] for key, value in results.items() if value['status'] != 'passed'}
+    if required_ids is not None:
+        required = {key: value for key, value in failed.items() if key in required_ids}
+        return required, {key: value for key, value in failed.items() if key not in required_ids}
     optional = {
         key: error for key, error in failed.items()
         if key in optional_ids or any(name in error.lower() for name in OPTIONAL_MODULES)
@@ -273,7 +280,7 @@ def _ensure_isolated_environments(prefix, *, failures=None):
     return ok
 
 
-def ensure_requirements(specs, request, bundle=None):
+def ensure_requirements(specs, request, bundle=None, *, prepare_library=False):
     """Repair the complete dependency graph, including missing transitive libraries."""
     Requirement = _requirement_class()
     missing = []
@@ -308,6 +315,8 @@ def ensure_requirements(specs, request, bundle=None):
             status, tail = _install(request, False, environment, constraints, bundle)
         if status:
             raise RuntimeError('pip install failed after the wheel and source attempts:\n' + tail)
+    if not prepare_library:
+        return {}
     if not _ensure_python_extras(constraints):
         print('some light operator extras could not be installed', flush=True)
     environment_failures = {}
@@ -345,6 +354,8 @@ def main():
     previous = json.loads(receipt.read_text()) if receipt.exists() else {}
     if previous.get('source_sha256') != args.digest:
         subprocess.run([sys.executable, '-I', '-m', 'pip', '--isolated', 'install', '--no-deps', str(code)], check=True)
+        if (code / 'library/pyproject.toml').is_file():
+            subprocess.run([sys.executable, '-I', '-m', 'pip', '--isolated', 'install', '--no-deps', str(code / 'library')], check=True)
     subprocess.run([sys.executable, '-I', '-m', 'pip', 'check'], check=True)
     from biopipe.dependencies import probe, scope
     allowed = scope()
@@ -356,7 +367,9 @@ def main():
         environment = (entry.get('resources') or {}).get('environment')
         if environment in environment_failures:
             results[entry['id']] = {'status': 'failed', 'error': environment + ': ' + environment_failures[environment]}
-    required, optional = split_failures(results, entries)
+    # pip check validates the base environment; explicit native Hi-C smoke
+    # checks below remain mandatory. Optional library failures stay visible.
+    required, optional = split_failures(results, entries, required_ids=set())
     if required:
         raise ValueError('Operator dependency checks failed: ' + json.dumps(required))
     if optional:

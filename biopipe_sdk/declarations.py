@@ -203,6 +203,11 @@ def implementation_root(entry):
     """Find a provider on sys.path without importing its package __init__."""
     import sys
     relative = entry.split(':')[0].replace('.', '/')
+    if relative.startswith(('src/task/step/steps/', 'src/reader/readers/')):
+        from biopipe.library_location import source_root
+        seed = source_root()
+        if seed and (seed / (relative + '.py')).is_file():
+            return seed
     for item in sys.path:
         root = Path(item or '.').resolve()
         if (root / (relative + '.py')).is_file() or (root / relative / '__init__.py').is_file():

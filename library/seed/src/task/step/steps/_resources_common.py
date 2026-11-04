@@ -1,4 +1,4 @@
-"""Helpers for the shipped large-resource manifest (``biopipe/resources.json``).
+"""Helpers for the library-owned large-resource manifest (``resources.json``).
 
 The manifest is the single place that records, for every large external
 resource (model weights, database bundles, official checkouts), the environment
@@ -24,7 +24,7 @@ MANIFEST_NAME = "resources.json"
 
 @dataclass(frozen=True)
 class Resource:
-    """One entry of ``biopipe/resources.json``."""
+    """One entry of the adjacent library resource manifest."""
 
     id: str
     title: str
@@ -57,23 +57,12 @@ class Resource:
 
 
 def manifest_path() -> Path:
-    """Locate ``biopipe/resources.json`` in a source tree or an installed wheel."""
-
-    for parent in Path(__file__).resolve().parents:
-        candidate = parent / "biopipe" / MANIFEST_NAME
-        if candidate.is_file():
-            return candidate
-    try:  # installed package: biopipe/resources.json sits next to the package
-        from importlib.resources import files
-
-        candidate = Path(str(files("biopipe").joinpath(MANIFEST_NAME)))
-        if candidate.is_file():
-            return candidate
-    except Exception:  # pragma: no cover - defensive, importlib.resources missing
-        pass
+    """Use the same immutable provider revision as this helper's code."""
+    candidate = Path(__file__).resolve().with_name(MANIFEST_NAME)
+    if candidate.is_file():
+        return candidate
     raise StepError(
-        "biopipe/resources.json is missing from this installation; "
-        "reinstall the package or run from the repository root"
+        "The operator library's resources.json is missing; reinstall the library bundle"
     )
 
 

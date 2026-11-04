@@ -152,8 +152,9 @@ def execute(args):
         if args.source_ref and args.action != "discover":
             raise ValueError("--source-ref is for static discovery only")
         os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
-        return inventory(source_ref=args.source_ref, route_roots=args.route_root) if args.action == "discover" else maintain(
-            args.action, route_roots=args.route_root, output_dir=args.output_dir, scope=args.scope)
+        roots = [str(Path(path).resolve()) for path in args.route_root] if args.route_root else None
+        return inventory(source_ref=args.source_ref, route_roots=roots) if args.action == "discover" else maintain(
+            args.action, route_roots=roots, output_dir=args.output_dir, scope=args.scope)
     if args.command == "schema":
         from biopipe_sdk.protocol import Descriptor, PackageDescriptor
         from src.web.models import Graph, Workspace

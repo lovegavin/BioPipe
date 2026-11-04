@@ -240,7 +240,7 @@ def test_source_library_discovers_plain_author_modules_without_manifest_edits(tm
     from biopipe.source_library import SOURCE_DIRS
     source_root = tmp_path / 'code'
     for relative in [*SOURCE_DIRS.values(), 'biopipe/builtin_packages.json']:
-        source, target = ROOT / relative, source_root / relative
+        source, target = ROOT / "library/seed" / relative, source_root / relative
         if source.is_dir():
             target.mkdir(parents=True)
             for parameter in source.glob('*.parameters.json'):

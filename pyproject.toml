@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "biopipe-studio"
-version = "2.0.4"
+version = "2.3.0"
 description = "Typed bioinformatics pipelines, desktop canvas and agent interfaces"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -21,8 +21,5 @@ biopipe = "biopipe.cli:main"
 include = ["biopipe*", "src*"]
 
 [tool.setuptools.package-data]
-"biopipe" = ["builtin_packages.json", "bundled_history.json", "resources.json", "environments.json", "guides/*.md"]
-"src.web" = ["builtin_routes.json"]
+"biopipe" = ["bundled_history.json", "guides/*.md"]
 "biopipe_sdk" = ["schemas/*.json"]
-"src.task.step.steps" = ["*.md", "*.parameters.json", "*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.svg", "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.webp", "**/*.gif", "**/*.svg"]
-"src.reader.readers" = ["*.md", "*.parameters.json", "*.png", "*.jpg", "*.jpeg", "*.webp", "*.gif", "*.svg", "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.webp", "**/*.gif", "**/*.svg"]

@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "CRISPR 阵列检测参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "min_repeats": {
+      "title": "最少重复数",
+      "type": "integer",
+      "default": 3,
+      "minimum": 2,
+      "maximum": 100,
+      "x-ui-group": "检测",
+      "x-ui-order": 1
+    },
+    "minced_path": {
+      "title": "minced 可执行文件",
+      "type": "string",
+      "default": "minced",
+      "x-ui-group": "依赖",
+      "x-ui-order": 1
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 300,
+      "minimum": 10,
+      "maximum": 3600,
+      "x-ui-group": "依赖",
+      "x-ui-order": 2
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "arrays",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

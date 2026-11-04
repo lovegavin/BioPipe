@@ -14,6 +14,7 @@ STATISTICS = ("n_environments", "n_unique", "top_count", "entropy")
 
 def environment_counts(molecule, radius: int) -> dict[int, int]:
     from rdkit.Chem import AllChem
+
     fingerprint = AllChem.GetMorganFingerprint(molecule, radius, useCounts=True)
     return dict(fingerprint.GetNonzeroElements())
 

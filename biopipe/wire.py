@@ -90,7 +90,7 @@ class Wire:
             from src.core import Form
             return Form(**self.decode(value['value'], mmap=mmap))
         if kind == 'labelencoder':
-            from src.reader.readers._encoder import LabelEncoder
+            from src.core.encoding import LabelEncoder
             encoder = LabelEncoder()
             encoder.__dict__.update(self.decode(value['value'], mmap=mmap))
             return encoder

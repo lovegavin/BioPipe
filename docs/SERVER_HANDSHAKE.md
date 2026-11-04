@@ -87,7 +87,7 @@ can execute. Frozen parameter JSON and execution JSON remain per workflow.
 
 ## Document-first discovery and readiness
 
-Server startup uses compiled `biopipe/builtin_packages.json` and the workspace's
+Server startup uses compiled `library/seed/biopipe/builtin_packages.json` and the workspace's
 plugin registry. It does not enumerate/stat/hash each provider's Python source.
 Explicit refresh remains the operation that detects new or changed source.
 Switching an existing workspace into this mode preserves its registered metadata

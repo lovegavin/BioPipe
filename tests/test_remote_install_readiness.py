@@ -115,7 +115,7 @@ def test_requirement_repair_runs_reader_extras_and_returns_environment_failures(
     monkeypatch.setattr(installer, '_ensure_isolated_environments', prepare)
     repaired = []
     monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: repaired.append(True) or True)
-    assert installer.ensure_requirements([], tmp_path / 'requirements.txt') == {'model': 'download failed'}
+    assert installer.ensure_requirements([], tmp_path / 'requirements.txt', prepare_library=True) == {'model': 'download failed'}
     assert repaired == [True]
 
 

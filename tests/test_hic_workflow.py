@@ -113,7 +113,7 @@ def test_hic_route_parameters_compile_and_export_relative_paths(tmp_path, mode):
     from src.web.graph import import_manifest, compile_graph, relative_manifest
     import yaml
     root=Path(__file__).resolve().parents[1]
-    raw=load_manifest(root/'routes'/('hic_'+mode)/'task.yaml')
+    raw=load_manifest(root/'library/seed/routes'/('hic_'+mode)/'task.yaml')
     catalog=build_catalog(STEPS)
     graph=import_manifest(yaml.safe_dump(raw),'.',catalog,tmp_path)
     manifest,_=compile_graph(graph,catalog,tmp_path)
@@ -169,7 +169,7 @@ def test_hic_helper_edits_change_code_identity_without_importing_tools(tmp_path)
     root=Path(__file__).resolve().parents[1]
     entry='src.task.step.steps.align_reads:AlignReadsStep'
     for folder in ('src/task/step/steps','src/reader/readers'):
-        shutil.copytree(root/folder,tmp_path/folder,ignore=shutil.ignore_patterns('__pycache__'))
+        shutil.copytree(root/'library/seed'/folder,tmp_path/folder,ignore=shutil.ignore_patterns('__pycache__'))
     before=code_hash(entry,tmp_path)
     helper=tmp_path/'src/task/step/steps/_hic_tools.py'
     helper.write_text(helper.read_text(encoding='utf-8')+'\n# Algorithm revision\n',encoding='utf-8')

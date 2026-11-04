@@ -60,7 +60,7 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
     python = destination / 'python.exe'
     subprocess.run([python, '-I', '-m', 'ensurepip', '--upgrade'], check=True)
     project = tomllib.loads((root / 'pyproject.toml').read_text(encoding='utf-8'))['project']
-    manifest = json.loads((root / 'biopipe/builtin_packages.json').read_text(encoding='utf-8'))
+    manifest = json.loads((root / 'library/seed/biopipe/builtin_packages.json').read_text(encoding='utf-8'))
     descriptors = windows_descriptors(manifest)
     specs = sorted(set(project['dependencies'] + project['optional-dependencies']['agent'] + ['build>=1.2', 'setuptools>=69']) |
                    {r for d in descriptors for r in d.get('dependencies', [])})
@@ -85,6 +85,20 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
             for name in archive.namelist():
                 if name.startswith('/') or '..' in Path(name).parts:
                     raise ValueError('Invalid wheel path')
+            archive.extractall(destination / 'Lib/site-packages')
+        # The Full distribution explicitly includes a separately versioned seed.
+        # Keep it out of the application wheel and remove only this build cache
+        # so deleted operators cannot survive a subsequent wheel rebuild.
+        library = (root / 'library').resolve()
+        cache = (library / 'build').resolve()
+        if cache.parent != library or not cache.is_relative_to(root.resolve()):
+            raise ValueError('Library build cache escaped the checkout')
+        if cache.exists():
+            shutil.rmtree(cache)
+        subprocess.run([python, '-I', '-m', 'build', '--wheel', '--no-isolation',
+                        '--outdir', temporary, library], check=True)
+        seed = next(Path(temporary).glob('biopipe_builtin_library-*.whl'))
+        with zipfile.ZipFile(seed) as archive:
             archive.extractall(destination / 'Lib/site-packages')
     subprocess.run([python, '-I', '-m', 'pip', 'check'], check=True)
     versions = json.loads(subprocess.check_output([python, '-I', '-c',

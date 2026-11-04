@@ -33,3 +33,8 @@ See `docs/agent_operations.md`; third-party application authors should use
 Related process notes: remote installs and repair in
 `docs/agent_environment_repair.md`, agent process rules and token
 discipline in `docs/design/agent_working_notes.md`.
+
+Application changes belong outside `library/seed/`. Operator/Reader code,
+sidecars and template routes belong inside it. Preserve original v3 entry-point
+names; do not raise the application version for library-only changes.
+See `docs/application_library_boundary.md` and `library/README.md`.

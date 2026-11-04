@@ -87,7 +87,7 @@ def test_setup_status_remains_responsive_while_connect_is_busy(tmp_path):
     assert 'never-write-this' not in manager.path.read_text()
 
 
-def test_deployment_requirements_include_all_current_provider_dependencies():
+def test_deployment_requirements_are_independent_of_optional_library():
     from biopipe.remote import install_linux as installer
     specs, entries = installer.requirements(ROOT)
     assert {'pairtools==1.1.2', 'cooltools==0.7.1', 'pandas==2.2.3'} <= set(specs)
@@ -97,8 +97,7 @@ def test_deployment_requirements_include_all_current_provider_dependencies():
     shared = [entry for entry in entries if not (entry.get('resources') or {}).get('environment')]
     isolated = [entry['id'] for entry in entries if (entry.get('resources') or {}).get('environment')]
     assert {'boltz_predict', 'antifold_design', 'esm3_fold'} <= set(isolated)
-    assert all({dep for dep in entry.get('dependencies', [])
-                if Requirement(dep).name.lower() not in conda_provided} <= set(specs) for entry in shared)
+    assert not any('torch' in spec or 'transformers' in spec for spec in specs)
     assert not any('boltz' in spec or 'antifold' in spec for spec in specs)
 
 
@@ -140,9 +139,9 @@ def test_native_bootstrap_does_not_mix_conda_and_pip_scientific_abis(monkeypatch
     result = module.provision(None, {}, lambda text: None, threading.Event(), ROOT)
     script = next(data.decode() for name, data in uploaded.items() if name.endswith('.sh'))
     native = next(line for line in script.splitlines() if '"$bp_action"' in line)
-    assert '--strict-channel-priority python=3.11 pip bwa=0.7.19 samtools=1.22.1 openmm pdbfixer' in native
+    assert '--strict-channel-priority python=3.11 pip bwa=0.7.19 samtools=1.22.1' in native
     assert '"python=3.11 pip' not in native and "'python=3.11 pip" not in native
-    assert 'gxx_linux-64' not in native and 'openmm pdbfixer' in native
+    assert 'gxx_linux-64' not in native and 'openmm' not in native and 'pdbfixer' not in native
     assert 'cooltools=' not in native and 'numpy=' not in native and 'pandas=' not in native
     assert 'PATH=' in script and 'install_linux.py' in script
     assert '/mnt/c/' not in script and '/mnt/d/' not in script

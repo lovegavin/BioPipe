@@ -76,7 +76,7 @@ def test_new_bundled_operators_have_declared_categories_and_icons():
     from biopipe.packages import load_entry
 
     root = Path(__file__).resolve().parents[1]
-    manifest = json.loads((root / "biopipe/builtin_packages.json").read_text(encoding="utf-8"))
+    manifest = json.loads((root / "library/seed/biopipe/builtin_packages.json").read_text(encoding="utf-8"))
     descriptors = {d["id"]: d for p in manifest["packages"] for d in p["descriptors"]}
     expected = {"annotate": "data", "explode": "data", "order_axis": "data",
                 "pivot": "data", "prioritize": "data", "enrich_go": "analysis",

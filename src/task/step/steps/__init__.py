@@ -1,10 +1,4 @@
-# src/task/step/steps/__init__.py
-"""Step modules.
+"""Stable import namespace for the optional, separately installed library."""
+from biopipe.library_location import implementation_paths
 
-Each module here defines one or more Step subclasses with a
-non-default ``name``. The router in ``src/task/step/__init__.py``
-scans this package.
-
-Adding a new step: drop a new module with a Step subclass in this
-directory. No registry to edit.
-"""
+__path__ = implementation_paths('src/task/step/steps')

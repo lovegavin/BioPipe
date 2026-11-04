@@ -13,7 +13,7 @@ const categoryAliases: Record<string, string> = {
   "quality control": "quality_control", qc: "quality_control",
   "data preparation": "data", "data processing": "data",
   "machine learning": "machine_learning", ml: "machine_learning",
-  genetics: "omics", genomics: "omics", transcriptomics: "omics", proteomics: "omics",
+  genetics: "omics", genome: "omics", genomics: "omics", transcriptomics: "omics", proteomics: "omics",
   "single cell": "omics", single_cell: "omics", microbiome: "omics", metagenomics: "omics",
   sequence: "omics", expression: "omics", "微生物组": "omics",
   plugins: "other", extensions: "other", "扩展算子": "other",

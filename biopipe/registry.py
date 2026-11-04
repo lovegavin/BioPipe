@@ -16,7 +16,8 @@ import sys
 
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]
+from biopipe.library_location import source_root
+ROOT = source_root() or Path(__file__).resolve().parents[1]
 PACKAGE_INDEX = Path("biopipe/builtin_packages.json")
 ROUTE_INDEX = Path("src/web/builtin_routes.json")
 
@@ -29,7 +30,7 @@ def scan_sources(root=ROOT, sources=None, warnings_out=None):
     """Read per-class definitions and parameter files without importing code."""
     from biopipe_sdk.declarations import DeclarationCompiler, source_declarations
     from biopipe_sdk.drift import check_source
-    root = Path(root)
+    root = source_root(root)
     descriptors, errors, seen = [], [], set()
     compiler = DeclarationCompiler(root)
     for folder in ('src/task/step/steps', 'src/reader/readers'):
@@ -87,6 +88,7 @@ def default_route_roots(root=ROOT):
     override = os.environ.get("BIOPIPE_ROUTES")
     if override:
         return [Path(override).resolve()]
+    root = source_root(root)
     candidates = [Path(root) / "routes"]
     prefix = Path(_sys.prefix)
     short = prefix.name[4:] if prefix.name.startswith("env-") else ""
@@ -197,6 +199,7 @@ def build_routes(root, catalog, previous, route_roots=None):
 
 def inventory(root=ROOT, source_ref=None, route_roots=None):
     """Static discovery works even if a newly added module cannot be imported."""
+    root = source_root(root)
     known = read_json(root / PACKAGE_INDEX, {"packages": []})
     ids = {d["id"] for p in known["packages"] for d in p["descriptors"]}
     known_routes = {r["id"] for r in read_json(root / ROUTE_INDEX, {"routes": []})["routes"]}
@@ -206,9 +209,11 @@ def inventory(root=ROOT, source_ref=None, route_roots=None):
         commit = subprocess.check_output(["git", "rev-parse", "--verify", "--end-of-options", source_ref + "^{commit}"], cwd=root, text=True).strip()
         paths = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", commit], cwd=root, text=True).splitlines()
         result["source_ref"] = commit
-        selected = [p for p in paths if (p.startswith(("src/task/step/steps/", "src/reader/readers/")) and p.endswith(".py") and not Path(p).name.startswith("_"))
-                    or (p.startswith(("routes/", "tasks/")) and Path(p).name in {"task.yaml", "task.yml"})]
-        sources = [(p, subprocess.check_output(["git", "show", f"{commit}:{p}"], cwd=root).decode("utf-8")) for p in selected]
+        def local_path(path):
+            return path.removeprefix('library/seed/')
+        selected = [p for p in paths if (local_path(p).startswith(("src/task/step/steps/", "src/reader/readers/")) and p.endswith(".py") and not Path(p).name.startswith("_"))
+                    or (local_path(p).startswith(("routes/", "tasks/")) and Path(p).name in {"task.yaml", "task.yml"})]
+        sources = [(local_path(p), subprocess.check_output(["git", "show", f"{commit}:{p}"], cwd=root).decode("utf-8")) for p in selected]
     else:
         paths = [*sorted((root / "src/task/step/steps").glob("[!_]*.py")), *sorted((root / "src/reader/readers").glob("[!_]*.py"))]
         found_routes = route_sources(root, route_roots)
@@ -261,7 +266,7 @@ def inventory(root=ROOT, source_ref=None, route_roots=None):
 
 def maintain(action="check", *, root=ROOT, route_roots=None, output_dir=None, scope="all"):
     from biopipe_sdk.protocol import PROTOCOL_VERSION, catalog_entry
-    root = Path(root).resolve()
+    root = source_root(root)
     previous = read_json(root / PACKAGE_INDEX, {"protocol_version": PROTOCOL_VERSION, "packages": []})
     warnings = []
     descriptors, errors = scan_sources(root, warnings_out=warnings)
@@ -301,6 +306,8 @@ def main(argv=None):
     parser.add_argument("--output-dir", type=Path, help="Write/check generated indexes under an alternate directory")
     parser.add_argument("--scope", choices=["all", "packages", "routes"], default="all")
     args = parser.parse_args(argv)
+    if args.route_root:
+        args.route_root = [str(Path(path).resolve()) for path in args.route_root]
     if args.source_ref and args.action != "discover":
         parser.error("--source-ref is for discovery only; adapt reviewed code locally before building")
     os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"

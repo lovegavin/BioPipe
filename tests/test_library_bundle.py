@@ -32,7 +32,8 @@ def test_sources_are_lazy_persistent_and_outside_application(tmp_path):
     restarted.ensure_source_root()
     assert restarted.source_root == target
     assert json.loads(parameter.read_text()) == {'author_edit': True}
-    assert json.loads((ROOT / parameter.relative_to(target)).read_text()) != {'author_edit': True}
+    from biopipe.library_location import source_root
+    assert json.loads((source_root(ROOT) / parameter.relative_to(target)).read_text()) != {'author_edit': True}
 
 
 def test_explicit_refresh_detaches_factory_without_changing_application(tmp_path):

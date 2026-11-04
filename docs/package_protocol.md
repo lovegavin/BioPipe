@@ -23,7 +23,7 @@ Counts describe the 2.0.1 factory library: 709 operators and 101 Readers. Instal
 profiles may add, replace or disable providers; use `biopipe plugin list` for the
 active library rather than assuming these counts at runtime.
 
-The startup index is `biopipe/builtin_packages.json`. It enumerates each package's
+The startup index is `library/seed/biopipe/builtin_packages.json`. It enumerates each package's
 name, version, title and descriptors. Paths are Python import entry points, never
 machine-specific filesystem locations. Use `biopipe registry discover/check/build`
 to maintain it together with the route index. `build_builtin_packages.py` builds distributable provider wheels after index maintenance. New modules must declare the complete protocol;

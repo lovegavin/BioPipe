@@ -104,7 +104,7 @@ def main():
         assert bootstraps[0]["desktop"] and not bootstraps[1]["desktop"]
         assert bootstraps[0]["storage"]["registry"] == bootstraps[1]["storage"]["registry"] == custom["Registry"]
         baseline = len(clients[0].get("/api/routes").json())
-        bundled_routes = json.loads((ROOT / "src/web/builtin_routes.json").read_text(encoding="utf-8"))["routes"]
+        bundled_routes = json.loads((ROOT / "library/seed/src/web/builtin_routes.json").read_text(encoding="utf-8"))["routes"]
         assert baseline == len(bundled_routes)
         for client, name in zip(clients, ("Desktop registered", "Development registered")):
             graph = {**bootstraps[0]["demo"], "name": name}

@@ -50,6 +50,7 @@ def transmit(value, direction, write, read_line):
 class Decoder:
     def __init__(self, direction):
         self.direction, self.pending, self.ack = direction, {}, None
+        self.progress = 0
 
     def feed(self, line):
         self.ack = None
@@ -66,6 +67,8 @@ class Decoder:
             record = self.pending.setdefault(digest, {'total': total, 'parts': {}})
             if record['total'] != total:
                 raise ValueError('Inconsistent SSH frame count')
+            if index not in record['parts']:
+                self.progress += 1
             record['parts'][index] = data
             self.ack = f'\nBIOPIPE-ACK {digest} {index}\n'
             if len(record['parts']) != total:

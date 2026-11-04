@@ -28,7 +28,7 @@ def refresh():
     if report["errors"]:
         raise ValueError(json.dumps(report["errors"], ensure_ascii=False))
     from biopipe.packages import bundled_manifest, bundled_state
-    return json.loads((ROOT / "biopipe/builtin_packages.json").read_text(encoding="utf-8"))
+    return bundled_manifest()
 
 
 def build_package(name, output):

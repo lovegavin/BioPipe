@@ -1,0 +1,88 @@
+name: Independent operator library
+on:
+  push:
+    branches: ['main', 'library/**', 'maintenance/independent-library-releases']
+    tags: ['library-v*']
+  pull_request:
+    paths:
+      - 'library/**'
+      - 'scripts/*library*.py'
+      - 'tests/test_library_release.py'
+      - '.github/workflows/library-release.yml'
+permissions:
+  contents: read
+env:
+  PYTHONIOENCODING: utf-8
+  PYTHONUTF8: '1'
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install released application and analysis test dependencies
+        shell: bash
+        run: |
+          version=$(python -c 'import json; print(json.load(open("library/release.json"))["build_application"])')
+          python -m pip install "https://github.com/lovegavin/BioPipe/releases/download/v${version}/biopipe_studio-${version}-py3-none-any.whl" pytest h5py scikit-learn biopython rdkit
+          python -m pip install "torch>=2.0" --index-url https://download.pytorch.org/whl/cpu
+      - name: Validate release rules
+        run: python -I -m pytest tests/test_library_release.py -q --import-mode=importlib
+      - name: Build independent library
+        shell: bash
+        run: |
+          tag=$(python -c 'import json; print("library-v" + json.load(open("library/release.json"))["version"])')
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then tag="$GITHUB_REF_NAME"; fi
+          python -I scripts/release_library.py --tag "$tag" --output build/library
+      - name: Verify installation, frozen routes and worker execution
+        shell: bash
+        run: |
+          bundle=$(python -c 'import json; print(json.load(open("build/library/library-build.json"))["bundle"])')
+          python -I scripts/verify_library_release.py --bundle "$bundle" --work build/library-verify
+          cp build/library-verify/verification.json "build/library/verification-${{ matrix.os }}.json"
+      - name: Build portable factory seed wheel
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          python -m pip install build
+          python -m build --wheel --outdir build/library library
+          cd build/library
+          sha256sum biopipe_builtin_library-*.whl > SHA256SUMS-seed.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: library-${{ matrix.os }}
+          path: |
+            build/library/*.biopipe-library.zip
+            build/library/*.whl
+            build/library/SHA256SUMS-*.txt
+            build/library/verification-*.json
+          if-no-files-found: error
+  publish:
+    if: startsWith(github.ref, 'refs/tags/library-v')
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: library-*
+          merge-multiple: true
+          path: artifacts
+      - name: Publish without replacing latest software release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          cat artifacts/SHA256SUMS-*.txt > artifacts/SHA256SUMS.txt
+          gh release create "$GITHUB_REF_NAME" --verify-tag --latest=false \
+            --title "BioPipe Operator Library ${GITHUB_REF_NAME#library-v}" \
+            --notes-file "docs/releases/${GITHUB_REF_NAME}.md" \
+            artifacts/*.biopipe-library.zip artifacts/*.whl artifacts/SHA256SUMS.txt artifacts/verification-*.json

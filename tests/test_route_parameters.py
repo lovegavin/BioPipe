@@ -262,10 +262,10 @@ def test_bundle_prepares_and_runs_after_default_rebuild_in_a_fresh_profile(tmp_p
     from biopipe.registry import maintain
     checkout = tmp_path / 'checkout'
     for relative in ('src/task/step/steps', 'src/reader/readers'):
-        shutil.copytree(ROOT / relative, checkout / relative, ignore=shutil.ignore_patterns('__pycache__'))
+        shutil.copytree(ROOT / "library/seed" / relative, checkout / relative, ignore=shutil.ignore_patterns('__pycache__'))
     (checkout / 'biopipe').mkdir()
-    shutil.copy2(ROOT / 'biopipe/builtin_packages.json', checkout / 'biopipe/builtin_packages.json')
-    monkeypatch.setattr(packages, '__file__', str(checkout / 'biopipe/packages.py'))
+    shutil.copy2(ROOT / 'library/seed/biopipe/builtin_packages.json', checkout / 'biopipe/builtin_packages.json')
+    monkeypatch.setattr('biopipe.library_location.source_root', lambda root=None: checkout if root is None else Path(root))
 
     def app_for(name):
         directory = tmp_path / name

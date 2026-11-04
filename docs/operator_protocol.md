@@ -80,7 +80,7 @@ private directories and subprocesses. See [dependency isolation](dependency_isol
 
 ## One generated index, several consumers
 
-`biopipe/builtin_packages.json` and profile `plugins/registry.json` are generated
+`library/seed/biopipe/builtin_packages.json` and profile `plugins/registry.json` are generated
 indexes. They combine each class definition and its parameter JSON into a
 snapshot descriptor. The frontend, graph compiler, contract checker, memory
 planner, CLI and MCP consume that descriptor. Do not edit the generated index to

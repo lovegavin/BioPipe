@@ -42,7 +42,7 @@ def source_tree(tmp_path, monkeypatch):
         (root / folder).mkdir(parents=True)
     write_operator(root)
     publish_manifest(root)
-    monkeypatch.setattr(packages, '__file__', str(root / 'biopipe/packages.py'))
+    monkeypatch.setattr('biopipe.library_location.source_root', lambda candidate=None: root if candidate is None else Path(candidate))
     return root
 
 

@@ -99,7 +99,7 @@ def test_strict_new_operator_parameters_are_validated(tmp_path):
         execute(tmp_path, "distance_matrix", [data], {"dim": "sample", "typo": True})
     assert not STEPS["reduce"].supports_streaming
     assert STEPS["describe"].supports_streaming
-    bundle = json.loads((Path(__file__).resolve().parents[1] / 'src/web/builtin_routes.json').read_text(encoding='utf-8'))
+    bundle = json.loads((Path(__file__).resolve().parents[1] / 'library/seed/src/web/builtin_routes.json').read_text(encoding='utf-8'))
     assert next(r for r in bundle['routes'] if r['name'] == '16S Microbiome')['graph']['memory']['enabled']
 
 

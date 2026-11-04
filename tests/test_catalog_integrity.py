@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_source_ids_and_parameter_schemas_match_static_manifest():
     from biopipe_sdk.declarations import source_declarations
     from biopipe_sdk.protocol import Descriptor
-    manifest = json.loads((ROOT / 'biopipe/builtin_packages.json').read_text(encoding='utf-8'))
+    manifest = json.loads((ROOT / 'library/seed/biopipe/builtin_packages.json').read_text(encoding='utf-8'))
     indexed = {d['id']: d for p in manifest['packages'] for d in p['descriptors']}
     found = {}
     for directory in ('src/task/step/steps', 'src/reader/readers'):

@@ -424,7 +424,9 @@ class RouteLibrary:
 
     def install_builtins(self):
         """Seed shipped routes once. Removal/disable and user edits survive boots."""
-        bundle = json.loads(Path(__file__).with_name("builtin_routes.json").read_text(encoding="utf-8"))
+        from biopipe.library_location import asset_path
+        path = asset_path('src/web/builtin_routes.json')
+        bundle = json.loads(path.read_text(encoding='utf-8')) if path.is_file() else {'routes': []}
         with self.lock:
             self._reload(force=True)
             receipt = self.directory / "builtins_installed.json"

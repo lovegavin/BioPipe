@@ -9,11 +9,13 @@ from pathlib import Path
 
 
 def manifest_path() -> Path:
-    return Path(__file__).with_name('environments.json')
+    from .library_location import asset_path
+    return asset_path('biopipe/environments.json')
 
 
 def load() -> dict:
-    return json.loads(manifest_path().read_text(encoding='utf-8')).get('environments', {})
+    path = manifest_path()
+    return json.loads(path.read_text(encoding='utf-8')).get('environments', {}) if path.is_file() else {}
 
 
 def root() -> Path:
