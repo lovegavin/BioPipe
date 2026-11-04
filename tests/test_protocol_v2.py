@@ -32,7 +32,8 @@ def test_every_implementation_declares_schema_without_registry_injection(monkeyp
         return original_import(name, *args, **kwargs)
     monkeypatch.setattr(importlib, "import_module", reject_implementation_import)
     canonical = bundled_state()["descriptors"]
-    root = Path(__file__).resolve().parents[1]
+    from biopipe.library_location import source_root
+    root = source_root(Path(__file__).resolve().parents[1])
     compiler = DeclarationCompiler(root)
     expected = {d["entry_point"]: d for d in canonical}
     observed = set()
