@@ -51,17 +51,21 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--json", type=Path, default=Path("dependency-diagnosis.json"))
     parser.add_argument("--log", type=Path, default=Path("dependency-diagnosis.log"))
+    parser.add_argument("--only", default="", help="comma-separated descriptor ids")
     args = parser.parse_args()
 
     from biopipe.environments import resolve
 
     log_path = args.log.expanduser().resolve()
     log_path.parent.mkdir(parents=True, exist_ok=True)
+    only = {item.strip() for item in args.only.split(',') if item.strip()}
     records = []
     started = datetime.now(timezone.utc).isoformat()
     with log_path.open("a", encoding="utf-8") as log:
         log.write(f"# dependency diagnosis {started} python={sys.executable}\n")
         for entry in descriptors():
+            if only and entry.get('id') not in only:
+                continue
             record = describe(entry)
             record["host_python"] = sys.executable
             environment = record["environment"]
