@@ -156,7 +156,9 @@ class DependencySession:
             for descriptor in active_descriptors(state):
                 identity = {k: descriptor.get(k) for k in ('id', 'kind', 'version', 'entry_point', 'implementation', 'dependencies', 'dependency_imports', 'execution')}
                 identity['implementation'] = {k: v for k, v in (descriptor.get('implementation') or {}).items() if k not in {'declaration_sha', 'sha256'}}
-                identity['r'] = descriptor.get('resources', {}).get('r')
+                resources = descriptor.get('resources') or {}
+                identity['r'] = resources.get('r')
+                identity['resources'] = {key: resources.get(key) for key in ('environment', 'external_tools')}
                 fingerprint = sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
                 old = self.entries.get(descriptor['id'], {})
                 current[descriptor['id']] = old if old.get('fingerprint') == fingerprint else {
@@ -164,7 +166,9 @@ class DependencySession:
                     'status': 'unchecked', 'error': '', 'execution': descriptor.get('execution', {'mode': 'shared'}),
                     'dependencies': descriptor.get('dependencies', []),
                     'dependency_imports': descriptor.get('dependency_imports', []),
-                    'r': descriptor.get('resources', {}).get('r')}
+                    'resources': {key: (descriptor.get('resources') or {}).get(key)
+                                  for key in ('environment', 'external_tools')},
+                    'r': (descriptor.get('resources') or {}).get('r')}
             allowed = scope()
             if allowed:
                 current = {key: value for key, value in current.items() if key in allowed}
