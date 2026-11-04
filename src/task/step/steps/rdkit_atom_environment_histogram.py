@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import numpy as np
-from rdkit import Chem, DataStructs
-from rdkit.Chem import AllChem
 
 from src.core.errors import StepError
 from src.core.forms.form import Form
@@ -15,6 +13,8 @@ STATISTICS = ("n_environments", "n_unique", "top_count", "entropy")
 
 
 def environment_counts(molecule, radius: int) -> dict[int, int]:
+    from rdkit.Chem import AllChem
+
     fingerprint = AllChem.GetMorganFingerprint(molecule, radius, useCounts=True)
     return dict(fingerprint.GetNonzeroElements())
 

@@ -51,9 +51,9 @@ def test_humanization_rows() -> None:
     assert 0.4 <= overall[3] <= 1.0
 
 
-def test_run() -> None:
+def test_run(tmp_path) -> None:
     form = encode_sequences([VHH], "sequence", "position", "protein")
-    ctx = Context("/tmp/humanization-task", {"params": {}})
+    ctx = Context(tmp_path / "humanization-task", {"params": {}})
     ctx["vhh"] = form
     run(ctx, [{"name": "vhh_humanization_score", "inputs": ["vhh"], "params": {"output": "hum"}}])
     out = ctx["hum"]
@@ -64,12 +64,12 @@ def test_run() -> None:
     assert out.info["reference"]["FR4"] == "IGHJ4*01"
 
 
-def test_errors() -> None:
+def test_errors(tmp_path) -> None:
     with pytest.raises(StepError, match="empty sequence"):
         humanization_rows("")
     with pytest.raises(StepError, match="too short"):
         humanization_rows("ACDE")
-    ctx = Context("/tmp/humanization-task2", {"params": {}})
+    ctx = Context(tmp_path / "humanization-task2", {"params": {}})
     ctx["vhh"] = encode_sequences([VHH, VHH], "sequence", "position", "protein")
     with pytest.raises(StepError, match="exactly one VHH sequence"):
         run(ctx, [{"name": "vhh_humanization_score", "inputs": ["vhh"], "params": {}}])

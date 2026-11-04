@@ -36,7 +36,10 @@ def test_wrong_released_application_is_rejected(tmp_path):
         HELPER['released_application'](tmp_path, {'build_application': '0.0.0'})
 
 
-@pytest.mark.parametrize('name,dependency', [('esm_embedding_autoencoder', 'torch'), ('vhh_humanization_score', 'Bio')])
+@pytest.mark.parametrize('name,dependency', [
+    ('esm_embedding_autoencoder', 'torch'), ('vhh_humanization_score', 'Bio'),
+    *[(name, 'rdkit') for name in ('rdkit_atom_environment_histogram', 'rdkit_charge_profile',
+                                  'rdkit_fragment_profile', 'rdkit_reaction_smarts_apply')]])
 def test_optional_dependencies_are_not_imported_during_registration(name, dependency):
     source = Path(__file__).resolve().parents[1] / 'src/task/step/steps' / (name + '.py')
     code = "import runpy,sys; sys.modules[sys.argv[1]]=None; runpy.run_path(sys.argv[2])"

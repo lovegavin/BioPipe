@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import numpy as np
-from rdkit import Chem
-from rdkit.Chem import AllChem, Descriptors
 
 from src.core.errors import StepError
 from src.core.forms.form import Form
@@ -15,6 +13,8 @@ STATISTICS = ("n_reactant_matches", "n_products", "mean_product_heavy_atoms")
 
 
 def reaction_from_smarts(text: str):
+    from rdkit.Chem import AllChem
+
     if not text or not text.strip():
         raise StepError("rdkit_reaction_smarts_apply: reaction_smarts is required")
     try:
@@ -34,6 +34,8 @@ def product_smiles(reaction, molecule, max_products: int) -> list[str]:
 
 
 def reaction_products(reaction, molecule, max_products: int):
+    from rdkit import Chem
+
     products: list[str] = []
     outcomes = reaction.RunReactants((molecule,))
     matched = len(outcomes)
@@ -88,6 +90,9 @@ class RdkitReactionSmartsApplyStep(Step):
     }
 
     def run(self, ctx, inputs) -> None:
+        from rdkit import Chem
+        from rdkit.Chem import Descriptors
+
         params = ctx.step_params
         smiles = str(params.get("smiles") or "")
         text = str(params.get("reaction_smarts") or "")

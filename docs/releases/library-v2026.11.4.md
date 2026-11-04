@@ -31,7 +31,7 @@ Markdown guides. Database paths are configurable and no longer default to an
 author's machine. The application, frontend, saved parameter values, memory
 planner and streaming interfaces are not replaced by this update.
 
-Two existing adapters now import optional PyTorch/Biopython dependencies only
+Six existing adapters now import optional PyTorch/Biopython/RDKit dependencies only
 when executing, so they do not prevent unrelated operators from registering.
 The older embedding autoencoder still requires a preinstalled PyTorch runtime;
 automatic installation of new PyTorch packages under 2.0.4 can fail on bundled
