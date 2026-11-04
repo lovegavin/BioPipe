@@ -65,3 +65,10 @@ build/
 /con
 /prn
 /aux
+
+# Runtime state and build output must never be committed
+/.studio/
+jobs/
+transfers/
+*.pyc
+node_modules/

@@ -13,7 +13,6 @@ import {
   Database,
   Dna,
   File,
-  File,
   Funnel,
   Intersect,
   ListBullets,
