@@ -11,7 +11,7 @@ def test_reference_route_validates():
     result = subprocess.run(
         [sys.executable, "-m", "biopipe", "--workspace", str(ROOT), "workflow", "validate",
          "tests/fixtures/smoke_route/route.json", "--require-files"],
-        cwd=ROOT, text=True, capture_output=True, timeout=300,
+        cwd=ROOT, text=True, encoding="utf-8", capture_output=True, timeout=300,
     )
     assert result.returncode == 0, result.stderr[-800:]
     assert '"order"' in result.stdout

@@ -10,7 +10,7 @@ from biopipe import environments
 
 
 def _descriptor(name="structure_interface_core", environment="fake"):
-    registry = json.loads((Path(__file__).resolve().parents[1] / "biopipe/builtin_packages.json").read_text())
+    registry = json.loads((Path(__file__).resolve().parents[1] / "biopipe/builtin_packages.json").read_text(encoding="utf-8"))
     descriptor = next(e for p in registry["packages"] for e in p["descriptors"] if e["id"] == name)
     return {**descriptor, "resources": {**descriptor["resources"], "environment": environment}}
 

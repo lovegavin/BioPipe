@@ -282,7 +282,7 @@ class Acceptance:
                 before_jobs = {job['id'] for job in self.cli('jobs', 'list')}
                 applied = await self.call(session, 'biopipe_apply', {'session_id': selected, 'document_id': canvas['document_id'],
                     'expected_revision': snapshot['revision'], 'commands': commands, 'request_id': 'release-batch-' + str(snapshot['revision'])})
-                assert applied['history'][canvas['document_id']]['undo'] == snapshot['history'][canvas['document_id']]['undo'] + 1
+                assert applied['history'][canvas['document_id']]['undo'] == snapshot.get('history', {}).get(canvas['document_id'], {}).get('undo', 0) + 1
                 assert before_jobs == {job['id'] for job in self.cli('jobs', 'list')}
                 canvas.update(baseline=baseline, applied_revision=applied['revision'])
                 self.check('Four graph edits form one undo entry and launch no job', {'revision': applied['revision']})
