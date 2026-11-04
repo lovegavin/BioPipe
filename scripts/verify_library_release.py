@@ -8,6 +8,7 @@ import hashlib
 import importlib
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import sys
@@ -46,6 +47,10 @@ def probe(lock, work):
         assert helper.manifest_path().is_relative_to(profile), str(helper.manifest_path())
         assert {'rfam', 'amrfinder', 'antismash'} <= set(helper.load_resources())
     import pytest
+    fixtures = work / 'cases/fixtures'
+    fixtures.mkdir(exist_ok=True)
+    shutil.copyfile(Path(__file__).resolve().parents[1] / 'tests/fixtures/backbone_1bc8_c60_75.pdb',
+                    fixtures / 'backbone_1bc8_c60_75.pdb')
     status = pytest.main([str(work / 'cases'), '-q', '-k', 'not real_', '--import-mode=importlib',
                           '--basetemp', str(work / 'test-temp')])
     if status:
