@@ -1,8 +1,10 @@
 """Compile immutable installations once with the interpreter that executes them."""
 import importlib.util
+import json
 import py_compile
 import os
 from pathlib import Path
+import sys
 
 
 def filesystem_path(path, *, resolve=True):
@@ -20,6 +22,16 @@ def io_path(path):
 
 
 def precompile(directory, *, immutable=True):
+    # Directory traversal and a single large compilation can both block. Keep
+    # all of that work outside the dependency repair thread, under the same
+    # cancellation/descendant ownership as pip and dependency probes.
+    from biopipe.plugins import run_process
+    output = run_process([sys.executable, '-I', '-S', str(Path(__file__).resolve()),
+                          filesystem_path(directory), 'immutable' if immutable else 'checked'], timeout=600)
+    return json.loads(output)
+
+
+def _compile(directory, *, immutable=True):
     directory = Path(directory)
     mode = (py_compile.PycInvalidationMode.UNCHECKED_HASH if immutable
             else py_compile.PycInvalidationMode.CHECKED_HASH)
@@ -33,3 +45,12 @@ def precompile(directory, *, immutable=True):
     if missing:
         raise ValueError(f"Incomplete bytecode coverage: {missing[:5]}")
     return {"sources": len(sources), "compiled": len(sources), "mode": mode.name.lower()}
+
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('directory')
+    parser.add_argument('mode', choices=['immutable', 'checked'])
+    args = parser.parse_args()
+    print(json.dumps(_compile(args.directory, immutable=args.mode == 'immutable')))

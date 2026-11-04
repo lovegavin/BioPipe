@@ -9,7 +9,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: python -m pip install -e ".[dev]"
-      - run: python -m pytest tests/test_dependency_processes.py -q
+      - run: python -m pytest tests/test_dependency_processes.py tests/test_bytecode_cancel.py -q
   check:
     runs-on: windows-latest
     env:
@@ -33,7 +33,7 @@ jobs:
         working-directory: frontend
       # Source-library refresh probes HDF5 and sklearn classes as well as the SDK.
       - run: python -m pip install -c constraints-py311-windows.txt -e ".[agent,dev]" "h5py>=3.10" "scikit-learn>=1.4"
-      - run: python -m pytest tests/test_agent_guidance.py tests/test_agent_canvas_loop.py tests/test_artifact_remote.py tests/test_environments.py tests/test_dependencies.py tests/test_dependency_processes.py tests/test_smoke_route.py -q
+      - run: python -m pytest tests/test_agent_guidance.py tests/test_agent_canvas_loop.py tests/test_artifact_remote.py tests/test_environments.py tests/test_dependencies.py tests/test_dependency_processes.py tests/test_bytecode_cancel.py tests/test_smoke_route.py -q
       - run: python -m pytest tests/test_optional_library_imports.py tests/test_resource_downloads.py tests/test_remote_handshake.py -q
       - run: python -m biopipe registry check
       - run: python scripts/build_operator_docs.py --check

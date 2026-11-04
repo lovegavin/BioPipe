@@ -36,6 +36,12 @@ Windows job object (attached before execution) or a POSIX process group. Cancel
 and timeout clean up that group even if the installer parent already exited.
 This prevents inherited output pipes from trapping the dependency worker during
 shutdown. No process is selected by executable name.
+Provider and dependency bytecode compilation runs in a separate, owned process
+using the selected Python interpreter. Directory scanning and even a single
+large source compilation can be cancelled during shutdown; neither runs inside
+the backend's dependency thread. Compilation must finish before a target receipt
+or registry generation is published. Cancelled work is not marked ready.
+Both checked and immutable hash modes retain relative filenames in bytecode.
 
 If a desktop backend is still closing after three seconds, its log records the
 active Python thread stacks. A host fallback also records whether the backend

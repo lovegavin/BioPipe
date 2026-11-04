@@ -33,7 +33,8 @@ def test_stalled_shutdown_reports_threads_only_until_backend_finishes(monkeypatc
     assert len(calls) == 1 and not capsys.readouterr().err
 
 
-def test_backend_shutdown_cancels_install_with_orphaned_child(tmp_path):
+@pytest.mark.parametrize('phase', ['installer', 'bytecode'])
+def test_backend_shutdown_cancels_dependency_preparation(tmp_path, phase):
     import psutil
     pid_file = tmp_path / 'installer-child.pid'
     child_code = ('import os,sys,time; from pathlib import Path; '
@@ -42,6 +43,34 @@ def test_backend_shutdown_cancels_install_with_orphaned_child(tmp_path):
                    'subprocess.Popen([sys.executable,"-c",sys.argv[1],sys.argv[2]]); '
                    'p=Path(sys.argv[2]); '
                    '\nwhile not p.exists(): time.sleep(.01)\n')
+    if phase == 'bytecode':
+        # Instrument only the compiler, in both the backend and any compiler
+        # child. The production cancellation/ownership path stays unchanged.
+        # A blocked single file catches both non-cancellable loops and designs
+        # that only check cancellation between files.
+        import biopipe.bytecode
+        compiler = tmp_path / 'slow_compiler.py'
+        release = tmp_path / 'release-compiler'
+        compiler.write_text(f'''
+import os as _os, time as _time, py_compile as _compiler
+from pathlib import Path as _Path
+_original_compile = _compiler.compile
+def _blocked_compile(*args, **kwargs):
+    _Path({str(pid_file)!r}).write_text(str(_os.getpid()))
+    while not _Path({str(release)!r}).exists():
+        _time.sleep(.02)
+    return _original_compile(*args, **kwargs)
+_compiler.compile = _blocked_compile
+''' + Path(biopipe.bytecode.__file__).read_text(encoding='utf-8'), encoding='utf-8')
+        target = tmp_path / 'synthetic-dependency'
+        target.mkdir()
+        (target / 'value.py').write_text('VALUE = 42\n', encoding='utf-8')
+        setup = f'''import runpy, biopipe.bytecode
+biopipe.bytecode.precompile = runpy.run_path({str(compiler)!r})['precompile']'''
+        operation = f'biopipe.bytecode.precompile({str(target)!r})'
+    else:
+        setup = ''
+        operation = f'run_process([sys.executable, "-c", {parent_code!r}, {child_code!r}, {str(pid_file)!r}])'
     bootstrap = tmp_path / 'installing_backend.py'
     bootstrap.write_text(f'''
 import sys
@@ -49,10 +78,11 @@ sys.path.insert(0, {str(ROOT)!r})
 from biopipe.dependencies import DependencySession
 from biopipe.plugins import run_process
 import biopipe.install_targets
+{setup}
 DependencySession._inspect = lambda self, state, entries: {{
     item['id']: {{'status': 'failed', 'error': 'Synthetic missing dependency'}} for item in entries}}
 def repair(manager, state, entries):
-    run_process([sys.executable, '-c', {parent_code!r}, {child_code!r}, {str(pid_file)!r}])
+    {operation}
     return state
 biopipe.install_targets.repair_entries = repair
 from scripts.desktop_server import main
