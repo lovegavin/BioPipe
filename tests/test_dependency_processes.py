@@ -47,11 +47,23 @@ def test_stopped_installer_releases_orphaned_output_pipes(tmp_path, trigger):
         cancellation.set()
         thread.join(4)
         stopped = not thread.is_alive()
-        try:
-            child = psutil.Process(int(pid_file.read_text()))
-            descendant_alive = child.is_running() and child.status() != psutil.STATUS_ZOMBIE
-        except psutil.NoSuchProcess:
-            descendant_alive = False
+        # killpg delivers a signal; the scheduler can briefly still report the
+        # orphan as running after the installer worker has returned. Observe
+        # actual termination with a bounded wait, not a single instantaneous read.
+        termination_deadline = time.monotonic()+1
+        observed_states = []
+        while True:
+            try:
+                child = psutil.Process(int(pid_file.read_text()))
+                state = child.status()
+                descendant_alive = child.is_running() and state != psutil.STATUS_ZOMBIE
+            except psutil.NoSuchProcess:
+                state, descendant_alive = 'gone', False
+            if not observed_states or observed_states[-1] != state:
+                observed_states.append(state)
+            if not descendant_alive or time.monotonic() >= termination_deadline:
+                break
+            time.sleep(.01)
     finally:
         cancellation.set()
         if pid_file.exists():
@@ -64,7 +76,7 @@ def test_stopped_installer_releases_orphaned_output_pipes(tmp_path, trigger):
                 pass
         thread.join(5)
     assert stopped, 'Installer cancellation/timeout remained blocked on an orphaned pipe'
-    assert not descendant_alive, 'An owned installer descendant survived cancellation'
+    assert not descendant_alive, f'An owned installer descendant survived cancellation: {observed_states}'
     assert len(errors) == 1
     if trigger == 'timeout':
         assert isinstance(errors[0], subprocess.TimeoutExpired)
