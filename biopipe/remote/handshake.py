@@ -255,9 +255,10 @@ class ManifestHandshake:
     def tool_snapshot(self, *, refresh=False):
         names = sorted({name for spec in self.service.catalog['operators'] + self.service.catalog['readers']
                         for name in spec.get('resources', {}).get('external_tools', [])})
+        from biopipe.dependencies import find_tool
         for name in names:
             if refresh or name not in self.tools:
-                self.tools[name] = shutil.which(name)
+                self.tools[name] = find_tool(name)
         return {name: bool(self.tools[name]) for name in names}
 
     def persist(self):
