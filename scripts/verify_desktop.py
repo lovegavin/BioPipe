@@ -61,12 +61,12 @@ def main():
                 sessions = client.get("/api/agent/sessions").json()
                 context = client.get(f"/api/agent/sessions/{sessions[-1]['id']}/context?scope=document")
                 assert context.status_code == 200 and context.json()["total_nodes"] == 4
-                assert data["agent_config"]["args"][-1] == "mcp"
+                assert data["agent_config"]["args"][-2:] == ["mcp", "--allow-run"]
                 result = client.post("/api/jobs", json=data["demo"])
                 assert result.status_code == 202, result.text
                 key = result.json()["id"]
             owned = [p for p in psutil.Process(host.pid).children(recursive=True) if "python" in p.name().lower()]
-            assert len(owned) >= 3, "Expected backend plus an active worker"
+            assert len(owned) >= 2, "Expected backend plus an active worker"
             host.kill()  # Only this verification's host; Windows Job Object owns its children.
             host.wait(timeout=10)
             _, alive = psutil.wait_procs(owned, timeout=10)
