@@ -440,6 +440,16 @@
     "status": "generated"
   },
   {
+    "id": "assembly_stats",
+    "kind": "operator",
+    "title": "Assembly quality metrics (QUAST)",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Run the official QUAST report on contigs and return assembly metrics, optionally against a reference genome.",
+    "doc": "src/task/step/steps/assembly_stats.AssemblyStatsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "attach_info",
     "kind": "operator",
     "title": "附加注释",
@@ -1287,6 +1297,16 @@
     "version": "1.0.0",
     "description": "Per-feature two-sample Cramer-von Mises test.",
     "doc": "src/task/step/steps/cramer_von_mises.CramerVonMisesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "crispr_array_detect",
+    "kind": "operator",
+    "title": "CRISPR array detection",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Detect CRISPR arrays with the official minced tool and report repeat counts, repeat/spacer lengths and consensus repeats.",
+    "doc": "src/task/step/steps/crispr_array_detect.CrisprArrayDetectStep.md",
     "status": "generated"
   },
   {
@@ -2177,6 +2197,16 @@
     "version": "1.0.0",
     "description": "Flow cytometry arcsinh transform：接收 1 个输入，输出 Form；主要参数：Event Dim、Channel Dim、Channels、A、B、C。",
     "doc": "src/task/step/steps/flow_transform.FlowTransformStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "flye_assemble",
+    "kind": "operator",
+    "title": "Flye de novo assembly",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Assemble long reads de novo with the official Flye binary and report contig lengths, coverage and circularity.",
+    "doc": "src/task/step/steps/flye_assemble.FlyeAssembleStep.md",
     "status": "generated"
   },
   {

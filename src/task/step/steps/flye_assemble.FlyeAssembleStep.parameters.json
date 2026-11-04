@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "Flye 组装参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "mode": {
+      "title": "读长类型",
+      "type": "string",
+      "enum": ["nano-raw", "nano-corr", "nano-hq", "pacbio-raw", "pacbio-corr", "pacbio-hifi"],
+      "default": "nano-raw",
+      "x-ui-group": "组装",
+      "x-ui-order": 1
+    },
+    "genome_size": {
+      "title": "基因组大小",
+      "type": "string",
+      "default": "48k",
+      "x-ui-group": "组装",
+      "x-ui-order": 2
+    },
+    "threads": {
+      "title": "线程数",
+      "type": "integer",
+      "default": 4,
+      "minimum": 1,
+      "maximum": 128,
+      "x-ui-group": "组装",
+      "x-ui-order": 3
+    },
+    "min_overlap": {
+      "title": "最小重叠长度",
+      "type": "integer",
+      "default": 1000,
+      "minimum": 100,
+      "maximum": 100000,
+      "x-ui-group": "组装",
+      "x-ui-order": 4
+    },
+    "flye_path": {
+      "title": "Flye 可执行文件",
+      "type": "string",
+      "default": "flye",
+      "x-ui-group": "依赖",
+      "x-ui-order": 1
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 1800,
+      "minimum": 30,
+      "maximum": 86400,
+      "x-ui-group": "依赖",
+      "x-ui-order": 2
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "assembly",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

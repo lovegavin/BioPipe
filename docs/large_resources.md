@@ -319,3 +319,21 @@ the environment variable at the version directory that contains `AMRProt.fa` and
 `AMR.LIB`. All four operators prepend the resolved tool's own `bin` directory to
 `PATH`, so helper binaries (`diamond`, `blastp`, `hmmpfam2` for antiSMASH and
 `blastp` for AMRFinderPlus) resolve inside a conda environment without activating it.
+
+## Genome assembly tools
+
+The assembly operators call the official command-line tools and do not ship
+binaries. Install them into a dedicated environment and put its `bin` on
+`PATH` (or point `flye_path` / `quast_path` / `minced_path` at the executable):
+
+```bash
+conda create -n assembly -c conda-forge -c bioconda \
+  flye=2.9.6 quast=5.3.0 minced=0.4.2 minimap2 openjdk=17
+conda activate assembly
+```
+
+- `flye_assemble` needs `flye` plus `minimap2` on PATH.
+- `assembly_stats` runs `quast` (QUAST 5.3); pass `reference_path` for
+  reference-based metrics such as genome fraction and NGA50.
+- `crispr_array_detect` runs `minced`, a Java program; the operator adds the
+  tool directory to PATH so a bundled `java` is found.
