@@ -70,6 +70,7 @@ def verify(source, bundle, work):
     os.environ['BIOPIPE_RUNTIME_CONFIG'] = str(work / 'runtime.json')
     os.environ['BIOPIPE_ADMISSION_DIR'] = str(work / 'admission')
     from biopipe.plugins import PluginManager
+    from biopipe.library_bundle import sha256
     from src.web.models import Graph
     before_files = application_digest()
     manager = PluginManager(work / 'profile')
@@ -121,6 +122,7 @@ def verify(source, bundle, work):
     assert summary['steps'] and memory['plans'][0]['mode'] == 'stream'
     assert application_digest() == before_files
     report = {'application': config['build_application'], 'library': config['version'],
+              'bundle_sha256': sha256(bundle),
               'operators': sum(d['kind'] == 'operator' for d in state['descriptors']),
               'readers': sum(d['kind'] == 'reader' for d in state['descriptors']),
               'added': sorted(after - before), 'application_unchanged': True,

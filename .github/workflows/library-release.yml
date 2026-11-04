@@ -11,49 +11,68 @@ on:
       - 'src/task/step/steps/**'
       - 'src/reader/readers/**'
       - '.github/workflows/library-release.yml'
-
 permissions:
   contents: read
-
+env:
+  PYTHONIOENCODING: utf-8
+  PYTHONUTF8: '1'
 jobs:
-  verify:
-    strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest]
-    runs-on: ${{ matrix.os }}
-    env:
-      PYTHONIOENCODING: utf-8
-      PYTHONUTF8: '1'
+  bundle:
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install the released application, never the source checkout
+      - name: Install released application, never source checkout
         shell: bash
         run: |
           version=$(python -c 'import json; print(json.load(open("library/release.json"))["build_application"])')
-          python -m pip install "https://github.com/lovegavin/BioPipe/releases/download/v${version}/biopipe_studio-${version}-py3-none-any.whl" pytest h5py scikit-learn
+          python -m pip install "https://github.com/lovegavin/BioPipe/releases/download/v${version}/biopipe_studio-${version}-py3-none-any.whl" pytest
       - name: Validate release rules
         run: python -I -m pytest tests/test_library_release.py -q --import-mode=importlib
-      - name: Build the independent bundle
+      - name: Build independent bundle
         shell: bash
         run: |
           tag=$(python -c 'import json; print("library-v" + json.load(open("library/release.json"))["version"])')
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then tag="$GITHUB_REF_NAME"; fi
           python -I scripts/release_library.py --tag "$tag" --output build/library
-      - name: Verify installation, frozen routes and worker execution
-        shell: bash
-        run: |
-          bundle=$(python -c 'import json; print(json.load(open("build/library/library-build.json"))["bundle"])')
-          python -I scripts/verify_library_release.py --bundle "$bundle" --work build/library-verify
       - uses: actions/upload-artifact@v4
         with:
-          name: library-${{ matrix.os }}
+          name: library-bundle
           path: |
             build/library/*.biopipe-library.zip
             build/library/SHA256SUMS.txt
-            build/library-verify/verification.json
+          if-no-files-found: error
+  verify:
+    needs: bundle
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install minimum supported application
+        shell: bash
+        run: |
+          version=$(python -c 'import json; print(json.load(open("library/release.json"))["build_application"])')
+          python -m pip install "https://github.com/lovegavin/BioPipe/releases/download/v${version}/biopipe_studio-${version}-py3-none-any.whl" pytest h5py scikit-learn
+      - uses: actions/download-artifact@v4
+        with:
+          name: library-bundle
+          path: build/library
+      - name: Verify the same ZIP on both platforms
+        shell: bash
+        run: |
+          bundle=$(python -c 'from pathlib import Path; print(next(Path("build/library").glob("*.biopipe-library.zip")))')
+          python -I scripts/verify_library_release.py --bundle "$bundle" --work build/library-verify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verification-${{ matrix.os }}
+          path: build/library-verify/verification.json
           if-no-files-found: error
   publish:
     if: startsWith(github.ref, 'refs/tags/library-v')
@@ -65,15 +84,19 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: library-windows-latest
+          name: library-bundle
           path: artifacts
-      - name: Publish without replacing the latest software release
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: verification-*
+          path: reports
+      - name: Publish without replacing latest software release
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
+          for os in windows-latest ubuntu-latest; do cp "reports/verification-$os/verification.json" "artifacts/verification-$os.json"; done
           gh release create "$GITHUB_REF_NAME" --verify-tag --latest=false \
             --title "BioPipe Operator Library ${GITHUB_REF_NAME#library-v}" \
             --notes-file "docs/releases/${GITHUB_REF_NAME}.md" \
-            artifacts/library/*.biopipe-library.zip artifacts/library/SHA256SUMS.txt \
-            artifacts/library-verify/verification.json
+            artifacts/*.biopipe-library.zip artifacts/SHA256SUMS.txt artifacts/verification-*.json
