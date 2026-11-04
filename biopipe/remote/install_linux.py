@@ -37,6 +37,14 @@ EXTRA_PIP = ('pdb2pqr', 'ViennaRNA')
 # distributions without forcing their resolver into the environment, then let
 # the dependency probe import them.
 EXTRA_NO_DEPS = ()  # conflicting model packages live in declared environments
+CONDA_FORGE = 'https://conda.anaconda.org/conda-forge'
+BIOCONDA = 'https://conda.anaconda.org/bioconda'
+
+
+def conda_environment():
+    """Keep transport settings, but do not inherit another activated Conda prefix."""
+    return {key: value for key, value in os.environ.items()
+            if not key.startswith(('CONDA_', 'MAMBA_')) and key not in ('_CE_CONDA', '_CE_M')}
 
 
 def requirements(code):
@@ -105,8 +113,8 @@ def _ensure_compilers():
         return
     subprocess.run(
         [mamba, '--no-rc', 'install', '-y', '-p', sys.prefix, '--override-channels',
-         '-c', 'conda-forge', 'gxx_linux-64', 'cmake', 'make'],
-        check=False,
+         '-c', CONDA_FORGE, 'gxx_linux-64', 'cmake', 'make'],
+        env=conda_environment(), check=False,
     )
 
 
@@ -125,18 +133,19 @@ def _requirement_class():
 
 
 def split_failures(results, entries=()):
-    """Separate mandatory failures from optional extras and environment-backed operators.
+    """Separate base-runtime failures from unavailable library capabilities.
 
-    An operator that declares a dedicated environment must not abort the whole
-    deployment when that interpreter could not be built on the host: the shared
-    installation is still valid and the operator reports the missing environment
-    at run time.
+    Dedicated environments and external tools belong to library capabilities.
+    Their real failure states are retained in the receipt. The shared runtime
+    and the explicit native Hi-C checks remain mandatory.
     """
-    isolated = {entry['id'] for entry in entries if (entry.get('resources') or {}).get('environment')}
+    optional_ids = {entry['id'] for entry in entries
+                    if any((entry.get('resources') or {}).get(key)
+                           for key in ('environment', 'external_tools'))}
     failed = {key: value['error'] for key, value in results.items() if value['status'] != 'passed'}
     optional = {
         key: error for key, error in failed.items()
-        if key in isolated or any(name in error.lower() for name in OPTIONAL_MODULES)
+        if key in optional_ids or any(name in error.lower() for name in OPTIONAL_MODULES)
     }
     required = {key: error for key, error in failed.items() if key not in optional}
     return required, optional
@@ -153,8 +162,8 @@ def _ensure_conda_extras():
         return False
     result = subprocess.run(
         [mamba, '--no-rc', 'install', '-y', '-p', sys.prefix, '--override-channels',
-         '-c', 'conda-forge', '-c', 'bioconda', '--strict-channel-priority', 'pysam=0.22.1'],
-        check=False,
+         '-c', CONDA_FORGE, '-c', BIOCONDA, '--strict-channel-priority', 'pysam=0.22.1'],
+        env=conda_environment(), check=False,
     )
     return result.returncode == 0
 
@@ -171,10 +180,10 @@ def _ensure_python_extras(constraints=None):
     return result.returncode == 0
 
 
-
-
 def _ensure_isolated_extras():
     """Install large model packages without letting their pins rewrite NumPy/Torch."""
+    if not EXTRA_NO_DEPS:
+        return True
     command = [
         sys.executable, '-I', '-m', 'pip', '--isolated', 'install',
         *PIP_TRANSFER, *PIP_INDEX, '--no-deps', *EXTRA_NO_DEPS,
@@ -183,22 +192,13 @@ def _ensure_isolated_extras():
     return result.returncode == 0
 
 
-
-def _ensure_isolated_extras():
-    """Install large model packages without letting their pins rewrite NumPy/Torch."""
-    command = [
-        sys.executable, '-I', '-m', 'pip', '--isolated', 'install',
-        *PIP_TRANSFER, *PIP_INDEX, '--no-deps', *EXTRA_NO_DEPS,
-    ]
-    result = subprocess.run(command, check=False)
-    return result.returncode == 0
-
-
-def _ensure_isolated_environments(prefix):
+def _ensure_isolated_environments(prefix, *, failures=None):
     """Create one interpreter per declared operator environment (AntiFold, ...)."""
     from biopipe.environments import load, resolve
-    mamba = prefix.parent / 'micromamba-2.10.0'
+    mamba = Path(os.environ.get('BIOPIPE_MAMBA') or
+                 prefix.parent / 'tools/micromamba-2.10.0/bin/micromamba')
     root = prefix / 'external'
+    failures = {} if failures is None else failures
     ok = True
     for name, entry in load().items():
         if resolve(name):
@@ -206,44 +206,49 @@ def _ensure_isolated_environments(prefix):
         target = root / name
         print(f'Preparing isolated environment {name} at {target}', flush=True)
         if not entry.get('venv_shared') and not mamba.is_file():
+            failures[name] = 'managed environment manager is unavailable'
             ok = False
             continue
-        env = dict(os.environ, MAMBA_ROOT_PREFIX=str(prefix.parent / 'mamba-cache'))
+        env = dict(conda_environment(), MAMBA_ROOT_PREFIX=str(prefix.parent / 'mamba-cache'))
+        prepared = True
         if entry.get('venv_shared'):
             create = [str(Path(sys.executable)), '-m', 'venv', '--system-site-packages', str(target)]
         elif entry.get('clone_shared'):
-            create = [str(mamba), 'create', '-y', '-p', str(target), '--clone', str(prefix)]
+            create = [str(mamba), '--no-rc', 'create', '-y', '-p', str(target), '--clone', str(prefix)]
         else:
-            create = [str(mamba), 'create', '-y', '-p', str(target), '-c', 'conda-forge',
+            create = [str(mamba), '--no-rc', 'create', '-y', '-p', str(target), '-c', CONDA_FORGE,
                       '--override-channels', 'python=' + str(entry.get('python', '3.11')), 'pip']
         if subprocess.run(create, env=env, check=False).returncode:
+            failures[name] = 'environment creation failed; see the preceding log'
             ok = False
             continue
         python = target / 'bin/python'
         conda_packages = entry.get('conda_packages') or []
         if conda_packages:
-            install = [str(mamba), 'install', '-y', '-p', str(target), '-c', 'conda-forge', '--override-channels', *conda_packages]
+            install = [str(mamba), '--no-rc', 'install', '-y', '-p', str(target), '-c', CONDA_FORGE,
+                       '--override-channels', '--strict-channel-priority', *conda_packages]
             if subprocess.run(install, env=env, check=False).returncode:
-                ok = False
+                prepared = False
         requirements = entry.get('requirements') or []
         direct = entry.get('pip_pypi') or []
         if entry.get('torch_cpu'):
             install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, 'torch',
                        '--index-url', 'https://download.pytorch.org/whl/cpu']
             if subprocess.run(install, check=False).returncode:
-                ok = False
+                prepared = False
         if direct:
             install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--index-url', 'https://pypi.org/simple', *direct]
             if subprocess.run(install, check=False).returncode:
-                ok = False
+                prepared = False
         wheels = entry.get('pip_wheels') or []
         if wheels:
             install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--only-binary=:all:', *PIP_INDEX, *wheels]
             if subprocess.run(install, check=False).returncode:
-                ok = False
+                prepared = False
         if requirements:
             install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--prefer-binary', *PIP_INDEX, *requirements]
             if subprocess.run(install, check=False).returncode:
+                failures[name] = 'Python dependency installation failed; see the preceding log'
                 ok = False
                 continue
         no_build = entry.get('no_build_isolation') or []
@@ -251,16 +256,20 @@ def _ensure_isolated_environments(prefix):
             pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX,
                    '--no-build-isolation', '--no-deps', *no_build]
             if subprocess.run(pip, check=False).returncode:
-                ok = False
+                prepared = False
         no_deps = entry.get('no_deps') or []
         if no_deps:
             pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, '--no-deps', *no_deps]
             if subprocess.run(pip, check=False).returncode:
-                ok = False
+                prepared = False
         from biopipe.environments import probe as probe_environment
         passed, interpreter, error = probe_environment(name)
-        print(f'isolated environment {name}: ' + ('ready' if passed else 'unavailable: ' + error), flush=True)
-        ok = ok and passed
+        ready = prepared and passed
+        reason = error or 'one or more dependency installation commands failed; see the preceding log'
+        if not ready:
+            failures[name] = reason
+        print(f'isolated environment {name}: ' + ('ready' if ready else 'unavailable: ' + reason), flush=True)
+        ok = ok and ready
     return ok
 
 
@@ -301,7 +310,8 @@ def ensure_requirements(specs, request, bundle=None):
             raise RuntimeError('pip install failed after the wheel and source attempts:\n' + tail)
     if not _ensure_python_extras(constraints):
         print('some light operator extras could not be installed', flush=True)
-    if not _ensure_isolated_environments(Path(sys.prefix).resolve()):
+    environment_failures = {}
+    if not _ensure_isolated_environments(Path(sys.prefix).resolve(), failures=environment_failures):
         print('an isolated operator environment could not be prepared', flush=True)
     if not _ensure_isolated_extras():
         print(
@@ -315,6 +325,7 @@ def ensure_requirements(specs, request, bundle=None):
             'bioconda pysam package',
             flush=True,
         )
+    return environment_failures
 
 
 def main():
@@ -328,7 +339,7 @@ def main():
     if sys.platform != 'linux' or not prefix.name.startswith('env-') or prefix.parent.name != 'managed-v1':
         raise ValueError('Installer only writes to a BioPipe managed Linux environment')
     specs, entries = requirements(code)
-    ensure_requirements(specs, prefix / 'biopipe-requirements.txt', code / 'biopipe' / 'bundled')
+    environment_failures = ensure_requirements(specs, prefix / 'biopipe-requirements.txt', code / 'biopipe' / 'bundled') or {}
     # Install the SDK distribution metadata (without altering the dependency plan).
     receipt = prefix / 'biopipe-ready.json'
     previous = json.loads(receipt.read_text()) if receipt.exists() else {}
@@ -341,15 +352,17 @@ def main():
         entries = [entry for entry in entries if entry['id'] in allowed]
         print(f'dependency scope active: checking {len(entries)} entries', flush=True)
     results = probe(entries)
+    for entry in entries:
+        environment = (entry.get('resources') or {}).get('environment')
+        if environment in environment_failures:
+            results[entry['id']] = {'status': 'failed', 'error': environment + ': ' + environment_failures[environment]}
     required, optional = split_failures(results, entries)
     if required:
         raise ValueError('Operator dependency checks failed: ' + json.dumps(required))
     if optional:
-        print(
-            'Optional OpenMM extras are not installed; MD/energy operators need '
-            'the conda-forge openmm and pdbfixer packages',
-            flush=True,
-        )
+        print('Optional operator capabilities are unavailable; affected workflows require repair:', flush=True)
+        for name, error in sorted(optional.items()):
+            print(f'  {name}: {error}', flush=True)
     for name, command, allowed in [
         ('bwa', ['bwa'], (1,)), ('samtools', ['samtools', '--version'], (0,)),
         ('pairtools', ['pairtools', '--version'], (0,)), ('cooler', ['cooler', '--version'], (0,)),

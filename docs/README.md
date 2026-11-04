@@ -26,6 +26,7 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 - [Repairing the environment and provisioning resources](agent_environment_repair.md)
 - [Execution environments and concurrent jobs](EXECUTION_ENVIRONMENTS.md)
 - [SSH execution](REMOTE_EXECUTION.md) and [server handshake](SERVER_HANDSHAKE.md)
+- [Server installation troubleshooting](SERVER_INSTALL_REPAIR.md) and [main/library separation audit](MAIN_LIBRARY_SEPARATION_AUDIT.md)
 - [Hi-C workflows](HIC.md) and [16S microbiome](microbiome.md)
 - [Publication figures](PUBLICATION_FIGURES.md) and [static plotting adapters](static_plotting.md)
 

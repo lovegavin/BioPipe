@@ -134,7 +134,9 @@ def runtime_compatible(installed, current):
 
 
 def _installation_key(entry):
-    return digest({'r': entry.get('resources', {}).get('r'), **{key: entry.get(key) for key in
+    resources = entry.get('resources') or {}
+    return digest({'resources': {key: resources.get(key) for key in ('r', 'environment', 'external_tools')},
+                   **{key: entry.get(key) for key in
                    ('id', 'kind', 'version', 'entry_point', 'code_sha', 'dependencies', 'dependency_imports')}})
 
 
@@ -243,8 +245,8 @@ class ManifestHandshake:
                         and not state.get('code_paths') and not state.get('shared_paths')
                         and entry.get('execution', {}).get('mode', 'shared') == 'shared'
                         and installed.get('declaration_key') == _installation_key(descriptor)
-                        and installed.get('status') == 'passed'):
-                    entry.update(status='passed', error='')
+                        and installed.get('status') in ('passed', 'failed')):
+                    entry.update(status=installed['status'], error=installed.get('error', ''))
                 entry['title'] = descriptor['title']
             self.runtime_keys = keys
         self.service.catalog.update(manager._catalog(state, self.service.base_catalog))

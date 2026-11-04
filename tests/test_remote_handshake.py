@@ -210,6 +210,43 @@ def test_installer_receipt_cannot_bypass_changed_requirements(remote, monkeypatc
     assert all(entry['status'] == 'passed' for key, entry in status.items() if key != changed)
 
 
+def test_installer_failed_capability_is_visible_and_never_promoted(remote, monkeypatch):
+    import biopipe.remote.handshake as module
+    original_read = module._read
+    state = json.loads(remote.service.plugins.registry.read_text(encoding='utf-8'))
+    missing = state['descriptors'][0]['id']
+    results = {entry['id']: {'status': 'passed', 'error': ''} for entry in state['descriptors']}
+    results[missing] = {'status': 'failed', 'error': 'optional-tool: not on PATH'}
+    receipt = {'dependency_readiness': installation_readiness(state['descriptors'], results)}
+    monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'biopipe-ready.json' else original_read(path))
+    handshake = module.ManifestHandshake(remote.service, remote.memory)
+    status = entries(handshake.response(request()))
+    assert status[missing]['status'] == 'failed'
+    assert status[missing]['error'] == results[missing]['error']
+    # A fresh failure must win over a previously successful installer receipt.
+    healthy = next(key for key in status if key != missing)
+    remote.service.dependencies.entries[healthy].update(status='failed', error='fresh failure')
+    handshake.sync(force=True)
+    status = entries(handshake.response(request()))
+    assert status[healthy]['status'] == 'failed' and status[healthy]['error'] == 'fresh failure'
+
+
+@pytest.mark.parametrize('resource,value', [('external_tools', ['new-tool']), ('environment', 'new-environment')])
+def test_installer_receipt_invalidates_changed_tool_or_environment(remote, monkeypatch, resource, value):
+    import biopipe.remote.handshake as module
+    original_read = module._read
+    state = json.loads(remote.service.plugins.registry.read_text(encoding='utf-8'))
+    results = {entry['id']: {'status': 'passed', 'error': ''} for entry in state['descriptors']}
+    receipt = {'dependency_readiness': installation_readiness(state['descriptors'], results)}
+    changed = state['descriptors'][0]['id']
+    def update(state):
+        state['descriptors'][0].setdefault('resources', {})[resource] = value
+    change_registry(remote, update)
+    monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'biopipe-ready.json' else original_read(path))
+    handshake = module.ManifestHandshake(remote.service, remote.memory)
+    assert entries(handshake.response(request()))[changed]['status'] == 'unchecked'
+
+
 def mock_daemon_lock(tmp_path, monkeypatch):
     import biopipe.remote.server as module
     monkeypatch.setitem(sys.modules, 'fcntl', SimpleNamespace(LOCK_EX=1, LOCK_NB=2, flock=lambda *args: None))

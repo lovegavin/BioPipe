@@ -20,6 +20,8 @@ CONDA_SPECS = ' '.join(spec for spec in CONDA_PACKAGES.split() if spec)
 CONDA_MARKER = '.biopipe-conda-packages'
 MAMBA_ARCHIVE_SHA = '9a97976244929bbae28fb1fae504e74a3e7e6d1932870e3a03321f01b7fbd07b'
 MAMBA_SHA = '701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd'
+# Fixed ordinary epoch retains reproducible archives without old-timestamp warnings.
+SOURCE_EPOCH = 946684800  # 2000-01-01 UTC
 
 
 def source_archive(root):
@@ -38,7 +40,7 @@ def source_archive(root):
                 raise ValueError('Deployment source cannot contain symlinks outside its code root')
             data = path.read_bytes()
             member = tarfile.TarInfo(path.relative_to(root).as_posix())
-            member.size = len(data); member.mode = 0o644; member.mtime = 0
+            member.size = len(data); member.mode = 0o644; member.mtime = SOURCE_EPOCH
             archive.addfile(member, io.BytesIO(data))
     return gzip.compress(stream.getvalue(), mtime=0)
 
@@ -129,7 +131,7 @@ def provision(connection, profile, progress, cancel, root=None):
     from .client import RemoteError
     shell = Shell(connection, progress, cancel)
     progress('检查服务器系统与部署目录')
-    probe = shell.run('printf "\\nBP_SYSTEM=%s\\nBP_ARCH=%s\\nBP_HOME=%s\\n" "$(uname -s)" "$(uname -m)" "$HOME"; for bp_tool in bash tar base64 sha256sum flock; do command -v "$bp_tool" || exit 1; done')
+    probe = shell.run('printf "\\nBP_SYSTEM=%s\\nBP_ARCH=%s\\nBP_HOME=%s\\n" "$(uname -s)" "$(uname -m)" "$HOME"; for bp_tool in bash tar base64 sha256sum flock tee; do command -v "$bp_tool" || exit 1; done')
     if not re.search(r'BP_SYSTEM=Linux\s*(?:\n|$)', probe) or not re.search(r'BP_ARCH=x86_64\s*(?:\n|$)', probe):
         raise RemoteError('自动部署目前支持 Linux x86_64；其他系统请使用已有环境。')
     home = re.search(r'BP_HOME=(/[^\r\n]*)', probe)
@@ -145,22 +147,28 @@ def provision(connection, profile, progress, cancel, root=None):
     digest = hashlib.sha256(data).hexdigest()
     code = managed + '/code-' + digest[:20]
     archive = managed + '/source-' + digest[:20] + '.tar.gz'
+    log = managed + '/setup-' + digest[:20] + '.log'
+    progress('服务端安装日志：' + log)
+    shell.run('umask 077; printf "\\n%s\\n" ' + q('BioPipe deployment ' + digest) + ' >> ' + q(log))
     present = shell.run('if test -f ' + q(code + '/.source-sha') + '; then cat ' + q(code + '/.source-sha') + '; fi')
     if digest not in present:
         progress('上传与桌面端匹配的 BioPipe 程序')
         shell.upload(archive, data)
         # Concurrent publishers serialize extraction; published code stays immutable.
-        shell.run('flock ' + q(managed + '/publish.lock') + ' bash -c ' + q(
+        extract = ('flock ' + q(managed + '/publish.lock') + ' bash -c ' + q(
             'set -eu; mkdir -p -- ' + q(code) + '; tar -xzf ' + q(archive) + ' -C ' + q(code) +
             '; printf %s ' + q(digest) + ' > ' + q(code + '/.source-sha')))
+        shell.run('bash -o pipefail -c ' + q(extract + ' 2>&1 | tee -a ' + q(log)))
     env = managed + '/env-' + digest[:20]
     python = env + '/bin/python'
-    log = managed + '/setup-' + digest[:20] + '.log'
     installer = code + '/biopipe/remote/install_linux.py'
     # micromamba is static: the server does not need Python, Conda, sudo or a compiler.
-    mamba = managed + '/micromamba-2.10.0'
+    # Some package post-link hooks require the executable basename `micromamba`.
+    mamba = managed + '/tools/micromamba-2.10.0/bin/micromamba'
     install = f'''set -eu
 umask 077
+unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_SHLVL CONDA_PROMPT_MODIFIER CONDA_EXE CONDA_PYTHON_EXE MAMBA_EXE MAMBA_ROOT_PREFIX _CE_CONDA _CE_M
+mkdir -p -- {q(mamba.rsplit('/', 1)[0])}
 if ! printf '%s  %s\\n' {q(MAMBA_SHA)} {q(mamba)} | sha256sum -c - >/dev/null 2>&1; then
   echo 'Downloading the verified environment manager'
   if command -v curl >/dev/null; then
@@ -176,21 +184,21 @@ if ! printf '%s  %s\\n' {q(MAMBA_SHA)} {q(mamba)} | sha256sum -c - >/dev/null 2>
   chmod 700 {q(mamba + '.new')}; mv -- {q(mamba + '.new')} {q(mamba)}
 fi
 export MAMBA_ROOT_PREFIX={q(managed + '/mamba-cache')}
-if ! test -f {q(env + '/biopipe-ready.json')} || ! test -x {q(env + '/bin/bwa')} || ! test -x {q(env + '/bin/samtools')} || test "$(cat {q(env + '/.biopipe-conda-packages')} 2>/dev/null)" != {CONDA_SPECS}; then
+if ! test -f {q(env + '/biopipe-ready.json')} || ! test -x {q(env + '/bin/bwa')} || ! test -x {q(env + '/bin/samtools')} || test "$(cat {q(env + '/.biopipe-conda-packages')} 2>/dev/null)" != {q(CONDA_SPECS)}; then
   echo 'Preparing Python and native Hi-C dependencies'
   bp_action=create; bp_repair=''
   if test -d {q(env + '/conda-meta')}; then
     bp_action=install
     if ! test -x {q(env + '/bin/bwa')} || ! test -x {q(env + '/bin/samtools')} || ! test -x {q(python)}; then bp_repair=--force-reinstall; fi
   fi
-  {q(mamba)} --no-rc "$bp_action" $bp_repair -y -p {q(env)} --override-channels -c conda-forge -c bioconda --strict-channel-priority {CONDA_SPECS}
-  printf '%s' {CONDA_SPECS} > {q(env + '/.biopipe-conda-packages')}
+  {q(mamba)} --no-rc "$bp_action" $bp_repair -y -p {q(env)} --override-channels -c https://conda.anaconda.org/conda-forge -c https://conda.anaconda.org/bioconda --strict-channel-priority {CONDA_SPECS}
+  printf '%s' {q(CONDA_SPECS)} > {q(env + '/.biopipe-conda-packages')}
 fi
 export PATH={q(env + '/bin')}:"$PATH"
 export PYTHONNOUSERSITE=1
 unset PYTHONPATH PYTHONHOME
 export BIOPIPE_MAMBA={q(mamba)}
-PATH={q(env)}/bin:"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Users/梦天曦/.dsh/profiles/desktop/node_modules/@dsh-ops/bash-win32-x64/ucrt64/bin:/mnt/c/Users/梦天曦/.dsh/profiles/desktop/node_modules/@dsh-ops/bash-win32-x64/usr/bin:/mnt/c/Users/梦天曦/bin:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Users/梦天曦/AppData/Local/Programs/Python/Python310/Scripts/:/mnt/c/Users/梦天曦/AppData/Local/Programs/Python/Python310/:/mnt/c/Users/梦天曦/AppData/Local/Microsoft/WindowsApps:/mnt/c/Windows/System32:/mnt/d/PyCharm 2026.2.2/bin:/snap/bin" {q(python)} -I {q(installer)} --code {q(code)} --digest {q(digest)}
+{q(python)} -I {q(installer)} --code {q(code)} --digest {q(digest)}
 '''
     # Redirect noisy resolver output on the server, but show bounded live lines.
     # The lock prevents two desktops from mutating the same target environment.
@@ -199,11 +207,14 @@ PATH={q(env)}/bin:"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:
     progress('检查并补齐 Python、BioPipe 与 Hi-C 依赖（首次可能需要数分钟）')
     # Closing SSH requests installer shutdown; an outstanding child may finish.
     command = ('umask 077; flock ' + q(managed + '/environment.lock') + ' bash ' + q(script) +
-               ' > ' + q(log) + ' 2>&1 & bp_setup_pid=$!; ' +
+               ' >> ' + q(log) + ' 2>&1 & bp_setup_pid=$!; ' +
                'trap \'kill "$bp_setup_pid" 2>/dev/null || true\' HUP INT TERM; ' +
                'while kill -0 "$bp_setup_pid" 2>/dev/null; do tail -n 1 ' + q(log) +
                '; printf "\\n"; sleep 2; done; wait "$bp_setup_pid"; bp_status=$?; tail -n 12 ' + q(log) + '; exit "$bp_status"')
-    shell.run(command, timeout=3600)
+    try:
+        shell.run(command, timeout=3600)
+    except RemoteError as exc:
+        raise RemoteError(str(exc) + '\n完整安装日志：' + log, code=exc.code) from exc
     workspace = profile.get('workspace') or base + '/workspace'
     # Publish a stable, server-owned entry point only after successful setup.
     # Other desktop versions read this document without uploading their code.

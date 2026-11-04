@@ -30,8 +30,11 @@ official conda-forge archive, then creates a private Python 3.11 environment wit
 BWA, samtools and the compilers needed for native Python extensions. One pip solve
 installs all bundled provider requirements together with pairtools, cooler and
 cooltools. This avoids replacing NumPy underneath conda-built scientific extensions.
-It checks
-the installed packages, import probes and tool executables before connecting.
+It checks the installed packages, import probes and tool executables before connecting.
+Missing optional external tools or dedicated model environments are recorded as
+failed operator capabilities; they do not prevent a healthy base service from
+being registered. Shared Python failures and the explicit native Hi-C checks
+remain fatal. A connected server is not a claim that every library entry is ready.
 
 The default installation directory is `$HOME/.local/share/biopipe`, resolved on
 the server. It can be changed in the connection panel. The default run directory
@@ -50,7 +53,11 @@ archive or rerunning `pip check` and import probes. The installer records verifi
 dependency state; ordinary handshake restores compatible readiness documents.
 Dependency downloads occur only during explicit installation/repair. An installation
 lock serializes changes from multiple clients. The panel shows progress and errors;
-the server retains `managed-v1/setup-<digest>.log` for diagnostics. Failed attempts
+the server reports the absolute `managed-v1/setup-<digest>.log` path before source
+upload. The log is created at that point, includes source extraction and environment
+installation output, and is appended on retries. Connection failures before the
+deployment directory can be created are available only in the connection panel.
+See [server installation troubleshooting](SERVER_INSTALL_REPAIR.md). Failed attempts
 do not publish a new installation pointer; choose installation again to retry. Cancellation stops waiting
 and closes SSH; allow any outstanding installer to release its lock before retrying.
 
