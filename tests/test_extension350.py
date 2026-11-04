@@ -102,8 +102,6 @@ def test_real_antismash_nisin(tmp_path):
     import os
     from pathlib import Path
 
-    from Bio import SeqIO
-
     if os.environ.get("BIOPIPE_ANTISMASH_REAL") != "1":
         pytest.skip("set BIOPIPE_ANTISMASH_REAL=1 to run the real antiSMASH check")
     binary = Path(os.environ.get("BIOPIPE_ANTISMASH_BIN", "/home/gavin/miniconda3/envs/antismash/bin/antismash"))
@@ -111,6 +109,7 @@ def test_real_antismash_nisin(tmp_path):
     fixture = Path(__file__).resolve().parent / "fixtures" / "antismash_nisin.gbk"
     if not binary.is_file() or not database.is_dir() or not fixture.is_file():
         pytest.skip("antiSMASH, its databases, or the nisin fixture is missing")
+    SeqIO = pytest.importorskip("Bio.SeqIO")
     sequence = str(SeqIO.read(fixture, "genbank").seq)
     form = encode_sequences([sequence], "sequence", "position", "dna")
     ctx = Context(str(tmp_path / "task"), {"params": {}})
