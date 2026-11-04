@@ -60,3 +60,8 @@ dist/
 build/
 /rna.ps
 *.ps
+# Windows reserved device names (never commit these)
+/nul
+/con
+/prn
+/aux
