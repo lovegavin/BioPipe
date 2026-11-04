@@ -1,0 +1,79 @@
+name: Independent operator library
+on:
+  push:
+    branches: ['library/**', 'maintenance/independent-library-releases']
+    tags: ['library-v*']
+  pull_request:
+    paths:
+      - 'library/**'
+      - 'scripts/*library*.py'
+      - 'tests/test_library_release.py'
+      - 'src/task/step/steps/**'
+      - 'src/reader/readers/**'
+      - '.github/workflows/library-release.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      PYTHONIOENCODING: utf-8
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install the released application, never the source checkout
+        shell: bash
+        run: |
+          version=$(python -c 'import json; print(json.load(open("library/release.json"))["build_application"])')
+          python -m pip install "https://github.com/lovegavin/BioPipe/releases/download/v${version}/biopipe_studio-${version}-py3-none-any.whl" pytest h5py scikit-learn
+      - name: Validate release rules
+        run: python -I -m pytest tests/test_library_release.py -q --import-mode=importlib
+      - name: Build the independent bundle
+        shell: bash
+        run: |
+          tag=$(python -c 'import json; print("library-v" + json.load(open("library/release.json"))["version"])')
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then tag="$GITHUB_REF_NAME"; fi
+          python -I scripts/release_library.py --tag "$tag" --output build/library
+      - name: Verify installation, frozen routes and worker execution
+        shell: bash
+        run: |
+          bundle=$(python -c 'import json; print(json.load(open("build/library/library-build.json"))["bundle"])')
+          python -I scripts/verify_library_release.py --bundle "$bundle" --work build/library-verify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: library-${{ matrix.os }}
+          path: |
+            build/library/*.biopipe-library.zip
+            build/library/SHA256SUMS.txt
+            build/library-verify/verification.json
+          if-no-files-found: error
+  publish:
+    if: startsWith(github.ref, 'refs/tags/library-v')
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: library-windows-latest
+          path: artifacts
+      - name: Publish without replacing the latest software release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release create "$GITHUB_REF_NAME" --verify-tag --latest=false \
+            --title "BioPipe Operator Library ${GITHUB_REF_NAME#library-v}" \
+            --notes-file "docs/releases/${GITHUB_REF_NAME}.md" \
+            artifacts/library/*.biopipe-library.zip artifacts/library/SHA256SUMS.txt \
+            artifacts/library-verify/verification.json

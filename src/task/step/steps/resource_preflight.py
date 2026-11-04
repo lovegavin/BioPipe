@@ -1,4 +1,4 @@
-"""Report whether the large resources of ``biopipe/resources.json`` are installed."""
+"""Report whether the large resources of ``src/task/step/steps/resources.json`` are installed."""
 
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ class ResourcePreflightStep(Step):
         "title": "Large-resource preflight",
         "description": (
             "Verify that the weights, databases and official checkouts listed in "
-            "biopipe/resources.json are installed. Emits one row per expected file with its "
+            "src/task/step/steps/resources.json are installed. Emits one row per expected file with its "
             "presence and size, and records the installation command for anything missing."
         ),
         "category": "Data",

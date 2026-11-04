@@ -55,6 +55,10 @@ and [documentation index](docs/README.md).
 Source version and downloadable desktop release are separate. The latest
 published Windows ZIP has the version shown on its Release page; updating
 `main` does not silently replace an existing desktop package.
+Operator-library releases use their own `library-v…` tags and
+`.biopipe-library.zip` assets. Install them with **Library manager → Import
+package**; compatible operator updates do not require a new EXE. See the
+[independent library release guide](docs/library_releases.md).
 
 The desktop editor also supports [SSH remote execution](docs/REMOTE_EXECUTION.md):
 edit on Windows, browse inputs on a Linux server, submit workflows and reconnect

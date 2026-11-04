@@ -3,7 +3,7 @@
 
 ## Purpose
 
-> Report whether the large resources of ``biopipe/resources.json`` are installed.
+> Report whether the large resources of ``src/task/step/steps/resources.json`` are installed.
 >
 > Check the files of one or all large resources and report remedies.
 

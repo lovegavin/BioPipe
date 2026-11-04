@@ -2,7 +2,7 @@
 
 BioPipe does not ship model weights, sequence databases or third-party
 checkouts. Operators that need them read the shipped manifest
-`biopipe/resources.json`, which records where each resource may live, which
+`src/task/step/steps/resources.json`, which records where each resource may live, which
 environment variable overrides the search path, and exactly which files a
 dependent operator expects. Nothing is downloaded automatically.
 

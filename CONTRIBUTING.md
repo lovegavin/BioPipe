@@ -1,5 +1,9 @@
 # Contributing to BioPipe
 
+Operator/Reader-only updates follow [independent library releases](docs/library_releases.md).
+Use a `library-v…` tag and update `library/release.json`; do not bump the Studio
+application or rebuild an EXE unless new engine/SDK behavior is required.
+
 Read [the documentation index](docs/README.md), then search the existing catalog
 before adding another operator. The current source lives on `main`; historical
 release branches and the legacy archive are not alternative authoring protocols.

@@ -5045,7 +5045,7 @@
     "title": "Large-resource preflight",
     "category": "Data",
     "version": "1.0.0",
-    "description": "Verify that the weights, databases and official checkouts listed in biopipe/resources.json are installed. Emits one row per expected file with its presence and size, and records the installation command for anything missing.",
+    "description": "Verify that the weights, databases and official checkouts listed in src/task/step/steps/resources.json are installed. Emits one row per expected file with its presence and size, and records the installation command for anything missing.",
     "doc": "src/task/step/steps/resource_preflight.ResourcePreflightStep.md",
     "status": "generated"
   },
