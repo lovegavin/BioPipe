@@ -2,6 +2,8 @@
 import json
 from pathlib import Path
 import runpy
+import subprocess
+import sys
 
 import pytest
 
@@ -32,3 +34,10 @@ def test_checkout_cannot_impersonate_released_application(tmp_path, monkeypatch)
 def test_wrong_released_application_is_rejected(tmp_path):
     with pytest.raises(ValueError, match='Expected released|python -I'):
         HELPER['released_application'](tmp_path, {'build_application': '0.0.0'})
+
+
+@pytest.mark.parametrize('name,dependency', [('esm_embedding_autoencoder', 'torch'), ('vhh_humanization_score', 'Bio')])
+def test_optional_dependencies_are_not_imported_during_registration(name, dependency):
+    source = Path(__file__).resolve().parents[1] / 'src/task/step/steps' / (name + '.py')
+    code = "import runpy,sys; sys.modules[sys.argv[1]]=None; runpy.run_path(sys.argv[2])"
+    subprocess.run([sys.executable, '-I', '-c', code, dependency, str(source)], check=True)

@@ -83,7 +83,9 @@ def verify(source, bundle, work):
     assert manager.source_root.is_relative_to(work / 'profile')
     assert next(p for p in state['packages'] if p['name'] == 'biopipe-microbiome')['enabled'] is False
     assert manager.install(bundle)['generation'] == state['generation']
-    assert manager.snapshot(old_graph)['generation'] == old['generation']
+    historical = manager.snapshot(old_graph)
+    pinned_pca = next(d for d in historical['descriptors'] if d['id'] == 'pca')
+    assert pinned_pca['implementation'] == old_graph.plugin_lock['pca']
     assert old_graph.nodes[0].params == {'n_components': 2}
     before = {d['id'] for d in old['descriptors']}
     after = {d['id'] for d in state['descriptors']}
@@ -96,7 +98,7 @@ def verify(source, bundle, work):
                      if d['id'] == 'resource_preflight')
     # Reuse the author's parser/adapter tests, but import the INSTALLED wheel.
     # The source checkout and its conftest are deliberately absent from sys.path.
-    for number in range(350, 357):
+    for number in (254, 279, *range(350, 357)):
         original = source / f'tests/test_extension{number}.py'
         content = original.read_text(encoding='utf-8').replace('src.task.step.steps', namespace)
         (cases / original.name).write_text(content, encoding='utf-8')

@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import numpy as np
 
-from Bio.Align import PairwiseAligner, substitution_matrices
-
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
@@ -25,6 +23,8 @@ HUMAN_IGHJ4 = "WGQGTLVTVSS"
 
 
 def _aligner() -> PairwiseAligner:
+    from Bio.Align import PairwiseAligner, substitution_matrices
+
     aligner = PairwiseAligner()
     aligner.mode = "global"
     aligner.match_score = 1.0

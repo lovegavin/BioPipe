@@ -9,11 +9,10 @@ from src.core.forms import Form
 from src.task.step.base import Step
 
 
-import torch
-from torch import nn
-
-
 def _build(features: int, hidden: int, latent: int, seed: int) -> nn.Module:
+    import torch
+    from torch import nn
+
     torch.manual_seed(seed)
     return nn.Sequential(
         nn.Linear(features, hidden),
@@ -43,6 +42,8 @@ def reconstruction_errors(
         raise StepError("esm_embedding_autoencoder: latent must be at least 1")
     if not np.isfinite(data).all():
         raise StepError("esm_embedding_autoencoder: the embedding matrix contains non-finite values")
+    import torch
+
     features = int(data.shape[1])
     model = _build(features, int(hidden), int(latent), int(random_state))
     optimiser = torch.optim.Adam(model.parameters(), lr=float(learning_rate))
@@ -72,6 +73,8 @@ class EsmEmbeddingAutoencoderStep(Step):
         "title": "Embedding autoencoder",
         "category": "Machine Learning",
         "icon": "Brain",
+        "dependencies": ["numpy>=1.24", "torch>=2.0"],
+        "dependency_imports": ["torch"],
         "contracts": {
             "version": 1,
             "inputs": [

@@ -27,6 +27,10 @@ Markdown guides. Database paths are configurable and no longer default to an
 author's machine. The application, frontend, saved parameter values, memory
 planner and streaming interfaces are not replaced by this update.
 
+Two existing adapters now import optional PyTorch/Biopython dependencies only
+when executing. The embedding autoencoder also declares its PyTorch dependency
+explicitly so the dependency manager can prepare it instead of failing at import.
+
 Validation covers independent installation on the released 2.0.4 engine,
 resource resolution, historical pins, frozen parameters, repeat imports,
 disabled providers, a real streaming worker, and synthetic external-tool
