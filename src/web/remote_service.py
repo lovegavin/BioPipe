@@ -53,6 +53,12 @@ class ConnectionProfile(StrictModel):
         return self
 
 
+def _has_dependency_status(info):
+    """True when the handshake already carries a populated dependency snapshot."""
+    dependencies = (info or {}).get('dependencies') or {}
+    return bool(isinstance(dependencies, dict) and dependencies.get('entries'))
+
+
 class RemoteManager:
     def __init__(self, service, connection_factory=SSHConnection):
         self.service, self.factory = service, connection_factory
