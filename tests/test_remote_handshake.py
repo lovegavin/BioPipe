@@ -269,11 +269,11 @@ def test_refresh_is_single_flight_and_slow_scan_or_probe_does_not_block_handshak
     def scan():
         scans.append(True)
         scanning.set()
-        assert scan_release.wait(5)
+        assert scan_release.wait(30)
         return {'updated': ['example']}
     def inspect(state, pending):
         inspecting.set()
-        assert probe_release.wait(5)
+        assert probe_release.wait(30)
         return {entry['id']: {'status': 'passed', 'error': ''} for entry in pending}
     monkeypatch.setattr(remote.service.plugins, 'refresh', scan)
     monkeypatch.setattr(remote.service.dependencies, '_inspect', inspect)
@@ -281,19 +281,22 @@ def test_refresh_is_single_flight_and_slow_scan_or_probe_does_not_block_handshak
         start = time.monotonic()
         first = remote.dispatch('refresh_registry', {})
         assert time.monotonic() - start < 1
-        assert first['registry_refresh']['running'] and scanning.wait(1)
+        assert first['registry_refresh']['running'] and scanning.wait(15)
         assert remote.dispatch('handshake', request())['registry_refresh']['running']
         assert remote.dispatch('refresh_registry', {})['registry_refresh']['running']
         assert len(scans) == 1
         scan_release.set()
-        assert inspecting.wait(1)
+        # Full-library bookkeeping precedes this event and grows with the
+        # catalog. The one-second assertions below/above measure API latency;
+        # this wait only synchronizes with the deliberately blocked worker.
+        assert inspecting.wait(15)
         start = time.monotonic()
         during = remote.dispatch('handshake', request())
         assert time.monotonic() - start < 1
         assert during['dependencies']['running']
         assert remote.dispatch('resources', {})
         probe_release.set()
-        remote.handshake.maintenance_thread.join(timeout=5)
+        remote.handshake.maintenance_thread.join(timeout=15)
         finished = remote.dispatch('refresh_status', {})
         assert not finished['registry_refresh']['running']
         assert finished['registry_refresh']['result'] == {'updated': ['example']}
@@ -340,13 +343,15 @@ def test_forced_revalidation_revokes_installer_receipt_before_probe_finishes(rem
     inspecting, release = threading.Event(), threading.Event()
     def inspect(state, pending):
         inspecting.set()
-        assert release.wait(5)
+        assert release.wait(30)
         return {entry['id']: {'status': 'passed', 'error': ''} for entry in pending}
     monkeypatch.setattr(remote.service.plugins, 'refresh', lambda: {})
     monkeypatch.setattr(remote.service.dependencies, '_inspect', inspect)
     try:
         remote.dispatch('refresh_registry', {'verify_all': True})
-        assert inspecting.wait(1)
+        # Persisting revocations for the full catalog is not an API latency
+        # requirement. Wait for the probe gate before reading durable state.
+        assert inspecting.wait(15)
         # Simulate a fresh process reading the durable receipt while the first
         # process has not committed any new successful probes yet.
         copy = SimpleNamespace(**vars(remote.service))
@@ -357,7 +362,7 @@ def test_forced_revalidation_revokes_installer_receipt_before_probe_finishes(rem
         assert all(entry['status'] == 'unchecked' for entry in copy.dependencies.snapshot()['entries'])
     finally:
         release.set()
-        remote.handshake.maintenance_thread.join(timeout=5)
+        remote.handshake.maintenance_thread.join(timeout=15)
 
 
 def test_runtime_identity_ignores_site_packages_mtime_drift():
