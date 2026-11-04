@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "properties": {
+    "node_dim": {
+      "type": "string",
+      "default": "node",
+      "title": "Tree A Node Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "Tree A Field Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "node_dim_b": {
+      "type": "string",
+      "default": "node",
+      "title": "Tree B Node Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "field_dim_b": {
+      "type": "string",
+      "default": "field",
+      "title": "Tree B Field Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

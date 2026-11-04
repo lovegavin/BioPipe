@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "window": {
+      "title": "窗口长度",
+      "type": "integer",
+      "default": 25,
+      "x-ui-group": "检测",
+      "x-ui-order": 1,
+      "minimum": 5,
+      "maximum": 101
+    },
+    "threshold": {
+      "title": "窗口阈值",
+      "type": "number",
+      "default": 0.0,
+      "x-ui-group": "检测",
+      "x-ui-order": 2,
+      "minimum": -1.0,
+      "maximum": 1.0
+    },
+    "min_length": {
+      "title": "最短片段",
+      "type": "integer",
+      "default": 4,
+      "x-ui-group": "检测",
+      "x-ui-order": 3,
+      "minimum": 1,
+      "maximum": 100
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "default": "disorder",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

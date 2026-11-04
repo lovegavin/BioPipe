@@ -249,6 +249,8 @@ class DocumentHub:
                     if not any(e["id"] == command.get("id") for e in graph["edges"]):
                         raise CommandError("not_found", "Unknown edge", 404)
                     graph["edges"] = [e for e in graph["edges"] if e["id"] != command["id"]]
+                elif op == "set_graph":
+                    graph = deepcopy(command["graph"])
                 elif op == "configure":
                     patch = command["patch"]
                     if set(patch) - {"name", "memory", "base_dir", "params", "runtime", "manifest_extra"}:
@@ -259,7 +261,7 @@ class DocumentHub:
             model = Graph.model_validate(layout(graph))
             model = self.service.plugins.pin(model)
             catalog = self.service.plugins.catalog_for(model, self.service.base_catalog)
-            analysis = analyze_graph(model, catalog, self.service.root)
+            analysis = analyze_graph(model, catalog, self.service.root, input_roots=self.service.settings.input_roots)
             incompatible = [e for e in analysis["edges"] if e["status"] == "incompatible"]
             if incompatible:
                 raise CommandError("incompatible_contract", "Edit creates incompatible connections", details=incompatible)
@@ -268,22 +270,38 @@ class DocumentHub:
             if request_id:
                 state["receipts"][request_id] = {"commands": commands, "document": document, "actor": actor}
                 state["receipts"] = dict(list(state["receipts"].items())[-100:])
-            return self._commit(state, workspace, actor, "Agent edit")
+            result = self._commit(state, workspace, actor, "Agent edit")
+            result["document_id"] = document
+            return result
 
-    def open(self, session, graph, revision, actor="agent"):
+    def open(self, session, graph, revision, actor="agent", document_id=None, mode="append"):
+        if mode not in ("append", "replace"):
+            raise CommandError("invalid_mode", "open accepts mode 'append' or 'replace'")
         model = self.service.plugins.pin(Graph.model_validate(layout(graph)))
-        analyze_graph(model, self.service.plugins.catalog_for(model, self.service.base_catalog), self.service.root)
+        analyze_graph(model, self.service.plugins.catalog_for(model, self.service.base_catalog), self.service.root, input_roots=self.service.settings.input_roots)
         with self.lock:
             state = self.load(session)
             self.expect(state, revision)
             workspace = deepcopy(state["workspace"])
-            if len(workspace["documents"]) >= 20:
-                raise CommandError("document_limit", "Close a tab before opening another graph")
-            doc = {"id": "page_" + uuid.uuid4().hex, "graph": model.model_dump(mode="json")}
-            workspace["documents"].append(doc)
+            target = document_id or (workspace.get("active_id") if mode == "replace" else None)
+            doc = next((item for item in workspace["documents"] if item["id"] == target), None) if target else None
+            if target and doc is None:
+                raise CommandError("not_found", "Unknown document", 404)
+            if doc is not None:
+                doc["graph"] = model.model_dump(mode="json")
+                label = "Replace graph"
+            else:
+                if len(workspace["documents"]) >= 20:
+                    raise CommandError("document_limit", "Close a tab before opening another graph")
+                doc = {"id": "page_" + uuid.uuid4().hex, "graph": model.model_dump(mode="json")}
+                workspace["documents"].append(doc)
+                label = "Open graph"
             workspace["active_id"] = doc["id"]
             state["presence"] = {"document_id": doc["id"], "nodes": [], "edges": []}
-            return self._commit(state, workspace, actor, "Open graph")
+            result = self._commit(state, workspace, actor, label)
+            result["document_id"] = doc["id"]
+            result["revision"] = result.get("ui_revision", result.get("revision"))
+            return result
 
     def undo(self, session, document, revision, redo=False, actor="user"):
         with self.lock:

@@ -37,7 +37,7 @@ build-backend = "setuptools.build_meta"
 name = "{package}"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["biopipe-studio>={__version__},<1"]
+dependencies = ["biopipe-studio>={__version__},<2"]
 [project.entry-points."biopipe.{group}"]
 {module} = "{module}:{cls}"
 [tool.setuptools.packages.find]

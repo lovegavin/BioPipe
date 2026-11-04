@@ -1,0 +1,102 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "title": "结构文件",
+      "description": "PDB 文件路径，ProteinMPNN 直接读取该文件。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "title": "ProteinMPNN 仓库路径",
+      "description": "包含 protein_mpnn_run.py 的官方仓库目录。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录",
+      "description": "留空时使用官方仓库默认的 vanilla_model_weights。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "留空时使用 python3；需要与安装 ProteinMPNN 依赖的解释器一致。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "model_name": {
+      "type": "string",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "default": "v_48_020",
+      "title": "模型",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 500,
+      "default": 8,
+      "title": "采样序列数",
+      "description": "至少为 2 才能估计熵。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "sampling_temp": {
+      "type": "string",
+      "default": "0.1",
+      "title": "采样温度",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 1,
+      "title": "随机种子",
+      "description": "官方实现中 0 表示随机种子，因此默认 1 保证可复现。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "设计链",
+      "description": "逗号分隔，例如 A,B；留空表示全部链。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "设备",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "timeout": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 86400,
+      "default": 1800,
+      "title": "超时（秒）",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "entropy",
+      "title": "输出",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}

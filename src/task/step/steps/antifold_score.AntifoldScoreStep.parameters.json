@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "AntiFold 逆折叠打分",
+  "description": "用 AntiFold 权重对单条抗体链做逐残基逆折叠困惑度打分。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "title": "结构文件",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "chains": {
+      "title": "抗体链",
+      "type": "string",
+      "default": "A",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "weights_path": {
+      "title": "AntiFold 权重",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 1
+    },
+    "device": {
+      "title": "计算设备",
+      "type": "string",
+      "default": "cpu",
+      "enum": [
+        "cpu",
+        "cuda"
+      ],
+      "x-ui-group": "模型",
+      "x-ui-order": 1
+    },
+    "batch_size": {
+      "title": "批大小",
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 8,
+      "x-ui-group": "模型",
+      "x-ui-order": 2
+    },
+    "imgt_regions": {
+      "title": "IMGT CDR 区域",
+      "type": "string",
+      "default": "CDR1,CDR2,CDR3",
+      "x-ui-group": "模型",
+      "x-ui-order": 3
+    },
+    "residue_dim": {
+      "title": "残基维度",
+      "type": "string",
+      "default": "residue",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    },
+    "output": {
+      "title": "输出参数",
+      "type": "string",
+      "default": "scores",
+      "x-ui-group": "输出",
+      "x-ui-order": 2
+    }
+  }
+}

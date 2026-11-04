@@ -1,0 +1,403 @@
+{
+  "id": "20261103T171111-098ee769",
+  "name": "真实数据冒烟：1MEL 界面 + VHH 序列风险",
+  "status": "complete",
+  "created_at": "2026-11-03T17:11:11.283148+00:00",
+  "finished_at": "2026-11-03T17:11:15.401259+00:00",
+  "error": null,
+  "exit_code": 0,
+  "logs_complete": true,
+  "order": [
+    "interface",
+    "liabilities"
+  ],
+  "graph": {
+    "schema_version": 2,
+    "name": "真实数据冒烟：1MEL 界面 + VHH 序列风险",
+    "base_dir": ".",
+    "nodes": [
+      {
+        "id": "complex",
+        "kind": "source",
+        "operator": null,
+        "title": "1MEL 结构",
+        "position": {
+          "x": 60.0,
+          "y": 140.0
+        },
+        "params": {},
+        "context_params": {},
+        "source": {
+          "reader": null,
+          "path": "examples/smoke_real_data/input/vhh_1mel.pdb",
+          "dims": [
+            "atom",
+            "field"
+          ],
+          "labels": {
+            "atom": "auto",
+            "field": "builtin"
+          },
+          "args": {
+            "model": 0
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "sequence",
+        "kind": "source",
+        "operator": null,
+        "title": "VHH 序列",
+        "position": {
+          "x": 60.0,
+          "y": 360.0
+        },
+        "params": {},
+        "context_params": {},
+        "source": {
+          "reader": null,
+          "path": "examples/smoke_real_data/input/vhh.fasta",
+          "dims": [
+            "sequence",
+            "position"
+          ],
+          "labels": {
+            "sequence": "builtin",
+            "position": "auto"
+          },
+          "args": {
+            "alphabet": "auto"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "interface",
+        "kind": "operator",
+        "operator": "structure_interface_core",
+        "title": "界面核心/边缘",
+        "position": {
+          "x": 380.0,
+          "y": 140.0
+        },
+        "params": {
+          "atom_dim": "atom",
+          "field_dim": "field",
+          "binder_chains": "A,B",
+          "target_chains": "L,M",
+          "core_fraction": 0.5,
+          "probe_radius": 1.4,
+          "n_points": 92,
+          "output": "iface"
+        },
+        "context_params": {},
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "liabilities",
+        "kind": "operator",
+        "operator": "sequence_liability_scan",
+        "title": "序列风险位点",
+        "position": {
+          "x": 380.0,
+          "y": 360.0
+        },
+        "params": {
+          "sequence_dim": "sequence",
+          "position_dim": "position",
+          "include_oxidation": true,
+          "context": 3,
+          "output": "liabilities"
+        },
+        "context_params": {},
+        "source": null,
+        "input_count": 1,
+        "route": null
+      }
+    ],
+    "edges": [
+      {
+        "id": "complex-interface",
+        "source": "complex",
+        "target": "interface",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "sequence-liabilities",
+        "source": "sequence",
+        "target": "liabilities",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      }
+    ],
+    "memory": {
+      "enabled": true,
+      "auto_spill": true
+    },
+    "params": {},
+    "runtime": {
+      "submission_key": "97fd28bc6f0b0c9a337ec3c4415dbaf5064cbec21d728ecb8676264e05d5dfee"
+    },
+    "manifest_extra": {},
+    "interface": {
+      "version": 1,
+      "inputs": [
+        {
+          "node_id": "complex",
+          "label": "1MEL 结构",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "atom",
+              "field"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        },
+        {
+          "node_id": "sequence",
+          "label": "VHH 序列",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "sequence",
+              "position"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              },
+              "alphabet": {
+                "type": "string"
+              },
+              "representation": {
+                "type": "string",
+                "const": "sequence_codes"
+              },
+              "alphabet_map": {
+                "type": "object"
+              },
+              "unknown_code": {
+                "type": "integer"
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "node_id": "interface",
+          "handle": "out",
+          "label": "界面核心/边缘",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {},
+            "axis_info": {},
+            "info_open": true,
+            "axis_info_open": true,
+            "ndim": 2,
+            "numeric": true
+          }
+        },
+        {
+          "node_id": "liabilities",
+          "handle": "out",
+          "label": "序列风险位点",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {},
+            "axis_info": {},
+            "info_open": true,
+            "axis_info_open": true,
+            "ndim": 2,
+            "numeric": true
+          }
+        }
+      ]
+    },
+    "plugin_lock": {
+      "PdbReader": {
+        "version": "1.0.0",
+        "sha256": "e5669dec3ed95e789e8f4b31583b58a37b5502ffa332aa70eb6765db87d79a31",
+        "package": "biopipe-readers",
+        "code_sha": "ae965901fa0d8655b3b8823b33dc2473ed06ccb30b0884bf834540ebe28a8272",
+        "declaration_sha": "14eb02e895aa3cd65ddf7a49c3565dbbdeb96081f6cfaf94eefd913e753c7dcd"
+      },
+      "FastaReader": {
+        "version": "1.0.0",
+        "sha256": "e5669dec3ed95e789e8f4b31583b58a37b5502ffa332aa70eb6765db87d79a31",
+        "package": "biopipe-readers",
+        "code_sha": "ae965901fa0d8655b3b8823b33dc2473ed06ccb30b0884bf834540ebe28a8272",
+        "declaration_sha": "18bb9e5f72fe43b9064f75c67fcb78a82405b85c4704aa1fc30260a323ee8eba"
+      },
+      "structure_interface_core": {
+        "version": "1.0.0",
+        "sha256": "61d18bc85f1a22c275afa50872b63bf965bd4cb461f58beecf9e7446cb5a0c6a",
+        "package": "biopipe-core",
+        "code_sha": "ae965901fa0d8655b3b8823b33dc2473ed06ccb30b0884bf834540ebe28a8272",
+        "declaration_sha": "c92887c1a00fee62b2eedcf95a73772dd46ef1e0b8ef9eccfc28e4a115cdfe81"
+      },
+      "sequence_liability_scan": {
+        "version": "1.0.0",
+        "sha256": "61d18bc85f1a22c275afa50872b63bf965bd4cb461f58beecf9e7446cb5a0c6a",
+        "package": "biopipe-core",
+        "code_sha": "ae965901fa0d8655b3b8823b33dc2473ed06ccb30b0884bf834540ebe28a8272",
+        "declaration_sha": "57cf59b49de8d5a9cc3e2d0377ac14da046e66d1f7692171a8d39b7175edec9e"
+      }
+    }
+  },
+  "owner": {
+    "pid": 225410,
+    "created": 1793725853.54,
+    "service_id": "c00fdcc13fa44817ab5165f62935f158"
+  },
+  "allocation": {
+    "budget_bytes": 26630644736,
+    "reserved_bytes": 26899080192,
+    "process_limit_bytes": 26899080192,
+    "cpu_threads": 1,
+    "memory_enabled": true,
+    "available_at_start_bytes": 59775733760,
+    "host_capacity_bytes": 53798160384,
+    "policy": "fixed-startup-pool",
+    "state": "released",
+    "released_at": "2026-11-03T17:11:15.404415+00:00"
+  },
+  "queued_reason": null,
+  "reservation_key": "/home/gavin/BioPipe/.studio/jobs/20261103T171111-098ee769",
+  "progress": {
+    "phase": "complete",
+    "completed": 2,
+    "total": 2,
+    "percent": 100.0
+  },
+  "plugins": {
+    "generation": "3b6aae59bfe6486ba8001945954777de",
+    "packages": [
+      {
+        "protocol_version": 3,
+        "name": "biopipe-readers",
+        "title": "Data readers",
+        "version": "1.0.0",
+        "origin": "bundled",
+        "sha256": "e5669dec3ed95e789e8f4b31583b58a37b5502ffa332aa70eb6765db87d79a31",
+        "enabled": true,
+        "code_sha": "ae965901fa0d8655b3b8823b33dc2473ed06ccb30b0884bf834540ebe28a8272",
+        "manifest_only": true
+      },
+      {
+        "protocol_version": 3,
+        "name": "biopipe-core",
+        "title": "Core transforms",
+        "version": "1.0.0",
+        "origin": "bundled",
+        "sha256": "61d18bc85f1a22c275afa50872b63bf965bd4cb461f58beecf9e7446cb5a0c6a",
+        "enabled": true,
+        "code_sha": "ae965901fa0d8655b3b8823b33dc2473ed06ccb30b0884bf834540ebe28a8272",
+        "manifest_only": true
+      },
+      {
+        "protocol_version": 3,
+        "name": "biopipe-genetics",
+        "title": "Genetics and statistics",
+        "version": "1.0.0",
+        "origin": "bundled",
+        "sha256": "eab8dbfde88ea5165418cd4eb11c8d85c313aad850b067cf4e61042254276396",
+        "enabled": true,
+        "code_sha": "ae965901fa0d8655b3b8823b33dc2473ed06ccb30b0884bf834540ebe28a8272",
+        "manifest_only": true
+      },
+      {
+        "protocol_version": 3,
+        "name": "biopipe-expression",
+        "title": "Expression analysis",
+        "version": "1.0.0",
+        "origin": "bundled",
+        "sha256": "494fb931471b74121d29b5c9d2fab4742ac2e981504caf9a620e833c45c893d2",
+        "enabled": true,
+        "code_sha": "ae965901fa0d8655b3b8823b33dc2473ed06ccb30b0884bf834540ebe28a8272",
+        "manifest_only": true
+      },
+      {
+        "protocol_version": 3,
+        "name": "biopipe-plots",
+        "title": "Visualization",
+        "version": "1.0.0",
+        "origin": "bundled",
+        "sha256": "cad6af8bd2797a79d939fa81ebcfa526ae1e1bc5adfa994f92d8ac2f6cd2f45e",
+        "enabled": true,
+        "code_sha": "ae965901fa0d8655b3b8823b33dc2473ed06ccb30b0884bf834540ebe28a8272",
+        "manifest_only": true
+      },
+      {
+        "protocol_version": 3,
+        "name": "biopipe-microbiome",
+        "title": "biopipe-microbiome",
+        "version": "1.0.0",
+        "origin": "bundled",
+        "sha256": "e9006138115979b1c1dad976135bc4ca8a1385d93ee41eb9cbf183a2f8e80b7d",
+        "enabled": true,
+        "code_sha": "ae965901fa0d8655b3b8823b33dc2473ed06ccb30b0884bf834540ebe28a8272",
+        "manifest_only": true
+      },
+      {
+        "protocol_version": 3,
+        "name": "biopipe-hic",
+        "title": "biopipe-hic",
+        "version": "1.0.0",
+        "origin": "bundled",
+        "sha256": "4a2d81085d989681188e9ea08264ccf64b6d246f8b958b4f8a93b5e7e042721c",
+        "enabled": true,
+        "code_sha": "ae965901fa0d8655b3b8823b33dc2473ed06ccb30b0884bf834540ebe28a8272",
+        "manifest_only": true
+      }
+    ]
+  },
+  "started_at": "2026-11-03T17:11:11.295347+00:00",
+  "worker": {
+    "pid": 225437,
+    "created": 1793725870.61
+  }
+}

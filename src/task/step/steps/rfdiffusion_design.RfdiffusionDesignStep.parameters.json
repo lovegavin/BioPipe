@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "rfdiffusion_design parameters",
+  "description": "RFdiffusion 主链生成参数。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "title": "输入结构路径",
+      "description": "可选；提供后作为 motif/支架输入，留空表示从头生成。",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "contigs": {
+      "type": "string",
+      "title": "contig 表达式",
+      "description": "RFdiffusion contigmap.contigs，例如 A1-100 或 50-80 A1-100,0。",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "num_designs": {
+      "type": "integer",
+      "title": "设计数量",
+      "description": "一次生成的主链数量。",
+      "default": 1,
+      "x-ui-group": "参数",
+      "x-ui-order": 1,
+      "minimum": 1,
+      "maximum": 100
+    },
+    "device": {
+      "type": "string",
+      "title": "设备",
+      "description": "推理设备。",
+      "default": "cpu",
+      "x-ui-group": "参数",
+      "x-ui-order": 2,
+      "enum": [
+        "cpu",
+        "cuda"
+      ]
+    },
+    "rfdiffusion_path": {
+      "type": "string",
+      "title": "RFdiffusion 路径",
+      "description": "官方 checkout 根目录；留空使用资源清单中的默认路径。",
+      "default": "",
+      "x-ui-group": "参数",
+      "x-ui-order": 3
+    },
+    "python_executable": {
+      "type": "string",
+      "title": "Python 解释器",
+      "description": "用于启动 run_inference.py 的解释器。",
+      "default": "python",
+      "x-ui-group": "参数",
+      "x-ui-order": 4
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "title": "超时（秒）",
+      "description": "设计器最长运行时间。",
+      "default": 3600,
+      "x-ui-group": "参数",
+      "x-ui-order": 5,
+      "minimum": 60,
+      "maximum": 86400
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "description": "输出 Form 名称。",
+      "default": "designs",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构文件路径",
+      "description": "含原子名的 PDB 文件；ProteinMPNN 需要 N/CA/C/O 骨架原子。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "fasta_path": {
+      "type": "string",
+      "default": "",
+      "title": "序列 FASTA 路径",
+      "description": "待打分序列，每条记录一行序列。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 仓库",
+      "description": "官方 ProteinMPNN  checkout 目录，留空时读取 BIOPIPE_PROTEINMPNN_PATH。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录",
+      "description": "v_48_*.pt 所在目录，留空时使用 <proteinmpnn_path>/vanilla_model_weights。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "运行官方脚本用的解释器，留空使用当前解释器。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "models": {
+      "type": "string",
+      "default": "v_48_002,v_48_010,v_48_020,v_48_030",
+      "minLength": 2,
+      "title": "模型组合",
+      "description": "逗号分隔的 v_48_* 模型名，顺序决定输出列顺序。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "链",
+      "description": "逗号分隔的链 ID，留空使用全部链。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1,
+      "title": "随机种子",
+      "description": "官方 runner 中 0 表示随机，因此默认 1。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "设备",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "timeout_seconds": {
+      "type": "number",
+      "minimum": 1,
+      "default": 1800,
+      "title": "超时（秒）",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "ensemble",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}

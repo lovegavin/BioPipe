@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "对接位姿 RMSD 参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "pose_dim": {
+      "title": "位姿维度名",
+      "type": "string",
+      "description": "输入位姿维度名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 1,
+      "default": "pose"
+    },
+    "atom_dim": {
+      "title": "原子维度名",
+      "type": "string",
+      "description": "输入原子维度名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 2,
+      "default": "atom"
+    },
+    "field_dim": {
+      "title": "字段维度名",
+      "type": "string",
+      "description": "输入字段维度名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 3,
+      "default": "field"
+    },
+    "reference_path": {
+      "title": "参考位姿",
+      "type": "string",
+      "description": "参考配体位姿的 PDBQT 文件路径",
+      "x-ui-group": "输入",
+      "x-ui-order": 4
+    },
+    "allow_symmetry": {
+      "title": "对称匹配",
+      "type": "boolean",
+      "description": "是否按元素对称等价原子进行匹配",
+      "x-ui-group": "模型",
+      "x-ui-order": 5,
+      "default": true
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "description": "输出槽名称",
+      "x-ui-group": "输出",
+      "x-ui-order": 6,
+      "default": "rmsd"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "",
+      "title": "SMILES 列表",
+      "description": "One 'SMILES [name]' per line; blank lines and # comments are skipped.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "description": "Output dimension for the molecules.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "max_tautomers": {
+      "type": "integer",
+      "default": 64,
+      "minimum": 1,
+      "maximum": 1024,
+      "title": "最大互变异构体数",
+      "description": "Cap passed to the RDKit tautomer enumerator.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "tautomers",
+      "title": "输出名称",
+      "description": "Context name of the output molecule-by-statistic form.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    }
+  }
+}

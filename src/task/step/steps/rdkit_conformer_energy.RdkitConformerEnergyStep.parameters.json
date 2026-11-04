@@ -1,0 +1,70 @@
+{
+  "type": "object",
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "CCO ethanol\\nc1ccccc1 benzene\\nCC(=O)Oc1ccccc1C(=O)O aspirin",
+      "title": "SMILES 列表",
+      "description": "每行一个 'SMILES [name]'，空行与 # 注释会被跳过。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "force_field": {
+      "type": "string",
+      "default": "MMFF94",
+      "enum": ["MMFF94", "MMFF94s", "UFF"],
+      "title": "力场",
+      "description": "MMFF94 需要分子中所有原子都有 MMFF 参数；UFF 覆盖更广但精度略低。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "num_conformers": {
+      "type": "integer",
+      "default": 5,
+      "minimum": 1,
+      "maximum": 50,
+      "title": "构象数",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "max_iterations": {
+      "type": "integer",
+      "default": 500,
+      "minimum": 1,
+      "maximum": 20000,
+      "title": "最小化迭代次数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "random_seed": {
+      "type": "integer",
+      "default": 20240517,
+      "title": "随机种子",
+      "description": "固定种子保证同一输入得到相同构象与能量。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "minimize": {
+      "type": "boolean",
+      "default": true,
+      "title": "能量最小化",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "default": "conformers",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    }
+  },
+  "additionalProperties": false
+}

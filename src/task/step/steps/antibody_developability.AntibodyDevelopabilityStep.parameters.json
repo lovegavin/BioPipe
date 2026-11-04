@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "low_ph": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 14.0,
+      "default": 6.0,
+      "title": "低 pH 电荷",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "high_ph": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 14.0,
+      "default": 7.4,
+      "title": "中性 pH 电荷",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "hydrophobic_residues": {
+      "type": "string",
+      "default": "AVILMFWY",
+      "title": "疏水残基集合",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "developability",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  },
+  "additionalProperties": false
+}

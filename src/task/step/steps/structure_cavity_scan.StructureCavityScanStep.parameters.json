@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "Buried cavity scan",
+  "description": "Grid based buried cavity detection on a PDB structure.",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "cavity_dim": {
+      "type": "string",
+      "default": "cavity",
+      "title": "空腔维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "spacing": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 3.0,
+      "default": 1.0,
+      "title": "网格间距 (Å)",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "probe_radius": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 3.0,
+      "default": 1.4,
+      "title": "探针半径 (Å)",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "min_volume": {
+      "type": "number",
+      "minimum": 0.0,
+      "default": 20.0,
+      "title": "最小空腔体积 (Å³)",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "padding": {
+      "type": "number",
+      "minimum": 0.0,
+      "default": 2.0,
+      "title": "边界留白 (Å)",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "output": {
+      "type": "string",
+      "default": "cavities",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    }
+  }
+}

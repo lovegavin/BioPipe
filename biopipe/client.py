@@ -63,11 +63,17 @@ class Client:
         # Servers in one profile share the session command store. Select any live
         # endpoint unless the caller explicitly chooses an instance.
         self.instance = available[-1]
+        self.scopes = scopes or ["context", "edit"]
+        self.workspace = workspace
         self.http = httpx.Client(base_url=self.instance["url"], timeout=30, trust_env=False)
+        self.connect()
+
+    def connect(self):
         value = self.http.post("/api/agent/connect", headers={"X-BioPipe-Bridge": self.instance["secret"]},
-                               json={"name": name, "scopes": scopes or ["context", "edit"]})
+                               json={"name": self.name, "scopes": self.scopes})
         data = self.decode(value)
         self.http.headers["Authorization"] = "Bearer " + data["token"]
+        return data
 
     @staticmethod
     def decode(response):
@@ -80,10 +86,40 @@ class Client:
                               value.get("code", "request_failed"), value.get("details"))
         return value
 
+    def status(self):
+        return {"connected": True, "url": str(self.http.base_url), "scopes": list(self.scopes),
+                "workspace": str(self.workspace) if self.workspace else "",
+                "instance_id": self.instance.get("instance_id") if self.instance else ""}
+
+    def restart(self):
+        """Re-discover the live bridge after Studio restarted and re-authenticate.
+
+        A restart publishes a new discovery record with a new instance id, secret
+        and connection table. The previous token is unknown to it, and posting to
+        the old secret fails, so the client must reload discovery before it can
+        mint a token again.
+        """
+        available = instances(self.directory)
+        if not available:
+            raise ClientError("No running BioPipe service found in this profile. Start biopipe serve or BioPipe Studio.", "not_connected")
+        previous = self.instance.get("url") if self.instance else ""
+        same = [value for value in available if value.get("url") == previous]
+        self.instance = (same or available)[-1]
+        self.http.close()
+        self.http = httpx.Client(base_url=self.instance["url"], timeout=30, trust_env=False)
+        return self.connect()
+
     def request(self, path, payload=None):
         route = '/api' + path if path.startswith('/v1/') else '/api/agent' + path
         response = self.http.get(route) if payload is None else self.http.post(
             route, json=payload, timeout=660 if path == "/plugins/install" else 120)
+        if response.status_code == 403:
+            try:
+                self.restart()
+            except (ClientError, httpx.HTTPError):
+                return self.decode(response)
+            response = self.http.get(route) if payload is None else self.http.post(
+                route, json=payload, timeout=660 if path == "/plugins/install" else 120)
         return self.decode(response)
 
     def download(self, path, destination, payload=None):

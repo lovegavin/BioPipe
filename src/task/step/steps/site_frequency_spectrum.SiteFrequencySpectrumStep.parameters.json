@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "properties": {
+    "variant_dim": {
+      "type": "string",
+      "default": "variant",
+      "title": "Variant Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "folded": {
+      "type": "boolean",
+      "default": false,
+      "title": "折叠频谱",
+      "description": "折叠后按次要等位基因计数分箱（1..n//2）",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    }
+  },
+  "additionalProperties": false
+}

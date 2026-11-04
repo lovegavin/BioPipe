@@ -282,3 +282,32 @@ def test_reader_plugin_is_discovered_and_runs_in_worker(gateway, tmp_path):
         time.sleep(.1)
         job = client.get(f"/api/jobs/{job['id']}").json()
     assert job["status"] == "complete", job
+
+
+def test_client_restart_rediscovers_after_studio_restart(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    from biopipe import client as module
+
+    first = {"instance_id": "a", "url": "http://127.0.0.1:1", "secret": "old", "pid": 1, "created": 1}
+    second = {"instance_id": "b", "url": "http://127.0.0.1:1", "secret": "new", "pid": 2, "created": 2}
+    sequence = [[first], [second]]
+
+    monkeypatch.setattr(module, "instances", lambda directory: sequence.pop(0) if sequence else [second])
+    created = []
+
+    class Fake:
+        def __init__(self, base_url, timeout=None, trust_env=None):
+            self.base_url, self.headers, self.closed = base_url, {}, False
+            created.append(self)
+        def close(self):
+            self.closed = True
+        def post(self, route, json=None, headers=None, timeout=None):
+            return SimpleNamespace(status_code=200, is_success=True,
+                                   json=lambda: {"token": "t" + str(len(created)), "scopes": ["context"]})
+
+    monkeypatch.setattr(module.httpx, "Client", Fake)
+    value = module.Client(tmp_path, auto_start=False)
+    assert value.instance["instance_id"] == "a"
+    value.restart()
+    assert value.instance["instance_id"] == "b"
+    assert created[-1].headers["Authorization"].startswith("Bearer t")

@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "description": "Sample and score designs for a fixed backbone with the official ESM-IF1 inverse-folding model.",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "Dim name of the structure form's atom axis.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "Dim name of the structure form's field axis.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "description": "Dim name assigned to the sampled designs on the output form.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "chain": {
+      "type": "string",
+      "default": "A",
+      "title": "设计链",
+      "description": "Chain that is redesigned from its N/CA/C backbone.",
+      "minLength": 1,
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "model_path": {
+      "type": "string",
+      "default": "",
+      "title": "ESM-IF 权重路径",
+      "description": "Local ESM-IF1 checkpoint such as esm_if1_gvp4_t16_142M_UR50.pt. No weights are downloaded automatically.",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "num_samples": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 64,
+      "default": 4,
+      "title": "采样数量",
+      "description": "Number of sequences sampled with the autoregressive decoder.",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "temperature": {
+      "type": "number",
+      "exclusiveMinimum": 0.0,
+      "maximum": 5.0,
+      "default": 0.1,
+      "title": "采样温度",
+      "description": "Softmax temperature of the decoder; lower values stay closer to the backbone's native sequence.",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 2147483647,
+      "default": 1,
+      "title": "随机种子",
+      "description": "Torch seed set before sampling so repeated runs give the same designs.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "output": {
+      "type": "string",
+      "default": "designs",
+      "title": "输出名称",
+      "description": "Form name registered in the execution context.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    }
+  }
+}

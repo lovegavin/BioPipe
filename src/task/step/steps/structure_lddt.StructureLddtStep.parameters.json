@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "lDDT 参数",
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度名",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维度名",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "reference_path": {
+      "title": "参考结构路径 (PDB)",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "model_chains": {
+      "title": "模型链（逗号分隔）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 4
+    },
+    "reference_chains": {
+      "title": "参考链（逗号分隔）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 5
+    },
+    "inclusion_cutoff": {
+      "title": "包含半径 (Å)",
+      "type": "number",
+      "default": 15.0,
+      "minimum": 5.0,
+      "maximum": 30.0,
+      "x-ui-group": "算法",
+      "x-ui-order": 6
+    },
+    "residue_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "residue",
+      "x-ui-group": "输出",
+      "x-ui-order": 7
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "lddt",
+      "x-ui-group": "输出",
+      "x-ui-order": 8
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "description": "Hydrophobicity profile of the Kabat CDR loops of a VHH or VH domain.",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "description": "Dim name of the sequence axis on the input form.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "description": "Dim name of the residue position axis on the input form.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "region_dim": {
+      "type": "string",
+      "default": "region",
+      "title": "区域维度",
+      "description": "Dim name assigned to the CDR region axis on the output form.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "regions": {
+      "type": "string",
+      "default": "CDR1,CDR2,CDR3",
+      "title": "CDR 区域",
+      "description": "Comma separated CDR regions to profile.",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "window": {
+      "type": "integer",
+      "default": 7,
+      "minimum": 3,
+      "maximum": 15,
+      "title": "疏水矩窗口",
+      "description": "Sliding window length used for the hydrophobic moment.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "ph": {
+      "type": "number",
+      "default": 7.4,
+      "minimum": 0,
+      "maximum": 14,
+      "title": "pH",
+      "description": "pH used for the net charge statistic.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "hydrophobic_residues": {
+      "type": "string",
+      "default": "AVILMFWY",
+      "title": "疏水残基",
+      "description": "Residues counted as hydrophobic when computing fraction and longest run.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "default": "cdr_hydrophobicity",
+      "title": "输出名称",
+      "description": "Form name registered in the execution context.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    }
+  }
+}

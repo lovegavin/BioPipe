@@ -1,0 +1,86 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "binder_chains": {
+      "type": "string",
+      "default": "A",
+      "title": "Binder 链",
+      "description": "逗号分隔的链 ID，空字符串时取 target 之外的所有链。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "target_chains": {
+      "type": "string",
+      "default": "",
+      "title": "Target 链",
+      "description": "逗号分隔的链 ID，空字符串时取 binder 之外的所有链。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "probe_radius": {
+      "type": "number",
+      "minimum": 1.0,
+      "maximum": 3.0,
+      "default": 1.4,
+      "title": "探针半径 (Å)",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "n_points": {
+      "type": "integer",
+      "minimum": 64,
+      "maximum": 1024,
+      "default": 92,
+      "title": "球面采样点数",
+      "description": "Shrake-Rupley 每个原子球面的采样点数，越大越精确越慢。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "min_buried": {
+      "type": "number",
+      "minimum": 0.0,
+      "default": 0.0,
+      "title": "最小埋藏面积 (Å²)",
+      "description": "只输出埋藏面积大于该值的残基。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "exclude_resnames": {
+      "type": "string",
+      "default": "HOH,WAT",
+      "title": "排除残基名",
+      "description": "逗号分隔，默认排除水分子。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "output": {
+      "type": "string",
+      "default": "interface",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    }
+  }
+}

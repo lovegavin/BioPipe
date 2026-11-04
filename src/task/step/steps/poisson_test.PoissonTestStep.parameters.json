@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {"type": "string", "title": "Sample dimension", "default": "sample", "x-ui-group": "basic", "x-ui-order": 0},
+    "feature_dim": {"type": "string", "title": "Feature dimension", "default": "feature", "x-ui-group": "basic", "x-ui-order": 10},
+    "counts_label": {"type": "string", "title": "Counts column", "x-ui-group": "basic", "x-ui-order": 20},
+    "exposure_label": {"type": "string", "title": "Exposure column", "x-ui-group": "basic", "x-ui-order": 30},
+    "rate": {"type": "number", "title": "Null rate", "default": 1.0, "minimum": 0, "x-ui-group": "basic", "x-ui-order": 40},
+    "alternative": {"type": "string", "title": "Alternative", "default": "two-sided", "enum": ["two-sided", "greater", "less"], "x-ui-group": "advanced", "x-ui-order": 60},
+    "confidence": {"type": "number", "title": "Confidence level", "default": 0.95, "minimum": 0.001, "maximum": 0.9999, "x-ui-group": "advanced", "x-ui-order": 70},
+    "output": {"type": "string", "title": "Output parameter", "default": "output", "x-ui-group": "advanced", "x-ui-order": 100}
+  },
+  "required": ["counts_label", "exposure_label"],
+  "additionalProperties": false
+}

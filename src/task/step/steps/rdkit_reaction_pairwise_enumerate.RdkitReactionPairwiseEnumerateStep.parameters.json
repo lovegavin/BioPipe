@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "双组分反应枚举参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "reactants_a": {
+      "title": "反应物 A 库",
+      "type": "string",
+      "description": "每行 'SMILES [名称]' 的第一组分库",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "reactants_b": {
+      "title": "反应物 B 库",
+      "type": "string",
+      "description": "每行 'SMILES [名称]' 的第二组分库",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "reaction_smarts": {
+      "title": "反应 SMARTS",
+      "type": "string",
+      "description": "包含两个反应物模板的官方反应 SMARTS",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "max_products": {
+      "title": "产物上限",
+      "type": "integer",
+      "description": "枚举产物总数上限",
+      "x-ui-group": "枚举",
+      "x-ui-order": 4,
+      "default": 100,
+      "minimum": 1,
+      "maximum": 5000
+    },
+    "max_products_per_pair": {
+      "title": "单对上限",
+      "type": "integer",
+      "description": "每个反应物对最多保留的产物数",
+      "x-ui-group": "枚举",
+      "x-ui-order": 5,
+      "default": 20,
+      "minimum": 1,
+      "maximum": 200
+    },
+    "dedupe": {
+      "title": "产物去重",
+      "type": "boolean",
+      "description": "按规范 SMILES 去重",
+      "x-ui-group": "枚举",
+      "x-ui-order": 6,
+      "default": true
+    },
+    "output": {
+      "title": "输出槽",
+      "type": "string",
+      "description": "输出 Form 的槽名",
+      "x-ui-group": "输出",
+      "x-ui-order": 7,
+      "default": "products"
+    }
+  }
+}

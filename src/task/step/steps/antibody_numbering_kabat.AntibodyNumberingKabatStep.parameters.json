@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "抗体 Kabat 编号",
+  "description": "将 VH/VHH 序列比对到 Kabat 参考模板，输出每个残基的编号与框架/CDR 归属。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "title": "序列维度",
+      "x-ui-group": "Dimension",
+      "x-ui-order": 1,
+      "description": "输入序列编码 Form 的序列维度名。",
+      "default": "sequence"
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "位置维度",
+      "x-ui-group": "Dimension",
+      "x-ui-order": 2,
+      "description": "序列编码 Form 的位置维度名。",
+      "default": "position"
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名",
+      "x-ui-group": "Output",
+      "x-ui-order": 9,
+      "description": "输出 Form 在上下文中的名称。",
+      "default": "numbering"
+    }
+  }
+}

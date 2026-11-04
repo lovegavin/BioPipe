@@ -1,0 +1,52 @@
+<!-- biopipe:generated -->
+# ESM embedding linear probe
+
+## Purpose
+
+> Cross-validated logistic-regression probe on protein embeddings.
+>
+> A linear probe is the standard sanity check for an embedding: if two labelled
+> groups are separable with a linear model, the representation carries that
+> signal.  The operator standardises the features, runs stratified k-fold
+> cross-validation and reports the per-fold accuracy together with the mean, the
+> standard deviation and the majority-class baseline.
+>
+> Stratified logistic-regression probe on a protein embedding form.
+
+## Inputs and outputs
+
+Kind: `operator`. Operator ID: `esm_embedding_linear_probe`.
+Input count: `1`.
+Read the structured `contracts` section before connecting nodes. It includes
+the accepted data types, dimension constraints and output propagation rule.
+
+## Parameter guidance
+
+The adjacent parameter JSON owns defaults, valid choices, ranges and required
+fields. Request the generated `parameters` section and `parameters_schema` for
+the exact interface; do not infer parameter names from prose.
+Saved routes keep their own parameter values independently of current defaults.
+
+## Interpretation
+
+Check output metadata and labels before downstream analysis. The declared output
+contract describes the representation; it does not establish biological validity
+or statistical assumptions for a particular dataset.
+
+## Limitations
+
+Declared memory modes: full. BioPipe retains the existing planner, disk-backed
+inputs and emergency spill behavior; full-mode operators still require their
+declared working set. This generated reference has not been independently
+scientifically reviewed.
+
+## Examples
+
+Use the registry to discover compatible Readers and validate a complete workflow
+before execution. This generated page does not claim an executable scientific
+example. Add a tested example and replace this generated page with authored
+guidance when extending this operator.
+
+## Source
+
+Implementation: `src/task/step/steps/esm_embedding_linear_probe.py` (`EsmEmbeddingLinearProbeStep`).

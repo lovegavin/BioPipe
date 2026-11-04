@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "配体姿态体检参数",
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度名",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维度名",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "ligand_resname": {
+      "title": "配体残基名",
+      "type": "string",
+      "default": "LIG",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "config": {
+      "title": "PoseBusters 配置",
+      "type": "string",
+      "default": "dock",
+      "enum": [
+        "dock",
+        "mol"
+      ],
+      "x-ui-group": "算法",
+      "x-ui-order": 4
+    },
+    "check_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "check",
+      "x-ui-group": "输出",
+      "x-ui-order": 5
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "pose_qc",
+      "x-ui-group": "输出",
+      "x-ui-order": 6
+    }
+  }
+}

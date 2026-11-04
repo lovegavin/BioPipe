@@ -1,0 +1,49 @@
+{
+  "type": "object",
+  "title": "Sequence hydrophobicity profile parameters",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "description": "The sequence dimension of the input form.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "description": "The position dimension of the input form.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "window": {
+      "type": "integer",
+      "default": 9,
+      "minimum": 3,
+      "maximum": 51,
+      "title": "滑窗大小",
+      "description": "Odd number of residues in the sliding window.",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "threshold": {
+      "type": "number",
+      "default": 1.6,
+      "title": "疏水阈值",
+      "description": "Window mean at or above which a position counts as hydrophobic.",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "default": "profile",
+      "title": "输出",
+      "description": "Output form name.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    }
+  }
+}

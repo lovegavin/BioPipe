@@ -1,0 +1,39 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "CCO ethanol\nO=C1C=CC(=O)C=C1 quinone\nCC(=O)Oc1ccccc1C(=O)O aspirin",
+      "title": "分子列表",
+      "description": "每行一个“SMILES [名称]”，以 # 开头的行会被忽略。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "description": "输出中分子维度的名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "catalogue": {
+      "type": "string",
+      "default": "all",
+      "enum": ["pains_a", "pains_b", "pains_c", "all"],
+      "title": "PAINS 目录",
+      "description": "选择 PAINS_A/B/C 子目录或全部合并。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "alerts",
+      "title": "输出名称",
+      "description": "写入上下文的 Form 名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    }
+  }
+}

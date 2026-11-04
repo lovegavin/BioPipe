@@ -1,0 +1,51 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "helix_pair",
+      "title": "螺旋对维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "cutoff": {
+      "type": "number",
+      "minimum": 3.0,
+      "maximum": 20.0,
+      "default": 8.0,
+      "title": "接触截断（Å）",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "min_residues": {
+      "type": "integer",
+      "minimum": 3,
+      "default": 4,
+      "title": "最短螺旋长度",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "helix_pairs",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "bond_dim": {
+      "type": "string",
+      "default": "bond",
+      "title": "氢键维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "binder_chains": {
+      "type": "string",
+      "default": "A",
+      "title": "Binder 链",
+      "description": "逗号分隔的链 ID。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "target_chains": {
+      "type": "string",
+      "default": "",
+      "title": "Target 链",
+      "description": "留空时自动取 binder 之外的链。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "energy_threshold": {
+      "type": "number",
+      "maximum": -0.01,
+      "default": -0.5,
+      "title": "能量阈值",
+      "description": "kcal/mol，仅保留低于该值的氢键。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "max_distance": {
+      "type": "number",
+      "minimum": 1.5,
+      "maximum": 10,
+      "default": 5.2,
+      "title": "N-O 距离上限",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "interface_bonds",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  }
+}

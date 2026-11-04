@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Beta diversity from presence/absence",
+  "description": "Pairwise beta diversity indices computed from binarised abundances.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the sample dimension of the abundance matrix.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "title": "Taxon dimension",
+      "description": "Name of the taxon dimension of the abundance matrix.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "sample_b_dim": {
+      "type": "string",
+      "default": "sample_b",
+      "title": "Second sample dimension",
+      "description": "Name of the second (column) sample dimension of the output matrix.",
+      "x-ui-group": "Input",
+      "x-ui-order": 2
+    },
+    "method": {
+      "type": "string",
+      "enum": ["w", "-1", "c", "wb", "r", "I", "e", "t", "me", "j", "sor", "m",
+               "-2", "co", "cc", "g", "-3", "l", "19", "hk", "rlb", "sim", "gl", "z"],
+      "default": "w",
+      "title": "Beta diversity method",
+      "description": "One of the 24 vegan betadiver method codes.",
+      "x-ui-group": "Method",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "default": "betadiver",
+      "title": "Output",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 100
+    }
+  },
+  "required": []
+}

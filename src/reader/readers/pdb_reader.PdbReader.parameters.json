@@ -15,6 +15,25 @@
       "title": "Encoders",
       "x-ui-group": "basic",
       "x-ui-order": 10
+    },
+    "records": {
+      "type": "string",
+      "enum": [
+        "all",
+        "atom",
+        "hetatm"
+      ],
+      "default": "all",
+      "title": "记录类型",
+      "x-ui-group": "basic",
+      "x-ui-order": 1
+    },
+    "exclude_solvent": {
+      "type": "boolean",
+      "default": false,
+      "title": "排除水分子",
+      "x-ui-group": "basic",
+      "x-ui-order": 2
     }
   },
   "additionalProperties": false

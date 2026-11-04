@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ProteinMPNN 界面打分",
+  "description": "用官方 ProteinMPNN 的 --score_only 对现有结构/序列打分，并按界面残基与非界面残基分组统计逐残基负对数似然。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "title": "原子维",
+      "description": "输入 PDB 原子表的原子维名称",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "字段维",
+      "description": "原子表的字段维名称",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "structure_path": {
+      "type": "string",
+      "title": "结构路径",
+      "description": "PDB 文件路径（官方 Runner 直接读取）",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "binder_chains": {
+      "type": "string",
+      "title": "Binder 链",
+      "description": "以逗号分隔的 binder 链，例如 A",
+      "default": "A",
+      "x-ui-group": "界面",
+      "x-ui-order": 1
+    },
+    "target_chains": {
+      "type": "string",
+      "title": "Target 链",
+      "description": "以逗号分隔的 target 链，例如 L；留空则由结构推导",
+      "default": "L",
+      "x-ui-group": "界面",
+      "x-ui-order": 2
+    },
+    "cutoff": {
+      "type": "number",
+      "title": "接触截断 (Å)",
+      "description": "重原子接触距离截断",
+      "default": 4.5,
+      "minimum": 1.0,
+      "maximum": 12.0,
+      "x-ui-group": "界面",
+      "x-ui-order": 3
+    },
+    "chains": {
+      "type": "string",
+      "title": "打分链",
+      "description": "传给 --pdb_path_chains 的链；留空表示全部链",
+      "default": "",
+      "x-ui-group": "界面",
+      "x-ui-order": 4
+    },
+    "model_name": {
+      "type": "string",
+      "title": "模型",
+      "description": "ProteinMPNN 模型权重名称",
+      "default": "v_48_020",
+      "enum": [
+        "v_48_002",
+        "v_48_010",
+        "v_48_020",
+        "v_48_030"
+      ],
+      "x-ui-group": "模型",
+      "x-ui-order": 1
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "title": "ProteinMPNN 目录",
+      "description": "官方仓库路径；留空则读 BIOPIPE_PROTEINMPNN_PATH",
+      "default": "",
+      "x-ui-group": "模型",
+      "x-ui-order": 2
+    },
+    "weights_path": {
+      "type": "string",
+      "title": "权重目录",
+      "description": "包含 v_48_*.pt 的目录；留空则使用仓库内 vanilla_model_weights",
+      "default": "",
+      "x-ui-group": "模型",
+      "x-ui-order": 3
+    },
+    "python_executable": {
+      "type": "string",
+      "title": "Python 解释器",
+      "description": "运行官方 Runner 的解释器；留空使用当前解释器",
+      "default": "",
+      "x-ui-group": "运行",
+      "x-ui-order": 1
+    },
+    "device": {
+      "type": "string",
+      "title": "设备",
+      "description": "cpu 或 cuda",
+      "default": "cpu",
+      "enum": [
+        "cpu",
+        "cuda"
+      ],
+      "x-ui-group": "运行",
+      "x-ui-order": 2
+    },
+    "timeout_seconds": {
+      "type": "number",
+      "title": "超时 (秒)",
+      "description": "子进程超时时间",
+      "default": 1800,
+      "minimum": 30,
+      "maximum": 14400,
+      "x-ui-group": "运行",
+      "x-ui-order": 3
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名",
+      "description": "输出 Form 在上下文中的名称",
+      "default": "iface_score",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

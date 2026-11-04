@@ -1,0 +1,97 @@
+{
+  "format": "biopipe.graph-parameters",
+  "schema_version": 1,
+  "params": {},
+  "nodes": {
+    "annot": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {}
+    },
+    "gff_feature_stats_1": {
+      "kind": "operator",
+      "operator": "gff_feature_stats",
+      "params": {
+        "record_dim": "record",
+        "field_dim": "field",
+        "output": "stats"
+      },
+      "context_params": {}
+    },
+    "describe_2": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "gene_structure_3": {
+      "kind": "operator",
+      "operator": "gene_structure",
+      "params": {
+        "record_dim": "record",
+        "field_dim": "field",
+        "output": "structures"
+      },
+      "context_params": {}
+    },
+    "describe_4": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "annotation_gaps_5": {
+      "kind": "operator",
+      "operator": "annotation_gaps",
+      "params": {
+        "record_dim": "record",
+        "field_dim": "field",
+        "min_gap": 500,
+        "output": "gaps"
+      },
+      "context_params": {}
+    },
+    "describe_6": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "histogram_7": {
+      "kind": "operator",
+      "operator": "histogram",
+      "params": {
+        "dim": "statistic",
+        "bins": 30,
+        "log_y": false,
+        "ylabel": "Count",
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "exon_count_hist.png",
+        "title": "Exons per gene (S. cerevisiae GTF)",
+        "value_label": "n_exons",
+        "xlabel": "Exon count"
+      },
+      "context_params": {}
+    },
+    "histogram_8": {
+      "kind": "operator",
+      "operator": "histogram",
+      "params": {
+        "dim": "statistic",
+        "bins": 40,
+        "log_y": false,
+        "ylabel": "Count",
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "gap_length_hist.png",
+        "title": "Inter-gene gap lengths (>= 500 bp)",
+        "value_label": "gap_length",
+        "xlabel": "Gap length (bp)"
+      },
+      "context_params": {}
+    }
+  }
+}

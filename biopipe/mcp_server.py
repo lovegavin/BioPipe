@@ -104,6 +104,22 @@ def create_server(client):
         return client.request(path)
 
     @server.tool()
+    def biopipe_artifact_table(job_id: str, artifact_id: str, offset: int = 0, limit: int = 100) -> dict:
+        """Paginated artifact table with column and row labels; works for local and ssh jobs."""
+        return client.request('/v1/jobs/' + quote(job_id, safe='') + '/artifacts/' + quote(artifact_id, safe='') + '/table?'
+                              + urlencode({'offset': offset, 'limit': limit}))
+
+    @server.tool()
+    def biopipe_remote_status() -> dict:
+        """List SSH execution profiles with their connected state."""
+        return client.request('/remote')
+
+    @server.tool()
+    def biopipe_remote_ensure(profile_id: str) -> dict:
+        """Idempotently reconnect a key/agent SSH profile before validate/prepare/run."""
+        return client.request('/remote/' + quote(profile_id, safe='') + '/ensure', {})
+
+    @server.tool()
     def biopipe_validate(graph: dict) -> dict:
         """Validate a complete route without running it. Missing node positions are automatically laid out."""
         return client.request("/validate", {"graph": graph})
@@ -114,20 +130,47 @@ def create_server(client):
         return client.request(f"/sessions/{session_id}")
 
     @server.tool()
-    def biopipe_open(session_id: str, expected_revision: int, graph: dict) -> dict:
-        """Open a generated route in a new tab. Does not execute it."""
-        return client.request(f"/sessions/{session_id}/open", {"graph": graph, "expected_revision": expected_revision})
+    def biopipe_open(session_id: str, expected_revision: int, graph: dict,
+                    document_id: str | None = None, mode: str = "replace") -> dict:
+        """Write a graph into the user's canvas. document_id targets an existing tab; mode=replace overwrites the active tab, append adds one. Returns {document_id, revision}."""
+        return client.request(f"/sessions/{session_id}/open", {"graph": graph, "expected_revision": expected_revision,
+                              "document_id": document_id, "mode": mode})
 
     @server.tool()
     def biopipe_apply(session_id: str, document_id: str, expected_revision: int, commands: list[dict], request_id: str) -> dict:
         """Atomically apply add_node, update_node, remove_node, connect, disconnect or configure commands.
 
         add_node: {op,node}; update_node: {op,id,patch}; remove_node: {op,id};
-        connect: {op,edge}; disconnect: {op,id}; configure: {op,patch:{name,memory,base_dir}}.
+        connect: {op,edge}; disconnect: {op,id}; configure: {op,patch:{name,memory,base_dir,params,runtime}};
+        set_graph: {op,graph}.
         One call creates one undo entry. Reuse request_id only when retrying identical commands.
         """
         return client.request(f"/sessions/{session_id}/apply", {"document_id": document_id, "expected_revision": expected_revision,
                               "commands": commands, "request_id": request_id})
+
+    @server.tool()
+    def biopipe_set_execution(session_id: str, document_id: str, expected_revision: int,
+                              execution: dict, request_id: str) -> dict:
+        """Set the execution device on an existing document: {kind:'local'|'ssh', profile_id?, mode?}. One transaction."""
+        kind = str(execution.get("kind", "local"))
+        if kind not in ("local", "ssh"):
+            raise ValueError("execution.kind must be 'local' or 'ssh'")
+        if kind == "ssh" and not execution.get("profile_id"):
+            raise ValueError("execution.profile_id is required for ssh")
+        runtime = {"execution": {k: execution[k] for k in ("kind", "profile_id", "mode") if k in execution}}
+        return client.request(f"/sessions/{session_id}/apply", {"document_id": document_id,
+                              "expected_revision": expected_revision, "request_id": request_id,
+                              "commands": [{"op": "configure", "patch": {"runtime": runtime}}]})
+
+    @server.tool()
+    def biopipe_status() -> dict:
+        """Report the MCP connection, scopes, installed version and the active canvas session/document."""
+        status = client.status()
+        try:
+            status["sessions"] = client.sessions()
+        except Exception as error:  # noqa: BLE001 - status must stay readable
+            status["sessions_error"] = str(error)
+        return status
 
     @server.tool()
     def biopipe_undo(session_id: str, document_id: str, expected_revision: int, redo: bool = False) -> dict:

@@ -93,7 +93,7 @@ def test_survival_prediction_matches_r():
     r = _r_values()
     form = _form()
     for t, expected in r["AUC"].items():
-        ctx = Ctx({"time_label": "time", "event_label": "event", "risk_label": "risk", "predict_time": t})
+        ctx = Ctx({"time_label": "time", "event_label": "event", "risk_label": "risk", "predict_time": t, "output": "time_dependent_auc"})
         TimeDependentAucStep().run(ctx, [form])
         assert ctx["time_dependent_auc"].info["auc"] == pytest.approx(expected, rel=1e-6)
 

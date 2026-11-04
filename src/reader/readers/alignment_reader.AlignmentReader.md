@@ -8,7 +8,7 @@
 ## Inputs and outputs
 
 Kind: `reader`. Operator ID: `AlignmentReader`.
-This Reader opens files with extensions: `.sam`, `.bam`.
+This Reader opens files with extensions: `.sam`.
 Read the structured `contracts` section before connecting nodes. It includes
 the accepted data types, dimension constraints and output propagation rule.
 
@@ -24,6 +24,10 @@ Saved routes keep their own parameter values independently of current defaults.
 Check output metadata and labels before downstream analysis. The declared output
 contract describes the representation; it does not establish biological validity
 or statistical assumptions for a particular dataset.
+
+## Runtime environment
+
+Runs in the shared BioPipe interpreter.
 
 ## Limitations
 

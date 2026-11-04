@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "properties": {
+    "modality": {
+      "type": "string",
+      "title": "Modality",
+      "description": "Name of the /mod entry to read; required when the file holds several modalities.",
+      "x-ui-group": "Selection",
+      "x-ui-order": 1
+    },
+    "layer": {
+      "type": "string",
+      "title": "Layer",
+      "description": "Optional layer name inside the modality; defaults to X.",
+      "x-ui-group": "Selection",
+      "x-ui-order": 2
+    }
+  },
+  "additionalProperties": false
+}

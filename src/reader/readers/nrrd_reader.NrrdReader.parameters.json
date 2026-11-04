@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Read a NRRD volume",
+  "description": "Read a NRRD volume as slices by flattened voxels.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "slice_start": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "title": "First slice",
+      "description": "Zero-based index of the first z slice to read.",
+      "x-ui-group": "Range",
+      "x-ui-order": 0
+    },
+    "slice_stop": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "default": null,
+      "title": "Stop slice",
+      "description": "Exclusive upper z slice index; null reads to the last slice.",
+      "x-ui-group": "Range",
+      "x-ui-order": 1
+    },
+    "max_cells": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 4000000,
+      "title": "Maximum voxels",
+      "description": "Reject volumes whose requested slice range exceeds this many voxels.",
+      "x-ui-group": "Limits",
+      "x-ui-order": 10
+    }
+  },
+  "required": []
+}

@@ -1,0 +1,60 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "atom_labels_dim": {
+      "type": "string",
+      "default": "ligand_atom",
+      "title": "配体原子维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "ligand_resnames": {
+      "type": "string",
+      "default": "LIG",
+      "title": "配体残基名",
+      "description": "逗号分隔的 HETATM 残基名，例如 LIG,UNL",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "tolerance": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 2.0,
+      "default": 0.4,
+      "title": "重叠容差（Å）",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "clash_scale": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 1.5,
+      "default": 1.0,
+      "title": "范德华半径缩放",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "clashes",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}

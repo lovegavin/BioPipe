@@ -1,0 +1,62 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "min_samples": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 5,
+      "title": "最少样本数",
+      "description": "Neighbourhood size used for core distances.",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "max_eps": {
+      "type": ["number", "null"],
+      "exclusiveMinimum": 0,
+      "default": null,
+      "title": "最大邻域半径",
+      "description": "Maximum reachability distance; null means infinity.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "xi": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1,
+      "default": 0.05,
+      "title": "Xi",
+      "description": "Steepness threshold used to extract clusters from the reachability plot.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "metric": {
+      "type": "string",
+      "enum": ["euclidean", "manhattan", "cosine"],
+      "default": "euclidean",
+      "title": "距离度量",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "additionalProperties": false
+}

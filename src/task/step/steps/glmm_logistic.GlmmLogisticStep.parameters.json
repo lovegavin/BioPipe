@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "title": "Sample dimension",
+      "default": "sample",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "title": "Feature dimension",
+      "default": "feature",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "group_dim": {
+      "type": "string",
+      "title": "Group dimension",
+      "default": "feature",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "target_label": {
+      "type": "string",
+      "title": "Outcome column",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "predictor_label": {
+      "type": "string",
+      "title": "Predictor column",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "group_label": {
+      "type": "string",
+      "title": "Group column",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "output",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "required": [
+    "target_label",
+    "predictor_label",
+    "group_label"
+  ],
+  "additionalProperties": false
+}

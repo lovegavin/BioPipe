@@ -1,0 +1,72 @@
+{
+ "$schema": "http://json-schema.org/draft-2020-12/schema",
+ "type": "object",
+ "title": "二级结构桥接网络",
+ "description": "二级结构元件之间的最近距离与接触数网络。",
+ "additionalProperties": false,
+ "properties": {
+  "atom_dim": {
+   "type": "string",
+   "default": "atom",
+   "title": "原子维度",
+   "x-ui-group": "basic",
+   "x-ui-order": 10
+  },
+  "field_dim": {
+   "type": "string",
+   "default": "field",
+   "title": "字段维度",
+   "x-ui-group": "basic",
+   "x-ui-order": 20
+  },
+  "bridge_dim": {
+   "type": "string",
+   "default": "bridge",
+   "title": "桥接维度",
+   "x-ui-group": "advanced",
+   "x-ui-order": 30
+  },
+  "window": {
+   "type": "integer",
+   "default": 5,
+   "title": "螺旋/折叠识别窗口",
+   "x-ui-group": "basic",
+   "x-ui-order": 40,
+   "minimum": 1,
+   "maximum": 21
+  },
+  "cutoff": {
+   "type": "number",
+   "default": 8.0,
+   "title": "桥接距离上限 (Å)",
+   "x-ui-group": "basic",
+   "x-ui-order": 50,
+   "minimum": 1.0,
+   "maximum": 40.0
+  },
+  "contact": {
+   "type": "number",
+   "default": 5.0,
+   "title": "接触距离阈值 (Å)",
+   "x-ui-group": "basic",
+   "x-ui-order": 60,
+   "minimum": 1.0,
+   "maximum": 40.0
+  },
+  "min_length": {
+   "type": "integer",
+   "default": 2,
+   "title": "元件最短残基数",
+   "x-ui-group": "advanced",
+   "x-ui-order": 70,
+   "minimum": 1
+  },
+  "output": {
+   "type": "string",
+   "default": "bridges",
+   "title": "输出名称",
+   "x-ui-group": "advanced",
+   "x-ui-order": 80
+  }
+ }
+}

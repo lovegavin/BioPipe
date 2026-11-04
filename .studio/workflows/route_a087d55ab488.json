@@ -1,0 +1,412 @@
+{
+  "id": "route_a087d55ab488",
+  "version": 2,
+  "updated_at": "2026-11-03T17:10:58.153820+00:00",
+  "graph": {
+    "schema_version": 2,
+    "name": "GWAS meta-analysis and PRS",
+    "base_dir": "routes/gwas_meta_prs",
+    "nodes": [
+      {
+        "id": "effects",
+        "kind": "source",
+        "operator": null,
+        "title": "effects",
+        "position": {
+          "x": 70.0,
+          "y": 100.0
+        },
+        "source": {
+          "reader": "CsvReader",
+          "path": "input/effects.csv",
+          "dims": [
+            "variant",
+            "study"
+          ],
+          "labels": {
+            "study": "builtin",
+            "variant": {
+              "study": 0
+            }
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "geno",
+        "kind": "source",
+        "operator": null,
+        "title": "geno",
+        "position": {
+          "x": 70.0,
+          "y": 310.0
+        },
+        "source": {
+          "reader": "VcfReader",
+          "path": "input/geno.vcf",
+          "dims": [
+            "variant",
+            "sample"
+          ],
+          "labels": {
+            "sample": "builtin",
+            "variant": "builtin"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "stds",
+        "kind": "source",
+        "operator": null,
+        "title": "stds",
+        "position": {
+          "x": 70.0,
+          "y": 520.0
+        },
+        "source": {
+          "reader": "CsvReader",
+          "path": "input/stds.csv",
+          "dims": [
+            "variant",
+            "study"
+          ],
+          "labels": {
+            "study": "builtin",
+            "variant": {
+              "study": 0
+            }
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "weights",
+        "kind": "source",
+        "operator": null,
+        "title": "weights",
+        "position": {
+          "x": 70.0,
+          "y": 730.0
+        },
+        "source": {
+          "reader": "CsvReader",
+          "path": "input/weights.csv",
+          "dims": [
+            "variant",
+            "statistic"
+          ],
+          "labels": {
+            "statistic": "builtin",
+            "variant": {
+              "statistic": 0
+            }
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "meta_analysis_1",
+        "kind": "operator",
+        "operator": "meta_analysis",
+        "title": "Meta-analysis",
+        "position": {
+          "x": 360.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 2,
+        "route": null
+      },
+      {
+        "id": "prs_2",
+        "kind": "operator",
+        "operator": "prs",
+        "title": "Polygenic risk score",
+        "position": {
+          "x": 360.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 2,
+        "route": null
+      },
+      {
+        "id": "describe_3",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 650.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "describe_4",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 650.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      }
+    ],
+    "edges": [
+      {
+        "id": "effects-meta_analysis_1-0",
+        "source": "effects",
+        "target": "meta_analysis_1",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "stds-meta_analysis_1-1",
+        "source": "stds",
+        "target": "meta_analysis_1",
+        "sourceHandle": "out",
+        "targetHandle": "in-1"
+      },
+      {
+        "id": "geno-prs_2-0",
+        "source": "geno",
+        "target": "prs_2",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "weights-prs_2-1",
+        "source": "weights",
+        "target": "prs_2",
+        "sourceHandle": "out",
+        "targetHandle": "in-1"
+      },
+      {
+        "id": "meta_analysis_1-describe_3-0",
+        "source": "meta_analysis_1",
+        "target": "describe_3",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "prs_2-describe_4-0",
+        "source": "prs_2",
+        "target": "describe_4",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      }
+    ],
+    "runtime": {},
+    "manifest_extra": {},
+    "interface": {
+      "version": 1,
+      "inputs": [
+        {
+          "node_id": "effects",
+          "label": "effects",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "variant",
+              "study"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        },
+        {
+          "node_id": "geno",
+          "label": "geno",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "variant",
+              "sample"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              },
+              "representation": {
+                "type": "string",
+                "const": "hard_call"
+              },
+              "ploidy": {
+                "type": "integer",
+                "min": 1
+              },
+              "chrom": {
+                "type": "array",
+                "items": "string"
+              },
+              "pos": {
+                "type": "array",
+                "items": "integer"
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": [
+              {
+                "dim": "variant",
+                "fields": [
+                  "chrom",
+                  "pos"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "node_id": "stds",
+          "label": "stds",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "variant",
+              "study"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        },
+        {
+          "node_id": "weights",
+          "label": "weights",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "variant",
+              "statistic"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "node_id": "meta_analysis_1",
+          "handle": "out",
+          "label": "Meta-analysis",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "axis_info": {},
+            "info_open": false,
+            "axis_info_open": false,
+            "ndim": 2,
+            "numeric": true
+          }
+        },
+        {
+          "node_id": "prs_2",
+          "handle": "out",
+          "label": "Polygenic risk score",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "axis_info": {},
+            "info_open": false,
+            "axis_info_open": false,
+            "ndim": 2,
+            "numeric": true
+          }
+        }
+      ]
+    },
+    "plugin_lock": {}
+  },
+  "parameters_file": "parameters/route_a087d55ab488/v2.json",
+  "execution_file": "execution/route_a087d55ab488/v2.json"
+}

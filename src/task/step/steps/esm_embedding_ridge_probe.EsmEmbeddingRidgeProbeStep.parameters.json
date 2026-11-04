@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "嵌入岭回归探针参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "title": "样本维度名",
+      "type": "string",
+      "description": "输入样本维度名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 1,
+      "default": "sequence"
+    },
+    "feature_dim": {
+      "title": "特征维度名",
+      "type": "string",
+      "description": "输入嵌入特征维度名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 2,
+      "default": "embedding"
+    },
+    "metric_dim": {
+      "title": "指标维度名",
+      "type": "string",
+      "description": "输出指标维度名称",
+      "x-ui-group": "输出",
+      "x-ui-order": 3,
+      "default": "metric"
+    },
+    "targets": {
+      "title": "目标值",
+      "type": "string",
+      "description": "逗号分隔的连续型目标值；留空则读取 info['targets']",
+      "x-ui-group": "输入",
+      "x-ui-order": 4,
+      "default": ""
+    },
+    "cv_folds": {
+      "title": "折数",
+      "type": "integer",
+      "description": "交叉验证折数",
+      "x-ui-group": "模型",
+      "x-ui-order": 5,
+      "default": 5,
+      "minimum": 2,
+      "maximum": 10
+    },
+    "alpha": {
+      "title": "正则强度",
+      "type": "number",
+      "description": "岭回归正则化强度",
+      "x-ui-group": "模型",
+      "x-ui-order": 6,
+      "default": 1.0,
+      "minimum": 1e-06,
+      "maximum": 1000000
+    },
+    "standardize": {
+      "title": "标准化",
+      "type": "boolean",
+      "description": "是否在训练折上标准化特征",
+      "x-ui-group": "模型",
+      "x-ui-order": 7,
+      "default": true
+    },
+    "random_state": {
+      "title": "随机种子",
+      "type": "integer",
+      "description": "折划分种子",
+      "x-ui-group": "模型",
+      "x-ui-order": 8,
+      "default": 0
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "description": "输出槽名称",
+      "x-ui-group": "输出",
+      "x-ui-order": 9,
+      "default": "probe"
+    }
+  }
+}

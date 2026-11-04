@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "description": "Evaluate the Lipinski, Veber and Egan rule sets for oral bioavailability from SMILES.",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "",
+      "title": "SMILES 列表",
+      "description": "One 'SMILES [name]' entry per line. Lines starting with # are comments.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "mw_max": {
+      "type": "number",
+      "default": 500.0,
+      "minimum": 1,
+      "title": "分子量上限",
+      "description": "Lipinski molecular weight threshold in Da.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "logp_max": {
+      "type": "number",
+      "default": 5.0,
+      "title": "cLogP 上限",
+      "description": "Lipinski cLogP threshold.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "hbd_max": {
+      "type": "integer",
+      "default": 5,
+      "minimum": 0,
+      "title": "氢键供体上限",
+      "description": "Lipinski hydrogen bond donor threshold.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "hba_max": {
+      "type": "integer",
+      "default": 10,
+      "minimum": 0,
+      "title": "氢键受体上限",
+      "description": "Lipinski hydrogen bond acceptor threshold.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "tpsa_max": {
+      "type": "number",
+      "default": 140.0,
+      "minimum": 1,
+      "title": "Veber TPSA 上限",
+      "description": "Veber polar surface area threshold in square angstrom.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "rotatable_bonds_max": {
+      "type": "integer",
+      "default": 10,
+      "minimum": 0,
+      "title": "Veber 可旋转键上限",
+      "description": "Veber rotatable bond threshold.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "egan_tpsa_max": {
+      "type": "number",
+      "default": 131.6,
+      "minimum": 0,
+      "title": "Egan TPSA 上限",
+      "description": "Egan polar surface area threshold in square angstrom (Egan et al. 2000).",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "egan_logp_max": {
+      "type": "number",
+      "default": 5.88,
+      "title": "Egan cLogP 上限",
+      "description": "Egan cLogP threshold (Egan et al. 2000).",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "description": "Dim name assigned to the molecule axis on the output form.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    },
+    "output": {
+      "type": "string",
+      "default": "bioavailability",
+      "title": "输出名称",
+      "description": "Form name registered in the execution context.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "title": "Embedding spectral projection",
+  "description": "Project an embedding Form with a kNN graph and normalised-Laplacian eigenvectors.",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度名",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "embedding_dim": {
+      "type": "string",
+      "default": "embedding",
+      "title": "嵌入维度名",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "component_dim": {
+      "type": "string",
+      "default": "component",
+      "title": "分量维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "n_neighbors": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50,
+      "default": 8,
+      "title": "近邻数",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "n_components": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 3,
+      "default": 2,
+      "title": "投影维数",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "projection",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  },
+  "additionalProperties": false
+}

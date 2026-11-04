@@ -20,6 +20,16 @@
     "status": "generated"
   },
   {
+    "id": "ArrowReader",
+    "kind": "reader",
+    "title": "Arrow, Feather and ORC table reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reads Arrow IPC, Feather and ORC columnar tables with pyarrow.",
+    "doc": "src/reader/readers/arrow_reader.ArrowReader.md",
+    "status": "generated"
+  },
+  {
     "id": "BamReader",
     "kind": "reader",
     "title": "Binary Alignment/Map reader",
@@ -410,6 +420,16 @@
     "status": "generated"
   },
   {
+    "id": "H5muReader",
+    "kind": "reader",
+    "title": "MuData multimodal HDF5 reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reads one modality from a MuData .h5mu container into a sample-by-feature matrix.",
+    "doc": "src/reader/readers/h5mu_reader.H5muReader.md",
+    "status": "generated"
+  },
+  {
     "id": "HapmapReader",
     "kind": "reader",
     "title": "HapMap genotype table, returned as variant x sample dosage",
@@ -540,6 +560,16 @@
     "status": "generated"
   },
   {
+    "id": "MrcReader",
+    "kind": "reader",
+    "title": "Read an MRC/CCP4 volume",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read an MRC/CCP4 electron-microscopy volume as a matrix of slices by flattened in-plane voxels, preserving the header geometry and voxel size.",
+    "doc": "src/reader/readers/mrc_reader.MrcReader.md",
+    "status": "generated"
+  },
+  {
     "id": "MtxReader",
     "kind": "reader",
     "title": "MtxReader",
@@ -630,6 +660,16 @@
     "status": "generated"
   },
   {
+    "id": "NiftiReader",
+    "kind": "reader",
+    "title": "Read a NIfTI-1 volume",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read a single-file NIfTI-1 volume as a matrix of slices by flattened in-plane voxels, applying scl_slope/scl_inter and preserving the header geometry and affine.",
+    "doc": "src/reader/readers/nifti_reader.NiftiReader.md",
+    "status": "generated"
+  },
+  {
     "id": "NpyReader",
     "kind": "reader",
     "title": "Reader for 2D numeric .npy/.npz arrays; output is sample x feature",
@@ -640,6 +680,26 @@
     "status": "generated"
   },
   {
+    "id": "NrrdReader",
+    "kind": "reader",
+    "title": "Read a NRRD volume",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read a NRRD volume (raw or gzip encoded, 2-D or 3-D) as a matrix of slices by flattened in-plane voxels, preserving the NRRD spacing, space origin and axis kinds.",
+    "doc": "src/reader/readers/nrrd_reader.NrrdReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "ObjReader",
+    "kind": "reader",
+    "title": "Read a Wavefront OBJ mesh",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read a Wavefront OBJ triangular mesh as one table: vertex rows carry x/y/z and face rows carry three vertex indices. Polygon faces are fan-triangulated.",
+    "doc": "src/reader/readers/obj_reader.ObjReader.md",
+    "status": "generated"
+  },
+  {
     "id": "OboReader",
     "kind": "reader",
     "title": "Reader for [Term] stanzas in OBO files; output is term x field",
@@ -647,6 +707,16 @@
     "version": "1.0.0",
     "description": "Reader for [Term] stanzas in OBO files; output is term x field.",
     "doc": "src/reader/readers/obo_reader.OboReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "OffReader",
+    "kind": "reader",
+    "title": "Read an OFF polygon mesh",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read an ASCII OFF (Object File Format) polygon mesh as one table: vertex rows carry x/y/z and face rows carry three vertex indices.",
+    "doc": "src/reader/readers/off_reader.OffReader.md",
     "status": "generated"
   },
   {
@@ -690,6 +760,26 @@
     "status": "generated"
   },
   {
+    "id": "PdbmlReader",
+    "kind": "reader",
+    "title": "PDBML coordinate reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "PDBML coordinate reader with the same fields as the PDB reader.",
+    "doc": "src/reader/readers/pdbml_reader.PdbmlReader.md",
+    "status": "generated"
+  },
+  {
+    "id": "PdbqtReader",
+    "kind": "reader",
+    "title": "AutoDock PDBQT coordinate reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "ATOM/HETATM records with AutoDock partial charges and atom types.",
+    "doc": "src/reader/readers/pdbqt_reader.PdbqtReader.md",
+    "status": "generated"
+  },
+  {
     "id": "PedReader",
     "kind": "reader",
     "title": "PLINK PED reader",
@@ -720,6 +810,16 @@
     "status": "generated"
   },
   {
+    "id": "PhyloXmlReader",
+    "kind": "reader",
+    "title": "Parse a PhyloXML tree into a node x field table",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Parse a PhyloXML tree into a node x field table.",
+    "doc": "src/reader/readers/phyloxml_reader.PhyloXmlReader.md",
+    "status": "generated"
+  },
+  {
     "id": "Plink1Reader",
     "kind": "reader",
     "title": "Plink1Reader",
@@ -737,6 +837,16 @@
     "version": "1.0.0",
     "description": "",
     "doc": "src/reader/readers/plink_reader.Plink2Reader.md",
+    "status": "generated"
+  },
+  {
+    "id": "PlyReader",
+    "kind": "reader",
+    "title": "Read a PLY polygon mesh",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read an ASCII or binary PLY polygon mesh as one table: vertex rows carry x/y/z and face rows carry three vertex indices.",
+    "doc": "src/reader/readers/ply_reader.PlyReader.md",
     "status": "generated"
   },
   {
@@ -800,6 +910,16 @@
     "status": "generated"
   },
   {
+    "id": "StlReader",
+    "kind": "reader",
+    "title": "Read an STL triangular mesh",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Read a binary or ASCII STL triangular mesh as one table: vertex rows carry x/y/z and facet rows carry three vertex indices.",
+    "doc": "src/reader/readers/stl_reader.StlReader.md",
+    "status": "generated"
+  },
+  {
     "id": "StockholmReader",
     "kind": "reader",
     "title": "Reader for Stockholm alignments",
@@ -817,6 +937,16 @@
     "version": "1.0.0",
     "description": "Reader for 10x Cell Ranger h5 count matrices.",
     "doc": "src/reader/readers/tenx_h5_reader.TenxH5Reader.md",
+    "status": "generated"
+  },
+  {
+    "id": "TpedReader",
+    "kind": "reader",
+    "title": "PLINK .tped genotype reader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "PLINK 1.9 .tped/.tfam hard-call genotypes.",
+    "doc": "src/reader/readers/tped_reader.TpedReader.md",
     "status": "generated"
   },
   {

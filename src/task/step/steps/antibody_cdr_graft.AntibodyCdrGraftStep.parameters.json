@@ -1,0 +1,60 @@
+{
+ "$schema": "http://json-schema.org/draft-2020-12/schema",
+ "type": "object",
+ "title": "CDR 移植",
+ "description": "把供体 VH/VHH 的 CDR 环移植到受体框架上（Kabat 锚点）。",
+ "additionalProperties": false,
+ "properties": {
+  "sequence_dim": {
+   "type": "string",
+   "default": "sequence",
+   "title": "序列维度",
+   "x-ui-group": "basic",
+   "x-ui-order": 10
+  },
+  "position_dim": {
+   "type": "string",
+   "default": "position",
+   "title": "位置维度",
+   "x-ui-group": "basic",
+   "x-ui-order": 20
+  },
+  "graft_dim": {
+   "type": "string",
+   "default": "graft",
+   "title": "移植维度",
+   "x-ui-group": "advanced",
+   "x-ui-order": 30
+  },
+  "donor_index": {
+   "type": "integer",
+   "default": 1,
+   "title": "供体序号",
+   "x-ui-group": "basic",
+   "x-ui-order": 40,
+   "minimum": 1
+  },
+  "acceptor_index": {
+   "type": "integer",
+   "default": 2,
+   "title": "受体序号",
+   "x-ui-group": "basic",
+   "x-ui-order": 50,
+   "minimum": 1
+  },
+  "regions": {
+   "type": "string",
+   "default": "CDR1,CDR2,CDR3",
+   "title": "移植区域",
+   "x-ui-group": "basic",
+   "x-ui-order": 60
+  },
+  "output": {
+   "type": "string",
+   "default": "grafts",
+   "title": "输出名称",
+   "x-ui-group": "advanced",
+   "x-ui-order": 70
+  }
+ }
+}

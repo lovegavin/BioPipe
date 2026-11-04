@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "OpenMM 势能与能量最小化",
+  "description": "用 OpenMM 为蛋白结构建系并计算势能，可选执行能量最小化。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维度",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "forcefield": {
+      "title": "力场文件",
+      "type": "string",
+      "default": "amber14-all.xml",
+      "x-ui-group": "模型",
+      "x-ui-order": 1
+    },
+    "implicit_model": {
+      "title": "隐式溶剂",
+      "type": "string",
+      "default": "implicit/gbn2.xml",
+      "x-ui-group": "模型",
+      "x-ui-order": 2
+    },
+    "ph": {
+      "title": "质子化 pH",
+      "type": "number",
+      "default": 7.0,
+      "minimum": 0.1,
+      "maximum": 13.9,
+      "x-ui-group": "模型",
+      "x-ui-order": 3
+    },
+    "minimize": {
+      "title": "执行最小化",
+      "type": "boolean",
+      "default": true,
+      "x-ui-group": "模型",
+      "x-ui-order": 4
+    },
+    "max_iterations": {
+      "title": "最小化迭代上限",
+      "type": "integer",
+      "default": 300,
+      "minimum": 1,
+      "maximum": 100000,
+      "x-ui-group": "模型",
+      "x-ui-order": 5
+    },
+    "tolerance": {
+      "title": "收敛容差 kJ/mol/nm",
+      "type": "number",
+      "default": 10.0,
+      "minimum": 0.001,
+      "maximum": 10000.0,
+      "x-ui-group": "模型",
+      "x-ui-order": 6
+    },
+    "stage_dim": {
+      "title": "阶段维度",
+      "type": "string",
+      "default": "stage",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    },
+    "output": {
+      "title": "输出参数",
+      "type": "string",
+      "default": "energy",
+      "x-ui-group": "输出",
+      "x-ui-order": 2
+    }
+  }
+}

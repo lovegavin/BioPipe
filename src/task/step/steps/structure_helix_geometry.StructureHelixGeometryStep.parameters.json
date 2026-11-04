@@ -1,0 +1,60 @@
+{
+  "type": "object",
+  "title": "Structure Helix Geometry Parameters",
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "title": "原子维度",
+      "default": "atom",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "字段维度",
+      "default": "field",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "helix_dim": {
+      "type": "string",
+      "title": "螺旋维度",
+      "default": "helix",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "ca_distance": {
+      "type": "number",
+      "title": "CA 间距上限",
+      "minimum": 2.0,
+      "maximum": 6.0,
+      "default": 3.9,
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "span_distance": {
+      "type": "number",
+      "title": "i 到 i+3 距离上限",
+      "minimum": 3.0,
+      "maximum": 9.0,
+      "default": 6.2,
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "min_length": {
+      "type": "integer",
+      "title": "最短螺旋长度",
+      "minimum": 4,
+      "maximum": 60,
+      "default": 4,
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "default": "helices"
+    }
+  },
+  "additionalProperties": false
+}

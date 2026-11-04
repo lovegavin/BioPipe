@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "PAE 矩阵摘要",
+  "description": "按行汇总 PAE 矩阵：平均 PAE、最大 PAE 与阈值以下比例。",
+  "additionalProperties": false,
+  "properties": {
+    "row_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "行维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "col_dim": {
+      "type": "string",
+      "default": "residue_b",
+      "title": "列维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "threshold": {
+      "type": "number",
+      "default": 10.0,
+      "title": "置信阈值 (Å)",
+      "x-ui-group": "basic",
+      "x-ui-order": 30,
+      "minimum": 0.0,
+      "maximum": 100.0
+    },
+    "output": {
+      "type": "string",
+      "default": "pae",
+      "title": "输出名",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "k_mer": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 6,
+      "default": 3,
+      "title": "k-mer 长度",
+      "description": "统计的 k-mer 长度（1-6）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "kmer_profile",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    }
+  }
+}

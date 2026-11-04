@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "RNA 可及性参数",
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度名",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度名",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "temperature": {
+      "title": "温度（°C）",
+      "type": "number",
+      "default": 37.0,
+      "minimum": 1.0,
+      "maximum": 99.0,
+      "x-ui-group": "模型",
+      "x-ui-order": 3
+    },
+    "threshold": {
+      "title": "可及阈值",
+      "type": "number",
+      "default": 0.5,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "x-ui-group": "后处理",
+      "x-ui-order": 4
+    },
+    "min_length": {
+      "title": "最短可及片段",
+      "type": "integer",
+      "default": 2,
+      "minimum": 1,
+      "maximum": 50,
+      "x-ui-group": "后处理",
+      "x-ui-order": 5
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "accessibility",
+      "x-ui-group": "输出",
+      "x-ui-order": 6
+    }
+  }
+}

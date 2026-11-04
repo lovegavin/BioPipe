@@ -1,0 +1,509 @@
+{
+  "id": "route_765bf596a9a5",
+  "version": 2,
+  "updated_at": "2026-11-03T17:10:57.328697+00:00",
+  "graph": {
+    "schema_version": 2,
+    "name": "Single-cell Loom workflow",
+    "base_dir": "routes/single_cell_loom",
+    "nodes": [
+      {
+        "id": "expr",
+        "kind": "source",
+        "operator": null,
+        "title": "expr",
+        "position": {
+          "x": 70.0,
+          "y": 100.0
+        },
+        "source": {
+          "reader": "LoomReader",
+          "path": "input/small.loom",
+          "dims": [
+            "gene",
+            "cell"
+          ],
+          "labels": {
+            "cell": "builtin",
+            "gene": "builtin"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "markers",
+        "kind": "source",
+        "operator": null,
+        "title": "markers",
+        "position": {
+          "x": 70.0,
+          "y": 310.0
+        },
+        "source": {
+          "reader": "GmtReader",
+          "path": "input/markers.gmt",
+          "dims": [
+            "gene",
+            "gene_set"
+          ],
+          "labels": {
+            "gene": "builtin",
+            "gene_set": "builtin"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "meta",
+        "kind": "source",
+        "operator": null,
+        "title": "meta",
+        "position": {
+          "x": 70.0,
+          "y": 520.0
+        },
+        "source": {
+          "reader": "CsvReader",
+          "path": "input/meta.csv",
+          "dims": [
+            "cell",
+            "feature"
+          ],
+          "labels": {
+            "cell": {
+              "feature": 0
+            },
+            "feature": "builtin"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "qc_metrics_1",
+        "kind": "operator",
+        "operator": "qc_metrics",
+        "title": "qc_metrics",
+        "position": {
+          "x": 360.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "normalize_2",
+        "kind": "operator",
+        "operator": "normalize",
+        "title": "归一化",
+        "position": {
+          "x": 360.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "log_transform_3",
+        "kind": "operator",
+        "operator": "log_transform",
+        "title": "Log",
+        "position": {
+          "x": 650.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "transpose_4",
+        "kind": "operator",
+        "operator": "transpose",
+        "title": "维度转置",
+        "position": {
+          "x": 940.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "doublet_detect_5",
+        "kind": "operator",
+        "operator": "doublet_detect",
+        "title": "Doublet detection",
+        "position": {
+          "x": 1230.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "pseudobulk_6",
+        "kind": "operator",
+        "operator": "pseudobulk",
+        "title": "Pseudobulk aggregation",
+        "position": {
+          "x": 1230.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 2,
+        "route": null
+      },
+      {
+        "id": "marker_score_7",
+        "kind": "operator",
+        "operator": "marker_score",
+        "title": "Signature score",
+        "position": {
+          "x": 1230.0,
+          "y": 520.0
+        },
+        "source": null,
+        "input_count": 2,
+        "route": null
+      },
+      {
+        "id": "describe_8",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 650.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "describe_9",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 1520.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "describe_10",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 1520.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "describe_11",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 1520.0,
+          "y": 520.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      }
+    ],
+    "edges": [
+      {
+        "id": "expr-qc_metrics_1-0",
+        "source": "expr",
+        "target": "qc_metrics_1",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "expr-normalize_2-0",
+        "source": "expr",
+        "target": "normalize_2",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "normalize_2-log_transform_3-0",
+        "source": "normalize_2",
+        "target": "log_transform_3",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "log_transform_3-transpose_4-0",
+        "source": "log_transform_3",
+        "target": "transpose_4",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "transpose_4-doublet_detect_5-0",
+        "source": "transpose_4",
+        "target": "doublet_detect_5",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "transpose_4-pseudobulk_6-0",
+        "source": "transpose_4",
+        "target": "pseudobulk_6",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "meta-pseudobulk_6-1",
+        "source": "meta",
+        "target": "pseudobulk_6",
+        "sourceHandle": "out",
+        "targetHandle": "in-1"
+      },
+      {
+        "id": "transpose_4-marker_score_7-0",
+        "source": "transpose_4",
+        "target": "marker_score_7",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "markers-marker_score_7-1",
+        "source": "markers",
+        "target": "marker_score_7",
+        "sourceHandle": "out",
+        "targetHandle": "in-1"
+      },
+      {
+        "id": "qc_metrics_1-describe_8-0",
+        "source": "qc_metrics_1",
+        "target": "describe_8",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "doublet_detect_5-describe_9-0",
+        "source": "doublet_detect_5",
+        "target": "describe_9",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "pseudobulk_6-describe_10-0",
+        "source": "pseudobulk_6",
+        "target": "describe_10",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "marker_score_7-describe_11-0",
+        "source": "marker_score_7",
+        "target": "describe_11",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      }
+    ],
+    "runtime": {},
+    "manifest_extra": {},
+    "interface": {
+      "version": 1,
+      "inputs": [
+        {
+          "node_id": "expr",
+          "label": "expr",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "gene",
+              "cell"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        },
+        {
+          "node_id": "markers",
+          "label": "markers",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "gene",
+              "gene_set"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        },
+        {
+          "node_id": "meta",
+          "label": "meta",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "cell",
+              "feature"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "node_id": "qc_metrics_1",
+          "handle": "out",
+          "label": "qc_metrics",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {},
+            "axis_info": {},
+            "info_open": true,
+            "axis_info_open": true,
+            "ndim": 2,
+            "numeric": true
+          }
+        },
+        {
+          "node_id": "doublet_detect_5",
+          "handle": "out",
+          "label": "Doublet detection",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "axis_info": {},
+            "info_open": false,
+            "axis_info_open": false,
+            "ndim": 2,
+            "numeric": true
+          }
+        },
+        {
+          "node_id": "pseudobulk_6",
+          "handle": "out",
+          "label": "Pseudobulk aggregation",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "axis_info": {},
+            "info_open": false,
+            "axis_info_open": false,
+            "ndim": 2,
+            "numeric": true
+          }
+        },
+        {
+          "node_id": "marker_score_7",
+          "handle": "out",
+          "label": "Signature score",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "axis_info": {},
+            "info_open": false,
+            "axis_info_open": false,
+            "ndim": 2,
+            "numeric": true
+          }
+        }
+      ]
+    },
+    "plugin_lock": {}
+  },
+  "parameters_file": "parameters/route_765bf596a9a5/v2.json",
+  "execution_file": "execution/route_765bf596a9a5/v2.json"
+}

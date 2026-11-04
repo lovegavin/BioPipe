@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "description": "Score every single-residue substitution of a backbone chain with the official ESM-IF1 inverse-folding model.",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "Dim name of the structure form's atom axis.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "Dim name of the structure form's field axis.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "chain": {
+      "type": "string",
+      "default": "A",
+      "title": "扫描链",
+      "description": "Chain whose backbone conditions the sequence probabilities.",
+      "minLength": 1,
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "model_path": {
+      "type": "string",
+      "default": "",
+      "title": "ESM-IF 权重路径",
+      "description": "Local ESM-IF1 checkpoint such as esm_if1_gvp4_t16_142M_UR50.pt. No weights are downloaded automatically.",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "positions": {
+      "type": "string",
+      "default": "",
+      "title": "扫描位点",
+      "description": "Comma separated 1-based positions or ranges such as 12,14-16. Leave empty to scan the whole chain.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "max_positions": {
+      "type": "integer",
+      "default": 256,
+      "minimum": 1,
+      "title": "最大位点数",
+      "description": "Refuse scans wider than this many positions to bound memory and runtime.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "mutations",
+      "title": "输出名称",
+      "description": "Form name registered in the execution context.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "vina_dock parameters",
+  "description": "AutoDock Vina 分子对接参数。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "receptor_path": {
+      "type": "string",
+      "title": "受体 PDBQT",
+      "description": "AutoDock Vina 受体文件（.pdbqt）。",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "ligand_path": {
+      "type": "string",
+      "title": "配体 PDBQT",
+      "description": "配体文件（.pdbqt），可用 Meeko/ADFR 从 SDF 转换。",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "auto_center": {
+      "type": "boolean",
+      "title": "自动居中",
+      "description": "以配体首构象质心作为盒中心。",
+      "default": true,
+      "x-ui-group": "参数",
+      "x-ui-order": 1
+    },
+    "center_x": {
+      "type": "number",
+      "title": "中心 X",
+      "description": "auto_center 关闭时使用。",
+      "default": 0.0,
+      "x-ui-group": "参数",
+      "x-ui-order": 2
+    },
+    "center_y": {
+      "type": "number",
+      "title": "中心 Y",
+      "description": "auto_center 关闭时使用。",
+      "default": 0.0,
+      "x-ui-group": "参数",
+      "x-ui-order": 3
+    },
+    "center_z": {
+      "type": "number",
+      "title": "中心 Z",
+      "description": "auto_center 关闭时使用。",
+      "default": 0.0,
+      "x-ui-group": "参数",
+      "x-ui-order": 4
+    },
+    "size_x": {
+      "type": "number",
+      "title": "盒子 X",
+      "description": "搜索盒尺寸（Å）。",
+      "default": 20.0,
+      "x-ui-group": "参数",
+      "x-ui-order": 5,
+      "minimum": 5.0,
+      "maximum": 60.0
+    },
+    "size_y": {
+      "type": "number",
+      "title": "盒子 Y",
+      "description": "搜索盒尺寸（Å）。",
+      "default": 20.0,
+      "x-ui-group": "参数",
+      "x-ui-order": 6,
+      "minimum": 5.0,
+      "maximum": 60.0
+    },
+    "size_z": {
+      "type": "number",
+      "title": "盒子 Z",
+      "description": "搜索盒尺寸（Å）。",
+      "default": 20.0,
+      "x-ui-group": "参数",
+      "x-ui-order": 7,
+      "minimum": 5.0,
+      "maximum": 60.0
+    },
+    "num_modes": {
+      "type": "integer",
+      "title": "构象数",
+      "description": "输出结合构象数量。",
+      "default": 9,
+      "x-ui-group": "参数",
+      "x-ui-order": 8,
+      "minimum": 1,
+      "maximum": 50
+    },
+    "exhaustiveness": {
+      "type": "integer",
+      "title": "搜索强度",
+      "description": "Vina exhaustiveness。",
+      "default": 8,
+      "x-ui-group": "参数",
+      "x-ui-order": 9,
+      "minimum": 1,
+      "maximum": 64
+    },
+    "seed": {
+      "type": "integer",
+      "title": "随机种子",
+      "description": "Vina 随机种子。",
+      "default": 42,
+      "x-ui-group": "参数",
+      "x-ui-order": 10,
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "vina_path": {
+      "type": "string",
+      "title": "Vina 可执行文件",
+      "description": "vina 二进制路径或 PATH 中的名称。",
+      "default": "vina",
+      "x-ui-group": "参数",
+      "x-ui-order": 11
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "title": "超时（秒）",
+      "description": "对接最长运行时间。",
+      "default": 1800,
+      "x-ui-group": "参数",
+      "x-ui-order": 12,
+      "minimum": 60,
+      "maximum": 86400
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "description": "输出 Form 名称。",
+      "default": "pose",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

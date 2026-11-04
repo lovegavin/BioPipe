@@ -1,0 +1,175 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "热点掩码设计",
+  "description": "按接触密度对界面残基排序，只保留热点为可设计位点，其余残基固定后用官方 ProteinMPNN 重新设计。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "title": "原子维度",
+      "x-ui-group": "Dimension",
+      "x-ui-order": 1,
+      "description": "结构 Form 的原子维度名。",
+      "default": "atom"
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "字段维度",
+      "x-ui-group": "Dimension",
+      "x-ui-order": 2,
+      "description": "结构 Form 的字段维度名。",
+      "default": "field"
+    },
+    "structure_path": {
+      "type": "string",
+      "title": "结构文件",
+      "x-ui-group": "Input",
+      "x-ui-order": 3,
+      "description": "与 Form 对应的 PDB 文件路径。",
+      "default": ""
+    },
+    "binder_chains": {
+      "type": "string",
+      "title": "抗体链",
+      "x-ui-group": "Chains",
+      "x-ui-order": 4,
+      "description": "逗号或空格分隔的抗体链。",
+      "default": ""
+    },
+    "target_chains": {
+      "type": "string",
+      "title": "抗原链",
+      "x-ui-group": "Chains",
+      "x-ui-order": 5,
+      "description": "逗号或空格分隔的抗原链。",
+      "default": ""
+    },
+    "cutoff": {
+      "type": "number",
+      "title": "接触截断",
+      "x-ui-group": "Contacts",
+      "x-ui-order": 6,
+      "description": "界面重原子接触距离上限（Å）。",
+      "default": 5.0,
+      "minimum": 3.0,
+      "maximum": 10.0
+    },
+    "min_contacts": {
+      "type": "integer",
+      "title": "最少接触数",
+      "x-ui-group": "Contacts",
+      "x-ui-order": 7,
+      "description": "残基进入热点排序所需的最少接触原子对数。",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 20
+    },
+    "top_n": {
+      "type": "integer",
+      "title": "热点数量",
+      "x-ui-group": "Design",
+      "x-ui-order": 8,
+      "description": "只设计接触最多的前 N 个残基；0 表示全部界面残基。",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 1000
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "title": "ProteinMPNN 目录",
+      "x-ui-group": "Design",
+      "x-ui-order": 9,
+      "description": "官方 ProteinMPNN 仓库目录。",
+      "default": ""
+    },
+    "weights_path": {
+      "type": "string",
+      "title": "权重目录",
+      "x-ui-group": "Design",
+      "x-ui-order": 10,
+      "description": "v_48_*.pt 权重所在目录；留空用仓库内 vanilla_model_weights。",
+      "default": ""
+    },
+    "python_executable": {
+      "type": "string",
+      "title": "Python 解释器",
+      "x-ui-group": "Design",
+      "x-ui-order": 11,
+      "description": "运行官方脚本的解释器。",
+      "default": ""
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "title": "序列数量",
+      "x-ui-group": "Design",
+      "x-ui-order": 12,
+      "description": "每个目标生成的序列数。",
+      "default": 8,
+      "minimum": 1,
+      "maximum": 128
+    },
+    "sampling_temp": {
+      "type": "string",
+      "title": "采样温度",
+      "x-ui-group": "Design",
+      "x-ui-order": 13,
+      "description": "ProteinMPNN 采样温度字符串。",
+      "default": "0.1"
+    },
+    "seed": {
+      "type": "integer",
+      "title": "随机种子",
+      "x-ui-group": "Design",
+      "x-ui-order": 14,
+      "description": "采样随机种子。",
+      "default": 1,
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "model_name": {
+      "type": "string",
+      "title": "模型",
+      "x-ui-group": "Design",
+      "x-ui-order": 15,
+      "description": "ProteinMPNN 权重名。",
+      "default": "v_48_020",
+      "enum": [
+        "v_48_002",
+        "v_48_010",
+        "v_48_020",
+        "v_48_030"
+      ]
+    },
+    "device": {
+      "type": "string",
+      "title": "设备",
+      "x-ui-group": "Design",
+      "x-ui-order": 16,
+      "description": "运行设备。",
+      "default": "cpu",
+      "enum": [
+        "cpu",
+        "cuda"
+      ]
+    },
+    "timeout": {
+      "type": "integer",
+      "title": "超时",
+      "x-ui-group": "Design",
+      "x-ui-order": 17,
+      "description": "官方脚本超时秒数。",
+      "default": 1800,
+      "minimum": 1,
+      "maximum": 86400
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名",
+      "x-ui-group": "Output",
+      "x-ui-order": 18,
+      "description": "输出 Form 在上下文中的名称。",
+      "default": "designs"
+    }
+  }
+}

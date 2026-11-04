@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {"type": "string", "title": "Sample dimension", "default": "sample", "x-ui-group": "basic", "x-ui-order": 0},
+    "response_dim": {"type": "string", "title": "Response dimension", "default": "response", "x-ui-group": "basic", "x-ui-order": 10},
+    "predictor_dim": {"type": "string", "title": "Predictor dimension", "default": "predictor", "x-ui-group": "basic", "x-ui-order": 20},
+    "n_axes": {"type": "integer", "title": "Number of axes", "default": 4, "minimum": 1, "x-ui-group": "basic", "x-ui-order": 30},
+    "output": {"type": "string", "title": "Output parameter", "default": "output", "x-ui-group": "advanced", "x-ui-order": 100}
+  },
+  "required": [],
+  "additionalProperties": false
+}

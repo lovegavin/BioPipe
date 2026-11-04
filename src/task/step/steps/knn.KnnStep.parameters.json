@@ -1,0 +1,78 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "title": "Sample dimension",
+      "default": "sample",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "title": "Feature dimension",
+      "default": "feature",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "label_dim": {
+      "type": "string",
+      "title": "Label dimension",
+      "default": "label",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "target_label": {
+      "type": "string",
+      "title": "Target column",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "n_neighbors": {
+      "type": "integer",
+      "title": "Neighbours",
+      "default": 5,
+      "x-ui-group": "basic",
+      "x-ui-order": 40,
+      "minimum": 1
+    },
+    "weights": {
+      "type": "string",
+      "title": "Weights",
+      "default": "uniform",
+      "x-ui-group": "basic",
+      "x-ui-order": 50,
+      "enum": [
+        "uniform",
+        "distance"
+      ]
+    },
+    "test_size": {
+      "type": "number",
+      "title": "Test size",
+      "default": 0.25,
+      "x-ui-group": "basic",
+      "x-ui-order": 60,
+      "minimum": 0.05,
+      "maximum": 0.5
+    },
+    "random_state": {
+      "type": "integer",
+      "title": "Random seed",
+      "default": 0,
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "output",
+      "x-ui-group": "basic",
+      "x-ui-order": 80
+    }
+  },
+  "required": [
+    "target_label"
+  ],
+  "additionalProperties": false
+}

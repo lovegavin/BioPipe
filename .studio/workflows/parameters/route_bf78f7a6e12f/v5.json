@@ -1,0 +1,127 @@
+{
+  "format": "biopipe.graph-parameters",
+  "schema_version": 1,
+  "params": {},
+  "nodes": {
+    "clinical": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "header": true,
+        "reader": "csv",
+        "sep": "\t"
+      }
+    },
+    "kaplan_meier_1": {
+      "kind": "operator",
+      "operator": "kaplan_meier",
+      "params": {
+        "xlabel": "Time (days)",
+        "ylabel": "Survival probability",
+        "show_censors": true,
+        "show_ci": false,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "event_label": "OS_event_nature2012",
+        "filename": "km_stage.png",
+        "group_label": "AJCC_Stage_nature2012",
+        "group_map": {
+          "Stage IA": "Stage I",
+          "Stage IB": "Stage I",
+          "Stage IIA": "Stage II",
+          "Stage IIB": "Stage II",
+          "Stage IIIA": "Stage III",
+          "Stage IIIB": "Stage III",
+          "Stage IIIC": "Stage III",
+          "Stage IV": "Stage IV"
+        },
+        "groups": [
+          "Stage I",
+          "Stage II",
+          "Stage III",
+          "Stage IV"
+        ],
+        "time_label": "OS_Time_nature2012",
+        "title": "TCGA BRCA: overall survival by AJCC stage"
+      },
+      "context_params": {}
+    },
+    "logrank_test_2": {
+      "kind": "operator",
+      "operator": "logrank_test",
+      "params": {
+        "pairwise": true,
+        "event_label": "OS_event_nature2012",
+        "group_label": "AJCC_Stage_nature2012",
+        "group_map": {
+          "Stage IA": "Stage I",
+          "Stage IB": "Stage I",
+          "Stage IIA": "Stage II",
+          "Stage IIB": "Stage II",
+          "Stage IIIA": "Stage III",
+          "Stage IIIB": "Stage III",
+          "Stage IIIC": "Stage III",
+          "Stage IV": "Stage IV"
+        },
+        "groups": [
+          "Stage I",
+          "Stage II",
+          "Stage III",
+          "Stage IV"
+        ],
+        "output": "logrank_result",
+        "time_label": "OS_Time_nature2012"
+      },
+      "context_params": {}
+    },
+    "cox_regression_3": {
+      "kind": "operator",
+      "operator": "cox_regression",
+      "params": {
+        "categorical": [
+          "AJCC_Stage_nature2012",
+          "Gender_nature2012"
+        ],
+        "covariates": [
+          "Age_at_Initial_Pathologic_Diagnosis_nature2012",
+          "AJCC_Stage_nature2012",
+          "Gender_nature2012"
+        ],
+        "event_label": "OS_event_nature2012",
+        "output": "cox_result",
+        "time_label": "OS_Time_nature2012"
+      },
+      "context_params": {}
+    },
+    "forest_plot_4": {
+      "kind": "operator",
+      "operator": "forest_plot",
+      "params": {
+        "dim": "covariate",
+        "stat_dim": "statistic",
+        "hr_label": "HR",
+        "low_label": "CI_low",
+        "high_label": "CI_high",
+        "p_label": "P",
+        "xlabel": "Hazard ratio (95% CI)",
+        "color_sig": "#D62728",
+        "color_ns": "#4C72B0",
+        "sort_by": "p",
+        "log_scale": true,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "forest.png",
+        "title": "TCGA BRCA: multivariable Cox regression"
+      },
+      "context_params": {}
+    },
+    "describe_5": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    }
+  }
+}

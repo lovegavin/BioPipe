@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "Foldseek 结构聚类参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_dir": {
+      "title": "结构目录",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "structure_paths": {
+      "title": "结构文件列表（逗号分隔）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "foldseek_path": {
+      "title": "Foldseek 可执行文件",
+      "type": "string",
+      "default": "foldseek",
+      "x-ui-group": "依赖",
+      "x-ui-order": 1
+    },
+    "tmscore_threshold": {
+      "title": "TM-score 阈值",
+      "type": "number",
+      "default": 0.6,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "x-ui-group": "聚类",
+      "x-ui-order": 1
+    },
+    "coverage": {
+      "title": "覆盖度",
+      "type": "number",
+      "default": 0.8,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "x-ui-group": "聚类",
+      "x-ui-order": 2
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 600,
+      "minimum": 10,
+      "maximum": 7200,
+      "x-ui-group": "依赖",
+      "x-ui-order": 2
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "clusters",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

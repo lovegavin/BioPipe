@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "fpocket 口袋检测参数",
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度名",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维度名",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "fpocket_path": {
+      "title": "fpocket 可执行文件",
+      "type": "string",
+      "default": "fpocket",
+      "x-ui-group": "依赖",
+      "x-ui-order": 3
+    },
+    "min_score": {
+      "title": "最低口袋分数",
+      "type": "number",
+      "default": 0.0,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "x-ui-group": "筛选",
+      "x-ui-order": 4
+    },
+    "min_druggability": {
+      "title": "最低可成药性",
+      "type": "number",
+      "default": 0.0,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "x-ui-group": "筛选",
+      "x-ui-order": 5
+    },
+    "max_pockets": {
+      "title": "最多保留口袋数 (0=全部)",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 100,
+      "x-ui-group": "筛选",
+      "x-ui-order": 6
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 1800,
+      "minimum": 30,
+      "maximum": 7200,
+      "x-ui-group": "依赖",
+      "x-ui-order": 7
+    },
+    "pocket_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "pocket",
+      "x-ui-group": "输出",
+      "x-ui-order": 8
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "pockets",
+      "x-ui-group": "输出",
+      "x-ui-order": 9
+    }
+  }
+}

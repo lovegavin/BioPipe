@@ -1,0 +1,645 @@
+{
+  "id": "route_f6f466bace35",
+  "version": 6,
+  "updated_at": "2026-11-03T17:10:59.122095+00:00",
+  "graph": {
+    "schema_version": 2,
+    "name": "GWAS",
+    "base_dir": ".studio/builtin-inputs/gwas",
+    "nodes": [
+      {
+        "id": "covar",
+        "kind": "source",
+        "operator": null,
+        "title": "covar",
+        "position": {
+          "x": 70.0,
+          "y": 100.0
+        },
+        "source": {
+          "reader": null,
+          "path": "input/covariates.csv",
+          "dims": [
+            "sample",
+            "feature"
+          ],
+          "labels": {
+            "feature": "builtin",
+            "sample": {
+              "feature": 0
+            }
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "geno",
+        "kind": "source",
+        "operator": null,
+        "title": "geno",
+        "position": {
+          "x": 70.0,
+          "y": 310.0
+        },
+        "source": {
+          "reader": null,
+          "path": "input/geno.vcf",
+          "dims": [
+            "variant",
+            "sample"
+          ],
+          "labels": {
+            "sample": "builtin",
+            "variant": "builtin"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "pheno",
+        "kind": "source",
+        "operator": null,
+        "title": "pheno",
+        "position": {
+          "x": 70.0,
+          "y": 520.0
+        },
+        "source": {
+          "reader": null,
+          "path": "input/phenotype.csv",
+          "dims": [
+            "sample",
+            "feature"
+          ],
+          "labels": {
+            "feature": "builtin",
+            "sample": {
+              "feature": 0
+            }
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "missing_1",
+        "kind": "operator",
+        "operator": "missing",
+        "title": "缺失值过滤",
+        "position": {
+          "x": 360.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "missing_2",
+        "kind": "operator",
+        "operator": "missing",
+        "title": "缺失值过滤",
+        "position": {
+          "x": 650.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "maf_3",
+        "kind": "operator",
+        "operator": "maf",
+        "title": "MAF",
+        "position": {
+          "x": 940.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "hwe_4",
+        "kind": "operator",
+        "operator": "hwe",
+        "title": "HWE",
+        "position": {
+          "x": 1230.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "ld_prune_5",
+        "kind": "operator",
+        "operator": "ld_prune",
+        "title": "LD pruning",
+        "position": {
+          "x": 1520.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "pca_6",
+        "kind": "operator",
+        "operator": "pca",
+        "title": "PCA",
+        "position": {
+          "x": 1810.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "transpose_7",
+        "kind": "operator",
+        "operator": "transpose",
+        "title": "维度转置",
+        "position": {
+          "x": 1520.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "rename_dim_8",
+        "kind": "operator",
+        "operator": "rename_dim",
+        "title": "重命名维度",
+        "position": {
+          "x": 1810.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "concat_9",
+        "kind": "operator",
+        "operator": "concat",
+        "title": "合并数据",
+        "position": {
+          "x": 2100.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 3,
+        "route": null
+      },
+      {
+        "id": "regress_10",
+        "kind": "operator",
+        "operator": "regress",
+        "title": "回归分析",
+        "position": {
+          "x": 2390.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "correction_11",
+        "kind": "operator",
+        "operator": "correction",
+        "title": "FDR",
+        "position": {
+          "x": 2680.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "attach_info_12",
+        "kind": "operator",
+        "operator": "attach_info",
+        "title": "附加注释",
+        "position": {
+          "x": 2970.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 2,
+        "route": null
+      },
+      {
+        "id": "manhattan_13",
+        "kind": "operator",
+        "operator": "manhattan",
+        "title": "曼哈顿图",
+        "position": {
+          "x": 3260.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "scatter_14",
+        "kind": "operator",
+        "operator": "scatter",
+        "title": "散点图",
+        "position": {
+          "x": 2100.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "histogram_15",
+        "kind": "operator",
+        "operator": "histogram",
+        "title": "直方图",
+        "position": {
+          "x": 2970.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "describe_16",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 2970.0,
+          "y": 520.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      }
+    ],
+    "edges": [
+      {
+        "id": "geno-missing_1-0",
+        "source": "geno",
+        "target": "missing_1",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "missing_1-missing_2-0",
+        "source": "missing_1",
+        "target": "missing_2",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "missing_2-maf_3-0",
+        "source": "missing_2",
+        "target": "maf_3",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "maf_3-hwe_4-0",
+        "source": "maf_3",
+        "target": "hwe_4",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "hwe_4-ld_prune_5-0",
+        "source": "hwe_4",
+        "target": "ld_prune_5",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "ld_prune_5-pca_6-0",
+        "source": "ld_prune_5",
+        "target": "pca_6",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "hwe_4-transpose_7-0",
+        "source": "hwe_4",
+        "target": "transpose_7",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "transpose_7-rename_dim_8-0",
+        "source": "transpose_7",
+        "target": "rename_dim_8",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "rename_dim_8-concat_9-0",
+        "source": "rename_dim_8",
+        "target": "concat_9",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "pheno-concat_9-1",
+        "source": "pheno",
+        "target": "concat_9",
+        "sourceHandle": "out",
+        "targetHandle": "in-1"
+      },
+      {
+        "id": "covar-concat_9-2",
+        "source": "covar",
+        "target": "concat_9",
+        "sourceHandle": "out",
+        "targetHandle": "in-2"
+      },
+      {
+        "id": "concat_9-regress_10-0",
+        "source": "concat_9",
+        "target": "regress_10",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "regress_10-correction_11-0",
+        "source": "regress_10",
+        "target": "correction_11",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "correction_11-attach_info_12-0",
+        "source": "correction_11",
+        "target": "attach_info_12",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "hwe_4-attach_info_12-1",
+        "source": "hwe_4",
+        "target": "attach_info_12",
+        "sourceHandle": "out",
+        "targetHandle": "in-1"
+      },
+      {
+        "id": "attach_info_12-manhattan_13-0",
+        "source": "attach_info_12",
+        "target": "manhattan_13",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "pca_6-scatter_14-0",
+        "source": "pca_6",
+        "target": "scatter_14",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "correction_11-histogram_15-0",
+        "source": "correction_11",
+        "target": "histogram_15",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "correction_11-describe_16-0",
+        "source": "correction_11",
+        "target": "describe_16",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      }
+    ],
+    "runtime": {},
+    "manifest_extra": {},
+    "interface": {
+      "version": 1,
+      "inputs": [
+        {
+          "node_id": "covar",
+          "label": "covar",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "sample",
+              "feature"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        },
+        {
+          "node_id": "geno",
+          "label": "geno",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "variant",
+              "sample"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              },
+              "representation": {
+                "type": "string",
+                "const": "hard_call"
+              },
+              "ploidy": {
+                "type": "integer",
+                "min": 1
+              },
+              "chrom": {
+                "type": "array",
+                "items": "string"
+              },
+              "pos": {
+                "type": "array",
+                "items": "integer"
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": [
+              {
+                "dim": "variant",
+                "fields": [
+                  "chrom",
+                  "pos"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "node_id": "pheno",
+          "label": "pheno",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "sample",
+              "feature"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "node_id": "pca_6",
+          "handle": "out",
+          "label": "PCA",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "sample",
+              "component"
+            ],
+            "labels": {
+              "sample": null,
+              "component": null
+            },
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "representation": {
+                "type": "string",
+                "const": "scores"
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "axis_info": {}
+          }
+        },
+        {
+          "node_id": "attach_info_12",
+          "handle": "out",
+          "label": "附加注释",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "feature",
+              "statistic"
+            ],
+            "labels": {
+              "feature": null,
+              "statistic": [
+                "BETA",
+                "SE",
+                "P",
+                "N",
+                "Q_VALUE",
+                "SIGNIFICANT"
+              ]
+            },
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "representation": {
+                "type": "string",
+                "const": "regression"
+              },
+              "correction_method": {
+                "type": "string",
+                "const": "fdr"
+              },
+              "chrom": {
+                "type": "array"
+              },
+              "pos": {
+                "type": "array"
+              }
+            },
+            "info_open": false,
+            "axis_info_open": true,
+            "axis_info": {
+              "feature": [
+                "chrom",
+                "pos"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "plugin_lock": {}
+  },
+  "parameters_file": "parameters/route_f6f466bace35/v6.json",
+  "execution_file": "execution/route_f6f466bace35/v6.json"
+}

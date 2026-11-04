@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "OpenFold 结构预测参数",
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度名",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度名",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "openfold_path": {
+      "title": "OpenFold 源码目录",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 3
+    },
+    "params_path": {
+      "title": "参数权重 (.pt)",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 4
+    },
+    "alignment_dir": {
+      "title": "预计算比对目录（可选）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 5
+    },
+    "template_dir": {
+      "title": "模板 mmCIF 目录（可选）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 6
+    },
+    "config_preset": {
+      "title": "配置预设",
+      "type": "string",
+      "default": "model_1_ptm",
+      "enum": [
+        "model_1",
+        "model_1_ptm",
+        "model_2",
+        "model_2_ptm",
+        "model_3",
+        "model_4",
+        "model_5"
+      ],
+      "x-ui-group": "模型",
+      "x-ui-order": 7
+    },
+    "device": {
+      "title": "设备",
+      "type": "string",
+      "default": "cpu",
+      "enum": [
+        "cpu",
+        "cuda"
+      ],
+      "x-ui-group": "模型",
+      "x-ui-order": 8
+    },
+    "skip_relaxation": {
+      "title": "跳过侧链松弛",
+      "type": "boolean",
+      "default": true,
+      "x-ui-group": "模型",
+      "x-ui-order": 9
+    },
+    "python_executable": {
+      "title": "Python 解释器",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 10
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 3600,
+      "minimum": 60,
+      "maximum": 14400,
+      "x-ui-group": "依赖",
+      "x-ui-order": 11
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "structure",
+      "x-ui-group": "输出",
+      "x-ui-order": 12
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "动态通讯路径参数",
+  "properties": {
+    "trajectory_path": {
+      "title": "轨迹 .npy 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "topology_path": {
+      "title": "拓扑 PDB 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "source": {
+      "title": "起始残基号",
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "x-ui-group": "路径",
+      "x-ui-order": 3
+    },
+    "target": {
+      "title": "目标残基号",
+      "type": "integer",
+      "default": 2,
+      "minimum": 1,
+      "x-ui-group": "路径",
+      "x-ui-order": 4
+    },
+    "min_correlation": {
+      "title": "最小相关阈值",
+      "type": "number",
+      "default": 0.05,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "x-ui-group": "路径",
+      "x-ui-order": 5
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "path",
+      "x-ui-group": "输出",
+      "x-ui-order": 6
+    }
+  }
+}

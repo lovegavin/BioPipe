@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "Feature dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "value_label": {
+      "type": "string",
+      "title": "Series column",
+      "description": "Column holding the time-ordered numeric series.",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "period": {
+      "type": "integer",
+      "minimum": 2,
+      "title": "Period",
+      "description": "Number of observations per seasonal cycle.",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "model": {
+      "type": "string",
+      "enum": ["additive", "multiplicative"],
+      "default": "additive",
+      "title": "Model",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "two_sided": {
+      "type": "boolean",
+      "default": true,
+      "title": "Two-sided moving average",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "required": ["value_label", "period"],
+  "additionalProperties": false
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Two-sample F test for variances",
+  "description": "F test for equality of two variances with a confidence interval for the ratio.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "Feature dimension",
+      "description": "Name of the feature dimension.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the sample dimension.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "group_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Group dimension",
+      "description": "Metadata dimension that holds the sample axis parallel to the group column.",
+      "x-ui-group": "Input",
+      "x-ui-order": 2
+    },
+    "group_label": {
+      "type": "string",
+      "title": "Group column",
+      "description": "Metadata column with exactly two group values.",
+      "x-ui-group": "Input",
+      "x-ui-order": 3
+    },
+    "alternative": {
+      "type": "string",
+      "enum": ["two-sided", "less", "greater"],
+      "default": "two-sided",
+      "title": "Alternative",
+      "description": "Direction of the variance ratio test.",
+      "x-ui-group": "Method",
+      "x-ui-order": 10
+    },
+    "conf_level": {
+      "type": "number",
+      "default": 0.95,
+      "minimum": 0.5,
+      "maximum": 0.999,
+      "title": "Confidence level",
+      "description": "Confidence level for the variance ratio interval.",
+      "x-ui-group": "Method",
+      "x-ui-order": 11
+    },
+    "output": {
+      "type": "string",
+      "default": "var_test",
+      "title": "Output name",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 99
+    }
+  },
+  "required": ["group_label"]
+}

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "description": "Scan Kabat CDR regions for post-translational liability motifs.",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "description": "Dim name of the sequence axis on the input form.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "description": "Dim name of the position axis on the input form.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "region_dim": {
+      "type": "string",
+      "default": "region",
+      "title": "区域维度",
+      "description": "Dim name assigned to the region axis on the output form.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "regions": {
+      "type": "string",
+      "default": "CDR1,CDR2,CDR3",
+      "title": "CDR 区域",
+      "description": "Comma separated CDR regions to scan (CDR1, CDR2, CDR3).",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "default": "liabilities",
+      "title": "输出名称",
+      "description": "Form name registered in the execution context.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    }
+  }
+}

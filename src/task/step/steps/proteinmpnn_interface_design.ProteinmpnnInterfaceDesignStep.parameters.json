@@ -1,0 +1,151 @@
+{
+  "type": "object",
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "minLength": 1,
+      "default": "",
+      "title": "PDB 结构路径",
+      "description": "Path to a complex PDB file (needs atom names, so it cannot come from a PdbReader table form).",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "binder_chains": {
+      "type": "string",
+      "default": "A",
+      "title": "设计链",
+      "description": "Binder chains to redesign, e.g. 'A' or 'AH'. All other chains are held fixed.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "target_chains": {
+      "type": "string",
+      "default": "",
+      "title": "固定链",
+      "description": "Chains to keep fixed. Empty uses every chain not listed as binder.",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 仓库路径",
+      "description": "Checkout containing protein_mpnn_run.py. Empty falls back to BIOPIPE_PROTEINMPNN_PATH.",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录",
+      "description": "Directory with v_48_*.pt. Empty uses <proteinmpnn_path>/vanilla_model_weights.",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "model_name": {
+      "type": "string",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "default": "v_48_020",
+      "title": "模型",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 4,
+      "title": "设计条数",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "design_ranges": {
+      "type": "string",
+      "default": "",
+      "title": "设计区间",
+      "description": "Restrict binder design to these residues, e.g. A:26-33,A:50-65 (VHH CDRs). Empty designs the whole binder chain.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    },
+    "fixed_positions": {
+      "type": "string",
+      "default": "",
+      "title": "额外固定位置",
+      "description": "Extra positions to keep fixed, e.g. A:1-20,B:5. Target chains are always fixed.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "bias_aa": {
+      "type": "string",
+      "default": "",
+      "title": "氨基酸偏好",
+      "description": "Per-amino-acid logit bias, e.g. 'C:-1.0,W:0.5' lowers cysteine and raises tryptophan.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    },
+    "omit_aa": {
+      "type": "string",
+      "default": "",
+      "title": "禁用氨基酸",
+      "description": "Residues never sampled, e.g. 'C' to avoid free cysteines.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    },
+    "tied_positions": {
+      "type": "string",
+      "default": "",
+      "title": "联动位置",
+      "description": "Positions tied across chains, e.g. 'A:12,B:12;A:14,B:14'.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 110
+    },
+    "sampling_temp": {
+      "type": "string",
+      "default": "0.1",
+      "title": "采样温度",
+      "description": "ProteinMPNN accepts one temperature or a space separated list.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 120
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1,
+      "title": "随机种子",
+      "description": "The official runner treats 0 as 'pick a random seed', so the default is 1.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 130
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "设备",
+      "x-ui-group": "advanced",
+      "x-ui-order": 140
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "Interpreter used for protein_mpnn_run.py. Empty uses the current interpreter.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 150
+    },
+    "timeout_seconds": {
+      "type": "number",
+      "minimum": 1,
+      "default": 3600,
+      "title": "超时秒数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 160
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 170
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,109 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "PDB Form 的原子维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "PDB Form 的字段维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "description": "输出中残基维度的名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "binder_chains": {
+      "type": "string",
+      "default": "A",
+      "title": "Binder 链",
+      "description": "逗号分隔的链标识；与 target_chains 至少给出一个。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "target_chains": {
+      "type": "string",
+      "default": "",
+      "title": "Target 链",
+      "description": "逗号分隔的链标识；为空时自动取其余链。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "cutoff": {
+      "type": "number",
+      "default": 5.0,
+      "minimum": 0.1,
+      "title": "接触距离阈值 (Å)",
+      "description": "统计跨链重原子接触的距离阈值。",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "min_contacts": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "title": "最小接触数",
+      "description": "只保留接触原子数不低于该值的残基。",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "sort_by": {
+      "type": "string",
+      "default": "contacts",
+      "enum": ["contacts", "buried"],
+      "title": "排序方式",
+      "description": "contacts：按接触数排序；buried：按埋藏面积排序。",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "probe_radius": {
+      "type": "number",
+      "default": 1.4,
+      "minimum": 1.0,
+      "maximum": 3.0,
+      "title": "探针半径 (Å)",
+      "description": "Shrake-Rupley SASA 计算使用的探针半径。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 80
+    },
+    "n_points": {
+      "type": "integer",
+      "default": 92,
+      "minimum": 64,
+      "maximum": 1024,
+      "title": "球面采样点数",
+      "description": "每个原子的 SASA 采样点数。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 90
+    },
+    "exclude_resnames": {
+      "type": "string",
+      "default": "HOH,WAT",
+      "title": "排除残基名",
+      "description": "逗号分隔的残基名，默认排除水。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    },
+    "output": {
+      "type": "string",
+      "default": "hotspots",
+      "title": "输出名称",
+      "description": "写入上下文的 Form 名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 110
+    }
+  }
+}

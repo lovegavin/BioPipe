@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "GNM 柔性分析参数",
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度名",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维度名",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "residue_dim": {
+      "title": "残基维度名",
+      "type": "string",
+      "default": "residue",
+      "x-ui-group": "输出",
+      "x-ui-order": 3
+    },
+    "chain": {
+      "title": "链（空为全部）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 4
+    },
+    "cutoff": {
+      "title": "接触截断（Å）",
+      "type": "number",
+      "default": 10.0,
+      "minimum": 4.0,
+      "maximum": 30.0,
+      "x-ui-group": "模型",
+      "x-ui-order": 5
+    },
+    "gamma": {
+      "title": "弹簧常数",
+      "type": "number",
+      "default": 1.0,
+      "minimum": 0.01,
+      "maximum": 100.0,
+      "x-ui-group": "模型",
+      "x-ui-order": 6
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "flexibility",
+      "x-ui-group": "输出",
+      "x-ui-order": 7
+    }
+  }
+}

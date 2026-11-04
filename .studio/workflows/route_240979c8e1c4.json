@@ -1,0 +1,243 @@
+{
+  "id": "route_240979c8e1c4",
+  "version": 4,
+  "updated_at": "2026-11-03T17:10:55.620960+00:00",
+  "graph": {
+    "schema_version": 2,
+    "name": "Hi-C from PAIRS",
+    "base_dir": ".studio/builtin-inputs/hic_pairs",
+    "nodes": [
+      {
+        "id": "reads",
+        "kind": "source",
+        "operator": null,
+        "title": "reads",
+        "position": {
+          "x": 70.0,
+          "y": 100.0
+        },
+        "source": {
+          "reader": null,
+          "path": "input/reads.pairs.gz",
+          "dims": [
+            "file"
+          ],
+          "labels": {},
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "build_contacts_1",
+        "kind": "operator",
+        "operator": "build_contacts",
+        "title": "Build contact map",
+        "position": {
+          "x": 360.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "analyze_contacts_2",
+        "kind": "operator",
+        "operator": "analyze_contacts",
+        "title": "Hi-C structure analysis",
+        "position": {
+          "x": 650.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "analyze_contacts_3",
+        "kind": "operator",
+        "operator": "analyze_contacts",
+        "title": "Hi-C structure analysis",
+        "position": {
+          "x": 650.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "select_4",
+        "kind": "operator",
+        "operator": "select",
+        "title": "选择特征",
+        "position": {
+          "x": 650.0,
+          "y": 520.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "heatmap_5",
+        "kind": "operator",
+        "operator": "heatmap",
+        "title": "Heatmap",
+        "position": {
+          "x": 940.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      }
+    ],
+    "edges": [
+      {
+        "id": "reads-build_contacts_1-0",
+        "source": "reads",
+        "target": "build_contacts_1",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "build_contacts_1-analyze_contacts_2-0",
+        "source": "build_contacts_1",
+        "target": "analyze_contacts_2",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "build_contacts_1-analyze_contacts_3-0",
+        "source": "build_contacts_1",
+        "target": "analyze_contacts_3",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "build_contacts_1-select_4-0",
+        "source": "build_contacts_1",
+        "target": "select_4",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "select_4-heatmap_5-0",
+        "source": "select_4",
+        "target": "heatmap_5",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      }
+    ],
+    "runtime": {},
+    "manifest_extra": {},
+    "interface": {
+      "version": 1,
+      "inputs": [
+        {
+          "node_id": "reads",
+          "label": "reads",
+          "contract": {
+            "version": 1,
+            "dims": [],
+            "labels": [],
+            "info": {
+              "representation": {
+                "type": "string",
+                "const": "pairs"
+              }
+            },
+            "info_open": true,
+            "axis_info_open": true,
+            "kind": "file",
+            "numeric": false,
+            "ndim": 0,
+            "parallel": []
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "node_id": "analyze_contacts_2",
+          "handle": "out",
+          "label": "Hi-C structure analysis",
+          "contract": {
+            "version": 1,
+            "dims": [
+              "record",
+              "statistic"
+            ],
+            "labels": {},
+            "info": {
+              "representation": {
+                "type": "string",
+                "const": "hic_expected"
+              }
+            },
+            "axis_info": {},
+            "info_open": true,
+            "axis_info_open": true,
+            "kind": "form",
+            "numeric": true,
+            "ndim": 2
+          }
+        },
+        {
+          "node_id": "analyze_contacts_3",
+          "handle": "out",
+          "label": "Hi-C structure analysis",
+          "contract": {
+            "version": 1,
+            "dims": [
+              "record",
+              "statistic"
+            ],
+            "labels": {},
+            "info": {
+              "representation": {
+                "type": "string",
+                "const": "hic_insulation"
+              }
+            },
+            "axis_info": {},
+            "info_open": true,
+            "axis_info_open": true,
+            "kind": "form",
+            "numeric": true,
+            "ndim": 2
+          }
+        },
+        {
+          "node_id": "select_4",
+          "handle": "out",
+          "label": "选择特征",
+          "contract": {
+            "version": 1,
+            "dims": [
+              "bin1",
+              "bin2"
+            ],
+            "labels": {},
+            "info": {
+              "representation": {
+                "type": "string",
+                "const": "contact_window"
+              }
+            },
+            "axis_info": {},
+            "info_open": true,
+            "axis_info_open": true,
+            "kind": "form",
+            "numeric": true,
+            "ndim": 2
+          }
+        }
+      ]
+    },
+    "plugin_lock": {}
+  },
+  "parameters_file": "parameters/route_240979c8e1c4/v4.json",
+  "execution_file": "execution/route_240979c8e1c4/v4.json"
+}

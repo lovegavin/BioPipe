@@ -1,0 +1,65 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "输入 PDB Form 的原子维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "输入 PDB Form 的字段维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "description": "输出 Form 的残基维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "energy_threshold": {
+      "type": "number",
+      "default": -0.5,
+      "maximum": -0.01,
+      "title": "能量阈值 (kcal/mol)",
+      "description": "只有当 Kabsch-Sander 能量低于该值时才算氢键，DSSP 经典阈值为 -0.5。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "max_distance": {
+      "type": "number",
+      "default": 5.2,
+      "minimum": 1.5,
+      "maximum": 10.0,
+      "title": "N-O 距离上限 (Å)",
+      "description": "预筛选供体 N 与受体 O 的最大距离，DSSP 使用 5.2 Å。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "include_inter_chain": {
+      "type": "boolean",
+      "default": false,
+      "title": "包含跨链氢键",
+      "description": "True 时统计不同链之间的主链氢键（DSSP 默认只报告链内氢键）。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "output",
+      "title": "输出端口",
+      "description": "结果 Form 写入的端口名。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}

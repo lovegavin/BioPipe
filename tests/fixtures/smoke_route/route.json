@@ -1,0 +1,106 @@
+{
+  "schema_version": 2,
+  "name": "真实数据冒烟：1MEL 界面 + VHH 序列风险",
+  "base_dir": ".",
+  "memory": {
+    "enabled": true,
+    "auto_spill": true
+  },
+  "nodes": [
+    {
+      "id": "complex",
+      "kind": "source",
+      "title": "1MEL 结构",
+      "position": {
+        "x": 60,
+        "y": 140
+      },
+      "source": {
+        "path": "examples/smoke_real_data/input/vhh_1mel.pdb",
+        "dims": [
+          "atom",
+          "field"
+        ],
+        "labels": {
+          "atom": "auto",
+          "field": "builtin"
+        },
+        "args": {}
+      }
+    },
+    {
+      "id": "sequence",
+      "kind": "source",
+      "title": "VHH 序列",
+      "position": {
+        "x": 60,
+        "y": 360
+      },
+      "source": {
+        "path": "examples/smoke_real_data/input/vhh.fasta",
+        "dims": [
+          "sequence",
+          "position"
+        ],
+        "labels": {
+          "sequence": "builtin",
+          "position": "auto"
+        },
+        "args": {}
+      }
+    },
+    {
+      "id": "interface",
+      "kind": "operator",
+      "operator": "structure_interface_core",
+      "title": "界面核心/边缘",
+      "position": {
+        "x": 380,
+        "y": 140
+      },
+      "params": {
+        "atom_dim": "atom",
+        "field_dim": "field",
+        "binder_chains": "A,B",
+        "target_chains": "L,M",
+        "core_fraction": 0.5,
+        "probe_radius": 1.4,
+        "n_points": 92,
+        "output": "iface"
+      }
+    },
+    {
+      "id": "liabilities",
+      "kind": "operator",
+      "operator": "sequence_liability_scan",
+      "title": "序列风险位点",
+      "position": {
+        "x": 380,
+        "y": 360
+      },
+      "params": {
+        "sequence_dim": "sequence",
+        "position_dim": "position",
+        "include_oxidation": true,
+        "context": 3,
+        "output": "liabilities"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "complex-interface",
+      "source": "complex",
+      "target": "interface",
+      "targetHandle": "in-0",
+      "sourceHandle": "out"
+    },
+    {
+      "id": "sequence-liabilities",
+      "source": "sequence",
+      "target": "liabilities",
+      "targetHandle": "in-0",
+      "sourceHandle": "out"
+    }
+  ]
+}

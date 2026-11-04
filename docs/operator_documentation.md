@@ -1,6 +1,6 @@
 # Operator documentation and progressive discovery
 
-BioPipe 0.116.0 / SDK 3.1 keeps operator protocol version 3. Documentation is
+BioPipe 1.0.0 / SDK 3.1 keeps operator protocol version 3. Documentation is
 optional for compatibility with existing v3 installations and included for the
 consolidated bundled library. New operators and Readers should ship it.
 

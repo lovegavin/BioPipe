@@ -46,6 +46,10 @@ Check output metadata and labels before downstream analysis. The declared output
 contract describes the representation; it does not establish biological validity
 or statistical assumptions for a particular dataset.
 
+## Runtime environment
+
+Runs in the shared BioPipe interpreter.
+
 ## Limitations
 
 Declared memory modes: full. BioPipe retains the existing planner, disk-backed

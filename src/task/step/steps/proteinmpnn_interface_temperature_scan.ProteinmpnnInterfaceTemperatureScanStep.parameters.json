@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "title": "原子维",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "structure_path": {
+      "title": "结构文件",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "binder_chains": {
+      "title": "Binder 链",
+      "type": "string",
+      "default": "A",
+      "x-ui-group": "输入",
+      "x-ui-order": 4
+    },
+    "target_chains": {
+      "title": "靶点链",
+      "type": "string",
+      "default": "B",
+      "x-ui-group": "输入",
+      "x-ui-order": 5
+    },
+    "cutoff": {
+      "title": "界面截断 (Å)",
+      "type": "number",
+      "default": 4.5,
+      "x-ui-group": "扫描",
+      "x-ui-order": 1,
+      "minimum": 2.0,
+      "maximum": 10.0
+    },
+    "min_contacts": {
+      "title": "最少接触",
+      "type": "integer",
+      "default": 1,
+      "x-ui-group": "扫描",
+      "x-ui-order": 2,
+      "minimum": 1,
+      "maximum": 50
+    },
+    "top_n": {
+      "title": "热点上限",
+      "type": "integer",
+      "default": 0,
+      "x-ui-group": "扫描",
+      "x-ui-order": 3,
+      "minimum": 0,
+      "maximum": 200
+    },
+    "temperatures": {
+      "title": "温度梯度",
+      "type": "string",
+      "default": "0.1,0.2,0.3",
+      "x-ui-group": "扫描",
+      "x-ui-order": 4
+    },
+    "num_seq_per_target": {
+      "title": "每条序列数",
+      "type": "integer",
+      "default": 8,
+      "x-ui-group": "设计",
+      "x-ui-order": 1,
+      "minimum": 1,
+      "maximum": 100
+    },
+    "seed": {
+      "title": "随机种子",
+      "type": "integer",
+      "default": 1,
+      "x-ui-group": "设计",
+      "x-ui-order": 2
+    },
+    "model_name": {
+      "title": "模型",
+      "type": "string",
+      "default": "v_48_020",
+      "x-ui-group": "设计",
+      "x-ui-order": 3,
+      "enum": [
+        "v_48_002",
+        "v_48_010",
+        "v_48_020",
+        "v_48_030"
+      ]
+    },
+    "proteinmpnn_path": {
+      "title": "ProteinMPNN 目录",
+      "type": "string",
+      "default": "/home/gavin/tools/ProteinMPNN",
+      "x-ui-group": "依赖",
+      "x-ui-order": 1
+    },
+    "weights_path": {
+      "title": "权重目录",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 2
+    },
+    "python_executable": {
+      "title": "Python 解释器",
+      "type": "string",
+      "default": "python3",
+      "x-ui-group": "依赖",
+      "x-ui-order": 3
+    },
+    "device": {
+      "title": "设备",
+      "type": "string",
+      "default": "cpu",
+      "x-ui-group": "依赖",
+      "x-ui-order": 4,
+      "enum": [
+        "cpu",
+        "cuda"
+      ]
+    },
+    "timeout": {
+      "title": "超时 (s)",
+      "type": "integer",
+      "default": 1800,
+      "x-ui-group": "依赖",
+      "x-ui-order": 5,
+      "minimum": 30,
+      "maximum": 7200
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "default": "scan",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

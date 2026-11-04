@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "",
+      "title": "分子列表",
+      "description": "每行一个 'SMILES [名称]'。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "distance_cutoff": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.4,
+      "title": "距离阈值",
+      "description": "单链接聚类阈值；1 - (MCS 原子数 / 较小分子重原子数) 小于该值时合并。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "cluster_dim": {
+      "type": "string",
+      "default": "cluster",
+      "title": "簇维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 30,
+      "title": "MCS 超时（秒）",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "mcs_clusters",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    }
+  }
+}

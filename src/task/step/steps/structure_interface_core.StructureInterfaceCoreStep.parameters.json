@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "structure_interface_core parameters",
+  "description": "界面 core 残基判定参数。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "title": "原子维",
+      "description": "输入原子维名称。",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "字段维",
+      "description": "输入字段维名称。",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "binder_chains": {
+      "type": "string",
+      "title": "binder 链",
+      "description": "逗号分隔的 binder 链；留空自动推断。",
+      "default": "",
+      "x-ui-group": "参数",
+      "x-ui-order": 1
+    },
+    "target_chains": {
+      "type": "string",
+      "title": "target 链",
+      "description": "逗号分隔的 target 链；留空自动推断。",
+      "default": "",
+      "x-ui-group": "参数",
+      "x-ui-order": 2
+    },
+    "core_fraction": {
+      "type": "number",
+      "title": "core 阈值",
+      "description": "相对孤立 SASA 的埋藏比例达到该值即为 core。",
+      "default": 0.5,
+      "x-ui-group": "参数",
+      "x-ui-order": 3,
+      "minimum": 0.01,
+      "maximum": 1.0
+    },
+    "probe_radius": {
+      "type": "number",
+      "title": "探针半径（Å）",
+      "description": "Shrake-Rupley 探针半径。",
+      "default": 1.4,
+      "x-ui-group": "参数",
+      "x-ui-order": 4,
+      "minimum": 0.5,
+      "maximum": 3.0
+    },
+    "n_points": {
+      "type": "integer",
+      "title": "球面采样点数",
+      "description": "每个原子的 SASA 采样点数。",
+      "default": 92,
+      "x-ui-group": "参数",
+      "x-ui-order": 5,
+      "minimum": 12,
+      "maximum": 512
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "description": "输出 Form 名称。",
+      "default": "core",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    },
+    "include_nonpolymer": {
+      "title": "包含非聚合物",
+      "type": "boolean",
+      "default": false,
+      "x-ui-group": "参数",
+      "x-ui-order": 6,
+      "description": "默认只统计蛋白质残基；水、离子与配体默认排除并在 n_nonpolymer 中计数。"
+    }
+  }
+}

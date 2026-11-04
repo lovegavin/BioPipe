@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "DockQ 参数",
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度名",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维度名",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "native_path": {
+      "title": "天然复合物路径 (PDB)",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "receptor_chains": {
+      "title": "受体链（逗号分隔）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 4
+    },
+    "ligand_chains": {
+      "title": "配体链（逗号分隔）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 5
+    },
+    "contact_cutoff": {
+      "title": "接触距离阈值 (Å)",
+      "type": "number",
+      "default": 5.0,
+      "minimum": 3.0,
+      "maximum": 8.0,
+      "x-ui-group": "算法",
+      "x-ui-order": 6
+    },
+    "interface_cutoff": {
+      "title": "界面距离阈值 (Å)",
+      "type": "number",
+      "default": 10.0,
+      "minimum": 5.0,
+      "maximum": 15.0,
+      "x-ui-group": "算法",
+      "x-ui-order": 7
+    },
+    "model_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "complex",
+      "x-ui-group": "输出",
+      "x-ui-order": 8
+    },
+    "model_label": {
+      "title": "模型标签",
+      "type": "string",
+      "default": "model",
+      "x-ui-group": "输出",
+      "x-ui-order": 9
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "dockq",
+      "x-ui-group": "输出",
+      "x-ui-order": 10
+    }
+  }
+}

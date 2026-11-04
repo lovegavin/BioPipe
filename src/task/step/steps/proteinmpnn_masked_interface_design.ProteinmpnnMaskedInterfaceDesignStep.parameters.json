@@ -1,0 +1,156 @@
+{
+ "$schema": "http://json-schema.org/draft-2020-12/schema",
+ "type": "object",
+ "title": "界面掩码 ProteinMPNN 设计",
+ "description": "由重原子接触推导界面掩码，仅重设计所选一侧的界面残基。",
+ "additionalProperties": false,
+ "properties": {
+  "atom_dim": {
+   "type": "string",
+   "default": "atom",
+   "title": "原子维度",
+   "x-ui-group": "advanced",
+   "x-ui-order": 10
+  },
+  "field_dim": {
+   "type": "string",
+   "default": "field",
+   "title": "字段维度",
+   "x-ui-group": "advanced",
+   "x-ui-order": 20
+  },
+  "design_dim": {
+   "type": "string",
+   "default": "design",
+   "title": "设计维度",
+   "x-ui-group": "advanced",
+   "x-ui-order": 30
+  },
+  "structure_path": {
+   "type": "string",
+   "default": "",
+   "title": "PDB 结构路径",
+   "x-ui-group": "basic",
+   "x-ui-order": 40
+  },
+  "binder_chains": {
+   "type": "string",
+   "default": "",
+   "title": "Binder 链",
+   "x-ui-group": "basic",
+   "x-ui-order": 50
+  },
+  "target_chains": {
+   "type": "string",
+   "default": "",
+   "title": "Target 链",
+   "x-ui-group": "basic",
+   "x-ui-order": 60
+  },
+  "cutoff": {
+   "type": "number",
+   "default": 4.5,
+   "title": "界面距离截断",
+   "x-ui-group": "basic",
+   "x-ui-order": 70,
+   "exclusiveMinimum": 0.0,
+   "maximum": 10.0
+  },
+  "mask_side": {
+   "type": "string",
+   "default": "binder",
+   "title": "掩码侧",
+   "x-ui-group": "basic",
+   "x-ui-order": 80,
+   "enum": [
+    "binder",
+    "target",
+    "both"
+   ]
+  },
+  "chains": {
+   "type": "string",
+   "default": "",
+   "title": "设计链",
+   "x-ui-group": "advanced",
+   "x-ui-order": 90
+  },
+  "proteinmpnn_path": {
+   "type": "string",
+   "default": "",
+   "title": "ProteinMPNN 路径",
+   "x-ui-group": "advanced",
+   "x-ui-order": 100
+  },
+  "weights_path": {
+   "type": "string",
+   "default": "",
+   "title": "权重目录",
+   "x-ui-group": "advanced",
+   "x-ui-order": 110
+  },
+  "python_executable": {
+   "type": "string",
+   "default": "",
+   "title": "Python 解释器",
+   "x-ui-group": "advanced",
+   "x-ui-order": 120
+  },
+  "num_seq_per_target": {
+   "type": "integer",
+   "default": 8,
+   "title": "设计数量",
+   "x-ui-group": "basic",
+   "x-ui-order": 130,
+   "minimum": 1
+  },
+  "sampling_temp": {
+   "type": "string",
+   "default": "0.1",
+   "title": "采样温度",
+   "x-ui-group": "basic",
+   "x-ui-order": 140
+  },
+  "seed": {
+   "type": "integer",
+   "default": 1,
+   "title": "随机种子",
+   "x-ui-group": "advanced",
+   "x-ui-order": 150,
+   "minimum": 0
+  },
+  "model_name": {
+   "type": "string",
+   "default": "v_48_020",
+   "title": "模型",
+   "x-ui-group": "advanced",
+   "x-ui-order": 160
+  },
+  "device": {
+   "type": "string",
+   "default": "cpu",
+   "title": "设备",
+   "x-ui-group": "advanced",
+   "x-ui-order": 170,
+   "enum": [
+    "cpu",
+    "cuda"
+   ]
+  },
+  "timeout": {
+   "type": "integer",
+   "default": 1800,
+   "title": "超时秒数",
+   "x-ui-group": "advanced",
+   "x-ui-order": 180,
+   "minimum": 1
+  },
+  "output": {
+   "type": "string",
+   "default": "designs",
+   "title": "输出名称",
+   "x-ui-group": "advanced",
+   "x-ui-order": 190
+  }
+ }
+}

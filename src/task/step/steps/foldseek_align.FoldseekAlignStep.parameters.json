@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "Foldseek 结构比对参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "query_path": {
+      "title": "查询结构",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "target_path": {
+      "title": "目标结构",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "foldseek_path": {
+      "title": "Foldseek 可执行文件",
+      "type": "string",
+      "default": "foldseek",
+      "x-ui-group": "依赖",
+      "x-ui-order": 1
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 300,
+      "minimum": 10,
+      "maximum": 3600,
+      "x-ui-group": "依赖",
+      "x-ui-order": 2
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "alignment",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

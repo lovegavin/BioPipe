@@ -1,0 +1,51 @@
+{
+  "type": "object",
+  "title": "ESM Embedding Outlier Scan Parameters",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "title": "样本维度",
+      "default": "sample",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "embedding_dim": {
+      "type": "string",
+      "title": "嵌入维度",
+      "default": "embedding",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "method": {
+      "type": "string",
+      "title": "距离方法",
+      "enum": ["mahalanobis", "knn"],
+      "default": "mahalanobis",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "k": {
+      "type": "integer",
+      "title": "近邻数",
+      "description": "knn 方法使用的近邻数。",
+      "minimum": 1,
+      "default": 5,
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "ridge": {
+      "type": "number",
+      "title": "协方差正则",
+      "minimum": 0,
+      "default": 1e-06,
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "default": "outliers"
+    }
+  },
+  "additionalProperties": false
+}

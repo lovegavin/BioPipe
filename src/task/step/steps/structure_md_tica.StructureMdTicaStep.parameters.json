@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "TICA 慢成分分析参数",
+  "properties": {
+    "trajectory_path": {
+      "title": "轨迹 .npy 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "topology_path": {
+      "title": "拓扑 PDB 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "lag_frames": {
+      "title": "滞后帧数",
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 100,
+      "x-ui-group": "动力学",
+      "x-ui-order": 4
+    },
+    "frame_time_ps": {
+      "title": "帧间隔（ps）",
+      "type": "number",
+      "default": 0.2,
+      "minimum": 0.001,
+      "maximum": 100.0,
+      "x-ui-group": "动力学",
+      "x-ui-order": 5
+    },
+    "n_modes": {
+      "title": "输出模式数",
+      "type": "integer",
+      "default": 5,
+      "minimum": 1,
+      "maximum": 50,
+      "x-ui-group": "输出",
+      "x-ui-order": 7
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "components",
+      "x-ui-group": "输出",
+      "x-ui-order": 8
+    },
+    "regularization": {
+      "title": "白化正则化",
+      "type": "number",
+      "default": 1e-06,
+      "minimum": 0.0,
+      "maximum": 0.1,
+      "x-ui-group": "模型",
+      "x-ui-order": 6
+    },
+    "n_pca": {
+      "title": "预降维主成分数",
+      "type": "integer",
+      "default": 10,
+      "minimum": 1,
+      "maximum": 100,
+      "x-ui-group": "模型",
+      "x-ui-order": 3
+    }
+  }
+}

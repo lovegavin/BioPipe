@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MD 氢键占有率参数",
+  "properties": {
+    "trajectory_path": {
+      "title": "轨迹文件 (.npy, nm)",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "topology_path": {
+      "title": "拓扑 PDB（含氢）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "chains": {
+      "title": "链过滤（逗号分隔）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "cutoff": {
+      "title": "H...受体距离 (Å)",
+      "type": "number",
+      "default": 3.5,
+      "minimum": 1.5,
+      "maximum": 6.0,
+      "x-ui-group": "几何",
+      "x-ui-order": 4
+    },
+    "angle_cutoff": {
+      "title": "D-H...A 角度下限 (°)",
+      "type": "number",
+      "default": 120.0,
+      "minimum": 60.0,
+      "maximum": 180.0,
+      "x-ui-group": "几何",
+      "x-ui-order": 5
+    },
+    "min_occupancy": {
+      "title": "最小占有率",
+      "type": "number",
+      "default": 0.2,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "x-ui-group": "几何",
+      "x-ui-order": 6
+    },
+    "stride": {
+      "title": "采样间隔（帧）",
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 100,
+      "x-ui-group": "采样",
+      "x-ui-order": 7
+    },
+    "bond_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "hbond",
+      "x-ui-group": "输出",
+      "x-ui-order": 8
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "hbonds",
+      "x-ui-group": "输出",
+      "x-ui-order": 9
+    }
+  }
+}

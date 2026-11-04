@@ -53,6 +53,12 @@ class ConnectionProfile(StrictModel):
         return self
 
 
+def _has_dependency_status(info):
+    """True when the handshake already carries a populated dependency snapshot."""
+    dependencies = (info or {}).get('dependencies') or {}
+    return bool(isinstance(dependencies, dict) and dependencies.get('entries'))
+
+
 class RemoteManager:
     def __init__(self, service, connection_factory=SSHConnection):
         self.service, self.factory = service, connection_factory
@@ -136,7 +142,14 @@ class RemoteManager:
                 for job in info.get('history', []): self.wrap_job(key, job)
                 self.persist()
                 report('已连接')
-                return info
+            if install or not _has_dependency_status(info):
+                try:
+                    report('正在核对依赖状态')
+                    info = self.refresh(key, verify_all=True)
+                    report('依赖状态已更新')
+                except RemoteError as exc:
+                    report(f'依赖状态将在刷新后更新：{exc}')
+            return info
         except HostKeyRequired as exc:
             with self.lock:
                 self.pending_keys[key] = exc.key
@@ -303,10 +316,22 @@ class RemoteManager:
         downloaded = client.download(result['path'], client.cache_dir / 'results' / identity / name)
         return Path(downloaded['path'])
 
-    def preview(self, key, artifact_id):
+    def preview(self, key, artifact_id, offset=0, limit=100):
         ref = self.reference(key)
         # Sampling happens on the server; opening a preview never downloads the array.
-        return self.call(ref['profile_id'], 'preview', {'job_id': ref['job_id'], 'artifact_id': artifact_id})
+        return self.call(ref['profile_id'], 'preview', {'job_id': ref['job_id'], 'artifact_id': artifact_id,
+                                                        'offset': offset, 'limit': limit})
+
+    def ensure(self, key):
+        """Idempotently restore an SSH connection; key/agent auth needs no secret."""
+        profile = self.profile(key)
+        state = self.status().get('profiles', {})
+        if state.get(key, {}).get('connected'):
+            return {'connected': True, 'profile_id': key, 'latency': None}
+        if profile.get('auth', 'password') == 'password':
+            raise ValueError('服务器需要密码认证，请调用 /api/remote/{key}/connect 提供本次会话密码')
+        value = self.connect(key, {})
+        return {'connected': True, 'profile_id': key, 'latency': value.get('latency') if isinstance(value, dict) else None}
 
     def artifact(self, key, artifact_id):
         match = next((a for a in (self.job(key).get('report') or {}).get('artifacts', [])

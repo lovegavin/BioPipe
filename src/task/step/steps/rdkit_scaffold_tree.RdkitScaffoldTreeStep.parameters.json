@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "Murcko scaffold tree",
+  "description": "Hierarchical Bemis-Murcko scaffold levels for a molecule collection.",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "",
+      "title": "SMILES 列表",
+      "description": "One 'SMILES [name]' line per molecule.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "node_dim": {
+      "type": "string",
+      "default": "scaffold",
+      "title": "骨架维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "max_level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "default": 3,
+      "title": "最大层级",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "default": "scaffolds",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    }
+  }
+}

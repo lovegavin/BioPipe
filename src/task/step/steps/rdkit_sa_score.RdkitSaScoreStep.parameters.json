@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "",
+      "title": "SMILES",
+      "description": "One 'SMILES [name]' line per molecule.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "default": "output",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "model_path": {
+      "type": "string",
+      "default": "",
+      "title": "ESM 权重路径",
+      "description": "本地 ESM 检查点，例如 esm2_t6_8M_UR50D.pt。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "计算设备",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "batch_size": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1024,
+      "default": 32,
+      "title": "批大小",
+      "description": "一次前向评估的被掩码位置数量。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "pseudo_likelihood",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  },
+  "additionalProperties": false
+}

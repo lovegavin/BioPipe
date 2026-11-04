@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "配体 redock 校验参数",
+  "properties": {
+    "complex_path": {
+      "title": "蛋白复合物 (PDB)",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "ligand_path": {
+      "title": "晶体配体 (SDF/PDB)",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "pose_path": {
+      "title": "对接构象 (SDF/PDB)",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "full_report": {
+      "title": "完整检查报告",
+      "type": "boolean",
+      "default": true,
+      "x-ui-group": "检查",
+      "x-ui-order": 4
+    },
+    "metric_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "metric",
+      "x-ui-group": "输出",
+      "x-ui-order": 5
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "redock",
+      "x-ui-group": "输出",
+      "x-ui-order": 6
+    }
+  }
+}

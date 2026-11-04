@@ -212,7 +212,7 @@ def test_installer_receipt_cannot_bypass_changed_requirements(remote, monkeypatc
 
 def mock_daemon_lock(tmp_path, monkeypatch):
     import biopipe.remote.server as module
-    monkeypatch.setitem(sys.modules, 'fcntl', SimpleNamespace(LOCK_EX=1, flock=lambda *args: None))
+    monkeypatch.setitem(sys.modules, 'fcntl', SimpleNamespace(LOCK_EX=1, LOCK_NB=2, flock=lambda *args: None))
     monkeypatch.setattr(module, 'socket_path', lambda workspace: tmp_path / 'daemon.sock')
     monkeypatch.setattr(module.subprocess, 'Popen', forbidden)
     return module
@@ -358,3 +358,14 @@ def test_forced_revalidation_revokes_installer_receipt_before_probe_finishes(rem
     finally:
         release.set()
         remote.handshake.maintenance_thread.join(timeout=5)
+
+
+def test_runtime_identity_ignores_site_packages_mtime_drift():
+    from biopipe.remote.handshake import runtime_compatible
+    base = {'python': ['/home/gavin/miniconda3/envs/biopipe/bin/python3.12', 31509696, 1793555547906412713, 1793555550650316209], 'version': '3.12.14 | packaged by Anaconda, Inc. | (main, Aug 27 2026, 14:46:43) [GCC 14.3.0]', 'prefix': '/home/gavin/miniconda3/envs/biopipe', 'base_prefix': '/home/gavin/miniconda3/envs/biopipe', 'environment': [['/home/gavin/miniconda3/envs/biopipe/lib/python3.12/site-packages', 20480, 1793731289809813295, 1793731289809813295]], 'base_paths': ''}
+    drifted = {**base, 'environment': [['/tmp/site-packages', 1, 2]]}
+    assert runtime_compatible(drifted, base) is True
+    assert runtime_compatible({**base, 'version': 'other'}, base) is False
+    assert runtime_compatible({**base, 'python': ['/other', 1, 2]}, base) is False
+    assert runtime_compatible({}, base) is False
+    assert runtime_compatible(None, base) is False

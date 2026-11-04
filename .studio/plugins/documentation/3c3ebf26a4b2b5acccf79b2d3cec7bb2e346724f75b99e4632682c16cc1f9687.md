@@ -1,0 +1,49 @@
+<!-- biopipe:generated -->
+# Reader for .fcs flow-cytometry files
+
+## Purpose
+
+> FCS (Flow Cytometry Standard) reader.
+>
+> The reader supports the list-mode integer/float/double FCS 2.0-3.1
+> layouts used by flowCore.  It exposes one row per event and one column
+> per parameter; parameter names prefer ``$PnN`` over ``$PnS`` and event
+> labels are stable ``event:<n>`` strings.
+
+## Inputs and outputs
+
+Kind: `reader`. Operator ID: `FcsReader`.
+This Reader opens files with extensions: `.fcs`.
+Read the structured `contracts` section before connecting nodes. It includes
+the accepted data types, dimension constraints and output propagation rule.
+
+## Parameter guidance
+
+The adjacent parameter JSON owns defaults, valid choices, ranges and required
+fields. Request the generated `parameters` section and `parameters_schema` for
+the exact interface; do not infer parameter names from prose.
+Saved routes keep their own parameter values independently of current defaults.
+
+## Interpretation
+
+Check output metadata and labels before downstream analysis. The declared output
+contract describes the representation; it does not establish biological validity
+or statistical assumptions for a particular dataset.
+
+## Limitations
+
+Declared memory modes: full. BioPipe retains the existing planner, disk-backed
+inputs and emergency spill behavior; full-mode operators still require their
+declared working set. This generated reference has not been independently
+scientifically reviewed.
+
+## Examples
+
+Use the registry to discover compatible Readers and validate a complete workflow
+before execution. This generated page does not claim an executable scientific
+example. Add a tested example and replace this generated page with authored
+guidance when extending this operator.
+
+## Source
+
+Implementation: `src/reader/readers/fcs_reader.py` (`FcsReader`).

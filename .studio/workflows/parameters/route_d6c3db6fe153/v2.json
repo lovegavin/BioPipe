@@ -1,0 +1,189 @@
+{
+  "format": "biopipe.graph-parameters",
+  "schema_version": 1,
+  "params": {},
+  "nodes": {
+    "counts": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {}
+    },
+    "qc_metrics_1": {
+      "kind": "operator",
+      "operator": "qc_metrics",
+      "params": {
+        "feature_dim": "gene",
+        "sample_dim": "cell",
+        "metrics": [
+          {
+            "name": "total",
+            "op": "sum"
+          },
+          {
+            "name": "n_detected",
+            "op": "nonzero"
+          }
+        ],
+        "output": "qc"
+      },
+      "context_params": {}
+    },
+    "describe_2": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "filter_by_3": {
+      "kind": "operator",
+      "operator": "filter_by",
+      "params": {
+        "dim": "cell",
+        "output": "cells_filtered",
+        "rules": [
+          {
+            "field": "total",
+            "min": 500
+          },
+          {
+            "field": "n_detected",
+            "min": 200
+          }
+        ]
+      },
+      "context_params": {}
+    },
+    "filter_min_4": {
+      "kind": "operator",
+      "operator": "filter_min",
+      "params": {
+        "min_value": 1,
+        "min_samples": 3,
+        "dim": "gene",
+        "output": "genes_filtered"
+      },
+      "context_params": {}
+    },
+    "normalize_5": {
+      "kind": "operator",
+      "operator": "normalize",
+      "params": {
+        "target_sum": 1000000.0,
+        "dim": "cell",
+        "method": "total",
+        "output": "cpm"
+      },
+      "context_params": {}
+    },
+    "log_transform_6": {
+      "kind": "operator",
+      "operator": "log_transform",
+      "params": {
+        "base": "e",
+        "pseudocount": 1,
+        "output": "logged"
+      },
+      "context_params": {}
+    },
+    "rank_axis_7": {
+      "kind": "operator",
+      "operator": "rank_axis",
+      "params": {
+        "keep_ties": false,
+        "descending": true,
+        "by": "variance",
+        "dim": "gene",
+        "output": "hvg",
+        "top_n": 2000
+      },
+      "context_params": {}
+    },
+    "reduce_8": {
+      "kind": "operator",
+      "operator": "reduce",
+      "params": {
+        "method": "pca",
+        "standardize": true,
+        "random_state": 0,
+        "dim": "gene",
+        "n_components": 50,
+        "output": "pcs"
+      },
+      "context_params": {}
+    },
+    "reduce_9": {
+      "kind": "operator",
+      "operator": "reduce",
+      "params": {
+        "method": "umap",
+        "standardize": true,
+        "random_state": 0,
+        "dim": "component",
+        "min_dist": 0.3,
+        "n_components": 2,
+        "n_neighbors": 10,
+        "output": "umap"
+      },
+      "context_params": {}
+    },
+    "cluster_axis_10": {
+      "kind": "operator",
+      "operator": "cluster_axis",
+      "params": {
+        "n_neighbors": 10,
+        "resolution": 2.0,
+        "random_state": 0,
+        "dim": "cell",
+        "method": "louvain",
+        "output": "clusters"
+      },
+      "context_params": {}
+    },
+    "compare_groups_11": {
+      "kind": "operator",
+      "operator": "compare_groups",
+      "params": {
+        "mode": "one_vs_rest",
+        "min_per_group": 3,
+        "method": "wilcoxon",
+        "dim": "gene",
+        "group_dim": "cell",
+        "group_label": "cluster",
+        "output": "markers"
+      },
+      "context_params": {}
+    },
+    "scatter_12": {
+      "kind": "operator",
+      "operator": "scatter",
+      "params": {
+        "dim": "component",
+        "alpha": 0.7,
+        "point_size": 8,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "umap.png",
+        "title": "PBMC 3k: UMAP of cells",
+        "x_label": "UMAP1",
+        "xlabel": "UMAP1",
+        "y_label": "UMAP2",
+        "ylabel": "UMAP2"
+      },
+      "context_params": {}
+    },
+    "describe_13": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "describe_14": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    }
+  }
+}

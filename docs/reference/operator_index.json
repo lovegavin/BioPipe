@@ -130,6 +130,16 @@
     "status": "generated"
   },
   {
+    "id": "agostino_test",
+    "kind": "operator",
+    "title": "D'Agostino skewness test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "D'Agostino's skewness test with a normal approximation of the sample skewness.",
+    "doc": "src/task/step/steps/agostino_test.AgostinoTestStep.md",
+    "status": "generated"
+  },
+  {
     "id": "aldex2",
     "kind": "operator",
     "title": "Compositional differential abundance",
@@ -237,6 +247,136 @@
     "version": "1.0.0",
     "description": "Anscombe-Glynn test for sample kurtosis.",
     "doc": "src/task/step/steps/anscombe_glynn.AnscombeGlynnStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "anscombe_test",
+    "kind": "operator",
+    "title": "Anscombe-Glynn kurtosis test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Anscombe-Glynn kurtosis test using the normal approximation of the sample kurtosis.",
+    "doc": "src/task/step/steps/anscombe_test.AnscombeTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antibody_cdr_graft",
+    "kind": "operator",
+    "title": "CDR grafting",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Graft donor CDR-H1/H2/H3 loops onto an acceptor VH/VHH framework using conserved-anchor Kabat boundaries.",
+    "doc": "src/task/step/steps/antibody_cdr_graft.AntibodyCdrGraftStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antibody_cdr_hydrophobicity",
+    "kind": "operator",
+    "title": "Antibody CDR Hydrophobicity",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Summarize each Kabat CDR loop of a VHH/VH domain with hydrophobic fraction, longest hydrophobic run, Kyte-Doolittle hydrophobic moment and net charge.",
+    "doc": "src/task/step/steps/antibody_cdr_hydrophobicity.AntibodyCdrHydrophobicityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antibody_cdr_kabat",
+    "kind": "operator",
+    "title": "Kabat CDR boundaries",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Locate the Kabat CDR-H1/H2/H3 and framework boundaries of a VH or VHH domain from conserved framework anchors and a reference alignment.",
+    "doc": "src/task/step/steps/antibody_cdr_kabat.AntibodyCdrKabatStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antibody_cdr_length_profile",
+    "kind": "operator",
+    "title": "CDR length profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Reports Kabat CDR lengths, hydrophobic fraction and CDR3 net charge per sequence.",
+    "doc": "src/task/step/steps/antibody_cdr_length_profile.AntibodyCdrLengthProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antibody_cdr_motifs",
+    "kind": "operator",
+    "title": "Antibody CDR Liability Motifs",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Scan the Kabat CDR regions of a VH/VHH sequence for N-glycosylation, deamidation, isomerization, oxidation and free-cysteine motifs and report the positions and per-region counts.",
+    "doc": "src/task/step/steps/antibody_cdr_motifs.AntibodyCdrMotifsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antibody_cdr_physchem",
+    "kind": "operator",
+    "title": "CDR physicochemical profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Annotate the Kabat CDR-H1/H2/H3 loops of a VH or VHH sequence and report length, molecular weight, isoelectric point, net charge at pH 7.4, hydrophobic fraction and PTM motif counts for each loop.",
+    "doc": "src/task/step/steps/antibody_cdr_physchem.AntibodyCdrPhyschemStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antibody_cdr_redesign",
+    "kind": "operator",
+    "title": "CDR 固定框架重设计",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "保持 Kabat CDR 不变，用 ProteinMPNN 重设计抗体框架位点。",
+    "doc": "src/task/step/steps/antibody_cdr_redesign.AntibodyCdrRedesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antibody_developability",
+    "kind": "operator",
+    "title": "Antibody developability panel",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "VHH/antibody developability: pI, charge at low and neutral pH, cysteines, deamidation/isomerization/glycosylation motifs, hydrophobic runs.",
+    "doc": "src/task/step/steps/antibody_developability.AntibodyDevelopabilityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antibody_numbering_imgt",
+    "kind": "operator",
+    "title": "IMGT numbering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Align a VH/VHH sequence to the reference template and return one row per residue with its IMGT number, insertion suffix and FR/CDR region assignment.",
+    "doc": "src/task/step/steps/antibody_numbering_imgt.AntibodyNumberingImgtStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antibody_numbering_kabat",
+    "kind": "operator",
+    "title": "Kabat numbering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Align a VH/VHH sequence to the Kabat reference template and return one row per residue with its Kabat number, insertion suffix and framework/CDR region assignment.",
+    "doc": "src/task/step/steps/antibody_numbering_kabat.AntibodyNumberingKabatStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antifold_design",
+    "kind": "operator",
+    "title": "AntiFold 抗体逆折叠设计",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official AntiFold antibody inverse-folding model on a PDB structure, returning sampled sequences with scores and a per-residue log-probability profile.",
+    "doc": "src/task/step/steps/antifold_design.AntifoldDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "antifold_score",
+    "kind": "operator",
+    "title": "AntiFold inverse-folding scores",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Per-residue AntiFold perplexity and native log-probability for an antibody structure.",
+    "doc": "src/task/step/steps/antifold_score.AntifoldScoreStep.md",
     "status": "generated"
   },
   {
@@ -390,6 +530,16 @@
     "status": "generated"
   },
   {
+    "id": "betadiver",
+    "kind": "operator",
+    "title": "Beta diversity from presence/absence",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Pairwise beta diversity between samples from a presence/absence transformation of an abundance table, following vegan betadiver.",
+    "doc": "src/task/step/steps/betadiver.BetadiverStep.md",
+    "status": "generated"
+  },
+  {
     "id": "bh_adjust",
     "kind": "operator",
     "title": "Benjamini-Hochberg FDR",
@@ -430,6 +580,26 @@
     "status": "generated"
   },
   {
+    "id": "bioenv",
+    "kind": "operator",
+    "title": "Bio-environment matching",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Bio-environment matching: for every subset size of the scaled environmental variables, report the largest Spearman or Pearson correlation between community distances and environmental distances, following vegan bioenv.",
+    "doc": "src/task/step/steps/bioenv.BioenvStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "birch",
+    "kind": "operator",
+    "title": "BIRCH clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Balanced iterative reducing and clustering using hierarchies (BIRCH).",
+    "doc": "src/task/step/steps/birch.BirchStep.md",
+    "status": "generated"
+  },
+  {
     "id": "bland_altman",
     "kind": "operator",
     "title": "Bland-Altman agreement",
@@ -437,6 +607,36 @@
     "version": "1.0.0",
     "description": "Bland-Altman agreement：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Method A、Method B、Confidence。",
     "doc": "src/task/step/steps/bland_altman.BlandAltmanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "boltz_affinity_summary",
+    "kind": "operator",
+    "title": "Boltz-2 亲和力预测汇总",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Read Boltz-2 affinity_*.json files and tabulate the predicted binding affinity value and binder probability, with the best prediction in info.",
+    "doc": "src/task/step/steps/boltz_affinity_summary.BoltzAffinitySummaryStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "boltz_complex_confidence",
+    "kind": "operator",
+    "title": "Boltz complex prediction confidence",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Predict a two-chain protein complex with Boltz and report per-residue confidence plus interface confidence.",
+    "doc": "src/task/step/steps/boltz_complex_confidence.BoltzComplexConfidenceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "boltz_predict",
+    "kind": "operator",
+    "title": "Boltz co-folding prediction",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/boltz_predict.BoltzPredictStep.md",
     "status": "generated"
   },
   {
@@ -700,6 +900,16 @@
     "status": "generated"
   },
   {
+    "id": "chisq_gof",
+    "kind": "operator",
+    "title": "Chi-square goodness-of-fit test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Pearson chi-square goodness-of-fit test of observed counts against uniform or user-supplied probabilities.",
+    "doc": "src/task/step/steps/chisq_gof.ChisqGofStep.md",
+    "status": "generated"
+  },
+  {
     "id": "chisq_out_test",
     "kind": "operator",
     "title": "Chi-square outlier test",
@@ -817,6 +1027,16 @@
     "version": "1.0.0",
     "description": "Cohen's kappa：接收 1 个输入，输出 Form；主要参数：Row Dim、Col Dim、Weights。",
     "doc": "src/task/step/steps/cohens_kappa.CohensKappaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "colabfold_predict",
+    "kind": "operator",
+    "title": "ColabFold structure prediction",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Predict a protein structure from one amino-acid sequence with the official colabfold_batch runner and return the rank-001 PDB together with the mean pLDDT, pTM and maximum PAE recorded in the ColabFold scores JSON.",
+    "doc": "src/task/step/steps/colabfold_predict.ColabfoldPredictStep.md",
     "status": "generated"
   },
   {
@@ -940,6 +1160,16 @@
     "status": "generated"
   },
   {
+    "id": "cophenetic_correlation",
+    "kind": "operator",
+    "title": "Cophenetic correlation",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Pearson correlation between tree patristic and observed sample distances.",
+    "doc": "src/task/step/steps/cophenetic_correlation.CopheneticCorrelationStep.md",
+    "status": "generated"
+  },
+  {
     "id": "correction",
     "kind": "operator",
     "title": "FDR",
@@ -957,6 +1187,16 @@
     "version": "1.0.0",
     "description": "Pairwise correlation matrix along one axis.",
     "doc": "src/task/step/steps/correlation.CorrelationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "corresp",
+    "kind": "operator",
+    "title": "Correspondence analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Simple correspondence analysis of a non-negative contingency table; the row standard coordinates are the output and the column scores, eigenvalues and proportions are reported in info.",
+    "doc": "src/task/step/steps/corresp.CorrespStep.md",
     "status": "generated"
   },
   {
@@ -987,6 +1227,16 @@
     "version": "1.0.0",
     "description": "多变量比例风险回归",
     "doc": "src/task/step/steps/cox_regression.CoxRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cox_stuart",
+    "kind": "operator",
+    "title": "Cox-Stuart trend test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Cox-Stuart sign test for a monotone trend by comparing the first and second halves of a numeric series.",
+    "doc": "src/task/step/steps/cox_stuart.CoxStuartStep.md",
     "status": "generated"
   },
   {
@@ -1057,6 +1307,16 @@
     "version": "1.0.0",
     "description": "Tabular CUSUM chart with a moving-range sigma estimate.",
     "doc": "src/task/step/steps/cusum_chart.CusumChartStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "cuzick",
+    "kind": "operator",
+    "title": "Cuzick's trend test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Rank-based test for a monotone trend across ordered groups.",
+    "doc": "src/task/step/steps/cuzick.CuzickTestStep.md",
     "status": "generated"
   },
   {
@@ -1310,6 +1570,16 @@
     "status": "generated"
   },
   {
+    "id": "dxy",
+    "kind": "operator",
+    "title": "Nei's Dxy (between-population divergence)",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Nei's Dxy: mean pairwise difference between two populations.",
+    "doc": "src/task/step/steps/dxy.DxyStep.md",
+    "status": "generated"
+  },
+  {
     "id": "egger_test",
     "kind": "operator",
     "title": "Egger's test",
@@ -1367,6 +1637,316 @@
     "version": "1.0.0",
     "description": "Environmental vector fitting：接收 2 个输入，输出 Form；主要参数：样本维度、Component Dim、特征维度。",
     "doc": "src/task/step/steps/envfit.EnvfitStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm3_embedding",
+    "kind": "operator",
+    "title": "ESM-3 蛋白嵌入",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute per-residue ESM-3 embeddings for protein sequences with the official EvolutionaryScale open model loaded from a local Hugging Face cache.",
+    "doc": "src/task/step/steps/esm3_embedding.Esm3EmbeddingStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm3_fold",
+    "kind": "operator",
+    "title": "ESM-3 结构预测",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Predict a protein structure from sequence with the official ESM-3 open model and return the annotated atom table together with pLDDT and pTM summaries.",
+    "doc": "src/task/step/steps/esm3_fold.Esm3FoldStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm3_inverse_folding",
+    "kind": "operator",
+    "title": "ESM-3 逆折叠序列设计",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Design a sequence for a protein backbone with the official ESM-3 open model, using coordinates as the only condition, and report recovery against the native sequence when it is available.",
+    "doc": "src/task/step/steps/esm3_inverse_folding.Esm3InverseFoldingStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm3_sasa_prediction",
+    "kind": "operator",
+    "title": "ESM-3 solvent accessibility prediction",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Predict per-residue solvent-accessible surface area for one protein sequence with the ESM-3 SASA track.",
+    "doc": "src/task/step/steps/esm3_sasa_prediction.Esm3SasaPredictionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm3_secondary_structure",
+    "kind": "operator",
+    "title": "ESM-3 secondary structure prediction",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Predict DSSP-style secondary structure for one protein sequence with the ESM-3 secondary-structure track.",
+    "doc": "src/task/step/steps/esm3_secondary_structure.Esm3SecondaryStructureStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm3_sequence_generation",
+    "kind": "operator",
+    "title": "ESM-3 序列生成",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sample protein sequences from an ESM-3 masked prompt on CPU or CUDA.",
+    "doc": "src/task/step/steps/esm3_sequence_generation.Esm3SequenceGenerationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding",
+    "kind": "operator",
+    "title": "ESM embeddings",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Load a local ESM2 checkpoint with fair-esm and return the mean-pooled final-layer embedding of every protein sequence in a sequence Form, ready for clustering, regression or visualization.",
+    "doc": "src/task/step/steps/esm_embedding.EsmEmbeddingStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_autoencoder",
+    "kind": "operator",
+    "title": "Embedding autoencoder",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/esm_embedding_autoencoder.EsmEmbeddingAutoencoderStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_isolation_forest",
+    "kind": "operator",
+    "title": "Embedding isolation forest",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/esm_embedding_isolation_forest.EsmEmbeddingIsolationForestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_kmeans_silhouette",
+    "kind": "operator",
+    "title": "Embedding k-means silhouette",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run deterministic k-means for a range of cluster counts over an embedding matrix and report inertia and silhouette scores.",
+    "doc": "src/task/step/steps/esm_embedding_kmeans_silhouette.EsmEmbeddingKmeansSilhouetteStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_knn_density",
+    "kind": "operator",
+    "title": "Embedding kNN density",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/esm_embedding_knn_density.EsmEmbeddingKnnDensityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_linear_probe",
+    "kind": "operator",
+    "title": "ESM embedding linear probe",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Fit a standardised logistic-regression probe on an embedding table with stratified k-fold cross-validation and report per-fold accuracy, the mean and standard deviation, and the majority-class baseline.",
+    "doc": "src/task/step/steps/esm_embedding_linear_probe.EsmEmbeddingLinearProbeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_mlp_probe",
+    "kind": "operator",
+    "title": "ESM embedding MLP probe",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Fit a standardised multi-layer perceptron on an embedding table with stratified k-fold cross-validation and report per-fold accuracy, the mean and standard deviation, and the majority-class baseline against the linear probe.",
+    "doc": "src/task/step/steps/esm_embedding_mlp_probe.EsmEmbeddingMlpProbeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_neighbors",
+    "kind": "operator",
+    "title": "ESM embedding neighbours",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Retrieve the k nearest neighbours of every sequence in an ESM embedding matrix using cosine similarity or euclidean distance.",
+    "doc": "src/task/step/steps/esm_embedding_neighbors.EsmEmbeddingNeighborsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_outlier_scan",
+    "kind": "operator",
+    "title": "ESM Embedding Outlier Scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Scores every sequence embedding against the collection, using the Mahalanobis distance to the centroid or the mean distance to the k nearest neighbours, so unusual sequences surface as high scores.",
+    "doc": "src/task/step/steps/esm_embedding_outlier_scan.EsmEmbeddingOutlierScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_pca",
+    "kind": "operator",
+    "title": "ESM embedding PCA",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Project an ESM embedding matrix onto its leading principal components for visualisation and clustering.",
+    "doc": "src/task/step/steps/esm_embedding_pca.EsmEmbeddingPcaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_pca_loadings",
+    "kind": "operator",
+    "title": "Embedding PCA loadings",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Projects embeddings on principal components and reports per-feature loadings.",
+    "doc": "src/task/step/steps/esm_embedding_pca_loadings.EsmEmbeddingPcaLoadingsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_pca_reconstruction",
+    "kind": "operator",
+    "title": "Embedding PCA reconstruction",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/esm_embedding_pca_reconstruction.EsmEmbeddingPcaReconstructionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_ridge_probe",
+    "kind": "operator",
+    "title": "Embedding ridge regression probe",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Fit a cross-validated ridge regression from per-sequence embedding vectors to a continuous property (for example a fitness or stability measurement) and report per-fold R2, RMSE and MAE with a mean baseline.",
+    "doc": "src/task/step/steps/esm_embedding_ridge_probe.EsmEmbeddingRidgeProbeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_embedding_umap_projection",
+    "kind": "operator",
+    "title": "Embedding spectral projection",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Project an embedding Form with a kNN graph and the eigenvectors of its normalised Laplacian, giving a deterministic UMAP-style two-dimensional layout.",
+    "doc": "src/task/step/steps/esm_embedding_umap_projection.EsmEmbeddingUmapProjectionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_if_design",
+    "kind": "operator",
+    "title": "ESM-IF Design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sample sequences for a fixed protein backbone with the official ESM-IF1 inverse-folding model and score every design with the same model.",
+    "doc": "src/task/step/steps/esm_if_design.EsmIfDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_if_interface_redesign",
+    "kind": "operator",
+    "title": "ESM-IF 界面重设计",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "只重设计复合物 binder 侧界面残基，其余位置保持原生序列。",
+    "doc": "src/task/step/steps/esm_if_interface_redesign.EsmIfInterfaceRedesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_if_masked_region_scan",
+    "kind": "operator",
+    "title": "ESM-IF Masked Region Scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Slide a masked window along a chain and score ESM-IF redesigns of each window.",
+    "doc": "src/task/step/steps/esm_if_masked_region_scan.EsmIfMaskedRegionScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_if_mutation_scan",
+    "kind": "operator",
+    "title": "ESM-IF Mutation Scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score every single-residue substitution of a protein chain with the official ESM-IF1 inverse-folding model and report the log-likelihood ratio of each mutant against the native residue.",
+    "doc": "src/task/step/steps/esm_if_mutation_scan.EsmIfMutationScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_if_position_entropy",
+    "kind": "operator",
+    "title": "ESM-IF Position Entropy",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sample the official ESM-IF1 inverse-folding model for a fixed backbone and report per-position sequence entropy, native recovery and consensus frequency.",
+    "doc": "src/task/step/steps/esm_if_position_entropy.EsmIfPositionEntropyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_if_redesign",
+    "kind": "operator",
+    "title": "ESM-IF Partial Redesign",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Redesign selected positions of a protein backbone with the official ESM-IF inverse-folding model while keeping the remaining residues fixed, then score every sampled sequence under the same model.",
+    "doc": "src/task/step/steps/esm_if_redesign.EsmIfRedesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_if_score",
+    "kind": "operator",
+    "title": "ESM-IF Score",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score a protein chain with the official ESM-IF1 inverse-folding model and report the per-residue log probability of the observed sequence given the backbone.",
+    "doc": "src/task/step/steps/esm_if_score.EsmIfScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_masked_marginal",
+    "kind": "operator",
+    "title": "ESM masked marginal",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Mask one position at a time and report the wild-type and mutant probabilities and their log ratio under a local ESM checkpoint.",
+    "doc": "src/task/step/steps/esm_masked_marginal.EsmMaskedMarginalStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_pseudo_likelihood",
+    "kind": "operator",
+    "title": "ESM masked pseudo-likelihood",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Per-residue masked pseudo-likelihood log P(x_t | x_-t) of a protein sequence under a local ESM checkpoint; mean and total scores in info.",
+    "doc": "src/task/step/steps/esm_pseudo_likelihood.EsmPseudoLikelihoodStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esm_variant_effect",
+    "kind": "operator",
+    "title": "ESM variant effect scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Mask each selected residue, read the ESM distribution over the 20 standard amino acids, and score all 19 single substitutions by log-likelihood ratio.",
+    "doc": "src/task/step/steps/esm_variant_effect.EsmVariantEffectStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "esmfold_predict",
+    "kind": "operator",
+    "title": "ESMFold structure prediction",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Fold one amino-acid sequence with the official ESMFold implementation shipped in fair-esm (esm.pretrained.esmfold_v1) and return the predicted PDB together with its mean pLDDT. The 3B checkpoint is downloaded on first use; set BIOPIPE_ESMFOLD_WEIGHTS or pre-populate the torch hub cache to run offline.",
+    "doc": "src/task/step/steps/esmfold_predict.EsmfoldPredictStep.md",
     "status": "generated"
   },
   {
@@ -1430,6 +2010,16 @@
     "status": "generated"
   },
   {
+    "id": "faith_pd",
+    "kind": "operator",
+    "title": "Faith's phylogenetic diversity",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Faith's PD：接收 2 个输入，输出 Form；主要参数：样本维度、类群维度、节点维度、字段维度。",
+    "doc": "src/task/step/steps/faith_pd.FaithPdStep.md",
+    "status": "generated"
+  },
+  {
     "id": "filter_by",
     "kind": "operator",
     "title": "Filter by metrics",
@@ -1467,6 +2057,16 @@
     "version": "1.0.0",
     "description": "Fine-Gray subdistribution hazard regression.",
     "doc": "src/task/step/steps/fine_gray.FineGrayStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fisher_alpha",
+    "kind": "operator",
+    "title": "Fisher's alpha",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Fisher's log-series alpha diversity for each sample.",
+    "doc": "src/task/step/steps/fisher_alpha.FisherAlphaStep.md",
     "status": "generated"
   },
   {
@@ -1557,6 +2157,36 @@
     "version": "1.0.0",
     "description": "Flow cytometry arcsinh transform：接收 1 个输入，输出 Form；主要参数：Event Dim、Channel Dim、Channels、A、B、C。",
     "doc": "src/task/step/steps/flow_transform.FlowTransformStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "foldseek_align",
+    "kind": "operator",
+    "title": "Foldseek structural alignment",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Align two structures with Foldseek structurealign and report TM-score, RMSD, lDDT, identity and coverage.",
+    "doc": "src/task/step/steps/foldseek_align.FoldseekAlignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "foldseek_cluster",
+    "kind": "operator",
+    "title": "Foldseek structural clustering",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Cluster a directory of structures with Foldseek and report cluster membership, size and representatives.",
+    "doc": "src/task/step/steps/foldseek_cluster.FoldseekClusterStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "foldseek_search",
+    "kind": "operator",
+    "title": "Foldseek structural search",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/foldseek_search.FoldseekSearchStep.md",
     "status": "generated"
   },
   {
@@ -1710,6 +2340,16 @@
     "status": "generated"
   },
   {
+    "id": "glmm_logistic",
+    "kind": "operator",
+    "title": "Logistic mixed model",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Binary logistic regression with a random intercept fitted by Laplace approximation (lme4 glmer nAGQ=1).",
+    "doc": "src/task/step/steps/glmm_logistic.GlmmLogisticStep.md",
+    "status": "generated"
+  },
+  {
     "id": "goldfeld_quandt",
     "kind": "operator",
     "title": "Goldfeld-Quandt test",
@@ -1727,6 +2367,16 @@
     "version": "1.0.0",
     "description": "Goodman-Kruskal gamma, the symmetric ordinal association measure.",
     "doc": "src/task/step/steps/goodman_kruskal_gamma.GoodmanKruskalGammaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gower_distance",
+    "kind": "operator",
+    "title": "Gower distance",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Gower distance：数值列按极差归一、分类列按相等与否取 0/1，缺失变量在每对样本间重新归一，输出对称距离矩阵。",
+    "doc": "src/task/step/steps/gower_distance.GowerDistanceStep.md",
     "status": "generated"
   },
   {
@@ -1780,6 +2430,16 @@
     "status": "generated"
   },
   {
+    "id": "gsva_plage",
+    "kind": "operator",
+    "title": "GSVA PLAGE scores",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "PLAGE gene-set scores: first right singular vector of the gene-wise z-scored expression of each set (GSVA plage method).",
+    "doc": "src/task/step/steps/gsva_plage.GsvaPlageStep.md",
+    "status": "generated"
+  },
+  {
     "id": "gwet_ac1",
     "kind": "operator",
     "title": "Gwet's AC1",
@@ -1810,6 +2470,16 @@
     "status": "generated"
   },
   {
+    "id": "hdbscan",
+    "kind": "operator",
+    "title": "HDBSCAN clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Hierarchical density-based clustering with cluster membership probabilities.",
+    "doc": "src/task/step/steps/hdbscan.HdbscanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "heatmap",
     "kind": "operator",
     "title": "Heatmap",
@@ -1817,6 +2487,16 @@
     "version": "1.0.0",
     "description": "矩阵热图与层次聚类",
     "doc": "src/task/step/steps/heatmap.HeatmapStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "heterozygosity",
+    "kind": "operator",
+    "title": "Heterozygosity",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Observed/expected heterozygosity and F_IS per diploid variant.",
+    "doc": "src/task/step/steps/heterozygosity.HeterozygosityStep.md",
     "status": "generated"
   },
   {
@@ -1837,6 +2517,16 @@
     "version": "1.0.0",
     "description": "查看指定数值标签的分布。",
     "doc": "src/task/step/steps/histogram.HistogramStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "hmmer_domains",
+    "kind": "operator",
+    "title": "HMMER domain annotation",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Annotate protein sequences with Pfam/HMMER domains through the official hmmscan binary and return one row per domain hit.",
+    "doc": "src/task/step/steps/hmmer_domains.HmmerDomainsStep.md",
     "status": "generated"
   },
   {
@@ -1940,6 +2630,16 @@
     "status": "generated"
   },
   {
+    "id": "indicator_species",
+    "kind": "operator",
+    "title": "Indicator species",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Indicator species (IndVal) fidelity, specificity and product per group.",
+    "doc": "src/task/step/steps/indicator_species.IndicatorSpeciesStep.md",
+    "status": "generated"
+  },
+  {
     "id": "integrated_brier_score",
     "kind": "operator",
     "title": "Integrated Brier score (Cox)",
@@ -1957,6 +2657,86 @@
     "version": "1.0.0",
     "description": "Integrated discrimination improvement：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Outcome Label、Old Risk Label、New Risk Label。",
     "doc": "src/task/step/steps/integrated_discrimination_improvement.IntegratedDiscriminationImprovementStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interface_alanine_scan",
+    "kind": "operator",
+    "title": "Interface alanine scan",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Computational alanine scanning of interface residues with single-point MM/GBSA energy differences.",
+    "doc": "src/task/step/steps/interface_alanine_scan.InterfaceAlanineScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interface_bsa",
+    "kind": "operator",
+    "title": "Interface buried area",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute the solvent accessible surface area of two chain groups alone and in complex with a Shrake-Rupley algorithm, report the buried area of every interface residue, and rank the contact hot spots of a binder-target complex.",
+    "doc": "src/task/step/steps/interface_bsa.InterfaceBsaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interface_contact_map",
+    "kind": "operator",
+    "title": "Interface contact map",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Build a binder-residue by target-residue matrix from the heavy atoms of two chain groups: a binary contact map or the minimal atom-pair distance for every contacting residue pair.",
+    "doc": "src/task/step/steps/interface_contact_map.InterfaceContactMapStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interface_distance_histogram",
+    "kind": "operator",
+    "title": "Interface distance histogram",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Bin the distances between binder and target heavy atoms across the interface. Pair counts are reported per distance bin together with quantile statistics.",
+    "doc": "src/task/step/steps/interface_distance_histogram.InterfaceDistanceHistogramStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interface_hbond_network",
+    "kind": "operator",
+    "title": "Interface hydrogen bond network",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Detect backbone hydrogen bonds between two chain groups with the Kabsch-Sander energy model and report energy and N-O distance.",
+    "doc": "src/task/step/steps/interface_hbond_network.InterfaceHbondNetworkStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interface_hotspots",
+    "kind": "operator",
+    "title": "Interface hotspots",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Rank the residues of a binder-target interface by the number of cross-chain heavy-atom contacts, the closest contact distance and the solvent-accessible area they bury on complex formation.",
+    "doc": "src/task/step/steps/interface_hotspots.InterfaceHotspotsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interface_hydrophobic_patch",
+    "kind": "operator",
+    "title": "Interface Hydrophobic Patches",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Cluster the binder residues that contact a target chain set into patches and report each patch's size, hydrophobic content and contact count.",
+    "doc": "src/task/step/steps/interface_hydrophobic_patch.InterfaceHydrophobicPatchStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interface_mmgbsa_delta",
+    "kind": "operator",
+    "title": "MM/GBSA binding energy",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Single-point OpenMM MM/GBSA binding-energy estimate with bonded, nonbonded and GB term decomposition.",
+    "doc": "src/task/step/steps/interface_mmgbsa_delta.InterfaceMmgbsaDeltaStep.md",
     "status": "generated"
   },
   {
@@ -2020,6 +2800,16 @@
     "status": "generated"
   },
   {
+    "id": "iptw_effect",
+    "kind": "operator",
+    "title": "IPTW treatment effect",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Inverse-probability-of-treatment weighting estimate of an average treatment effect.",
+    "doc": "src/task/step/steps/iptw_effect.IptwEffectStep.md",
+    "status": "generated"
+  },
+  {
     "id": "isolation_forest",
     "kind": "operator",
     "title": "Isolation Forest",
@@ -2047,6 +2837,16 @@
     "version": "1.0.0",
     "description": "Fit a monotone (increasing or decreasing) least-squares curve.",
     "doc": "src/task/step/steps/isotonic.IsotonicStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "iv_2sls",
+    "kind": "operator",
+    "title": "Two-stage least squares",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Two-stage least squares IV regression for a numeric table; instruments endogenous regressors.",
+    "doc": "src/task/step/steps/iv_2sls.Iv2slsStep.md",
     "status": "generated"
   },
   {
@@ -2150,6 +2950,16 @@
     "status": "generated"
   },
   {
+    "id": "knn",
+    "kind": "operator",
+    "title": "k nearest neighbours classifier",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "k nearest neighbours classifier with uniform or distance weights; reports test predictions and accuracy.",
+    "doc": "src/task/step/steps/knn.KnnStep.md",
+    "status": "generated"
+  },
+  {
     "id": "kpss_test",
     "kind": "operator",
     "title": "KPSS stationarity test",
@@ -2200,6 +3010,16 @@
     "status": "generated"
   },
   {
+    "id": "ld_decay",
+    "kind": "operator",
+    "title": "LD decay",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "LD decay: binned mean r^2 between variant dosages by distance.",
+    "doc": "src/task/step/steps/ld_decay.LdDecayStep.md",
+    "status": "generated"
+  },
+  {
     "id": "ld_prune",
     "kind": "operator",
     "title": "LD pruning",
@@ -2207,6 +3027,16 @@
     "version": "1.0.0",
     "description": "在滑动窗口内移除高度相关的变异。",
     "doc": "src/task/step/steps/ld_prune.LdPruneStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "lda",
+    "kind": "operator",
+    "title": "Linear discriminant analysis",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Linear discriminant analysis fit on all labelled samples; reports fitted classes, posteriors class scores and LD scores.",
+    "doc": "src/task/step/steps/lda.LdaStep.md",
     "status": "generated"
   },
   {
@@ -2260,6 +3090,86 @@
     "status": "generated"
   },
   {
+    "id": "ligand_contact_profile",
+    "kind": "operator",
+    "title": "Ligand contact profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "For every ligand atom report how many distinct receptor residues lie within a heavy-atom cutoff and the nearest contact residue.",
+    "doc": "src/task/step/steps/ligand_contact_profile.LigandContactProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ligand_efficiency",
+    "kind": "operator",
+    "title": "Ligand efficiency metrics",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Parse SMILES with an assay potency, convert the potency to pActivity and a binding free energy, then report ligand efficiency, lipophilic ligand efficiency and the binding efficiency index.",
+    "doc": "src/task/step/steps/ligand_efficiency.LigandEfficiencyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ligand_pdbqt_flexible",
+    "kind": "operator",
+    "title": "柔性配体 PDBQT 准备（扭转树）",
+    "category": "Docking",
+    "version": "1.0.0",
+    "description": "Convert SMILES into a flexible AutoDock PDBQT ligand: build a 3D conformer with RDKit, emit a ROOT/BRANCH/ENDBRANCH torsion tree and set TORSDOF from the rotatable single bonds.",
+    "doc": "src/task/step/steps/ligand_pdbqt_flexible.LigandPdbqtFlexibleStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ligand_pdbqt_prepare",
+    "kind": "operator",
+    "title": "Ligand PDBQT preparation",
+    "category": "Ligand",
+    "version": "1.0.0",
+    "description": "Embed a SMILES ligand in 3D with RDKit, assign Gasteiger charges and AutoDock 4 atom types, return the atom table and optionally write a PDBQT file ready for vina_dock.",
+    "doc": "src/task/step/steps/ligand_pdbqt_prepare.LigandPdbqtPrepareStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ligandmpnn_active_site_design",
+    "kind": "operator",
+    "title": "LigandMPNN Active Site Design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Find the protein residues around a bound ligand and let the official LigandMPNN redesign only those positions while the rest of the structure stays fixed.",
+    "doc": "src/task/step/steps/ligandmpnn_active_site_design.LigandmpnnActiveSiteDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ligandmpnn_design",
+    "kind": "operator",
+    "title": "LigandMPNN Design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Design protein sequences on a fixed backbone with the official LigandMPNN runner, including ligand- and side-chain-aware context, per-residue bias, omitted residues and redesign ranges.",
+    "doc": "src/task/step/steps/ligandmpnn_design.LigandMpnnDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ligandmpnn_score",
+    "kind": "operator",
+    "title": "LigandMPNN Score",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score every residue of a structure against the native sequence with the official LigandMPNN scorer and report the mean and spread of the per-residue log-probabilities across scoring batches.",
+    "doc": "src/task/step/steps/ligandmpnn_score.LigandMpnnScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ligandmpnn_side_chain_packing",
+    "kind": "operator",
+    "title": "LigandMPNN side-chain packing",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official LigandMPNN side-chain packer on a backbone PDB and return the packed structure as an atom table.  The packer needs the LigandMPNN repository and its side-chain checkpoint.",
+    "doc": "src/task/step/steps/ligandmpnn_side_chain_packing.LigandmpnnSideChainPackingStep.md",
+    "status": "generated"
+  },
+  {
     "id": "lillie_test",
     "kind": "operator",
     "title": "Lilliefors normality test",
@@ -2267,6 +3177,16 @@
     "version": "1.0.0",
     "description": "Lilliefors (Kolmogorov-Smirnov) normality test.",
     "doc": "src/task/step/steps/lillie_test.LillieTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "lilliefors_test",
+    "kind": "operator",
+    "title": "Lilliefors normality test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Lilliefors test for normality with estimated mean and standard deviation, using the Kolmogorov-Smirnov statistic.",
+    "doc": "src/task/step/steps/lilliefors_test.LillieforsTestStep.md",
     "status": "generated"
   },
   {
@@ -2440,6 +3360,16 @@
     "status": "generated"
   },
   {
+    "id": "manova",
+    "kind": "operator",
+    "title": "One-way MANOVA",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "One-way MANOVA for one or more numeric responses with Pillai, Wilks, Hotelling-Lawley or Roy statistics, following R stats::summary.manova approximations.",
+    "doc": "src/task/step/steps/manova.ManovaStep.md",
+    "status": "generated"
+  },
+  {
     "id": "mantel",
     "kind": "operator",
     "title": "Mantel test",
@@ -2540,6 +3470,16 @@
     "status": "generated"
   },
   {
+    "id": "minibinder_interface",
+    "kind": "operator",
+    "title": "Minibinder interface residues",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Count target residues within a heavy-atom distance cutoff of each binder residue and report the closest approach.",
+    "doc": "src/task/step/steps/minibinder_interface.MinibinderInterfaceStep.md",
+    "status": "generated"
+  },
+  {
     "id": "missing",
     "kind": "operator",
     "title": "缺失值过滤",
@@ -2547,6 +3487,16 @@
     "version": "1.0.0",
     "description": "按指定维度过滤缺失比例过高的样本或特征。",
     "doc": "src/task/step/steps/missing.MissingStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mood_median",
+    "kind": "operator",
+    "title": "Mood two-sample scale test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Mood two-sample test of scale: compares the dispersion of two groups from the ranked pooled sample.",
+    "doc": "src/task/step/steps/mood_median.MoodMedianStep.md",
     "status": "generated"
   },
   {
@@ -2570,6 +3520,26 @@
     "status": "generated"
   },
   {
+    "id": "moran",
+    "kind": "operator",
+    "title": "Moran's I",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Moran's I spatial autocorrelation from a distance matrix.",
+    "doc": "src/task/step/steps/moran.MoranStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "morisita",
+    "kind": "operator",
+    "title": "Morisita dispersal index",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Morisita index of dispersion with its clustering and uniform critical values, the standardised index and the chi-square probability for every feature, following vegan dispindmorisita.",
+    "doc": "src/task/step/steps/morisita.MorisitaStep.md",
+    "status": "generated"
+  },
+  {
     "id": "moses_test",
     "kind": "operator",
     "title": "Moses extreme reactions test",
@@ -2587,6 +3557,16 @@
     "version": "1.0.0",
     "description": "Count IUPAC motif occurrences per sequence.",
     "doc": "src/task/step/steps/motif_scan.MotifScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "mrpp",
+    "kind": "operator",
+    "title": "MRPP",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "MRPP chance-corrected within-group agreement with a permutation p-value.",
+    "doc": "src/task/step/steps/mrpp.MrppStep.md",
     "status": "generated"
   },
   {
@@ -2630,6 +3610,26 @@
     "status": "generated"
   },
   {
+    "id": "neighbor_joining",
+    "kind": "operator",
+    "title": "Neighbor joining tree",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Neighbor-joining tree from a symmetric pairwise distance matrix.",
+    "doc": "src/task/step/steps/neighbor_joining.NeighborJoiningStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "nelson_aalen",
+    "kind": "operator",
+    "title": "Nelson-Aalen cumulative hazard",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Nelson-Aalen：接收 1 个输入，按随访时间字段与事件字段计算累计风险、风险集人数、事件数与标准误。",
+    "doc": "src/task/step/steps/nelson_aalen.NelsonAalenStep.md",
+    "status": "generated"
+  },
+  {
     "id": "nemenyi_test",
     "kind": "operator",
     "title": "Nemenyi post-hoc test",
@@ -2637,6 +3637,16 @@
     "version": "1.0.0",
     "description": "All-pairwise Nemenyi comparisons using mean ranks.",
     "doc": "src/task/step/steps/nemenyi_test.NemenyiTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "nestedness",
+    "kind": "operator",
+    "title": "NODF nestedness",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Nestedness by overlap and decreasing fill (NODF) for a binary sample-by-taxon matrix, following the vegan nestednodf definition.",
+    "doc": "src/task/step/steps/nestedness.NestednessStep.md",
     "status": "generated"
   },
   {
@@ -2700,6 +3710,16 @@
     "status": "generated"
   },
   {
+    "id": "nucleotide_diversity",
+    "kind": "operator",
+    "title": "Nucleotide diversity",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Nucleotide diversity over the whole input or fixed genomic windows.",
+    "doc": "src/task/step/steps/nucleotide_diversity.NucleotideDiversityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "odds_ratio",
     "kind": "operator",
     "title": "Odds ratio",
@@ -2707,6 +3727,26 @@
     "version": "1.0.0",
     "description": "Odds ratio：接收 1 个输入，输出 Form；主要参数：Row Dim、Col Dim、Correction、Confidence。",
     "doc": "src/task/step/steps/odds_ratio.OddsRatioStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "openfold_predict",
+    "kind": "operator",
+    "title": "OpenFold 结构预测",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run OpenFold (AlphaFold-2 weights) inference for one protein sequence with precomputed single-sequence alignments and return the predicted structure with pLDDT statistics.",
+    "doc": "src/task/step/steps/openfold_predict.OpenfoldPredictStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "optics",
+    "kind": "operator",
+    "title": "OPTICS clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Ordering points to identify clustering structure (OPTICS).",
+    "doc": "src/task/step/steps/optics.OpticsStep.md",
     "status": "generated"
   },
   {
@@ -2760,6 +3800,16 @@
     "status": "generated"
   },
   {
+    "id": "pains_filter",
+    "kind": "operator",
+    "title": "PAINS alert filter",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Screen a list of SMILES against the RDKit PAINS catalogues and report the number of matching substructure alerts per molecule together with the alert descriptions.",
+    "doc": "src/task/step/steps/pains_filter.PainsFilterStep.md",
+    "status": "generated"
+  },
+  {
     "id": "pair_confusion_matrix",
     "kind": "operator",
     "title": "Pair confusion matrix",
@@ -2767,6 +3817,26 @@
     "version": "1.0.0",
     "description": "Pair-count confusion matrix behind Rand-type agreement scores.",
     "doc": "src/task/step/steps/pair_confusion_matrix.PairConfusionMatrixStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pairwise_alignment",
+    "kind": "operator",
+    "title": "Pairwise alignment",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Align two sequences with affine gaps and report the alignment counts.",
+    "doc": "src/task/step/steps/pairwise_alignment.PairwiseAlignmentStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pam",
+    "kind": "operator",
+    "title": "Partitioning around medoids",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "PAM（围绕中心点划分）：欧氏距离、BUILD 选取初始中心点，SWAP 以精确代价下降迭代，输出每个样本的簇编号与到中心点距离。",
+    "doc": "src/task/step/steps/pam.PamStep.md",
     "status": "generated"
   },
   {
@@ -2800,6 +3870,26 @@
     "status": "generated"
   },
   {
+    "id": "patristic_distance",
+    "kind": "operator",
+    "title": "Patristic distance",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Patristic distance：接收 1 个输入，输出 tip × tip 距离矩阵；主要参数：节点维度、字段维度、tip 维度。",
+    "doc": "src/task/step/steps/patristic_distance.PatristicDistanceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "patterson_fst",
+    "kind": "operator",
+    "title": "Patterson's Fst",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Patterson's Fst (Patterson 2012) from two population allele counts.",
+    "doc": "src/task/step/steps/patterson_fst.PattersonFstStep.md",
+    "status": "generated"
+  },
+  {
     "id": "pca",
     "kind": "operator",
     "title": "PCA",
@@ -2817,6 +3907,16 @@
     "version": "1.0.0",
     "description": "PCA loadings：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、主成分数、标准化。",
     "doc": "src/task/step/steps/pca_loadings.PcaLoadingsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pcnm",
+    "kind": "operator",
+    "title": "Principal coordinates of neighbourhood matrices",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Classical MDS axes of a distance matrix truncated at the PCNM threshold.",
+    "doc": "src/task/step/steps/pcnm.PcnmStep.md",
     "status": "generated"
   },
   {
@@ -2840,6 +3940,16 @@
     "status": "generated"
   },
   {
+    "id": "pearson_test",
+    "kind": "operator",
+    "title": "Pearson chi-square normality test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Pearson chi-square goodness-of-fit test for normality with equiprobable classes and estimated mean and standard deviation.",
+    "doc": "src/task/step/steps/pearson_test.PearsonTestStep.md",
+    "status": "generated"
+  },
+  {
     "id": "peptide_qvalue",
     "kind": "operator",
     "title": "Peptide q-values",
@@ -2847,6 +3957,16 @@
     "version": "1.0.0",
     "description": "Peptide q-values：接收 1 个输入，输出 Form；主要参数：Psm Dim、特征维度、Score Label、Decoy Label、Decoy Values。",
     "doc": "src/task/step/steps/peptide_qvalue.PeptideQvalueStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "periodogram",
+    "kind": "operator",
+    "title": "Periodogram",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Raw periodogram (no taper, no smoothing) of one numeric series; matches stats::spec.pgram with taper = 0 and no kernel.",
+    "doc": "src/task/step/steps/periodogram.PeriodogramStep.md",
     "status": "generated"
   },
   {
@@ -2927,6 +4047,16 @@
     "version": "1.0.0",
     "description": "Poisson regression：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Response Label、Predictors、分类协变量、Maxiter。",
     "doc": "src/task/step/steps/poisson_regression.PoissonRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "poisson_test",
+    "kind": "operator",
+    "title": "Exact Poisson rate test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Exact conditional Poisson test of an observed count against a null rate, with a gamma confidence interval.",
+    "doc": "src/task/step/steps/poisson_test.PoissonTestStep.md",
     "status": "generated"
   },
   {
@@ -3020,6 +4150,36 @@
     "status": "generated"
   },
   {
+    "id": "prodigal_genes",
+    "kind": "operator",
+    "title": "Prodigal gene prediction",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Predict prokaryotic genes with the official Prodigal binary; returns gene spans, strand, partial flags and the predicted protein sequences.",
+    "doc": "src/task/step/steps/prodigal_genes.ProdigalGenesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proportion_ci",
+    "kind": "operator",
+    "title": "Binomial proportion confidence interval",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Confidence intervals for binomial proportions using Wilson, Clopper-Pearson, Agresti-Coull, Jeffreys or Wald.",
+    "doc": "src/task/step/steps/proportion_ci.ProportionCiStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "prosite_scan",
+    "kind": "operator",
+    "title": "Motif scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Translate PROSITE-like patterns (letters, x, [sets], {exclusions}) into regular expressions and report hit counts and positions.",
+    "doc": "src/task/step/steps/prosite_scan.PrositeScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "protein_properties",
     "kind": "operator",
     "title": "Protein properties",
@@ -3037,6 +4197,256 @@
     "version": "1.0.0",
     "description": "Peptide to protein rollup：接收 2 个输入，输出 Form；主要参数：Peptide Dim、样本维度、Protein Dim、方法、Min Peptides。",
     "doc": "src/task/step/steps/protein_rollup.ProteinRollupStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_bias_matrix",
+    "kind": "operator",
+    "title": "ProteinMPNN bias matrix",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Build a per-residue amino-acid bias matrix for the official ProteinMPNN runner and return the designs it produces.  Selected positions are pushed towards the favor residues and away from the avoid residues.",
+    "doc": "src/task/step/steps/proteinmpnn_bias_matrix.ProteinmpnnBiasMatrixStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_bias_scan",
+    "kind": "operator",
+    "title": "ProteinMPNN Bias Scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sample designs with and without an amino-acid bias using the official ProteinMPNN runner and report the per-position frequency shift induced by the bias.",
+    "doc": "src/task/step/steps/proteinmpnn_bias_scan.ProteinmpnnBiasScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_design",
+    "kind": "operator",
+    "title": "ProteinMPNN design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official ProteinMPNN protein_mpnn_run.py entry point on a PDB structure and return the designed sequences with their model scores.  Design ranges restrict which residues are redesigned.",
+    "doc": "src/task/step/steps/proteinmpnn_design.ProteinMpnnDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_design_cluster",
+    "kind": "operator",
+    "title": "Cluster ProteinMPNN designs",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sample designs with the official ProteinMPNN runner, compute pairwise sequence identity and group the designs into single-linkage clusters.",
+    "doc": "src/task/step/steps/proteinmpnn_design_cluster.ProteinmpnnDesignClusterStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_design_diversity",
+    "kind": "operator",
+    "title": "ProteinMPNN design diversity",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official ProteinMPNN runner and quantify how diverse the sampled designs are: per-design mean/min/nearest identity and a single-linkage cluster identifier at an identity threshold.",
+    "doc": "src/task/step/steps/proteinmpnn_design_diversity.ProteinmpnnDesignDiversityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_design_profile",
+    "kind": "operator",
+    "title": "ProteinMPNN design profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/proteinmpnn_design_profile.ProteinmpnnDesignProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_ensemble_score",
+    "kind": "operator",
+    "title": "ProteinMPNN ensemble score",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score a structure with several official ProteinMPNN checkpoints in --score_only mode and return the per-sequence mean negative log-likelihood matrix across models.",
+    "doc": "src/task/step/steps/proteinmpnn_ensemble_score.ProteinmpnnEnsembleScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_hotspot_masked_design",
+    "kind": "operator",
+    "title": "Hotspot-masked design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Rank binder-target interface residues by contact density, keep the top hotspots as the only designable positions and run the official ProteinMPNN runner with every other residue fixed.",
+    "doc": "src/task/step/steps/proteinmpnn_hotspot_masked_design.ProteinmpnnHotspotMaskedDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_interface_design",
+    "kind": "operator",
+    "title": "ProteinMPNN interface design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Design a binder chain against a fixed partner with the official ProteinMPNN runner, including amino-acid bias, omission and tied positions.",
+    "doc": "src/task/step/steps/proteinmpnn_interface_design.ProteinmpnnInterfaceDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_interface_redesign",
+    "kind": "operator",
+    "title": "Interface Redesign",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Design only binder residues at the target interface with ProteinMPNN.",
+    "doc": "src/task/step/steps/proteinmpnn_interface_redesign.ProteinmpnnInterfaceRedesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_interface_scan",
+    "kind": "operator",
+    "title": "ProteinMPNN interface scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/proteinmpnn_interface_scan.ProteinmpnnInterfaceScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_interface_temperature_scan",
+    "kind": "operator",
+    "title": "Interface temperature scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/proteinmpnn_interface_temperature_scan.ProteinmpnnInterfaceTemperatureScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_masked_design",
+    "kind": "operator",
+    "title": "Masked ProteinMPNN design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Redesign a structure while fixing the residues named by a mask.",
+    "doc": "src/task/step/steps/proteinmpnn_masked_design.ProteinmpnnMaskedDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_masked_interface_design",
+    "kind": "operator",
+    "title": "Interface-masked ProteinMPNN design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Redesign the interface residues of a binder/target complex with official ProteinMPNN; the interface mask is derived from heavy-atom contacts instead of a residue list.",
+    "doc": "src/task/step/steps/proteinmpnn_masked_interface_design.ProteinmpnnMaskedInterfaceDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_masked_interface_score",
+    "kind": "operator",
+    "title": "ProteinMPNN interface score",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score an existing structure/sequence pair with the official ProteinMPNN runner in --score_only mode and split the per-residue negative log-likelihood into interface and non-interface residues.",
+    "doc": "src/task/step/steps/proteinmpnn_masked_interface_score.ProteinmpnnMaskedInterfaceScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_multi_model_consensus",
+    "kind": "operator",
+    "title": "ProteinMPNN 多模型共识",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "用多个 ProteinMPNN checkpoint 采样并汇总逐位点共识频率。",
+    "doc": "src/task/step/steps/proteinmpnn_multi_model_consensus.ProteinmpnnMultiModelConsensusStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_native_recovery_scan",
+    "kind": "operator",
+    "title": "ProteinMPNN Native Recovery Scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Per-position native recovery and dominant substitution of sampled designs.",
+    "doc": "src/task/step/steps/proteinmpnn_native_recovery_scan.ProteinmpnnNativeRecoveryScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_noise_robustness",
+    "kind": "operator",
+    "title": "ProteinMPNN noise robustness",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Perturb the backbone coordinates with increasing Gaussian noise, redesign every replicate with the official ProteinMPNN runner and report the mean sequence recovery and model scores per noise level as a measure of design robustness.",
+    "doc": "src/task/step/steps/proteinmpnn_noise_robustness.ProteinmpnnNoiseRobustnessStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_omit_design",
+    "kind": "operator",
+    "title": "ProteinMPNN constrained design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official ProteinMPNN sampler with a global amino-acid omission set (for example cysteine-free design) and report the sampled designs.",
+    "doc": "src/task/step/steps/proteinmpnn_omit_design.ProteinmpnnOmitDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_perplexity",
+    "kind": "operator",
+    "title": "ProteinMPNN Perplexity",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Computes how uncertain ProteinMPNN is at every designed position. The operator runs the official conditional-probability pass and reports the effective number of amino-acid choices, the position entropy and the most likely probability.",
+    "doc": "src/task/step/steps/proteinmpnn_perplexity.ProteinmpnnPerplexityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_position_entropy",
+    "kind": "operator",
+    "title": "ProteinMPNN position entropy",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sample ProteinMPNN designs for a structure and summarise the per-position amino-acid entropy and native recovery.",
+    "doc": "src/task/step/steps/proteinmpnn_position_entropy.ProteinmpnnPositionEntropyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_probability_profile",
+    "kind": "operator",
+    "title": "ProteinMPNN probability profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official ProteinMPNN runner in --conditional_probs_only mode and report the per-position amino-acid probability profile p(s_i | backbone, rest of sequence).",
+    "doc": "src/task/step/steps/proteinmpnn_probability_profile.ProteinmpnnProbabilityProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_score",
+    "kind": "operator",
+    "title": "ProteinMPNN sequence score",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score a structure/sequence pair with the official ProteinMPNN runner in --score_only mode; returns mean and global negative log-likelihood per sequence.",
+    "doc": "src/task/step/steps/proteinmpnn_score.ProteinmpnnScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_temperature_ladder",
+    "kind": "operator",
+    "title": "ProteinMPNN 温度梯度",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "在同一骨架上扫描多个采样温度，比较序列多样性与打分。",
+    "doc": "src/task/step/steps/proteinmpnn_temperature_ladder.ProteinmpnnTemperatureLadderStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "proteinmpnn_tied_design",
+    "kind": "operator",
+    "title": "ProteinMPNN tied-position design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official ProteinMPNN runner with a tied-positions payload so that symmetry-equivalent residues receive the same amino acid, and report the design scores together with the tied payload used.",
+    "doc": "src/task/step/steps/proteinmpnn_tied_design.ProteinmpnnTiedDesignStep.md",
     "status": "generated"
   },
   {
@@ -3067,6 +4477,16 @@
     "version": "1.0.0",
     "description": "Per-sample summary metrics along a feature axis.",
     "doc": "src/task/step/steps/qc_metrics.QcMetricsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "qda",
+    "kind": "operator",
+    "title": "Quadratic discriminant analysis",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Quadratic discriminant analysis with per-class covariance; reports test predictions, accuracy and confusion matrix.",
+    "doc": "src/task/step/steps/qda.QdaStep.md",
     "status": "generated"
   },
   {
@@ -3150,6 +4570,16 @@
     "status": "generated"
   },
   {
+    "id": "rank_test",
+    "kind": "operator",
+    "title": "Mann-Kendall rank test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Mann-Kendall rank correlation test using the number of later observations larger than each earlier observation.",
+    "doc": "src/task/step/steps/rank_test.RankTestStep.md",
+    "status": "generated"
+  },
+  {
     "id": "rank_transform",
     "kind": "operator",
     "title": "Rank transform",
@@ -3167,6 +4597,306 @@
     "version": "1.0.0",
     "description": "Expected species richness at a fixed number of individuals.",
     "doc": "src/task/step/steps/rarefaction.RarefactionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rda",
+    "kind": "operator",
+    "title": "Redundancy analysis",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Constrained ordination (RDA) of a response matrix on centred predictors, returning constrained eigenvalues.",
+    "doc": "src/task/step/steps/rda.RdaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdd",
+    "kind": "operator",
+    "title": "Regression discontinuity",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Sharp regression-discontinuity jump estimated by local linear regression near a cutoff.",
+    "doc": "src/task/step/steps/rdd.RddStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_admet_rules",
+    "kind": "operator",
+    "title": "RDKit drug-likeness rules",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Descriptor panel plus Lipinski, Veber and Ghose pass/fail flags per molecule.",
+    "doc": "src/task/step/steps/rdkit_admet_rules.RdkitAdmetRulesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_atom_environment_histogram",
+    "kind": "operator",
+    "title": "Atom environment histogram",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Counts hashed Morgan atom environments per molecule and reports entropy.",
+    "doc": "src/task/step/steps/rdkit_atom_environment_histogram.RdkitAtomEnvironmentHistogramStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_charge_profile",
+    "kind": "operator",
+    "title": "RDKit charge profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Reports formal charge, charged atom counts and Gasteiger charge summaries for each molecule.",
+    "doc": "src/task/step/steps/rdkit_charge_profile.RdkitChargeProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_conformer_cluster",
+    "kind": "operator",
+    "title": "Conformer clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/rdkit_conformer_cluster.RdkitConformerClusterStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_conformer_energy",
+    "kind": "operator",
+    "title": "RDKit conformer energies",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Embed ETKDGv3 conformers per molecule and report the MMFF94/UFF energy distribution.",
+    "doc": "src/task/step/steps/rdkit_conformer_energy.RdkitConformerEnergyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_descriptors",
+    "kind": "operator",
+    "title": "RDKit molecular descriptors",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Parse SMILES strings with RDKit and compute twelve standard descriptors (molecular weight, Crippen logP and molar refractivity, TPSA, hydrogen-bond donors and acceptors, rotatable bonds, ring counts, heavy and hetero atom counts and the fraction of sp3 carbons).",
+    "doc": "src/task/step/steps/rdkit_descriptors.RdkitDescriptorsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_esol",
+    "kind": "operator",
+    "title": "RDKit ESOL Solubility",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Estimate aqueous molar solubility from SMILES with the Delaney/ESOL linear regression over cLogP, molecular weight, rotatable bonds and aromatic proportion.",
+    "doc": "src/task/step/steps/rdkit_esol.RdkitEsolStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_fragment_overlap",
+    "kind": "operator",
+    "title": "RDKit fragment overlap",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compare two molecule groups through their BRICS fragment sets: the output is the Jaccard overlap (shared / union) of every molecule of the first group against every molecule of the second group. Groups are given as 'SMILES [name]' lines.",
+    "doc": "src/task/step/steps/rdkit_fragment_overlap.RdkitFragmentOverlapStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_fragment_profile",
+    "kind": "operator",
+    "title": "Fragment profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Decompose molecules with BRICS or RECAP and report which canonical fragments occur, as a molecule-by-fragment presence matrix with per-molecule fragment counts.",
+    "doc": "src/task/step/steps/rdkit_fragment_profile.RdkitFragmentProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_functional_group_counts",
+    "kind": "operator",
+    "title": "Functional group counts",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Count SMARTS-defined functional groups for every input molecule.",
+    "doc": "src/task/step/steps/rdkit_functional_group_counts.RdkitFunctionalGroupCountsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_mcs",
+    "kind": "operator",
+    "title": "Maximum common substructure",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Parse a set of SMILES and report the maximum common substructure (RDKit rdFMCS) with per-molecule matched and unmatched heavy atom counts.",
+    "doc": "src/task/step/steps/rdkit_mcs.RdkitMcsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_mcs_cluster",
+    "kind": "operator",
+    "title": "RDKit MCS cluster",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute pairwise maximum common substructure similarity with RDKit and group the molecules by single-linkage clustering.",
+    "doc": "src/task/step/steps/rdkit_mcs_cluster.RdkitMcsClusterStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_morgan_fingerprint",
+    "kind": "operator",
+    "title": "Morgan fingerprint",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute the RDKit Morgan (extended connectivity) bit fingerprint for every SMILES string and return a [molecule, bit] matrix of 0/1 values that downstream clustering or machine-learning operators can consume.",
+    "doc": "src/task/step/steps/rdkit_morgan_fingerprint.RdkitMorganFingerprintStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_murcko_fingerprint",
+    "kind": "operator",
+    "title": "Murcko scaffold fingerprint",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Murcko scaffold extraction followed by a hashed Morgan bit fingerprint, one row per molecule.",
+    "doc": "src/task/step/steps/rdkit_murcko_fingerprint.RdkitMurckoFingerprintStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_oral_bioavailability",
+    "kind": "operator",
+    "title": "RDKit Oral Bioavailability Rules",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Evaluate the Lipinski, Veber and Egan rule sets for oral bioavailability from SMILES and report descriptor values, violations and a combined pass flag.",
+    "doc": "src/task/step/steps/rdkit_oral_bioavailability.RdkitOralBioavailabilityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_pharmacophore_features",
+    "kind": "operator",
+    "title": "Pharmacophore Features",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Count RDKit pharmacophore feature families for each molecule.",
+    "doc": "src/task/step/steps/rdkit_pharmacophore_features.RdkitPharmacophoreFeaturesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_qed",
+    "kind": "operator",
+    "title": "RDKit QED",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute the Bickerton quantitative estimate of drug-likeness (QED) from SMILES together with the descriptor values that feed its desirability terms.",
+    "doc": "src/task/step/steps/rdkit_qed.RdkitQedStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_reaction_pairwise_enumerate",
+    "kind": "operator",
+    "title": "Pairwise reaction enumeration",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Apply a two-component reaction SMARTS to the cross product of two SMILES libraries, deduplicate the products and report heavy-atom count and molecular weight per product.",
+    "doc": "src/task/step/steps/rdkit_reaction_pairwise_enumerate.RdkitReactionPairwiseEnumerateStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_reaction_smarts_apply",
+    "kind": "operator",
+    "title": "Reaction SMARTS application",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Applies one or more reaction SMARTS to a SMILES collection and counts products.",
+    "doc": "src/task/step/steps/rdkit_reaction_smarts_apply.RdkitReactionSmartsApplyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_ring_systems",
+    "kind": "operator",
+    "title": "RDKit ring systems",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Counts SSSR rings, aromatic rings, fused ring systems and spiro links, and reports the largest and mean ring size.",
+    "doc": "src/task/step/steps/rdkit_ring_systems.RdkitRingSystemsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_sa_score",
+    "kind": "operator",
+    "title": "RDKit Synthetic Accessibility",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Score molecules with Ertl's synthetic accessibility model from the official RDKit contribution scorer, with an easy/moderate/hard/very-hard bucket.",
+    "doc": "src/task/step/steps/rdkit_sa_score.RdkitSaScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_scaffold",
+    "kind": "operator",
+    "title": "RDKit Bemis-Murcko scaffolds",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Bemis-Murcko scaffold SMILES plus scaffold and ring-system counts per molecule.",
+    "doc": "src/task/step/steps/rdkit_scaffold.RdkitScaffoldStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_scaffold_diversity",
+    "kind": "operator",
+    "title": "RDKit Scaffold Diversity",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Groups a molecule collection by Murcko scaffold and reports how often each scaffold occurs, so library diversity and scaffold hopping can be inspected directly.",
+    "doc": "src/task/step/steps/rdkit_scaffold_diversity.RdkitScaffoldDiversityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_scaffold_tree",
+    "kind": "operator",
+    "title": "Murcko scaffold tree",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Hierarchical scaffold levels shared by a molecule collection.",
+    "doc": "src/task/step/steps/rdkit_scaffold_tree.RdkitScaffoldTreeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_similarity",
+    "kind": "operator",
+    "title": "Molecular similarity matrix",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Parse a list of SMILES, build Morgan fingerprints and report the pairwise Tanimoto, Dice or cosine similarity as a symmetric molecule-by-molecule matrix.",
+    "doc": "src/task/step/steps/rdkit_similarity.RdkitSimilarityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_smarts_matches",
+    "kind": "operator",
+    "title": "RDKit SMARTS Matches",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Match a list of SMARTS patterns against every input molecule and report the per-molecule match counts as a [molecule, pattern] matrix.",
+    "doc": "src/task/step/steps/rdkit_smarts_matches.RdkitSmartsMatchesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_smiles_augment",
+    "kind": "operator",
+    "title": "RDKit SMILES Augment",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Enumerate seeded random SMILES strings for every molecule and report how many variants are unique along with their length statistics.",
+    "doc": "src/task/step/steps/rdkit_smiles_augment.RdkitSmilesAugmentStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rdkit_tautomer",
+    "kind": "operator",
+    "title": "Tautomer canonicalization",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Enumerate the RDKit tautomers of every input SMILES, pick the canonical tautomer and report the tautomer count, whether the input changed, and the canonical hydrogen-bond donor/acceptor counts.",
+    "doc": "src/task/step/steps/rdkit_tautomer.RdkitTautomerStep.md",
     "status": "generated"
   },
   {
@@ -3240,6 +4970,16 @@
     "status": "generated"
   },
   {
+    "id": "renyi",
+    "kind": "operator",
+    "title": "Renyi diversity profiles",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Renyi generalised entropy of each sample across taxa for a requested set of alpha orders, following vegan renyi.",
+    "doc": "src/task/step/steps/renyi.RenyiStep.md",
+    "status": "generated"
+  },
+  {
     "id": "reset_test",
     "kind": "operator",
     "title": "RESET functional-form test",
@@ -3247,6 +4987,16 @@
     "version": "1.0.0",
     "description": "RESET functional-form test：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、Response Label、Predictors、分类协变量、Power。",
     "doc": "src/task/step/steps/reset_test.ResetTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "resource_preflight",
+    "kind": "operator",
+    "title": "Large-resource preflight",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Verify that the weights, databases and official checkouts listed in biopipe/resources.json are installed. Emits one row per expected file with its presence and size, and records the installation command for anything missing.",
+    "doc": "src/task/step/steps/resource_preflight.ResourcePreflightStep.md",
     "status": "generated"
   },
   {
@@ -3267,6 +5017,16 @@
     "version": "1.0.0",
     "description": "Reverse complement：接收 1 个输入，输出 Form；主要参数：序列维度、位置维度。",
     "doc": "src/task/step/steps/reverse_complement.ReverseComplementStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rfdiffusion_design",
+    "kind": "operator",
+    "title": "RFdiffusion backbone design",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run the official RFdiffusion run_inference.py for a contig expression and return the generated backbones as a [design, atom, field] all-atom table.",
+    "doc": "src/task/step/steps/rfdiffusion_design.RfdiffusionDesignStep.md",
     "status": "generated"
   },
   {
@@ -3297,6 +5057,16 @@
     "version": "1.0.0",
     "description": "Restricted mean survival：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、随访时间字段、事件字段、分组字段、Tau。",
     "doc": "src/task/step/steps/rmst.RmstStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "robinson_foulds",
+    "kind": "operator",
+    "title": "Robinson-Foulds distance",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Unweighted Robinson-Foulds distance between two node x field trees.",
+    "doc": "src/task/step/steps/robinson_foulds.RobinsonFouldsStep.md",
     "status": "generated"
   },
   {
@@ -3360,6 +5130,16 @@
     "status": "generated"
   },
   {
+    "id": "sasa_per_residue",
+    "kind": "operator",
+    "title": "Per-Residue SASA",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute the Shrake-Rupley solvent-accessible surface area of every residue in a full-atom structure with Bondi van der Waals radii and a 1.4 A probe.",
+    "doc": "src/task/step/steps/sasa_per_residue.SasaPerResidueStep.md",
+    "status": "generated"
+  },
+  {
     "id": "scale_features",
     "kind": "operator",
     "title": "scale_features",
@@ -3390,6 +5170,16 @@
     "status": "generated"
   },
   {
+    "id": "seasonal_decompose",
+    "kind": "operator",
+    "title": "Classical seasonal decomposition",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Classical moving-average seasonal decomposition (additive or multiplicative).",
+    "doc": "src/task/step/steps/seasonal_decompose.SeasonalDecomposeStep.md",
+    "status": "generated"
+  },
+  {
     "id": "select",
     "kind": "operator",
     "title": "选择特征",
@@ -3410,6 +5200,276 @@
     "status": "generated"
   },
   {
+    "id": "sequence_aggregation_propensity",
+    "kind": "operator",
+    "title": "Aggregation propensity",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_aggregation_propensity.SequenceAggregationPropensityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_beta_propensity",
+    "kind": "operator",
+    "title": "Beta-sheet propensity",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_beta_propensity.SequenceBetaPropensityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_codon_adaptation",
+    "kind": "operator",
+    "title": "Codon adaptation index",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Codon adaptation index of coding DNA sequences relative to a reference coding set (Sharp & Li 1987).",
+    "doc": "src/task/step/steps/sequence_codon_adaptation.SequenceCodonAdaptationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_complexity",
+    "kind": "operator",
+    "title": "Sequence Complexity",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Measure protein sequence complexity with k-mer Shannon entropy, linguistic complexity and the fraction of low-complexity windows, useful for filtering repeat-rich or low-entropy designed sequences.",
+    "doc": "src/task/step/steps/sequence_complexity.SequenceComplexityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_cpg_island",
+    "kind": "operator",
+    "title": "CpG island scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sliding-window CpG island detection using GC content and observed/expected CpG ratio, with merged island coordinates.",
+    "doc": "src/task/step/steps/sequence_cpg_island.SequenceCpgIslandStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_cysteine_pairing",
+    "kind": "operator",
+    "title": "Cysteine pairing",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_cysteine_pairing.SequenceCysteinePairingStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_disorder_predictor",
+    "kind": "operator",
+    "title": "Sequence disorder predictor",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_disorder_predictor.SequenceDisorderPredictorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_gc_profile",
+    "kind": "operator",
+    "title": "Sequence GC Profile",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Summarises nucleotide composition: GC content, third-codon GC, CpG observed/expected ratio, AT skew and the spread of a sliding GC window, which supports ORF and primer design checks.",
+    "doc": "src/task/step/steps/sequence_gc_profile.SequenceGcProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_gc_skew_profile",
+    "kind": "operator",
+    "title": "GC skew profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Sliding-window GC content and GC/AT skew profile of nucleotide sequences.",
+    "doc": "src/task/step/steps/sequence_gc_skew_profile.SequenceGcSkewProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_hydrophobic_moment",
+    "kind": "operator",
+    "title": "Helical hydrophobic moment",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_hydrophobic_moment.SequenceHydrophobicMomentStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_hydrophobicity_profile",
+    "kind": "operator",
+    "title": "Sequence hydrophobicity profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute a sliding-window Kyte-Doolittle hydrophobicity profile for each protein sequence and report hydrophobic segments above a threshold.",
+    "doc": "src/task/step/steps/sequence_hydrophobicity_profile.SequenceHydrophobicityProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_isoelectric_point",
+    "kind": "operator",
+    "title": "Isoelectric point",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_isoelectric_point.SequenceIsoelectricPointStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_kmer_enrichment",
+    "kind": "operator",
+    "title": "Sequence k-mer enrichment",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Compare the k-mer content of query sequences to a background set: counts, add-pseudocount log2 enrichment, two-sided Fisher exact p-values and optional Benjamini-Hochberg q-values.",
+    "doc": "src/task/step/steps/sequence_kmer_enrichment.SequenceKmerEnrichmentStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_kmer_profile",
+    "kind": "operator",
+    "title": "K-mer composition profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Summarises k-mer entropy, distinct fraction and the dominant k-mer per sequence.",
+    "doc": "src/task/step/steps/sequence_kmer_profile.SequenceKmerProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_liability_scan",
+    "kind": "operator",
+    "title": "Sequence liability scan",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Scan a protein sequence for curated developability liabilities (Asn deamidation, Asp isomerisation, Met/Trp oxidation, N-linked glycosylation sequons and N-terminal pyroglutamate) and report each site with its severity code.",
+    "doc": "src/task/step/steps/sequence_liability_scan.SequenceLiabilityScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_net_charge",
+    "kind": "operator",
+    "title": "Protein net charge",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/sequence_net_charge.SequenceNetChargeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_orf_finder",
+    "kind": "operator",
+    "title": "Six-frame ORF finder",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Finds open reading frames on both strands with a minimum length.",
+    "doc": "src/task/step/steps/sequence_orf_finder.SequenceOrfFinderStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_repeat_finder",
+    "kind": "operator",
+    "title": "Tandem repeat finder",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Non-overlapping tandem repeats with period and copy counts.",
+    "doc": "src/task/step/steps/sequence_repeat_finder.SequenceRepeatFinderStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_restriction_sites",
+    "kind": "operator",
+    "title": "Restriction site scan",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Scans DNA sequences for common type II restriction sites and reports positions.",
+    "doc": "src/task/step/steps/sequence_restriction_sites.SequenceRestrictionSitesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_rna_accessibility",
+    "kind": "operator",
+    "title": "RNA 可及性",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Compute the Boltzmann ensemble base-pair probabilities with ViennaRNA and report per-base unpaired probabilities plus accessible single-stranded segments.",
+    "doc": "src/task/step/steps/sequence_rna_accessibility.SequenceRnaAccessibilityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_rna_cofold",
+    "kind": "operator",
+    "title": "RNA 二聚体共折叠平衡",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Cofold two RNA strands with ViennaRNA RNAcofold and report the dimer MFE, ensemble energy, binding free energy, MFE frequency and equilibrium concentrations of the five dimer and monomer species.",
+    "doc": "src/task/step/steps/sequence_rna_cofold.SequenceRnaCofoldStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_rna_cofold_ensemble",
+    "kind": "operator",
+    "title": "RNA 双链系综",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Run the ViennaRNA two-strand partition function and split each base's pairing probability into unpaired, intra-strand and inter-strand parts, with the MFE cofold structure and the interface bases.",
+    "doc": "src/task/step/steps/sequence_rna_cofold_ensemble.SequenceRnaCofoldEnsembleStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_rna_duplex",
+    "kind": "operator",
+    "title": "RNA-RNA 杂交位点",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Compute the optimal and near-optimal hybridization sites between two RNA sequences with ViennaRNA RNAduplex and report the duplex energy and spans.",
+    "doc": "src/task/step/steps/sequence_rna_duplex.SequenceRnaDuplexStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_rna_ensemble",
+    "kind": "operator",
+    "title": "RNA 系综统计 (RNAfold -p)",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Run the ViennaRNA partition function (RNAfold -p) and report the MFE energy, ensemble free energy, maximum expected accuracy structure and energy, the frequency of the MFE structure and the ensemble diversity.",
+    "doc": "src/task/step/steps/sequence_rna_ensemble.SequenceRnaEnsembleStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_rna_fold",
+    "kind": "operator",
+    "title": "RNA 二级结构折叠 (ViennaRNA)",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Fold RNA sequences with the official ViennaRNA RNAfold implementation and report the minimum free energy structure, energy, ensemble energy, base-pair count and GC content.",
+    "doc": "src/task/step/steps/sequence_rna_fold.SequenceRnaFoldStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_signal_peptide",
+    "kind": "operator",
+    "title": "Signal peptide detection",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Detect an N-terminal signal peptide with a SignalP-style heuristic: a positively charged n-region, a 7-15 residue hydrophobic h-region, a small residue at the -1 and -3 positions and a reported cleavage site.",
+    "doc": "src/task/step/steps/sequence_signal_peptide.SequenceSignalPeptideStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_signal_peptide_v2",
+    "kind": "operator",
+    "title": "Signal peptide typing",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Scan a protein sequence for a signal peptide, discriminate secretory from Tat-dependent and lipoprotein from non-lipoprotein routes, and report the most likely signal peptidase cleavage site.",
+    "doc": "src/task/step/steps/sequence_signal_peptide_v2.SequenceSignalPeptideV2Step.md",
+    "status": "generated"
+  },
+  {
     "id": "sequence_stats",
     "kind": "operator",
     "title": "sequence_stats",
@@ -3417,6 +5477,26 @@
     "version": "1.1.0",
     "description": "Per-sequence length, GC and N content for any sequence-codes Form.",
     "doc": "src/task/step/steps/sequence_stats.SequenceStatsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_tm_segments",
+    "kind": "operator",
+    "title": "Transmembrane helix segments",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Score a protein sequence with Kyte-Doolittle hydropathy windows, merge windows above the membrane threshold into segments and report their ranges and hydropathy.",
+    "doc": "src/task/step/steps/sequence_tm_segments.SequenceTmSegmentsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sequence_transmembrane_topology",
+    "kind": "operator",
+    "title": "Transmembrane topology",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Detect transmembrane segments with the Kyte-Doolittle window and assign each one to the inside or outside face using the positive-inside rule on the flanking loops.",
+    "doc": "src/task/step/steps/sequence_transmembrane_topology.SequenceTransmembraneTopologyStep.md",
     "status": "generated"
   },
   {
@@ -3520,6 +5600,26 @@
     "status": "generated"
   },
   {
+    "id": "simper",
+    "kind": "operator",
+    "title": "SIMPER",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "SIMPER decomposition of Bray-Curtis dissimilarity between two groups.",
+    "doc": "src/task/step/steps/simper.SimperStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "site_frequency_spectrum",
+    "kind": "operator",
+    "title": "Site frequency spectrum",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Unfolded or folded site frequency spectrum of biallelic variants.",
+    "doc": "src/task/step/steps/site_frequency_spectrum.SiteFrequencySpectrumStep.md",
+    "status": "generated"
+  },
+  {
     "id": "skillings_mack",
     "kind": "operator",
     "title": "Skillings-Mack test",
@@ -3527,6 +5627,16 @@
     "version": "1.0.0",
     "description": "Skillings-Mack test for an arbitrary incomplete block design.",
     "doc": "src/task/step/steps/skillings_mack.SkillingsMackTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "smiles_standardize",
+    "kind": "operator",
+    "title": "Standardize SMILES",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Optionally keep the largest fragment, neutralize charges and write canonical RDKit SMILES for every input molecule.  The output is a [molecule, statistic] Form with atom, heavy-atom, fragment and ring counts; the canonical strings are exposed in info.canonical_smiles.",
+    "doc": "src/task/step/steps/smiles_standardize.SmilesStandardizeStep.md",
     "status": "generated"
   },
   {
@@ -3557,6 +5667,26 @@
     "version": "1.0.0",
     "description": "Somers' D with the row or column variable as dependent.",
     "doc": "src/task/step/steps/somers_d.SomersDStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "specaccum",
+    "kind": "operator",
+    "title": "Species accumulation",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Exact species accumulation curve and its conditioned standard deviation.",
+    "doc": "src/task/step/steps/specaccum.SpecaccumStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "specpool",
+    "kind": "operator",
+    "title": "Species pool estimators",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Chao, first- and second-order jackknife and bootstrap species-pool richness estimators with standard errors.",
+    "doc": "src/task/step/steps/specpool.SpecpoolStep.md",
     "status": "generated"
   },
   {
@@ -3610,6 +5740,746 @@
     "status": "generated"
   },
   {
+    "id": "structure_amide_pi_bonds",
+    "kind": "operator",
+    "title": "Amide-pi interactions",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/structure_amide_pi_bonds.StructureAmidePiBondsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_anm_modes",
+    "kind": "operator",
+    "title": "ANM 模式分析",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Build an anisotropic network model Hessian from CA atoms and report per-residue mean-square fluctuations, slowest eigenvalues and collectivity.",
+    "doc": "src/task/step/steps/structure_anm_modes.StructureAnmModesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_aromatic_stacking",
+    "kind": "operator",
+    "title": "Aromatic stacking",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/structure_aromatic_stacking.StructureAromaticStackingStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_bfactor_profile",
+    "kind": "operator",
+    "title": "Structure B-factor Profile",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Summarise crystallographic B-factors per residue (mean, maximum, atom count) with heavy-atom filtering, order residues from most to least flexible, and report the global distribution for design and model quality control.",
+    "doc": "src/task/step/steps/structure_bfactor_profile.StructureBfactorProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ca_distance_matrix",
+    "kind": "operator",
+    "title": "CA distance matrix",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Builds a symmetric residue-by-residue CA-CA distance matrix from a full-atom PDB form, optionally restricted to selected chains.",
+    "doc": "src/task/step/steps/structure_ca_distance_matrix.StructureCaDistanceMatrixStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_cation_pi",
+    "kind": "operator",
+    "title": "Cation-pi interactions",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/structure_cation_pi.StructureCationPiStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_cavity_druggability",
+    "kind": "operator",
+    "title": "Cavity druggability",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Detect the largest buried cavity of a structure, measure how enclosed it is and how hydrophobic its lining is, and combine both into a 0-1 druggability score.",
+    "doc": "src/task/step/steps/structure_cavity_druggability.StructureCavityDruggabilityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_cavity_lining",
+    "kind": "operator",
+    "title": "Cavity lining residues",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Residues lining the largest buried cavity of a structure, with their nearest distance to the cavity volume.",
+    "doc": "src/task/step/steps/structure_cavity_lining.StructureCavityLiningStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_cavity_scan",
+    "kind": "operator",
+    "title": "Buried cavity scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Detect buried voids on a grid and report their volume and centroid.",
+    "doc": "src/task/step/steps/structure_cavity_scan.StructureCavityScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_chi_angles",
+    "kind": "operator",
+    "title": "Side-chain chi angles",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Computes chi1, chi2 and chi3 side-chain torsion angles for every residue.",
+    "doc": "src/task/step/steps/structure_chi_angles.StructureChiAnglesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_contact_order",
+    "kind": "operator",
+    "title": "Structure contact order",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compute the absolute and relative contact order of a protein from CA-CA contacts. Rows report per-residue contact counts and mean sequence separation; the info carries the absolute contact order (mean sequence separation divided by chain length) and the relative contact order.",
+    "doc": "src/task/step/steps/structure_contact_order.StructureContactOrderStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_contacts",
+    "kind": "operator",
+    "title": "Residue contact network",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Convert a heavy-atom PDB form into a residue contact graph: for every residue report how many partner residues lie within the cutoff (cross-chain by default) and the distance to the nearest partner.",
+    "doc": "src/task/step/steps/structure_contacts.StructureContactsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_disorder_profile",
+    "kind": "operator",
+    "title": "Structure disorder profile",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Report one row per residue with the mean B-factor, its per-chain z-score, the number of unmodelled residues that follow it, and a combined disorder score.",
+    "doc": "src/task/step/steps/structure_disorder_profile.StructureDisorderProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_disulfide_bonds",
+    "kind": "operator",
+    "title": "Structure disulfide bonds",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Detect disulfide bonds from cysteine SG atoms and report the bonded and free cysteine residues.",
+    "doc": "src/task/step/steps/structure_disulfide_bonds.StructureDisulfideBondsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_dockq",
+    "kind": "operator",
+    "title": "DockQ 复合物质量评分",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute the CAPRI DockQ score for a protein-protein model against a native complex: native contact fraction, interface RMSD, ligand RMSD and their combination.",
+    "doc": "src/task/step/steps/structure_dockq.StructureDockqStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_domain_boundary",
+    "kind": "operator",
+    "title": "Structure domain boundary",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Segment a chain into domains from the CA contact graph (connected components or normalized-Laplacian spectral clustering) and report each residue's domain, the number of cross-domain contacts and whether it sits on a domain boundary.",
+    "doc": "src/task/step/steps/structure_domain_boundary.StructureDomainBoundaryStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_dssp_segments",
+    "kind": "operator",
+    "title": "DSSP secondary-structure segments",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/structure_dssp_segments.StructureDsspSegmentsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_glycosylation_sites",
+    "kind": "operator",
+    "title": "Glycosylation sites",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Report N-X-S/T (and optionally O-linked Ser/Thr) sequons of every protein chain together with the mean per-atom solvent exposure of the acceptor residue.",
+    "doc": "src/task/step/steps/structure_glycosylation_sites.StructureGlycosylationSitesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_gnm_flexibility",
+    "kind": "operator",
+    "title": "GNM 柔性分析",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Build a Gaussian network model from CA atoms and report per-residue mean-square fluctuations, the slowest mode weights and its collectivity.",
+    "doc": "src/task/step/steps/structure_gnm_flexibility.StructureGnmFlexibilityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_halogen_bond_scan",
+    "kind": "operator",
+    "title": "Halogen bond scan",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Scan a full-atom structure for halogen bonds: carbon-halogen donors against oxygen, nitrogen or sulfur acceptors using distance and C-X...Y angle criteria.",
+    "doc": "src/task/step/steps/structure_halogen_bond_scan.StructureHalogenBondScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_hbonds",
+    "kind": "operator",
+    "title": "Backbone Hydrogen Bonds",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Find backbone N-H...O=C hydrogen bonds with the Kabsch-Sander electrostatic model and summarise donors, acceptors and the strongest interaction energy per residue.",
+    "doc": "src/task/step/steps/structure_hbonds.StructureHbondsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_helix_bend",
+    "kind": "operator",
+    "title": "Helix axis bend",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Fit helical runs from CA geometry and report the overall and local bend of each helix axis together with an approximate curvature radius.",
+    "doc": "src/task/step/steps/structure_helix_bend.StructureHelixBendStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_helix_geometry",
+    "kind": "operator",
+    "title": "Structure Helix Geometry",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Detects CA helices and reports the geometric parameters of each one: axial rise per residue, helix radius, twist angle and residues per turn, which exposes over- or under-wound helical segments.",
+    "doc": "src/task/step/steps/structure_helix_geometry.StructureHelixGeometryStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_helix_helix_angle",
+    "kind": "operator",
+    "title": "Helix-helix angle and spacing",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Detect helical runs from CA geometry and report pairwise axis angles, axis distances and inter-helix contact counts.",
+    "doc": "src/task/step/steps/structure_helix_helix_angle.StructureHelixHelixAngleStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_interface_core",
+    "kind": "operator",
+    "title": "Interface core residues",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute the per-residue buried surface area of a protein complex and classify interface residues as rim or core by the fraction of their isolated SASA that becomes buried on complex formation.",
+    "doc": "src/task/step/steps/structure_interface_core.StructureInterfaceCoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_interface_residue_energy",
+    "kind": "operator",
+    "title": "界面残基能量分解",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Decompose the vacuum Coulomb + Lennard-Jones interaction energy of a protein-protein interface into per-residue contributions, with an exact sum identity against the side totals.",
+    "doc": "src/task/step/steps/structure_interface_residue_energy.StructureInterfaceResidueEnergyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_lddt",
+    "kind": "operator",
+    "title": "lDDT 局部距离差异检验",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute per-residue local Distance Difference Test scores for a model against a reference structure using C-alpha atoms in a 15 A inclusion radius and the 0.5/1/2/4 A thresholds.",
+    "doc": "src/task/step/steps/structure_lddt.StructureLddtStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_burial",
+    "kind": "operator",
+    "title": "Ligand burial",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Computes solvent-accessible surface area of each ligand residue alone and in the protein complex and reports the buried fraction.",
+    "doc": "src/task/step/steps/structure_ligand_burial.StructureLigandBurialStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_clash",
+    "kind": "operator",
+    "title": "Ligand steric clashes",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Count van der Waals overlaps between ligand heavy atoms and protein heavy atoms, with per-atom worst overlap and closest distance.",
+    "doc": "src/task/step/steps/structure_ligand_clash.StructureLigandClashStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_geometry_qc",
+    "kind": "operator",
+    "title": "配体几何与碰撞质检",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Check a bound ligand against RDKit distance-geometry bounds for bond lengths and against the protein for steric clashes.",
+    "doc": "src/task/step/steps/structure_ligand_geometry_qc.StructureLigandGeometryQcStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_interaction_fingerprint",
+    "kind": "operator",
+    "title": "Ligand interaction fingerprint",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/structure_ligand_interaction_fingerprint.StructureLigandInteractionFingerprintStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_pose_qc",
+    "kind": "operator",
+    "title": "配体姿态 PoseBusters 体检",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Run the official PoseBusters validation suite on a protein-ligand complex: sanitisation, bond lengths and angles, internal strain, ring flatness and protein-ligand volume overlap, reported as one row per check.",
+    "doc": "src/task/step/steps/structure_ligand_pose_qc.StructureLigandPoseQcStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_pose_rmsd",
+    "kind": "operator",
+    "title": "Ligand pose RMSD",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Superpose a ligand pose onto a reference pose with the Kabsch algorithm and, when requested, re-match same-element atoms with the Hungarian assignment to obtain a symmetry-corrected RMSD. Emits per-atom deviations and the matched permutation.",
+    "doc": "src/task/step/steps/structure_ligand_pose_rmsd.StructureLigandPoseRmsdStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_redock_qc",
+    "kind": "operator",
+    "title": "配体 redock 几何校验",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Validate a docked ligand pose against a crystal ligand and its protein with PoseBusters redock mode, reporting symmetry-aware RMSD and failed checks.",
+    "doc": "src/task/step/steps/structure_ligand_redock_qc.StructureLigandRedockQcStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_residue_map",
+    "kind": "operator",
+    "title": "Ligand residue contact map",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Contact matrix between ligand atoms and protein residues.",
+    "doc": "src/task/step/steps/structure_ligand_residue_map.StructureLigandResidueMapStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ligand_strain",
+    "kind": "operator",
+    "title": "Ligand internal strain",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute the MMFF94 (or UFF) energy of a bound ligand conformation, minimize it locally and report the strain energy that the conformation carries relative to its own minimum.",
+    "doc": "src/task/step/steps/structure_ligand_strain.StructureLigandStrainStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_communication_path",
+    "kind": "operator",
+    "title": "动态通讯路径",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Build a dynamic cross-correlation matrix from a trajectory and extract the shortest allosteric communication path between two residues.",
+    "doc": "src/task/step/steps/structure_md_communication_path.StructureMdCommunicationPathStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_conformational_clusters",
+    "kind": "operator",
+    "title": "构象聚类",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Cluster trajectory frames by pairwise CA RMSD with average linkage and a distance cutoff; report cluster membership and distance to cluster centre.",
+    "doc": "src/task/step/steps/structure_md_conformational_clusters.StructureMdConformationalClustersStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_contact_occupancy",
+    "kind": "operator",
+    "title": "MD 残基接触占有率",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute per-residue-pair heavy-atom minimum distances across MD frames and report how often each pair stays in contact, with mean and minimum distances.",
+    "doc": "src/task/step/steps/structure_md_contact_occupancy.StructureMdContactOccupancyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_dihedral_occupancy",
+    "kind": "operator",
+    "title": "MD 主链二面角占有率",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute backbone phi/psi for every MD frame, classify each frame into coarse Ramachandran regions and report per-residue region occupancies and means.",
+    "doc": "src/task/step/steps/structure_md_dihedral_occupancy.StructureMdDihedralOccupancyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_dssp_transitions",
+    "kind": "operator",
+    "title": "二级结构状态转换",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Run DSSP on every trajectory frame, map codes onto helix/strand/coil, and report per-residue populations, transition counts and dwell times plus the global coarse transition matrix.",
+    "doc": "src/task/step/steps/structure_md_dssp_transitions.StructureMdDsspTransitionsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_free_energy_landscape",
+    "kind": "operator",
+    "title": "自由能景观",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Project trajectory frames onto the two leading principal components and build a histogram-based free-energy landscape F = -kT ln p.",
+    "doc": "src/task/step/steps/structure_md_free_energy_landscape.StructureMdFreeEnergyLandscapeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_hbond_lifetime",
+    "kind": "operator",
+    "title": "氢键寿命",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Detect hydrogen bonds per frame and report residence statistics: occupancy, mean and maximum continuous lifetime, transitions and picosecond conversion.",
+    "doc": "src/task/step/steps/structure_md_hbond_lifetime.StructureMdHbondLifetimeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_hbond_occupancy",
+    "kind": "operator",
+    "title": "MD 氢键占有率",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Detect donor-H...acceptor hydrogen bonds from topology and per-frame geometry, and report the fraction of MD frames in which each residue pair stays bonded.",
+    "doc": "src/task/step/steps/structure_md_hbond_occupancy.StructureMdHbondOccupancyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_interface_occupancy",
+    "kind": "operator",
+    "title": "MD interface occupancy",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Report which interface residues stay in contact across a trajectory.",
+    "doc": "src/task/step/steps/structure_md_interface_occupancy.StructureMdInterfaceOccupancyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_ligand_rmsd",
+    "kind": "operator",
+    "title": "MD 配体位移 RMSD",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Superpose each MD frame on the first frame using receptor CA atoms and report the ligand RMSD after superposition, summarising mean, maximum and final values.",
+    "doc": "src/task/step/steps/structure_md_ligand_rmsd.StructureMdLigandRmsdStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_markov_states",
+    "kind": "operator",
+    "title": "马尔可夫状态模型",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Cluster trajectory frames by CA RMSD, estimate a transition matrix at a chosen lag with pseudo counts, and report state populations, dwell times and implied timescales.",
+    "doc": "src/task/step/steps/structure_md_markov_states.StructureMdMarkovStatesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_pca",
+    "kind": "operator",
+    "title": "轨迹主成分分析",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Superpose trajectory frames on CA atoms, build the coordinate covariance matrix and report essential-dynamics modes with variance fractions.",
+    "doc": "src/task/step/steps/structure_md_pca.StructureMdPcaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_quasiharmonic_entropy",
+    "kind": "operator",
+    "title": "准谐振熵",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Estimate configurational entropy from the quasiharmonic covariance matrix of a trajectory (Schlitter formula), with per-mode contributions.",
+    "doc": "src/task/step/steps/structure_md_quasiharmonic_entropy.StructureMdQuasiharmonicEntropyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_rotamer_states",
+    "kind": "operator",
+    "title": "侧链旋转异构状态",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Classify chi1 side-chain rotamers over a trajectory and report populations, rotamer entropy and the number of state transitions.",
+    "doc": "src/task/step/steps/structure_md_rotamer_states.StructureMdRotamerStatesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_salt_bridge_occupancy",
+    "kind": "operator",
+    "title": "MD 盐桥占有率",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Track acidic (ASP/GLU) and basic (LYS/ARG/HIS) side-chain atom pairs across MD frames and report the fraction of frames in which each pair stays within the salt-bridge cutoff, with mean and minimum distances.",
+    "doc": "src/task/step/steps/structure_md_salt_bridge_occupancy.StructureMdSaltBridgeOccupancyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_sasa_occupancy",
+    "kind": "operator",
+    "title": "MD 残留溶剂可及面积统计",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Compute per-residue solvent-accessible surface area for every MD frame with mdtraj Shrake-Rupley and report mean, minimum, maximum and exposed fraction.",
+    "doc": "src/task/step/steps/structure_md_sasa_occupancy.StructureMdSasaOccupancyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_ss_occupancy",
+    "kind": "operator",
+    "title": "MD 轨迹二级结构占有率",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Run DSSP on sampled MD frames and report per-residue helix, strand and coil occupancies together with the dominant secondary-structure state.",
+    "doc": "src/task/step/steps/structure_md_ss_occupancy.StructureMdSsOccupancyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_md_tica",
+    "kind": "operator",
+    "title": "TICA 慢成分分析",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Solve the time-lagged independent component analysis eigenproblem on superposed CA coordinates and report eigenvalues with implied timescales.",
+    "doc": "src/task/step/steps/structure_md_tica.StructureMdTicaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_metal_coordination",
+    "kind": "operator",
+    "title": "Metal coordination shells",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Reports coordinating atoms within a distance cutoff of each metal ion.",
+    "doc": "src/task/step/steps/structure_metal_coordination.StructureMetalCoordinationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_openmm_energy",
+    "kind": "operator",
+    "title": "OpenMM potential energy",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Build an OpenMM system for a protein structure and report the potential energy, optionally minimized.",
+    "doc": "src/task/step/steps/structure_openmm_energy.StructureOpenmmEnergyStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_openmm_md_rmsf",
+    "kind": "operator",
+    "title": "短程 OpenMM MD 与残基柔性 (RMSF)",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Run a short implicit-solvent molecular dynamics simulation with OpenMM and report the per-residue C-alpha root mean square fluctuation and radius of gyration.",
+    "doc": "src/task/step/steps/structure_openmm_md_rmsf.StructureOpenmmMdRmsfStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_openmm_md_stability",
+    "kind": "operator",
+    "title": "OpenMM 短程分子动力学稳定性",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Minimise an implicit-solvent system with OpenMM and run a short Langevin trajectory, reporting temperature, potential energy, RMSD and radius of gyration per sampled frame.",
+    "doc": "src/task/step/steps/structure_openmm_md_stability.StructureOpenmmMdStabilityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_packing_density",
+    "kind": "operator",
+    "title": "Structure packing density",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Measure how tightly each residue is packed: heavy-atom neighbours inside a sphere around the residue centre, the number of distinct neighbour residues, and atoms per cubic angstrom.",
+    "doc": "src/task/step/steps/structure_packing_density.StructurePackingDensityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_pae_summary",
+    "kind": "operator",
+    "title": "PAE matrix summary",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Summarise an N x N predicted-alignment-error matrix (ColabFold, AlphaFold or ESMFold) into per-residue mean and maximum PAE plus the fraction of partner residues below a confidence threshold.",
+    "doc": "src/task/step/steps/structure_pae_summary.StructurePaeSummaryStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_paratope_predict",
+    "kind": "operator",
+    "title": "Paratope prediction",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Annotate the Kabat CDR spans of the binder chain(s), count antigen contacts per residue and report which CDR residues form the paratope.",
+    "doc": "src/task/step/steps/structure_paratope_predict.StructureParatopePredictStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_pdbqt_flexible_receptor",
+    "kind": "operator",
+    "title": "柔性受体 PDBQT（刚性 + 柔性残基）",
+    "category": "Docking",
+    "version": "1.0.0",
+    "description": "Split a protein structure into a rigid PDBQT receptor and a flexible-residue PDBQT file with BEGIN_RES blocks, so AutoDock Vina can sample selected side-chain torsions during docking.",
+    "doc": "src/task/step/steps/structure_pdbqt_flexible_receptor.StructurePdbqtFlexibleReceptorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_phi_psi",
+    "kind": "operator",
+    "title": "Backbone phi/psi and Ramachandran regions",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Computes per-residue phi and psi dihedrals from a full-atom PDB form and labels each residue with a coarse Ramachandran region.",
+    "doc": "src/task/step/steps/structure_phi_psi.StructurePhiPsiStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_plddt_profile",
+    "kind": "operator",
+    "title": "Per-residue pLDDT profile",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Aggregate the B-factor column of a predicted structure (ESMFold, ColabFold or AlphaFold write pLDDT there) into one row per residue with mean, minimum and maximum confidence and the number of contributing atoms.",
+    "doc": "src/task/step/steps/structure_plddt_profile.StructurePlddtProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_pocket_detect",
+    "kind": "operator",
+    "title": "fpocket 口袋检测",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Detect surface pockets with the fpocket alpha-sphere method and report the pocket score, druggability, volume, alpha-sphere radius, lining residue count and centroid for every pocket that passes the filters.",
+    "doc": "src/task/step/steps/structure_pocket_detect.StructurePocketDetectStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_protonation_pka",
+    "kind": "operator",
+    "title": "PROPKA protonation states",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Predict per-residue pKa with PROPKA and read the resulting protonation charges at a target pH.",
+    "doc": "src/task/step/steps/structure_protonation_pka.StructureProtonationPkaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_protonation_sites",
+    "kind": "operator",
+    "title": "Protonation sites",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "",
+    "doc": "src/task/step/steps/structure_protonation_sites.StructureProtonationSitesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_rmsd",
+    "kind": "operator",
+    "title": "Structure RMSD",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Match atoms of a mobile and a reference PDB form by chain, residue number and atom name, fit the mobile structure with the Kabsch algorithm, and report the per-residue RMSD together with the global RMSD and the fitted rigid transform.",
+    "doc": "src/task/step/steps/structure_rmsd.StructureRmsdStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_salt_bridges",
+    "kind": "operator",
+    "title": "Structure salt bridges",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Find salt bridges from the distance between charged side-chain group centroids of ASP/GLU and LYS/ARG/HIS residues.",
+    "doc": "src/task/step/steps/structure_salt_bridges.StructureSaltBridgesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_secondary_structure",
+    "kind": "operator",
+    "title": "Structure secondary structure",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Assign a three-state secondary structure (helix H, strand E, coil C) from backbone phi/psi dihedral angles with a smoothing window. Rows are contiguous segments with their 1-based start, end and length; the per-residue string is stored in info.",
+    "doc": "src/task/step/steps/structure_secondary_structure.StructureSecondaryStructureStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_ss_bridge_network",
+    "kind": "operator",
+    "title": "SSE bridge network",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Contact network between secondary-structure elements.",
+    "doc": "src/task/step/steps/structure_ss_bridge_network.StructureSsBridgeNetworkStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_surface_hydrophobicity",
+    "kind": "operator",
+    "title": "Per-residue surface hydrophobicity",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Multiplies per-residue solvent-accessible area by the Kyte-Doolittle scale.",
+    "doc": "src/task/step/steps/structure_surface_hydrophobicity.StructureSurfaceHydrophobicityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_tm_score",
+    "kind": "operator",
+    "title": "TM-score 结构相似度",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Superpose a model structure onto a reference by C-alpha atoms and report the length-normalised TM-score with iterative distance weighting.",
+    "doc": "src/task/step/steps/structure_tm_score.StructureTmScoreStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_zinc_sites",
+    "kind": "operator",
+    "title": "Structural zinc sites",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Find zinc ions in a PDB atom table and report the cysteine and histidine atoms within coordination distance, with ligand counts and Zn-donor distances.",
+    "doc": "src/task/step/steps/structure_zinc_sites.StructureZincSitesStep.md",
+    "status": "generated"
+  },
+  {
     "id": "stuart_maxwell",
     "kind": "operator",
     "title": "Stuart-Maxwell test",
@@ -3657,6 +6527,16 @@
     "version": "1.0.0",
     "description": "Linear SVM regressor：接收 2 个输入，输出 Form；主要参数：样本维度、特征维度、标签维度、目标字段、测试集比例、交叉验证折数。",
     "doc": "src/task/step/steps/svm_regressor.SvmRegressorStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "tajimas_d",
+    "kind": "operator",
+    "title": "Tajima's D",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Tajima's D over the whole input or fixed genomic windows.",
+    "doc": "src/task/step/steps/tajimas_d.TajimasDStep.md",
     "status": "generated"
   },
   {
@@ -3770,6 +6650,16 @@
     "status": "generated"
   },
   {
+    "id": "tsallis",
+    "kind": "operator",
+    "title": "Tsallis diversity profiles",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Tsallis generalised entropy of each sample across taxa for a requested set of q orders, following vegan tsallis.",
+    "doc": "src/task/step/steps/tsallis.TsallisStep.md",
+    "status": "generated"
+  },
+  {
     "id": "tsne",
     "kind": "operator",
     "title": "t-SNE",
@@ -3820,6 +6710,16 @@
     "status": "generated"
   },
   {
+    "id": "turning_point",
+    "kind": "operator",
+    "title": "Turning point test",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Wald-Wolfowitz turning point test of serial randomness; tied consecutive values are removed before counting.",
+    "doc": "src/task/step/steps/turning_point.TurningPointStep.md",
+    "status": "generated"
+  },
+  {
     "id": "turning_point_test",
     "kind": "operator",
     "title": "Turning point randomness test",
@@ -3840,6 +6740,26 @@
     "status": "generated"
   },
   {
+    "id": "unweighted_unifrac",
+    "kind": "operator",
+    "title": "Unweighted UniFrac",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Unweighted UniFrac：接收 2 个输入，输出距离矩阵；主要参数：样本维度、类群维度、节点维度、字段维度。",
+    "doc": "src/task/step/steps/unweighted_unifrac.UnweightedUnifracStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "upgma",
+    "kind": "operator",
+    "title": "UPGMA tree",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "UPGMA (average linkage) tree from a symmetric pairwise distance matrix.",
+    "doc": "src/task/step/steps/upgma.UpgmaStep.md",
+    "status": "generated"
+  },
+  {
     "id": "van_waerden",
     "kind": "operator",
     "title": "Van der Waerden test",
@@ -3857,6 +6777,16 @@
     "version": "1.0.0",
     "description": "Estimate a VAR(p) model with a deterministic OLS fit.",
     "doc": "src/task/step/steps/var_model.VarModelStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "var_test",
+    "kind": "operator",
+    "title": "Two-sample F test for variances",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "F test for equality of two variances with an exact chi-square based confidence interval for the ratio.",
+    "doc": "src/task/step/steps/var_test.VarTestStep.md",
     "status": "generated"
   },
   {
@@ -3890,6 +6820,16 @@
     "status": "generated"
   },
   {
+    "id": "varpart",
+    "kind": "operator",
+    "title": "Variance partitioning",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Variance partitioning of a response matrix between two predictor tables, reported as adjusted R2 fractions [a], [b], [c] and [d] following vegan varpart.",
+    "doc": "src/task/step/steps/varpart.VarpartStep.md",
+    "status": "generated"
+  },
+  {
     "id": "vecm",
     "kind": "operator",
     "title": "Vector error correction model",
@@ -3900,6 +6840,26 @@
     "status": "generated"
   },
   {
+    "id": "vhh_humanization_mutations",
+    "kind": "operator",
+    "title": "VHH humanization mutations",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Compare the Kabat frameworks of a VHH with the human IGHV3-23/IGHJ4 reference and return every mismatch together with the reference-substituted sequence.",
+    "doc": "src/task/step/steps/vhh_humanization_mutations.VhhHumanizationMutationsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vhh_humanization_score",
+    "kind": "operator",
+    "title": "VHH humanization score",
+    "category": "Antibody",
+    "version": "1.0.0",
+    "description": "Score VHH framework humanness by aligning the Kabat FR1-FR4 of each sequence to the human IGHV3-23*01 and IGHJ4*01 germline references and reporting per-framework mismatch fractions.",
+    "doc": "src/task/step/steps/vhh_humanization_score.VhhHumanizationScoreStep.md",
+    "status": "generated"
+  },
+  {
     "id": "vif",
     "kind": "operator",
     "title": "Variance inflation factor",
@@ -3907,6 +6867,56 @@
     "version": "1.0.0",
     "description": "Variance inflation factor：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度。",
     "doc": "src/task/step/steps/vif.VifStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vina_dock",
+    "kind": "operator",
+    "title": "AutoDock Vina docking",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run AutoDock Vina with a PDBQT receptor and ligand, then return every docked pose as a [pose, atom, field] table together with the affinity table parsed from the Vina log.",
+    "doc": "src/task/step/steps/vina_dock.VinaDockStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vina_dock_batch",
+    "kind": "operator",
+    "title": "Batch docking",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Run AutoDock Vina for every listed PDBQT ligand against one receptor and report the best affinity, RMSD bounds and mode count per ligand.",
+    "doc": "src/task/step/steps/vina_dock_batch.VinaDockBatchStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vina_dock_python",
+    "kind": "operator",
+    "title": "AutoDock Vina 对接 (Python 绑定)",
+    "category": "Docking",
+    "version": "1.0.0",
+    "description": "Dock a prepared ligand PDBQT into a protein receptor with the official AutoDock Vina Python engine and report the per-pose scoring terms.",
+    "doc": "src/task/step/steps/vina_dock_python.VinaDockPythonStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vina_pose_cluster",
+    "kind": "operator",
+    "title": "Docking pose clustering",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Cluster the poses returned by vina_dock with symmetry-aware heavy-atom RMSD and greedy leader clustering, reporting the cluster of every pose and the distance to its cluster representative.",
+    "doc": "src/task/step/steps/vina_pose_cluster.VinaPoseClusterStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vina_pose_rmsd",
+    "kind": "operator",
+    "title": "Pose RMSD to a reference",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Superpose every docked ligand pose onto a reference pose, matching symmetry-equivalent atoms, and report the RMSD and the largest per-atom deviation.",
+    "doc": "src/task/step/steps/vina_pose_rmsd.VinaPoseRmsdStep.md",
     "status": "generated"
   },
   {
@@ -3937,6 +6947,36 @@
     "version": "1.0.0",
     "description": "Von Neumann ratio test for serial randomness.",
     "doc": "src/task/step/steps/von_neumann.VonNeumannStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "watterson_theta",
+    "kind": "operator",
+    "title": "Watterson's theta",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Watterson's theta over the whole input or fixed genomic windows.",
+    "doc": "src/task/step/steps/watterson_theta.WattersonThetaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "weighted_kappa",
+    "kind": "operator",
+    "title": "Weighted kappa",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Weighted Cohen's kappa for two raters with linear or quadratic disagreement weights.",
+    "doc": "src/task/step/steps/weighted_kappa.WeightedKappaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "weighted_unifrac",
+    "kind": "operator",
+    "title": "Weighted UniFrac",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Weighted UniFrac：接收 2 个输入，输出距离矩阵；主要参数：样本维度、类群维度、节点维度、字段维度。",
+    "doc": "src/task/step/steps/weighted_unifrac.WeightedUnifracStep.md",
     "status": "generated"
   },
   {

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "title": "样本维",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "feature_dim": {
+      "title": "特征维",
+      "type": "string",
+      "default": "embedding",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "n_components": {
+      "title": "主成分数",
+      "type": "integer",
+      "default": 2,
+      "x-ui-group": "模型",
+      "x-ui-order": 1,
+      "minimum": 1,
+      "maximum": 256
+    },
+    "standardize": {
+      "title": "标准化",
+      "type": "boolean",
+      "default": false,
+      "x-ui-group": "模型",
+      "x-ui-order": 2
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "default": "errors",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

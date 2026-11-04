@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "逐残基 pLDDT",
+  "description": "把预测结构 B-factor 列的 pLDDT 聚合为逐残基置信度。",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "输出残基维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "default": "plddt",
+      "title": "输出名",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    }
+  }
+}

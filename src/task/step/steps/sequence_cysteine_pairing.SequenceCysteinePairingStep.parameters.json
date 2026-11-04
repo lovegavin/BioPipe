@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "scheme": {
+      "title": "配对方案",
+      "type": "string",
+      "default": "adjacent",
+      "x-ui-group": "检测",
+      "x-ui-order": 1,
+      "enum": [
+        "adjacent",
+        "outer"
+      ]
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "default": "pairs",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "结构无序度剖面参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度",
+      "type": "string",
+      "description": "结构 Form 的原子维度名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 1,
+      "default": "atom"
+    },
+    "field_dim": {
+      "title": "字段维度",
+      "type": "string",
+      "description": "结构 Form 的字段维度名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 2,
+      "default": "field"
+    },
+    "residue_dim": {
+      "title": "残基维度",
+      "type": "string",
+      "description": "输出残基维度名称",
+      "x-ui-group": "输出",
+      "x-ui-order": 3,
+      "default": "residue"
+    },
+    "z_clip": {
+      "title": "Z 截断",
+      "type": "number",
+      "description": "B 因子 z 分数的绝对值上限",
+      "x-ui-group": "计算",
+      "x-ui-order": 4,
+      "default": 3.0,
+      "exclusiveMinimum": 0,
+      "maximum": 10
+    },
+    "output": {
+      "title": "输出槽",
+      "type": "string",
+      "description": "输出 Form 的槽名",
+      "x-ui-group": "输出",
+      "x-ui-order": 5,
+      "default": "disorder"
+    }
+  }
+}

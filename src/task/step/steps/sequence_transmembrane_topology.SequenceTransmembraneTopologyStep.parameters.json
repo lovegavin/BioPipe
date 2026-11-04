@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "跨膜拓扑参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度",
+      "type": "string",
+      "description": "序列编码 Form 的序列维度",
+      "x-ui-group": "输入",
+      "x-ui-order": 1,
+      "default": "sequence"
+    },
+    "position_dim": {
+      "title": "位置维度",
+      "type": "string",
+      "description": "序列编码 Form 的位置维度",
+      "x-ui-group": "输入",
+      "x-ui-order": 2,
+      "default": "position"
+    },
+    "window": {
+      "title": "窗口长度",
+      "type": "integer",
+      "description": "疏水性滑动窗口（奇数）",
+      "x-ui-group": "检测",
+      "x-ui-order": 3,
+      "default": 19,
+      "minimum": 9,
+      "maximum": 25
+    },
+    "threshold": {
+      "title": "阈值",
+      "type": "number",
+      "description": "窗口平均 Kyte-Doolittle 疏水性阈值",
+      "x-ui-group": "检测",
+      "x-ui-order": 4,
+      "default": 1.6,
+      "minimum": -5,
+      "maximum": 5
+    },
+    "min_length": {
+      "title": "最短片段",
+      "type": "integer",
+      "description": "跨膜片段的最短残基数",
+      "x-ui-group": "检测",
+      "x-ui-order": 5,
+      "default": 12,
+      "minimum": 5,
+      "maximum": 50
+    },
+    "output": {
+      "title": "输出槽",
+      "type": "string",
+      "description": "输出 Form 的槽名",
+      "x-ui-group": "输出",
+      "x-ui-order": 6,
+      "default": "topology"
+    }
+  }
+}

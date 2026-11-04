@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "信号肽分型参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度名",
+      "type": "string",
+      "description": "输入序列维度名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 1,
+      "default": "sequence"
+    },
+    "position_dim": {
+      "title": "位点维度名",
+      "type": "string",
+      "description": "输入位点维度名称",
+      "x-ui-group": "输入",
+      "x-ui-order": 2,
+      "default": "position"
+    },
+    "peptide_dim": {
+      "title": "序列轴名",
+      "type": "string",
+      "description": "输出每序列一行的维度名称",
+      "x-ui-group": "输出",
+      "x-ui-order": 3,
+      "default": "peptide"
+    },
+    "min_hydrophobicity": {
+      "title": "最小疏水性",
+      "type": "number",
+      "description": "候选疏水核心区所需的最低平均 Kyte-Doolittle 疏水性",
+      "x-ui-group": "模型",
+      "x-ui-order": 4,
+      "default": 0.9,
+      "minimum": -2.0,
+      "maximum": 5.0
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "description": "输出槽名称",
+      "x-ui-group": "输出",
+      "x-ui-order": 5,
+      "default": "signals"
+    }
+  }
+}

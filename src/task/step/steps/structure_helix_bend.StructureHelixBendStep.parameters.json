@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "title": "Helix axis bend",
+  "description": "Measure the overall and local bend of helices detected from CA geometry.",
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度名",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度名",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "helix_dim": {
+      "type": "string",
+      "default": "helix",
+      "title": "螺旋维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "window": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 12,
+      "default": 4,
+      "title": "方向窗口",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "min_residues": {
+      "type": "integer",
+      "minimum": 4,
+      "default": 4,
+      "title": "最短螺旋长度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "bends",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  },
+  "additionalProperties": false
+}

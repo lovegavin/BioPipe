@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Renyi diversity profiles",
+  "description": "Renyi generalised entropy for each sample over a range of alpha orders.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the sample dimension of the abundance matrix.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "title": "Taxon dimension",
+      "description": "Name of the taxon dimension of the abundance matrix.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "scales": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "default": [0, 0.5, 1, 2, 4],
+      "title": "Alpha scales",
+      "description": "Renyi alpha orders to evaluate; 0 is richness, 1 is Shannon.",
+      "x-ui-group": "Method",
+      "x-ui-order": 10
+    },
+    "include_inf": {
+      "type": "boolean",
+      "default": true,
+      "title": "Include Inf",
+      "description": "Append the alpha = Inf limit (log of the reciprocal of the maximum proportion).",
+      "x-ui-group": "Method",
+      "x-ui-order": 11
+    },
+    "hill": {
+      "type": "boolean",
+      "default": false,
+      "title": "Hill numbers",
+      "description": "Exponentiate the profiles to return Hill numbers instead of entropies.",
+      "x-ui-group": "Method",
+      "x-ui-order": 12
+    },
+    "output": {
+      "type": "string",
+      "default": "renyi",
+      "title": "Output",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 100
+    }
+  },
+  "required": []
+}

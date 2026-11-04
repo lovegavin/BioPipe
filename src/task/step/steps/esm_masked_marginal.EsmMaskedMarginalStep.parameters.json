@@ -1,0 +1,59 @@
+{
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "mutations": {
+      "type": "string",
+      "minLength": 1,
+      "default": "A12V",
+      "title": "突变列表",
+      "description": "Comma separated substitutions such as A12V,G4D using 1-based positions.",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "model_path": {
+      "type": "string",
+      "default": "",
+      "title": "ESM 权重路径",
+      "description": "Local checkpoint accepted by esm.pretrained.load_model_and_alphabet_local.",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "sequence_index": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "title": "序列序号",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "设备",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    }
+  },
+  "additionalProperties": false
+}

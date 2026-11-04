@@ -58,3 +58,5 @@ desktop/bin/
 desktop/obj/
 dist/
 build/
+/rna.ps
+*.ps

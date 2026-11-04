@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "sequence_signal_peptide parameters",
+  "description": "信号肽启发式检测参数。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "title": "序列维",
+      "description": "输入序列维名称。",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "位置维",
+      "description": "输入位置维名称。",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "max_length": {
+      "type": "integer",
+      "title": "最大信号肽长度",
+      "description": "候选切割位点搜索上界。",
+      "default": 40,
+      "x-ui-group": "参数",
+      "x-ui-order": 1,
+      "minimum": 15,
+      "maximum": 60
+    },
+    "min_hydrophobicity": {
+      "type": "number",
+      "title": "h 区最低疏水性",
+      "description": "h 区 Kyte-Doolittle 平均疏水性下限。",
+      "default": 1.0,
+      "x-ui-group": "参数",
+      "x-ui-order": 2,
+      "minimum": -2.0,
+      "maximum": 5.0
+    },
+    "require_positive_n": {
+      "type": "boolean",
+      "title": "要求 n 区非负电荷",
+      "description": "n 区净电荷为负时拒绝候选位点。",
+      "default": true,
+      "x-ui-group": "参数",
+      "x-ui-order": 3
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "description": "输出 Form 名称。",
+      "default": "signal",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

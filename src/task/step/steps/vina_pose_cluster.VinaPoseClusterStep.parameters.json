@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "vina_pose_cluster parameters",
+  "description": "对接构象聚类参数。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "pose_dim": {
+      "type": "string",
+      "title": "构象维",
+      "description": "输入构象维名称。",
+      "default": "pose",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "atom_dim": {
+      "type": "string",
+      "title": "原子维",
+      "description": "输入原子维名称。",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "字段维",
+      "description": "输入字段维名称。",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "cutoff": {
+      "type": "number",
+      "title": "聚类阈值（Å）",
+      "description": "对称感知 RMSD 阈值，小于等于该值归入同一簇。",
+      "default": 2.0,
+      "x-ui-group": "参数",
+      "x-ui-order": 1,
+      "minimum": 0.1,
+      "maximum": 20.0
+    },
+    "allow_symmetry": {
+      "type": "boolean",
+      "title": "对称匹配",
+      "description": "允许同一元素的等价原子互换后比较。",
+      "default": true,
+      "x-ui-group": "参数",
+      "x-ui-order": 2
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "description": "输出 Form 名称。",
+      "default": "clusters",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    }
+  }
+}

@@ -87,11 +87,18 @@ def test_setup_status_remains_responsive_while_connect_is_busy(tmp_path):
 
 
 def test_deployment_requirements_include_all_current_provider_dependencies():
-    from biopipe.remote.install_linux import requirements
-    specs, entries = requirements(ROOT)
+    from biopipe.remote import install_linux as installer
+    specs, entries = installer.requirements(ROOT)
     assert {'pairtools==1.1.2', 'cooltools==0.7.1', 'pandas==2.2.3'} <= set(specs)
     assert {'build_contacts', 'analyze_contacts', 'align_reads'} <= {d['id'] for d in entries}
-    assert all(set(entry.get('dependencies', [])) <= set(specs) for entry in entries)
+    from packaging.requirements import Requirement
+    conda_provided = {name.lower() for name in installer.CONDA_PROVIDED}
+    shared = [entry for entry in entries if not (entry.get('resources') or {}).get('environment')]
+    isolated = [entry['id'] for entry in entries if (entry.get('resources') or {}).get('environment')]
+    assert {'boltz_predict', 'antifold_design', 'esm3_fold'} <= set(isolated)
+    assert all({dep for dep in entry.get('dependencies', [])
+                if Requirement(dep).name.lower() not in conda_provided} <= set(specs) for entry in shared)
+    assert not any('boltz' in spec or 'antifold' in spec for spec in specs)
 
 
 @pytest.mark.parametrize('broken', [False, True])
@@ -107,6 +114,10 @@ def test_installer_repairs_transitive_dependencies_without_reinstalling_healthy_
         installs.append(command)
         return SimpleNamespace(returncode=0)
     monkeypatch.setattr(installer.subprocess, 'run', run)
+    monkeypatch.setattr(installer, '_ensure_python_extras', lambda *a, **k: True)
+    monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_extras', lambda *a, **k: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_environments', lambda *a, **k: True)
     installer.ensure_requirements(['parent==1.0'], tmp_path/'requirements.txt')
     assert bool(installs) == broken
     if broken:
@@ -128,7 +139,119 @@ def test_native_bootstrap_does_not_mix_conda_and_pip_scientific_abis(monkeypatch
     result = module.provision(None, {}, lambda text: None, threading.Event(), ROOT)
     script = next(data.decode() for name, data in uploaded.items() if name.endswith('.sh'))
     native = next(line for line in script.splitlines() if '"$bp_action"' in line)
-    assert 'c-compiler' in native and 'samtools=1.22.1' in native
+    assert '--strict-channel-priority python=3.11 pip bwa=0.7.19 samtools=1.22.1 openmm pdbfixer' in native
+    assert '"python=3.11 pip' not in native and "'python=3.11 pip" not in native
+    assert 'gxx_linux-64' not in native and 'openmm pdbfixer' in native
     assert 'cooltools=' not in native and 'numpy=' not in native and 'pandas=' not in native
-    assert 'run -p' in script and 'install_linux.py' in script
+    assert 'PATH=' in script and 'install_linux.py' in script
     assert result['workspace'] == '/home/test/.local/share/biopipe/workspace'
+
+def test_installer_prefers_mirror_wheels_and_falls_back_to_source(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    from biopipe.remote import install_linux as installer
+
+    monkeypatch.setattr(installer.metadata, 'version', lambda name: '1.0')
+    calls = []
+
+    def run(command, **kwargs):
+        if 'check' in command:
+            return SimpleNamespace(returncode=1, stdout='', stderr='')
+        calls.append(list(command))
+        if '--only-binary=:all:' in command:
+            return SimpleNamespace(returncode=1, stdout='no wheel for pyarrow', stderr='')
+        return SimpleNamespace(returncode=0, stdout='', stderr='')
+
+    monkeypatch.setattr(installer.subprocess, 'run', run)
+    monkeypatch.setattr(installer, '_ensure_python_extras', lambda *a, **k: True)
+    monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_extras', lambda *a, **k: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_environments', lambda *a, **k: True)
+    monkeypatch.setattr(installer.shutil, 'which', lambda name: '/opt/env/bin/' + name)
+    installer.ensure_requirements(['pyarrow==21.0.0'], tmp_path / 'requirements.txt')
+    assert len(calls) == 2
+    assert '--only-binary=:all:' in calls[0]
+    assert '--only-binary=:all:' not in calls[1]
+    for command in calls:
+        assert 'https://pypi.tuna.tsinghua.edu.cn/simple' in command
+        assert '--trusted-host' in command
+    assert 'CC' in (installer.compiler_environment())
+
+
+def test_cxx_toolchain_is_installed_only_for_source_builds():
+    from biopipe.remote import install_linux as module
+
+    source = Path(module.__file__).read_text()
+    assert 'gxx_linux-64' in source
+    assert 'cmake' in source and 'make' in source
+    assert 'BIOPIPE_MAMBA' in source
+
+def test_installer_skips_conda_only_packages_and_pins_build_fragile_sdists(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    from biopipe.remote import install_linux as installer
+
+    specs, _ = installer.requirements(ROOT)
+    assert not any(spec.lower().startswith(('pdbfixer', 'openmm', 'pysam', 'antifold')) for spec in specs)
+
+    monkeypatch.setattr(installer.metadata, 'version', lambda name: '1.0')
+    calls = []
+    constraints_seen = []
+
+    def run(command, **kwargs):
+        if 'check' in command:
+            return SimpleNamespace(returncode=1, stdout='', stderr='')
+        calls.append(list(command))
+        if '--constraint' in command:
+            constraints_seen.append(Path(command[command.index('--constraint') + 1]).read_text())
+        return SimpleNamespace(returncode=0, stdout='', stderr='')
+
+    monkeypatch.setattr(installer.subprocess, 'run', run)
+    monkeypatch.setattr(installer, '_ensure_python_extras', lambda *a, **k: True)
+    monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_extras', lambda *a, **k: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_environments', lambda *a, **k: True)
+    installer.ensure_requirements(['pyarrow>=14'], tmp_path / 'requirements.txt')
+    assert len(calls) == 1
+    assert 'pyarrow<22' in constraints_seen[0]
+    assert 'libcst<1.8' in constraints_seen[0]
+
+
+def test_installer_source_fallback_prefers_binaries_and_keeps_constraints(monkeypatch, tmp_path):
+    from types import SimpleNamespace
+    from biopipe.remote import install_linux as installer
+
+    monkeypatch.setattr(installer.metadata, 'version', lambda name: '1.0')
+    calls = []
+
+    def run(command, **kwargs):
+        if 'check' in command:
+            return SimpleNamespace(returncode=1, stdout='', stderr='')
+        calls.append(list(command))
+        if '--only-binary=:all:' in command:
+            return SimpleNamespace(returncode=1, stdout='no wheel', stderr='')
+        return SimpleNamespace(returncode=0, stdout='', stderr='')
+
+    monkeypatch.setattr(installer.subprocess, 'run', run)
+    monkeypatch.setattr(installer, '_ensure_python_extras', lambda *a, **k: True)
+    monkeypatch.setattr(installer, '_ensure_conda_extras', lambda: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_extras', lambda *a, **k: True)
+    monkeypatch.setattr(installer, '_ensure_isolated_environments', lambda *a, **k: True)
+    installer.ensure_requirements(['pyarrow>=14'], tmp_path / 'requirements.txt')
+    assert len(calls) == 2
+    assert '--only-binary=:all:' in calls[0]
+    assert '--prefer-binary' in calls[1]
+    assert '--only-binary=:all:' not in calls[1]
+    for command in calls:
+        assert '--constraint' in command
+
+def test_split_failures_keeps_openmm_extras_non_fatal():
+    from biopipe.remote.install_linux import split_failures
+
+    results = {
+        'structure_openmm_energy': {'status': 'failed', 'error': "No module named 'openmm'"},
+        'structure_md_rmsf': {'status': 'failed', 'error': "No module named 'pdbfixer'"},
+        'sequence_net_charge': {'status': 'passed', 'error': ''},
+        'structure_rmsd': {'status': 'failed', 'error': 'numpy missing'},
+    }
+    required, optional = split_failures(results)
+    assert list(required) == ['structure_rmsd']
+    assert set(optional) == {'structure_openmm_energy', 'structure_md_rmsf'}

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ESM embedding linear probe",
+  "description": "Stratified logistic-regression probe with k-fold cross-validation on an embedding table.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "样本维度",
+      "description": "Row dimension of the embedding table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "embedding",
+      "title": "特征维度",
+      "description": "Column dimension of the embedding table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 10
+    },
+    "labels": {
+      "type": "string",
+      "default": "",
+      "title": "标签",
+      "description": "Comma-separated class labels, one per sample; empty reads info['labels'] from the embedding form.",
+      "x-ui-group": "Input",
+      "x-ui-order": 20
+    },
+    "cv_folds": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 10,
+      "default": 5,
+      "title": "交叉验证折数",
+      "description": "Number of stratified folds.",
+      "x-ui-group": "Probe",
+      "x-ui-order": 0
+    },
+    "max_iter": {
+      "type": "integer",
+      "minimum": 10,
+      "default": 1000,
+      "title": "最大迭代次数",
+      "description": "Logistic-regression solver iterations.",
+      "x-ui-group": "Probe",
+      "x-ui-order": 10
+    },
+    "random_state": {
+      "type": "integer",
+      "default": 0,
+      "title": "随机种子",
+      "description": "Seed for the stratified fold split and the solver.",
+      "x-ui-group": "Probe",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "probe",
+      "title": "输出名称",
+      "description": "Output slot name for the probe table.",
+      "x-ui-group": "Output",
+      "x-ui-order": 0
+    }
+  },
+  "required": []
+}

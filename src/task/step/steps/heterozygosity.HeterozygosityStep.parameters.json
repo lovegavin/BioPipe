@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "properties": {
+    "variant_dim": {
+      "type": "string",
+      "default": "variant",
+      "title": "Variant dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

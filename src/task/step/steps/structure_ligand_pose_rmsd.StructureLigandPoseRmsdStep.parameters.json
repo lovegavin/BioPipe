@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "配体构象 RMSD",
+  "description": "把配体构象叠合到参考构象，按元素做匈牙利匹配得到对称校正后的 RMSD。",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "pose_dim": {
+      "type": "string",
+      "default": "pose_atom",
+      "title": "输出原子维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "pose_resnames": {
+      "type": "string",
+      "default": "LIG",
+      "title": "构象配体残基名",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "reference_resnames": {
+      "type": "string",
+      "default": "",
+      "title": "参考配体残基名（留空同构象）",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "allow_symmetry": {
+      "type": "boolean",
+      "default": true,
+      "title": "允许同元素原子重匹配",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "max_iterations": {
+      "type": "integer",
+      "default": 20,
+      "title": "对称匹配迭代次数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40,
+      "minimum": 1,
+      "maximum": 200
+    },
+    "output": {
+      "type": "string",
+      "default": "rmsd",
+      "title": "输出名称",
+      "x-ui-group": "output",
+      "x-ui-order": 10
+    }
+  }
+}

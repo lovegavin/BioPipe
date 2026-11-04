@@ -1,0 +1,28 @@
+name: smoke_real_data
+sources:
+  complex:
+    path: input/vhh_1mel.pdb
+    dims:
+    - atom
+    - field
+    labels:
+      atom: auto
+      field: builtin
+    reader: PdbReader
+  sequence:
+    path: input/vhh.fasta
+    dims:
+    - sequence
+    - position
+    labels:
+      sequence: builtin
+      position: auto
+    reader: FastaReader
+steps:
+- name: structure_interface_core
+  inputs:
+  - complex
+- name: sequence_liability_scan
+  inputs:
+  - sequence
+parameters_file: parameters.json

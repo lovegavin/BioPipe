@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "patterns": {
+      "type": "string",
+      "default": "N-{P}-[ST] N-glycosylation\nN-G deamidation",
+      "minLength": 1,
+      "title": "模式列表",
+      "description": "每行一个 'PATTERN [名称]'；支持字母、x、[ABC] 字符集、{ABC} 排除集，'-' 与 '.' 为分隔符。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "motif_dim": {
+      "type": "string",
+      "default": "motif",
+      "title": "模式维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "prosite_hits",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    }
+  }
+}

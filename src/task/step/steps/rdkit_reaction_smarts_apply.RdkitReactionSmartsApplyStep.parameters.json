@@ -1,0 +1,45 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "smiles": {
+      "type": "string",
+      "default": "",
+      "title": "分子 SMILES",
+      "description": "每行一个 `SMILES [name]`。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "reaction_smarts": {
+      "type": "string",
+      "default": "[CH3:1][OH:2]>>[CH3:1][O:2]C",
+      "title": "反应 SMARTS",
+      "description": "反应式 SMARTS（`reactant>>product`）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "molecule_dim": {
+      "type": "string",
+      "default": "molecule",
+      "title": "分子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "max_products": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 50,
+      "title": "最大产物数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "default": "reaction_products",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  }
+}

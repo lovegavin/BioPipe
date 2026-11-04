@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Dimension that indexes samples in the abundance table.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "title": "Taxon dimension",
+      "description": "Dimension that indexes taxa in the abundance table.",
+      "x-ui-group": "basic",
+      "x-ui-order": 1
+    },
+    "node_dim": {
+      "type": "string",
+      "default": "node",
+      "title": "Node dimension",
+      "description": "Dimension that indexes tree nodes.",
+      "x-ui-group": "tree",
+      "x-ui-order": 10
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "Field dimension",
+      "description": "Dimension that indexes tree fields (parent, branch_length, depth, is_leaf).",
+      "x-ui-group": "tree",
+      "x-ui-order": 11
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name"
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

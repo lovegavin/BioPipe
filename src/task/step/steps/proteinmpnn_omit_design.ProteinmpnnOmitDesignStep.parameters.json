@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "ProteinMPNN 约束设计参数",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "structure_path": {
+      "title": "结构文件",
+      "type": "string",
+      "description": "输入 PDB 结构的绝对路径",
+      "x-ui-group": "结构",
+      "x-ui-order": 1
+    },
+    "chains": {
+      "title": "设计链",
+      "type": "string",
+      "description": "空格分隔的链 ID；留空表示全部链",
+      "x-ui-group": "结构",
+      "x-ui-order": 2,
+      "default": ""
+    },
+    "omit_AAs": {
+      "title": "禁用氨基酸",
+      "type": "string",
+      "description": "在设计中被禁止出现的氨基酸字母，逗号或空格分隔，例如 C 表示无半胱氨酸设计",
+      "x-ui-group": "设计",
+      "x-ui-order": 3,
+      "default": "C"
+    },
+    "num_seq_per_target": {
+      "title": "序列数",
+      "type": "integer",
+      "description": "每个结构采样的序列数量",
+      "x-ui-group": "设计",
+      "x-ui-order": 4,
+      "default": 8,
+      "minimum": 1,
+      "maximum": 200
+    },
+    "sampling_temp": {
+      "title": "采样温度",
+      "type": "string",
+      "description": "ProteinMPNN 采样温度字符串",
+      "x-ui-group": "设计",
+      "x-ui-order": 5,
+      "default": "0.1"
+    },
+    "seed": {
+      "title": "随机种子",
+      "type": "integer",
+      "description": "采样种子",
+      "x-ui-group": "设计",
+      "x-ui-order": 6,
+      "default": 1
+    },
+    "design_dim": {
+      "title": "设计维度名",
+      "type": "string",
+      "description": "输出设计维度名称",
+      "x-ui-group": "输出",
+      "x-ui-order": 7,
+      "default": "design"
+    },
+    "model_name": {
+      "title": "模型",
+      "type": "string",
+      "description": "ProteinMPNN 权重名称",
+      "x-ui-group": "模型",
+      "x-ui-order": 8,
+      "default": "v_48_020",
+      "enum": [
+        "v_48_002",
+        "v_48_010",
+        "v_48_020",
+        "v_48_030"
+      ]
+    },
+    "device": {
+      "title": "设备",
+      "type": "string",
+      "description": "cpu 或 cuda",
+      "x-ui-group": "模型",
+      "x-ui-order": 9,
+      "default": "cpu",
+      "enum": [
+        "cpu",
+        "cuda"
+      ]
+    },
+    "proteinmpnn_path": {
+      "title": "ProteinMPNN 目录",
+      "type": "string",
+      "description": "官方 ProteinMPNN 仓库路径",
+      "x-ui-group": "模型",
+      "x-ui-order": 10
+    },
+    "weights_path": {
+      "title": "权重目录",
+      "type": "string",
+      "description": "包含 v_48_*.pt 的目录；留空使用仓库内 vanilla_model_weights",
+      "x-ui-group": "模型",
+      "x-ui-order": 11,
+      "default": ""
+    },
+    "python_executable": {
+      "title": "Python",
+      "type": "string",
+      "description": "运行官方脚本的解释器；留空使用当前解释器",
+      "x-ui-group": "模型",
+      "x-ui-order": 12,
+      "default": ""
+    },
+    "timeout_seconds": {
+      "title": "超时",
+      "type": "integer",
+      "description": "子进程超时秒数",
+      "x-ui-group": "运行",
+      "x-ui-order": 13,
+      "default": 1800,
+      "minimum": 30,
+      "maximum": 86400
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "description": "输出槽名称",
+      "x-ui-group": "输出",
+      "x-ui-order": 14,
+      "default": "designs"
+    }
+  }
+}

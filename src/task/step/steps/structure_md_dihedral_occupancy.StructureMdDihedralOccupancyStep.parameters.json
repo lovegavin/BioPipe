@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MD 主链二面角参数",
+  "properties": {
+    "trajectory_path": {
+      "title": "轨迹文件 (.npy, nm)",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "topology_path": {
+      "title": "拓扑 PDB",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "chains": {
+      "title": "链过滤（逗号分隔）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "stride": {
+      "title": "采样间隔（帧）",
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 100,
+      "x-ui-group": "采样",
+      "x-ui-order": 4
+    },
+    "residue_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "residue",
+      "x-ui-group": "输出",
+      "x-ui-order": 5
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "dihedrals",
+      "x-ui-group": "输出",
+      "x-ui-order": 6
+    }
+  }
+}

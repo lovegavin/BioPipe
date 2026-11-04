@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Morisita dispersal index",
+  "description": "Dispersion indices for every feature across samples.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the sample dimension.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "Feature dimension",
+      "description": "Name of the feature (species) dimension.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "crit": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1,
+      "default": 0.05,
+      "title": "Critical level",
+      "description": "Critical level for the clustering and uniform confidence values.",
+      "x-ui-group": "Model",
+      "x-ui-order": 10
+    },
+    "unique_rm": {
+      "type": "boolean",
+      "default": false,
+      "title": "Remove singleton features",
+      "description": "Drop features that occur in exactly one sample before reporting indices.",
+      "x-ui-group": "Model",
+      "x-ui-order": 11
+    },
+    "output": {
+      "type": "string",
+      "default": "morisita",
+      "title": "Output",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 100
+    }
+  },
+  "required": []
+}

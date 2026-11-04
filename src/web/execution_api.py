@@ -56,6 +56,7 @@ def mount_execution(app, service, executions):
         # require a Reader declaration just to be transferred to an operator.
         name = safe_filename(filename)
         base = project_path(service.root, '.', base_dir)
+        base.mkdir(parents=True, exist_ok=True)
         directory = service.assets_dir / uuid.uuid4().hex
         if (not service.assets_dir.resolve().is_relative_to(service.root) or
                 directory.resolve().parent != service.assets_dir.resolve()):

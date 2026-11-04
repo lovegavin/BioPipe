@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bio-environment matching",
+  "description": "Match community distances against subsets of environmental variables.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the shared sample dimension of both inputs.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "title": "Taxon dimension",
+      "description": "Name of the taxon dimension of the community table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "env_dim": {
+      "type": "string",
+      "default": "env",
+      "title": "Environment dimension",
+      "description": "Name of the variable dimension of the environmental table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 2
+    },
+    "index": {
+      "type": "string",
+      "enum": ["bray", "euclidean", "manhattan"],
+      "default": "bray",
+      "title": "Community index",
+      "description": "Distance index used for the community table.",
+      "x-ui-group": "Model",
+      "x-ui-order": 10
+    },
+    "method": {
+      "type": "string",
+      "enum": ["spearman", "pearson"],
+      "default": "spearman",
+      "title": "Correlation",
+      "description": "Correlation method between community and environment distances.",
+      "x-ui-group": "Model",
+      "x-ui-order": 11
+    },
+    "upto": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "default": null,
+      "title": "Largest subset",
+      "description": "Largest number of environmental variables to combine; null uses all variables.",
+      "x-ui-group": "Model",
+      "x-ui-order": 12
+    },
+    "output": {
+      "type": "string",
+      "default": "bioenv",
+      "title": "Output",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 100
+    }
+  },
+  "required": []
+}

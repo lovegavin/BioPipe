@@ -779,7 +779,7 @@ class ExecutionService:
         profile = target_key(child['target'])
         return self.service.remotes.fetch_output(profile, child['id'], kind, **fields)
 
-    def preview(self, key, artifact_id):
+    def preview(self, key, artifact_id, offset=0, limit=20):
         child, match = self._artifact_ref(key, artifact_id)
         if child['target']['kind'] == 'local':
             result = self.service.preview(child['id'], match['child_artifact_id'])

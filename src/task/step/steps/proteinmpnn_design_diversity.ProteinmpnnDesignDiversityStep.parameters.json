@@ -1,0 +1,119 @@
+{
+  "type": "object",
+  "properties": {
+    "structure_path": {
+      "type": "string",
+      "default": "",
+      "title": "结构文件路径",
+      "description": "要设计的 PDB 结构文件（绝对路径）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "proteinmpnn_path": {
+      "type": "string",
+      "default": "",
+      "title": "ProteinMPNN 仓库路径",
+      "description": "官方 ProteinMPNN 检出目录，需包含 protein_mpnn_run.py。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "weights_path": {
+      "type": "string",
+      "default": "",
+      "title": "权重目录或文件",
+      "description": "可选；留空时使用仓库 model_params / vanilla_model_weights 默认位置。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "python_executable": {
+      "type": "string",
+      "default": "",
+      "title": "Python 解释器",
+      "description": "可选；留空时使用当前运行的解释器。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "model_name": {
+      "type": "string",
+      "enum": ["v_48_002", "v_48_010", "v_48_020", "v_48_030"],
+      "default": "v_48_020",
+      "title": "模型权重",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "num_seq_per_target": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 500,
+      "default": 16,
+      "title": "采样序列数",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "sampling_temp": {
+      "type": "string",
+      "default": "0.1",
+      "title": "采样温度",
+      "description": "字符串形式，官方脚本原样接收。",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 1,
+      "title": "随机种子",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    },
+    "chains": {
+      "type": "string",
+      "default": "",
+      "title": "设计链",
+      "description": "逗号分隔的链 ID；留空表示全部链。",
+      "x-ui-group": "basic",
+      "x-ui-order": 80
+    },
+    "device": {
+      "type": "string",
+      "enum": ["cpu", "cuda"],
+      "default": "cpu",
+      "title": "设备",
+      "x-ui-group": "basic",
+      "x-ui-order": 90
+    },
+    "timeout": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1800,
+      "title": "超时（秒）",
+      "x-ui-group": "advanced",
+      "x-ui-order": 100
+    },
+    "identity_threshold": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "default": 0.9,
+      "title": "聚类一致性阈值",
+      "description": "两序列一致性不低于该值时归入同一簇（单链接）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 110
+    },
+    "design_dim": {
+      "type": "string",
+      "default": "design",
+      "title": "设计维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 120
+    },
+    "output": {
+      "type": "string",
+      "default": "diversity",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 130
+    }
+  },
+  "additionalProperties": false
+}

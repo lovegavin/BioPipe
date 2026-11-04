@@ -1,6 +1,9 @@
 import {
   ArrowsDownUp,
   ArrowsIn,
+  Atom,
+  BatteryFull,
+  Brain,
   ChartBar,
   ChartLine,
   ChartScatter,
@@ -9,6 +12,8 @@ import {
   Columns,
   Database,
   Dna,
+  File,
+  File,
   Funnel,
   Intersect,
   ListBullets,
@@ -30,11 +35,26 @@ import {
   Function,
   PuzzlePiece,
   Sigma,
+  Cube,
+  Flask,
+  MagicWand,
+  Scissors,
+  ShareNetwork,
+  Waves,
 } from "@phosphor-icons/react";
 import type { IconProps } from "@phosphor-icons/react";
 import type { ComponentType } from "react";
 import { categoryLabel } from "./operatorPresentation";
-const icons: Record<string, ComponentType<IconProps>> = {
+const icons: Record<string, ComponentType<IconProps>> = {  Atom,
+  BatteryFull,
+  Brain,
+  Cube,
+  Flask,
+  MagicWand,
+  Scissors,
+  ShareNetwork,
+  Waves,
+
   ArrowsDownUp,
   ArrowsIn,
   ChartBar,

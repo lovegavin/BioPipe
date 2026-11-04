@@ -1,0 +1,123 @@
+{
+  "format": "biopipe.graph-parameters",
+  "schema_version": 1,
+  "params": {},
+  "nodes": {
+    "meta": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "header": true
+      }
+    },
+    "table": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "taxonomy": false
+      }
+    },
+    "filter_min_1": {
+      "kind": "operator",
+      "operator": "filter_min",
+      "params": {
+        "min_value": 1,
+        "min_samples": 2,
+        "dim": "taxon",
+        "output": "filtered"
+      },
+      "context_params": {}
+    },
+    "normalize_2": {
+      "kind": "operator",
+      "operator": "normalize",
+      "params": {
+        "target_sum": 1000000.0,
+        "dim": "sample",
+        "method": "total",
+        "output": "relative"
+      },
+      "context_params": {}
+    },
+    "ancom_bc_3": {
+      "kind": "operator",
+      "operator": "ancom_bc",
+      "params": {
+        "sample_dim": "sample",
+        "taxon_dim": "taxon",
+        "pseudocount": 1.0,
+        "correction": "fdr",
+        "group_a": "ctrl",
+        "group_b": "case",
+        "group_label": "group",
+        "output": "ancom"
+      },
+      "context_params": {}
+    },
+    "aldex2_4": {
+      "kind": "operator",
+      "operator": "aldex2",
+      "params": {
+        "sample_dim": "sample",
+        "taxon_dim": "taxon",
+        "n_mc": 32,
+        "seed": 3,
+        "pseudocount": 0.5,
+        "monte_carlo": true,
+        "correction": "fdr",
+        "group_a": "ctrl",
+        "group_b": "case",
+        "group_label": "group",
+        "output": "aldex"
+      },
+      "context_params": {}
+    },
+    "describe_5": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "describe_6": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "transpose_7": {
+      "kind": "operator",
+      "operator": "transpose",
+      "params": {
+        "order": [
+          "taxon",
+          "sample"
+        ],
+        "output": "taxa_by_sample"
+      },
+      "context_params": {}
+    },
+    "barplot_8": {
+      "kind": "operator",
+      "operator": "barplot",
+      "params": {
+        "top_n": 10,
+        "other_label": "Other",
+        "normalize": true,
+        "cmap": "tab20",
+        "legend": true,
+        "legend_ncol": 3,
+        "rotate_labels": true,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "dim": "taxon",
+        "filename": "composition.png",
+        "sample_dim": "sample"
+      },
+      "context_params": {}
+    }
+  }
+}

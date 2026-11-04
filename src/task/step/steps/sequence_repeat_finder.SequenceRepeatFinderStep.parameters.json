@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "Tandem repeat finder",
+  "description": "Non-overlapping tandem repeats with period and copy counts.",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "repeat_dim": {
+      "type": "string",
+      "default": "repeat",
+      "title": "重复维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "min_period": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 2,
+      "title": "最小重复单元长度",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "max_period": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 6,
+      "title": "最大重复单元长度",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "min_copies": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 2,
+      "title": "最少拷贝数",
+      "x-ui-group": "basic",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "default": "repeats",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    }
+  }
+}

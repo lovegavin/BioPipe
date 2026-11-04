@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "origin": "wheel",
   "dependencies": [
-    "biopipe-studio>=0.8.1,<1"
+    "biopipe-studio>=0.8.1,<2"
   ],
   "descriptors": [
     {

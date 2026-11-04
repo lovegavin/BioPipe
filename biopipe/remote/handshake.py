@@ -117,6 +117,22 @@ def runtime_identity():
     }
 
 
+def runtime_compatible(installed, current):
+    """Compare a saved runtime identity without the mutable library directory stamp.
+
+    ``environment`` records the mtime of ``site-packages``, which changes whenever
+    any package, ``*.pth`` or editable-install hook is written. That drift must
+    not discard installer probe results on the first connection; the interpreter
+    stamp, version and prefix still pin the actual runtime.
+    """
+    if not isinstance(installed, dict) or not isinstance(current, dict):
+        return False
+    for key in ('python', 'version', 'prefix', 'base_prefix', 'base_paths'):
+        if installed.get(key) != current.get(key):
+            return False
+    return True
+
+
 def _installation_key(entry):
     return digest({'r': entry.get('resources', {}).get('r'), **{key: entry.get(key) for key in
                    ('id', 'kind', 'version', 'entry_point', 'code_sha', 'dependencies', 'dependency_imports')}})
@@ -156,7 +172,8 @@ class ManifestHandshake:
         if self.saved.get('version') != 1:
             self.saved = {}
         self.installed = _read(Path(sys.prefix) / 'biopipe-ready.json').get('dependency_readiness', {})
-        if not isinstance(self.installed, dict) or self.installed.get('version') != 1 or self.installed.get('runtime') != self.runtime:
+        if (not isinstance(self.installed, dict) or self.installed.get('version') != 1
+                or not runtime_compatible(self.installed.get('runtime'), self.runtime)):
             self.installed = {}
         self.installation_key = digest(self.installed)
         self.invalidated_installation = self.saved.get('invalidated_installation')
@@ -238,9 +255,10 @@ class ManifestHandshake:
     def tool_snapshot(self, *, refresh=False):
         names = sorted({name for spec in self.service.catalog['operators'] + self.service.catalog['readers']
                         for name in spec.get('resources', {}).get('external_tools', [])})
+        from biopipe.dependencies import find_tool
         for name in names:
             if refresh or name not in self.tools:
-                self.tools[name] = shutil.which(name)
+                self.tools[name] = find_tool(name)
         return {name: bool(self.tools[name]) for name in names}
 
     def persist(self):
@@ -257,6 +275,20 @@ class ManifestHandshake:
             self.saved, self.saved_digest = deepcopy(value), key
         return snapshot
 
+    def _apply_installation_receipt(self, snapshot):
+        """Trust a verified install receipt over a stale probe snapshot."""
+        installed = _entries(self.installed) if isinstance(self.installed, dict) else {}
+        if not installed:
+            return snapshot
+        for entry in snapshot.get('entries') or []:
+            saved = installed.get(entry.get('id'))
+            if not saved or saved.get('status') != 'passed':
+                continue
+            if entry.get('status') != 'passed':
+                entry['status'] = 'passed'
+                entry['error'] = ''
+        return snapshot
+
     def response(self, params, *, legacy=False):
         if not legacy:
             validate_request(params)
@@ -270,6 +302,7 @@ class ManifestHandshake:
         from biopipe import __version__
         tools = self.tool_snapshot()
         dependencies = self.persist()
+        dependencies = self._apply_installation_receipt(dependencies)
         value = {
             'protocol_version': VERSION, 'version': __version__, 'system': platform.system().lower(),
             'python': sys.executable, 'workspace': str(self.service.root),

@@ -7,9 +7,16 @@ Layout:
     axis 0 = sequence, axis 1 = position.
 
 Sequences of different lengths are padded with NaN to the maximum
-length found in the file. Characters are encoded as integers:
+length found in the file. Characters are encoded as integers. For
+nucleotide input the legacy code table is used:
 
     A=0, C=1, G=2, T=3, U=3, N=4, anything else=5
+
+When the alphabet is ``protein`` the twenty standard residues plus
+``*`` use the code table shared with the sequence operators
+(``ACDEFGHIKLMNPQRSTVWY*`` -> 0..20) and every other residue
+(``B``, ``X``, ``Z``, ``J``, ...) is stored as ``unknown_code`` 21
+instead of the nucleotide code 5.
 
 Compression is handled by the framework; this reader sees plain
 files only.
@@ -28,7 +35,8 @@ Sequence identifiers remain string axis labels; they are not data encoders.
 
 The alphabet is inferred from the observed characters and recorded
 in ``info["alphabet"]`` as one of ``"dna"``, ``"rna"`` or
-``"protein"``.
+``"protein"``. Pass ``alphabet`` (``auto``/``dna``/``rna``/``protein``)
+to override the inference.
 
 Reference
 ---------
@@ -39,6 +47,8 @@ Info fields set:
 
     missing_code      np.nan
     alphabet          "dna" | "rna" | "protein"
+    alphabet_map      character -> integer code
+    unknown_code      integer code used for unlisted characters
 """
 
 from __future__ import annotations
@@ -55,9 +65,16 @@ from src.reader.readers._labels import unique_labels
 _CHAR_MAP = {"A": 0, "C": 1, "G": 2, "T": 3, "U": 3, "N": 4}
 _UNKNOWN = 5
 
+# Keep in sync with src/task/step/steps/_sequence_common.PROTEIN_MAP.
+_PROTEIN_CHARS = tuple("ACDEFGHIKLMNPQRSTVWY*")
+_PROTEIN_MAP = {ch: i for i, ch in enumerate(_PROTEIN_CHARS)}
+_PROTEIN_UNKNOWN = len(_PROTEIN_MAP)
+
 _DNA_CHARS = set("ACGTN")
 _RNA_CHARS = set("ACGUN")
-_PROTEIN_CHARS = set("ACDEFGHIKLMNPQRSTVWYBXZJOU*")
+_PROTEIN_RESIDUES = set("ACDEFGHIKLMNPQRSTVWYBXZJOU*")
+
+_ALPHABETS = ("auto", "dna", "rna", "protein")
 
 
 class FastaReader(Reader):
@@ -93,16 +110,19 @@ class FastaReader(Reader):
      'file_input': {'dims': ['sequence', 'position'],
                     'labels': {'sequence': 'builtin', 'position': 'auto'}}}
 
-
-
-
-
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:
             raise ReaderError(
                 f"FASTA reader requires exactly two dims, got {dims}"
             )
         sequence_dim, position_dim = dims[0], dims[1]
+
+        requested = str(args.get("alphabet", "auto") or "auto").strip().lower()
+        if requested not in _ALPHABETS:
+            raise ReaderError(
+                f"FASTA reader: alphabet must be one of {list(_ALPHABETS)}, "
+                f"got {requested!r}"
+            )
 
         ids, seqs = _parse_fasta(path)
         if not ids:
@@ -111,12 +131,18 @@ class FastaReader(Reader):
         max_len = max(len(s) for s in seqs)
         n = len(ids)
 
+        alphabet = _infer_alphabet(seqs) if requested == "auto" else requested
+        if alphabet == "protein":
+            codes = _PROTEIN_MAP
+            unknown = _PROTEIN_UNKNOWN
+        else:
+            codes = _CHAR_MAP
+            unknown = _UNKNOWN
+
         data = np.full((n, max_len), np.nan, dtype=np.float32)
         for i, seq in enumerate(seqs):
             for j, ch in enumerate(seq):
-                data[i, j] = _CHAR_MAP.get(ch.upper(), _UNKNOWN)
-
-        alphabet = _infer_alphabet(seqs)
+                data[i, j] = codes.get(ch.upper(), unknown)
 
         final: dict[str, dict[str, int]] = {}
 
@@ -154,8 +180,8 @@ class FastaReader(Reader):
             "missing_code": np.nan,
             "alphabet": alphabet,
             "representation": "sequence_codes",
-            "alphabet_map": dict(_CHAR_MAP),
-            "unknown_code": _UNKNOWN,
+            "alphabet_map": dict(codes),
+            "unknown_code": unknown,
         }
 
         return Form(
@@ -217,8 +243,9 @@ def _infer_alphabet(seqs: list[str]) -> str:
         return "dna"
     if observed <= _RNA_CHARS:
         return "rna"
-    if "U" in observed and "T" not in observed:
-        return "rna"
-    if observed <= _PROTEIN_CHARS:
+    if observed <= (_DNA_CHARS | _RNA_CHARS):
+        # A mixed T/U file is still nucleotide; U marks the RNA reading.
+        return "rna" if "U" in observed else "dna"
+    if observed <= _PROTEIN_RESIDUES:
         return "protein"
     return "protein"

@@ -1,0 +1,69 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "min_cluster_size": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 5,
+      "title": "最小簇大小",
+      "description": "Smallest group size that can be a cluster.",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "min_samples": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "default": null,
+      "title": "核心样本数",
+      "description": "Number of neighbours used for the core distance; null uses min_cluster_size.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "cluster_selection_epsilon": {
+      "type": "number",
+      "minimum": 0,
+      "default": 0.0,
+      "title": "簇选择半径",
+      "description": "Clusters closer than this distance are merged during extraction.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "cluster_selection_method": {
+      "type": "string",
+      "enum": ["eom", "leaf"],
+      "default": "eom",
+      "title": "簇选择方法",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "metric": {
+      "type": "string",
+      "enum": ["euclidean", "manhattan", "cosine"],
+      "default": "euclidean",
+      "title": "距离度量",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 70
+    }
+  },
+  "additionalProperties": false
+}

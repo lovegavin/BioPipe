@@ -664,7 +664,7 @@ class JobService:
             raise KeyError("产物文件不可用。")
         return path, match
 
-    def preview(self, key, artifact_id):
+    def preview(self, key, artifact_id, offset=0, limit=20):
         path, descriptor = self.artifact(key, artifact_id)
         if descriptor.get("kind") == "file":
             payload = self._file_payload(key, path)
@@ -677,10 +677,36 @@ class JobService:
         data = np.load(path, mmap_mode="r", allow_pickle=False)
         if data.ndim != 2 or data.dtype.kind not in "biuf":
             return {"descriptor": descriptor, "rows": [], "points": []}
-        rows = data[:20, :8].tolist()
+        offset = max(0, int(offset))
+        limit = max(1, min(int(limit), 1000))
+        total = int(data.shape[0])
+        window = data[offset:offset + limit, :min(data.shape[1], 12)].tolist()
+        labels = self._artifact_labels(path)
+        columns = labels[1] if labels and len(labels) > 1 else [f"c{index}" for index in range(data.shape[1])]
+        row_labels = labels[0][offset:offset + len(window)] if labels and labels[0] else [str(offset + index) for index in range(len(window))]
         points = data[:200, :2].tolist() if data.shape[1] >= 2 else []
         del data
-        return safe_json({"descriptor": descriptor, "rows": rows, "points": points})
+        return safe_json({"descriptor": descriptor, "rows": window, "points": points, "columns": columns,
+                          "row_labels": row_labels, "total": total, "offset": offset, "limit": limit})
+
+    @staticmethod
+    def _artifact_labels(path):
+        import pickle
+        metadata = Path(path).parent / "metadata.pkl"
+        if not metadata.is_file():
+            return None
+        try:
+            with metadata.open("rb") as handle:
+                value = pickle.load(handle)
+        except Exception:  # noqa: BLE001 - labels are optional metadata
+            return None
+        labels = value.get("labels") if isinstance(value, dict) else None
+        if not isinstance(labels, dict) or len(labels) != 2:
+            return None
+        ordered = []
+        for mapping in labels.values():
+            ordered.append([name for name, _ in sorted(mapping.items(), key=lambda item: item[1])])
+        return ordered
 
     def _file_payload(self, key, path):
         payload = read_json(path)

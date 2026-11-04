@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "protein_chain": {
+      "title": "蛋白链",
+      "type": "string",
+      "default": "A",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "ligand_smiles": {
+      "title": "配体 SMILES",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 4
+    },
+    "ligand_chain": {
+      "title": "配体链",
+      "type": "string",
+      "default": "B",
+      "x-ui-group": "输入",
+      "x-ui-order": 5
+    },
+    "affinity": {
+      "title": "预测亲和力",
+      "type": "boolean",
+      "default": false,
+      "x-ui-group": "输入",
+      "x-ui-order": 6
+    },
+    "model": {
+      "title": "模型",
+      "type": "string",
+      "default": "boltz2",
+      "x-ui-group": "模型",
+      "x-ui-order": 1,
+      "enum": [
+        "boltz2",
+        "boltz1"
+      ]
+    },
+    "use_msa_server": {
+      "title": "MSA 服务器",
+      "type": "boolean",
+      "default": true,
+      "x-ui-group": "模型",
+      "x-ui-order": 2
+    },
+    "device": {
+      "title": "设备",
+      "type": "string",
+      "default": "cpu",
+      "x-ui-group": "模型",
+      "x-ui-order": 3,
+      "enum": [
+        "cpu",
+        "cuda"
+      ]
+    },
+    "extra_args": {
+      "title": "额外参数",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "模型",
+      "x-ui-order": 4
+    },
+    "boltz_path": {
+      "title": "boltz 命令",
+      "type": "string",
+      "default": "boltz",
+      "x-ui-group": "依赖",
+      "x-ui-order": 1
+    },
+    "timeout_seconds": {
+      "title": "超时 (s)",
+      "type": "integer",
+      "default": 3600,
+      "x-ui-group": "依赖",
+      "x-ui-order": 2,
+      "minimum": 60,
+      "maximum": 21600
+    },
+    "output": {
+      "title": "输出",
+      "type": "string",
+      "default": "structure",
+      "x-ui-group": "输出",
+      "x-ui-order": 1
+    },
+    "output_format": {
+      "title": "输出格式",
+      "type": "string",
+      "default": "pdb",
+      "enum": [
+        "pdb",
+        "mmcif"
+      ],
+      "x-ui-group": "模型",
+      "x-ui-order": 5
+    },
+    "sampling_steps": {
+      "title": "采样步数",
+      "type": "integer",
+      "default": 200,
+      "minimum": 1,
+      "maximum": 1000,
+      "x-ui-group": "模型",
+      "x-ui-order": 6
+    },
+    "diffusion_samples": {
+      "title": "扩散样本数",
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 32,
+      "x-ui-group": "模型",
+      "x-ui-order": 7
+    },
+    "num_workers": {
+      "title": "数据线程",
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "maximum": 16,
+      "x-ui-group": "模型",
+      "x-ui-order": 8
+    },
+    "no_kernels": {
+      "title": "禁用 kernel",
+      "type": "boolean",
+      "default": false,
+      "x-ui-group": "模型",
+      "x-ui-order": 9
+    },
+    "msa_mode": {
+      "title": "MSA 模式",
+      "type": "string",
+      "default": "server",
+      "enum": [
+        "server",
+        "empty"
+      ],
+      "x-ui-group": "模型",
+      "x-ui-order": 10
+    },
+    "cache_dir": {
+      "title": "权重缓存目录",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 3
+    }
+  }
+}

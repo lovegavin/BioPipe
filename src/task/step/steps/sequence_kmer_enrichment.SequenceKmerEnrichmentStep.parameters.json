@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "序列 k-mer 富集",
+  "description": "把查询序列的 k-mer 组成与背景序列比较：计数、log2 富集、Fisher 精确检验与 BH 校正。",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "kmer_dim": {
+      "type": "string",
+      "default": "kmer",
+      "title": "输出 k-mer 维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "k": {
+      "type": "integer",
+      "default": 3,
+      "title": "k-mer 长度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10,
+      "minimum": 2,
+      "maximum": 8
+    },
+    "pseudocount": {
+      "type": "number",
+      "default": 0.5,
+      "title": "伪计数",
+      "x-ui-group": "basic",
+      "x-ui-order": 20,
+      "minimum": 0.0,
+      "maximum": 100.0
+    },
+    "correction": {
+      "type": "string",
+      "default": "bh",
+      "title": "多重检验校正",
+      "x-ui-group": "basic",
+      "x-ui-order": 30,
+      "enum": [
+        "bh",
+        "none"
+      ]
+    },
+    "min_count": {
+      "type": "integer",
+      "default": 1,
+      "title": "最小查询计数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40,
+      "minimum": 1,
+      "maximum": 1000000
+    },
+    "output": {
+      "type": "string",
+      "default": "enrichment",
+      "title": "输出名称",
+      "x-ui-group": "output",
+      "x-ui-order": 10
+    }
+  }
+}

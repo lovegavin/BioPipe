@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tsallis diversity profiles",
+  "description": "Tsallis generalised entropy for each sample over a range of q orders.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the sample dimension of the abundance matrix.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "title": "Taxon dimension",
+      "description": "Name of the taxon dimension of the abundance matrix.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "scales": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "default": [0, 0.5, 1, 2],
+      "title": "Q scales",
+      "description": "Tsallis q orders to evaluate; 0 gives richness minus one, 1 gives Shannon entropy.",
+      "x-ui-group": "Method",
+      "x-ui-order": 10
+    },
+    "norm": {
+      "type": "boolean",
+      "default": false,
+      "title": "Normalise by richness",
+      "description": "Divide each profile by its maximum attainable value for the observed richness, as vegan tsallis norm=TRUE.",
+      "x-ui-group": "Method",
+      "x-ui-order": 11
+    },
+    "hill": {
+      "type": "boolean",
+      "default": false,
+      "title": "Hill numbers",
+      "description": "Convert the profiles to Hill numbers; cannot be combined with norm.",
+      "x-ui-group": "Method",
+      "x-ui-order": 12
+    },
+    "output": {
+      "type": "string",
+      "default": "tsallis",
+      "title": "Output",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 100
+    }
+  },
+  "required": []
+}

@@ -1,0 +1,4 @@
+{"run_id": "20261102T200946-e97f858b8ae9", "memory_enabled": false, "time": "2026-11-02T20:09:46.697364+00:00", "event": "run_started"}
+{"name": "esmfold_predict", "index": 1, "time": "2026-11-02T20:09:46.697498+00:00", "event": "step_started"}
+{"name": "esmfold_predict", "inputs": 1, "outputs": ["structure"], "contract_version": 1, "time": "2026-11-02T20:10:33.440649+00:00", "event": "contract_checked"}
+{"name": "esmfold_predict", "index": 1, "seconds": 46.74093572499987, "time": "2026-11-02T20:10:33.440719+00:00", "event": "step_finished"}

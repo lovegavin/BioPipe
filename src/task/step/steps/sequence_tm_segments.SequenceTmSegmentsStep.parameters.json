@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Transmembrane helix segments",
+  "description": "Kyte-Doolittle hydropathy windows merged into membrane-span candidates.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "序列维度",
+      "description": "Row dimension of the protein sequence form.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "位置维度",
+      "description": "Column dimension of the protein sequence form.",
+      "x-ui-group": "Input",
+      "x-ui-order": 10
+    },
+    "window": {
+      "type": "integer",
+      "minimum": 9,
+      "maximum": 25,
+      "default": 19,
+      "title": "窗口长度",
+      "description": "Odd sliding-window length; the classic membrane window is 19.",
+      "x-ui-group": "Hydropathy",
+      "x-ui-order": 0
+    },
+    "threshold": {
+      "type": "number",
+      "minimum": -5,
+      "maximum": 5,
+      "default": 1.6,
+      "title": "疏水性阈值",
+      "description": "Minimum mean Kyte-Doolittle hydropathy of a candidate window.",
+      "x-ui-group": "Hydropathy",
+      "x-ui-order": 10
+    },
+    "min_length": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 50,
+      "default": 12,
+      "title": "最短片段长度",
+      "description": "Merged segments shorter than this many residues are dropped.",
+      "x-ui-group": "Hydropathy",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "segments",
+      "title": "输出名称",
+      "description": "Output slot name for the transmembrane segment table.",
+      "x-ui-group": "Output",
+      "x-ui-order": 0
+    }
+  },
+  "required": []
+}

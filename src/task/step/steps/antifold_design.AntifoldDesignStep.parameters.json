@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "AntiFold 抗体逆折叠参数",
+  "properties": {
+    "structure_path": {
+      "title": "结构文件 (PDB)",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "nanobody_chain": {
+      "title": "纳米抗体链",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "heavy_chain": {
+      "title": "重链",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "light_chain": {
+      "title": "轻链",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 4
+    },
+    "antigen_chain": {
+      "title": "抗原链",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 5
+    },
+    "regions": {
+      "title": "采样区域",
+      "type": "string",
+      "default": "CDR1 CDR2 CDR3",
+      "x-ui-group": "模型",
+      "x-ui-order": 6
+    },
+    "num_seq_per_target": {
+      "title": "每个目标的序列数",
+      "type": "integer",
+      "default": 5,
+      "minimum": 1,
+      "maximum": 50,
+      "x-ui-group": "模型",
+      "x-ui-order": 7
+    },
+    "sampling_temp": {
+      "title": "采样温度",
+      "type": "string",
+      "default": "0.2",
+      "x-ui-group": "模型",
+      "x-ui-order": 8
+    },
+    "seed": {
+      "title": "随机种子",
+      "type": "integer",
+      "default": 42,
+      "minimum": 0,
+      "maximum": 1000000,
+      "x-ui-group": "模型",
+      "x-ui-order": 9
+    },
+    "limit_variation": {
+      "title": "限制变异",
+      "type": "boolean",
+      "default": false,
+      "x-ui-group": "模型",
+      "x-ui-order": 10
+    },
+    "python_executable": {
+      "title": "Python 解释器",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 11
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 1800,
+      "minimum": 30,
+      "maximum": 7200,
+      "x-ui-group": "依赖",
+      "x-ui-order": 12
+    },
+    "design_dim": {
+      "title": "设计维度名",
+      "type": "string",
+      "default": "design",
+      "x-ui-group": "输出",
+      "x-ui-order": 13
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "designs",
+      "x-ui-group": "输出",
+      "x-ui-order": 14
+    },
+    "runner_path": {
+      "title": "自定义 runner 路径（可选）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "依赖",
+      "x-ui-order": 12
+    }
+  }
+}

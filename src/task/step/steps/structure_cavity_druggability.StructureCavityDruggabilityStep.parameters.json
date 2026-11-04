@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "空腔成药性",
+  "description": "检测最大埋藏空腔，结合包埋程度与内衬疏水性给出 0-1 成药性评分。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "title": "原子维度",
+      "x-ui-group": "Dimension",
+      "x-ui-order": 1,
+      "description": "结构 Form 的原子维度名。",
+      "default": "atom"
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "字段维度",
+      "x-ui-group": "Dimension",
+      "x-ui-order": 2,
+      "description": "结构 Form 的字段维度名。",
+      "default": "field"
+    },
+    "residue_dim": {
+      "type": "string",
+      "title": "残基维度",
+      "x-ui-group": "Dimension",
+      "x-ui-order": 3,
+      "description": "输出残基维度名。",
+      "default": "residue"
+    },
+    "spacing": {
+      "type": "number",
+      "title": "网格间距",
+      "x-ui-group": "Grid",
+      "x-ui-order": 4,
+      "description": "空腔检测网格间距（Å）。",
+      "default": 1.0,
+      "minimum": 0.5,
+      "maximum": 4.0
+    },
+    "probe_radius": {
+      "type": "number",
+      "title": "探针半径",
+      "x-ui-group": "Grid",
+      "x-ui-order": 5,
+      "description": "溶剂探针半径（Å）。",
+      "default": 1.4,
+      "minimum": 0.5,
+      "maximum": 5.0
+    },
+    "min_volume": {
+      "type": "number",
+      "title": "最小体积",
+      "x-ui-group": "Grid",
+      "x-ui-order": 6,
+      "description": "空腔最小体积（Å³）。",
+      "default": 20.0,
+      "minimum": 1.0,
+      "maximum": 5000.0
+    },
+    "padding": {
+      "type": "number",
+      "title": "边界填充",
+      "x-ui-group": "Grid",
+      "x-ui-order": 7,
+      "description": "网格向外扩展的距离（Å）。",
+      "default": 2.0,
+      "minimum": 0.0,
+      "maximum": 10.0
+    },
+    "lining_cutoff": {
+      "type": "number",
+      "title": "内衬截断",
+      "x-ui-group": "Lining",
+      "x-ui-order": 8,
+      "description": "残基被视为内衬的距离上限（Å）。",
+      "default": 4.0,
+      "minimum": 1.0,
+      "maximum": 8.0
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名",
+      "x-ui-group": "Output",
+      "x-ui-order": 9,
+      "description": "输出 Form 在上下文中的名称。",
+      "default": "druggability"
+    }
+  }
+}

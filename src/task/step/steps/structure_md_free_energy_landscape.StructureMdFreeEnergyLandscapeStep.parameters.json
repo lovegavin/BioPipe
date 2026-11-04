@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "自由能景观参数",
+  "properties": {
+    "trajectory_path": {
+      "title": "轨迹 .npy 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "topology_path": {
+      "title": "拓扑 PDB 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "pc1": {
+      "title": "PC1 索引",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 50,
+      "x-ui-group": "投影",
+      "x-ui-order": 3
+    },
+    "pc2": {
+      "title": "PC2 索引",
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "maximum": 50,
+      "x-ui-group": "投影",
+      "x-ui-order": 4
+    },
+    "bins": {
+      "title": "直方图格数",
+      "type": "integer",
+      "default": 20,
+      "minimum": 2,
+      "maximum": 100,
+      "x-ui-group": "直方图",
+      "x-ui-order": 5
+    },
+    "temperature": {
+      "title": "温度（K）",
+      "type": "number",
+      "default": 300.0,
+      "minimum": 1.0,
+      "maximum": 1000.0,
+      "x-ui-group": "直方图",
+      "x-ui-order": 6
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "landscape",
+      "x-ui-group": "输出",
+      "x-ui-order": 7
+    }
+  }
+}

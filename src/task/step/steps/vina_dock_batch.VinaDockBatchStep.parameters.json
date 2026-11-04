@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "批量对接",
+  "description": "对同一受体批量运行 AutoDock Vina，并汇总每个配体的最佳亲和力。",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "receptor_path": {
+      "type": "string",
+      "title": "受体文件",
+      "x-ui-group": "Input",
+      "x-ui-order": 1,
+      "description": "受体 PDBQT 文件路径。",
+      "default": ""
+    },
+    "ligand_paths": {
+      "type": "string",
+      "title": "配体列表",
+      "x-ui-group": "Input",
+      "x-ui-order": 2,
+      "description": "逗号、分号或换行分隔的配体 PDBQT 文件列表。",
+      "default": ""
+    },
+    "vina_path": {
+      "type": "string",
+      "title": "Vina 可执行文件",
+      "x-ui-group": "Engine",
+      "x-ui-order": 3,
+      "description": "vina 可执行文件名或路径。",
+      "default": "vina"
+    },
+    "center_x": {
+      "type": "number",
+      "title": "中心 X",
+      "x-ui-group": "Box",
+      "x-ui-order": 4,
+      "description": "对接盒中心 X（Å）；三项都留空时取配体质心。",
+      "minimum": -1000.0,
+      "maximum": 1000.0
+    },
+    "center_y": {
+      "type": "number",
+      "title": "中心 Y",
+      "x-ui-group": "Box",
+      "x-ui-order": 5,
+      "description": "对接盒中心 Y（Å）。",
+      "minimum": -1000.0,
+      "maximum": 1000.0
+    },
+    "center_z": {
+      "type": "number",
+      "title": "中心 Z",
+      "x-ui-group": "Box",
+      "x-ui-order": 6,
+      "description": "对接盒中心 Z（Å）。",
+      "minimum": -1000.0,
+      "maximum": 1000.0
+    },
+    "size_x": {
+      "type": "number",
+      "title": "盒长 X",
+      "x-ui-group": "Box",
+      "x-ui-order": 7,
+      "description": "对接盒 X 方向尺寸（Å）。",
+      "default": 20.0,
+      "minimum": 5.0,
+      "maximum": 100.0
+    },
+    "size_y": {
+      "type": "number",
+      "title": "盒长 Y",
+      "x-ui-group": "Box",
+      "x-ui-order": 8,
+      "description": "对接盒 Y 方向尺寸（Å）。",
+      "default": 20.0,
+      "minimum": 5.0,
+      "maximum": 100.0
+    },
+    "size_z": {
+      "type": "number",
+      "title": "盒长 Z",
+      "x-ui-group": "Box",
+      "x-ui-order": 9,
+      "description": "对接盒 Z 方向尺寸（Å）。",
+      "default": 20.0,
+      "minimum": 5.0,
+      "maximum": 100.0
+    },
+    "num_modes": {
+      "type": "integer",
+      "title": "模式数",
+      "x-ui-group": "Search",
+      "x-ui-order": 10,
+      "description": "每个配体保留的结合模式数。",
+      "default": 9,
+      "minimum": 1,
+      "maximum": 50
+    },
+    "exhaustiveness": {
+      "type": "integer",
+      "title": "穷举度",
+      "x-ui-group": "Search",
+      "x-ui-order": 11,
+      "description": "Vina 搜索穷举度。",
+      "default": 8,
+      "minimum": 1,
+      "maximum": 64
+    },
+    "seed": {
+      "type": "integer",
+      "title": "随机种子",
+      "x-ui-group": "Search",
+      "x-ui-order": 12,
+      "description": "Vina 随机种子。",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 2147483647
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "title": "超时",
+      "x-ui-group": "Search",
+      "x-ui-order": 13,
+      "description": "每个配体的超时秒数。",
+      "default": 600,
+      "minimum": 1,
+      "maximum": 86400
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名",
+      "x-ui-group": "Output",
+      "x-ui-order": 14,
+      "description": "输出 Form 在上下文中的名称。",
+      "default": "results"
+    }
+  }
+}

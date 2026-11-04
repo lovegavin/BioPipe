@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "PDB Form 的原子维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "PDB Form 的字段维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "description": "输出中残基维度的名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "chi_angles",
+      "title": "输出名称",
+      "description": "写入上下文的输出 Form 名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    }
+  }
+}

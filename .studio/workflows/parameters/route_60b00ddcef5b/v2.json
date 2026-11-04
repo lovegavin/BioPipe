@@ -1,0 +1,82 @@
+{
+  "format": "biopipe.graph-parameters",
+  "schema_version": 1,
+  "params": {},
+  "nodes": {
+    "gaf": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {}
+    },
+    "pivot_1": {
+      "kind": "operator",
+      "operator": "pivot",
+      "params": {
+        "agg": "first",
+        "columns_label": "go_id",
+        "columns_name": "go_term",
+        "index_label": "db_object_symbol",
+        "index_name": "gene",
+        "output": "universe"
+      },
+      "context_params": {}
+    },
+    "gene_list_to_hits_2": {
+      "kind": "operator",
+      "operator": "gene_list_to_hits",
+      "params": {
+        "gene_dim": "gene",
+        "term_dim": "go_term",
+        "genes": [
+          "ATM",
+          "ATR",
+          "CHEK1",
+          "CHEK2",
+          "TP53",
+          "MDM2",
+          "MDM4",
+          "CDKN1A",
+          "CDKN2A",
+          "GADD45A"
+        ],
+        "output": "hits"
+      },
+      "context_params": {}
+    },
+    "enrich_go_3": {
+      "kind": "operator",
+      "operator": "enrich_go",
+      "params": {
+        "gene_dim": "gene",
+        "term_dim": "go_term",
+        "correction": "fdr",
+        "min_term_size": 5,
+        "output": "enriched"
+      },
+      "context_params": {}
+    },
+    "enrichment_plot_4": {
+      "kind": "operator",
+      "operator": "enrichment_plot",
+      "params": {
+        "statistic_dim": "statistic",
+        "q_column": "Q_VALUE",
+        "size_column": "n_hit",
+        "top_n": 20,
+        "filename": "go_enrichment_p53.png",
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "title": "GO enrichment: KEGG p53 signaling pathway members"
+      },
+      "context_params": {}
+    },
+    "describe_5": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    }
+  }
+}

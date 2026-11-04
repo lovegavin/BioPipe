@@ -1,0 +1,9 @@
+{
+  "n_liabilities": 10,
+  "kinds": {
+    "oxidation": 5,
+    "isomerization": 3,
+    "deamidation": 2
+  },
+  "include_oxidation": true
+}

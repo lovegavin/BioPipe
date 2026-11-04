@@ -1,0 +1,56 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "title": "Sample dimension",
+      "default": "sample",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "response_dim": {
+      "type": "string",
+      "title": "Response dimension",
+      "default": "response",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "group_dim": {
+      "type": "string",
+      "title": "Group dimension",
+      "default": "feature",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "group_label": {
+      "type": "string",
+      "title": "Group column",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "test": {
+      "type": "string",
+      "title": "MANOVA test",
+      "default": "pillai",
+      "x-ui-group": "basic",
+      "x-ui-order": 40,
+      "enum": [
+        "pillai",
+        "wilks",
+        "hotelling_lawley",
+        "roy"
+      ]
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "output",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    }
+  },
+  "required": [
+    "group_label"
+  ],
+  "additionalProperties": false
+}

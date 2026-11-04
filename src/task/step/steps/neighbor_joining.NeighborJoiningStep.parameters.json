@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "properties": {
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "title": "Taxon Dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "taxon_b_dim": {
+      "type": "string",
+      "default": "taxon_b",
+      "title": "Taxon Dim B",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "node_dim": {
+      "type": "string",
+      "default": "node",
+      "title": "Node Dim",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "Field Dim",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

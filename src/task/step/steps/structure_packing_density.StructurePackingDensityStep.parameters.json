@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "title": "Structure packing density parameters",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "The atom dimension of the PDB form.",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "The field dimension of the PDB form.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "description": "Output residue dimension name.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "radius": {
+      "type": "number",
+      "default": 6.0,
+      "minimum": 2.0,
+      "maximum": 20.0,
+      "title": "球半径 (Å)",
+      "description": "Neighbour sphere radius around each residue centre.",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "exclude_resnames": {
+      "type": "string",
+      "default": "HOH,WAT",
+      "title": "排除残基名",
+      "description": "Comma separated residue names to exclude.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "default": "packing",
+      "title": "输出",
+      "description": "Output form name.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "RNA 双链系综参数",
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度名",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度名",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "temperature": {
+      "title": "温度（°C）",
+      "type": "number",
+      "default": 37.0,
+      "minimum": 1.0,
+      "maximum": 99.0,
+      "x-ui-group": "模型",
+      "x-ui-order": 3
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "cofold",
+      "x-ui-group": "输出",
+      "x-ui-order": 4
+    }
+  }
+}

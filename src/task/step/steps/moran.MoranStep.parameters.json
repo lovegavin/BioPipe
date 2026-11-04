@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Moran's I",
+  "description": "Moran's I spatial autocorrelation from a value column and a distance matrix.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the sample dimension in both inputs.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "Value dimension",
+      "description": "Name of the value dimension in the value table.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "sample_b_dim": {
+      "type": "string",
+      "default": "sample_b",
+      "title": "Distance column dimension",
+      "description": "Name of the second dimension of the distance matrix.",
+      "x-ui-group": "Input",
+      "x-ui-order": 2
+    },
+    "value_label": {
+      "type": "string",
+      "title": "Value column",
+      "description": "Value column to analyse. The table must have exactly one column unless this is set.",
+      "x-ui-group": "Input",
+      "x-ui-order": 3
+    },
+    "weighting": {
+      "type": "string",
+      "enum": [
+        "inverse",
+        "binary"
+      ],
+      "default": "inverse",
+      "title": "Spatial weighting",
+      "description": "Inverse distance weights, or binary adjacency for non-zero distances.",
+      "x-ui-group": "Weights",
+      "x-ui-order": 0
+    },
+    "output": {
+      "type": "string",
+      "default": "moran",
+      "title": "Output name",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 99
+    }
+  },
+  "required": []
+}

@@ -11,6 +11,8 @@ from hashlib import sha256
 import importlib
 from importlib import metadata
 import json
+import os
+import subprocess
 from pathlib import Path
 import sys
 import threading
@@ -19,9 +21,80 @@ from datetime import datetime, timezone
 from packaging.requirements import Requirement
 
 
+def find_tool(name):
+    """Resolve an external tool from PATH or any managed environment bin directory."""
+    import shutil
+    found = shutil.which(name)
+    if found:
+        return found
+    from pathlib import Path
+    import sys
+    roots = [Path(sys.prefix) / 'bin', Path(sys.prefix) / 'Scripts']
+    managed = Path(sys.prefix).resolve().parent
+    roots.extend(sorted(managed.glob('env-*/bin')))
+    roots.extend(sorted(managed.glob('env-*/Scripts')))
+    for root in roots:
+        candidate = root / name
+        if candidate.is_file():
+            import os
+            if os.access(candidate, os.X_OK):
+                return str(candidate)
+    return None
+
+
+def scope():
+    """Temporarily restrict dependency checks to a declared id list.
+
+    ``BIOPIPE_DEPENDENCY_SCOPE`` (comma separated) wins; otherwise
+    ``~/.config/biopipe/dependency_scope.json`` (list of ids) is used. An empty
+    or missing scope means the full library.
+    """
+    import os
+    value = os.environ.get('BIOPIPE_DEPENDENCY_SCOPE', '').strip()
+    if value:
+        return {item.strip() for item in value.split(',') if item.strip()}
+    path = Path(os.path.expanduser('~/.config/biopipe/dependency_scope.json'))
+    if path.is_file():
+        try:
+            data = json.loads(path.read_text(encoding='utf-8'))
+            return {str(item) for item in data if str(item).strip()}
+        except Exception:
+            return set()
+    return set()
+
+
+def probe_environment(entry_id, environment, imports):
+    """Check an operator that declares a dedicated interpreter environment."""
+    from biopipe.environments import resolve
+    python = resolve(environment)
+    if python is None:
+        return {'status': 'failed',
+                'error': f'isolated environment {environment!r} is not installed; run scripts/install_environments.py'}
+    names = imports or []
+    script = ';'.join(f'import {name}' for name in names) or 'pass'
+    result = subprocess.run([str(python), '-c', script], capture_output=True, text=True, timeout=300)
+    if result.returncode:
+        tail = (result.stderr or result.stdout).strip().splitlines()[-3:] or ['import failed']
+        return {'status': 'failed', 'error': f'{environment}: ' + ' | '.join(tail),
+                'environment_python': str(python), 'command': f'{python} -c {script!r}',
+                'stderr': result.stderr[-2000:]}
+    return {'status': 'passed', 'error': '', 'environment': str(python)}
+
+
 def probe(entries):
     results = {}
     for entry in entries:
+        tools = (entry.get('resources') or {}).get('external_tools') or []
+        if tools:
+            missing = [name for name in tools if find_tool(name) is None]
+            results[entry['id']] = {'status': 'failed' if missing else 'passed',
+                                    'error': ', '.join(f'{name}: not on PATH' for name in missing)}
+            continue
+        environment = (entry.get('resources') or {}).get('environment')
+        if environment:
+            results[entry['id']] = probe_environment(entry['id'], environment,
+                                                     entry.get('dependency_imports', []))
+            continue
         errors = []
         queue = list(entry.get('dependencies', []))
         seen = set()
@@ -83,7 +156,9 @@ class DependencySession:
             for descriptor in active_descriptors(state):
                 identity = {k: descriptor.get(k) for k in ('id', 'kind', 'version', 'entry_point', 'implementation', 'dependencies', 'dependency_imports', 'execution')}
                 identity['implementation'] = {k: v for k, v in (descriptor.get('implementation') or {}).items() if k not in {'declaration_sha', 'sha256'}}
-                identity['r'] = descriptor.get('resources', {}).get('r')
+                resources = descriptor.get('resources') or {}
+                identity['r'] = resources.get('r')
+                identity['resources'] = {key: resources.get(key) for key in ('environment', 'external_tools')}
                 fingerprint = sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
                 old = self.entries.get(descriptor['id'], {})
                 current[descriptor['id']] = old if old.get('fingerprint') == fingerprint else {
@@ -91,7 +166,12 @@ class DependencySession:
                     'status': 'unchecked', 'error': '', 'execution': descriptor.get('execution', {'mode': 'shared'}),
                     'dependencies': descriptor.get('dependencies', []),
                     'dependency_imports': descriptor.get('dependency_imports', []),
-                    'r': descriptor.get('resources', {}).get('r')}
+                    'resources': {key: (descriptor.get('resources') or {}).get(key)
+                                  for key in ('environment', 'external_tools')},
+                    'r': (descriptor.get('resources') or {}).get('r')}
+            allowed = scope()
+            if allowed:
+                current = {key: value for key, value in current.items() if key in allowed}
             self.entries = current
 
     def snapshot(self):
@@ -108,10 +188,23 @@ class DependencySession:
                     output.write(json.dumps(record, ensure_ascii=False) + '\n')
 
     def _inspect(self, state, entries):
+        self._log_round(state, entries)
         if state.get('runtime_protocol') == 1:
             from biopipe.targets import inspect_entries
             return inspect_entries(state, entries, self.manager.directory / 'staging')
         return self.inspector(self.manager.python_for(state), entries, self.manager.directory / 'staging')
+
+    def _log_round(self, state, entries):
+        try:
+            python = self.manager.python_for(state)
+        except Exception:
+            python = 'unknown'
+        path = self.log.parent / 'dependency-checks.log'
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open('a', encoding='utf-8') as handle:
+            handle.write(json.dumps({'time': datetime.now(timezone.utc).isoformat(),
+                                     'python': str(python),
+                                     'ids': [entry['id'] for entry in entries]}, ensure_ascii=False) + '\n')
 
     def check(self, *, repair=True, repair_r=None):
         # Shared with source/wheel transactions so the runtime cannot change
@@ -178,4 +271,13 @@ class DependencySession:
 
 if __name__ == '__main__':
     request, response = map(Path, sys.argv[1:])
-    response.write_text(json.dumps(probe(json.loads(request.read_text(encoding='utf-8'))), ensure_ascii=False), encoding='utf-8')
+    entries = json.loads(request.read_text(encoding='utf-8'))
+    results = probe(entries)
+    log = Path(os.environ.get('BIOPIPE_DEPENDENCY_LOG', response.with_suffix('.log')))
+    log.parent.mkdir(parents=True, exist_ok=True)
+    with log.open('a', encoding='utf-8') as handle:
+        handle.write(json.dumps({'time': datetime.now(timezone.utc).isoformat(),
+                                 'python': sys.executable, 'entries': len(entries)}, ensure_ascii=False) + '\n')
+        for entry in entries:
+            handle.write(json.dumps({'id': entry['id'], **results.get(entry['id'], {})}, ensure_ascii=False) + '\n')
+    response.write_text(json.dumps(results, ensure_ascii=False), encoding='utf-8')

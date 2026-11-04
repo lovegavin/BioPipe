@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "PDB Form 的原子维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "PDB Form 的字段维度名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度",
+      "description": "输出中残基维度的名称。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "atom_names": {
+      "type": "string",
+      "default": "",
+      "title": "参与拟合的原子名",
+      "description": "逗号分隔的原子名（如 CA,CB）；为空表示全部重原子。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "fit_residues": {
+      "type": "string",
+      "default": "",
+      "title": "拟合残基范围",
+      "description": "仅用这些残基做叠合（如 A:1-20,B:5-10）；为空表示全部匹配原子。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "min_rmsd": {
+      "type": "number",
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "最小 RMSD 过滤 (Å)",
+      "description": "只输出 RMSD 不低于该值的残基。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "rmsd",
+      "title": "输出名称",
+      "description": "写入上下文的 Form 名称。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}

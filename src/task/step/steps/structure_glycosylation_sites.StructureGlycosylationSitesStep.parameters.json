@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "title": "parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度",
+      "description": "原子维度名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 1,
+      "default": "atom"
+    },
+    "field_dim": {
+      "title": "字段维度",
+      "description": "字段维度名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 2,
+      "default": "field"
+    },
+    "site_dim": {
+      "title": "位点维度",
+      "description": "输出位点维度名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 3,
+      "default": "site"
+    },
+    "min_sasa": {
+      "title": "最小暴露度",
+      "description": "每个原子的平均 SASA（Å²）达到该值才视为表面位点",
+      "type": "number",
+      "x-ui-group": "输入",
+      "x-ui-order": 4,
+      "default": 10.0,
+      "minimum": 0.0,
+      "maximum": 200.0
+    },
+    "include_o_linked": {
+      "title": "包含 O-连接",
+      "description": "同时报告 Ser/Thr O-连接位点",
+      "type": "boolean",
+      "x-ui-group": "输入",
+      "x-ui-order": 5,
+      "default": false
+    },
+    "output": {
+      "title": "输出参数",
+      "description": "写入位点表的参数名",
+      "type": "string",
+      "x-ui-group": "输入",
+      "x-ui-order": 6,
+      "default": "sites"
+    }
+  },
+  "x-ui-order": [
+    "atom_dim",
+    "field_dim",
+    "site_dim",
+    "min_sasa",
+    "include_o_linked",
+    "output"
+  ]
+}

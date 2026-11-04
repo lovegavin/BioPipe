@@ -1,0 +1,424 @@
+{
+  "id": "route_88fb083f4238",
+  "version": 6,
+  "updated_at": "2026-11-03T17:10:57.824544+00:00",
+  "graph": {
+    "schema_version": 2,
+    "name": "Proteomics DE",
+    "base_dir": ".studio/builtin-inputs/proteomics_de",
+    "nodes": [
+      {
+        "id": "meta",
+        "kind": "source",
+        "operator": null,
+        "title": "meta",
+        "position": {
+          "x": 70.0,
+          "y": 100.0
+        },
+        "source": {
+          "reader": null,
+          "path": "input/clinical_raw.txt",
+          "dims": [
+            "sample",
+            "feature"
+          ],
+          "labels": {
+            "feature": "builtin",
+            "sample": {
+              "feature": 0
+            }
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "proteins",
+        "kind": "source",
+        "operator": null,
+        "title": "proteins",
+        "position": {
+          "x": 70.0,
+          "y": 310.0
+        },
+        "source": {
+          "reader": null,
+          "path": "input/proteomics_raw.txt",
+          "dims": [
+            "protein",
+            "sample"
+          ],
+          "labels": {
+            "protein": {
+              "sample": 0
+            },
+            "sample": "builtin"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "missing_1",
+        "kind": "operator",
+        "operator": "missing",
+        "title": "缺失值过滤",
+        "position": {
+          "x": 360.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "impute_2",
+        "kind": "operator",
+        "operator": "impute",
+        "title": "缺失值填补",
+        "position": {
+          "x": 650.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "normalize_3",
+        "kind": "operator",
+        "operator": "normalize",
+        "title": "归一化",
+        "position": {
+          "x": 940.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "compare_groups_4",
+        "kind": "operator",
+        "operator": "compare_groups",
+        "title": "Group comparison",
+        "position": {
+          "x": 1230.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 2,
+        "route": null
+      },
+      {
+        "id": "correction_5",
+        "kind": "operator",
+        "operator": "correction",
+        "title": "FDR",
+        "position": {
+          "x": 1520.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "volcano_6",
+        "kind": "operator",
+        "operator": "volcano",
+        "title": "Volcano",
+        "position": {
+          "x": 1810.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "ma_plot_7",
+        "kind": "operator",
+        "operator": "ma_plot",
+        "title": "MA plot",
+        "position": {
+          "x": 1810.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "transpose_8",
+        "kind": "operator",
+        "operator": "transpose",
+        "title": "维度转置",
+        "position": {
+          "x": 1230.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "heatmap_9",
+        "kind": "operator",
+        "operator": "heatmap",
+        "title": "Heatmap",
+        "position": {
+          "x": 1520.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "describe_10",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 1810.0,
+          "y": 520.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      }
+    ],
+    "edges": [
+      {
+        "id": "proteins-missing_1-0",
+        "source": "proteins",
+        "target": "missing_1",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "missing_1-impute_2-0",
+        "source": "missing_1",
+        "target": "impute_2",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "impute_2-normalize_3-0",
+        "source": "impute_2",
+        "target": "normalize_3",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "normalize_3-compare_groups_4-0",
+        "source": "normalize_3",
+        "target": "compare_groups_4",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "meta-compare_groups_4-1",
+        "source": "meta",
+        "target": "compare_groups_4",
+        "sourceHandle": "out",
+        "targetHandle": "in-1"
+      },
+      {
+        "id": "compare_groups_4-correction_5-0",
+        "source": "compare_groups_4",
+        "target": "correction_5",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "correction_5-volcano_6-0",
+        "source": "correction_5",
+        "target": "volcano_6",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "correction_5-ma_plot_7-0",
+        "source": "correction_5",
+        "target": "ma_plot_7",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "normalize_3-transpose_8-0",
+        "source": "normalize_3",
+        "target": "transpose_8",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "transpose_8-heatmap_9-0",
+        "source": "transpose_8",
+        "target": "heatmap_9",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "correction_5-describe_10-0",
+        "source": "correction_5",
+        "target": "describe_10",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      }
+    ],
+    "runtime": {},
+    "manifest_extra": {},
+    "interface": {
+      "version": 1,
+      "inputs": [
+        {
+          "node_id": "meta",
+          "label": "meta",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "sample",
+              "feature"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        },
+        {
+          "node_id": "proteins",
+          "label": "proteins",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "protein",
+              "sample"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "node_id": "correction_5",
+          "handle": "out",
+          "label": "FDR",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "protein",
+              "statistic"
+            ],
+            "labels": {
+              "protein": null,
+              "statistic": [
+                "log2FC",
+                "mean_a",
+                "mean_b",
+                "stat",
+                "P",
+                "N",
+                "Q_VALUE",
+                "SIGNIFICANT"
+              ]
+            },
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "representation": {
+                "type": "string",
+                "const": "comparison"
+              },
+              "correction_method": {
+                "type": "string",
+                "const": "fdr"
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "axis_info": {}
+          }
+        },
+        {
+          "node_id": "transpose_8",
+          "handle": "out",
+          "label": "维度转置",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "sample",
+              "protein"
+            ],
+            "labels": {
+              "protein": null,
+              "sample": null
+            },
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "representation": {
+                "type": "string",
+                "const": "normalize"
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "axis_info": {}
+          }
+        }
+      ]
+    },
+    "plugin_lock": {}
+  },
+  "parameters_file": "parameters/route_88fb083f4238/v6.json",
+  "execution_file": "execution/route_88fb083f4238/v6.json"
+}

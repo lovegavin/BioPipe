@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "RNA-RNA 杂交参数",
+  "properties": {
+    "sequence_dim": {
+      "title": "序列维度名",
+      "type": "string",
+      "default": "sequence",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "position_dim": {
+      "title": "位置维度名",
+      "type": "string",
+      "default": "position",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "energy_range": {
+      "title": "能量容差 (kcal/mol)",
+      "type": "number",
+      "default": 0.0,
+      "minimum": 0.0,
+      "maximum": 50.0,
+      "x-ui-group": "搜索",
+      "x-ui-order": 3
+    },
+    "rnaduplex_path": {
+      "title": "RNAduplex 路径",
+      "type": "string",
+      "default": "RNAduplex",
+      "x-ui-group": "依赖",
+      "x-ui-order": 4
+    },
+    "timeout_seconds": {
+      "title": "超时 (秒)",
+      "type": "integer",
+      "default": 120,
+      "minimum": 5,
+      "maximum": 3600,
+      "x-ui-group": "依赖",
+      "x-ui-order": 5
+    },
+    "duplex_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "duplex",
+      "x-ui-group": "输出",
+      "x-ui-order": 6
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "duplexes",
+      "x-ui-group": "输出",
+      "x-ui-order": 7
+    }
+  }
+}

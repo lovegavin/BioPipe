@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "title": "结构域边界划分",
+  "description": "从 CA 接触图划分结构域并标记跨域接触的边界残基。",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "title": "残基维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "contact_cutoff": {
+      "type": "number",
+      "default": 8.0,
+      "title": "CA 接触距离阈值 (Å)",
+      "x-ui-group": "basic",
+      "x-ui-order": 10,
+      "minimum": 4.0,
+      "maximum": 15.0
+    },
+    "min_separation": {
+      "type": "integer",
+      "default": 3,
+      "title": "最小序列间隔",
+      "x-ui-group": "basic",
+      "x-ui-order": 20,
+      "minimum": 1,
+      "maximum": 100
+    },
+    "n_domains": {
+      "type": "integer",
+      "default": 0,
+      "title": "结构域数（0=自动）",
+      "x-ui-group": "basic",
+      "x-ui-order": 30,
+      "minimum": 0,
+      "maximum": 8
+    },
+    "max_domains": {
+      "type": "integer",
+      "default": 4,
+      "title": "自动检测的最大结构域数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40,
+      "minimum": 2,
+      "maximum": 8
+    },
+    "min_gap_ratio": {
+      "type": "number",
+      "default": 1.5,
+      "title": "特征间隙比阈值",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50,
+      "minimum": 1.0,
+      "maximum": 10.0
+    },
+    "seed": {
+      "type": "integer",
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "default": "domains",
+      "title": "输出名称",
+      "x-ui-group": "output",
+      "x-ui-order": 10
+    }
+  }
+}

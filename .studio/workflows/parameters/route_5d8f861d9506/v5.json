@@ -1,0 +1,315 @@
+{
+  "format": "biopipe.graph-parameters",
+  "schema_version": 1,
+  "params": {},
+  "nodes": {
+    "meta": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "header": true,
+        "reader": "csv",
+        "sep": ","
+      }
+    },
+    "otu": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "header": true,
+        "reader": "csv",
+        "sep": ","
+      }
+    },
+    "filter_min_1": {
+      "kind": "operator",
+      "operator": "filter_min",
+      "params": {
+        "min_value": 10,
+        "min_samples": 5,
+        "dim": "species",
+        "output": "otu_filtered"
+      },
+      "context_params": {}
+    },
+    "transpose_2": {
+      "kind": "operator",
+      "operator": "transpose",
+      "params": {
+        "order": [
+          "sample",
+          "species"
+        ],
+        "output": "samples_by_species"
+      },
+      "context_params": {}
+    },
+    "normalize_3": {
+      "kind": "operator",
+      "operator": "normalize",
+      "params": {
+        "target_sum": 1000000.0,
+        "dim": "sample",
+        "method": "total",
+        "output": "otu_rel"
+      },
+      "context_params": {}
+    },
+    "diversity_4": {
+      "kind": "operator",
+      "operator": "diversity",
+      "params": {
+        "dim": "species",
+        "metrics": [
+          "shannon",
+          "simpson",
+          "richness",
+          "evenness"
+        ],
+        "output": "alpha_div"
+      },
+      "context_params": {}
+    },
+    "distance_matrix_5": {
+      "kind": "operator",
+      "operator": "distance_matrix",
+      "params": {
+        "metric": "braycurtis",
+        "max_positions": null,
+        "dim": "sample",
+        "output": "bray_dist"
+      },
+      "context_params": {}
+    },
+    "distance_matrix_6": {
+      "kind": "operator",
+      "operator": "distance_matrix",
+      "params": {
+        "metric": "jaccard",
+        "max_positions": null,
+        "dim": "sample",
+        "output": "jaccard_dist"
+      },
+      "context_params": {}
+    },
+    "reduce_7": {
+      "kind": "operator",
+      "operator": "reduce",
+      "params": {
+        "method": "pcoa",
+        "standardize": true,
+        "random_state": 0,
+        "dim": "sample",
+        "n_components": 5,
+        "output": "pcoa_coords"
+      },
+      "context_params": {}
+    },
+    "join_8": {
+      "kind": "operator",
+      "operator": "join",
+      "params": {
+        "columns": [
+          "site",
+          "horizon",
+          "transect"
+        ],
+        "how": "inner",
+        "prefix": "meta_",
+        "dim": "sample",
+        "output": "pcoa_with_meta"
+      },
+      "context_params": {}
+    },
+    "scatter_9": {
+      "kind": "operator",
+      "operator": "scatter",
+      "params": {
+        "dim": "component",
+        "alpha": 0.75,
+        "point_size": 30,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "color_label": "meta_site",
+        "filename": "pcoa_by_site.png",
+        "title": "PCoA (Bray-Curtis), colored by site",
+        "x_label": "PCo1",
+        "y_label": "PCo2"
+      },
+      "context_params": {}
+    },
+    "scatter_10": {
+      "kind": "operator",
+      "operator": "scatter",
+      "params": {
+        "dim": "component",
+        "alpha": 0.75,
+        "point_size": 30,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "color_label": "meta_horizon",
+        "filename": "pcoa_by_horizon.png",
+        "title": "PCoA (Bray-Curtis), colored by horizon",
+        "x_label": "PCo1",
+        "y_label": "PCo2"
+      },
+      "context_params": {}
+    },
+    "scatter_11": {
+      "kind": "operator",
+      "operator": "scatter",
+      "params": {
+        "dim": "component",
+        "alpha": 0.75,
+        "point_size": 30,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "color_label": "meta_transect",
+        "filename": "pcoa_by_transect.png",
+        "title": "PCoA (Bray-Curtis), colored by transect",
+        "x_label": "PCo1",
+        "y_label": "PCo2"
+      },
+      "context_params": {}
+    },
+    "permanova_12": {
+      "kind": "operator",
+      "operator": "permanova",
+      "params": {
+        "dist_dim": "sample",
+        "pairwise": true,
+        "n_permutations": 999,
+        "random_state": 0,
+        "group_dim": "sample",
+        "group_label": "site",
+        "output": "permanova_site"
+      },
+      "context_params": {}
+    },
+    "permanova_13": {
+      "kind": "operator",
+      "operator": "permanova",
+      "params": {
+        "dist_dim": "sample",
+        "pairwise": false,
+        "n_permutations": 999,
+        "random_state": 0,
+        "group_dim": "sample",
+        "group_label": "horizon",
+        "output": "permanova_horizon"
+      },
+      "context_params": {}
+    },
+    "permanova_14": {
+      "kind": "operator",
+      "operator": "permanova",
+      "params": {
+        "dist_dim": "sample",
+        "pairwise": false,
+        "n_permutations": 999,
+        "random_state": 0,
+        "group_dim": "sample",
+        "group_label": "transect",
+        "output": "permanova_transect"
+      },
+      "context_params": {}
+    },
+    "correlation_15": {
+      "kind": "operator",
+      "operator": "correlation",
+      "params": {
+        "metric": "spearman",
+        "min_valid": 20,
+        "max_positions": null,
+        "dim": "sample",
+        "output": "sample_corr"
+      },
+      "context_params": {}
+    },
+    "heatmap_16": {
+      "kind": "operator",
+      "operator": "heatmap",
+      "params": {
+        "dim": "sample",
+        "other_dim": "sample_b",
+        "select": "all",
+        "standardize": "none",
+        "cmap": "RdBu_r",
+        "nan_color": "#DDDDDD",
+        "top_n": 50,
+        "cluster_rows": true,
+        "cluster_cols": true,
+        "show_row_labels": false,
+        "show_col_labels": true,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "sample_correlation.png",
+        "title": "Sample-sample Spearman correlation"
+      },
+      "context_params": {}
+    },
+    "aggregate_17": {
+      "kind": "operator",
+      "operator": "aggregate",
+      "params": {
+        "method": "mean",
+        "dim": "sample",
+        "group_col": "site",
+        "output": "site_mean"
+      },
+      "context_params": {}
+    },
+    "rename_dim_18": {
+      "kind": "operator",
+      "operator": "rename_dim",
+      "params": {
+        "from": "feature",
+        "output": "site_mean_renamed",
+        "to": "site"
+      },
+      "context_params": {}
+    },
+    "barplot_19": {
+      "kind": "operator",
+      "operator": "barplot",
+      "params": {
+        "top_n": 15,
+        "other_label": "Other",
+        "normalize": true,
+        "cmap": "tab20",
+        "legend": true,
+        "legend_ncol": 3,
+        "rotate_labels": false,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "dim": "species",
+        "filename": "site_composition.png",
+        "sample_dim": "site",
+        "title": "Average species composition per site"
+      },
+      "context_params": {}
+    },
+    "describe_20": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "describe_21": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    },
+    "describe_22": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    }
+  }
+}

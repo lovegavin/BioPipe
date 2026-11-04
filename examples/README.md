@@ -35,3 +35,4 @@ See the [stable protocol](../docs/operator_protocol.md),
 [SDK reference](../docs/sdk_reference.md) and
 [one-time migration](../docs/migration_v2.md). Existing source IDs and computation
 bodies are preserved; old wheel manifests must be rebuilt under the current SDK.
+- [smoke_real_data](smoke_real_data/README.md) — offline real-data smoke route (1MEL structure + real VHH sequence)

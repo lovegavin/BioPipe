@@ -1,0 +1,135 @@
+{
+  "format": "biopipe.graph-parameters",
+  "schema_version": 1,
+  "params": {},
+  "nodes": {
+    "mapping": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "header": true
+      }
+    },
+    "meta": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "header": true
+      }
+    },
+    "peptides": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "header": true
+      }
+    },
+    "protein_rollup_1": {
+      "kind": "operator",
+      "operator": "protein_rollup",
+      "params": {
+        "peptide_dim": "peptide",
+        "sample_dim": "sample",
+        "protein_dim": "protein",
+        "method": "sum",
+        "min_peptides": 1,
+        "output": "proteins"
+      },
+      "context_params": {}
+    },
+    "missing_2": {
+      "kind": "operator",
+      "operator": "missing",
+      "params": {
+        "threshold": 0.5,
+        "dim": "protein",
+        "output": "filtered"
+      },
+      "context_params": {}
+    },
+    "impute_3": {
+      "kind": "operator",
+      "operator": "impute",
+      "params": {
+        "min_scale": 1.0,
+        "dim": "protein",
+        "method": "min",
+        "output": "imputed"
+      },
+      "context_params": {}
+    },
+    "normalize_4": {
+      "kind": "operator",
+      "operator": "normalize",
+      "params": {
+        "target_sum": 1000000.0,
+        "dim": "sample",
+        "method": "quantile",
+        "output": "normalized"
+      },
+      "context_params": {}
+    },
+    "limma_de_5": {
+      "kind": "operator",
+      "operator": "limma_de",
+      "params": {
+        "feature_dim": "protein",
+        "sample_dim": "sample",
+        "correction": "fdr",
+        "group_a": "ctrl",
+        "group_b": "case",
+        "group_label": "group",
+        "output": "de",
+        "prior_df": 0
+      },
+      "context_params": {}
+    },
+    "volcano_6": {
+      "kind": "operator",
+      "operator": "volcano",
+      "params": {
+        "dim": "protein",
+        "stat_dim": "statistic",
+        "lfc_label": "logFC",
+        "p_label": "P_VALUE",
+        "ylabel": "-log10(P)",
+        "lfc_threshold": 1.0,
+        "p_threshold": 0.05,
+        "point_size": 8,
+        "alpha": 0.7,
+        "label_top": 0,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "volcano.png"
+      },
+      "context_params": {}
+    },
+    "ma_plot_7": {
+      "kind": "operator",
+      "operator": "ma_plot",
+      "params": {
+        "dim": "protein",
+        "stat_dim": "statistic",
+        "lfc_label": "logFC",
+        "mean_a_label": "mean_a",
+        "mean_b_label": "mean_b",
+        "p_label": "P_VALUE",
+        "xlabel": "log2 mean",
+        "p_threshold": 0.05,
+        "point_size": 8,
+        "alpha": 0.7,
+        "label_top": 0,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "ma.png"
+      },
+      "context_params": {}
+    }
+  }
+}

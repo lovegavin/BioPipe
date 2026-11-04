@@ -1,0 +1,369 @@
+{
+  "id": "route_34254db160bf",
+  "version": 1,
+  "updated_at": "2026-11-03T17:10:56.188915+00:00",
+  "graph": {
+    "schema_version": 2,
+    "name": "Genomic interval analysis",
+    "base_dir": ".studio/builtin-inputs/interval_analysis",
+    "nodes": [
+      {
+        "id": "ccre",
+        "kind": "source",
+        "operator": null,
+        "title": "ccre",
+        "position": {
+          "x": 70.0,
+          "y": 100.0
+        },
+        "source": {
+          "reader": "BedReader",
+          "path": "input/cCREs.bed",
+          "dims": [
+            "region",
+            "field"
+          ],
+          "labels": {
+            "field": "builtin",
+            "region": "auto"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "reg",
+        "kind": "source",
+        "operator": null,
+        "title": "reg",
+        "position": {
+          "x": 70.0,
+          "y": 310.0
+        },
+        "source": {
+          "reader": "BedReader",
+          "path": "input/ensembl_regulatory.bed",
+          "dims": [
+            "region",
+            "field"
+          ],
+          "labels": {
+            "field": "builtin",
+            "region": "auto"
+          },
+          "location": null
+        },
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "interval_stats_1",
+        "kind": "operator",
+        "operator": "interval_stats",
+        "title": "interval_stats",
+        "position": {
+          "x": 360.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "describe_2",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 650.0,
+          "y": 100.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "interval_merge_3",
+        "kind": "operator",
+        "operator": "interval_merge",
+        "title": "interval_merge",
+        "position": {
+          "x": 360.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "describe_4",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 650.0,
+          "y": 310.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "interval_overlap_5",
+        "kind": "operator",
+        "operator": "interval_overlap",
+        "title": "interval_overlap",
+        "position": {
+          "x": 360.0,
+          "y": 520.0
+        },
+        "source": null,
+        "input_count": 2,
+        "route": null
+      },
+      {
+        "id": "describe_6",
+        "kind": "operator",
+        "operator": "describe",
+        "title": "数据概览",
+        "position": {
+          "x": 650.0,
+          "y": 520.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "histogram_7",
+        "kind": "operator",
+        "operator": "histogram",
+        "title": "直方图",
+        "position": {
+          "x": 650.0,
+          "y": 730.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "histogram_8",
+        "kind": "operator",
+        "operator": "histogram",
+        "title": "直方图",
+        "position": {
+          "x": 650.0,
+          "y": 940.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      },
+      {
+        "id": "histogram_9",
+        "kind": "operator",
+        "operator": "histogram",
+        "title": "直方图",
+        "position": {
+          "x": 650.0,
+          "y": 1150.0
+        },
+        "source": null,
+        "input_count": 1,
+        "route": null
+      }
+    ],
+    "edges": [
+      {
+        "id": "ccre-interval_stats_1-0",
+        "source": "ccre",
+        "target": "interval_stats_1",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "interval_stats_1-describe_2-0",
+        "source": "interval_stats_1",
+        "target": "describe_2",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "ccre-interval_merge_3-0",
+        "source": "ccre",
+        "target": "interval_merge_3",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "interval_merge_3-describe_4-0",
+        "source": "interval_merge_3",
+        "target": "describe_4",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "ccre-interval_overlap_5-0",
+        "source": "ccre",
+        "target": "interval_overlap_5",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "reg-interval_overlap_5-1",
+        "source": "reg",
+        "target": "interval_overlap_5",
+        "sourceHandle": "out",
+        "targetHandle": "in-1"
+      },
+      {
+        "id": "interval_overlap_5-describe_6-0",
+        "source": "interval_overlap_5",
+        "target": "describe_6",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "interval_stats_1-histogram_7-0",
+        "source": "interval_stats_1",
+        "target": "histogram_7",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "interval_merge_3-histogram_8-0",
+        "source": "interval_merge_3",
+        "target": "histogram_8",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      },
+      {
+        "id": "interval_overlap_5-histogram_9-0",
+        "source": "interval_overlap_5",
+        "target": "histogram_9",
+        "sourceHandle": "out",
+        "targetHandle": "in-0"
+      }
+    ],
+    "runtime": {},
+    "manifest_extra": {},
+    "interface": {
+      "version": 1,
+      "inputs": [
+        {
+          "node_id": "ccre",
+          "label": "ccre",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "region",
+              "field"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        },
+        {
+          "node_id": "reg",
+          "label": "reg",
+          "contract": {
+            "version": 1,
+            "ndim": 2,
+            "numeric": true,
+            "dims": [
+              "region",
+              "field"
+            ],
+            "labels": [],
+            "info": {
+              "missing_code": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "encoders": {
+                "type": "object",
+                "optional": true
+              }
+            },
+            "info_open": false,
+            "axis_info_open": false,
+            "parallel": []
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "node_id": "interval_stats_1",
+          "handle": "out",
+          "label": "interval_stats",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {},
+            "axis_info": {},
+            "info_open": true,
+            "axis_info_open": true,
+            "ndim": 2,
+            "numeric": true
+          }
+        },
+        {
+          "node_id": "interval_merge_3",
+          "handle": "out",
+          "label": "interval_merge",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {},
+            "axis_info": {},
+            "info_open": true,
+            "axis_info_open": true,
+            "ndim": 2,
+            "numeric": true
+          }
+        },
+        {
+          "node_id": "interval_overlap_5",
+          "handle": "out",
+          "label": "interval_overlap",
+          "contract": {
+            "version": 1,
+            "dims": null,
+            "labels": {},
+            "info": {},
+            "axis_info": {},
+            "info_open": true,
+            "axis_info_open": true,
+            "ndim": 2,
+            "numeric": true
+          }
+        }
+      ]
+    },
+    "plugin_lock": {}
+  },
+  "parameters_file": "parameters/route_34254db160bf/v1.json",
+  "execution_file": "execution/route_34254db160bf/v1.json"
+}

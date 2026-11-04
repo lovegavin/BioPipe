@@ -1,0 +1,85 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "chain": {
+      "type": "string",
+      "default": "A",
+      "title": "链",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "model_path": {
+      "type": "string",
+      "default": "",
+      "title": "ESM-IF 权重路径",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "window": {
+      "type": "integer",
+      "default": 6,
+      "minimum": 1,
+      "maximum": 64,
+      "title": "窗口长度",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "step": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 64,
+      "title": "步长",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "num_samples": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 8,
+      "title": "每个窗口样本数",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
+    },
+    "temperature": {
+      "type": "number",
+      "default": 0.1,
+      "minimum": 0.01,
+      "maximum": 2.0,
+      "title": "采样温度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "seed": {
+      "type": "integer",
+      "default": 1,
+      "minimum": 0,
+      "title": "随机种子",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "output": {
+      "type": "string",
+      "default": "windows",
+      "title": "输出名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    }
+  }
+}

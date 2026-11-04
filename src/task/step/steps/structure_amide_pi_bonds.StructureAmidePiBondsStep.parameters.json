@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "max_distance": {
+      "type": "number",
+      "minimum": 2.0,
+      "maximum": 8.0,
+      "default": 4.5,
+      "title": "最大距离 (Å)",
+      "description": "酰胺碳到芳香环质心的距离上限。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "max_offset": {
+      "type": "number",
+      "minimum": 0.1,
+      "maximum": 5.0,
+      "default": 2.5,
+      "title": "最大平面偏移 (Å)",
+      "description": "酰胺碳到芳香环平面的距离上限。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "min_angle": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 180.0,
+      "default": 90.0,
+      "title": "最小 N-C-质心角 (°)",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "bond_dim": {
+      "type": "string",
+      "default": "bond",
+      "title": "相互作用维度",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "amide_pi",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  }
+}

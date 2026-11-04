@@ -315,8 +315,8 @@ class ArtifactService:
         backend = self.app.jobs.backend(job_id)
         return backend.artifact_file(job_id, artifact_id, role) if role else backend.artifact(job_id, artifact_id)[0]
 
-    def preview(self, job_id, artifact_id):
-        return self.app.jobs.backend(job_id).preview(job_id, artifact_id)
+    def preview(self, job_id, artifact_id, offset=0, limit=20):
+        return self.app.jobs.backend(job_id).preview(job_id, artifact_id, offset=offset, limit=limit)
 
     def report(self, job_id, index):
         return self.app.jobs.backend(job_id).export_file(job_id, index)

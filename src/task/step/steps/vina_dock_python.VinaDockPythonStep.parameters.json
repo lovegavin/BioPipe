@@ -1,0 +1,145 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "Vina Python 对接参数",
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度名",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维度名",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "ligand_path": {
+      "title": "配体 PDBQT 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 3
+    },
+    "center_x": {
+      "title": "盒中心 X（0=配体中心）",
+      "type": "number",
+      "default": 0.0,
+      "x-ui-group": "盒子",
+      "x-ui-order": 4
+    },
+    "center_y": {
+      "title": "盒中心 Y",
+      "type": "number",
+      "default": 0.0,
+      "x-ui-group": "盒子",
+      "x-ui-order": 5
+    },
+    "center_z": {
+      "title": "盒中心 Z",
+      "type": "number",
+      "default": 0.0,
+      "x-ui-group": "盒子",
+      "x-ui-order": 6
+    },
+    "size_x": {
+      "title": "盒尺寸 X (Å)",
+      "type": "number",
+      "default": 20.0,
+      "minimum": 5.0,
+      "maximum": 100.0,
+      "x-ui-group": "盒子",
+      "x-ui-order": 7
+    },
+    "size_y": {
+      "title": "盒尺寸 Y (Å)",
+      "type": "number",
+      "default": 20.0,
+      "minimum": 5.0,
+      "maximum": 100.0,
+      "x-ui-group": "盒子",
+      "x-ui-order": 8
+    },
+    "size_z": {
+      "title": "盒尺寸 Z (Å)",
+      "type": "number",
+      "default": 20.0,
+      "minimum": 5.0,
+      "maximum": 100.0,
+      "x-ui-group": "盒子",
+      "x-ui-order": 9
+    },
+    "exhaustiveness": {
+      "title": "穷举度",
+      "type": "integer",
+      "default": 8,
+      "minimum": 1,
+      "maximum": 64,
+      "x-ui-group": "对接",
+      "x-ui-order": 10
+    },
+    "num_modes": {
+      "title": "输出姿态数",
+      "type": "integer",
+      "default": 9,
+      "minimum": 1,
+      "maximum": 100,
+      "x-ui-group": "对接",
+      "x-ui-order": 11
+    },
+    "seed": {
+      "title": "随机种子",
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 2147483647,
+      "x-ui-group": "对接",
+      "x-ui-order": 12
+    },
+    "cpu": {
+      "title": "CPU 线程",
+      "type": "integer",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 32,
+      "x-ui-group": "对接",
+      "x-ui-order": 13
+    },
+    "scoring": {
+      "title": "打分函数",
+      "type": "string",
+      "default": "vina",
+      "enum": [
+        "vina",
+        "vinardo"
+      ],
+      "x-ui-group": "对接",
+      "x-ui-order": 14
+    },
+    "pose_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "pose",
+      "x-ui-group": "输出",
+      "x-ui-order": 15
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "docking",
+      "x-ui-group": "输出",
+      "x-ui-order": 16
+    },
+    "flex_path": {
+      "title": "柔性残基 PDBQT 路径（可选）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输入",
+      "x-ui-order": 4
+    }
+  }
+}

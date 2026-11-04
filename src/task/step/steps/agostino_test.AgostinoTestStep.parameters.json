@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "D'Agostino skewness test",
+  "description": "Normal approximation test for sample skewness.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "description": "Name of the observation dimension.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "Feature dimension",
+      "description": "Name of the feature dimension that holds the value column.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "value_label": {
+      "type": "string",
+      "title": "Value column",
+      "description": "Feature column that holds the series to test.",
+      "x-ui-group": "Input",
+      "x-ui-order": 2
+    },
+    "alternative": {
+      "type": "string",
+      "enum": ["two-sided", "less", "greater"],
+      "default": "two-sided",
+      "title": "Alternative",
+      "description": "Direction of the skewness test.",
+      "x-ui-group": "Method",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "default": "agostino_test",
+      "title": "Output name",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 99
+    }
+  },
+  "required": ["value_label"]
+}

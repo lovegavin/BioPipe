@@ -1,0 +1,69 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dimension",
+      "x-ui-group": "Data",
+      "x-ui-order": 1
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "Feature dimension",
+      "x-ui-group": "Data",
+      "x-ui-order": 2
+    },
+    "outcome_label": {
+      "type": "string",
+      "title": "Outcome column",
+      "x-ui-group": "Model",
+      "x-ui-order": 3
+    },
+    "endog_labels": {
+      "type": "array",
+      "items": {"type": "string"},
+      "title": "Endogenous regressors",
+      "x-ui-group": "Model",
+      "x-ui-order": 4
+    },
+    "instrument_labels": {
+      "type": "array",
+      "items": {"type": "string"},
+      "title": "Instruments",
+      "x-ui-group": "Model",
+      "x-ui-order": 5
+    },
+    "exog_labels": {
+      "type": "array",
+      "items": {"type": "string"},
+      "default": [],
+      "title": "Exogenous controls",
+      "x-ui-group": "Model",
+      "x-ui-order": 6
+    },
+    "add_constant": {
+      "type": "boolean",
+      "default": true,
+      "title": "Add intercept",
+      "x-ui-group": "Model",
+      "x-ui-order": 7
+    },
+    "confidence": {
+      "type": "number",
+      "default": 0.95,
+      "minimum": 0.5,
+      "maximum": 0.999,
+      "title": "Confidence level",
+      "x-ui-group": "Inference",
+      "x-ui-order": 8
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name"
+    }
+  },
+  "required": ["outcome_label", "endog_labels", "instrument_labels"],
+  "additionalProperties": false
+}

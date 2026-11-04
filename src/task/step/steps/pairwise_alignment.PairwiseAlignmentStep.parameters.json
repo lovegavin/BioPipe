@@ -1,0 +1,83 @@
+{
+  "title": "Pairwise alignment",
+  "description": "Align two sequences with affine gaps and report the alignment counts.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "Sequence dimension",
+      "description": "Name of the sequence dimension in both sequence inputs.",
+      "x-ui-group": "Input",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "Position dimension",
+      "description": "Name of the position dimension in both sequence inputs.",
+      "x-ui-group": "Input",
+      "x-ui-order": 1
+    },
+    "match": {
+      "type": "number",
+      "default": 2.0,
+      "title": "Match score",
+      "description": "Score added when two aligned bases are identical.",
+      "x-ui-group": "Scoring",
+      "x-ui-order": 0
+    },
+    "mismatch": {
+      "type": "number",
+      "default": -1.0,
+      "title": "Mismatch score",
+      "description": "Score added when two aligned bases differ.",
+      "x-ui-group": "Scoring",
+      "x-ui-order": 1
+    },
+    "gap_open": {
+      "type": "number",
+      "default": -2.0,
+      "title": "Gap opening penalty",
+      "description": "Cost of the first base of a gap.",
+      "x-ui-group": "Scoring",
+      "x-ui-order": 2
+    },
+    "gap_extend": {
+      "type": "number",
+      "default": -1.0,
+      "title": "Gap extension penalty",
+      "description": "Cost of every additional base in an open gap.",
+      "x-ui-group": "Scoring",
+      "x-ui-order": 3
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["global", "local"],
+      "default": "global",
+      "title": "Alignment mode",
+      "description": "Global alignment spans both sequences; local alignment returns the best sub-alignment.",
+      "x-ui-group": "Scoring",
+      "x-ui-order": 4
+    },
+    "max_cells": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 4000000,
+      "title": "Maximum matrix cells",
+      "description": "Refuse to align when the dynamic-programming matrix would exceed this many cells.",
+      "x-ui-group": "Resources",
+      "x-ui-order": 0
+    },
+    "output": {
+      "type": "string",
+      "default": "pairwise_alignment",
+      "title": "Output name",
+      "description": "Name of the output form.",
+      "x-ui-group": "Output",
+      "x-ui-order": 99
+    }
+  },
+  "required": []
+}

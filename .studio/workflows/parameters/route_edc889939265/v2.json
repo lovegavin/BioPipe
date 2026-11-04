@@ -1,0 +1,139 @@
+{
+  "format": "biopipe.graph-parameters",
+  "schema_version": 1,
+  "params": {},
+  "nodes": {
+    "counts": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "header": true
+      }
+    },
+    "meta": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {
+        "header": true
+      }
+    },
+    "sets": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {}
+    },
+    "filter_min_1": {
+      "kind": "operator",
+      "operator": "filter_min",
+      "params": {
+        "min_value": 10,
+        "min_samples": 3,
+        "dim": "gene",
+        "output": "filtered"
+      },
+      "context_params": {}
+    },
+    "compare_groups_2": {
+      "kind": "operator",
+      "operator": "compare_groups",
+      "params": {
+        "mode": "two_groups",
+        "min_per_group": 2,
+        "method": "ttest",
+        "dim": "gene",
+        "group_a": "untrt",
+        "group_b": "trt",
+        "group_dim": "sample",
+        "group_label": "group",
+        "output": "de"
+      },
+      "context_params": {}
+    },
+    "volcano_3": {
+      "kind": "operator",
+      "operator": "volcano",
+      "params": {
+        "dim": "gene",
+        "stat_dim": "statistic",
+        "lfc_label": "log2FC",
+        "p_label": "P",
+        "ylabel": "-log10(P)",
+        "lfc_threshold": 1.0,
+        "p_threshold": 0.05,
+        "point_size": 8,
+        "alpha": 0.7,
+        "label_top": 0,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "de_volcano.png"
+      },
+      "context_params": {}
+    },
+    "ma_plot_4": {
+      "kind": "operator",
+      "operator": "ma_plot",
+      "params": {
+        "dim": "gene",
+        "stat_dim": "statistic",
+        "lfc_label": "log2FC",
+        "mean_a_label": "mean_a",
+        "mean_b_label": "mean_b",
+        "p_label": "P",
+        "xlabel": "log2 mean",
+        "p_threshold": 0.05,
+        "point_size": 8,
+        "alpha": 0.7,
+        "label_top": 0,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "de_ma.png"
+      },
+      "context_params": {}
+    },
+    "gsea_5": {
+      "kind": "operator",
+      "operator": "gsea",
+      "params": {
+        "gene_dim": "gene",
+        "stat_dim": "statistic",
+        "gene_set_dim": "gene_set",
+        "rank_label": "log2FC",
+        "weight": 1.0,
+        "n_permutations": 200,
+        "seed": 7,
+        "min_set_size": 3,
+        "max_set_size": 20,
+        "correction": "fdr",
+        "output": "gsea"
+      },
+      "context_params": {}
+    },
+    "enrichment_plot_6": {
+      "kind": "operator",
+      "operator": "enrichment_plot",
+      "params": {
+        "statistic_dim": "statistic",
+        "q_column": "Q_VALUE",
+        "size_column": "set_size",
+        "top_n": 20,
+        "filename": "gsea.png",
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "term_dim": "gene_set"
+      },
+      "context_params": {}
+    },
+    "describe_7": {
+      "kind": "operator",
+      "operator": "describe",
+      "params": {},
+      "context_params": {}
+    }
+  }
+}

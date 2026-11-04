@@ -1,0 +1,46 @@
+{
+  "type": "object",
+  "properties": {
+    "variant_dim": {
+      "type": "string",
+      "default": "variant",
+      "title": "Variant dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "Sample dim",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "group_label": {
+      "type": "string",
+      "title": "Group column",
+      "description": "Metadata column holding the population label.",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "group_a": {
+      "type": ["string", "number"],
+      "title": "Group A",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "group_b": {
+      "type": ["string", "number"],
+      "title": "Group B",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    }
+  },
+  "required": ["group_label", "group_a", "group_b"],
+  "additionalProperties": false
+}

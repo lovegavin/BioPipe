@@ -1,0 +1,119 @@
+{
+  "format": "biopipe.graph-parameters",
+  "schema_version": 1,
+  "params": {},
+  "nodes": {
+    "reads": {
+      "kind": "source",
+      "operator": null,
+      "params": {},
+      "context_params": {},
+      "args": {}
+    },
+    "build_contacts_1": {
+      "kind": "operator",
+      "operator": "build_contacts",
+      "params": {
+        "executor": "auto",
+        "threads": 1,
+        "memory_mb": 2048,
+        "timeout_seconds": 0,
+        "assembly": "unknown",
+        "binsize": 10000,
+        "min_mapq": 0,
+        "walks_policy": "5unique",
+        "max_mismatch": 3,
+        "pair_types": [
+          "UU"
+        ],
+        "balance": true,
+        "resolutions": [],
+        "ignore_diags": 2,
+        "chromsizes": "input/chrom.sizes",
+        "output": "contacts"
+      },
+      "context_params": {}
+    },
+    "analyze_contacts_2": {
+      "kind": "operator",
+      "operator": "analyze_contacts",
+      "params": {
+        "executor": "auto",
+        "threads": 1,
+        "memory_mb": 2048,
+        "timeout_seconds": 0,
+        "method": "expected",
+        "features_format": "BEDPE",
+        "windows": [
+          100000,
+          250000,
+          500000
+        ],
+        "weight_name": "weight",
+        "n_eigs": 3,
+        "ignore_diags": 2,
+        "max_loci_separation": 2000000,
+        "flank": 100000,
+        "output": "expected"
+      },
+      "context_params": {}
+    },
+    "analyze_contacts_3": {
+      "kind": "operator",
+      "operator": "analyze_contacts",
+      "params": {
+        "executor": "auto",
+        "threads": 1,
+        "memory_mb": 2048,
+        "timeout_seconds": 0,
+        "method": "insulation",
+        "features_format": "BEDPE",
+        "windows": [
+          100000,
+          250000,
+          500000
+        ],
+        "weight_name": "weight",
+        "n_eigs": 3,
+        "ignore_diags": 2,
+        "max_loci_separation": 2000000,
+        "flank": 100000,
+        "output": "insulation"
+      },
+      "context_params": {}
+    },
+    "select_4": {
+      "kind": "operator",
+      "operator": "select",
+      "params": {
+        "source_type": "contact_matrix",
+        "balanced": true,
+        "weight_name": "weight",
+        "output": "window",
+        "region": "chr1:0-1000000"
+      },
+      "context_params": {}
+    },
+    "heatmap_5": {
+      "kind": "operator",
+      "operator": "heatmap",
+      "params": {
+        "dim": "bin1",
+        "other_dim": "bin2",
+        "select": "all",
+        "standardize": "none",
+        "cmap": "Reds",
+        "nan_color": "#DDDDDD",
+        "top_n": 50,
+        "cluster_rows": false,
+        "cluster_cols": false,
+        "show_row_labels": false,
+        "show_col_labels": true,
+        "figure_dpi": 300,
+        "figure_font_size": 8,
+        "filename": "contacts.png"
+      },
+      "context_params": {}
+    }
+  }
+}

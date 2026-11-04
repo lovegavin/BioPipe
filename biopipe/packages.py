@@ -11,9 +11,12 @@ import json
 from pathlib import Path
 
 
-def _stamp(path):
+def _stamp(path, *, content=False):
     stat = path.stat()
-    return str(path), stat.st_mtime_ns, stat.st_ctime_ns, stat.st_size
+    base = (str(path), stat.st_mtime_ns, stat.st_ctime_ns, stat.st_size)
+    if content:
+        base += (hashlib.sha256(path.read_bytes()).hexdigest(),)
+    return base
 
 
 @lru_cache(maxsize=1)
@@ -22,7 +25,7 @@ def _manifest(stamp):
 
 
 def bundled_manifest():
-    return _manifest(_stamp(Path(__file__).with_name("builtin_packages.json")))
+    return _manifest(_stamp(Path(__file__).with_name("builtin_packages.json"), content=True))
 
 
 def _provider_paths(root, package):
@@ -53,7 +56,7 @@ def bundled_state(root=None, *, manifest_only=False):
     source-change detection until an explicit refresh rebuilds the descriptors.
     """
     root = Path(root).resolve() if root is not None else Path(__file__).resolve().parents[1]
-    index = _stamp(root / "biopipe/builtin_packages.json")
+    index = _stamp(root / "biopipe/builtin_packages.json", content=True)
     if manifest_only:
         return _bundled_state(index, (), manifest_only=True)
     # A long-lived desktop must notice source edits before its next worker starts.

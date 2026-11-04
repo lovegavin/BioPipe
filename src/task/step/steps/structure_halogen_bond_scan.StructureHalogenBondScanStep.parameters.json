@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "title": "Halogen bond scan",
+  "description": "Scan a full-atom structure for carbon-halogen...acceptor halogen bonds.",
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度名",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度名",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "bond_dim": {
+      "type": "string",
+      "default": "bond",
+      "title": "键维度名",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "max_distance": {
+      "type": "number",
+      "minimum": 2.5,
+      "maximum": 6.0,
+      "default": 4.0,
+      "title": "最大卤键距离 (Å)",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "min_angle": {
+      "type": "number",
+      "minimum": 90.0,
+      "maximum": 180.0,
+      "default": 140.0,
+      "title": "最小 C-X...Y 角 (度)",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "bond_length": {
+      "type": "number",
+      "minimum": 1.4,
+      "maximum": 3.0,
+      "default": 2.2,
+      "title": "C-X 共价键上限 (Å)",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "output": {
+      "type": "string",
+      "default": "halogen_bonds",
+      "title": "输出名称",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    }
+  },
+  "additionalProperties": false
+}

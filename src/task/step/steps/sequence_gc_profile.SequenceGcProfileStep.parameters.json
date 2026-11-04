@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "title": "Sequence GC Profile Parameters",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "title": "序列维度",
+      "default": "sequence",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "位点维度",
+      "default": "position",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "window": {
+      "type": "integer",
+      "title": "滑动窗口",
+      "minimum": 1,
+      "default": 50,
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "default": "gc"
+    }
+  },
+  "additionalProperties": false
+}

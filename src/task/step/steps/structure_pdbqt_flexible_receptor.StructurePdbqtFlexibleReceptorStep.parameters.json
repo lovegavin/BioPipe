@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "柔性受体 PDBQT 参数",
+  "properties": {
+    "atom_dim": {
+      "title": "原子维度名",
+      "type": "string",
+      "default": "atom",
+      "x-ui-group": "输入",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "title": "字段维度名",
+      "type": "string",
+      "default": "field",
+      "x-ui-group": "输入",
+      "x-ui-order": 2
+    },
+    "flexible_residues": {
+      "title": "柔性残基（A:45,B:12；留空=自动列出候选）",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "选择",
+      "x-ui-order": 3
+    },
+    "output_path": {
+      "title": "刚性受体 PDBQT 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输出",
+      "x-ui-order": 4
+    },
+    "flex_output_path": {
+      "title": "柔性残基 PDBQT 路径",
+      "type": "string",
+      "default": "",
+      "x-ui-group": "输出",
+      "x-ui-order": 5
+    },
+    "residue_dim": {
+      "title": "输出维度名",
+      "type": "string",
+      "default": "receptor",
+      "x-ui-group": "输出",
+      "x-ui-order": 6
+    },
+    "output": {
+      "title": "输出参数名",
+      "type": "string",
+      "default": "receptor",
+      "x-ui-group": "输出",
+      "x-ui-order": 7
+    }
+  }
+}
