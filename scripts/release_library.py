@@ -7,6 +7,7 @@ import argparse
 import json
 from pathlib import Path
 import sys
+import platform
 import zipfile
 
 from packaging.version import Version
@@ -52,9 +53,18 @@ def build(root, output, tag=None):
                 data = json.dumps(document, indent=2).encode()
             target.writestr(item, data)
     temporary.replace(path)
+    # The released v2.0.4 installer compares rebuilt wheel ZIP bytes. Its ZIP
+    # metadata is OS-specific, so publish a native envelope for each platform.
+    system = platform.system()
+    if system not in {'Windows', 'Linux'}:
+        raise ValueError('Official library bundles currently target Windows and Linux')
+    native = path.with_name(f'BioPipe-Library-v{config["version"]}-{system}.biopipe-library.zip')
+    path.replace(native)
+    path = native
+    result['bundle'] = str(path)
     result.update(sha256=sha256(path), minimum_application=config['minimum_application'],
                   build_application=config['build_application'], tag='library-v' + config['version'])
-    (output / 'SHA256SUMS.txt').write_text(f"{result['sha256']}  {path.name}\n", encoding='utf-8')
+    (output / f'SHA256SUMS-{system}.txt').write_text(f"{result['sha256']}  {path.name}\n", encoding='utf-8')
     (output / 'library-build.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
     return result
 

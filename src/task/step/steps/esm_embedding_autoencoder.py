@@ -73,8 +73,6 @@ class EsmEmbeddingAutoencoderStep(Step):
         "title": "Embedding autoencoder",
         "category": "Machine Learning",
         "icon": "Brain",
-        "dependencies": ["numpy>=1.24", "torch>=2.0"],
-        "dependency_imports": ["torch"],
         "contracts": {
             "version": 1,
             "inputs": [

@@ -22,13 +22,13 @@ does not overwrite an independently installed profile library.
 
 ## For users
 
-Download the `.biopipe-library.zip` from a **BioPipe Operator Library** release.
+Download the **Windows** or **Linux** `.biopipe-library.zip` matching the host from a **BioPipe Operator Library** release. The v2.0.4 installer uses native wheel archive comparison, so separate envelopes are required although their library source is the same.
 In Studio open **算子库管理 → 导入包 (Import package)** and select the ZIP. The
 installation publishes a new registry generation and the canvas can use the
 new entries without replacing or restarting the EXE. The equivalent command is:
 
 ```bash
-biopipe plugin install ./BioPipe-Library-v2026.11.4.biopipe-library.zip
+biopipe plugin install ./BioPipe-Library-v2026.11.4-Windows.biopipe-library.zip
 ```
 
 Use the profile used by Studio. **Refresh** scans the editable local source
@@ -61,7 +61,7 @@ install a database or make a Linux tool run natively on Windows.
 
    ```bash
    python -I scripts/release_library.py --output build/library --tag library-v2026.11.4
-   python -I scripts/verify_library_release.py --bundle build/library/BioPipe-Library-v2026.11.4.biopipe-library.zip --work build/library-verify
+   python -I scripts/verify_library_release.py --bundle build/library/BioPipe-Library-v2026.11.4-Windows.biopipe-library.zip --work build/library-verify
    ```
 
    Do not use `pip install -e .` in this environment. `-I` excludes checkout/user
