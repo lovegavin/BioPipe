@@ -37,11 +37,12 @@ def resolve(name: str) -> Path | None:
     if os.environ.get(env_var):
         candidates.append(Path(os.environ[env_var]).expanduser())
     base = root() / name
-    candidates.extend([base / 'bin/python', base / 'Scripts/python.exe'])
+    layouts = ('bin/python', 'Scripts/python.exe', 'python.exe')
+    candidates.extend(base / layout for layout in layouts)
     managed = Path(sys.prefix).resolve().parent
-    for candidate in sorted(managed.glob(f'env-*/external/{name}/bin/python')):
-        candidates.append(candidate)
-    candidates.append(managed / 'external' / name / 'bin/python')
+    for layout in layouts:
+        candidates.extend(sorted(managed.glob(f'env-*/external/{name}/{layout}')))
+        candidates.append(managed / 'external' / name / layout)
     for path in candidates:
         if path.is_file() and os.access(path, os.X_OK):
             return path
@@ -119,7 +120,7 @@ def _write_form(directory: Path, index: int, form) -> dict:
     data_path = directory / f"input{index}.npy"
     np.save(data_path, np.asarray(form.data))
     meta = {"dims": list(form.dims), "labels": {k: dict(v) for k, v in form.labels.items()},
-            "info": _jsonable(form.info)}
+            "info": _jsonable(form.info), "axis_info": _jsonable(form.axis_info)}
     (directory / f"input{index}.json").write_text(json.dumps(meta), encoding="utf-8")
     return meta
 
@@ -132,33 +133,43 @@ def _jsonable(value):
     if isinstance(value, (list, tuple)):
         return [_jsonable(v) for v in value]
     if isinstance(value, np.generic):
-        return value.item()
+        return _jsonable(value.item())
     if isinstance(value, np.ndarray):
-        return value.tolist()
+        return _jsonable(value.tolist())
     if isinstance(value, float) and not np.isfinite(value):
-        return None
+        return {"__float__": str(value)}
     return value
 
 
 def run_step(descriptor: dict, inputs, params: dict, python: Path, *, timeout: int = 3600):
     """Execute one step in ``python`` and return (form, export, console tail)."""
+    with tempfile.TemporaryDirectory(prefix="envbridge-") as temporary:
+        return _run_step(Path(temporary), descriptor, inputs, params, python, timeout=timeout)
+
+
+def worker_environment(python: Path) -> dict[str, str]:
+    """Keep OS/DLL/download settings while isolating Python module resolution."""
+    env = os.environ.copy()
+    env.pop('PYTHONHOME', None)
+    env['PYTHONPATH'] = str(code_root())
+    env['PYTHONNOUSERSITE'] = '1'
+    env['PYTHONUTF8'] = '1'
+    env['PYTHONIOENCODING'] = 'utf-8'
+    base = python.parent.parent if python.parent.name in {'bin', 'Scripts'} else python.parent
+    paths = [python.parent, base / 'Scripts', base / 'Library/bin', base / 'bin']
+    env['PATH'] = os.pathsep.join([*(str(p) for p in paths if p.is_dir()), env.get('PATH', '')])
+    return env
+
+
+def _run_step(directory, descriptor, inputs, params, python, *, timeout):
     from src.core.errors import StepError
-    directory = Path(tempfile.mkdtemp(prefix="envbridge-"))
     request = {"entry_point": descriptor["entry_point"], "params": params, "inputs": []}
     for index, form in enumerate(inputs):
         request["inputs"].append(_write_form(directory, index, form))
     (directory / "request.json").write_text(json.dumps(request), encoding="utf-8")
     command = [str(python), "-m", "biopipe.env_worker", str(directory)]
-    import os
-    env = {
-        "PYTHONPATH": str(code_root()),
-        "PATH": "/usr/bin:/bin",
-        "PYTHONNOUSERSITE": "1",
-        # Isolated weight downloads use the reachable mirror by default.
-        "HF_ENDPOINT": os.environ.get("HF_ENDPOINT", "https://hf-mirror.com"),
-        "HF_HOME": os.environ.get("HF_HOME", str(Path.home() / ".cache/huggingface")),
-    }
-    completed = subprocess.run(command, capture_output=True, text=True, timeout=timeout, env=env)
+    completed = subprocess.run(command, capture_output=True, text=True, encoding='utf-8',
+                               errors='replace', timeout=timeout, env=worker_environment(python))
     if completed.returncode:
         tail = (completed.stderr or completed.stdout).strip().splitlines()[-6:]
         raise StepError("environment bridge failed with exit code " + str(completed.returncode) + ": " + " | ".join(tail))
@@ -166,9 +177,11 @@ def run_step(descriptor: dict, inputs, params: dict, python: Path, *, timeout: i
     if "error" in message:
         raise StepError(message["error"])
     from src.core.forms import Form
+    from biopipe.env_worker import _revive
     data = np.load(directory / "output.npy", allow_pickle=False)
-    form = Form(data=data, dims=message["dims"], labels=message["labels"], info=message.get("info", {}))
-    return form, message.get("export", {}), "\n".join((completed.stderr or "").strip().splitlines()[-4:])
+    form = Form(data=data, dims=message["dims"], labels=message["labels"],
+                info=_revive(message.get("info", {})), axis_info=message.get("axis_info", {}))
+    return form, _revive(message.get("export", {})), "\n".join((completed.stderr or "").strip().splitlines()[-4:])
 
 
 def proxy_step(descriptor: dict):

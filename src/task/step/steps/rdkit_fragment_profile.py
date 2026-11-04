@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import numpy as np
-from rdkit import Chem
-from rdkit.Chem import BRICS, Recap
 
 from src.core.errors import StepError
 from src.core.forms.form import Form
@@ -14,6 +12,7 @@ from src.task.step.steps._rdkit_common import build_molecules, molecule_labels, 
 
 def clean_fragment(smiles: str) -> str:
     """Return a canonical fragment SMILES with attachment dummies removed."""
+    from rdkit import Chem
 
     text = str(smiles)
     molecule = Chem.MolFromSmiles(text)
@@ -34,6 +33,7 @@ def clean_fragment(smiles: str) -> str:
 
 def brics_fragments(molecule) -> list[str]:
     """Distinct BRICS fragments of a molecule, dummies stripped and canonicalised."""
+    from rdkit.Chem import BRICS
 
     try:
         raw = BRICS.BRICSDecompose(molecule, minFragmentSize=2)
@@ -44,6 +44,7 @@ def brics_fragments(molecule) -> list[str]:
 
 def recap_fragments(molecule) -> list[str]:
     """Distinct RECAP fragments of a molecule, dummies stripped and canonicalised."""
+    from rdkit.Chem import Recap
 
     try:
         hierarchy = Recap.RecapDecompose(molecule)

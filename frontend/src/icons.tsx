@@ -13,7 +13,6 @@ import {
   Database,
   Dna,
   File,
-  File,
   Funnel,
   Intersect,
   ListBullets,
@@ -46,6 +45,7 @@ import type { IconProps } from "@phosphor-icons/react";
 import type { ComponentType } from "react";
 import { categoryLabel } from "./operatorPresentation";
 const icons: Record<string, ComponentType<IconProps>> = {  Atom,
+  File,
   BatteryFull,
   Brain,
   Cube,

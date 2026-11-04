@@ -186,6 +186,13 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeyp
     client, app, data, state = gateway
     source = tmp_path / "scale_plugin"
     scaffold(source)
+    import tomllib
+    from packaging.requirements import Requirement
+    from biopipe import __version__
+    project = tomllib.loads((source / 'pyproject.toml').read_text(encoding='utf-8'))
+    requirement = Requirement(project['project']['dependencies'][0])
+    assert __version__ in requirement.specifier
+    assert f'{int(__version__.split(".")[0]) + 1}.0.0' not in requirement.specifier
     wheel = build(source)["wheels"][0]
     import zipfile
     with zipfile.ZipFile(wheel) as archive:

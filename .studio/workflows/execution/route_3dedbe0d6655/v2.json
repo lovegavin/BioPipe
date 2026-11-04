@@ -1,9 +1,0 @@
-{
-  "format": "biopipe.graph-execution",
-  "schema_version": 1,
-  "memory": {
-    "enabled": false
-  },
-  "execution": {},
-  "routes": {}
-}

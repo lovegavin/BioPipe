@@ -83,9 +83,9 @@ def _pdb_form(path=FIXTURE):
     return read_source(path, ["atom", "field"], {"atom": "auto", "field": "builtin"})
 
 
-def _run_interface(**extra):
+def _run_interface(tmp_path, **extra):
     form = _pdb_form()
-    ctx = Context("/tmp/biopipe_interface_test", {"params": {}})
+    ctx = Context(tmp_path, {"params": {}})
     ctx.step_params = {"atom_dim": "atom", "field_dim": "field", "binder_chains": "A,B",
                        "target_chains": "L,M", "core_fraction": 0.5, "probe_radius": 1.4,
                        "n_points": 92, "output": "iface", **extra}
@@ -95,20 +95,20 @@ def _run_interface(**extra):
     return ctx["iface"]
 
 
-def test_interface_core_is_polymer_only_by_default():
+def test_interface_core_is_polymer_only_by_default(tmp_path):
     form = _pdb_form()
     assert "HOH" in set(
         value for key, value in form.info["encoders"]["field"]["resname"].inverse.items()
     )
-    interface = _run_interface()
+    interface = _run_interface(tmp_path)
     assert interface.info["n_interface"] == 88
     assert interface.info["n_core"] == 52
     assert interface.info["n_rim"] == 36
     assert interface.info["n_nonpolymer"] == 33
 
 
-def test_interface_core_can_include_nonpolymer():
-    interface = _run_interface(include_nonpolymer=True)
+def test_interface_core_can_include_nonpolymer(tmp_path):
+    interface = _run_interface(tmp_path, include_nonpolymer=True)
     assert interface.info["n_interface"] == 99
     assert interface.info["n_core"] == 58
 

@@ -20,9 +20,9 @@ from biopipe.platforms import supported_systems
 
 
 def windows_descriptors(manifest):
-    """Keep Linux-only adapters in the catalog, not the Windows Python runtime."""
+    """Shared Windows dependencies; dedicated runtimes remain separate."""
     return [d for p in manifest['packages'] for d in p['descriptors']
-            if 'windows' in supported_systems(d)]
+            if 'windows' in supported_systems(d) and not d.get('resources', {}).get('environment')]
 
 
 def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, bundle_wheels=None):
@@ -110,14 +110,17 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
         target.mkdir()
         for path in Path(bundle_wheels).glob('*.whl'):
             shutil.copy2(path, target / path.name)
+    # Torch ships a Python 3.12-only compiler test even in its CPython 3.11 wheel.
+    # Leave that test as source; all executable application/dependency code is checked.
     subprocess.run([python, '-I', '-m', 'compileall', '-q', '-f',
+                    '-x', r'torch[\\/]testing[\\/]_internal[\\/]py312_intrinsics\.py$',
                     '--invalidation-mode', 'unchecked-hash', '-s', str(destination), str(destination / 'Lib')], check=True)
     info = {'schema_version': 1, 'python_version': '.'.join(map(str, probe[0])),
             'platform': 'windows-x86_64', 'provider': 'astral-sh/python-build-standalone',
             'bootstrap_archives': bootstrap_archives,
             'included_extensions': sorted(d['id'] for d in descriptors),
             'external_extensions': sorted(d['id'] for p in manifest['packages'] for d in p['descriptors']
-                                          if 'windows' not in supported_systems(d)),
+                                          if d['id'] not in {item['id'] for item in descriptors}),
             'requirements_sha256': hashlib.sha256(requested.read_bytes()).hexdigest(), 'distributions': versions}
     (destination / 'biopipe-runtime.json').write_text(json.dumps(info, indent=2)+'\n', encoding='utf-8')
     return info

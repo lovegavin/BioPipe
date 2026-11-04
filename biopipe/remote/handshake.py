@@ -275,20 +275,6 @@ class ManifestHandshake:
             self.saved, self.saved_digest = deepcopy(value), key
         return snapshot
 
-    def _apply_installation_receipt(self, snapshot):
-        """Trust a verified install receipt over a stale probe snapshot."""
-        installed = _entries(self.installed) if isinstance(self.installed, dict) else {}
-        if not installed:
-            return snapshot
-        for entry in snapshot.get('entries') or []:
-            saved = installed.get(entry.get('id'))
-            if not saved or saved.get('status') != 'passed':
-                continue
-            if entry.get('status') != 'passed':
-                entry['status'] = 'passed'
-                entry['error'] = ''
-        return snapshot
-
     def response(self, params, *, legacy=False):
         if not legacy:
             validate_request(params)
@@ -302,7 +288,6 @@ class ManifestHandshake:
         from biopipe import __version__
         tools = self.tool_snapshot()
         dependencies = self.persist()
-        dependencies = self._apply_installation_receipt(dependencies)
         value = {
             'protocol_version': VERSION, 'version': __version__, 'system': platform.system().lower(),
             'python': sys.executable, 'workspace': str(self.service.root),

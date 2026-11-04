@@ -69,7 +69,9 @@ def probe_environment(entry_id, environment, imports):
     python = resolve(environment)
     if python is None:
         return {'status': 'failed',
-                'error': f'isolated environment {environment!r} is not installed; run scripts/install_environments.py'}
+                'error': f'isolated environment {environment!r} is not installed; '
+                         f'configure BIOPIPE_ENV_{environment.upper()} with its Python executable '
+                         'or use Linux server environment repair (docs/agent_environment_repair.md)'}
     names = imports or []
     script = ';'.join(f'import {name}' for name in names) or 'pass'
     result = subprocess.run([str(python), '-c', script], capture_output=True, text=True, timeout=300)

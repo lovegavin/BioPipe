@@ -30,6 +30,7 @@ def scaffold(path, template="operator"):
     folder.mkdir(parents=True, exist_ok=True)
     reader = template == 'reader'
     cls, group = ('ArrayReader', 'readers') if reader else ('Scale', 'operators')
+    next_major = int(__version__.split('.', 1)[0]) + 1
     (path / 'pyproject.toml').write_text(f'''[build-system]
 requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
@@ -37,7 +38,7 @@ build-backend = "setuptools.build_meta"
 name = "{package}"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["biopipe-studio>={__version__},<2"]
+dependencies = ["biopipe-studio>={__version__},<{next_major}"]
 [project.entry-points."biopipe.{group}"]
 {module} = "{module}:{cls}"
 [tool.setuptools.packages.find]

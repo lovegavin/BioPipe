@@ -63,7 +63,7 @@ python scripts/studio.py --profile-dir biopipe-v3-test
 | 运行目录 | 远端任务与产物根 | 手动必填；托管留空自动创建 | `/public/home/lihj/biopipe-work` |
 | 认证方式 | 密码 / 私钥文件 / SSH Agent | 默认密码 | `私钥文件` |
 | 密码 | 仅本次会话，不落盘 | 密码认证时填 | — |
-| 本机私钥路径 | 运行前端的本机私钥，不是服务器路径 | 私钥认证时填 | `C:/Users/you/.ssh/id_rsa` |
+| 本机私钥路径 | 运行前端的本机私钥，不是服务器路径 | 私钥认证时填 | `~/.ssh/id_rsa` |
 | 私钥口令 | 私钥口令 | 可选 | — |
 | SSH 网关 | 普通 SSH / 交互式网关 | 默认普通 | `普通 SSH` |
 | 实例编号 | 交互式网关的菜单编号 | 网关模式填 | `0` |
@@ -82,21 +82,21 @@ DSH 的 MCP 客户端配置在 `%USERPROFILE%\.dsh\profiles\desktop\cordis.patch
   config:
     serverName: "biopipe"
     transport: "stdio"
-    command: "C:\Users\<you>\AppData\Local\Programs\Python\Python312\python.exe"
+    command: "<python-executable>"
     args:
       - "-m"
       - "biopipe"
       - "--workspace"
-      - "C:\Users\<you>\BioPipe"
+      - "<BioPipe-workspace>"
       - "--data-dir"
-      - "C:\Users\<you>\BioPipe\.studio"
+      - "<BioPipe-data-directory>"
       - "mcp"
       - "--allow-run"
 ```
 
 | 项 | 建议 | 说明 |
 | --- | --- | --- |
-| 工作区 | BioPipe 仓库根（如 `C:\Users\<you>\BioPipe`）或专用数据目录 | 下文的示例路线用相对路径，必须选仓库根；不要把 `C:\Windows`、盘符根、整个用户目录设为工作区 |
+| 工作区 | BioPipe 仓库根（如 `<BioPipe-workspace>`）或专用数据目录 | 下文的示例路线用相对路径，必须选仓库根；不要把 系统目录、盘符根、整个用户目录设为工作区 |
 | 文件权限 | 默认 `workspace-write` | 只写工作区与临时目录；不要为常规分析开 `danger-full-access` |
 | MCP 权限 | `mcp --allow-run` | 允许校验与提交运行；只读排查去掉；禁止编辑再加 `--read-only` |
 | 插件 | 默认不加 | 仅安装受信插件时加 `--allow-plugins` |
@@ -217,7 +217,7 @@ python scripts/run.py <task 目录或工作流 JSON>           # 真正执行
 需求：最终验收必须是本地前端从零向服务器发起的一次安装；已测试环境可以保留，但测试
 环境必须干净。
 
-1. backend 更新到最新 `D:\BioPipe`（版本号见 `biopipe/__init__.py`）。
+1. backend 更新到最新 `<BioPipe-directory>`（版本号见 `biopipe/__init__.py`）。
 2. 选一个全新 base 目录（连接服务器时填写），例如 `~/biopipe-clean-test`，不要复用
    已有 `managed-v1`。也可以保留 base 但删除测试用环境：
    `rm -rf <base>/env-*`（保留 `mamba-cache`、`~/.cache/pip` 可以加速，不影响"干净"）。

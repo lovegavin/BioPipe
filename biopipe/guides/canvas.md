@@ -26,3 +26,7 @@ CLI: `biopipe --session <session> graph apply commands.json --document <document
 5. Run separately, only when authorized. `biopipe_run` requires run scope.
 
 No open window? Use the workflow guide. Never fabricate a canvas session.
+
+`biopipe_open` defaults to `mode="replace"` in 2.x. Use `mode="append"` when
+opening a separate workflow tab, and `document_id` plus the current revision
+when intentionally replacing an existing document. Never replace unrelated work.

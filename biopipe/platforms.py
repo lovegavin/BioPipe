@@ -8,6 +8,8 @@ EXTERNAL_SYSTEMS = {name: {'linux'} for name in ('bwa', 'samtools', 'pairtools',
 EXTERNAL_SYSTEMS['cooler'] = set(SYSTEMS)
 PYTHON_SYSTEMS = {'pysam': {'linux', 'macos'}, 'cyvcf2': {'linux', 'macos'},
                   'pybigwig': {'linux', 'macos'},
+                  # Vina's Python bindings support Linux/macOS, unlike its Windows CLI.
+                  'vina': {'linux', 'macos'},
                   'pywin32': {'windows'}, 'pyobjc': {'macos'}}
 PORTABLE = {'numpy', 'scipy', 'pandas', 'matplotlib', 'statsmodels', 'scikit-learn', 'scikit-bio',
             'scikit-image', 'h5py', 'h5netcdf', 'anndata', 'zarr', 'pyarrow', 'fastparquet',

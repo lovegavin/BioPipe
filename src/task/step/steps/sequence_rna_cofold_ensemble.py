@@ -90,7 +90,7 @@ class SequenceRnaCofoldEnsembleStep(Step):
             "output": {"mode": "declare", "schema": {"ndim": 2, "numeric": True, "info_open": True, "axis_info_open": False}},
         },
         "resources": {"memory_modes": ["full"], "estimate": "estimate_memory"},
-        "dependencies": [],
+        "dependencies": ["ViennaRNA>=2.6"],
         "dependency_imports": ["RNA"],
         "inputs_arity": 1,
         "outputs": [],

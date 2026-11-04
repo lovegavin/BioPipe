@@ -22,7 +22,7 @@ release loop. These are process rules, not API documentation.
   the bridge to the Linux environment; `$VAR` inside that payload is consumed
   by the outer shell, so use literal absolute paths or a script file.
 - The `write`/`edit` tools cannot write `\\wsl.localhost\...` paths
-  (`ENOTSUP`). Write under `D:/tmp/...` and copy with a WSL script.
+  (`ENOTSUP`). Write under `<temporary-directory>` and copy with a WSL script.
 - PowerShell must run from `.ps1` files; avoid `$env:` in inline `-Command`.
 - Server work: use Windows `ssh`/`scp` (`scp -O` or `ssh 'cat > file'` because
   the server may lack an SFTP subsystem); WSL egress to the server is blocked
@@ -41,9 +41,9 @@ release loop. These are process rules, not API documentation.
    `docs/backend_versioning.md`, plus `docs/releases/vX.Y.Z.md`.
 5. Run focused tests, then the six packaging tests, then commit with
    `Backend version: X.Y.Z (operators N, Readers 101)` in the body, annotated
-   tag, push, sync `D:\BioPipe` when the user asks for it.
+   tag, push, sync `<BioPipe-directory>` when the user asks for it.
 6. If the push fails, record the pending version in
-   `/home/gavin/biopipe-backlog.md` and retry next batch; never claim a release
+   `~/biopipe-backlog.md` and retry next batch; never claim a release
    that is not on the remote.
 
 ## Remote install debugging

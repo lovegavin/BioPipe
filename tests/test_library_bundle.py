@@ -112,6 +112,6 @@ def test_new_library_rejects_runtime_without_shared_io(tmp_path, library_bundle,
     import biopipe
     monkeypatch.setattr(biopipe, '__version__', '0.116.1')
     destination = tmp_path / 'unsupported-runtime'
-    with pytest.raises(ValueError, match=r'requires BioPipe 0\.116\.2'):
+    with pytest.raises(ValueError, match=r'requires BioPipe 2\.0\.1'):
         unpack_bundle(library_bundle, destination)
     assert not destination.exists()

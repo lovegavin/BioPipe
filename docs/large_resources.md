@@ -37,9 +37,9 @@ patches because the official code imports its CUDA attention kernel
 unconditionally.
 
 ```bash
-git clone https://github.com/aqlaboratory/openfold /home/gavin/tools/openfold
+git clone https://github.com/aqlaboratory/openfold ~/tools/openfold
 python -m pip install dllogger ml-collections biotite modelcif einops   # dllogger may need git+https://github.com/NVIDIA/dllogger.git
-curl -L -o /home/gavin/models/openfold/finetuning_ptm_2.pt \
+curl -L -o ~/models/openfold/finetuning_ptm_2.pt \
   https://openfold.s3.amazonaws.com/openfold_params/finetuning_ptm_2.pt   # 358 MB
 ```
 
@@ -118,7 +118,7 @@ per expected file with its presence and size and records the remedy in
 
 ### proteinmpnn — ProteinMPNN official checkout
 
-* root: `BIOPIPE_PROTEINMPNN_PATH` (defaults `/home/gavin/tools/ProteinMPNN`, `D:/tools/ProteinMPNN`)
+* root: `BIOPIPE_PROTEINMPNN_PATH` (defaults `~/.biopipe/resources/proteinmpnn`, `~/.biopipe/resources/proteinmpnn`)
 * files: `protein_mpnn_run.py`, `vanilla_model_weights/v_48_020.pt`
 
 ```bash
@@ -134,7 +134,7 @@ cd ProteinMPNN && curl -L -o vanilla_model_weights/v_48_020.pt \
 
 ### esm2 / esm_if1 — Meta ESM checkpoints
 
-* root: `BIOPIPE_ESM_MODEL_DIR` (defaults `/home/gavin/models`, `D:/models`)
+* root: `BIOPIPE_ESM_MODEL_DIR` (defaults `~/models`, `~/models`)
 * files: `esm2_t6_8M_UR50D.pt`, `esm_if1_gvp4_t16_142M_UR50.pt`
 
 ```bash
@@ -187,7 +187,7 @@ Foldseek is a static binary and needs a database that the user builds or
 downloads; the operator does not download anything.
 
 ```bash
-mkdir -p /home/gavin/tools/foldseek && cd /home/gavin/tools/foldseek
+mkdir -p ~/tools/foldseek && cd ~/tools/foldseek
 curl -sL -o fs.tar.gz https://github.com/steineggerlab/foldseek/releases/download/10-941cd33/foldseek-linux-avx2.tar.gz
 tar xzf fs.tar.gz          # ./foldseek/bin/foldseek
 mkdir -p db && cp *.pdb db/

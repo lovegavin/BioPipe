@@ -9,11 +9,9 @@ from src.core.forms import Form
 from src.task.step.base import Step
 
 
-import torch
-from torch import nn
-
-
-def _build(features: int, hidden: int, latent: int, seed: int) -> nn.Module:
+def _build(features: int, hidden: int, latent: int, seed: int):
+    import torch
+    from torch import nn
     torch.manual_seed(seed)
     return nn.Sequential(
         nn.Linear(features, hidden),
@@ -36,6 +34,7 @@ def reconstruction_errors(
     random_state: int = 0,
 ) -> tuple[np.ndarray, float]:
     """Train a small autoencoder and return per-sample MSE plus final loss."""
+    import torch
 
     if data.size == 0:
         raise StepError("esm_embedding_autoencoder: the embedding form is empty")

@@ -47,6 +47,7 @@ input/
 Thumbs.db
 
 # Local Studio assets, worker jobs and verification output
+.studio/
 .local/
 .verification/
 .tmp/

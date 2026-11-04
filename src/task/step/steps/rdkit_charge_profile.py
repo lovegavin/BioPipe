@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import numpy as np
-from rdkit import Chem
-from rdkit.Chem import AllChem
 from src.core.errors import StepError
 from src.core.forms.form import Form
 from src.task.step.base import Step
@@ -23,6 +21,8 @@ STATISTICS = (
 
 def gasteiger_charges(molecule) -> list[float]:
     """Return per-atom Gasteiger charges (zeros for atoms RDKit cannot type)."""
+    from rdkit import Chem
+    from rdkit.Chem import AllChem
     probe = Chem.Mol(molecule)
     AllChem.ComputeGasteigerCharges(probe)
     charges: list[float] = []

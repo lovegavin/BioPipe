@@ -64,33 +64,46 @@ def _ctx(params):
 
 
 def test_real_pdb2pqr(tmp_path):
-    import shutil
-    import tempfile
-
-    import pytest as _pytest
-
-    import sys
     from pathlib import Path
-
-    binary = shutil.which("pdb2pqr30")
-    if not binary:
-        candidate = Path(sys.executable).parent / "pdb2pqr30"
-        binary = str(candidate) if candidate.is_file() else ""
-    if not binary:
-        _pytest.skip("pdb2pqr30 is not installed")
+    pytest.importorskip("pdb2pqr")
     from src.reader import read_source
     from src.task.context import Context
     from src.task.runner import run
 
-    lines = [line.rstrip() for line in open("/home/gavin/BioPipe/tests/fixtures/vhh_1mel.pdb") if line.startswith("ATOM") and line[21] == "A"]
+    fixture = Path(__file__).parent / "fixtures/vhh_1mel.pdb"
+    lines = [line.rstrip() for line in fixture.read_text().splitlines() if line.startswith("ATOM") and line[21] == "A"]
     path = tmp_path / "chain_a.pdb"
     path.write_text("\n".join(lines) + "\nTER\nEND\n")
     form = read_source(str(path), ["atom", "field"], {"atom": "auto", "field": "builtin"})
-    ctx = Context(tempfile.mkdtemp(), {"params": {}})
+    ctx = Context(tmp_path / "task", {"params": {}})
     ctx["pdb"] = form
-    run(ctx, [{"name": "structure_protonation_pka", "inputs": ["pdb"], "params": {"output": "pka", "ph": 7.0, "pdb2pqr_path": binary}}])
+    run(ctx, [{"name": "structure_protonation_pka", "inputs": ["pdb"], "params": {"output": "pka", "ph": 7.0}}])
     result = ctx["pka"]
     assert result.data.shape[0] >= 5
     assert result.info["n_missing_pqr"] == 0
     assert abs(result.info["net_charge_hh"] - result.info["net_charge_pqr"]) < 1.0
     assert any(label.startswith("A:") for label in result.labels["residue"])
+
+
+@pytest.mark.parametrize("binary, module_launch", [("pdb2pqr30", True), ("pdb2pqr", True), ("custom-pdb2pqr", False)])
+def test_default_uses_current_python_and_explicit_binary_is_preserved(tmp_path, monkeypatch, binary, module_launch):
+    import sys
+    from types import SimpleNamespace
+    output = tmp_path / "result.pqr"
+    def execute(command, **kwargs):
+        expected = [sys.executable, "-m", "pdb2pqr"] if module_launch else [binary]
+        assert command[:len(expected)] == expected
+        output.write_text("synthetic PQR")
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+    monkeypatch.setattr(module.subprocess, "run", execute)
+    assert module.run_pdb2pqr(binary, tmp_path / "input.pdb", output, 7.0, 30)[1] == "synthetic PQR"
+
+
+def test_python_module_in_dependency_target_is_visible_to_subprocess(tmp_path, monkeypatch):
+    package = tmp_path / "target/pdb2pqr"
+    package.mkdir(parents=True)
+    (package / "__init__.py").write_text("")
+    (package / "__main__.py").write_text("import sys\nfrom pathlib import Path\nPath(sys.argv[-1]).write_text('target PQR')\n")
+    monkeypatch.syspath_prepend(str(package.parent))
+    output = tmp_path / "target.pqr"
+    assert module.run_pdb2pqr("pdb2pqr30", tmp_path / "input.pdb", output, 7.0, 30)[1] == "target PQR"

@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import shutil
 import time
 import urllib.request
@@ -70,6 +71,7 @@ def download(
     dest: Path,
     *,
     sha256: str = "",
+    size: int = 0,
     timeout: int = 60,
     retries: int = DEFAULT_RETRIES,
 ) -> Path:
@@ -83,16 +85,35 @@ def download(
             offset = partial.stat().st_size if partial.is_file() else 0
             headers = {"Range": f"bytes={offset}-"} if offset else {}
             request = urllib.request.Request(url, headers=headers)
-            mode = "ab" if offset else "wb"
-            with urllib.request.urlopen(request, timeout=timeout) as response, open(partial, mode) as handle:
-                while True:
-                    block = response.read(CHUNK)
-                    if not block:
-                        break
-                    handle.write(block)
-            if sha256 and sha256_file(partial) != sha256:
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                status = response.getcode()
+                if status == 206:
+                    matched = re.fullmatch(r'bytes (\d+)-(\d+)/(\d+|\*)', response.headers.get('Content-Range', ''))
+                    if not matched or int(matched[1]) != offset:
+                        raise ProvisionError(f'invalid resume range for {dest.name}')
+                    expected = int(matched[2]) - offset + 1
+                    mode = 'ab' if offset else 'wb'
+                else:
+                    # Servers may ignore Range and return the complete file.
+                    mode = 'wb'
+                    expected = int(response.headers.get('Content-Length', -1))
+                received = 0
+                with open(partial, mode) as handle:
+                    while True:
+                        block = response.read(CHUNK)
+                        if not block:
+                            break
+                        handle.write(block)
+                        received += len(block)
+                if expected >= 0 and received != expected:
+                    raise OSError(f'incomplete response for {dest.name}: {received} != {expected}')
+                if status == 206 and matched[3] != '*' and partial.stat().st_size != int(matched[3]):
+                    raise OSError(f'incomplete range response for {dest.name}')
+            valid, reason = verify_file(partial, sha256=sha256, size=size)
+            if not valid:
                 partial.unlink(missing_ok=True)
-                raise ProvisionError(f"checksum mismatch for {dest.name}")
+                label = 'checksum mismatch' if reason == 'sha256 mismatch' else 'verification failed'
+                raise ProvisionError(f"{label} for {dest.name}: {reason}")
             os.replace(partial, dest)
             return dest
         except ProvisionError:
@@ -129,13 +150,13 @@ class ProvisionResult:
         }
 
 
-def _copy_from_source(source: Path, target: Path, sha256: str) -> bool:
+def _copy_from_source(source: Path, target: Path, sha256: str, size: int = 0) -> bool:
     """Atomic copy from a local staging directory."""
 
     target.parent.mkdir(parents=True, exist_ok=True)
     partial = target.with_name(target.name + ".part")
     shutil.copyfile(source, partial)
-    if sha256 and sha256_file(partial) != sha256:
+    if not verify_file(partial, sha256=sha256, size=size)[0]:
         partial.unlink(missing_ok=True)
         return False
     os.replace(partial, target)
@@ -176,17 +197,17 @@ def provision_one(
             continue
         source = (source_dir / name) if source_dir else None
         if source is not None and source.is_file():
-            if _copy_from_source(source, target, stamp):
+            if _copy_from_source(source, target, stamp, size):
                 result.copied.append(name)
                 continue
-            result.failed.append(f"{name}: checksum mismatch in {source}")
+            result.failed.append(f"{name}: checksum mismatch or size mismatch in {source}")
             continue
         url = downloads.get(name, "")
         if offline or not url:
             result.missing.append(f"{name} ({reason})" if not url else name)
             continue
         try:
-            download(rewrite_url(url, mirrors=mirrors, rewrites=rewrites), target, sha256=stamp, timeout=timeout, retries=retries)
+            download(rewrite_url(url, mirrors=mirrors, rewrites=rewrites), target, sha256=stamp, size=size, timeout=timeout, retries=retries)
             result.downloaded.append(name)
         except ProvisionError as exc:
             result.failed.append(f"{name}: {exc}")

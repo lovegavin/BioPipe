@@ -39,6 +39,8 @@ def test_installed_wheel_runs_headless_worker_without_checkout(tmp_path):
     assert Path(probe['worker']).is_relative_to(runtime)
     assert all(Path(path or tmp_path).resolve() != ROOT for path in probe['sys_path'])
     installed_root = Path(probe['path']).parent.parent
+    for resource in ('resources.json', 'environments.json', 'guides/start.md'):
+        assert (installed_root / 'biopipe' / resource).is_file(), resource
     assert not (installed_root / 'scripts/run.py').exists()
     assert not (installed_root / 'frontend/dist').exists()
 

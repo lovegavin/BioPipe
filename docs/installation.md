@@ -21,6 +21,33 @@ Already-bundled CPU analyses do not require downloads. New extensions may need
 internet access; package availability, OS support and GPU drivers still matter.
 Windows x64, macOS, Linux and Windows ARM need separate tested distributions.
 
+The 2.0.1 release integrates the author's 2.0.0 library (709 operators and 101
+Readers). The runtime receipt lists Python dependency coverage, not a claim that
+every model or external executable is preinstalled. Large model weights,
+databases, Linux tools and declared dedicated environments remain separate.
+AntiFold, ESM-3 and Boltz retain their own environment requirements and dependency
+status. They are not installed into the shared Windows Python by the builder.
+Vina's Python bindings require Linux/macOS; its separate Windows command-line
+executable does not provide those bindings. See the
+[upstream installation guide](https://autodock-vina.readthedocs.io/en/latest/installation.html).
+
+PDBFixer is built from a checksum-pinned official source release because it does
+not publish a PyPI wheel. Before building the complete runtime, run
+`python scripts/build_pdbfixer_wheel.py --output .local/wheels`, then pass
+`--wheelhouse .local/wheels --bundle-wheels .local/wheels` to the runtime builder.
+Retain the pgenlib wheel in this same directory if it is required. The recipient
+uses the prebuilt wheels and does not compile these packages.
+
+Resource locations are relative to the user's home directory, or explicitly
+configured with each resource's environment variable. No author-machine paths
+are required. Inspect with `python scripts/check_resources.py --json` and use
+`python scripts/provision_resources.py --help` for opt-in model downloads.
+For an existing dedicated interpreter, set `BIOPIPE_ENV_<NAME>` to its Python
+executable, then inspect with `python -m biopipe.environments <name> --json`.
+The bridge recognizes Windows Conda and venv layouts as well as Linux layouts.
+It keeps full-mode memory accounting; it does not advertise streaming for those
+operators. Input arrays are mapped from disk and metadata survives the boundary.
+
 ### Dependency state
 
 At startup Studio reads declarations from the registry without rescanning source.

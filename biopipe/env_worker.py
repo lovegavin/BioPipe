@@ -32,6 +32,8 @@ class Context:
 
 def _revive(value):
     if isinstance(value, dict):
+        if set(value) == {"__float__"}:
+            return float(value['__float__'])
         if set(value) == {"__labelencoder__"}:
             from src.reader.readers._encoder import LabelEncoder
             encoder = LabelEncoder()
@@ -53,9 +55,9 @@ def main():
         cls = getattr(importlib.import_module(module), name)
         inputs = []
         for index, meta in enumerate(request["inputs"]):
-            data = np.load(directory / f"input{index}.npy", allow_pickle=False)
+            data = np.load(directory / f"input{index}.npy", allow_pickle=False, mmap_mode='c')
             inputs.append(Form(data=data, dims=meta["dims"], labels=meta["labels"],
-                               info=_revive(meta.get("info", {}))))
+                               info=_revive(meta.get("info", {})), axis_info=meta.get("axis_info", {})))
         ctx = Context(request["params"])
         step = cls()
         step.run(ctx, inputs)
@@ -63,7 +65,8 @@ def main():
         np.save(directory / "output.npy", np.asarray(form.data))
         export = step.export(ctx) or {}
         result = {"dims": list(form.dims), "labels": {k: dict(v) for k, v in form.labels.items()},
-                  "info": _jsonable(form.info), "export": _jsonable(export)}
+                  "info": _jsonable(form.info), "axis_info": _jsonable(form.axis_info),
+                  "export": _jsonable(export)}
     except Exception as exc:  # noqa: BLE001 - returned to the parent process
         traceback.print_exc(file=sys.stderr)
         message = str(exc)
@@ -74,17 +77,8 @@ def main():
 
 
 def _jsonable(value):
-    if isinstance(value, dict):
-        return {str(k): _jsonable(v) for k, v in value.items()}
-    if isinstance(value, (list, tuple)):
-        return [_jsonable(v) for v in value]
-    if isinstance(value, np.generic):
-        return value.item()
-    if isinstance(value, np.ndarray):
-        return value.tolist()
-    if isinstance(value, float) and not np.isfinite(value):
-        return None
-    return value
+    from biopipe.environments import _jsonable as encode
+    return encode(value)
 
 
 if __name__ == "__main__":

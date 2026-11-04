@@ -135,6 +135,18 @@ class Acceptance:
             names = {tool.name for tool in (await session.list_tools()).tools}
             assert {'biopipe_context', 'biopipe_apply', 'biopipe_submit', 'biopipe_artifacts'} <= names
             self.check('MCP tool discovery', sorted(names))
+            guide = await self.call(session, 'biopipe_guide')
+            assert guide['topic'] == 'start' and guide['content']
+            cached = await self.call(session, 'biopipe_guide', {'if_sha256': guide['sha256']})
+            assert not cached.get('content')
+            resources = await session.list_resources()
+            assert 'biopipe://guide' in {str(item.uri) for item in resources.resources}
+            search_page = await self.call(session, 'biopipe_operator_search', {'query': ''})
+            assert len(search_page['items']) <= 5
+            assert all('parameters_schema' not in item for item in search_page['items'])
+            schema = await self.call(session, 'biopipe_operator_describe', {'ids': ['pca']})
+            assert 'parameters_schema' in schema['items'][0]['descriptor']
+            self.check('Layered guides, conditional reuse and bounded default schemas')
             searched = await self.call(session, 'biopipe_operator_search', {'query': 'pca', 'limit': 3})
             assert len(searched['items']) <= 3
             described = await self.call(session, 'biopipe_operator_describe', {'ids': ['pca'], 'sections': ['parameters']})
@@ -181,6 +193,10 @@ class Acceptance:
             again = await self.call(session, 'biopipe_submit', self.request())
             assert again['id'] == job['id'] and again['reused']
             index = await self.call(session, 'biopipe_artifacts', {'job_id': job['id']})
+            brief = await self.call(session, 'biopipe_job', {'job_id': job['id'], 'wait_seconds': 1})
+            assert brief['status'] == 'complete' and 'graph' not in brief and 'report' not in brief
+            log_text = await self.call(session, 'biopipe_logs', {'job_id': job['id']})
+            assert isinstance(log_text['text'], str) and 'base64' not in log_text
             write(self.evidence / 'artifacts.json', index)
             cursor, log = 0, bytearray()
             import base64
@@ -212,6 +228,14 @@ class Acceptance:
                 assert abs(float(image.attrib['width'].removesuffix('pt')) * 25.4 / 72 - 90) < .01
                 assert abs(float(image.attrib['height'].removesuffix('pt')) * 25.4 / 72 - 75) < .01
         self.check('Exact logs, original PDF/SVG/PNG, numeric report and MCP retry', {'mean': 7.5, 'figure_mm': [90, 75]})
+        spec = self.control.request('/v1/openapi.json')
+        assert '/api/v1/jobs' in spec['paths']
+        assert self.control.request('/v1/guides/api')['content']
+        assert self.cli('help', 'workflow')['content']
+        result = json.loads(self.process([str(self.args.python), str(self.code / 'examples/api_client/run_workflow.py'),
+                                          '--workspace', str(self.workspace), '--job', job['id']]))
+        assert result['job']['status'] == 'complete' and result['results']['job_id'] == job['id']
+        self.check('Packaged API tutorial and authenticated OpenAPI', {'job_id': job['id']})
 
     def request(self):
         return {key: self.state[key] for key in ('request_id', 'workflow_id', 'expected_version')}
@@ -233,7 +257,7 @@ class Acceptance:
             snapshot = await self.call(session, 'biopipe_graph', {'session_id': selected})
             if self.args.phase == 'open':
                 opened = await self.call(session, 'biopipe_open', {'session_id': selected, 'expected_revision': snapshot['revision'],
-                                                                 'graph': self.state.get('graph') or self.fixture()})
+                                                                 'mode': 'append', 'graph': self.state.get('graph') or self.fixture()})
                 self.state['canvas'] = {'session_id': selected, 'document_id': opened['workspace']['active_id']}
                 self.check('New synthetic tab opened; select PCA in the actual EXE', self.state['canvas'])
                 return
@@ -287,7 +311,7 @@ def main():
     parser.add_argument('--instance', required=True)
     parser.add_argument('--evidence', type=Path, required=True)
     parser.add_argument('--session')
-    parser.add_argument('--version', default='0.116.2')
+    parser.add_argument('--version', default='2.0.1')
     parser.add_argument('--allow-headless', action='store_true', help='Development smoke only; never label this an EXE UI test')
     args = parser.parse_args()
     try:

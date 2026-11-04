@@ -55,8 +55,9 @@ def build_bundle(root, output, version):
             raise ValueError("Library contains no operators or Readers")
         files = {p.relative_to(staging).as_posix(): sha256(p) for p in sorted(staging.rglob("*")) if p.is_file()}
         document = {"format": "biopipe.library", "version": version, "protocol_version": PROTOCOL_VERSION,
-                    # Bundled plotting helpers use the shared native-I/O boundary.
-                    "minimum_application": "0.116.2",
+                    # The bundled library can use the current engine's resource
+                    # and isolated-environment adapters, not just SDK syntax.
+                    "minimum_application": "2.0.1",
                     "packages": packages, "files": files}
         archive_path = staging / "library.zip"
         with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:

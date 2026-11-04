@@ -50,11 +50,7 @@ def _form():
 def test_bridge_runs_a_step_in_the_environment_interpreter(monkeypatch, tmp_path):
     import sys
 
-    fake = tmp_path / "fakeenv/bin/python"
-    fake.parent.mkdir(parents=True)
-    fake.write_text("#!/bin/sh\nexec " + sys.executable + ' "$@"\n')
-    fake.chmod(0o755)
-    monkeypatch.setattr(environments, "resolve", lambda name: fake)
+    monkeypatch.setattr(environments, "resolve", lambda name: Path(sys.executable))
     monkeypatch.setattr(environments, "code_root", lambda: Path(__file__).resolve().parents[1])
 
     step = environments.proxy_step(_descriptor())()
@@ -83,3 +79,44 @@ def test_bridge_reports_a_missing_environment():
 
     with pytest.raises(StepError, match="is not installed"):
         step.run(Ctx(), [_form()])
+
+
+def test_bridge_preserves_axis_metadata_missing_values_and_cleans_files(monkeypatch, tmp_path):
+    import sys
+    from src.core.forms import Form
+    monkeypatch.setattr(environments.tempfile, 'tempdir', str(tmp_path))
+    form = Form(data=np.array([[3.0, np.nan]]), dims=['sample', 'feature'],
+                labels={'sample': {'s': 0}, 'feature': {'a': 0, 'b': 1}},
+                info={'missing_code': np.nan, 'group': ['control']},
+                axis_info={'sample': ['group']})
+    result, _, _ = environments.run_step(_descriptor('log_transform'), [form],
+                                         {'output': 'log', 'base': 2, 'pseudocount': 1}, Path(sys.executable))
+    assert result.axis_info == form.axis_info
+    assert result.info['group'] == ['control']
+    assert np.isnan(result.info['missing_code'])
+    np.testing.assert_allclose(result.data, [[2, np.nan]], equal_nan=True)
+    assert not list(tmp_path.glob('envbridge-*'))
+    with pytest.raises(Exception):
+        environments.run_step(_descriptor('log_transform'), [form],
+                              {'output': 'log', 'pseudocount': -1}, Path(sys.executable))
+    assert not list(tmp_path.glob('envbridge-*'))
+
+
+def test_bridge_uses_portable_interpreter_and_process_environment(monkeypatch, tmp_path):
+    import os
+    executable = tmp_path / 'example/python.exe'
+    executable.parent.mkdir()
+    executable.touch()
+    executable.chmod(0o755)
+    monkeypatch.setenv('BIOPIPE_ENVIRONMENTS_ROOT', str(tmp_path))
+    monkeypatch.setenv('SystemRoot', 'windows-system-location')
+    monkeypatch.setenv('PYTHONHOME', 'unrelated-python')
+    monkeypatch.setenv('PYTHONPATH', 'unrelated-modules')
+    monkeypatch.setenv('HF_ENDPOINT', 'https://example.invalid/models')
+    assert environments.resolve('example') == executable
+    env = environments.worker_environment(executable)
+    assert {key.upper(): value for key, value in env.items()}['SYSTEMROOT'] == 'windows-system-location'
+    assert 'PYTHONHOME' not in env
+    assert env['PYTHONPATH'] == str(environments.code_root())
+    assert env['PATH'].split(os.pathsep)[0] == str(executable.parent)
+    assert env['HF_ENDPOINT'] == 'https://example.invalid/models'

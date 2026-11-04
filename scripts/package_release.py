@@ -73,7 +73,8 @@ def main():
         copy(root / name_, name_)
     for name_ in ('desktop_server.py', 'run.py', 'diagnose_pins.py',
                   'accept_igv_handoff.py', 'open_igv_handoff.ps1',
-                  'verify_release_agent.py', 'verify_release_agent.md'):
+                  'verify_release_agent.py', 'verify_release_agent.md',
+                  'check_resources.py', 'provision_resources.py'):
         copy(root / 'scripts' / name_, Path('scripts') / name_)
     if not args.lite:
         python = destination / 'runtime/python/python.exe'

@@ -14,6 +14,8 @@ def test_windows_runtime_keeps_portable_dependencies_and_excludes_unix_only_tool
         {"id": "signal", "dependencies": ["pyBigWig"]},
         {"id": "align", "resources": {"external_tools": ["bwa"]}},
         {"id": "conditional", "dependencies": ['pysam; sys_platform == "linux"']},
+        {"id": "dedicated", "dependencies": ['numpy==1.26.4'], "resources": {"environment": "example"}},
+        {"id": "vina_python", "dependencies": ['vina>=1.2']},
     ]
     manifest = {"packages": [{"descriptors": items}]}
     assert [d["id"] for d in windows_descriptors(manifest)] == ["table", "conditional"]
@@ -36,6 +38,8 @@ def test_lite_archive_preserves_operator_docs_and_frozen_task_parameters(tmp_pat
         "scripts/desktop_server.py": "# Desktop entry",
         "scripts/run.py": "# Worker entry",
         "scripts/diagnose_pins.py": "# Diagnostic entry",
+        "scripts/check_resources.py": "# Resource inspection",
+        "scripts/provision_resources.py": "# Resource provisioning",
         "scripts/accept_igv_handoff.py": "# IGV acceptance",
         "scripts/open_igv_handoff.ps1": "# IGV launcher",
         "scripts/verify_release_agent.py": "# Agent acceptance",

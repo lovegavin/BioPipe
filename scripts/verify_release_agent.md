@@ -24,6 +24,8 @@ scatter run, independent parameter JSON, client-process exit during computation,
 bounded logs, durable retries and original PNG/PDF/SVG file retrieval. The
 synthetic input has mean 7.5; all figure formats have physical size 90 × 75 mm.
 No browser or UI observation is claimed by this phase.
+It also checks layered guides, conditional guide retrieval, compact query defaults,
+the authenticated OpenAPI document and the packaged third-party client example.
 
 For restart acceptance, close and reopen the test EXE normally after completion,
 find its **new** instance ID, then run `retry` with the same workspace and evidence

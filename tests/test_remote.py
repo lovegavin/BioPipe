@@ -40,6 +40,9 @@ def test_reconnect_history_retains_child_lineage_after_reload(tmp_path, lineage)
     class Connection:
         connected = True
         def __init__(self, *args): self.info = deepcopy(bootstrap)
+        def call(self, method, params=None):
+            assert method == 'refresh_registry'
+            return {**self.info, 'catalog': {'operators': [], 'readers': []}}
         def close(self): self.connected = False
     service = SimpleNamespace(directory=tmp_path)
     manager = RemoteManager(service, connection_factory=Connection)

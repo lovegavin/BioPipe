@@ -6,7 +6,7 @@
 
 ```bash
 wsl -d Ubuntu-24.04
-cd /home/gavin/BioPipe
+cd ~/BioPipe
 git status --short
 conda activate biopipe
 python -m biopipe registry check     # expect errors []

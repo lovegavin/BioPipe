@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import re
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -70,8 +71,11 @@ def parse_pqr_charges(text: str) -> dict[tuple[str, int, str], float]:
 
 
 def run_pdb2pqr(binary: str, pdb_path: Path, out_pqr: Path, ph: float, timeout: int) -> tuple[str, str]:
+    # Relocatable runtimes intentionally omit pip's absolute-path launchers.
+    # Preserve explicit executables, but resolve default package commands here.
+    launcher = [sys.executable, "-m", "pdb2pqr"] if binary in {"pdb2pqr", "pdb2pqr30"} else [binary]
     command = [
-        binary,
+        *launcher,
         "--ff=AMBER",
         "--titration-state-method=propka",
         f"--with-ph={ph}",
@@ -81,6 +85,10 @@ def run_pdb2pqr(binary: str, pdb_path: Path, out_pqr: Path, ph: float, timeout: 
     ]
     environment = dict(os.environ)
     environment["CUDA_VISIBLE_DEVICES"] = ""
+    if binary in {"pdb2pqr", "pdb2pqr30"}:
+        # Dependency repair can place packages in a shared or isolated target.
+        environment["PYTHONPATH"] = os.pathsep.join(dict.fromkeys(map(str, sys.path)))
+        environment["PYTHONNOUSERSITE"] = "1"
     try:
         completed = subprocess.run(command, capture_output=True, text=True, timeout=timeout, env=environment)
     except FileNotFoundError as exc:
@@ -123,7 +131,7 @@ class StructureProtonationPkaStep(Step):
             "outputs": [],
         },
         "resources": {"memory_modes": ["full"], "estimate": "estimate_memory"},
-        "dependencies": [],
+        "dependencies": ["pdb2pqr>=3.6"],
         "dependency_imports": ["pdb2pqr"],
         "inputs_arity": 1,
         "outputs": [],
