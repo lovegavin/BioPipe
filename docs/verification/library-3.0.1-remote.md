@@ -461,3 +461,17 @@ variance vector and asserts a finite positive prior, and it rejects any
 remaining `stats.distributions.gamma._*` reference in the module source.
 Library registry was rebuilt after the change; no v3 definition, parameter or
 contract file was touched.
+
+## 19. Post-fix route retests
+
+Per the test-later rule, routes that ran before a library fix are rerun once the
+fixed commit is deployed. The remote repo was advanced to `a78652bc` (public
+SciPy gamma helpers) and rechecked:
+
+| route | before | after | evidence |
+| --- | --- | --- | --- |
+| `proteomics_limma` | complete (private SciPy path) | complete, 7/7 steps | `runs/route_proteomics_limma/output/run_summary.json` |
+
+`--check` returned `CHECK OK`; the rerun overwrote the same route output and
+kept the same graph, parameters and data. Routes unaffected by a fix are not
+rerun (test-later rule).
