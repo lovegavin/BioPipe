@@ -11,7 +11,7 @@ import pytest
 
 from biopipe.packages import bundled_manifest, bundled_state
 from biopipe.plugins import PluginManager, active_descriptors
-from biopipe_sdk.protocol import PackageDescriptor, validate_extension
+from biopipe_sdk.protocol import PackageDescriptor, validate_declaration
 from src.task import STEPS
 from src.reader import READERS
 from src.task.operator_catalog import build_catalog
@@ -25,11 +25,11 @@ def test_builtin_manifest_complete_and_capabilities_valid():
     for package in bundled_manifest()['packages']:
         PackageDescriptor.model_validate(package)
         ids += [d['id'] for d in package['descriptors']]
+        for descriptor in package['descriptors']:
+            validate_declaration(descriptor)
     assert len(ids) == len(set(ids)) == len(STEPS) + len(READERS)
-    for cls in STEPS.values():
-        validate_extension(cls, 'operator')
-    for reader in READERS:
-        validate_extension(type(reader), 'reader')
+    # Catalog validation is static. Runtime environment proxies are not authored
+    # extension classes, and optional providers must not be imported here.
     descriptors = {d['id']: d for d in bundled_state()['descriptors']}
     assert descriptors['describe']['resources']['stream_protocol'] == 'flat-reduction-v1'
     for name in ['H5adReader', 'MtxReader']:
