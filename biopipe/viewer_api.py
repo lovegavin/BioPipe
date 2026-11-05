@@ -10,13 +10,19 @@ class ViewerPath(BaseModel):
 
 class ViewerOpen(BaseModel):
     model_config = ConfigDict(extra='forbid')
-    viewer: str = Field(min_length=1, max_length=64)
+    viewer: str | None = Field(default=None, min_length=1, max_length=64)
     role: str = Field(min_length=1, max_length=512)
 
 
 class ViewerPrepare(BaseModel):
     model_config = ConfigDict(extra='forbid')
     role: str = Field(min_length=1, max_length=512)
+
+
+class ViewerDefault(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    extension: str = Field(min_length=2, max_length=64)
+    viewer: str | None = Field(default=None, min_length=1, max_length=64)
 
 
 def mount_viewers(app, application, bridge):
@@ -26,6 +32,11 @@ def mount_viewers(app, application, bridge):
     def viewers(request: Request, refresh: bool = False):
         bridge.actor(request, 'context')
         return service.listing(refresh=refresh)
+
+    @app.post('/api/v1/viewers/default')
+    def set_default(payload: ViewerDefault, request: Request):
+        bridge.actor(request, 'run')
+        return service.set_default(payload.extension, payload.viewer)
 
     @app.post('/api/v1/viewers/{viewer}/configure')
     def configure(viewer: str, payload: ViewerPath, request: Request):

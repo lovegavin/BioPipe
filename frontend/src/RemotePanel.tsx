@@ -13,14 +13,16 @@ export function remoteId(graph: {runtime?: Record<string, unknown>}): string {
   return value?.kind === 'ssh' ? value.profile_id || '' : '';
 }
 
-export function RemotePanel({servers, active, onUpdate, onSelect, onClose}: {
+export function RemotePanel({servers, active, onUpdate, onSelect, onClose, embedded = false, onBusyChange}: {
   servers: RemoteStatus[]; active: string; onUpdate: () => Promise<void>; onSelect: (id: string) => void; onClose: () => void;
+  embedded?: boolean; onBusyChange?: (busy: boolean) => void;
 }) {
   const [profile, setProfile] = useState<RemoteProfile>(() => servers.find(s => s.profile.id === active)?.profile || servers[0]?.profile || {...empty});
   const [password, setPassword] = useState(''), [passphrase, setPassphrase] = useState('');
   const [busy, setBusy] = useState<ConnectionAction | 'refresh' | null>(null), [error, setError] = useState('');
   const [maintenance, setMaintenance] = useState(false);
   const [setup, setSetup] = useState<string[]>([]);
+  useEffect(() => {onBusyChange?.(!!busy);}, [busy, onBusyChange]);
   useEffect(() => {
     if (busy !== 'install' || !profile.id) return;
     let alive = true;
@@ -31,8 +33,8 @@ export function RemotePanel({servers, active, onUpdate, onSelect, onClose}: {
   const [trust, setTrust] = useState<{id: string; fingerprint: string; changed: boolean; action: ConnectionAction} | null>(null);
   const selected = servers.find(s => s.profile.id === profile.id);
   const info = selected?.info;
-  useEffect(() => {const key = (e: KeyboardEvent) => {if(e.key === 'Escape' && !busy) onClose();};
-    window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key);}, [busy, onClose]);
+  useEffect(() => {if (embedded) return; const key = (e: KeyboardEvent) => {if(e.key === 'Escape' && !busy) onClose();};
+    window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key);}, [busy, onClose, embedded]);
   function edit(patch: Partial<RemoteProfile>) {setTrust(null); setError(''); setProfile({...profile, ...patch});}
   function showError(issue: ApiError) {
     const message = issue.message?.trim();
@@ -77,9 +79,8 @@ export function RemotePanel({servers, active, onUpdate, onSelect, onClose}: {
   const field = (label: string, key: 'name' | 'host' | 'username' | 'python' | 'app_dir' | 'workspace' | 'key_path' | 'menu_choice' | 'managed_root', placeholder = '') =>
     <label className="field"><span>{label}</span><input value={profile[key] || ''} disabled={!!busy} placeholder={placeholder}
       onChange={e => edit({[key]: e.target.value})} autoComplete="off" required={['name', 'host', 'username'].includes(key) || (profile.environment !== 'managed' && ['app_dir', 'workspace', 'python'].includes(key))}/></label>;
-  return <div className="agent-overlay" onMouseDown={e => {if(e.target === e.currentTarget && !busy) onClose();}}>
-    <section className="remote-panel" role="dialog" aria-modal="true" aria-label="服务器连接">
-      <header><h2><Server size={22}/>服务器</h2><button className="icon-button" disabled={!!busy} onClick={onClose} aria-label="关闭服务器面板"><X size={18}/></button></header>
+  const panel = <section className={`remote-panel${embedded ? ' remote-embedded' : ''}`} role={embedded ? undefined : 'dialog'} aria-modal={embedded ? undefined : true} aria-label="服务器连接">
+      {!embedded && <header><h2><Server size={22}/>服务器</h2><button className="icon-button" disabled={!!busy} onClick={onClose} aria-label="关闭服务器面板"><X size={18}/></button></header>}
       <div className="remote-layout"><nav aria-label="已保存的服务器">
         {servers.map(server => <button key={server.profile.id} className={server.profile.id === profile.id ? 'active' : ''} disabled={!!busy}
           onClick={() => {setProfile(server.profile); setPassword(''); setPassphrase(''); setTrust(null); setError(''); setSetup([]); setMaintenance(false);}}>
@@ -126,8 +127,8 @@ export function RemotePanel({servers, active, onUpdate, onSelect, onClose}: {
           <button className="primary-button" type="submit" disabled={!!busy || !!trust}>{busy === 'connect' ? <><CircleNotch className="spin" size={16}/>连接中</> : '连接服务器'}</button>
         </footer>
       </form></div>
-    </section>
-  </div>;
+    </section>;
+  return embedded ? panel : <div className="agent-overlay" onMouseDown={e => {if(e.target === e.currentTarget && !busy) onClose();}}>{panel}</div>;
 }
 
 export function RemoteFilePicker({profileId, initial, source, reader, onSelect, onClose}: {profileId: string; initial: string; source?: boolean; reader?: string;

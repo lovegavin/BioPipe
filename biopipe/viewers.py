@@ -98,6 +98,7 @@ class ViewerService:
         self.app = application
         self.directory = application.service.directory / 'viewers'
         self.config = self.directory / 'settings.json'
+        self.defaults_path = self.directory / 'defaults.json'
         self.lock = FileLock(self.directory / 'settings.lock')
 
     def catalog(self):
@@ -110,6 +111,27 @@ class ViewerService:
     def settings(self):
         return json.loads(io_path(self.config).read_text(encoding='utf-8')) if self.config.is_file() else {}
 
+    def defaults(self):
+        return json.loads(io_path(self.defaults_path).read_text(encoding='utf-8')) if self.defaults_path.is_file() else {}
+
+    def set_default(self, extension, viewer):
+        catalog = self.catalog()
+        supported = {s for v in catalog.values() if v['kind'] == 'desktop' for s in v['extensions']}
+        if extension not in supported and not (viewer is None and extension in self.defaults()):
+            raise ValueError('Choose a registered file extension')
+        if viewer is not None:
+            entry = catalog.get(viewer)
+            if not entry or entry['kind'] != 'desktop' or extension not in entry['extensions']:
+                raise ValueError('Choose a compatible desktop viewer')
+        with self.lock:
+            defaults = self.defaults()
+            if viewer is None:
+                defaults.pop(extension, None)
+            else:
+                defaults[extension] = viewer
+            atomic_json(self.defaults_path, defaults)
+        return self.listing()
+
     def listing(self, refresh=False):
         if refresh:
             discover.cache_clear()
@@ -117,6 +139,7 @@ class ViewerService:
         result = []
         for key, entry in self.catalog().items():
             item = dict(entry)
+            item['configured_path'] = settings.get(key)
             item['executable'] = None
             if entry['kind'] == 'web':
                 item.update(available=True, status='web')
@@ -137,7 +160,7 @@ class ViewerService:
                 item.update(available=ready, status=reason)
             result.append(item)
         result.sort(key=lambda e: (e['kind'] == 'web', not e['available'], e['name'].casefold()))
-        return {'schema_version': 1, 'viewers': result}
+        return {'schema_version': 1, 'viewers': result, 'defaults': self.defaults()}
 
     def configure(self, key, path):
         entry = self.catalog().get(key)
@@ -164,7 +187,14 @@ class ViewerService:
     def options(self, job, artifact, role):
         selected, _ = self.context(job, artifact, role)
         name = selected['name'].lower()
-        return {'file': selected, 'viewers': [v for v in self.listing()['viewers'] if any(name.endswith(s) for s in v['extensions'])]}
+        listing = self.listing()
+        viewers = [v for v in listing['viewers'] if any(name.endswith(s) for s in v['extensions'])]
+        # The most specific saved suffix wins (e.g. .vcf.gz before .gz).
+        suffix = next((s for s in sorted(listing['defaults'], key=len, reverse=True) if name.endswith(s)), None)
+        preferred = listing['defaults'].get(suffix) if suffix else None
+        fallback = next((v['id'] for v in viewers if v['kind'] == 'desktop' and v['available']), None)
+        return {'file': selected, 'viewers': viewers, 'default_viewer': preferred or fallback,
+                'default_source': 'configured' if preferred else 'automatic'}
 
     def prepare(self, job, artifact, role):
         selected, files = self.context(job, artifact, role)
@@ -200,10 +230,13 @@ class ViewerService:
                 primary = folder / selected['name']
         return {'path': str(primary), 'sidecars': [f['name'] for f in companions]}
 
-    def open(self, job, artifact, role, viewer):
+    def open(self, job, artifact, role, viewer=None):
         options = self.options(job, artifact, role)
+        viewer = viewer or options['default_viewer']
         entry = next((v for v in options['viewers'] if v['id'] == viewer), None)
         if not entry or entry['kind'] != 'desktop':
+            if not viewer or options['default_source'] == 'configured' and viewer == options['default_viewer']:
+                raise CommandError('viewer_unavailable', 'Choose an installed default viewer in Settings', 409)
             raise ValueError('Choose a compatible desktop viewer; web links require a user browser action')
         if not entry['available']:
             raise CommandError('viewer_unavailable', 'Configure an installed viewer application; status: ' + entry['status'], 409)

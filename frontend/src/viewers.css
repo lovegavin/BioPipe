@@ -1,18 +1,19 @@
 .native-result { display:flex; align-items:flex-start; gap:24px; flex-wrap:wrap; padding:8px 0; border-bottom:1px solid var(--separator); }
 .native-result > a { flex:1; min-width:180px; overflow-wrap:anywhere; }
 .result-viewers { min-width:110px; max-width:100%; }
+.viewer-open-actions { display:flex; align-items:center; gap:4px; }
+.viewer-open-actions .icon-button { width:24px; height:24px; }
+.viewer-inline-status { display:block; margin-top:6px; font-size:11px; color:var(--text-muted); }
+.viewer-settings-link { border-top:1px solid var(--separator); padding-top:10px; }
 .viewer-panel { width:340px; max-width:100%; margin-top:8px; padding:12px; display:flex; flex-direction:column; gap:8px; border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--surface-elevated); box-shadow:0 6px 24px rgb(0 0 0 / 8%); }
-.viewer-heading, .viewer-row, .viewer-config > div, .viewer-location { display:flex; align-items:center; gap:8px; }
+.viewer-heading, .viewer-row, .viewer-location { display:flex; align-items:center; gap:8px; }
 .viewer-heading { justify-content:space-between; color:var(--text-muted); font-size:var(--font-xs); }
-.viewer-heading button, .viewer-row > button:last-child { flex:none; }
 .viewer-panel button { min-height:30px; border-radius:var(--radius-md); }
 .viewer-row > button:first-child { display:flex; flex:1; justify-content:space-between; align-items:center; text-align:left; gap:12px; padding:6px 8px; border:0; background:transparent; color:var(--text-primary); }
 .viewer-row > button:first-child:hover:not(:disabled) { background:var(--surface-hover); }
 .viewer-row small, .viewer-web span { font-size:var(--font-xs); color:var(--text-muted); }
 .viewer-row button:disabled { opacity:.55; cursor:default; }
-.viewer-config { display:flex; flex-direction:column; gap:8px; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md); }
-.viewer-config label { display:flex; flex-direction:column; gap:6px; }
-.viewer-location input, .viewer-config input { min-width:0; width:100%; padding:7px; border:1px solid var(--border); border-radius:var(--radius-md); color:var(--text-primary); background:var(--field); }
+.viewer-location input { min-width:0; width:100%; padding:7px; border:1px solid var(--border); border-radius:var(--radius-md); color:var(--text-primary); background:var(--field); }
 .viewer-web { border-top:1px solid var(--separator); padding-top:8px; }
 .viewer-web summary { cursor:pointer; color:var(--text-secondary); }
 .viewer-web a { display:flex; gap:8px; align-items:center; padding:8px; color:var(--text-primary); text-decoration:none; border-radius:var(--radius-md); }

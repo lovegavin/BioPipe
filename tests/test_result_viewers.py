@@ -119,6 +119,7 @@ def test_open_and_configuration_require_execution_permission(tmp_path, monkeypat
     app = create_headless_app(Settings(tmp_path, tmp_path / 'profile', tmp_path / 'no-ui', testing=True,
                                        code_root=Path(__file__).resolve().parents[1]))
     app.state.application.viewers.prepare = lambda *args: {'path': 'prepared'}
+    app.state.application.viewers.open = lambda j, a, r, v: {'viewer': v, 'role': r}
     with TestClient(app, base_url='http://127.0.0.1') as client:
         def auth(scopes):
             r = client.post('/api/agent/connect', headers={'X-BioPipe-Bridge': app.state.bridge.secret}, json={'name': 'viewer-test', 'scopes': scopes})
@@ -127,11 +128,69 @@ def test_open_and_configuration_require_execution_permission(tmp_path, monkeypat
         assert client.get('/api/v1/viewers').status_code == 403
         assert client.get('/api/v1/viewers', headers=read).status_code == 200
         assert client.post('/api/v1/viewers/igv/configure', headers=read, json={}).status_code == 403
+        assert client.post('/api/v1/viewers/default', headers=read, json={'extension': '.bed', 'viewer': 'igv'}).status_code == 403
+        saved = client.post('/api/v1/viewers/default', headers=run, json={'extension': '.bed', 'viewer': 'igv'})
+        assert saved.status_code == 200 and saved.json()['defaults'] == {'.bed': 'igv'}
+        assert client.get('/api/v1/viewers', headers=read).json()['defaults'] == {'.bed': 'igv'}
         prefix = '/api/v1/jobs/j/artifacts/a'
         assert client.post(prefix + '/open-viewer', headers=read, json={'viewer': 'igv', 'role': 'data'}).status_code == 403
+        assert client.post(prefix + '/open-viewer', headers=run, json={'role': 'data'}).json() == {'viewer': None, 'role': 'data'}
         assert client.post(prefix + '/prepare-viewer', headers=read, json={'role': 'data'}).status_code == 403
         assert client.post(prefix + '/prepare-viewer', headers=run, json={'role': 'data'}).json() == {'path': 'prepared'}
         assert client.post(prefix + '/prepare-viewer', headers=run, json={'role': 'data', 'path': 'untrusted'}).status_code == 422
+
+
+def test_default_survives_restart_without_changing_program_paths(service, tmp_path, monkeypatch):
+    viewer, files = service
+    exe = tmp_path / 'IGV.exe'; exe.write_bytes(b'test')
+    viewer.configure('igv', str(exe)); viewer.set_default('.bed', 'igv')
+    p = tmp_path / 'reads.BED'; p.write_bytes(b'chr1\t0\t10'); files['data'] = p
+    fresh = module.ViewerService(viewer.app)
+    assert fresh.settings() == {'igv': str(exe)}
+    assert fresh.options('j', 'a', 'data')['default_viewer'] == 'igv'
+    calls = []
+    class Process:
+        pid = 123
+        def wait(self): return 0
+    monkeypatch.setattr(module.subprocess, 'Popen', lambda args, **kw: (calls.append(args), Process())[1])
+    assert fresh.open('j', 'a', 'data')['status'] == 'started'
+    assert calls == [[str(exe), str(p)]]
+    fresh.set_default('.bed', None)
+    assert fresh.defaults() == {} and fresh.settings() == viewer.settings()
+    assert fresh.options('j', 'a', 'data')['default_source'] == 'automatic'
+
+
+@pytest.mark.parametrize(('suffix', 'viewer'), [('.bed', 'pymol'), ('.hic', 'juicebox-web'), ('.exe', 'igv'), ('.bed', 'unknown')])
+def test_default_requires_compatible_desktop_format(service, suffix, viewer):
+    with pytest.raises(ValueError):
+        service[0].set_default(suffix, viewer)
+    assert service[0].defaults() == {}
+
+
+def test_unavailable_default_never_silently_launches_another_viewer(service, tmp_path, monkeypatch):
+    viewer, files = service
+    path = tmp_path / 'reads.bed'; path.write_bytes(b'chr1'); files['data'] = path
+    viewer.set_default('.bed', 'igv')
+    monkeypatch.setattr(module.subprocess, 'Popen', lambda *a, **kw: pytest.fail('must not launch a fallback'))
+    with pytest.raises(CommandError, match='Configure'):
+        viewer.open('j', 'a', 'data')
+    # A removed custom entry remains visible as an unavailable preference.
+    module.atomic_json(viewer.defaults_path, {'.bed': 'removed-app', '.custom': 'removed-app'})
+    with pytest.raises(CommandError, match='Settings'):
+        viewer.open('j', 'a', 'data')
+    viewer.set_default('.custom', None)
+    assert '.custom' not in viewer.defaults()
+
+
+def test_default_uses_longest_suffix_and_does_not_fetch_outputs(service, tmp_path):
+    viewer, files = service
+    entry = deepcopy(viewer.catalog()['igv']); entry.update(id='generic-gz', extensions=['.gz'])
+    viewer.directory.mkdir(parents=True)
+    (viewer.directory / 'catalog.json').write_text(json.dumps({'schema_version': 1, 'viewers': [entry]}))
+    viewer.set_default('.gz', 'generic-gz'); viewer.set_default('.vcf.gz', 'igv')
+    p = tmp_path / 'reads.vcf.gz'; p.write_bytes(b'test'); files['data'] = p
+    viewer.app.artifacts.file = lambda *args: pytest.fail('preferences must not fetch files')
+    assert viewer.options('j', 'a', 'data')['default_viewer'] == 'igv'
 
 
 def test_cli_exposes_viewer_actions():
@@ -139,6 +198,9 @@ def test_cli_exposes_viewer_actions():
     assert parser().parse_args(['viewers', 'list', '--refresh']).refresh
     args = parser().parse_args(['artifacts', 'open', 'job', 'artifact', '--role', 'data', '--viewer', 'igv'])
     assert args.viewer == 'igv' and args.role == 'data'
+    args = parser().parse_args(['viewers', 'default', '.bed', '--viewer', 'igv'])
+    assert args.action == 'default' and args.id == '.bed' and args.viewer == 'igv'
+    assert parser().parse_args(['artifacts', 'open', 'job', 'artifact', '--role', 'data']).viewer is None
 
 
 def test_mcp_viewer_uses_shared_api_and_escapes_ids():

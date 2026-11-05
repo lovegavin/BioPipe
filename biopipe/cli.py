@@ -115,10 +115,11 @@ def parser():
     artifacts.add_argument('--figure-id')
     artifacts.add_argument('--viewer')
     viewers = commands.add_parser('viewers', help='Discover or configure desktop result viewers')
-    viewers.add_argument('action', choices=['list', 'configure'])
+    viewers.add_argument('action', choices=['list', 'configure', 'default'])
     viewers.add_argument('id', nargs='?')
     viewers.add_argument('--executable', help='Absolute executable/GUI JAR path; omit to clear a configured path')
     viewers.add_argument('--refresh', action='store_true')
+    viewers.add_argument('--viewer', help='Default desktop viewer ID; omit to restore automatic selection')
     servers = commands.add_parser('servers')
     servers.add_argument('action', choices=['list', 'save', 'connect', 'trust'])
     servers.add_argument('value', nargs='?')
@@ -199,7 +200,7 @@ def execute(args):
         from .mcp_server import serve
         return serve(args)
     scopes = ["context", "edit"]
-    if (args.command == 'viewers' and args.action == 'configure'
+    if (args.command == 'viewers' and args.action in ('configure', 'default')
             or args.command == 'artifacts' and args.action in ('open', 'prepare-viewer')):
         scopes.append('run')
     if args.command == 'run' or args.command == 'jobs' and args.action == 'cancel' or args.command == 'service' and args.action == 'stop' or args.command == 'servers' and args.action == 'connect':
@@ -255,6 +256,10 @@ def execute(args):
         if args.command == 'viewers':
             if args.action == 'list':
                 return client.request('/v1/viewers' + ('?refresh=true' if args.refresh else ''))
+            if args.action == 'default':
+                if not args.id:
+                    raise ValueError('A file extension is required, for example .hic')
+                return client.request('/v1/viewers/default', {'extension': args.id, 'viewer': args.viewer})
             if not args.id:
                 raise ValueError('A viewer ID is required')
             return client.request('/v1/viewers/' + quote(args.id, safe='') + '/configure', {'executable': args.executable})
@@ -271,8 +276,6 @@ def execute(args):
                 if args.action == 'viewers':
                     return client.request(path + '/viewers?' + urlencode({'role': args.role}))
                 if args.action == 'open':
-                    if not args.viewer:
-                        raise ValueError('Choose --viewer from artifacts viewers')
                     return client.request(path + '/open-viewer', {'role': args.role, 'viewer': args.viewer})
                 return client.request(path + '/prepare-viewer', {'role': args.role})
             if args.action in ('report', 'figure'):

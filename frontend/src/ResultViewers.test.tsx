@@ -28,14 +28,15 @@ const desktop = {id:'igv',name:'IGV',kind:'desktop',mode:'file',available:true,s
 const list = [desktop,{...desktop,id:'missing',name:'Missing',available:false,status:'not_found'},
   {...desktop,id:'manual',name:'Manual',mode:'manual'},
   {...desktop,id:'web',name:'Web',kind:'web',url:'https://example.org'}] as Viewer[];
-function render() {hooks.cursor=0;return ResultViewers({job:'job',artifact:'artifact',role:'data'});}
+const onSettings = vi.fn();
+function render() {hooks.cursor=0;return ResultViewers({job:'job',artifact:'artifact',role:'data',onSettings});}
 function click(label: string) {
   const button = elements(render()).find(e => e.type === 'button' && (text(e.props.children as ReactNode).startsWith(label) || e.props['aria-label'] === label));
   expect(button).toBeDefined(); (button!.props.onClick as () => void)();
 }
 beforeEach(() => {
-  hooks.values = [true,list,false,'',null,'','','']; hooks.cursor=0;
-  vi.clearAllMocks(); vi.mocked(api.artifactViewers).mockResolvedValue({viewers:list});
+  hooks.values = [true,{viewers:list,default_viewer:'igv',default_source:'configured'},false,'','','']; hooks.cursor=0;
+  vi.clearAllMocks(); vi.mocked(api.artifactViewers).mockResolvedValue({viewers:list,default_viewer:'igv',default_source:'configured'});
   vi.mocked(api.openViewer).mockResolvedValue({status:'started',mode:'file',path:'result.bed'});
 });
 describe('desktop-first result handoff', () => {
@@ -60,12 +61,14 @@ describe('desktop-first result handoff', () => {
     click('IGV'); await vi.waitFor(() => expect(text(render())).toContain('Application missing'));
     expect(text(render())).not.toContain('已发送打开请求');
   });
-  it('stores executable configuration separately from the workflow', async () => {
-    click('设置 Missing');
-    const input = elements(render()).find(e => e.props['aria-label'] === '程序位置')!;
-    (input.props.onChange as (e: unknown) => void)({target:{value:'C:\\Apps\\viewer.exe'}});
-    const form = elements(render()).find(e => e.type === 'form')!;
-    (form.props.onSubmit as (e: unknown) => void)({preventDefault:()=>{}});
-    await vi.waitFor(() => expect(api.configureViewer).toHaveBeenCalledWith('missing','C:\\Apps\\viewer.exe'));
+  it('moves configuration into central settings', () => {
+    click('管理打开方式');
+    expect(onSettings).toHaveBeenCalledOnce();
+    expect(elements(render()).some(e => e.type === 'form')).toBe(false);
+    expect(api.configureViewer).not.toHaveBeenCalled();
+  });
+  it('resolves the current saved default on the service when Open is clicked', async () => {
+    click('打开');
+    await vi.waitFor(() => expect(api.openViewer).toHaveBeenCalledExactlyOnceWith('job','artifact','data',undefined));
   });
 });

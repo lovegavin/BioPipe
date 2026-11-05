@@ -6,6 +6,23 @@ Python runtime and the built-in CPU dependencies. Double-click `BioPipe Studio.e
 the host starts a local backend, waits for health checks and opens the workspace.
 Launching it again activates the existing window for that profile.
 
+## Application settings
+
+Use the toolbar gear to open **Settings**. The left navigation contains:
+
+- **Servers:** saved SSH connections, credentials for the current session, server
+  installation/upgrade, and catalog/dependency refresh. The toolbar keeps only the
+  current execution-location selector.
+- **Outputs and viewers:** defaults by file extension and installed application
+  locations. Program rows expand when needed; results retain a compact **Open**
+  button and an alternative-viewer menu. See [result viewers](result_viewers.md).
+- **Appearance:** light, dark or system theme, using the existing saved preference.
+
+Switching sections retains unfinished form entries. Escape or Close returns to
+the canvas; connection/installation and preference writes must finish or be
+cancelled before closing. Settings never starts a workflow. Memory budgets and
+execution assignments remain in each workflow's execution settings.
+
 ## Runtime configuration
 
 The adjacent `biopipe-desktop.json` uses relative defaults:

@@ -29,13 +29,16 @@ third-party graphical software or grant its licenses.
    connect the original Cooler artifact and choose `hic`. For annotated plasmids,
    use a GenBank Reader with record retention and choose `genbank`.
 2. Run the workflow. Files are already saved in that run's output folder.
-3. Open **Run history → Results**, select the exported artifact, then **Open with**
-   beside its file. Available desktop software appears before unavailable apps and
-   web alternatives. A gear stores an executable or GUI JAR path once per profile.
-4. **Open file** sends a documented file argument. **Launch · manual open** starts
+3. Open the toolbar **Settings → Outputs and viewers** to set program paths and
+   default desktop viewers by file extension. Expand a program row to configure
+   its executable or GUI JAR. Settings also contains **Servers** and **Appearance**.
+4. Open **Run history → Results**, select the exported artifact, then **Open**
+   beside its file to use the saved default. The adjacent arrow offers other
+   desktop apps and web alternatives; **Manage opening preferences** returns to Settings.
+5. File-mode viewers receive a documented file argument. Manual-mode viewers start
    the application and shows the retained file location for its File/Open dialog.
    A successful launch response does not prove rendering or scientific validity.
-5. Web entries are manual links. HiGlass, JBrowse and Vitessce may require their
+6. Web entries are manual links. HiGlass, JBrowse and Vitessce may require their
    own server/reference/view configuration; opening their website is not equivalent
    to loading a local dataset. The catalog notes spell out these prerequisites.
 
@@ -44,6 +47,16 @@ profile settings, never workflow fields. Use the actual EXE, or a GUI JAR plus
 Java on PATH, rather than a shortcut/batch file. On macOS configure the executable
 inside the `.app` bundle. A headless Linux host without a display cannot launch a
 GUI; run this handoff on the desktop/client service instead.
+
+Defaults apply only when the user requests opening a result, not automatically
+after every run. The longest matching saved suffix wins (for example `.vcf.gz`
+before `.gz`). Without a preference, the first available compatible desktop app
+in the catalog's name ordering is used. An unavailable or removed explicit default
+produces an actionable error, never a silent fallback. Clearing a preference
+restores automatic selection. Preferences and executable overrides live separately
+under the application profile's `viewers/` directory and survive restarts. They do
+not enter workflow JSON. Route-specific execution locations, memory budgets and
+parameters retain their existing independent workflow configuration.
 
 **Remote results:** listing choices does not transfer files. Launching or obtaining
 a local path uses the existing resumable output transfer/cache. Only the selected
@@ -131,14 +144,20 @@ biopipe artifacts preview JOB ARTIFACT
 biopipe artifacts viewers JOB ARTIFACT --role data
 biopipe viewers list --refresh
 biopipe viewers configure igv --executable "ABSOLUTE_APPLICATION_PATH"
+biopipe viewers default .bed --viewer igv
+biopipe artifacts open JOB ARTIFACT --role data
 biopipe artifacts open JOB ARTIFACT --role data --viewer igv
 biopipe artifacts prepare-viewer JOB ARTIFACT --role data
 ```
 
-Omit `--executable` when configuring to clear that profile override. MCP uses
+Omit `--executable` when configuring to clear that profile override. Omit `--viewer`
+from `viewers default .bed` to clear the saved preference; omit it from `artifacts
+open` to use the current default. MCP uses
 `biopipe_viewer(job_id, artifact_id, role)` to discover choices and the same call
 with `viewer="igv"` to launch. Launch needs `--allow-run`. Obtain only the required
 artifact's preview; do not retrieve every operator schema or the entire matrix.
+Discovery returns `default_viewer` and `default_source`; MCP discovery still never
+launches anything. Pass an explicit viewer ID to launch through MCP.
 
 ## HTTP API
 
@@ -147,11 +166,16 @@ a locally discovered client with the required scopes; follow [the API tutorial](
 
 | Method / path | Scope | Body / result |
 | --- | --- | --- |
-| GET `/api/v1/viewers?refresh=true` | context | Catalog and installed/configured states |
+| GET `/api/v1/viewers?refresh=true` | context | Catalog, installed/configured states and `defaults` mapping |
 | POST `/api/v1/viewers/{id}/configure` | run | `{"executable":"absolute path"}` or null to reset |
+| POST `/api/v1/viewers/default` | run | `{"extension":".hic","viewer":"juicebox"}`; null viewer resets |
 | GET `/api/v1/jobs/{job}/artifacts/{id}/viewers?role=data` | context | Only matching choices; no output download |
 | POST `/api/v1/jobs/{job}/artifacts/{id}/prepare-viewer` | run | `{"role":"data"}` → local path and index names |
 | POST `/api/v1/jobs/{job}/artifacts/{id}/open-viewer` | run | `{"role":"data","viewer":"igv"}` → started, mode, path, PID and launch log |
+
+Omit `viewer` (or pass null) on `open-viewer` to resolve the current saved default
+on the server. Preference writes require execution scope, just like program-path
+configuration; unprivileged clients can read compatible choices only.
 
 ```python
 from biopipe.client import Client, data_directory

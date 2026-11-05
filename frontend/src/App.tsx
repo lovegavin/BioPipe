@@ -55,7 +55,8 @@ import { api, ApiError, downloadText, downloadBlob } from "./api";
 import { CanvasBridge } from "./agentBridge";
 import type { AgentState } from "./agentBridge";
 import { AgentPanel } from "./AgentPanel";
-import { RemotePanel, RemoteFilePicker, remoteId } from './RemotePanel';
+import { RemoteFilePicker, remoteId } from './RemotePanel';
+import { SettingsPage, type SettingsSection } from './SettingsPage';
 import type {RemoteStatus, BrowseRemote, DataSource} from './types';
 import {HardDrives as Server} from '@phosphor-icons/react';
 import {
@@ -95,7 +96,7 @@ import { supportedPlatformLabel, targetPlatformWarning } from "./platform";
 import { PanelResizeHandle } from "./PanelResizeHandle";
 import { automaticPanels, panelLimits, panelMaximum, resolvePanels } from "./panelLayout";
 import type { PanelSide, PanelWidths } from "./panelLayout";
-import { AppearanceMenu } from "./AppearanceMenu";
+import { useAppearance } from "./AppearanceSettings";
 import { NODE_LAYOUT, portRowHeight } from "./nodeLayout";
 import { contractSignature } from "./contracts";
 import type {
@@ -186,7 +187,9 @@ function Studio() {
   const agentBridge = useRef<CanvasBridge | null>(null);
   const [agentReady, setAgentReady] = useState(false), [agentPanel, setAgentPanel] = useState(false);
   const [routes, setRoutes] = useState<RouteDefinition[]>([]);
-  const [servers, setServers] = useState<RemoteStatus[]>([]), [remoteOpen, setRemoteOpen] = useState(false);
+  const [servers, setServers] = useState<RemoteStatus[]>([]);
+  const [appSettings, setAppSettings] = useState<SettingsSection | null>(null);
+  const appearance = useAppearance();
   const [remotePicker, setRemotePicker] = useState<{profileId: string; initial: string; source?: boolean; reader?: string; onSelect: (path: string, source?: DataSource) => void} | null>(null);
   const selectedServerId = remoteId(graph);
   const selectedServer = servers.find(s => s.profile.id === selectedServerId);
@@ -463,7 +466,7 @@ function Studio() {
     setRoutes(registered); setLibraryState(state);
   }
   async function refreshPlugins() {
-    if (selectedServerId) {setRemoteOpen(true); return;}
+    if (selectedServerId) {setAppSettings('servers'); return;}
     if (refreshingPlugins) return;
     setRefreshingPlugins(true);
     try {
@@ -1173,7 +1176,7 @@ function Studio() {
           >
             <FloppyDisk size={18} />
           </button>
-          <AppearanceMenu />
+          <button className="icon-button" aria-label="设置" title="设置" onClick={() => setAppSettings('servers')}><GearSix size={19}/></button>
           <div className="file-menu">
             <button
               className="subtle-button"
@@ -1263,7 +1266,7 @@ function Studio() {
               <option value="">本机</option>
               {selectedServerId && !selectedServer && <option value={selectedServerId}>未配置的服务器</option>}
               {servers.map(server => <option key={server.profile.id} value={server.profile.id}>{server.profile.name}{server.connected ? '' : ' · 离线'}</option>)}
-            </select><button className="icon-button" aria-label="管理服务器" onClick={() => setRemoteOpen(true)}><GearSix size={15}/></button>
+            </select>
           </div>
           <button
             className="subtle-button check-control"
@@ -1421,7 +1424,7 @@ function Studio() {
             )}
           </div>
           <div className="library-footer">
-            <button className="library-packages" onClick={() => selectedServerId ? setRemoteOpen(true) : setPluginsOpen(true)}><Package size={16}/>{selectedServerId ? '服务器算子库' : '算子库管理'}</button>
+            <button className="library-packages" onClick={() => selectedServerId ? setAppSettings('servers') : setPluginsOpen(true)}><Package size={16}/>{selectedServerId ? '服务器算子库' : '算子库管理'}</button>
           </div>
           <PanelResizeHandle side="library" width={displayedPanels.library} min={panelLimits.library.min}
             max={panelMaximum("library", displayedPanels, windowWidth)} onResize={value => resizePanel("library", value)}
@@ -1681,6 +1684,7 @@ function Studio() {
             </div>
           </main>
           <Results
+            onViewerSettings={() => setAppSettings('viewers')}
             job={job}
             events={events}
             consoleText={consoleText}
@@ -1785,7 +1789,7 @@ function Studio() {
       {picker && <WorkflowPicker mode={picker} onClose={() => setPicker(null)} onOpen={openSaved} onRegister={refreshRoutes} onImport={() => routeImport.current?.click()}/>}
       {saveDialog && <SaveWorkflowDialog graph={saveDialog} catalog={catalog} workflowId={documents.find(doc=>doc.id===activeId)?.workflow_id} version={documents.find(doc=>doc.id===activeId)?.workflow_version} onClose={() => setSaveDialog(null)} onSaved={savedWorkflow}/>}
       {agentPanel && <AgentPanel sessionId={agentBridge.current?.state?.id} command={bootstrap.agent_config} onClose={() => setAgentPanel(false)} onCopySelection={() => void copyAgentContext()}/>}
-      {remoteOpen && <RemotePanel servers={servers} active={selectedServerId} onUpdate={refreshServers} onSelect={chooseServer} onClose={() => setRemoteOpen(false)}/>}
+      {appSettings && <SettingsPage initial={appSettings} appearance={appearance} servers={servers} active={selectedServerId} onUpdate={refreshServers} onSelect={chooseServer} onClose={() => setAppSettings(null)}/>}
       {remotePicker && <RemoteFilePicker {...remotePicker} onClose={() => setRemotePicker(null)}/>}
       {toast && (
         <div

@@ -165,6 +165,7 @@ export function Results({
   stale,
   onCancel,
   cancelling,
+  onViewerSettings,
 }: {
   job: Job | null;
   events: RunEvent[];
@@ -181,6 +182,7 @@ export function Results({
   stale: boolean;
   onCancel?: (id: string) => void;
   cancelling?: string;
+  onViewerSettings?: () => void;
 }) {
   const [preview, setPreview] = useState<Preview | null>(null),
     [selected, setSelected] = useState(""),
@@ -577,7 +579,7 @@ export function Results({
                     {preview.files?.map(file => (
                       file.downloadable ? <div key={`${job.id}-${selected}-${file.role}`} className="native-result"><a className="text-button" href={api.url(`/api/jobs/${job.id}/artifacts/${selected}/files/${encodeURIComponent(file.role)}`)}>
                         <ArrowDown size={14} /> {file.name} · {(file.bytes / 1024 ** 2).toFixed(2)} MiB
-                      </a><ResultViewers job={job.id} artifact={selected!} role={file.role}/></div> : <span key={file.role}>{file.name} · {(file.bytes / 1024 ** 2).toFixed(2)} MiB</span>
+                      </a><ResultViewers job={job.id} artifact={selected!} role={file.role} onSettings={onViewerSettings}/></div> : <span key={file.role}>{file.name} · {(file.bytes / 1024 ** 2).toFixed(2)} MiB</span>
                     ))}
                     {preview.points.length > 0 && (
                       <div className="chart-preview">
