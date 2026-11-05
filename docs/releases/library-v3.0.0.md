@@ -1,7 +1,8 @@
 # BioPipe Operator Library v3.0.0
 
 Backend version: 3.0.0 (operators 717, Readers 101).
-Tag: `library-v3.0.0`. Minimum and build application: `3.0.0`.
+Tag: `library-v3.0.0`. Minimum and build application: `2.4.1`; the library
+version is independent and may be newer than the host application.
 Base library: `2026.11.5.2` (domain exports and GenBank Reader retained).
 
 This is the coordinated operator-library release for BioPipe 3.0.0. It does not

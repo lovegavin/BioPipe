@@ -33,8 +33,9 @@ parameter JSON.
 Rules enforced by `scripts/release_library.py`:
 
 - `version`, `minimum_application` and `build_application` are canonical versions.
-- `minimum_application == build_application`; build and verify against the
-  minimum supported application.
+- `minimum_application == build_application`; the pair names the oldest
+  **actually tested** application. The library version is independent and may be
+  newer than the host application.
 - The annotated tag is exactly `library-v<version>`; any other tag is rejected.
 - The release commit updates `library/release.json` and `library/pyproject.toml`
   to the same version.
@@ -148,5 +149,7 @@ git tag -a library-vX -m "BioPipe Operator Library vX"
 git push origin main library-vX
 ```
 
-The tag is immutable: never move or reuse a published library tag. Publish a new
-patch version instead.
+A tag that has never produced a published release artifact may be corrected (for
+example when the first CI run fails before publish). Once a GitHub release
+exists, the tag is immutable: never move or reuse it; publish a new patch
+version instead.

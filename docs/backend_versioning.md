@@ -31,7 +31,8 @@ Do not retroactively rename published versions or tags.
 BioPipe 3.0.0 and BioPipe Operator Library v3.0.0 are released together. Both
 products use version `3.0.0`, published as annotated tags `v3.0.0` and
 `library-v3.0.0`. The library declares `minimum_application` and
-`build_application` `3.0.0`. This is a coordinated milestone, not a new
+`build_application` `2.4.1` (the oldest supported application) while its own
+version is `3.0.0`. This is a coordinated milestone, not a new
 versioning rule: later operator-only changes continue to use the library
 release process.
 
