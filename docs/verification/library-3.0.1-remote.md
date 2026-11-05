@@ -196,25 +196,35 @@ exported FASTA; the venv used for these runs reports `biopipe 3.0.0`.
 
 ## 11. Family coverage graphs (real data)
 
-Six additional family graphs under `coverage/graphs/` exercise operators that
-the 24 built-in routes do not touch: tab_stats (67 steps), tab_ml (44), struct
-(16), omics (16), seq (14), data (9). Totals: 166 executed step records,
-155 distinct operators (154 analysis + export_results), each in exactly one
-graph, zero overlap with the 87 operators of the built-in routes and zero
-overlap between graphs. Every graph ends with `export_results` on the terminal
-real-data Form plus one intermediate export (12 exports, all read-back
-`ok`, 6 terminal exports value-equal to the source Form with sha256 recorded).
-Evidence: `coverage/COVERAGE_ROUTES.jsonl`, `coverage/ROUTE_OPERATOR_MATRIX.csv`,
-`coverage/builtin_candidates/` (6 staged routes) and per-graph
+Nine additional family graphs under `coverage/graphs/` (six wave-1 + three
+rescue) exercise operators that the 24 built-in routes do not touch:
+tab_stats (67 steps/189.0 s), tab_ml (44/28.6 s), struct (16/67.2 s), omics
+(16/1.6 s), seq (14/9.4 s), data (9/6.0 s), w2_struct (8/5.8 s), w2_seq
+(5/1.2 s), w2_data (3/0.04 s). Totals: 182 executed step records, 165 distinct
+operators (164 analysis + export_results), each in exactly one graph, zero
+overlap with the 87 operators of the built-in routes and zero overlap between
+graphs. Framework-tested operators overall: 87 + 165 = 252/717; the remaining
+465 have per-op reasons in `coverage/UNCOVERED.md` (369 bind-sweep errors, 91
+unbound, 5 graph-step errors below).
+
+Every graph ends with `export_results` on the terminal real-data Form plus one
+intermediate export: 18 exports (9 terminal + 9 intermediate), all files exist
+and read back, sha256 recorded; all 9 terminal exports are value-equal to the
+declared source Form (`max_abs_diff 0.0`; 14,448 values for golub_wide, 26,180
+for biom_qiime). Intermediate exports carry read-back + sha256 only because
+there is no reference Form for those operator outputs (`values_match: null`).
+Evidence: `coverage/COVERAGE_ROUTES.jsonl`,
+`coverage/ROUTE_OPERATOR_MATRIX.csv` (48 rows x 256 operator columns),
+`coverage/builtin_candidates/` (9 staged routes) and per-graph
 `README.md`/`graph.mmd`/`input_manifest.json`.
 
 A library defect surfaced only inside graph runs: `src/task/step/base.py`
 declares `@classmethod estimate_memory(cls, inputs, params, profiles)` returning
 `(workspace, output)`, but eight step modules define an instance method that
-returns a dict, so the planner calls it with the wrong arity
+returns a dict; five surface in these graphs, so the planner calls it with the wrong arity
 (`missing 1 required positional argument: 'profiles'`). Affected operators
 include `esm_embedding_outlier_scan`, `structure_cavity_scan`,
-`sequence_kmer_profile` and `structure_helix_geometry`. This is a 3.0.2 fix
+`sequence_kmer_profile`, `sequence_gc_profile` and `structure_helix_geometry`. This is a 3.0.2 fix
 item; the repo was not modified here.
 
 `bgen_qc` remains the other reader-level 3.0.2 item: plink2 BGEN is decoded as
