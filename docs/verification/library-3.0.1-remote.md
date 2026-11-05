@@ -581,3 +581,39 @@ stall on an aborted network fetch.
 Evidence: `coverage/WAVE4_ROUTES.jsonl`, `WAVE4_SUMMARY.md`,
 `WAVE4_EXPORTS.json`, refreshed `UNCOVERED.md` (313, bucketed) and
 `ROUTE_OPERATOR_MATRIX.csv` (112x404); previous copies retained as `.wave3`.
+
+## 23. Fifth coverage wave
+
+Four more real-data graphs (`w5_seq`, `w5_struct`, `w5_tab_ml`,
+`w5_tab_stats`) completed with rc=0 on the first attempt: 26 successful
+operator steps (including 7 export helpers), 4 in-run drops (`lda`,
+`manova`, `fligner_killeen`, plus a dependent export), and **19 new distinct
+operators** with zero overlap against builtin routes or waves 1-4. Cumulative
+framework-route coverage is **422/717 (58.9%)**.
+
+New operators: `sequence_codon_adaptation`, `sequence_cysteine_pairing`,
+`antibody_cdr_kabat`, `antibody_cdr_motifs`, `antibody_cdr_physchem`,
+`antibody_developability`, `structure_pae_summary`, `chow_test`,
+`cooks_distance`, `covratio`, `dfbetas`, `dffits`, `egger_test`, `leverage`,
+`power_anova`, `press`, `redundancy_analysis`, `standardized_residuals`,
+`studentized_residuals`.
+
+Eight export files were produced and read back with sha256; every non-plot
+graph terminates in `export_results` and also exports one intermediate. The
+drops are data-shape limits, not harness errors: a constant-within-group
+variable (`lda`), singular residual covariance (`manova`), and no feature with
+two finite values per group (`fligner_killeen`).
+
+The mechanical buckets do not reduce further without library changes or
+invented data. Residual arity/parameter cases need SMILES inputs (no SMILES
+file and no openbabel in the workspace), real MD trajectories, or absent
+binaries/models (foldseek, vina, esm3, boltz; the ProteinMPNN designer exits
+1). Residual sequence/structure cases exceed what the three real sources can
+supply, and residual label cases need multi-arm group columns that the
+two-class Golub board does not have. Combinations that were contract-valid but
+semantically wrong were not counted as coverage.
+
+Evidence: `coverage/WAVE5_ROUTES.jsonl` (4 graph rows and 30 step rows with
+absolute step-JSON paths), `WAVE5_SUMMARY.md`, `WAVE5_EXPORTS.json`, refreshed
+`UNCOVERED.md` (295) and `ROUTE_OPERATOR_MATRIX.csv` (68x422); the wave-4
+versions are retained as `.wave4` copies.
