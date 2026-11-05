@@ -205,7 +205,7 @@ print(json.dumps(run_operator(STEPS['example.fresh_scale'],[form],{}).data.tolis
     original = manager.registry.read_bytes()
     data['properties'].pop('factor')
     parameter.write_text(json.dumps(data), encoding='utf-8')
-    with pytest.raises(ValueError, match='Undeclared parameter reads'):
+    with pytest.raises(ValueError, match='Undeclared parameter reads|Unknown localized parameter'):
         manager.refresh()
     assert manager.registry.read_bytes() == original
 

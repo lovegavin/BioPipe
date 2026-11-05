@@ -79,6 +79,8 @@ def module_assets(source):
             assets.add(d['icon'])
         if d.get('documentation'):
             assets.add(d['documentation']['path'])
+        if d.get('localization'):
+            assets.add(d['localization']['path'])
     return sorted(assets)
 
 

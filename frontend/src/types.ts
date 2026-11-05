@@ -1,4 +1,5 @@
 export type Parameter = {
+  option_labels?: Record<string, string>;
   group?: 'main' | 'environment' | 'resources' | 'advanced';
   priority?: number;
   path_kind?: 'source' | 'workflow';
@@ -11,7 +12,7 @@ export type Parameter = {
   min?: number;
   max?: number;
   step?: number;
-  options?: (string | number)[];
+  options?: unknown[];
 };
 export type PluginRefresh = {generation: string; updated: string[]; unchanged: string[]; directory: string; operators: number; readers: number};
 export type PluginOperation = {id: string; status: 'running' | 'complete' | 'failed'; error: string | null; result?: PluginRefresh};
@@ -21,8 +22,9 @@ export type PluginState = {generation: string | null; packages: PluginPackage[];
   library_release?: {version: string; sha256: string} | null;
   dependencies?: DependencyState;
   source_directories?: {operator: string; reader: string};
-  descriptors: {id: string; kind: 'reader' | 'operator'; title: string; distribution: string; resources?: {memory_modes: string[]}}[]};
+  descriptors: {id: string; kind: 'reader' | 'operator'; title: string; distribution: string; localization?: import('./operatorLocalization').OperatorLanguagePack; resources?: {memory_modes: string[]}}[]};
 export type Operator = {
+  localization?: import('./operatorLocalization').OperatorLanguagePack;
   supported_systems?: string[];
   systems_status?: 'inferred' | 'unknown';
   id: string;
@@ -43,6 +45,8 @@ export type Operator = {
   contracts?: { version: number; inputs: PortContract[] | null; output: { mode: string } | null };
 };
 export type ReaderSpec = { id: string; extensions: string[]; contracts: {output: PortContract | null};
+  title_aliases?: string[];
+  localization?: import('./operatorLocalization').OperatorLanguagePack;
   title?: string; description?: string; category?: string; icon?: string | null; icon_image?: string | null;
   supported_systems?: string[]; systems_status?: 'inferred' | 'unknown';
   parameters?: Parameter[];
@@ -193,6 +197,7 @@ export type Preview = {
   points: (number | null)[][];
 };
 export type Bootstrap = {
+  preferences?: import('./preferences').UiPreferences;
   system?: string;
   automatic_memory_fraction?: number;
   automatic_memory_budget_bytes?: number | null;

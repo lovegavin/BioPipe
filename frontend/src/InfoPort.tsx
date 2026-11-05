@@ -1,3 +1,4 @@
+import {t} from './i18n';
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
@@ -22,7 +23,7 @@ export function InfoPort({ direction, height, ports, checks = NO_CHECKS, hint, c
   const anchor = useRef<HTMLDivElement>(null), panel = useRef<HTMLDivElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const id = useId();
-  const title = direction === "input" ? source ? "文件 info" : "输入 info" : "输出 info";
+  const title = direction === "input" ? source ? t("文件 info") : t("输入 info") : t("输出 info");
   function show() { clearTimeout(timer.current); setOpen(true); }
   function hide() { clearTimeout(timer.current); timer.current = setTimeout(() => setOpen(false), 130); }
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -43,7 +44,7 @@ export function InfoPort({ direction, height, ports, checks = NO_CHECKS, hint, c
   }, [open]);
   const incompatible = checks.some(check => check.status === "incompatible");
   const uncertain = checks.some(check => check.status === "unknown");
-  const status = incompatible ? "不兼容" : uncertain ? "运行时确认" : checks.length ? "契约兼容" : "端口契约";
+  const status = incompatible ? t("不兼容") : uncertain ? t("运行时确认") : checks.length ? t("契约兼容") : t("端口契约");
   return <div ref={anchor} className={`node-port-row ${direction}-row`} style={{ height }}
     onMouseEnter={show} onMouseLeave={hide} onPointerDown={event => { if (!(event.target as HTMLElement).closest("button")) setOpen(false); }}>
     <button className="port-info-trigger nodrag" aria-label={title} aria-describedby={open ? id : undefined}
@@ -59,14 +60,14 @@ export function InfoPort({ direction, height, ports, checks = NO_CHECKS, hint, c
       onMouseEnter={show} onMouseLeave={hide}>
       <header><span><Info size={15} />{title}</span><small className={incompatible ? "error-text" : ""}>{status}</small></header>
       <div className="info-popover-content">
-        {ports === undefined ? <p>正在分析契约…</p> : ports.length === 0 ? <p>{source ? "Reader 根据文件格式输出数据与 info；连线前不加载文件内容。" : "此算子生成报告或图表，没有数据输出端口。"}</p> : ports.map((port, index) =>
+        {ports === undefined ? <p>{t("正在分析契约…")}</p> : ports.length === 0 ? <p>{source ? t("Reader 根据文件格式输出数据与 info；连线前不加载文件内容。") : t("此算子生成报告或图表，没有数据输出端口。")}</p> : ports.map((port, index) =>
           <section key={index}>
-            {(ports.length > 1 || labels?.[index]) && <h4>{direction === "input" ? "输入" : "输出"} {index + 1}{labels?.[index] ? ` · ${labels[index]}` : ""}</h4>}
+            {(ports.length > 1 || labels?.[index]) && <h4>{direction === "input" ? t("输入") : t("输出")} {index + 1}{labels?.[index] ? ` · ${labels[index]}` : ""}</h4>}
             <dl>{contractRows(port).map(([field, value], index) => <div key={`${field}-${index}`}><dt>{field}</dt><dd>{value}</dd></div>)}</dl>
           </section>)}
         {checks.filter(check => check.status !== "compatible").map(check => <p className={`contract-note ${check.status}`} key={check.id}>{check.reasons.join("；")}</p>)}
       </div>
-      <footer>结构与字段预检 · 实际数值在运行时校验</footer>
+      <footer>{t("结构与字段预检 · 实际数值在运行时校验")}</footer>
     </div>, document.body)}
   </div>;
 }

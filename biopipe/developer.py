@@ -91,11 +91,16 @@ class ArrayReader(Reader):
     import pprint
     parameters = declaration.pop('parameters_schema')
     declaration.pop('entry_point')
-    definition = '    parameters_file = "parameters.json"\n    definition = ' + pprint.pformat(declaration, width=100, sort_dicts=False).replace('\n', '\n    ') + '\n'
+    definition = '    parameters_file = "parameters.json"\n    localization_file = "localization.json"\n    definition = ' + pprint.pformat(declaration, width=100, sort_dicts=False).replace('\n', '\n    ') + '\n'
     source = source.replace(f'class {cls}(' + ('Reader' if reader else 'Operator') + '):\n',
                             f'class {cls}(' + ('Reader' if reader else 'Operator') + '):\n' + definition)
     (folder / '__init__.py').write_text(source, encoding='utf-8')
     (folder / 'parameters.json').write_text(json.dumps(parameters, indent=2)+'\n', encoding='utf-8')
+    language_pack = {'default_locale': 'en', 'translations': {
+        'en': {'title': declaration['title'], 'parameters': {} if reader else {'factor': {'title': 'Scale factor'}}},
+        'zh-CN': {'title': '数组读取' if reader else '矩阵缩放', 'parameters': {} if reader else {'factor': {'title': '缩放系数'}}},
+    }}
+    (folder / 'localization.json').write_text(json.dumps(language_pack, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
     (folder / '__init__.md').write_text('''# Example extension
 
 ## Purpose

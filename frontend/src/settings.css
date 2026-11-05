@@ -54,3 +54,9 @@
 .theme-system { background:linear-gradient(110deg, #fafafa 50%, #171719 50%); }.theme-system i { background:#8888; }
 .appearance-settings input:checked + .theme-swatch { border-color:var(--text-primary); box-shadow:0 0 0 3px var(--surface-hover); }
 @media (max-width:720px) { .settings-page { width:calc(100vw - 20px); height:calc(100dvh - 24px); }.settings-layout { grid-template-columns:1fr; grid-template-rows:auto minmax(0, 1fr); }.settings-navigation { display:flex; padding:8px; border-right:0; border-bottom:1px solid var(--separator); }.settings-navigation button { width:auto; margin:0; padding:8px; font-size:12px; }.settings-content { padding:20px; }.default-viewer-form { grid-template-columns:1fr; }.default-viewer-form > button { justify-self:end; }.settings-page .remote-fields { grid-template-columns:1fr; } }
+
+.language-settings { border:0; padding:0; max-width:480px; }
+.language-settings legend { font-size:14px; margin-bottom:16px; }
+.language-settings label { display:flex; align-items:center; gap:12px; border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; margin-bottom:10px; cursor:pointer; }
+.language-settings label:has(input:checked) { border-color:var(--text-primary); background:var(--surface-hover); }
+.language-settings input { accent-color:var(--text-primary); }.language-settings label svg { margin-left:auto; }

@@ -1,3 +1,4 @@
+import {t} from './i18n';
 import { api, ApiError } from "./api";
 import type { Workspace } from "./types";
 
@@ -27,7 +28,7 @@ export function recoverWorkspace(base: Workspace, local: Workspace, remote: Work
         graph: {...structuredClone(doc.graph), name: `${doc.graph.name} · Recovered edits`}});
     }
   }
-  if (result.documents.length > 20) throw Error("恢复的编辑超过 20 个标签页。请先导出当前画布，再重新连接。");
+  if (result.documents.length > 20) throw Error(t("恢复的编辑超过 20 个标签页。请先导出当前画布，再重新连接。"));
   return result;
 }
 
@@ -92,7 +93,7 @@ export class CanvasBridge {
         this.receive({...state, workspace: merged});
         this.acknowledged = structuredClone(state.workspace);
       }
-      this.notify("画布同时发生修改，冲突的本地编辑已保留在恢复标签页中。");
+      this.notify(t("画布同时发生修改，冲突的本地编辑已保留在恢复标签页中。"));
     }
   }
 
@@ -132,7 +133,7 @@ export class CanvasBridge {
     return this.serialized(async () => {
       await this.flushNow();
       await this.publishPresence();
-      if (!this.state) throw Error("Agent 接口尚未就绪");
+      if (!this.state) throw Error(t("Agent 接口尚未就绪"));
       return api.agent(`/sessions/${this.state.id}/context?scope=selection`);
     });
   }

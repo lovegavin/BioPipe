@@ -63,6 +63,8 @@ def execution_digest(wheel):
     with zipfile.ZipFile(wheel) as archive:
         entries = {name: archive.read(name) for name in archive.namelist() if not name.endswith('/')}
     excluded = {archive_path(entries, entry['expected']) for entry in records if entry['expected'].get('documentation')}
+    from biopipe_sdk.localization import archive_path as language_path
+    excluded.update(language_path(entries, entry['expected']) for entry in records if entry['expected'].get('localization'))
     import ast
     from pathlib import PurePosixPath
     for record in records:
@@ -87,6 +89,8 @@ def execution_digest(wheel):
             value = json.loads(content)
             for descriptor in value['descriptors']:
                 descriptor.pop('documentation', None)
+                descriptor.pop('localization', None)
+                descriptor.pop('protocol_revision', None)
                 descriptor.pop('parameters_schema', None)
                 descriptor['declaration_sha'] = declaration_hash(descriptor)
             content = json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')

@@ -1,3 +1,4 @@
+import {t} from './i18n';
 import type { Catalog, DataSource, Graph, GraphNode, ReaderSpec, TargetRef } from './types';
 import { makeNode } from './graph';
 
@@ -24,7 +25,7 @@ export function readerMatches(reader: ReaderSpec, search: string): boolean {
 export function rePointSource(previous: DataSource, uploaded: DataSource, catalog: Catalog): DataSource {
   const before = readerForSource(catalog, previous), after = readerForSource(catalog, uploaded);
   const source: DataSource = {...uploaded, location: {kind: 'local'}};
-  if (previous.reader && !before) throw Error(`Reader ${previous.reader} 未安装。`);
+  if (previous.reader && !before) throw Error(t("Reader {v0} 未安装。", {v0: previous.reader}));
   if (previous.reader && before) source.reader = previous.reader;
   if (!before || before.id !== (source.reader || after?.id)) return source;
   const fileKeys = new Set((before.parameters ?? []).filter(p => p.path_kind).map(p => p.key));
@@ -33,7 +34,7 @@ export function rePointSource(previous: DataSource, uploaded: DataSource, catalo
 }
 
 export function renameSourceDimensions(source: DataSource, dims: string[]): DataSource {
-  if (!dims.length || new Set(dims).size !== dims.length) throw Error('维度名称不能为空或重复。');
+  if (!dims.length || new Set(dims).size !== dims.length) throw Error(t("维度名称不能为空或重复。"));
   const renamed = new Map(source.dims.map((name, index) => [name, dims[index]]));
   const labels: Record<string, unknown> = {};
   dims.forEach((name, index) => {

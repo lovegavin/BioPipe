@@ -1,3 +1,4 @@
+import {t, getLocale} from './i18n';
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowDown,
@@ -99,7 +100,7 @@ function Scatter({ preview }: { preview: Preview }) {
       Number.isFinite(p[1]),
   );
   if (!points.length)
-    return <div className="mini-empty">没有可绘制的有限数值</div>;
+    return <div className="mini-empty">{t("没有可绘制的有限数值")}</div>;
   const xs = points.map((p) => p[0]),
     ys = points.map((p) => p[1]);
   const minX = Math.min(...xs),
@@ -113,7 +114,7 @@ function Scatter({ preview }: { preview: Preview }) {
       className="scatter"
       viewBox="0 0 340 161"
       role="img"
-      aria-label={`前两列散点图，共 ${points.length} 个预览点`}
+      aria-label={t("前两列散点图，共 {v0} 个预览点", {v0: points.length})}
     >
       {[25, 61, 97, 133].map((v) => (
         <line key={v} x1="34" x2="310" y1={v} y2={v} stroke="var(--border)" />
@@ -134,12 +135,8 @@ function Scatter({ preview }: { preview: Preview }) {
           </title>
         </circle>
       ))}
-      <text x="172" y="155" textAnchor="middle">
-        第 1 列
-      </text>
-      <text x="13" y="79" textAnchor="middle" transform="rotate(-90 13 79)">
-        第 2 列
-      </text>
+      <text x="172" y="155" textAnchor="middle">{t("第 1 列")}</text>
+      <text x="13" y="79" textAnchor="middle" transform="rotate(-90 13 79)">{t("第 2 列")}</text>
       <text x="34" y="146" textAnchor="middle" className="tick">
         {minX.toFixed(1)}
       </text>
@@ -277,14 +274,14 @@ export function Results({
   const counts = job?.spill_counts || spillCounts(events);
   const completed = events.filter((e) => e.event === "step_finished").length;
   return (
-    <section className="results-panel" aria-label="运行结果与日志">
+    <section className="results-panel" aria-label={t("运行结果与日志")}>
       <div className="results-heading">
-        <div className="result-tabs" role="tablist" aria-label="结果面板">
+        <div className="result-tabs" role="tablist" aria-label={t("结果面板")}>
           {[
-            ["results", "结果"],
-            ["logs", "运行日志"],
-            ['tasks', '任务'],
-            ["history", "运行记录"],
+            ["results", t("结果")],
+            ["logs", t("运行日志")],
+            ['tasks', t("任务")],
+            ["history", t("运行记录")],
           ].map(([key, label]) => (
             <button
               key={key}
@@ -306,20 +303,20 @@ export function Results({
             <>
               <span className={`status-dot ${job.status}`} />
               <span>
-                {stale ? "上次运行 · 画布已修改" : statusLabel[job.status]}
+                {stale ? t("上次运行 · 画布已修改") : t(statusLabel[job.status])}
                 {job.status === "running"
-                  ? ` · ${completed}/${job.order?.length || 0} 步`
+                  ? t(" · {v0}/{v1} 步", {v0: completed, v1: job.order?.length || 0})
                   : ""}
               </span>
               <span className="mono run-id">{job.id.slice(-8)}</span>
             </>
           ) : (
-            <span>未运行</span>
+            <span>{t("未运行")}</span>
           )}
           <button
             className={`icon-button result-toggle ${collapsed ? "closed" : ""}`}
-            aria-label={collapsed ? "展开结果面板" : "收起结果面板"}
-            title={collapsed ? "展开结果面板" : "收起结果面板"}
+            aria-label={collapsed ? t("展开结果面板") : t("收起结果面板")}
+            title={collapsed ? t("展开结果面板") : t("收起结果面板")}
             onClick={onToggle}
           >
             <CaretDown size={14} />
@@ -337,11 +334,11 @@ export function Results({
                   <button
                     className="history-name"
                     onClick={() => void openJob(item.id, 'results')}
-                    aria-label={`查看结果 ${item.name}`}
+                    aria-label={t("查看结果 {v0}", {v0: item.name})}
                   >
                     <strong>{item.name}</strong>
                     <small>
-                      {new Date(item.created_at).toLocaleString("zh-CN", {
+                      {new Date(item.created_at).toLocaleString(getLocale(), {
                         month: "2-digit",
                         day: "2-digit",
                         hour: "2-digit",
@@ -351,15 +348,14 @@ export function Results({
                     </small>
                   </button>
                   <span className={`status-label ${item.status}`}>
-                    {statusLabel[item.status]}
+                    {t(statusLabel[item.status])}
                   </span>
                   <div className="history-actions">
                   <button className="text-button history-view" onClick={() => void openJob(item.id, 'results')}>
-                    <ChartScatter size={15}/>{isActiveJob(item) ? '查看进度' : '查看结果'}
+                    <ChartScatter size={15}/>{isActiveJob(item) ? t("查看进度") : t("查看结果")}
                   </button>
                   <button className="text-button" onClick={() => void openJob(item.id, 'logs')}>
-                    <Terminal size={15}/>查看日志
-                  </button>
+                    <Terminal size={15}/>{t("查看日志")}</button>
                   <button
                     className="text-button"
                     onClick={() => {
@@ -368,16 +364,14 @@ export function Results({
                         .then(onRestore)
                         .catch((e) => onError(e.message));
                     }}
-                  >
-                    载入画布
-                  </button>
+                  >{t("载入画布")}</button>
                   </div>
                 </div>
               ))
             ) : (
               <div className="results-empty">
                 <Clock size={29} weight="light" />
-                <p>暂无运行记录</p>
+                <p>{t("暂无运行记录")}</p>
               </div>
             )}
           </div>
@@ -392,19 +386,19 @@ export function Results({
                     key={`${event.time}-${index}`}
                   >
                     <time>
-                      {new Date(event.time).toLocaleTimeString("zh-CN", {
+                      {new Date(event.time).toLocaleTimeString(getLocale(), {
                         hour12: false,
                       })}
                     </time>
-                    <strong>{eventNames[event.event] || event.event}</strong>
+                    <strong>{t(eventNames[event.event] || event.event)}</strong>
                     <span>
                       {event.name || ""}
                       {event.message ? `${event.name ? " · " : ""}${event.message}` : ""}
                       {event.reason
-                        ? ` · ${reasons[event.reason] || event.reason}`
+                        ? ` · ${t(reasons[event.reason] || event.reason)}`
                         : ""}
                       {event.event === "step_plan"
-                        ? ` · ${event.mode === "stream" ? "分块执行" : "整体执行"}`
+                        ? ` · ${event.mode === "stream" ? t("分块执行") : t("整体执行")}`
                         : ""}
                       {event.error ? ` · ${event.error}` : ""}
                     </span>
@@ -413,24 +407,24 @@ export function Results({
               ) : !job?.error && !consoleText ? (
                 <div className="results-empty">
                   <Terminal size={29} weight="light" />
-                  <p>暂无运行日志</p>
+                  <p>{t("暂无运行日志")}</p>
                 </div>
               ) : null}
               {consoleText && (
                 <details className="process-console" key={job?.id} open={job?.status === "failed" || !events.length}>
-                  <summary><Terminal size={16} />进程输出{consoleTruncated ? " · 最近输出" : ""}</summary>
+                  <summary><Terminal size={16} />{t("进程输出")}{consoleTruncated ? t(" · 最近输出") : ""}</summary>
                   <pre>{consoleText}</pre>
                 </details>
               )}
             </div>
             <div className="resource-metrics">
-              <h3>存储事件</h3>
+              <h3>{t("存储事件")}</h3>
               {(
                 [
-                  ["planned", "规划落盘"],
-                  ["emergency", "紧急溢写"],
-                  ["correction", "大小校正"],
-                  ["final", "产物保存"],
+                  ["planned", t("规划落盘")],
+                  ["emergency", t("紧急溢写")],
+                  ["correction", t("大小校正")],
+                  ["final", t("产物保存")],
                 ] as const
               ).map(([key, label]) => (
                 <div key={key}>
@@ -444,9 +438,7 @@ export function Results({
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <ArrowSquareOut size={14} />
-                  完整进程日志
-                </a>
+                  <ArrowSquareOut size={14} />{t("完整进程日志")}</a>
               )}
             </div>
           </div>
@@ -456,18 +448,16 @@ export function Results({
               <Play size={23} weight="light" />
             </div>
             <div>
-              <h3>暂无运行结果</h3>
+              <h3>{t("暂无运行结果")}</h3>
             </div>
           </div>
         ) : job.error && !hasOutputs ? (
           <div className="run-error">
             <WarningCircle size={24} />
             <div>
-              <h3>{statusLabel[job.status]}</h3>
+              <h3>{t(statusLabel[job.status])}</h3>
               <p>{job.error}</p>
-              <button className="text-button" onClick={() => onTab("logs")}>
-                查看运行日志
-              </button>
+              <button className="text-button" onClick={() => onTab("logs")}>{t("查看运行日志")}</button>
             </div>
           </div>
         ) : isActiveJob(job) ? (
@@ -476,9 +466,9 @@ export function Results({
               <ChartScatter size={24} />
             </div>
             <div>
-              <h3>{statusLabel[job.status]}</h3>
+              <h3>{t(statusLabel[job.status])}</h3>
               <TaskProgress job={job}/>
-              <button className="text-button" onClick={() => onTab('tasks')}>查看所有任务</button>
+              <button className="text-button" onClick={() => onTab('tasks')}>{t("查看所有任务")}</button>
             </div>
           </div>
         ) : (
@@ -486,14 +476,13 @@ export function Results({
             <div className="artifact-sidebar">
               {job.remote && <div className="result-location" title={`${job.remote.workspace}/.studio/jobs/${job.remote.job_id}`}>{job.remote.name}</div>}
               {savedFigures.length > 0 && <>
-                <div className="section-caption">输出图表 <span>{savedFigures.length}</span></div>
+                <div className="section-caption">{t("输出图表")} <span>{savedFigures.length}</span></div>
                 {savedFigures.map(item => <div className="saved-figure" key={`${item.index}:${item.id}`}>
                   <button className="text-button" onClick={() => void report(item.index, item.id)}><ChartScatter size={15}/>{item.title}</button>
                   <FigureLinks jobId={job.id} step={item.index} formats={item.formats} figureId={item.id === "__legacy__" ? undefined : item.id} compact/>
                 </div>)}
               </>}
-              <div className="section-caption">
-                数据产物 <span>{artifacts.length}</span>
+              <div className="section-caption">{t("数据产物")}<span>{artifacts.length}</span>
               </div>
               {artifacts.map((artifact) => (
                 <button
@@ -516,7 +505,7 @@ export function Results({
                   </span>
                 </button>
               ))}
-              <div className="section-caption">步骤报告</div>
+              <div className="section-caption">{t("步骤报告")}</div>
               {job.summary?.steps.map((item, index) => (
                 <button
                   className={`step-option ${step === index ? "active" : ""}`}
@@ -531,11 +520,11 @@ export function Results({
               ))}
             </div>
             <div className="preview-content">
-              {job.error && <div className="result-warning" role="alert"><WarningCircle size={16}/><span>{job.error}</span><button className="text-button" onClick={() => onTab('logs')}>查看日志</button></div>}
-              {previewError ? <div className="result-warning" role="alert"><WarningCircle size={18}/><span>{previewError}</span><button className="text-button" onClick={() => step >= 0 ? void report(step) : setReload(value => value + 1)}>重试</button></div> : step >= 0 ? (
+              {job.error && <div className="result-warning" role="alert"><WarningCircle size={16}/><span>{job.error}</span><button className="text-button" onClick={() => onTab('logs')}>{t("查看日志")}</button></div>}
+              {previewError ? <div className="result-warning" role="alert"><WarningCircle size={18}/><span>{previewError}</span><button className="text-button" onClick={() => step >= 0 ? void report(step) : setReload(value => value + 1)}>{t("重试")}</button></div> : step >= 0 ? (
                 <>
                   <div className="preview-heading">
-                    <strong>步骤 {step + 1} · 分析报告</strong>
+                    <strong>{t("步骤")} {step + 1} {t("· 分析报告")}</strong>
                     <a
                       className="text-button"
                       href={api.url(
@@ -552,7 +541,7 @@ export function Results({
                     <pre className="report-json">
                       {detail
                         ? JSON.stringify(detail, null, 2)
-                        : "正在读取报告…"}
+                        : t("正在读取报告…")}
                     </pre>
                   )}
                 </>
@@ -572,7 +561,7 @@ export function Results({
                       )}
                     >
                       <ArrowDown size={14} />
-                      {preview.format ? "下载文件清单" : "下载 .npy"}
+                      {preview.format ? t("下载文件清单") : t("下载 .npy")}
                     </a>
                   </div>
                   <div className="data-preview">
@@ -584,19 +573,17 @@ export function Results({
                     {preview.points.length > 0 && (
                       <div className="chart-preview">
                         <Scatter preview={preview} />
-                        <small>数据预览 · 前两列 · 最多 200 行</small>
+                        <small>{t("数据预览 · 前两列 · 最多 200 行")}</small>
                       </div>
                     )}
                     {!preview.format && <div className="table-preview">
                       <table>
-                        <caption className="sr-only">
-                          产物预览，最多 20 行与 8 列
-                        </caption>
+                        <caption className="sr-only">{t("产物预览，最多 20 行与 8 列")}</caption>
                         <thead>
                           <tr>
                             <th>#</th>
                             {preview.rows[0]?.map((_, i) => (
-                              <th key={i}>列 {i + 1}</th>
+                              <th key={i}>{t("列")} {i + 1}</th>
                             ))}
                           </tr>
                         </thead>
@@ -621,30 +608,30 @@ export function Results({
               ) : (
                 <div className="mini-empty">
                   {loading
-                    ? "正在读取产物…"
-                    : "本次运行没有保存可查看的产物。"}
+                    ? t("正在读取产物…")
+                    : t("本次运行没有保存可查看的产物。")}
                 </div>
               )}
             </div>
             <div className="resource-metrics">
-              <h3>内存记录</h3>
+              <h3>{t("内存记录")}</h3>
               <div>
-                <span>固定数据预算</span>
+                <span>{t("固定数据预算")}</span>
                 <strong>{bytes(job.report?.budget_bytes)}</strong>
               </div>
               <div>
-                <span>数据峰值</span>
+                <span>{t("数据峰值")}</span>
                 <strong>{bytes(job.report?.managed_peak_bytes)}</strong>
               </div>
               <div>
-                <span>进程 RSS 峰值</span>
+                <span>{t("进程 RSS 峰值")}</span>
                 <strong>{bytes(job.report?.sampled_rss_peak_bytes)}</strong>
               </div>
               <div>
-                <span>紧急溢写</span>
+                <span>{t("紧急溢写")}</span>
                 <strong>{counts.emergency}</strong>
               </div>
-              <small>RSS 包含运行环境；数据峰值不含全部进程开销。</small>
+              <small>{t("RSS 包含运行环境；数据峰值不含全部进程开销。")}</small>
             </div>
           </div>
         )}

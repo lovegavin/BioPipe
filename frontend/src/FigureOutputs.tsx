@@ -1,3 +1,4 @@
+import {t} from './i18n';
 import {ArrowSquareOut} from '@phosphor-icons/react';
 import {api} from './api';
 
@@ -18,10 +19,10 @@ export function figureUrl(jobId: string, step: number, format: string, figureId?
 }
 
 export function FigureLinks({jobId, step, formats, figureId, compact = false}: {jobId: string; step: number; formats: string[]; figureId?: string; compact?: boolean}) {
-  return <div className="figure-links" aria-label="已保存图表">
+  return <div className="figure-links" aria-label={t("已保存图表")}>
     {formats.map(format => <a key={format} className="text-button" href={figureUrl(jobId, step, format, figureId)}
-      target="_blank" rel="noreferrer" aria-label={`打开 ${format.toUpperCase()}`}>
-      {!compact && <><ArrowSquareOut size={13}/>打开 </>}{format.toUpperCase()}</a>)}
+      target="_blank" rel="noreferrer" aria-label={t("打开 {v0}", {v0: format.toUpperCase()})}>
+      {!compact && <><ArrowSquareOut size={13}/>{t("打开")} </>}{format.toUpperCase()}</a>)}
   </div>;
 }
 
@@ -31,11 +32,11 @@ export function figureGroups(report: Record<string, unknown> | null | undefined)
   if (Array.isArray(report.figures)) for (const file of report.figures) {
     if (!file || typeof file !== 'object' || !supported.has(file.format)) continue;
     const id = typeof file.id === 'string' ? file.id : '__legacy__';
-    const group = groups.get(id) || {id, title: String(file.title || report.title || report.name || '输出图表'), formats: [] as string[]};
+    const group = groups.get(id) || {id, title: String(file.title || report.title || report.name || t("输出图表")), formats: [] as string[]};
     if (!group.formats.includes(file.format)) group.formats.push(file.format);
     groups.set(id, group);
   }
-  if (!groups.size && figureFormats(report).length) return [{id: '__legacy__', title: String(report.title || report.name || '输出图表'), formats: figureFormats(report)}];
+  if (!groups.size && figureFormats(report).length) return [{id: '__legacy__', title: String(report.title || report.name || t("输出图表")), formats: figureFormats(report)}];
   return [...groups.values()];
 }
 
@@ -45,7 +46,7 @@ export function FigureGallery({jobId, step, report, focusId}: {jobId: string; st
     const preview = group.formats.find(f => ['png','svg','jpg','jpeg','webp'].includes(f));
     return <section className="figure-preview" key={group.id}>
       <h3>{group.title}</h3>
-      {preview && <a className="figure-image-link" href={figureUrl(jobId, step, preview, id)} target="_blank" rel="noreferrer" aria-label={`打开 ${group.title} 原图`}>
+      {preview && <a className="figure-image-link" href={figureUrl(jobId, step, preview, id)} target="_blank" rel="noreferrer" aria-label={t("打开 {v0} 原图", {v0: group.title})}>
         <img loading="lazy" src={figureUrl(jobId, step, preview, id)} alt={group.title}/>
       </a>}
       <FigureLinks jobId={jobId} step={step} formats={group.formats} figureId={id}/>

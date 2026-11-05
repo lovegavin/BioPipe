@@ -1,3 +1,4 @@
+import {t} from './i18n';
 import {defaultTarget, executionConfig, nodeTarget} from './execution';
 import type {Graph, RemoteStatus, TargetRef} from './types';
 
@@ -27,5 +28,5 @@ export function targetPlatformWarning(systems: string[] | undefined, graph: Grap
   if (executionConfig(graph).mode === 'auto') return '';
   const target = nodeId ? nodeTarget(graph, nodeId) : defaultTarget(graph);
   return supportsTarget(systems, target, servers, localSystem) === false
-    ? `当前指定的运行环境不支持此算子；需要 ${supportedPlatformLabel(systems)}。` : '';
+    ? t("当前指定的运行环境不支持此算子；需要 {v0}。", {v0: supportedPlatformLabel(systems)}) : '';
 }

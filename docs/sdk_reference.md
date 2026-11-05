@@ -163,3 +163,12 @@ Protocol v3 now supports the public figure-artifact SDK and optional validated
 `resources.r` declarations. Multiple figures retain distinct IDs across local and
 SSH result viewing. See [Static plotting adapters](static_plotting.md) for the
 API, dependency lifecycle, frozen JSON parameters, memory limits and examples.
+
+## Optional localized presentation (SDK 3.5)
+
+Operators and Readers can declare `localization_file = "localization.json"`.
+The adjacent language pack is validated and indexed statically; it never changes
+parameter keys, defaults, port names, resource capabilities or frozen workflow
+values. Existing v3 extensions do not need migration. Include the JSON in package
+data and rebuild the index after editing translations.
+See [language-pack format and examples](localization.md).

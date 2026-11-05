@@ -175,7 +175,7 @@ def test_unavailable_default_never_silently_launches_another_viewer(service, tmp
     with pytest.raises(CommandError, match='Configure'):
         viewer.open('j', 'a', 'data')
     # A removed custom entry remains visible as an unavailable preference.
-    module.atomic_json(viewer.defaults_path, {'.bed': 'removed-app', '.custom': 'removed-app'})
+    viewer.user_config.update(lambda config: config['viewers'].update(defaults={'.bed': 'removed-app', '.custom': 'removed-app'}))
     with pytest.raises(CommandError, match='Settings'):
         viewer.open('j', 'a', 'data')
     viewer.set_default('.custom', None)

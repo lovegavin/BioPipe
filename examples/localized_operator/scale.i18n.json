@@ -1,0 +1,25 @@
+{
+  "default_locale": "en",
+  "translations": {
+    "en": {
+      "title": "Scale matrix",
+      "description": "Multiply values by a scalar and retain axis metadata.",
+      "parameters": {
+        "scale_factor": {
+          "title": "Scale factor",
+          "description": "Multiplier applied to numeric values."
+        }
+      }
+    },
+    "zh-CN": {
+      "title": "矩阵缩放",
+      "description": "按系数缩放数值，并保留维度元数据。",
+      "parameters": {
+        "scale_factor": {
+          "title": "缩放系数",
+          "description": "应用于数值的乘数。"
+        }
+      }
+    }
+  }
+}

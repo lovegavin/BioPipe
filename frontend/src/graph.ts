@@ -1,4 +1,5 @@
-import type { Catalog, Graph, GraphEdge, GraphNode, Operator, RouteDefinition } from "./types";
+import {t} from './i18n';
+import type { Catalog, Graph, GraphEdge, GraphNode, Operator, ReaderSpec, RouteDefinition } from "./types";
 
 export const clone = <T>(value: T): T => structuredClone(value);
 export function runSignature(graph: Graph): string {
@@ -40,7 +41,7 @@ export function normalizeGraph(value: Graph): Graph {
     !Array.isArray(value.nodes) ||
     !Array.isArray(value.edges)
   )
-    throw new Error("需要 BioPipe Studio 工作流 JSON。");
+    throw new Error(t("需要 BioPipe Studio 工作流 JSON。"));
   return {
     schema_version: value.schema_version,
     interface: value.interface,
@@ -48,7 +49,7 @@ export function normalizeGraph(value: Graph): Graph {
     params: value.params || {},
     runtime: value.runtime || {},
     manifest_extra: value.manifest_extra || {},
-    name: value.name || "我的工作流",
+    name: value.name || t("我的工作流"),
     base_dir: value.base_dir || ".",
     memory: {
       ...value.memory,
@@ -57,7 +58,7 @@ export function normalizeGraph(value: Graph): Graph {
     },
     nodes: value.nodes.map((node) => ({
       ...node,
-      title: node.title || node.operator || "输入数据",
+      title: node.title || node.operator || t("输入数据"),
       params: node.params || {},
       input_count: node.input_count ?? 1,
     })),
@@ -95,7 +96,7 @@ export function executionOrder(graph: Graph): string[] {
     const node = graph.nodes.find(
       (node) => !seen.has(node.id) && indegree.get(node.id) === 0,
     );
-    if (!node) throw new Error("工作流中存在环路或失效连线。");
+    if (!node) throw new Error(t("工作流中存在环路或失效连线。"));
     seen.add(node.id);
     order.push(node.id);
     for (const edge of graph.edges)
@@ -146,7 +147,7 @@ export function makeNode(
     id,
     kind: spec ? "operator" : "source",
     operator: spec?.id,
-    title: spec?.title || "输入数据",
+    title: spec?.title || t("输入数据"),
     position,
     input_count: spec?.inputs_arity === "*" ? 2 : (spec?.inputs_arity ?? 0),
     params: spec
@@ -179,7 +180,7 @@ export function specFor(
   return catalog.operators.find((o) => o.id === node.operator);
 }
 export function routeSpec(route: RouteDefinition): Operator {
-  return { id: route.id, title: route.name, category: "路线算子", description: `${route.graph.nodes.filter(n => n.kind !== "source").length} 个内部节点 · v${route.version}`,
+  return { id: route.id, title: route.name, category: t("路线算子"), description: t("{v0} 个内部节点 · v{v1}", {v0: route.graph.nodes.filter(n => n.kind !== "source").length, v1: route.version}),
     icon: "Stack", inputs_arity: route.graph.interface?.inputs.length || 0,
     outputs: route.graph.interface?.outputs.map(p => p.label) || [], output_parameter: null,
     resources: {memory_modes: ["adaptive"], supports_cuda: false}, parameters: [] };
@@ -193,9 +194,13 @@ export function retainedOutputs(node: GraphNode, spec?: Operator): string[] {
     ? Array.from({length: outputCount(node, spec)}, (_, i) => `${node.id}__out_${i + 1}`)
     : spec?.output_parameter ? [String(node.params.output || node.id)] : spec?.outputs || [];
 }
-export function displayTitle(node: GraphNode, spec?: Operator): string {
+export function displayTitle(node: GraphNode, spec?: Operator, reader?: ReaderSpec): string {
+  if (node.kind === 'source') {
+    if (reader?.localization && (node.title === reader.id || node.title === reader.title || reader.title_aliases?.includes(node.title)))
+      return reader.title || node.title;
+    return ['输入数据', 'Input data'].includes(node.title) ? t('输入数据') : node.title;
+  }
   if (
-    node.kind === "source" ||
     !spec ||
     (node.title !== spec.title &&
       node.title !== spec.id &&

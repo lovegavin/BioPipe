@@ -1,3 +1,4 @@
+import {t} from './i18n';
 import { useRef } from "react";
 import type { PanelSide } from "./panelLayout";
 
@@ -9,9 +10,9 @@ export function PanelResizeHandle({ side, width, min, max, onResize, onReset, on
   const direction = side === "library" ? 1 : -1;
   const resize = (value: number) => onResize(Math.round(Math.max(min, Math.min(max, value))));
   return <div className={`panel-resize-handle resize-${side}`} role="separator" tabIndex={0}
-    aria-label={side === "library" ? "调整算子库宽度" : "调整检查器宽度"}
+    aria-label={side === "library" ? t("调整算子库宽度") : t("调整检查器宽度")}
     aria-orientation="vertical" aria-valuemin={min} aria-valuemax={max} aria-valuenow={width}
-    aria-valuetext={`${width} 像素`} title="拖动调整宽度 · 双击恢复自动 · 方向键微调"
+    aria-valuetext={t("{v0} 像素", {v0: width})} title={t("拖动调整宽度 · 双击恢复自动 · 方向键微调")}
     onPointerDown={e => {
       if (e.button !== 0) return;
       e.preventDefault(); e.currentTarget.focus(); e.currentTarget.setPointerCapture(e.pointerId);

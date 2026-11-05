@@ -17,9 +17,16 @@ Use the toolbar gear to open **Settings**. The left navigation contains:
   locations. Program rows expand when needed; results retain a compact **Open**
   button and an alternative-viewer menu. See [result viewers](result_viewers.md).
 - **Appearance:** light, dark or system theme, using the existing saved preference.
+- **Language:** Simplified Chinese, English or the system language. Operator
+  language packs are optional; untranslated operators keep their original text.
+
+Language, theme and viewer preferences share `workspace/.studio/config.json`
+inside the selected profile. Each change merges its fields atomically; switching
+the desktop port or restarting does not reset these choices. See
+[languages and library management](localization.md).
 
 Switching sections retains unfinished form entries. Escape or Close returns to
-the canvas; connection/installation and preference writes must finish or be
+the canvas; connection/installation operations and viewer writes must finish or be
 cancelled before closing. Settings never starts a workflow. Memory budgets and
 execution assignments remain in each workflow's execution settings.
 
@@ -81,6 +88,7 @@ Python to resolve it. The default does not use AppData or depend on cwd.
   logs/desktop-YYYYMMDD.log     startup/backend/shutdown logs
   port.txt                     last preferred loopback port
   workspace/.studio/
+    config.json                language, theme and viewer preferences
     operators.json             generated catalog
     workflows/
       workspace.json           open/closed pages and view preferences
@@ -98,7 +106,9 @@ Python to resolve it. The default does not use AppData or depend on cwd.
 BioPipe registries are ordinary JSON files; discovery reads, but never modifies,
 the Windows registry.
 First launch installs GWAS, RNA-seq DE, Proteomics DE, survival and 16S microbiome templates. Saving
-a graph does not register it: select saved routes with the library plus button.
+a graph does not register it: the library plus button opens **Add operators**,
+where saved workflows and ordinary operator packages can both be added. The
+existing footer entry opens **Manage library** in the same window.
 
 Startup reads the selected profile without searching or importing other directories.
 For v0.4.1 data, close Studio and use [explicit migration](migration_v2.md).

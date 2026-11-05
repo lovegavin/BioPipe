@@ -170,3 +170,12 @@ biopipe plugin install examples/resource_plugin/dist/biopipe_resource_example-0.
 The integration tests build real wheels, install them into new generations and run
 fresh workers, covering builtin replacement, H5AD/MTX disk staging, streaming,
 compressed external-reader input, old locks, and enable/remove/restore behavior.
+
+## Optional localized presentation (SDK 3.5)
+
+Operators and Readers can declare `localization_file = "localization.json"`.
+The adjacent language pack is validated and indexed statically; it never changes
+parameter keys, defaults, port names, resource capabilities or frozen workflow
+values. Existing v3 extensions do not need migration. Include the JSON in package
+data and rebuild the index after editing translations.
+See [language-pack format and examples](localization.md).

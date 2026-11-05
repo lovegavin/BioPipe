@@ -1,3 +1,5 @@
+import {t, useLocale} from './i18n';
+import {getPreferences, setPreferences} from './preferences';
 import { PluginPanel } from "./PluginPanel";
 import { version as studioVersion } from "../package.json";
 import {
@@ -156,19 +158,15 @@ class ErrorBoundary extends Component<
     return this.state.failed ? (
       <div className="boot-state" role="status" aria-live="polite">
         <Dna size={36} />
-        <h1>界面需要重新加载</h1>
-        <p>草稿已保存在此浏览器。可以重新加载，或恢复示例画布。</p>
-        <button className="primary-button" onClick={() => location.reload()}>
-          重新加载
-        </button>
+        <h1>{t("界面需要重新加载")}</h1>
+        <p>{t("草稿已保存在此浏览器。可以重新加载，或恢复示例画布。")}</p>
+        <button className="primary-button" onClick={() => location.reload()}>{t("重新加载")}</button>
         <button
           className="text-button"
           onClick={() => {
             location.reload();
           }}
-        >
-          恢复示例
-        </button>
+        >{t("恢复示例")}</button>
       </div>
     ) : (
       this.props.children
@@ -176,6 +174,7 @@ class ErrorBoundary extends Component<
   }
 }
 function Studio() {
+  const locale = useLocale();
   const [bootstrap, setBootstrap] = useState<Bootstrap | null>(null),
     [bootError, setBootError] = useState("");
   const [graph, setGraph] = useState<Graph>(emptyGraph),
@@ -197,13 +196,13 @@ function Studio() {
   const chooseServer = (id: string) => {if (!busy) commit(current => withExecution(current, {...targetFromKey(id), profile_id: id || undefined}));};
   const browseRemote: BrowseRemote = (initial, onSelect, source, target, reader) => {
     const profileId = target?.kind === 'ssh' ? target.profile_id : selectedServerId || servers.find(server => server.connected)?.profile.id || servers[0]?.profile.id;
-    if (!profileId) {notify('请先连接服务器。'); return;}
+    if (!profileId) {notify(t("请先连接服务器。")); return;}
     setRemotePicker({profileId, initial, source, reader, onSelect: (path, data) => {
       const location = {kind: 'ssh' as const, profile_id: profileId};
       onSelect(path, data ? {...data, location} : undefined, location);
     }});
   };
-  const [pluginsOpen, setPluginsOpen] = useState(false);
+  const [pluginsOpen, setPluginsOpen] = useState<"manage" | "add" | null>(null);
   const [refreshingPlugins, setRefreshingPlugins] = useState(false);
   const [libraryState, setLibraryState] = useState<LibraryState>({disabled: [], hidden: []});
   const [showHidden, setShowHidden] = useState(false);
@@ -280,7 +279,7 @@ function Studio() {
       for (const reader of source!.readers || []) if (!readers.has(reader.id)) readers.set(reader.id, reader);
     }
     return presentCatalog({schema_version: 1, operators: [...operators.values()], readers: [...readers.values()]});
-  }, [bootstrap?.catalog, selectedServerId, servers]);
+  }, [bootstrap?.catalog, selectedServerId, servers, locale]);
   const inspectNode = useCallback((id: string | null) => {
     setSelected(id);
     setInspected(id);
@@ -311,7 +310,7 @@ function Studio() {
       void api.contracts(snapshot).then(value => {
         if (active && contractSignature(graphRef.current) === contractKey)
           setContractResult({ key: contractKey, value });
-      }).catch(error => { if (active) notify(`契约检查：${(error as Error).message}`); });
+      }).catch(error => { if (active) notify(t("契约检查：{v0}", {v0: (error as Error).message})); });
     }, 180);
     return () => { active = false; clearTimeout(timer); };
   }, [bootstrap, contractKey, notify]);
@@ -404,15 +403,15 @@ function Studio() {
       try {await bridge.tick();} catch (error) {if (alive) notify((error as Error).message);}
       if (alive) timer = setTimeout(() => void tick(), 350);
     };
-    void bridge.start().then(() => {if (alive) {setAgentReady(true); void tick();}}).catch(error => notify(`Agent 接口连接失败：${(error as Error).message}`));
+    void bridge.start().then(() => {if (alive) {setAgentReady(true); void tick();}}).catch(error => notify(t("Agent 接口连接失败：{v0}", {v0: (error as Error).message})));
     return () => {alive = false; clearTimeout(timer); bridge.stop(); if (agentBridge.current === bridge) agentBridge.current = null;};
   }, [readyForAgent, notify]);
   async function copyAgentContext() {
     try {
       const context = await agentBridge.current?.context();
-      if (!context) throw Error("Agent 接口尚未就绪");
+      if (!context) throw Error(t("Agent 接口尚未就绪"));
       await navigator.clipboard.writeText(JSON.stringify(context, null, 2));
-      notify("已复制选区上下文，可粘贴到自己的 agent。", "success"); setContextMenu(null);
+      notify(t("已复制选区上下文，可粘贴到自己的 agent。"), "success"); setContextMenu(null);
     } catch (error) {failure(error);}
   }
   function stashPage() {
@@ -437,13 +436,13 @@ function Studio() {
     for (const item of items) {
       const existing = item.workflow_id && pages.find(doc => doc.workflow_id === item.workflow_id && doc.workflow_version === item.workflow_version);
       if (existing) {focus = existing.id; continue;}
-      if (pages.length >= 20) {notify("最多同时打开 20 个页面，请先关闭部分页面。"); break;}
+      if (pages.length >= 20) {notify(t("最多同时打开 20 个页面，请先关闭部分页面。")); break;}
       const doc = {...item, graph: normalizeGraph(clone(item.graph)), id: `page_${crypto.randomUUID()}`};
       pages.push(doc); focus = doc.id;
     }
     activatePage(focus, pages);
   }
-  function newPage() {openPages([{graph: {...clone(emptyGraph), schema_version: 2, name: "未命名路线"}}]);}
+  function newPage() {openPages([{graph: {...clone(emptyGraph), schema_version: 2, name: t("未命名路线")}}]);}
   function closePage(id: string) {
     stashPage(); const index = documentsRef.current.findIndex(doc => doc.id === id);
     const doc = documentsRef.current[index]; if(!doc) return;
@@ -454,7 +453,7 @@ function Studio() {
   }
   function reopenPage() {
     const doc = closedDocuments.current[0]; if(!doc) return;
-    if (documentsRef.current.length >= 20) return notify("最多同时打开 20 个页面。");
+    if (documentsRef.current.length >= 20) return notify(t("最多同时打开 20 个页面。"));
     stashPage(); closedDocuments.current = closedDocuments.current.slice(1); activatePage(doc.id, [...documentsRef.current, doc]);
   }
   function openRoute(route: RouteDefinition) {
@@ -475,11 +474,11 @@ function Studio() {
         await new Promise(resolve => setTimeout(resolve, 800));
         operation = await api.pluginOperation(operation.id);
       }
-      if (operation.status === "failed") throw Error(operation.error || "算子库刷新失败");
+      if (operation.status === "failed") throw Error(operation.error || t("算子库刷新失败"));
       const latest = await api.catalog();
       setBootstrap(current => current ? {...current, catalog: latest} : current);
       const count = operation.result?.updated.length || 0;
-      notify(count ? "算子库已更新，即刻可用。" : "算子库已是最新。", "success");
+      notify(count ? t("算子库已更新，即刻可用。") : t("算子库已是最新。"), "success");
     } catch (error) {failure(error);}
     finally {setRefreshingPlugins(false);}
   }
@@ -488,14 +487,14 @@ function Studio() {
     try {
       const result = await api.manageLibrary(key, action);
       setRoutes(result.routes); setLibraryState(result.state);
-      notify(action === "delete" ? (key.startsWith("route_") ? "已从算子库删除，可通过 ＋ 重新添加已保存路线。" : "已从算子库删除，可在「已删除」中恢复。")
-        : action === "disable" ? "算子已禁用，右键可重新启用。" : "算子已启用。", "success");
+      notify(action === "delete" ? (key.startsWith("route_") ? t("已从算子库删除，可通过 ＋ 重新添加已保存路线。") : t("已从算子库删除，可在「已删除」中恢复。"))
+        : action === "disable" ? t("算子已禁用，右键可重新启用。") : t("算子已启用。"), "success");
     } catch (error) {failure(error);}
   }
   function savedWorkflow(item: SavedWorkflow) {
     const pages = documentsRef.current.map(doc => doc.id === activeIdRef.current ? {...doc, graph: item.graph, workflow_id: item.id, workflow_version: item.version} : doc);
     documentsRef.current = pages; setDocuments(pages); putGraph(item.graph);
-    notify(`路线已保存 · v${item.version}，可从算子库 ＋ 注册。`, "success");
+    notify(t("路线已保存 · v{v0}，可从算子库 ＋ 注册。", {v0: item.version}), "success");
   }
   async function importRoutes(files: FileList | null) {
     if (!files) return;
@@ -506,7 +505,7 @@ function Studio() {
           ? await api.importWorkflow(file) : JSON.parse(await file.text()));
         saved.push(await api.saveWorkflow(graph));
       }
-      setPicker(null); openSaved(saved); notify(`已导入 ${saved.length} 条路线。请通过算子库 ＋ 选择注册。`, "success");
+      setPicker(null); openSaved(saved); notify(t("已导入 {v0} 条路线。请通过算子库 ＋ 选择注册。", {v0: saved.length}), "success");
     } catch(error) {failure(error);} finally {if(routeImport.current) routeImport.current.value = "";}
   }
   async function copySelection(cut = false) {
@@ -515,7 +514,7 @@ function Studio() {
     clipboard.current = fragment;
     if (cut && !busy) deleteNodes(selection);
     try {await navigator.clipboard.writeText(JSON.stringify(fragment));} catch { /* Internal clipboard supports desktop permissions. */ }
-    notify(`已${cut ? "剪切" : "复制"} ${fragment.nodes.length} 个节点及内部连线。`, "success");
+    notify(t("已{v0} {v1} 个节点及内部连线。", {v0: cut ? t("剪切") : t("复制"), v1: fragment.nodes.length}), "success");
     setContextMenu(null);
   }
   async function pasteSelection(duplicate = false, anchor?: {x: number; y: number}) {
@@ -526,7 +525,7 @@ function Studio() {
       if (!duplicate) {
         try {const text = await navigator.clipboard.readText(); if(text.includes('"biopipe/graph-fragment-v1"')) fragment = parseFragment(text);} catch { /* use internal clipboard */ }
       }
-      if (!fragment?.nodes.length) return notify("剪贴板中没有 BioPipe 节点。");
+      if (!fragment?.nodes.length) return notify(t("剪贴板中没有 BioPipe 节点。"));
       if (page !== activeIdRef.current) return;
       const value = pasteFragment(graphRef.current, fragment, anchor); commit(value.graph); setSelection(value.ids); setSelected(value.ids[0] || null); setSelectedEdges([]);
       setContextMenu(null);
@@ -536,6 +535,7 @@ function Studio() {
     setBootError("");
     try {
       const data = await api.bootstrap();
+      if (data.preferences) setPreferences(await api.savePreferences(getPreferences(), true));
       setServers(await api.remoteStatus());
       setHistory(data.history);
       const [workspace, registered, state] = await Promise.all([api.workspace(), api.routes(), api.libraryState()]);
@@ -599,7 +599,7 @@ function Studio() {
         else await api.saveWorkspace(captureRef.current());
         if (graphRef.current === graph) setSaved(true);
       } catch {
-        notify("未能保存草稿，请重试或导出 JSON 保存。");
+        notify(t("未能保存草稿，请重试或导出 JSON 保存。"));
       }
     }, 500);
     return () => clearTimeout(timer);
@@ -695,7 +695,7 @@ function Studio() {
     source.onerror = () => {
       if (!warned) {
         warned = true;
-        notify(job.remote ? '日志连接中断，请重新连接服务器；远程任务会继续运行。' : "事件连接中断，正在自动重连。任务仍在本地进程中运行。");
+        notify(job.remote ? t("日志连接中断，请重新连接服务器；远程任务会继续运行。") : t("事件连接中断，正在自动重连。任务仍在本地进程中运行。"));
       }
     };
     return () => source.close();
@@ -868,9 +868,9 @@ function Studio() {
           e.target === connection.target && e.targetHandle === targetHandle,
       )
     )
-      return notify("这个输入端口已有连线。选中连线并按 Delete 删除后再连接。");
+      return notify(t("这个输入端口已有连线。选中连线并按 Delete 删除后再连接。"));
     if (wouldCycle(snapshot.edges, connection.source, connection.target))
-      return notify("这条连线会形成环路，请按数据生成方向连接。");
+      return notify(t("这条连线会形成环路，请按数据生成方向连接。"));
     const edge: GraphEdge = {
       ...connection,
       sourceHandle,
@@ -882,18 +882,18 @@ function Studio() {
       const candidate = { ...snapshot, edges: [...snapshot.edges, edge] };
       const analysis = await api.contracts(candidate);
       if (contractSignature(graphRef.current) !== contractSignature(snapshot))
-        return notify("工作流刚刚发生变化，请重新连接以检查最新契约。");
+        return notify(t("工作流刚刚发生变化，请重新连接以检查最新契约。"));
       const check = analysis.edges.find(item => item.id === edge.id);
-      if (!check) throw new Error("没有收到端口兼容性结果，请重试。");
+      if (!check) throw new Error(t("没有收到端口兼容性结果，请重试。"));
       if (check.status === "incompatible") {
         setInvalid(edge.target);
-        return notify(`无法连接：${check.reasons.join("；")}`);
+        return notify(t("无法连接：{v0}", {v0: check.reasons.join("；")}));
       }
       commit(current => ({ ...current, edges: [...current.edges, edge] }));
       setContractResult({ key: contractSignature(candidate), value: analysis });
-      if (check.status === "unknown") notify("连线已建立；部分字段待读取后确认，悬停输入 info 查看。", "success");
+      if (check.status === "unknown") notify(t("连线已建立；部分字段待读取后确认，悬停输入 info 查看。"), "success");
     } catch (error) {
-      notify(`无法完成连线检查：${(error as Error).message}`);
+      notify(t("无法完成连线检查：{v0}", {v0: (error as Error).message}));
     } finally {
       connecting.current = false;
     }
@@ -963,7 +963,7 @@ function Studio() {
   }
   function failure(error: unknown) {
     const value = error as ApiError;
-    notify(value.message || "操作未完成。");
+    notify(value.message || t("操作未完成。"));
     setInvalid(value.nodeId);
     if (value.nodeId) {
       inspectNode(value.nodeId);
@@ -975,7 +975,7 @@ function Studio() {
       const result = await api.validate(graphRef.current);
       setInvalid(undefined);
       notify(
-        `检查通过 · ${result.order.length} 个步骤，按固定顺序执行`,
+        t("检查通过 · {v0} 个步骤，按固定顺序执行", {v0: result.order.length}),
         "success",
       );
     } catch (error) {
@@ -1026,7 +1026,7 @@ function Studio() {
       closeInspector();
       setJob(null);
       setEvents([]);
-      notify("已载入工作流，可检查后运行。", "success");
+      notify(t("已载入工作流，可检查后运行。"), "success");
     } catch (error) {
       failure(error);
     } finally {
@@ -1116,7 +1116,7 @@ function Studio() {
         setLibraryOpen(true);
         requestAnimationFrame(() =>
           document
-            .querySelector<HTMLInputElement>('input[aria-label="搜索算子"]')
+            .querySelector<HTMLInputElement>('[data-library-search]')
             ?.focus(),
         );
       }
@@ -1133,11 +1133,9 @@ function Studio() {
           <Dna size={31} />
         </div>
         <h1>BioPipe Studio</h1>
-        <p>{bootError || "正在连接本地工作台…"}</p>
+        <p>{bootError || t("正在连接本地工作台…")}</p>
         {bootError ? (
-          <button className="primary-button" onClick={() => void load()}>
-            重新连接
-          </button>
+          <button className="primary-button" onClick={() => void load()}>{t("重新连接")}</button>
         ) : (
           <LoadingSkeleton />
         )}
@@ -1170,13 +1168,13 @@ function Studio() {
         <div className="topbar-actions">
           <button
             className="icon-button save-control"
-            aria-label="保存路线"
-            title="保存路线与注册接口 Ctrl+S"
+            aria-label={t("保存路线")}
+            title={t("保存路线与注册接口 Ctrl+S")}
             onClick={save}
           >
             <FloppyDisk size={18} />
           </button>
-          <button className="icon-button" aria-label="设置" title="设置" onClick={() => setAppSettings('servers')}><GearSix size={19}/></button>
+          <button className="icon-button" aria-label={t("设置")} title={t("设置")} onClick={() => setAppSettings('servers')}><GearSix size={19}/></button>
           <div className="file-menu">
             <button
               className="subtle-button"
@@ -1184,19 +1182,19 @@ function Studio() {
               onClick={() => setExportOpen(!exportOpen)}
             >
               <ArrowDown size={16} />
-              <span>文件</span>
+              <span>{t("文件")}</span>
               <CaretDown size={11} />
             </button>
             {exportOpen && (
               <>
                 <button
                   className="menu-scrim"
-                  aria-label="关闭文件菜单"
+                  aria-label={t("关闭文件菜单")}
                   onClick={() => setExportOpen(false)}
                 />
                 <div className="dropdown">
-                  <button onClick={() => {setExportOpen(false); setPicker("open");}}><FolderOpen size={16}/>打开已保存画布</button>
-                  <button onClick={() => {setExportOpen(false); void save();}}><FloppyDisk size={16}/>保存路线与接口</button>
+                  <button onClick={() => {setExportOpen(false); setPicker("open");}}><FolderOpen size={16}/>{t("打开已保存画布")}</button>
+                  <button onClick={() => {setExportOpen(false); void save();}}><FloppyDisk size={16}/>{t("保存路线与接口")}</button>
                   <button
                     disabled={busy}
                     onClick={() => {
@@ -1204,14 +1202,12 @@ function Studio() {
                       importInput.current?.click();
                     }}
                   >
-                    <ArrowUp size={16} />
-                    导入路线 / YAML / JSON
-                  </button>
+                    <ArrowUp size={16} />{t("导入路线 / YAML / JSON")}</button>
                   <label className="menu-base">
-                    <span>YAML 输入相对目录</span>
+                    <span>{t("YAML 输入相对目录")}</span>
                     <input
                       value={importBase}
-                      placeholder="例如 tasks/demo"
+                      placeholder={t("例如 tasks/demo")}
                       onChange={(e) => setImportBase(e.target.value)}
                     />
                   </label>
@@ -1222,13 +1218,9 @@ function Studio() {
                       setExportOpen(false);
                     }}
                   >
-                    <ArrowDown size={16} />
-                    导出路线包
-                  </button>
+                    <ArrowDown size={16} />{t("导出路线包")}</button>
                   <button onClick={() => void exportYaml()}>
-                    <ArrowDown size={16} />
-                    导出执行 YAML
-                  </button>
+                    <ArrowDown size={16} />{t("导出执行 YAML")}</button>
                   <div className="menu-line" />
                   <button
                     disabled={busy}
@@ -1239,9 +1231,7 @@ function Studio() {
                       setExportOpen(false);
                     }}
                   >
-                    <ArrowCounterClockwise size={16} />
-                    载入分支示例
-                  </button>
+                    <ArrowCounterClockwise size={16} />{t("载入分支示例")}</button>
                   <button
                     disabled={busy}
                     onClick={() => {
@@ -1249,23 +1239,21 @@ function Studio() {
                       setExportOpen(false);
                     }}
                   >
-                    <Plus size={16} />
-                    新建空白工作流
-                  </button>
-                  <button disabled={!closedDocuments.current.length} onClick={() => {setExportOpen(false); reopenPage();}}><ArrowCounterClockwise size={16}/>恢复关闭的页面 <kbd>Ctrl⇧T</kbd></button>
+                    <Plus size={16} />{t("新建空白工作流")}</button>
+                  <button disabled={!closedDocuments.current.length} onClick={() => {setExportOpen(false); reopenPage();}}><ArrowCounterClockwise size={16}/>{t("恢复关闭的页面")} <kbd>Ctrl⇧T</kbd></button>
                 </div>
               </>
             )}
           </div>
           <span className="toolbar-divider" />
-          <button className="subtle-button agent-control" title="连接自己的 Agent · CLI / MCP" onClick={() => setAgentPanel(true)}>
+          <button className="subtle-button agent-control" title={t("连接自己的 Agent · CLI / MCP")} onClick={() => setAgentPanel(true)}>
             <span className={agentReady ? "agent-dot ready" : "agent-dot"}/>Agent
           </button>
-          <div className="execution-target" title={selectedServerId ? (selectedServer?.connected ? '服务器已连接' : '服务器未连接') : '本机运行'}>
-            <Server size={15}/><select aria-label="执行位置" value={selectedServerId} disabled={!!busy} onChange={e => chooseServer(e.target.value)}>
-              <option value="">本机</option>
-              {selectedServerId && !selectedServer && <option value={selectedServerId}>未配置的服务器</option>}
-              {servers.map(server => <option key={server.profile.id} value={server.profile.id}>{server.profile.name}{server.connected ? '' : ' · 离线'}</option>)}
+          <div className="execution-target" title={selectedServerId ? (selectedServer?.connected ? t("服务器已连接") : t("服务器未连接")) : t("本机运行")}>
+            <Server size={15}/><select aria-label={t("执行位置")} value={selectedServerId} disabled={!!busy} onChange={e => chooseServer(e.target.value)}>
+              <option value="">{t("本机")}</option>
+              {selectedServerId && !selectedServer && <option value={selectedServerId}>{t("未配置的服务器")}</option>}
+              {servers.map(server => <option key={server.profile.id} value={server.profile.id}>{server.profile.name}{server.connected ? '' : t(" · 离线")}</option>)}
             </select>
           </div>
           <button
@@ -1273,11 +1261,9 @@ function Studio() {
             disabled={busy || !!action}
             onClick={() => void validate()}
           >
-            <CheckCircle size={17} />
-            检查
-          </button>
+            <CheckCircle size={17} />{t("检查")}</button>
           <button className="subtle-button task-control" onClick={() => {setTab('tasks'); setResultsCollapsed(false); setResultsExpanded(true);}}>
-            <Rows size={16}/>任务{activeJobs.length > 0 && <span className="count-badge">{activeJobs.length}</span>}
+            <Rows size={16}/>{t("任务")}{activeJobs.length > 0 && <span className="count-badge">{activeJobs.length}</span>}
           </button>
             <button
               className="primary-button"
@@ -1288,25 +1274,23 @@ function Studio() {
                 <CircleNotch size={16} className="spin" />
               ) : (
                 <Lightning size={16} weight="fill" />
-              )}
-              运行
-            </button>
+              )}{t("运行")}</button>
         </div>
         <input
           ref={importInput}
           type="file"
           accept=".zip,.json,.yaml,.yml"
           className="sr-only"
-          aria-label="导入工作流文件"
+          aria-label={t("导入工作流文件")}
           onChange={(e) => void importFile(e.target.files?.[0])}
         />
-        <input ref={routeImport} type="file" multiple accept=".zip,.json" className="sr-only" aria-label="导入路线包或 JSON" onChange={e => void importRoutes(e.target.files)}/>
+        <input ref={routeImport} type="file" multiple accept=".zip,.json" className="sr-only" aria-label={t("导入路线包或 JSON")} onChange={e => void importRoutes(e.target.files)}/>
       </header>
       <div className="workspace">
         {(libraryOpen || inspectorOpen) && (
           <button
             className="drawer-scrim"
-            aria-label="关闭工具面板"
+            aria-label={t("关闭工具面板")}
             onClick={() => {
               setLibraryOpen(false);
               setInspectorOpen(false);
@@ -1315,16 +1299,16 @@ function Studio() {
         )}
         <aside
           className={`library panel ${libraryOpen ? "drawer-open" : ""}`}
-          aria-label="算子库"
+          aria-label={t("算子库")}
         >
           <div className="panel-heading">
-            <h2>算子库</h2>
+            <h2>{t("算子库")}</h2>
             <span className="count-badge">{catalog.operators.filter(item => !libraryState.hidden.includes(item.id)).length + (catalog.readers?.length ?? 0) + routes.length}</span>
-            <button className="icon-button register-route-button" aria-label="添加路线算子" title="从已保存路线添加算子" onClick={() => setPicker("register")}><Plus size={18}/></button>
-            <button className="icon-button library-refresh" aria-label="刷新算子库" title={selectedServerId ? '连接服务器并读取算子库' : '扫描算子与 Reader 目录并热更新'} disabled={refreshingPlugins} onClick={() => void refreshPlugins()}><ArrowClockwise size={16} className={refreshingPlugins ? "spin" : ""}/></button>
+            <button className="icon-button register-route-button" aria-label={t("添加算子")} title={t("添加算子")} onClick={() => setPluginsOpen("add")}><Plus size={18}/></button>
+            <button className="icon-button library-refresh" aria-label={t("刷新算子库")} title={selectedServerId ? t("连接服务器并读取算子库") : t("扫描算子与 Reader 目录并热更新")} disabled={refreshingPlugins} onClick={() => void refreshPlugins()}><ArrowClockwise size={16} className={refreshingPlugins ? "spin" : ""}/></button>
             <button
               className="icon-button mobile-close"
-              aria-label="关闭算子库"
+              aria-label={t("关闭算子库")}
               onClick={() => setLibraryOpen(false)}
             >
               <X size={16} />
@@ -1333,14 +1317,14 @@ function Studio() {
           <label className="search-field">
             <MagnifyingGlass size={16} />
             <input
-              aria-label="搜索算子与 Reader"
-              placeholder="搜索算子与 Reader"
+              data-library-search aria-label={t("搜索算子与 Reader")}
+              placeholder={t("搜索算子与 Reader")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <kbd>/</kbd>
           </label>
-          {!!libraryState.hidden.length && <button className={`library-removed-toggle ${showHidden ? "is-active" : ""}`} aria-pressed={showHidden} onClick={() => setShowHidden(value => !value)}><Trash size={13}/>{showHidden ? "收起已删除" : "已删除"}<span>{libraryState.hidden.length}</span></button>}
+          {!!libraryState.hidden.length && <button className={`library-removed-toggle ${showHidden ? "is-active" : ""}`} aria-pressed={showHidden} onClick={() => setShowHidden(value => !value)}><Trash size={13}/>{showHidden ? t("收起已删除") : t("已删除")}<span>{libraryState.hidden.length}</span></button>}
           <button
             className="source-add"
             disabled={busy}
@@ -1353,7 +1337,7 @@ function Studio() {
           >
             <OperatorIcon name="Database" size={18} />
             <span>
-              <strong>输入数据</strong>
+              <strong>{t("输入数据")}</strong>
             </span>
             <Plus size={15} />
           </button>
@@ -1365,22 +1349,22 @@ function Studio() {
                 onDragStart={event => {event.dataTransfer.setData('application/biopipe', `reader:${reader.id}`); event.dataTransfer.effectAllowed = 'move';}}>
                 <span className="operator-icon"><OperatorArtwork spec={{...reader, icon: reader.icon || 'Database'}} size={18}/></span>
                 <span><strong>{reader.title || reader.id}</strong>
-                  {supportedPlatformLabel(reader.supported_systems) && <span className="platform-badge" title="支持的运行环境">{supportedPlatformLabel(reader.supported_systems)}</span>}
+                  {supportedPlatformLabel(reader.supported_systems) && <span className="platform-badge" title={t("支持的运行环境")}>{supportedPlatformLabel(reader.supported_systems)}</span>}
                 </span><Plus className="add-hint" size={14}/>
               </button>)}
             </LibrarySection>}
-            {(!search || routes.some(route => route.name.toLowerCase().includes(search.toLowerCase()))) && <LibrarySection name="路线算子" count={routes.filter(route => route.name.toLowerCase().includes(search.toLowerCase())).length} sectionKey="routes" search={search} className="route-library">
-              {!routes.length && <button className="route-empty" onClick={() => setPicker("register")}>
-                <Stack size={20}/><strong>添加已保存路线</strong><Plus size={14}/>
+            {(!search || routes.some(route => route.name.toLowerCase().includes(search.toLowerCase()))) && <LibrarySection name={t("路线算子")} count={routes.filter(route => route.name.toLowerCase().includes(search.toLowerCase())).length} sectionKey="routes" search={search} className="route-library">
+              {!routes.length && <button className="route-empty" onClick={() => setPluginsOpen("add")}>
+                <Stack size={20}/><strong>{t("添加已保存路线")}</strong><Plus size={14}/>
               </button>}
-              {routes.filter(route => route.name.toLowerCase().includes(search.toLowerCase())).map(route => <button key={route.id} className={`operator-item route-item ${libraryState.disabled.includes(route.id) ? "is-library-disabled" : ""}`} title={`${routeSpec(route).description} · 右键管理`} disabled={busy} aria-disabled={libraryState.disabled.includes(route.id)} draggable={!busy && !libraryState.disabled.includes(route.id)}
+              {routes.filter(route => route.name.toLowerCase().includes(search.toLowerCase())).map(route => <button key={route.id} className={`operator-item route-item ${libraryState.disabled.includes(route.id) ? "is-library-disabled" : ""}`} title={t("{v0} · 右键管理", {v0: routeSpec(route).description})} disabled={busy} aria-disabled={libraryState.disabled.includes(route.id)} draggable={!busy && !libraryState.disabled.includes(route.id)}
                 onClick={() => add(route.id)} onContextMenu={event => {event.preventDefault(); setContextMenu({x: event.clientX, y: event.clientY, route, libraryKey: route.id});}}
                 onDragStart={event => {event.dataTransfer.setData("application/biopipe", route.id); event.dataTransfer.effectAllowed = "move";}}>
-                <span className="operator-icon"><Stack size={18}/></span><span><strong>{route.name}</strong><small>{libraryState.disabled.includes(route.id) ? "已禁用 · " : ""}{route.graph.interface?.inputs.length} → {route.graph.interface?.outputs.length} · v{route.version}</small></span><Plus className="add-hint" size={14}/>
+                <span className="operator-icon"><Stack size={18}/></span><span><strong>{route.name}</strong><small>{libraryState.disabled.includes(route.id) ? t("已禁用 · ") : ""}{route.graph.interface?.inputs.length} → {route.graph.interface?.outputs.length} · v{route.version}</small></span><Plus className="add-hint" size={14}/>
               </button>)}
             </LibrarySection>}
             {categories.map((category) => (
-              <LibrarySection key={category} name={category} count={filtered.filter(o => o.category === category).length} sectionKey={`operator:${categoryId(category)}`} search={search}>
+              <LibrarySection key={category} name={t(category)} count={filtered.filter(o => o.category === category).length} sectionKey={`operator:${categoryId(category)}`} search={search}>
                 {filtered
                   .filter((o) => o.category === category)
                   .map((spec) => (
@@ -1405,8 +1389,8 @@ function Studio() {
                         <OperatorArtwork spec={spec} size={18}/>
                       </span>
                       <span>
-                        <strong>{spec.title}</strong>{supportedPlatformLabel(spec.supported_systems) && <span className="platform-badge" title="支持的运行环境">{supportedPlatformLabel(spec.supported_systems)}</span>}
-                        {libraryState.hidden.includes(spec.id) ? <small>已删除</small> : libraryState.disabled.includes(spec.id) ? <small>已禁用</small> : null}
+                        <strong>{spec.title}</strong>{supportedPlatformLabel(spec.supported_systems) && <span className="platform-badge" title={t("支持的运行环境")}>{supportedPlatformLabel(spec.supported_systems)}</span>}
+                        {libraryState.hidden.includes(spec.id) ? <small>{t("已删除")}</small> : libraryState.disabled.includes(spec.id) ? <small>{t("已禁用")}</small> : null}
                       </span>
                       <Plus className="add-hint" size={14} />
                     </button>
@@ -1414,17 +1398,13 @@ function Studio() {
               </LibrarySection>
             ))}
             {!filtered.length && !filteredReaders.length && !routes.some(r => r.name.toLowerCase().includes(search.toLowerCase())) && (
-              <div className="search-empty">
-                没有找到算子
-                <br />
-                <button className="text-button" onClick={() => setSearch("")}>
-                  清空搜索
-                </button>
+              <div className="search-empty">{t("没有找到算子")}<br />
+                <button className="text-button" onClick={() => setSearch("")}>{t("清空搜索")}</button>
               </div>
             )}
           </div>
           <div className="library-footer">
-            <button className="library-packages" onClick={() => selectedServerId ? setAppSettings('servers') : setPluginsOpen(true)}><Package size={16}/>{selectedServerId ? '服务器算子库' : '算子库管理'}</button>
+            <button className="library-packages" onClick={() => selectedServerId ? setAppSettings('servers') : setPluginsOpen("manage")}><Package size={16}/>{selectedServerId ? t("服务器算子库") : t("算子库管理")}</button>
           </div>
           <PanelResizeHandle side="library" width={displayedPanels.library} min={panelLimits.library.min}
             max={panelMaximum("library", displayedPanels, windowWidth)} onResize={value => resizePanel("library", value)}
@@ -1436,19 +1416,19 @@ function Studio() {
               <div className="canvas-topline">
                 <div>
                   <h1>{graph.name}</h1>
-                  {documents.find(doc=>doc.id===activeId)?.workflow_id && <span className="canvas-route-label"><Stack size={11}/>路线图 · v{documents.find(doc=>doc.id===activeId)?.workflow_version}</span>}
+                  {documents.find(doc=>doc.id===activeId)?.workflow_id && <span className="canvas-route-label"><Stack size={11}/>{t("路线图 · v")}{documents.find(doc=>doc.id===activeId)?.workflow_version}</span>}
                 </div>
                 <div className="canvas-meta">
-                  <span>{graph.nodes.length} 个节点</span>
+                  <span>{graph.nodes.length} {t("个节点")}</span>
                   <span className="meta-dot" />
-                  <span>{graph.edges.length} 条连接</span>
+                  <span>{graph.edges.length} {t("条连接")}</span>
                 </div>
               </div>
               <div className="canvas-toolbar">
                 <div className="toolbar-group">
                   <button
                     className="icon-button show-library"
-                    aria-label="打开算子库"
+                    aria-label={t("打开算子库")}
                     onClick={() => {
                       setLibraryOpen(true);
                       setInspectorOpen(false);
@@ -1458,8 +1438,8 @@ function Studio() {
                   </button>
                   <button
                     className="icon-button"
-                    aria-label="撤销"
-                    title="撤销 Ctrl+Z"
+                    aria-label={t("撤销")}
+                    title={t("撤销 Ctrl+Z")}
                     disabled={!past.length || busy}
                     onClick={undo}
                   >
@@ -1467,8 +1447,8 @@ function Studio() {
                   </button>
                   <button
                     className="icon-button"
-                    aria-label="重做"
-                    title="重做 Ctrl+Shift+Z"
+                    aria-label={t("重做")}
+                    title={t("重做 Ctrl+Shift+Z")}
                     disabled={!future.length || busy}
                     onClick={redo}
                   >
@@ -1477,7 +1457,7 @@ function Studio() {
                   <span className="toolbar-divider" />
                   <button
                     className="text-button"
-                    title="自动排布节点"
+                    title={t("自动排布节点")}
                     disabled={busy || !graph.nodes.length}
                     onClick={() => {
                       try {
@@ -1488,13 +1468,13 @@ function Studio() {
                     }}
                   >
                     <Rows size={16} />
-                    <span>自动排布</span>
+                    <span>{t("自动排布")}</span>
                   </button>
                 </div>
                 <div className="toolbar-group">
                   <button
                     className="icon-button show-inspector"
-                    aria-label="打开检查器"
+                    aria-label={t("打开检查器")}
                     onClick={() => {
                       inspectNode(selected);
                     }}
@@ -1503,7 +1483,7 @@ function Studio() {
                   </button>
                   <button
                     className={`text-button ${settings ? "active" : ""}`}
-                    aria-label="执行设置"
+                    aria-label={t("执行设置")}
                     onClick={() => {
                       setSettings(!settings);
                       setInspectorOpen(true);
@@ -1511,7 +1491,7 @@ function Studio() {
                     }}
                   >
                     <GearSix size={16} />
-                    <span>执行设置</span>
+                    <span>{t("执行设置")}</span>
                   </button>
                 </div>
               </div>
@@ -1596,8 +1576,8 @@ function Studio() {
               proOptions={{ hideAttribution: true }}
               ariaLabelConfig={{
                 "node.a11yDescription.default":
-                  "单击选中，双击或 Enter 查看参数，方向键移动，Delete 删除。",
-                "edge.a11yDescription.default": "按 Delete 删除连接。",
+                  t("单击选中，双击或 Enter 查看参数，方向键移动，Delete 删除。"),
+                "edge.a11yDescription.default": t("按 Delete 删除连接。"),
               }}
             >
               <Background
@@ -1627,23 +1607,23 @@ function Studio() {
                 </div>
                 <button className="primary-button canvas-empty-action" onClick={() => add()}>
                   <Plus size={16} aria-hidden="true" />
-                  <span>添加输入数据</span>
+                  <span>{t("添加输入数据")}</span>
                 </button>
               </div>
             )}
             <div className="canvas-bottomline">
-              <HelpTip label="画布快捷键" icon={<Keyboard size={18}/>} above>
-                <span className="shortcut-row"><span>框选</span><kbd>Shift + 拖动</kbd></span>
-                <span className="shortcut-row"><span>多选</span><kbd>Ctrl + 单击</kbd></span>
-                <span className="shortcut-row"><span>平移</span><kbd>中键拖动</kbd></span>
-                <span className="shortcut-row"><span>复制 / 粘贴</span><kbd>Ctrl + C / V</kbd></span>
-                <span className="shortcut-row"><span>查看参数</span><kbd>双击 / Enter</kbd></span>
-                <span className="shortcut-row"><span>适配画布</span><kbd>双击空白处</kbd></span>
+              <HelpTip label={t("画布快捷键")} icon={<Keyboard size={18}/>} above>
+                <span className="shortcut-row"><span>{t("框选")}</span><kbd>{t("Shift + 拖动")}</kbd></span>
+                <span className="shortcut-row"><span>{t("多选")}</span><kbd>{t("Ctrl + 单击")}</kbd></span>
+                <span className="shortcut-row"><span>{t("平移")}</span><kbd>{t("中键拖动")}</kbd></span>
+                <span className="shortcut-row"><span>{t("复制 / 粘贴")}</span><kbd>Ctrl + C / V</kbd></span>
+                <span className="shortcut-row"><span>{t("查看参数")}</span><kbd>{t("双击 / Enter")}</kbd></span>
+                <span className="shortcut-row"><span>{t("适配画布")}</span><kbd>{t("双击空白处")}</kbd></span>
               </HelpTip>
               <div className="zoom-controls">
                 <button
                   className="icon-button"
-                  aria-label="缩小画布"
+                  aria-label={t("缩小画布")}
                   onClick={() =>
                     void flow.zoomOut({
                       duration: window.matchMedia(
@@ -1658,7 +1638,7 @@ function Studio() {
                 </button>
                 <button
                   className="icon-button"
-                  aria-label="放大画布"
+                  aria-label={t("放大画布")}
                   onClick={() =>
                     void flow.zoomIn({
                       duration: window.matchMedia(
@@ -1674,8 +1654,8 @@ function Studio() {
                 <span className="toolbar-divider" />
                 <button
                   className="icon-button"
-                  aria-label="适配画布"
-                  title="适配画布 · 双击空白处"
+                  aria-label={t("适配画布")}
+                  title={t("适配画布 · 双击空白处")}
                   onClick={fit}
                 >
                   <ArrowsOut size={17} />
@@ -1716,7 +1696,7 @@ function Studio() {
               setJob(value);
               setSelected(null);
               closeInspector();
-              notify("已载入这次运行的画布与参数。", "success");
+              notify(t("已载入这次运行的画布与参数。"), "success");
             }}
           />
         </div>
@@ -1752,40 +1732,39 @@ function Studio() {
       <footer className="statusbar">
         <span>
           <span className="status-dot complete" />
-          {saved ? "已保存" : "保存中…"}
+          {saved ? t("已保存") : t("保存中…")}
         </span>
         <span className="execution-caption">
-          {job ? statusLabel[job.status] : "就绪"}
+          {job ? t(statusLabel[job.status]) : t("就绪")}
           <span className="meta-dot" />
-          {order.length} 个算子
-        </span>
+          {order.length}{t("个算子")}</span>
         <span>
           BioPipe Studio <span className="mono">{studioVersion}</span>
         </span>
       </footer>
       {contextMenu && <>
         <div className="context-dismiss" onMouseDown={() => setContextMenu(null)} onContextMenu={e => {e.preventDefault(); setContextMenu(null);}}/>
-        <div className="canvas-context" role="menu" aria-label={contextMenu.libraryKey ? "算子库操作" : "画布操作"} style={{left: Math.max(8, Math.min(contextMenu.x, window.innerWidth-244)), top: Math.max(8, Math.min(contextMenu.y, window.innerHeight-460))}}>
-          {contextMenu.route && <><button role="menuitem" onClick={() => {openRoute(contextMenu.route!); setContextMenu(null);}}><Stack size={16}/>打开路线的算子图</button><div className="context-caption">{contextMenu.route.name} · v{contextMenu.route.version}</div><div className="menu-line"/></>}
+        <div className="canvas-context" role="menu" aria-label={contextMenu.libraryKey ? t("算子库操作") : t("画布操作")} style={{left: Math.max(8, Math.min(contextMenu.x, window.innerWidth-244)), top: Math.max(8, Math.min(contextMenu.y, window.innerHeight-460))}}>
+          {contextMenu.route && <><button role="menuitem" onClick={() => {openRoute(contextMenu.route!); setContextMenu(null);}}><Stack size={16}/>{t("打开路线的算子图")}</button><div className="context-caption">{contextMenu.route.name} · v{contextMenu.route.version}</div><div className="menu-line"/></>}
           {contextMenu.libraryKey ? <>
-            {libraryState.hidden.includes(contextMenu.libraryKey) ? <button role="menuitem" onClick={() => void manageLibrary(contextMenu.libraryKey!, "restore")}><ArrowCounterClockwise size={16}/>恢复到算子库</button> : <>
-              <button role="menuitem" disabled={busy || libraryState.disabled.includes(contextMenu.libraryKey)} onClick={() => {add(contextMenu.libraryKey); setContextMenu(null);}}><Plus size={16}/>添加到画布</button>
-              <button role="menuitem" onClick={() => void manageLibrary(contextMenu.libraryKey!, libraryState.disabled.includes(contextMenu.libraryKey!) ? "enable" : "disable")}>{libraryState.disabled.includes(contextMenu.libraryKey) ? <PlayCircle size={16}/> : <PauseCircle size={16}/>} {libraryState.disabled.includes(contextMenu.libraryKey) ? "启用算子" : "禁用算子"}</button>
+            {libraryState.hidden.includes(contextMenu.libraryKey) ? <button role="menuitem" onClick={() => void manageLibrary(contextMenu.libraryKey!, "restore")}><ArrowCounterClockwise size={16}/>{t("恢复到算子库")}</button> : <>
+              <button role="menuitem" disabled={busy || libraryState.disabled.includes(contextMenu.libraryKey)} onClick={() => {add(contextMenu.libraryKey); setContextMenu(null);}}><Plus size={16}/>{t("添加到画布")}</button>
+              <button role="menuitem" onClick={() => void manageLibrary(contextMenu.libraryKey!, libraryState.disabled.includes(contextMenu.libraryKey!) ? "enable" : "disable")}>{libraryState.disabled.includes(contextMenu.libraryKey) ? <PlayCircle size={16}/> : <PauseCircle size={16}/>} {libraryState.disabled.includes(contextMenu.libraryKey) ? t("启用算子") : t("禁用算子")}</button>
               <div className="menu-line"/>
-              <button role="menuitem" className="menu-danger" onClick={() => void manageLibrary(contextMenu.libraryKey!, "delete")}><Trash size={16}/>从算子库删除</button>
+              <button role="menuitem" className="menu-danger" onClick={() => void manageLibrary(contextMenu.libraryKey!, "delete")}><Trash size={16}/>{t("从算子库删除")}</button>
             </>}
           </> : <>
-            <button role="menuitem" disabled={!selection.length && !selectedEdges.length} onClick={() => void copyAgentContext()}><Copy size={16}/>复制选区上下文</button>
+            <button role="menuitem" disabled={!selection.length && !selectedEdges.length} onClick={() => void copyAgentContext()}><Copy size={16}/>{t("复制选区上下文")}</button>
             <div className="menu-line"/>
-            <button role="menuitem" disabled={!selection.length} onClick={() => void copySelection()}><Copy size={16}/>复制节点 <kbd>Ctrl C</kbd></button>
-            <button role="menuitem" disabled={busy} onClick={() => void pasteSelection(false, flow.screenToFlowPosition({x: contextMenu.x, y: contextMenu.y}))}><Clipboard size={16}/>粘贴 <kbd>Ctrl V</kbd></button>
-            <button role="menuitem" disabled={!selection.length || busy} onClick={() => void pasteSelection(true)}><SquaresFour size={16}/>复制副本 <kbd>Ctrl D</kbd></button>
+            <button role="menuitem" disabled={!selection.length} onClick={() => void copySelection()}><Copy size={16}/>{t("复制节点")} <kbd>Ctrl C</kbd></button>
+            <button role="menuitem" disabled={busy} onClick={() => void pasteSelection(false, flow.screenToFlowPosition({x: contextMenu.x, y: contextMenu.y}))}><Clipboard size={16}/>{t("粘贴")} <kbd>Ctrl V</kbd></button>
+            <button role="menuitem" disabled={!selection.length || busy} onClick={() => void pasteSelection(true)}><SquaresFour size={16}/>{t("复制副本")} <kbd>Ctrl D</kbd></button>
             {contextMenu.nodeId && <EnvironmentMenu graph={graph} nodeId={contextMenu.nodeId} servers={servers}
               onSelect={target => {commit(current => assignNodeTarget(current, contextMenu.nodeId!, target)); setContextMenu(null);}}/>}
           </>}
         </div>
       </>}
-      {pluginsOpen && <PluginPanel onClose={() => setPluginsOpen(false)} onChanged={async () => {const latest = await api.catalog(); setBootstrap(current => current ? {...current, catalog: latest} : current);}}/>}
+      {pluginsOpen && <PluginPanel initialTab={pluginsOpen} onClose={() => setPluginsOpen(null)} onChanged={async () => {const latest = await api.catalog(); setBootstrap(current => current ? {...current, catalog: latest} : current); await refreshRoutes();}}/>}
       {picker && <WorkflowPicker mode={picker} onClose={() => setPicker(null)} onOpen={openSaved} onRegister={refreshRoutes} onImport={() => routeImport.current?.click()}/>}
       {saveDialog && <SaveWorkflowDialog graph={saveDialog} catalog={catalog} workflowId={documents.find(doc=>doc.id===activeId)?.workflow_id} version={documents.find(doc=>doc.id===activeId)?.workflow_version} onClose={() => setSaveDialog(null)} onSaved={savedWorkflow}/>}
       {agentPanel && <AgentPanel sessionId={agentBridge.current?.state?.id} command={bootstrap.agent_config} onClose={() => setAgentPanel(false)} onCopySelection={() => void copyAgentContext()}/>}
@@ -1798,7 +1777,7 @@ function Studio() {
         >
           {toast.type === "success" ? <CheckCircle size={18} /> : <InfoIcon />}
           <span>{toast.message}</span>
-          <button aria-label="关闭提示" onClick={() => setToast(null)}>
+          <button aria-label={t("关闭提示")} onClick={() => setToast(null)}>
             <X size={14} />
           </button>
         </div>

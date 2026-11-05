@@ -1,3 +1,4 @@
+import {t} from './i18n';
 import type { Graph, GraphNode, GraphEdge, TargetRef } from "./types";
 import { clone } from "./graph";
 import {defaultTarget, executionConfig, withExecution} from './execution';
@@ -18,14 +19,14 @@ export function parseFragment(text: string): Fragment {
   const value = JSON.parse(text) as Fragment;
   if (value.format !== FORMAT || !Array.isArray(value.nodes) || !Array.isArray(value.edges) ||
       value.nodes.length > 1000 || value.edges.length > 5000 || !value.nodes.every(n => n.id && n.position && ["source", "operator", "route"].includes(n.kind)))
-    throw Error("剪贴板中没有 BioPipe 节点。");
+    throw Error(t("剪贴板中没有 BioPipe 节点。"));
   return value;
 }
 function rebaseSource(path: string, from: string, to: string): string {
   const absolute = (value: string) => /^(?:[A-Za-z]:[\\/]|[\\/])/.test(value);
   if (!path || from === to || absolute(path)) return path;
   if (absolute(from) || absolute(to))
-    throw Error("跨目录粘贴数据节点时，请先将两张画布的基础目录设为项目内相对路径。");
+    throw Error(t("跨目录粘贴数据节点时，请先将两张画布的基础目录设为项目内相对路径。"));
   const parts = (value: string) => value.replaceAll("\\", "/").split("/").reduce<string[]>((items, part) => {
     if (part === ".." && items.length && items[items.length-1] !== "..") items.pop();
     else if (part && part !== ".") items.push(part);
@@ -38,7 +39,7 @@ function rebaseSource(path: string, from: string, to: string): string {
 }
 export function pasteFragment(graph: Graph, fragment: Fragment, anchor?: {x: number; y: number}): {graph: Graph; ids: string[]} {
   if (!fragment.nodes.length) return {graph, ids: []};
-  if (graph.nodes.length + fragment.nodes.length > 1000) throw Error("画布最多支持 1000 个节点。");
+  if (graph.nodes.length + fragment.nodes.length > 1000) throw Error(t("画布最多支持 1000 个节点。"));
   const next = clone(graph), ids = new Map<string, string>();
   const used = new Set(next.nodes.flatMap(n => [n.id, String(n.params.output || "")]));
   const offset = anchor ? {x: anchor.x - Math.min(...fragment.nodes.map(n => n.position.x)), y: anchor.y - Math.min(...fragment.nodes.map(n => n.position.y))} : {x: 48, y: 48};

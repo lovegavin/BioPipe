@@ -1,4 +1,5 @@
 import type { Catalog, Operator } from "./types";
+import {localizeOperator} from './operatorLocalization';
 
 // Stable category IDs are independent of localized labels and package ownership.
 export const CANONICAL_CATEGORIES = ["quality_control", "statistics", "data", "machine_learning", "omics", "visualization"] as const;
@@ -43,11 +44,11 @@ export function compareCategories(a: string, b: string): number {
 
 export function presentOperator(spec: Operator): Operator {
   return {
-    ...spec,
+    ...localizeOperator(spec),
     category: categoryLabel(spec.category),
   };
 }
 
 export function presentCatalog(catalog: Catalog): Catalog {
-  return { ...catalog, operators: catalog.operators.map(presentOperator) };
+  return { ...catalog, operators: catalog.operators.map(presentOperator), readers: catalog.readers?.map(reader => localizeOperator(reader)) };
 }

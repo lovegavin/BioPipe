@@ -1,6 +1,6 @@
 # Write an operator in 30 minutes
 
-SDK 3.1 / protocol 3 uses **one implementation, its own parameter JSON and Markdown**.
+SDK 3.5 / protocol 3 (optional v3.5 language packs) uses **one implementation, its own parameter JSON and Markdown**.
 The Python class owns a literal `definition`; its JSON owns parameter types,
 defaults, constraints and form hints. The registry is a generated index.
 
@@ -21,6 +21,7 @@ lab_scale/
   lab_scale/
     __init__.py         # definition + compute()
     parameters.json    # this operator's JSON Schema
+    localization.json  # optional display translations; independent of parameter values
     __init__.md        # purpose, assumptions, parameter guidance and interpretation
   tests/test_plugin.py
   README.md
@@ -114,3 +115,10 @@ require installation; increment the package/operator version for behavior change
 Share the wheel with its README and tests. No central author-maintained JSON is
 required. For old extensions, use the explicit [migration](migration_v2.md) before
 installing into protocol 3.
+
+## Translate the operator
+
+The scaffold includes English and Simplified Chinese in `localization.json`.
+Edit display text there; keep computation defaults in `parameters.json`. Remove
+`localization_file` from the class if a single-language v3 declaration is preferred.
+See [the v3.5 language-pack guide](localization.md).

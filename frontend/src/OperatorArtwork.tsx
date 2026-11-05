@@ -1,3 +1,4 @@
+import {t} from './i18n';
 import { useState, type ReactNode } from "react";
 import type { Operator } from "./types";
 import { OperatorIcon } from "./icons";
@@ -51,6 +52,6 @@ export function OperatorPreview({ spec }: { spec?: Operator }) {
   if (!spec?.preview || !charts[spec.preview.kind]) return null;
   return <figure className="operator-preview">
     <ChartGlyph kind={spec.preview.kind}/>
-    <figcaption><span>{spec.preview.caption}</span><small>图形示意</small></figcaption>
+    <figcaption><span>{spec.preview.caption}</span><small>{t("图形示意")}</small></figcaption>
   </figure>;
 }

@@ -17,7 +17,8 @@ from urllib.parse import urlparse
 
 from .bytecode import io_path
 from .documents import CommandError
-from src.web.storage import FileLock, atomic_json
+from .user_config import UserConfig
+from src.web.storage import FileLock
 
 
 def system():
@@ -97,9 +98,7 @@ class ViewerService:
     def __init__(self, application):
         self.app = application
         self.directory = application.service.directory / 'viewers'
-        self.config = self.directory / 'settings.json'
-        self.defaults_path = self.directory / 'defaults.json'
-        self.lock = FileLock(self.directory / 'settings.lock')
+        self.user_config = UserConfig(application.service.directory)
 
     def catalog(self):
         entries = load_catalog(Path(__file__).with_name('viewers.json'))
@@ -109,10 +108,10 @@ class ViewerService:
         return entries
 
     def settings(self):
-        return json.loads(io_path(self.config).read_text(encoding='utf-8')) if self.config.is_file() else {}
+        return self.user_config.read().get('viewers', {}).get('paths', {})
 
     def defaults(self):
-        return json.loads(io_path(self.defaults_path).read_text(encoding='utf-8')) if self.defaults_path.is_file() else {}
+        return self.user_config.read().get('viewers', {}).get('defaults', {})
 
     def set_default(self, extension, viewer):
         catalog = self.catalog()
@@ -123,13 +122,13 @@ class ViewerService:
             entry = catalog.get(viewer)
             if not entry or entry['kind'] != 'desktop' or extension not in entry['extensions']:
                 raise ValueError('Choose a compatible desktop viewer')
-        with self.lock:
-            defaults = self.defaults()
+        def edit(config):
+            defaults = config.setdefault('viewers', {}).setdefault('defaults', {})
             if viewer is None:
                 defaults.pop(extension, None)
             else:
                 defaults[extension] = viewer
-            atomic_json(self.defaults_path, defaults)
+        self.user_config.update(edit)
         return self.listing()
 
     def listing(self, refresh=False):
@@ -167,13 +166,13 @@ class ViewerService:
         if not entry or entry['kind'] != 'desktop':
             raise ValueError('Choose a registered desktop viewer')
         value = executable(path) if path else None
-        with self.lock:
-            settings = self.settings()
+        def edit(config):
+            settings = config.setdefault('viewers', {}).setdefault('paths', {})
             if value:
                 settings[key] = value
             else:
                 settings.pop(key, None)
-            atomic_json(self.config, settings)
+        self.user_config.update(edit)
         return self.listing(refresh=True)
 
     def context(self, job, artifact, role):

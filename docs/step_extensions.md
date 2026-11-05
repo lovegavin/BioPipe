@@ -84,3 +84,12 @@ existing operator to accept both Form and FileArtifact explicitly, while keeping
 the original numeric path. The frozen run workspace is admitted through
 `estimate_memory`; subprocesses do not rescan available host memory. See
 [Hi-C workflows](HIC.md) for inputs, coordinate conventions and real-tool tests.
+
+## Optional localized presentation (SDK 3.5)
+
+Operators and Readers can declare `localization_file = "localization.json"`.
+The adjacent language pack is validated and indexed statically; it never changes
+parameter keys, defaults, port names, resource capabilities or frozen workflow
+values. Existing v3 extensions do not need migration. Include the JSON in package
+data and rebuild the index after editing translations.
+See [language-pack format and examples](localization.md).

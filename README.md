@@ -16,10 +16,10 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-The **v2.5.0 application** and independently versioned **2026.11.5.2 operator library**
+The **v2.6.0 application** and independently versioned **2026.11.5.2 operator library**
 share this repository. The reference library includes **717 operators, 101 Readers, seven
 provider packages and 24 route templates**. Operators and Readers use **protocol
-v3 / SDK 3.1**, separate parameter JSON and adjacent Markdown documentation.
+v3 / SDK 3.5**, separate parameter JSON and adjacent Markdown documentation.
 
 
 ## Why BioPipe
@@ -1104,3 +1104,17 @@ and prepared in managed libraries; existing v3 declarations and independently
 saved workflow parameters remain the authoring model. The
 [plotting examples](examples/plotting_plugin/README.md) include a Python volcano
 report and R ComplexHeatmap with explicit memory estimates.
+
+## Operator library and language settings
+
+The library management entry stays in the library footer. Its window has two
+pages: **Manage library** (refresh, dependencies, enable/disable/remove) and
+**Add operators** (operator/Reader packages, source directories, and saved or
+imported workflow operators). The library **+** opens Add operators directly.
+Importing a workflow here saves and registers it without changing the active canvas.
+
+**Settings → Language** selects Simplified Chinese, English, or the system language.
+The choice is saved in the current BioPipe profile. Switching does not reload the
+page or rewrite workflows. Existing v3 operator names stay in their original
+language; optional **v3.5 language packs** translate presentation independently of
+parameter schemas and frozen values. See [the localization guide](docs/localization.md).

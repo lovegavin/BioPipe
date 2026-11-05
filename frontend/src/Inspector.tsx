@@ -1,3 +1,5 @@
+import {t} from './i18n';
+import {enumKey} from './operatorLocalization';
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
@@ -53,11 +55,11 @@ function JsonField({
           try {
             const next = JSON.parse(raw);
             if (!allowArray && (!next || Array.isArray(next) || typeof next !== "object"))
-              throw Error("需要 JSON 对象");
+              throw Error(t("需要 JSON 对象"));
             onChange(next);
             setError("");
           } catch {
-            setError(allowArray ? "需要有效的 JSON 值" : "需要有效的 JSON 对象");
+            setError(allowArray ? t("需要有效的 JSON 值") : t("需要有效的 JSON 对象"));
           }
         }}
       />
@@ -137,19 +139,22 @@ export function ParameterField({
     <label className="field" htmlFor={id}>
       <span>
         {field.label}
-        {field.required && <small>必填</small>}
+        {field.required && <small>{t("必填")}</small>}
       </span>
       {field.type === "boolean" ? <input id={id} type="checkbox" checked={Boolean(value)} disabled={disabled} onChange={e=>onChange(e.target.checked)}/> : field.type === "choice" ? (
         <select
           id={id}
-          value={String(value ?? "")}
+          value={value === undefined ? '' : enumKey(value)}
           disabled={disabled}
-          onChange={(e) => onChange(field.options?.find(option => String(option) === e.target.value) ?? e.target.value)}
+          onChange={(e) => {
+            const index = field.options?.findIndex(option => enumKey(option) === e.target.value) ?? -1;
+            if (index >= 0) onChange(field.options![index]);
+          }}
         >
-          {!value && <option value="">请选择</option>}
+          {value === undefined && <option value="">{t("请选择")}</option>}
           {field.options?.map((option) => (
-            <option key={option} value={option}>
-              {option}
+            <option key={enumKey(option)} value={enumKey(option)}>
+              {field.option_labels?.[enumKey(option)] ?? (typeof option === 'string' ? option : JSON.stringify(option))}
             </option>
           ))}
         </select>
@@ -168,7 +173,7 @@ export function ParameterField({
         />
       ) : field.type === "list" ? (
         <CommaSeparatedInput id={id} value={value} disabled={disabled}
-          placeholder="用逗号分隔，如 PC1, PC2" onChange={onChange} />
+          placeholder={t("用逗号分隔，如 PC1, PC2")} onChange={onChange} />
       ) : (
         <input
           id={id}
@@ -182,13 +187,13 @@ export function ParameterField({
         />
       )}
       {field.path_kind && <div className="path-actions">
-        <input type="file" className="sr-only" ref={input} aria-label={`选择本机文件 ${field.label}`} onChange={e => void localFile(e.target.files?.[0])}/>
-        <button type="button" className="subtle-button" disabled={disabled || uploading} onClick={() => input.current?.click()}>{uploading ? '导入中…' : '本机文件'}</button>
+        <input type="file" className="sr-only" ref={input} aria-label={t("选择本机文件 {v0}", {v0: field.label})} onChange={e => void localFile(e.target.files?.[0])}/>
+        <button type="button" className="subtle-button" disabled={disabled || uploading} onClick={() => input.current?.click()}>{uploading ? t("导入中…") : t("本机文件")}</button>
         {onBrowse && <button type="button" className="subtle-button" disabled={disabled || uploading} onClick={() => onBrowse(String(value || ''), (path, _source, location) => {
           if (onPath && location) onPath(path, location); else onChange(path);
-        }, false, target)}>服务器文件</button>}
+        }, false, target)}>{t("服务器文件")}</button>}
       </div>}
-      {field.description && <HelpTip label={`${field.label}说明`}>{field.description}</HelpTip>}
+      {field.description && <HelpTip label={t("{v0}说明", {v0: field.label})}>{field.description}</HelpTip>}
     </label>
   );
 }
@@ -266,7 +271,7 @@ export function Inspector({
     const files = Array.from(selection ?? []);
     if (!files.length || !node?.source) return;
     if (uploadLimit != null && files.some(file => file.size > uploadLimit * 1024 ** 2))
-      return onError(`单个文件超过 ${uploadLimit} MiB，可改用项目内路径。`);
+      return onError(t("单个文件超过 {v0} MiB，可改用项目内路径。", {v0: uploadLimit}));
     setUploading(true);
     try {
       const result = await api.uploadFiles(files, graph.base_dir, node.source.reader);
@@ -284,14 +289,14 @@ export function Inspector({
   return (
     <aside
       className="inspector panel"
-      aria-label={settings ? "执行设置" : "节点参数"}
+      aria-label={settings ? t("执行设置") : t("节点参数")}
     >
       <div className="panel-heading">
-        <h2>{settings ? "执行设置" : "检查器"}</h2>
+        <h2>{settings ? t("执行设置") : t("检查器")}</h2>
         <button
           className="icon-button mobile-close"
-          title="关闭检查器"
-          aria-label="关闭检查器"
+          title={t("关闭检查器")}
+          aria-label={t("关闭检查器")}
           onClick={onClose}
         >
           <X size={17} />
@@ -305,16 +310,16 @@ export function Inspector({
               <div className="node-icon">
                 <HardDrives size={20} />
               </div>
-              <h3>内存预算</h3>
-              <HelpTip label="内存规划说明">显示启动时的预算估算，运行开始后更新为该次运行的实际预算。每次运行前扫描一次可用内存；运行期间由紧急溢写应对内存压力。</HelpTip>
+              <h3>{t("内存预算")}</h3>
+              <HelpTip label={t("内存规划说明")}>{t("显示启动时的预算估算，运行开始后更新为该次运行的实际预算。每次运行前扫描一次可用内存；运行期间由紧急溢写应对内存压力。")}</HelpTip>
             </div>
             <label className="toggle-field">
-              <span><strong>内存管理</strong></span>
-              <input type="checkbox" aria-label="内存管理" checked={memory.enabled} disabled={busy}
+              <span><strong>{t("内存管理")}</strong></span>
+              <input type="checkbox" aria-label={t("内存管理")} checked={memory.enabled} disabled={busy}
                 onChange={e => onMemory({...memory, enabled: e.target.checked})}/><span className="toggle-track"/>
             </label>
             <div className="field">
-              <span>数据内存预算</span>
+              <span>{t("数据内存预算")}</span>
               <div className="segmented">
                 <button
                   disabled={busy}
@@ -324,25 +329,20 @@ export function Inspector({
                     delete next.budget_mb;
                     onMemory(next);
                   }}
-                >
-                  自动
-                </button>
+                >{t("自动")}</button>
                 <button
                   disabled={busy}
                   className={memory.budget_mb !== undefined ? "active" : ""}
                   onClick={() => onMemory({ ...memory, budget_mb: 512 })}
-                >
-                  手动
-                </button>
+                >{t("手动")}</button>
               </div>
             </div>
             {memory.budget_mb !== undefined ? (
               <label className="field">
-                <span>
-                  分配内存 <small>MiB</small>
+                <span>{t("分配内存")}<small>MiB</small>
                 </span>
                 <input
-                  aria-label="分配内存 MiB"
+                  aria-label={t("分配内存 MiB")}
                   type="number"
                   min="1"
                   step="1"
@@ -355,13 +355,13 @@ export function Inspector({
               </label>
             ) : (
               <div className="budget-summary">
-                <dl><div><dt>分配比例</dt><dd>{automaticPercent == null ? "自动" : <>{automaticPercent}<small>%</small></>}</dd></div><div><dt>预算上限</dt><dd className="budget-value">{automaticMemoryBudget == null ? "无法读取" : bytes(automaticMemoryBudget)}</dd></div></dl>
+                <dl><div><dt>{t("分配比例")}</dt><dd>{automaticPercent == null ? t("自动") : <>{automaticPercent}<small>%</small></>}</dd></div><div><dt>{t("预算上限")}</dt><dd className="budget-value">{automaticMemoryBudget == null ? t("无法读取") : bytes(automaticMemoryBudget)}</dd></div></dl>
                 {automaticPercent != null && <div className="budget-proportion" aria-hidden="true"><span style={{width: `${automaticPercent}%`}}/></div>}
               </div>
             )}
             <label className="toggle-field">
               <span>
-                <strong title="触及固定压力阈值时，释放未锁定数据">紧急溢写</strong>
+                <strong title={t("触及固定压力阈值时，释放未锁定数据")}>{t("紧急溢写")}</strong>
               </span>
               <input
                 type="checkbox"
@@ -374,21 +374,20 @@ export function Inspector({
               <span className="toggle-track" />
             </label>
             <details className="advanced">
-              <summary>
-                高级预算 <CaretDown size={14} />
+              <summary>{t("高级预算")}<CaretDown size={14} />
               </summary>
               {(["process_limit_mb", "disk_limit_mb"] as const).map((key) => (
                 <label className="field" key={key}>
                   <span>
                     {key === "process_limit_mb"
-                      ? "进程 RSS 阈值"
-                      : "缓存磁盘上限"}
-                    <small>MiB · 可选</small>
+                      ? t("进程 RSS 阈值")
+                      : t("缓存磁盘上限")}
+                    <small>{t("MiB · 可选")}</small>
                   </span>
                   <input
                     type="number"
                     min={1}
-                    placeholder="不设置"
+                    placeholder={t("不设置")}
                     value={memory[key] ?? ""}
                     disabled={busy}
                     onChange={(e) => {
@@ -400,23 +399,20 @@ export function Inspector({
                   />
                 </label>
               ))}
-              <p className="helper">
-                RSS 包含 Python 和库的内存。数据预算只管理
-                Form、元数据与估算的工作区。
-              </p>
-              <JsonField label="完整内存配置 JSON" value={memory} disabled={busy}
+              <p className="helper">{t("RSS 包含 Python 和库的内存。数据预算只管理 Form、元数据与估算的工作区。")}</p>
+              <JsonField label={t("完整内存配置 JSON")} value={memory} disabled={busy}
                 onChange={value => {
                   if (typeof value.enabled !== 'boolean') throw Error('enabled must be boolean');
                   onMemory(value as Graph['memory']);
                 }}/>
             </details>
-            <details className="advanced"><summary>全局参数 <CaretDown size={14}/></summary>
+            <details className="advanced"><summary>{t("全局参数")} <CaretDown size={14}/></summary>
               <JsonField label="Pipeline params" value={graph.params || {}} disabled={busy} onChange={onParams}/>
             </details>
             <div className="section-rule" />
-            <div className="capability" title="支线按依赖排序后依次运行。分块由算子的实际能力决定。">
+            <div className="capability" title={t("支线按依赖排序后依次运行。分块由算子的实际能力决定。")}>
               <Cpu size={17} />
-              <span>资源充足时并行运行任务</span>
+              <span>{t("资源充足时并行运行任务")}</span>
             </div>
           </>
         ) : node ? (
@@ -425,17 +421,17 @@ export function Inspector({
               <div className="node-icon">
                 <OperatorArtwork spec={node.kind === 'source' && reader ? {...reader, icon: reader.icon || 'Database'} : spec} source={node.kind === 'source' && !reader}/>
               </div>
-              <h3>{displayTitle(node, spec)}</h3>
-              {spec?.description && node.kind !== "source" && <HelpTip label="算子说明">{spec.description}</HelpTip>}
-              {reader?.description && node.kind === 'source' && <HelpTip label="Reader 说明">{reader.description}</HelpTip>}
+              <h3>{displayTitle(node, spec, reader)}</h3>
+              {spec?.description && node.kind !== "source" && <HelpTip label={t("算子说明")}>{spec.description}</HelpTip>}
+              {reader?.description && node.kind === 'source' && <HelpTip label={t("Reader 说明")}>{reader.description}</HelpTip>}
             </div>
             <OperatorPreview spec={spec}/>
             {targetPlatformWarning((node.kind === 'source' ? reader : spec)?.supported_systems, graph, servers, localSystem, node.id) &&
               <p className="helper" role="status">{targetPlatformWarning((node.kind === 'source' ? reader : spec)?.supported_systems, graph, servers, localSystem, node.id)}</p>}
             <label className="field">
-              <span>显示名称</span>
+              <span>{t("显示名称")}</span>
               <input
-                value={displayTitle(node, spec)}
+                value={displayTitle(node, spec, reader)}
                 maxLength={120}
                 disabled={busy}
                 onChange={(e) => onNode(node.id, { title: e.target.value })}
@@ -444,7 +440,7 @@ export function Inspector({
             {node.kind === "source" && node.source ? (
               <>
                 <label className="field"><span>Reader</span>
-                  <select aria-label="选择 Reader" value={node.source.reader || ''} disabled={busy || uploading}
+                  <select aria-label={t("选择 Reader")} value={node.source.reader || ''} disabled={busy || uploading}
                     onChange={event => {
                       const chosen = catalog.readers?.find(item => item.id === event.target.value);
                       if (chosen) {
@@ -455,15 +451,15 @@ export function Inspector({
                         onNode(node.id, {source});
                       }
                     }}>
-                    <option value="">按文件格式自动识别</option>
-                    {node.source.reader && !reader && <option value={node.source.reader}>{node.source.reader} · 未安装</option>}
+                    <option value="">{t("按文件格式自动识别")}</option>
+                    {node.source.reader && !reader && <option value={node.source.reader}>{node.source.reader} {t("· 未安装")}</option>}
                     {(catalog.readers ?? []).map(item => <option key={item.id} value={item.id}>{item.title || item.id}</option>)}
                   </select>
                 </label>
-                {reader && <details className="advanced input-format-help"><summary>格式与读取说明 <CaretDown size={14}/></summary>
+                {reader && <details className="advanced input-format-help"><summary>{t("格式与读取说明")} <CaretDown size={14}/></summary>
                   {reader.description && <p className="helper">{reader.description}</p>}
                   <p className="helper">{reader.extensions.join(' · ')}</p>
-                  {supportedPlatformLabel(reader.supported_systems) && <p className="helper">运行环境：{supportedPlatformLabel(reader.supported_systems)}</p>}
+                  {supportedPlatformLabel(reader.supported_systems) && <p className="helper">{t("运行环境：")}{supportedPlatformLabel(reader.supported_systems)}</p>}
                 </details>}
                 <input
                   ref={fileInput}
@@ -471,7 +467,7 @@ export function Inspector({
                   accept={inputAccept(reader ? {...catalog, readers: [reader]} : catalog)}
                   multiple
                   className="sr-only"
-                  aria-label="选择数据文件"
+                  aria-label={t("选择数据文件")}
                   onChange={(e) => void upload(e.target.files)}
                 />
                 <button
@@ -480,28 +476,28 @@ export function Inspector({
                   onClick={() => fileInput.current?.click()}
                 >
                   <FileArrowUp size={22} />
-                  <strong>{uploading ? "正在导入…" : "选择本机文件"}</strong>
-                  {uploadLimit != null && <small>每个文件上限 {uploadLimit} MiB</small>}
+                  <strong>{uploading ? t("正在导入…") : t("选择本机文件")}</strong>
+                  {uploadLimit != null && <small>{t("每个文件上限")} {uploadLimit} MiB</small>}
                 </button>
                 {onBrowseRemote && <button className="subtle-button source-server-button" disabled={busy || uploading}
                   onClick={() => onBrowseRemote(node.source!.path, (path, source, location) => onNode(node.id,
-                    {source: {...(source || node.source!), path, location: location || sourceLocation}}), true, sourceLocation, node.source!.reader)}>选择服务器文件</button>}
-                <details className="advanced input-format-help"><summary>多文件格式 <CaretDown size={14}/></summary>
-                  <p className="helper">PLINK：同时选择同名的 .bed、.bim、.fam。10x MTX：同时选择 matrix、barcodes 和 features / genes。</p>
+                    {source: {...(source || node.source!), path, location: location || sourceLocation}}), true, sourceLocation, node.source!.reader)}>{t("选择服务器文件")}</button>}
+                <details className="advanced input-format-help"><summary>{t("多文件格式")} <CaretDown size={14}/></summary>
+                  <p className="helper">{t("PLINK：同时选择同名的 .bed、.bim、.fam。10x MTX：同时选择 matrix、barcodes 和 features / genes。")}</p>
                 </details>
-                <label className="field"><span>文件所在位置</span><select aria-label="文件所在位置" value={targetKey(sourceLocation)} disabled={busy || uploading}
+                <label className="field"><span>{t("文件所在位置")}</span><select aria-label={t("文件所在位置")} value={targetKey(sourceLocation)} disabled={busy || uploading}
                   onChange={e => onNode(node.id, {source: {...node.source!, location: targetFromKey(e.target.value)}})}>
-                  <option value="">本机</option>
-                  {sourceLocation.kind === 'ssh' && !servers.some(server => server.profile.id === sourceLocation.profile_id) && <option value={sourceLocation.profile_id}>未配置的服务器</option>}
+                  <option value="">{t("本机")}</option>
+                  {sourceLocation.kind === 'ssh' && !servers.some(server => server.profile.id === sourceLocation.profile_id) && <option value={sourceLocation.profile_id}>{t("未配置的服务器")}</option>}
                   {servers.map(server => <option key={server.profile.id} value={server.profile.id}>{server.profile.name}</option>)}
                 </select></label>
                 <label className="field">
-                  <span>{targetLabel(sourceLocation, servers)}文件路径</span>
+                  <span>{targetLabel(sourceLocation, servers)}{t("文件路径")}</span>
                   <textarea
                     rows={2}
                     value={node.source.path}
                     disabled={busy || uploading}
-                    placeholder="例如 tasks/demo/input/data.csv"
+                    placeholder={t("例如 tasks/demo/input/data.csv")}
                     onChange={(e) =>
                       onNode(node.id, {
                         source: { ...node.source!, path: e.target.value },
@@ -510,7 +506,7 @@ export function Inspector({
                   />
                 </label>
                 {reader?.contracts.output?.kind !== "file" && <label className="field">
-                  <span>维度名称</span>
+                  <span>{t("维度名称")}</span>
                   <CommaSeparatedInput
                     key={node.id}
                     commitOnBlur
@@ -523,7 +519,7 @@ export function Inspector({
                   />
                 </label>}
                 {!!reader?.parameters?.length && <div className="reader-options">
-                  <p className="section-caption">{reader.id} · 读取参数</p>
+                  <p className="section-caption">{reader.id} {t("· 读取参数")}</p>
                   <ParameterGroups parameters={reader.parameters || []} renderField={field => <ParameterField key={`${node.id}-${field.key}`} field={field}
                     onBrowse={onBrowseRemote}
                     baseDir={graph.base_dir} target={pathTarget(`${node.id}.source.args.${field.key}`)} onError={onError}
@@ -539,11 +535,10 @@ export function Inspector({
                     }}/>}/>
                 </div>}
                 <details className="advanced">
-                  <summary>
-                    标签与完整读取选项 <CaretDown size={14} />
+                  <summary>{t("标签与完整读取选项")}<CaretDown size={14} />
                   </summary>
                   <JsonField
-                    label="维度标签 JSON"
+                    label={t("维度标签 JSON")}
                     value={node.source.labels}
                     disabled={busy}
                     onChange={(labels) =>
@@ -551,7 +546,7 @@ export function Inspector({
                     }
                   />
                   <JsonField
-                    label="Reader 参数 JSON"
+                    label={t("Reader 参数 JSON")}
                     value={node.source.args}
                     disabled={busy}
                     onChange={(args) =>
@@ -563,14 +558,13 @@ export function Inspector({
             ) : (
               <>
                 {node.kind === "route" && node.route && <div className="route-inspector">
-                  <span className="route-version" title="当前画布保留这个版本的快照">路线算子 · v{node.route.version}</span>
-                  <button className="subtle-button" onClick={() => onOpenRoute(node.route!)}><OperatorIcon name="Stack" size={17}/>打开路线的算子图</button>
-                  <p className="helper">输入：{node.route.graph.interface?.inputs.map(p=>p.label).join(" / ") || "无"}</p>
-                  <p className="helper">输出：{node.route.graph.interface?.outputs.map(p=>p.label).join(" / ") || "报告与图片"}</p>
+                  <span className="route-version" title={t("当前画布保留这个版本的快照")}>{t("路线算子 · v")}{node.route.version}</span>
+                  <button className="subtle-button" onClick={() => onOpenRoute(node.route!)}><OperatorIcon name="Stack" size={17}/>{t("打开路线的算子图")}</button>
+                  <p className="helper">{t("输入：")}{node.route.graph.interface?.inputs.map(p=>p.label).join(" / ") || t("无")}</p>
+                  <p className="helper">{t("输出：")}{node.route.graph.interface?.outputs.map(p=>p.label).join(" / ") || t("报告与图片")}</p>
                 </div>}
                 {node.kind !== "route" && <>
-                <div className="section-caption">
-                  参数 <span className="mono">{node.operator}</span>
+                <div className="section-caption">{t("参数")}<span className="mono">{node.operator}</span>
                 </div>
                 <ParameterGroups parameters={spec?.parameters || []} renderField={(field) => (
                   <ParameterField
@@ -586,7 +580,7 @@ export function Inspector({
                 )}/>
                 {spec?.output_parameter && (
                   <label className="field">
-                    <span>输出数据名称</span>
+                    <span>{t("输出数据名称")}</span>
                     <input
                       value={String(node.params.output ?? node.id)}
                       disabled={busy}
@@ -596,7 +590,7 @@ export function Inspector({
                 )}
                 {spec?.inputs_arity === "*" && (
                   <label className="field">
-                    <span>输入端口数量</span>
+                    <span>{t("输入端口数量")}</span>
                     <input
                       type="number"
                       min={1}
@@ -615,11 +609,10 @@ export function Inspector({
                   </label>
                 )}
                 <details className="advanced">
-                  <summary>
-                    完整参数 JSON <CaretDown size={14} />
+                  <summary>{t("完整参数 JSON")}<CaretDown size={14} />
                   </summary>
                   <JsonField
-                    label="算子参数"
+                    label={t("算子参数")}
                     value={node.params}
                     disabled={busy}
                     onChange={(params) => onNode(node.id, { params })}
@@ -630,15 +623,15 @@ export function Inspector({
                   <Cpu size={16} />
                   <span>
                     {spec?.resources.supports_cuda ? "CPU / CUDA" : "CPU"}
-                    {node.kind === "route" ? " · 共享外层内存规划" : spec?.resources.memory_modes.includes("stream")
-                      ? " · 支持分块"
-                      : " · 整体处理"}
+                    {node.kind === "route" ? t(" · 共享外层内存规划") : spec?.resources.memory_modes.includes("stream")
+                      ? t(" · 支持分块")
+                      : t(" · 整体处理")}
                   </span>
                 </div>
               </>
             )}
             {retainedNames.map((name, index) => (
-              <label className="check-field" key={name} title="末端输出会自动保存，便于下载">
+              <label className="check-field" key={name} title={t("末端输出会自动保存，便于下载")}>
                 <input
                   type="checkbox"
                   checked={(memory.keep || []).includes(name)}
@@ -653,15 +646,15 @@ export function Inspector({
                   }}
                 />
                 <span>
-                  {node.kind === "route" ? `额外保留 ${node.route?.graph.interface?.outputs[index]?.label || `输出 ${index + 1}`}` : retainedNames.length > 1
-                    ? `保留 ${name}`
-                    : "额外保留这份数据"}
+                  {node.kind === "route" ? t("额外保留 {v0}", {v0: node.route?.graph.interface?.outputs[index]?.label || `输出 ${index + 1}`}) : retainedNames.length > 1
+                    ? t("保留 {v0}", {v0: name})
+                    : t("额外保留这份数据")}
                 </span>
               </label>
             ))}
             {inputCount(node, spec) > 0 && (
               <div className="connections">
-                <div className="section-caption">输入连接</div>
+                <div className="section-caption">{t("输入连接")}</div>
                 {Array.from({ length: inputCount(node, spec) }, (_, index) => {
                   const edge = graph.edges.find(
                     (e) =>
@@ -674,7 +667,7 @@ export function Inspector({
                       <span>
                         {source
                           ? displayTitle(source, specFor(source, catalog))
-                          : "尚未连接"}
+                          : t("尚未连接")}
                       </span>
                       <ArrowRight size={12} />
                     </div>
@@ -688,14 +681,12 @@ export function Inspector({
               disabled={busy}
               onClick={() => onDelete(node.id)}
             >
-              <Trash size={15} />
-              删除节点
-            </button>
+              <Trash size={15} />{t("删除节点")}</button>
           </>
         ) : (
           <div className="inspector-empty">
             <div className="inspector-empty-glyph" aria-hidden="true"><OperatorIcon size={24} weight="light"/><span/><span/></div>
-            <h3>双击查看节点</h3>
+            <h3>{t("双击查看节点")}</h3>
           </div>
         )}
       </div>

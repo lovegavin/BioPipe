@@ -49,6 +49,122 @@
       ],
       "title": "Documentation",
       "type": "object"
+    },
+    "Localization": {
+      "additionalProperties": false,
+      "properties": {
+        "default_locale": {
+          "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$",
+          "title": "Default Locale",
+          "type": "string"
+        },
+        "translations": {
+          "additionalProperties": {
+            "$ref": "#/$defs/OperatorText"
+          },
+          "title": "Translations",
+          "type": "object"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "minimum_sdk": {
+          "const": "3.5.0",
+          "default": "3.5.0",
+          "title": "Minimum Sdk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "default_locale",
+        "translations",
+        "path",
+        "sha256"
+      ],
+      "title": "Localization",
+      "type": "object"
+    },
+    "OperatorText": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ParameterText"
+          },
+          "title": "Parameters",
+          "type": "object"
+        }
+      },
+      "title": "OperatorText",
+      "type": "object"
+    },
+    "ParameterText": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "enum_labels": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Enum Labels",
+          "type": "object"
+        }
+      },
+      "title": "ParameterText",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -59,6 +175,30 @@
       "default": 3,
       "title": "Protocol Version",
       "type": "integer"
+    },
+    "protocol_revision": {
+      "anyOf": [
+        {
+          "const": "3.5",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Protocol Revision"
+    },
+    "localization": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Localization"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "id": {
       "pattern": "^[A-Za-z_][A-Za-z0-9_.-]{0,79}$",

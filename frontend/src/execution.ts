@@ -1,3 +1,4 @@
+import {t} from './i18n';
 import type {ExecutionConfig, Graph, Job, Parameter, RemoteStatus, RunEvent, TargetRef} from './types';
 
 export const jobStatusLabel: Record<Job['status'], string> = {
@@ -24,7 +25,7 @@ export function nodeTarget(graph: Graph, id: string): TargetRef {
 export function targetKey(target: TargetRef): string { return target.kind === 'ssh' ? target.profile_id : ''; }
 export function targetFromKey(key: string): TargetRef {return key ? {kind: 'ssh', profile_id: key} : {kind: 'local'};}
 export function targetLabel(target: TargetRef, servers: RemoteStatus[]): string {
-  return target.kind === 'local' ? '本机' : servers.find(s => s.profile.id === target.profile_id)?.profile.name || '未配置的服务器';
+  return target.kind === 'local' ? t("本机") : servers.find(s => s.profile.id === target.profile_id)?.profile.name || t("未配置的服务器");
 }
 export function assignNodeTarget(graph: Graph, id: string, target?: TargetRef): Graph {
   if (executionConfig(graph).mode === 'auto') return graph;
@@ -82,8 +83,8 @@ export function nodeStatuses(events: RunEvent[], job: Job | null, stale = false)
 export type ParameterGroup = {id: 'main' | 'environment' | 'resources' | 'advanced'; label: string; fields: Parameter[]};
 export function groupParameters(parameters: Parameter[]): ParameterGroup[] {
   const groups: ParameterGroup[] = [
-    {id: 'main', label: '分析参数', fields: []}, {id: 'environment', label: '工具与环境', fields: []},
-    {id: 'resources', label: '资源与性能', fields: []}, {id: 'advanced', label: '高级参数', fields: []},
+    {id: 'main', label: t("分析参数"), fields: []}, {id: 'environment', label: t("工具与环境"), fields: []},
+    {id: 'resources', label: t("资源与性能"), fields: []}, {id: 'advanced', label: t("高级参数"), fields: []},
   ];
   const environment = /^(executor|backend|wsl(_.*)?|tool(_.*)?|.*_executable|executable|container|conda(_.*)?)$/;
   const resources = /^(threads?|n_threads|n_jobs|workers?|cpus?|memory(_.*)?|.*_memory(_.*)?|timeout(_.*)?|chunk(_.*)?|batch_size)$/;

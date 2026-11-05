@@ -1,0 +1,101 @@
+{
+  "$defs": {
+    "OperatorText": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ParameterText"
+          },
+          "title": "Parameters",
+          "type": "object"
+        }
+      },
+      "title": "OperatorText",
+      "type": "object"
+    },
+    "ParameterText": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "enum_labels": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Enum Labels",
+          "type": "object"
+        }
+      },
+      "title": "ParameterText",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "default_locale": {
+      "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$",
+      "title": "Default Locale",
+      "type": "string"
+    },
+    "translations": {
+      "additionalProperties": {
+        "$ref": "#/$defs/OperatorText"
+      },
+      "title": "Translations",
+      "type": "object"
+    }
+  },
+  "required": [
+    "default_locale",
+    "translations"
+  ],
+  "title": "LanguagePack",
+  "type": "object"
+}

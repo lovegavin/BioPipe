@@ -3,6 +3,7 @@ from copy import deepcopy
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+from .localization import Localization
 
 PROTOCOL_VERSION = 3
 
@@ -28,6 +29,8 @@ class Descriptor(BaseModel):
     """Canonical, versioned extension declaration; UI projections are separate."""
     model_config = ConfigDict(extra="forbid")
     protocol_version: Literal[3] = 3
+    protocol_revision: Literal['3.5'] | None = None
+    localization: Localization | None = None
     id: str = Field(pattern=r"^[A-Za-z_][A-Za-z0-9_.-]{0,79}$")
     version: str = Field(pattern=r"^\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?$")
     kind: Literal["operator", "reader"]
@@ -147,6 +150,8 @@ def schema_to_fields(schema):
                  "required": key in schema.get("required", [])}
         if value.get("description"):
             field["description"] = value["description"]
+        if value.get('x-ui-enum-labels'):
+            field['option_labels'] = deepcopy(value['x-ui-enum-labels'])
         if value.get("type") == "array" and value.get("items", {}).get("type") == "string":
             field["type"] = "list"
         if not isinstance(field["type"], str):
@@ -278,6 +283,11 @@ def validate_declaration(value):
     """Complete pure-data validation shared by build and metadata hot updates."""
     Descriptor.model_validate(value)
     validate_schema(value['parameters_schema'])
+    if value.get('localization'):
+        from .localization import validate_parameters as validate_language_parameters
+        validate_language_parameters(value['localization'], value['parameters_schema'])
+        if value.get('protocol_revision') != '3.5':
+            raise ValueError('Language packs require protocol_revision 3.5')
     resources, contracts = value['resources'], value['contracts']
     from .r_dependencies import validate_r
     validate_r(resources.get('r'))

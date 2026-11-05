@@ -60,6 +60,8 @@ def create_app(settings=None):
     app.state.bridge = bridge
     from .plugin_api import mount_plugins
     mount_plugins(app, service)
+    from .preferences import mount_preferences
+    mount_preferences(app, service)
     from .remote_api import mount_remote
     remote_events, remote_console = mount_remote(app, service)
     executions = application.executions
@@ -127,6 +129,7 @@ def create_app(settings=None):
     def bootstrap():
         import sys
         import platform
+        from .preferences import load as load_preferences
         agent_args = ["-m", "biopipe", "--workspace", str(service.root), "--data-dir", str(service.directory), "mcp", "--allow-run"]
         return {"token": token, "catalog": catalog, "demo": service.demo,
                 "system": platform.system().lower().replace('darwin', 'macos'),
@@ -138,7 +141,7 @@ def create_app(settings=None):
                 "upload_extensions": accepted_extensions(catalog),
                 "storage": settings.profile or {"workspace": str(service.root), "data_dir": str(service.directory),
                                                 "registry": str(service.routes.directory / "registry.json")},
-                "desktop": settings.desktop}
+                "desktop": settings.desktop, "preferences": load_preferences(service.directory).model_dump()}
 
     @app.get("/api/workspace")
     def workspace():

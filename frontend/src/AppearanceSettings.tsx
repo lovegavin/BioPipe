@@ -1,15 +1,14 @@
+import {t} from './i18n';
 import {useEffect, useState} from 'react';
 import {Desktop, Moon, Sun} from '@phosphor-icons/react';
+import {api} from './api';
+import {setPreferences, usePreferences, type ThemePreference} from './preferences';
 
-type Preference = 'system' | 'light' | 'dark';
-const KEY = 'biopipe-studio-theme-v1';
 const choices = [{value:'light', label:'浅色', Icon:Sun}, {value:'dark', label:'深色', Icon:Moon}, {value:'system', label:'跟随系统', Icon:Desktop}] as const;
-function stored(): Preference {
-  try {const value = localStorage.getItem(KEY); return value === 'light' || value === 'dark' ? value : 'system';} catch {return 'system';}
-}
 // Mounted in App, so system-theme changes still apply while Settings is closed.
 export function useAppearance() {
-  const [preference, setPreference] = useState(stored);
+  const {theme: preference} = usePreferences();
+  const [pending, setPending] = useState(false), [error, setError] = useState('');
   useEffect(() => {
     const system = window.matchMedia('(prefers-color-scheme: dark)');
     const apply = () => {
@@ -18,15 +17,19 @@ export function useAppearance() {
     };
     apply(); system.addEventListener('change', apply); return () => system.removeEventListener('change', apply);
   }, [preference]);
-  useEffect(() => {
-    const update = (e: StorageEvent) => {if (e.key === KEY || e.key === null) setPreference(stored());};
-    window.addEventListener('storage', update); return () => window.removeEventListener('storage', update);
-  }, []);
-  return {preference, onChange: (value: Preference) => {setPreference(value); try {localStorage.setItem(KEY, value);} catch { /* Session theme still works. */ }}};
+  async function onChange(value: ThemePreference) {
+    setPending(true); setError('');
+    try {setPreferences(await api.savePreferences({theme: value}));}
+    catch (error) {setError((error as Error).message);}
+    finally {setPending(false);}
+  }
+  return {preference, pending, error, onChange};
 }
-export function AppearanceSettings({preference, onChange}: ReturnType<typeof useAppearance>) {
-  return <fieldset className="appearance-settings"><legend>主题</legend><div>{choices.map(({value, label, Icon}) => <label key={value}>
-    <input type="radio" name="appearance" value={value} checked={preference === value} onChange={() => onChange(value)}/>
-    <span className={`theme-swatch theme-${value}`} aria-hidden="true"><i/><i/><i/></span><span><Icon size={16}/>{label}</span>
-  </label>)}</div></fieldset>;
+export function AppearanceSettings({preference, onChange, pending, error}: {
+  preference: ThemePreference; onChange: (value: ThemePreference) => void; pending?: boolean; error?: string;
+}) {
+  return <fieldset className="appearance-settings"><legend>{t("主题")}</legend><div>{choices.map(({value, label, Icon}) => <label key={value}>
+    <input type="radio" name="appearance" value={value} disabled={pending} checked={preference === value} onChange={() => onChange(value)}/>
+    <span className={`theme-swatch theme-${value}`} aria-hidden="true"><i/><i/><i/></span><span><Icon size={16}/>{t(label)}</span>
+  </label>)}</div>{error && <p className="modal-error" role="alert">{error}</p>}</fieldset>;
 }

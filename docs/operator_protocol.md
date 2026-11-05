@@ -1,6 +1,6 @@
-# Operator protocol v3
+# Operator protocol v3 and v3.5
 
-BioPipe 1.0.0 uses SDK 3.1.0 and protocol 3. Operator IDs, numerical kernels,
+The current SDK is 3.5.0. The wire major remains protocol 3. Operator IDs, numerical kernels,
 Form contracts and resource protocols retain their existing meaning.
 
 ## Authoring unit: code + its own parameter JSON + Markdown
@@ -38,6 +38,19 @@ required parameter; add a name to the schema's `required` array to require input
 
 See the complete [Step](step_extensions.md) and [Reader](reader_extensions.md)
 examples. `biopipe plugin init` creates these files and an executable test.
+
+## Optional v3.5 language pack
+
+Add a literal `localization_file = "localization.json"` to the class. The SDK validates
+and embeds its display translations in the static registry, with
+`protocol_revision: "3.5"` and `minimum_sdk: "3.5.0"`. Existing v3 declarations
+without this field remain valid and display their original language. Do not set
+`protocol_version` to a float or a string: it remains the integer `3`.
+
+See [localization and library management](localization.md) for the complete format,
+fallback rules, package-data requirements and an executable example. Language
+packs may describe names, explanations and enum labels, never parameter defaults
+or execution contracts.
 
 ## Definition fields
 

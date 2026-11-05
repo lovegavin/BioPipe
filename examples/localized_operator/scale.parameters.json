@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "scale_factor": {
+      "type": "number",
+      "default": 2.0,
+      "title": "Scale factor"
+    }
+  }
+}

@@ -37,7 +37,7 @@ describe('parameter hierarchy', () => {
       value={graph.nodes[0].params[field.key]} disabled={false} onChange={() => {}}/>}/>);
     expect(html.indexOf('param-method')).toBeLessThan(html.indexOf('param-view'));
     expect(html.indexOf('param-view')).toBeLessThan(html.indexOf('<details'));
-    expect(html).toContain('<option value="insulation" selected="">');
+    expect(html).toContain('<option value="&quot;insulation&quot;" selected="">');
     expect(html).toContain('value="3"');
     expect(html).toContain('value="256"');
     expect(html).not.toMatch(/<details[^>]*\bopen/);

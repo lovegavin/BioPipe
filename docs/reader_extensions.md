@@ -86,3 +86,12 @@ For large disk datasets, the Hi-C Readers demonstrate metadata-only loading:
 returns `FileArtifact`, and `sequence_stats` consumes it record by record. The
 existing numeric Reader disk protocol and streaming methods are unchanged.
 See [SDK file datasets](sdk_reference.md#file-backed-datasets) and [Hi-C](HIC.md).
+
+## Optional localized presentation (SDK 3.5)
+
+Operators and Readers can declare `localization_file = "localization.json"`.
+The adjacent language pack is validated and indexed statically; it never changes
+parameter keys, defaults, port names, resource capabilities or frozen workflow
+values. Existing v3 extensions do not need migration. Include the JSON in package
+data and rebuild the index after editing translations.
+See [language-pack format and examples](localization.md).

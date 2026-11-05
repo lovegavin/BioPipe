@@ -21,6 +21,7 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 - [Installation and dependencies](installation.md)
 - [Windows Setup and isolated installations](windows_setup.md)
 - [Desktop application](desktop.md)
+- [Languages, application settings and operator library management](localization.md)
 - [Input formats and explicit Readers](input_formats.md)
 - [Saved workflow parameters](workflow_parameters.md)
 - [Memory, streaming and spill](resource_runtime.md)

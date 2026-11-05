@@ -1,3 +1,4 @@
+import {t} from './i18n';
 import type { Bootstrap, Graph, Job, Preview, ContractAnalysis, Workspace, SavedWorkflow, WorkflowSummary, RouteDefinition, DataSource } from "./types";
 import type { LibraryState, LibraryAction } from "./types";
 
@@ -6,6 +7,7 @@ const base =
     .VITE_API_BASE || "";
 let token = "";
 let workspaceWrite: Promise<unknown> = Promise.resolve();
+let preferencesWrite: Promise<unknown> = Promise.resolve();
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -30,14 +32,14 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
   try {
     value = await response.json();
   } catch {
-    throw new ApiError("本地服务未返回有效响应，请确认服务已启动。");
+    throw new ApiError(t("本地服务未返回有效响应，请确认服务已启动。"));
   }
   if (!response.ok) {
     const details = Array.isArray(value.detail)
       ? value.detail.map((d: { msg: string }) => d.msg).join("；")
       : value.detail;
     throw new ApiError(
-      value.message || details || "操作未完成，请重试。",
+      value.message || details || t("操作未完成，请重试。"),
       value.node_id,
       response.status,
       value.code,
@@ -47,6 +49,12 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
   return value as T;
 }
 export const api = {
+  savePreferences: (value: Partial<import('./preferences').UiPreferences>, initialize = false) => {
+    // Keep responses in edit order when users switch settings sections quickly.
+    const result = preferencesWrite.catch(() => {}).then(() => request<import('./preferences').UiPreferences>(`/api/preferences?initialize=${initialize}`, value));
+    preferencesWrite = result;
+    return result;
+  },
   viewers: (refresh = false) => request<import('./viewerTypes').ViewerCatalog>(`/api/v1/viewers?refresh=${refresh}`),
   configureViewer: (id: string, executable: string | null) => request<import('./viewerTypes').ViewerCatalog>(`/api/v1/viewers/${encodeURIComponent(id)}/configure`, {executable}),
   defaultViewer: (extension: string, viewer: string | null) => request<import('./viewerTypes').ViewerCatalog>('/api/v1/viewers/default', {extension, viewer}),
@@ -78,7 +86,7 @@ export const api = {
       method: 'POST', headers: {'X-Studio-Token': token, 'Content-Type': 'application/octet-stream'}, body: file,
     });
     const result = await response.json();
-    if (!response.ok) throw Error(result.message || result.detail || '插件安装未完成');
+    if (!response.ok) throw Error(result.message || result.detail || t("插件安装未完成"));
     return result;
   },
   agent: <T,>(path: string, body?: unknown) => request<T>("/api/agent" + path, body),
@@ -97,7 +105,7 @@ export const api = {
     });
     if (!response.ok) {
       const value = await response.json();
-      throw new ApiError(value.message || value.detail || '路线导出失败');
+      throw new ApiError(value.message || value.detail || t("路线导出失败"));
     }
     return response.blob();
   },
@@ -106,7 +114,7 @@ export const api = {
       method: 'POST', headers: {'X-Studio-Token': token, 'Content-Type': 'application/zip'}, body: file,
     });
     const value = await response.json();
-    if (!response.ok) throw new ApiError(value.message || value.detail || '路线导入失败');
+    if (!response.ok) throw new ApiError(value.message || value.detail || t("路线导入失败"));
     return value;
   },
   saveWorkflow: (graph: Graph, id?: string, expected_version?: number) => request<SavedWorkflow>("/api/workflows/save", {graph, id, expected_version}),
@@ -156,7 +164,7 @@ export const api = {
       method: 'POST', headers: {'Content-Type': 'application/octet-stream', 'X-Studio-Token': token}, body: file,
     });
     const value = await response.json();
-    if (!response.ok) throw new ApiError(value.message || value.detail || '文件导入失败。');
+    if (!response.ok) throw new ApiError(value.message || value.detail || t("文件导入失败。"));
     return value as {path: string; bytes: number};
   },
   upload: async (file: File, batch?: string) => {
@@ -173,7 +181,7 @@ export const api = {
     );
     const value = await response.json();
     if (!response.ok)
-      throw new ApiError(value.message || value.detail || "上传失败。");
+      throw new ApiError(value.message || value.detail || t("上传失败。"));
     return value as { path: string; filename: string; bytes: number };
   },
 };

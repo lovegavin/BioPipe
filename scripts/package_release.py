@@ -190,7 +190,13 @@ Server originals stay on the server and are fetched only when opened. The small
 interactive data preview is not a publication export. See docs/PUBLICATION_FIGURES.md.
 
 APPLICATION SETTINGS AND SPECIALIST VIEWERS
-The toolbar gear groups Servers, Outputs and viewers, and Appearance.
+The toolbar gear groups Servers, Outputs and viewers, Appearance, and Language.
+Language, appearance and viewer preferences share the current profile's config.json.
+The library manager separates Manage library and Add operators; the large plus
+opens Add operators for both ordinary packages and saved/imported workflow operators.
+The interface supports English, Simplified Chinese and the system language.
+Optional v3.5 operator language packs are compatible with existing v3 packages.
+See docs/localization.md and examples/localized_operator for authoring details.
 Configure installed EXE/GUI JAR paths and default viewers by file extension once.
 In Results, Open uses that preference; the arrow offers alternative desktop apps
 and manual web viewers. Third-party graphical apps and licenses are not bundled.

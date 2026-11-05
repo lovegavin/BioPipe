@@ -2321,3 +2321,20 @@ strong {
     grid-template-columns: 119px minmax(0, 1fr);
   }
 }
+
+.library-management-tabs { display:flex; flex-shrink:0; gap:6px; margin:16px 24px 12px; padding:5px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); }
+.plugin-panel-body { overflow:auto; min-height:0; }
+.library-management-tabs button { flex:1; padding:10px 16px; border-radius:var(--radius-sm); color:var(--text-muted); }
+.library-management-tabs button[aria-pressed="true"] { color:var(--text-primary); background:var(--panel); box-shadow:0 1px 4px #0002; }
+.add-operators { display:grid; gap:18px; }
+.operator-install-card { border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+.operator-install-heading { display:flex; gap:12px; align-items:center; padding:18px; }
+.operator-install-heading > span { display:grid; place-items:center; width:44px; height:44px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); }
+.operator-install-heading h3 { font-size:14px; margin:0 0 4px; }.operator-install-heading code { color:var(--text-muted); font-size:11px; }
+.operator-install-heading > button { margin-left:auto; }
+.operator-install-card .plugin-folder-row { margin:0; padding:10px 14px; border-top:1px solid var(--separator); flex-wrap:wrap; }
+.saved-operator-routes { border-top:1px solid var(--separator); padding:14px; }
+.route-search { width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--surface); color:var(--text-primary); }
+.add-route-list { max-height:230px; overflow:auto; margin:10px 0; }.add-route-list .workflow-choice { margin:4px 0; }
+.add-route-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-top:10px; }.add-route-actions > span { font-size:12px; color:var(--text-muted); }
+@media(max-width:600px) { .operator-install-heading { flex-wrap:wrap; }.operator-install-heading > button { margin-left:0; }.library-management-tabs { margin:0 12px; } }

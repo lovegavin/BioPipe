@@ -47,7 +47,7 @@ def source_declarations(path, module):
         for node in cls.body:
             targets = node.targets if isinstance(node, ast.Assign) else [node.target] if isinstance(node, ast.AnnAssign) else []
             for target in targets:
-                if isinstance(target, ast.Name) and target.id in {'definition', 'parameters_file', 'documentation_file', 'provider'}:
+                if isinstance(target, ast.Name) and target.id in {'definition', 'parameters_file', 'documentation_file', 'localization_file', 'provider'}:
                     try:
                         fields[target.id] = ast.literal_eval(node.value)
                     except (ValueError, TypeError) as exc:
@@ -78,6 +78,8 @@ def source_declarations(path, module):
             document = next((name for name in options if (path.parent / name).is_file()), None)
         if document is not None:
             value['documentation'] = {'path': document}
+        if 'localization_file' in fields:
+            value['localization'] = {'path': fields['localization_file']}
         result.append({**value, 'entry_point': module + ':' + cls.name,
                        'parameters_schema': schema, 'provider': fields.get('provider')})
     return result
@@ -162,6 +164,10 @@ def compile_declaration(value, root, *, _code_identity=None):
     if value.get('documentation'):
         from .documentation import compile_documentation
         value['documentation'] = compile_documentation(source, value['documentation'])
+    if value.get('localization'):
+        from .localization import compile_localization
+        value['localization'] = compile_localization(source, value['localization'], value['parameters_schema'])
+        value['protocol_revision'] = '3.5'
     if is_image_icon(value.get('icon')):
         value['icon_image'] = image_data(icon_path(source.parent, value['icon']))
     else:
@@ -309,6 +315,12 @@ def verify_archive(entries, descriptors):
             if document not in entries:
                 raise ValueError(f'Missing Markdown in wheel: {document}. Include *.md in package-data.')
             verify_content(entries[document], descriptor['documentation'])
+        if descriptor.get('localization'):
+            from .localization import archive_path, verify_content
+            resource = archive_path(entries, descriptor)
+            if resource not in entries:
+                raise ValueError(f'Missing language pack in wheel: {resource}. Include *.json in package-data.')
+            verify_content(entries[resource], descriptor['localization'], descriptor['parameters_schema'])
         if not descriptor.get("icon_image"):
             continue
         asset = str(PurePosixPath(entry).parent / descriptor["icon"].replace("\\", "/"))
