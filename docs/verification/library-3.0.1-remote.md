@@ -548,3 +548,36 @@ cases, 10 `hictkpy` cases, ESM-IF/fair-esm/OpenFold/ProteinMPNN/Foldseek/OpenMM
 opt-ins that need weights or dedicated environments, and a few optional
 libraries (mrcfile, torch_scatter ABI, DockQ numpy pin, Windows Job Object).
 The per-test reasons are in the `-rs` log written alongside this run.
+
+## 22. Fourth coverage wave
+
+Five more real-data graphs (`w4_data`, `w4_omics`, `w4_seq`, `w4_struct`,
+`w4_tab_stats`) completed with rc=0 and zero dropped steps: **18 new distinct
+operators**, zero real-operator overlap with the previous waves, cumulative
+**403/717 (56.2%)**.
+
+New operators: `barnard_test`, `bhapkar_test`, `boschloo_exact`, `cohens_h`,
+`difference_sign`, `fisher_exact`, `flow_transform`, `indicator_species`,
+`odds_ratio`, `ordinal_logistic`, `risk_ratio`, `sequence_isoelectric_point`,
+`sequence_repeat_finder`, `structure_cation_pi`, `structure_contacts`,
+`structure_plddt_profile`, `structure_ss_bridge_network`,
+`stuart_maxwell_test`.
+
+What unlocked them: scoring candidates against each Step class's real
+`input_contracts` instead of descriptor arity, a 68-source pool with relabeled
+views of real matrices (values unchanged), real protein/CDS FASTAs from repo
+fixtures, and a 2x2 contingency table derived from the real Golub GCT. Ten
+export files were produced; all read back, five terminal exports matched their
+source Form at `max_abs_diff = 0.0`.
+
+This wave missed its +40-80 target (+18). The remaining 313 uncovered operators
+are bucketed as 102 arity/parameter harness gaps, 61 domain-specific semantics,
+61 sequence/structure contract gaps, 33 label/column mismatches, 30 operators
+needing more than 302 observations, 17 missing tool/data files, and 9 with no
+contract-matching source. Hard workspace limits: no SMILES/openbabel, no MD
+trajectories, no foldseek/vina/esm3/boltz binaries, and model-backed operators
+stall on an aborted network fetch.
+
+Evidence: `coverage/WAVE4_ROUTES.jsonl`, `WAVE4_SUMMARY.md`,
+`WAVE4_EXPORTS.json`, refreshed `UNCOVERED.md` (313, bucketed) and
+`ROUTE_OPERATOR_MATRIX.csv` (112x404); previous copies retained as `.wave3`.
