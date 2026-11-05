@@ -337,3 +337,27 @@ after:  3 passed in 0.11s
 focused suite (357-361, export_results, old five-form tests,
 mantel/dca/var_model, DSSP): 89 passed, 1 skipped in 3.81s
 ```
+
+## 15. BGEN route completes after the four-plane fix
+
+The built-in `bgen_qc` route previously stopped at the first reader:
+
+```
+reader BgenReader output contract: invalid allele_count value np.float32(3.0)
+```
+
+With the reader fix from section 14.1 installed (library built from main
+`59b4e5cb`, registry 717/101/7/24, errors `[]`), the same route directory with
+the official `example.bgen` (2504 samples x 648 variants) now completes:
+
+```
+status: complete, 8/8 steps, total_elapsed 6.0098 s,
+managed_peak_bytes 13,431,817
+maf -> ld_prune (1.935 s) -> pca (2.816 s, PC1 0.081, PC2 0.050)
+ -> scatter (1.008 s) -> describe 210 x 2504, n_valid 525840
+```
+
+This supersedes the `bgen_qc` row of section 9: the built-in route tally is
+now **20 complete / 4 skipped** (remaining skips: ml_classification,
+ml_regression, proteomics_de lack a protein x sample matrix; multi_omics
+requires a CITE-seq H5 that returned 403).
