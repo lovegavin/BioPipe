@@ -61,6 +61,14 @@ if a later file fails. Runtime errors are shown and the current library remains
 managed by the existing transactional backend. The server-library entry continues
 to open server settings; this window manages the local library.
 
+Saving an incomplete canvas creates an editable draft; it does not make that
+canvas a runnable workflow operator. Registration validates the internal graph.
+For example, a PCA node needs a source connected to its input before registration.
+Input file contents need not be present on the registration computer. Failures
+remain visible outside the scrolling library content, retain the selection, and
+leave the previous registry unchanged. Connect the missing ports, save the route
+again, and retry **Add to library**.
+
 ## Operator protocol v3.5
 
 This is an additive presentation revision of protocol v3. The wire field remains

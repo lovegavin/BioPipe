@@ -33,7 +33,7 @@ export function AddOperators({state, busy, onPackage, onRefresh, onChanged, onPe
       await api.registerRoutes(files ? saved : selected);
       setSelected([]);
       onMessage(t('路线算子已添加，即刻可用。'));
-    } catch (error) {onError((error as Error).message); if (saved.length) setSelected(saved);}
+    } catch (error) {onError(t('路线未添加：{reason}', {reason: (error as Error).message})); if (saved.length) setSelected(saved);}
     finally {
       try {setRoutes(await api.workflows()); await onChanged();}
       catch (error) {onError((error as Error).message);}

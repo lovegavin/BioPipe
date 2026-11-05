@@ -87,9 +87,11 @@ export function PluginPanel({onClose, onChanged, initialTab = 'manage'}: {onClos
       </div>
       <div hidden={tab !== 'add'}><AddOperators state={state} busy={busy} onPackage={() => file.current?.click()}
         onRefresh={() => void operate(api.refreshPlugins)} onChanged={onChanged} onPending={setPending} onError={setError} onMessage={setMessage}/></div>
+    </div>
+    {(message || error) && <div className="library-operation-feedback">
       {message && <p role="status" className="plugin-status">{message}</p>}
       {error && <p role="alert" className="modal-error">{error}</p>}
-    </div>
+    </div>}
     <footer><span className="modal-spacer"/><button className="subtle-button" disabled={pending} onClick={onClose}>{t("完成")}</button></footer>
   </Modal>;
 }

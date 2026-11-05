@@ -45,3 +45,14 @@ it('registers all selected saved workflows in a single request',async()=>{
   await vi.waitFor(()=>expect(onPending).toHaveBeenLastCalledWith(false));
   expect(api.registerRoutes).toHaveBeenCalledExactlyOnceWith(['one','two']);expect(api.saveWorkflow).not.toHaveBeenCalled();
 });
+it('reports a rejected workflow without clearing its selection or claiming success',async()=>{
+  hooks.values=[[],['incomplete'],'',false];
+  vi.mocked(api.registerRoutes).mockRejectedValue(new Error('PCA needs 1 input.'));
+  const button=elements(render()).find(n=>n.type==='button'&&Array.isArray(n.props.children)&&n.props.children.includes('添加到算子库'))!;
+  (button.props.onClick as Function)();
+  await vi.waitFor(()=>expect(onPending).toHaveBeenLastCalledWith(false));
+  expect(onError).toHaveBeenLastCalledWith('路线未添加：PCA needs 1 input.');
+  expect(hooks.values[1]).toEqual(['incomplete']);
+  expect(onMessage).not.toHaveBeenCalledWith('路线算子已添加，即刻可用。');
+  expect(onChanged).toHaveBeenCalledOnce();
+});

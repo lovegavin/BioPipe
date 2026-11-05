@@ -141,6 +141,33 @@ def test_registration_is_atomic_and_requires_complete_boundary(route_studio):
     assert response.status_code == 422 and client.get('/api/routes').json() == []
 
 
+def test_disconnected_pca_can_be_saved_then_connected_and_registered(route_studio):
+    client, data, _ = route_studio
+    graph = deepcopy(data['demo'])
+    graph['nodes'] = [node for node in graph['nodes'] if node.get('operator') == 'pca']
+    graph['edges'] = []
+    graph['memory'] = {'enabled': True}
+    saved = client.post('/api/workflows/save', json={'graph': graph})
+    assert saved.status_code == 200, saved.text
+    item = saved.json()
+    rejected = client.post('/api/routes/register', json={'workflow_ids': [item['id']]})
+    assert rejected.status_code == 422, rejected.text
+    assert rejected.json()['node_id'] == graph['nodes'][0]['id']
+    assert client.get('/api/routes').json() == []
+    assert client.get(f"/api/workflows/{item['id']}").status_code == 200
+
+    source = deepcopy(next(node for node in data['demo']['nodes'] if node['kind'] == 'source'))
+    graph['nodes'].insert(0, source)
+    graph['edges'] = [{'id': 'connected', 'source': source['id'], 'target': graph['nodes'][1]['id'],
+                       'sourceHandle': 'out', 'targetHandle': 'in-0'}]
+    updated = client.post('/api/workflows/save', json={
+        'graph': graph, 'id': item['id'], 'expected_version': item['version']})
+    assert updated.status_code == 200, updated.text
+    registered = client.post('/api/routes/register', json={'workflow_ids': [item['id']]})
+    assert registered.status_code == 200, registered.text
+    assert [(route['id'], route['version']) for route in client.get('/api/routes').json()] == [(item['id'], 2)]
+
+
 def test_registration_preserves_genotype_reader_contract_without_original_files(route_studio):
     client, data, _ = route_studio
     graph = deepcopy(data['demo'])

@@ -2324,6 +2324,7 @@ strong {
 
 .library-management-tabs { display:flex; flex-shrink:0; gap:6px; margin:16px 24px 12px; padding:5px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); }
 .plugin-panel-body { overflow:auto; min-height:0; }
+.library-operation-feedback { flex-shrink:0; max-height:25dvh; overflow-y:auto; }
 .library-management-tabs button { flex:1; padding:10px 16px; border-radius:var(--radius-sm); color:var(--text-muted); }
 .library-management-tabs button[aria-pressed="true"] { color:var(--text-primary); background:var(--panel); box-shadow:0 1px 4px #0002; }
 .add-operators { display:grid; gap:18px; }

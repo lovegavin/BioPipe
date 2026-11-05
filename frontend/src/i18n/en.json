@@ -631,5 +631,6 @@
   "机器学习": "Machine learning",
   "组学分析": "Omics",
   "可视化": "Visualization",
-  "未分类": "Uncategorized"
+  "未分类": "Uncategorized",
+  "路线未添加：{reason}": "Workflow not added: {reason}"
 }
