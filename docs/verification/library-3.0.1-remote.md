@@ -169,3 +169,53 @@ Known skip defect: `bgen_qc` with a plink2 BGEN. `bgen-reader` returns
 `P(AB) + 2*P(BB)` reaches 3.0 and the output contract rejects it
 (`invalid allele_count value np.float32(3.0)`). The official example BGEN host
 returned 403, so this is reproducible only with a locally generated plink2 file.
+
+## 10. Genome routes with official tools (real data)
+
+Seven genome routes were authored under `runs/route_genome_*` (task.yaml +
+parameters.json + input/), passed `--check`, and ran end-to-end with the
+official binaries installed under `tools/envs/`; every route ends in a
+non-plotting `export_results`. Evidence: `ROUTES_GENOME.jsonl` (7 lines) and
+`SUMMARY_GENOME.md`.
+
+| route | tool | elapsed (s) | key numbers | oracle |
+|---|---|---|---|---|
+| antismash | antiSMASH 8.0.4 + DB | 13.35 | nisin 15,016 bp, 1 region 1-15,016 lanthipeptide-class-i, 12 genes, 1 protocluster; export 1 row | CLI JSON same region/product/12 CDS PASS |
+| amrfinder | AMRFinderPlus 4.2.7 + DB 2026-10-29.1 | 107.15 | E. coli K-12, 0 hits (negative control) | CLI 0 hits PASS |
+| amrfinder_pos | AMRFinderPlus 4.2.7 | 1.61 | pBR322, 2 hits tet(C) 86-1273, blaTEM-1 3296-4153 (100% id/cov) | CLI identical PASS |
+| trna | tRNAscan-SE 2.0.13 | 36.46 | 89 tRNAs, 24 isotypes; export 89 rows | CLI 89 tRNAs, 0 coordinate mismatches PASS |
+| flye | flye 2.9.6 | 115.48 | 291 x 5 kb, 3% error lambda reads (30x); 1 contig 48,502 bp, N50 48,502, circular | QUAST 5.3.0 48,502 bp, 100% fraction, 0 mismatches PASS |
+| assembly_stats | QUAST 5.3.0 | 1.12 | 54 metrics on the Flye FASTA + reference; N50 48,502, 100% fraction | 53 numeric metrics equal PASS |
+| crispr | minced 0.4.2 | 7.85 | K-12, 2 arrays (2,877,701-2,878,463 13 repeats 29/32; 2,904,014-2,904,407 7 repeats 28/33) | CLI identical spans/repeat counts PASS |
+
+Notes: antiSMASH needs an explicit `database_dir`; `rfam_scan` was not run
+because no pressed Rfam.cm / Infernal database exists in this workspace
+(tRNAscan-SE covers the tRNA item); Flye emits contig statistics but no
+sequences in its output Form, so `assembly_stats` is a separate route over the
+exported FASTA; the venv used for these runs reports `biopipe 3.0.0`.
+
+## 11. Family coverage graphs (real data)
+
+Six additional family graphs under `coverage/graphs/` exercise operators that
+the 24 built-in routes do not touch: tab_stats (67 steps), tab_ml (44), struct
+(16), omics (16), seq (14), data (9). Totals: 166 executed step records,
+155 distinct operators (154 analysis + export_results), each in exactly one
+graph, zero overlap with the 87 operators of the built-in routes and zero
+overlap between graphs. Every graph ends with `export_results` on the terminal
+real-data Form plus one intermediate export (12 exports, all read-back
+`ok`, 6 terminal exports value-equal to the source Form with sha256 recorded).
+Evidence: `coverage/COVERAGE_ROUTES.jsonl`, `coverage/ROUTE_OPERATOR_MATRIX.csv`,
+`coverage/builtin_candidates/` (6 staged routes) and per-graph
+`README.md`/`graph.mmd`/`input_manifest.json`.
+
+A library defect surfaced only inside graph runs: `src/task/step/base.py`
+declares `@classmethod estimate_memory(cls, inputs, params, profiles)` returning
+`(workspace, output)`, but eight step modules define an instance method that
+returns a dict, so the planner calls it with the wrong arity
+(`missing 1 required positional argument: 'profiles'`). Affected operators
+include `esm_embedding_outlier_scan`, `structure_cavity_scan`,
+`sequence_kmer_profile` and `structure_helix_geometry`. This is a 3.0.2 fix
+item; the repo was not modified here.
+
+`bgen_qc` remains the other reader-level 3.0.2 item: plink2 BGEN is decoded as
+four one-hot planes, so dosage reaches 3.0 and the output contract rejects it.
