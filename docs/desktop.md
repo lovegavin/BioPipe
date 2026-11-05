@@ -155,6 +155,9 @@ on the user's computer; none of these paths refer to the developer's computer.
    the allocated socket until service startup to avoid a port allocation race.
 3. Start backend work only after the host attaches its process tree to a Windows
    Job Object. The host manages only processes it created.
+   Explicit specialist-viewer launches break away from that job so closing BioPipe
+   does not close the user's external viewer. Analysis and installer workers remain
+   owned by the host and are cleaned up as before.
 4. The frontend reports ready after loading catalog/drafts. Closing flushes the
    workspace, then requests graceful backend shutdown through stdin. Active jobs
    prompt the user before stopping and exiting.

@@ -264,7 +264,8 @@ class ViewerService:
             try:
                 process = subprocess.Popen(argv, shell=False, cwd=str(Path(program).parent),
                                            stdin=subprocess.DEVNULL, stdout=log, stderr=log,
-                                           close_fds=True, **({'start_new_session': True} if os.name != 'nt' else {}))
+                                           close_fds=True, **({'start_new_session': True} if os.name != 'nt' else
+                                                             {'creationflags': subprocess.CREATE_BREAKAWAY_FROM_JOB}))
             except OSError as exc:
                 raise CommandError('viewer_launch_failed', str(exc), 409) from exc
         # Reap without pipes or non-daemon executors that can block Studio exit.

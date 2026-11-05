@@ -43,5 +43,5 @@ jobs:
       - run: python scripts/build_operator_docs.py --check
       - run: python -m pytest tests/test_manifest_v3.py tests/test_contracts.py tests/test_protocol_v2.py tests/test_sdk_agent.py tests/test_builtin_pins.py tests/test_route_parameters.py tests/test_desktop.py -q
       - run: python -m pytest tests/test_headless_application.py tests/test_operator_docs.py tests/test_wheel_execution.py tests/test_application_library_separation.py tests/test_memory_system.py tests/test_memory_runtime.py -q
-      - run: python -m pytest tests/test_result_viewers.py tests/test_export_domain.py tests/test_export_results.py tests/test_hic_workflow.py -q
+      - run: python -m pytest tests/test_result_viewers.py tests/test_viewer_lifetime.py tests/test_export_domain.py tests/test_export_results.py tests/test_hic_workflow.py -q
       - run: python -m pytest tests/test_plugin_refresh.py tests/test_transfers.py tests/test_remote_transfer.py tests/test_release_build.py tests/test_release_agent_harness.py tests/test_storage.py tests/test_storage_runtime.py tests/test_service_long_paths.py tests/test_library_bundle.py::test_new_library_rejects_runtime_without_shared_io -q

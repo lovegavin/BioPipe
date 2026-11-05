@@ -47,6 +47,8 @@ profile settings, never workflow fields. Use the actual EXE, or a GUI JAR plus
 Java on PATH, rather than a shortcut/batch file. On macOS configure the executable
 inside the `.app` bundle. A headless Linux host without a display cannot launch a
 GUI; run this handoff on the desktop/client service instead.
+External desktop viewers have their own lifetime: closing BioPipe does not close
+them. Scientific workers and dependency installers retain BioPipe's normal cleanup.
 
 Defaults apply only when the user requests opening a result, not automatically
 after every run. The longest matching saved suffix wins (for example `.vcf.gz`
