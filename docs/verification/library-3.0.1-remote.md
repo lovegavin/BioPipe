@@ -475,3 +475,55 @@ SciPy gamma helpers) and rechecked:
 `--check` returned `CHECK OK`; the rerun overwrote the same route output and
 kept the same graph, parameters and data. Routes unaffected by a fix are not
 rerun (test-later rule).
+
+## 20. Second coverage wave (wave-3 graphs)
+
+A second solver wave added 11 real-data task graphs (`g2_*`, `g3_*`, `g4_fixed`)
+under `coverage/graphs/`, executed with `scripts/run.py --memory-mb 4096`.
+
+| graph | ops | steps ok | elapsed s |
+| --- | --- | --- | --- |
+| g2_data | 4 | 6 | 0.07 |
+| g2_omics | 14 | 16 | 4.68 |
+| g2_struct | 2 | 4 | 3.49 |
+| g2_tab_ml | 16 | 18 | 1.42 |
+| g2_tab_stats | 83 | 85 | 5.92 |
+| g3_data | 1 | 2 | 0.05 |
+| g3_omics | 1 | 3 | 0.38 |
+| g3_struct | 2 | 4 | 0.55 |
+| g3_tab_ml | 5 | 7 | 1.07 |
+| g3_tab_stats | 1 | 2 | 4.65 |
+| g4_fixed | 5 | 7 | 19.51 |
+
+Totals: **11/11 graphs complete, 154 operator steps ok, 3 dropped, 134 distinct
+new operators**, zero overlap with the wave-1 operators and zero with the
+builtin routes; no operator appears in more than one wave-3 graph.
+
+- Cumulative framework coverage: **386/717 (53.8%)** = builtin 87 + wave-1
+  164 + wave-3 134.
+- The 5 `estimate_memory` operators re-ran green on current HEAD `a78652bc`
+  (`g4_fixed`, 7 steps, 19.5 s): the earlier failure was a stale working tree,
+  not the fixed commit.
+- Dropped: `fligner_killeen` (no feature had two finite values in every group),
+  `manova` (residual covariance is singular), `difference_sign` (needs two
+  non-zero successive differences). These are data-shape limits, not crashes.
+- 20 export artifacts across wave-3 graphs exist and were read back
+  (`WAVE2_EXPORTS.json`, every `readback_ok=true`), with sha256 and row/col
+  counts.
+- Evidence: `coverage/WAVE2_ROUTES.jsonl` (graph rows with explicit operator
+  arrays + per-op rows), `WAVE2_SUMMARY.md`, per-graph `task.yaml`,
+  `parameters.json`, `graph.mmd`/`graph.dot`, `README`, and
+  `_exec/<graph>/output/run_summary.json`; refreshed `UNCOVERED.md` (331
+  remaining, wave-1 copy kept as `UNCOVERED.wave1.md`) and
+  `ROUTE_OPERATOR_MATRIX.csv/json` (39x717).
+
+Remaining 331 uncovered operators break down as: 205 one-off StepErrors, 52
+small-n (need >=8..302 complete observations while the 48-sample source is too
+small for some), 23 arity/harness (descriptor arity differs from the class
+arity), 18 label/column, 16 unbound (no contract-matching real source), 14
+sequence/structure contract, 3 singular/non-positive.
+
+Caveat: a few bindings are contract-valid but semantically distant (for example
+`topic_lda` on 48x1 metadata or `antibody_numbering_imgt` on a pBR322 FASTA).
+The data and execution are real, but these rows are disclosed as coverage
+evidence, not as domain-meaningful routes.
