@@ -99,7 +99,7 @@ class MantelStep(Step):
                 (int(np.sum(permuted <= observed)) + 1) / (n_perm + 1),
             )
         z = float(np.sum(x * y) / len(x))
-        out = np.array([[observed, p, z, float(len(common))]], dtype=np.float32)
+        out = np.array([[observed], [p], [z], [float(len(common))]], dtype=np.float32)
         ctx[ctx.step_params.get("output", self.name)] = Form(
             data=out, dims=["statistic", "value"],
             labels={"statistic": {"r": 0, "p": 1, "z": 2, "n": 3}, "value": {"value": 0}},

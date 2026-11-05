@@ -74,10 +74,10 @@ def test_mantel_permutation_and_labels():
     bdist = 0.5 * (raw + raw.T)
     b = _form(bdist, ["sample", "sample_b"], labels)
     out, export = _run(MantelStep(), {"n_perm": 99}, [a, b])
-    assert out.data.shape == (1, 4)
+    assert out.data.shape == (4, 1)
     assert list(out.labels["statistic"]) == ["r", "p", "z", "n"]
     assert out.data[0, 0] > 0.9
-    assert 0.0 <= out.data[0, 1] <= 1.0
+    assert 0.0 <= out.data[1, 0] <= 1.0
     assert export["n_samples"] == 10
 
 

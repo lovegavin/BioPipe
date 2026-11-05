@@ -98,7 +98,7 @@ class NestednessStep(Step):
                                          key=lambda kv: kv[1])]
         if axis == 1:
             row_names, col_names = col_names, row_names
-        data_out = np.asarray([[n_columns, n_rows, nodf, fill]], dtype=np.float32)
+        data_out = np.asarray([[n_columns], [n_rows], [nodf], [fill]], dtype=np.float32)
         ctx[out_name] = Form(
             data=data_out,
             dims=["statistic", "value"],

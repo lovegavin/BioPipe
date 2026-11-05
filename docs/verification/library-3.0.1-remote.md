@@ -268,3 +268,26 @@ int64 serialization, `dca`, `var_model`, `mantel`, `nestedness`), DSSP
 parsing of mkdssp 4.x mmCIF output, `limma_de` on SciPy 1.17
 (`gamma_gen._digamma`), `gc_skew_profile` 10 kb default window, and
 `esm_masked_marginal` under torch 2.6 `weights_only=True`.
+## 13. Five Form-boundary defects
+
+Remote framework runs exposed five operators whose declared output Form did
+not satisfy the runtime label contract. The failing stage was output
+validation, not the statistical computation; the new
+`tests/test_extension360.py` reproduces each case without any external tool.
+
+| Operator | Defect | Fix |
+| --- | --- | --- |
+| `cox_stuart` | `n_pairs` stayed `numpy.int64`, so exporting the step raised the JSON serialization error | cast to `int` before export |
+| `dca` | rows carried seven values (threshold first) while only six metric labels exist, so the output Form failed validation | drop the threshold column; thresholds remain in the `threshold` dim |
+| `var_model` | block shape `(neqs*terms, 4)` but labels were `equation=neqs` and `term=terms` | label `equation` with the six `equation:term` rows and `term` with `coef/se/t/p` |
+| `mantel` | statistic row vector `(1, 4)` while four labels were declared | return a `(4, 1)` column vector |
+| `nestedness` | same `(1, 4)` row vector with four labels | return a `(4, 1)` column vector |
+
+Evidence: before the change, `pytest tests/test_extension360.py` produced
+`5 failed`; after it, `5 passed`. The three legacy unit tests that asserted
+the old shapes (`tests/test_extension8.py`, `tests/test_extension80.py`,
+`tests/test_extension99.py`) were updated to the corrected contract, and the
+combined regression set finished with `47 passed, 6 skipped`. `registry
+check` still reports `717 operators / 101 Readers / 7 packages / 24 routes`
+with `errors []`. These five defects, together with the earlier
+`estimate_memory` contract fix, belong to the 3.0.2 patch candidate set.

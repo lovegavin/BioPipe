@@ -102,7 +102,7 @@ class DcaStep(Step):
             net_benefit = tp / n - (fp / n) * odds
             treat_all = prevalence - (1.0 - prevalence) * odds
             rows.append(
-                [float(threshold), net_benefit, treat_all, 0.0, float(tp), float(fp), float(n)]
+                [net_benefit, treat_all, 0.0, float(tp), float(fp), float(n)]
             )
 
         metric_names = [
