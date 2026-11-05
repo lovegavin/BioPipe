@@ -430,3 +430,34 @@ registration/runtime checks plus documentation. The reader-side BGEN fix and
 the DSSP mmCIF fallback remain operator/library fixes (sections 14-16), and the
 `limma_de` private-SciPy dependency should be replaced with
 `scipy.special.polygamma` in a follow-up (not changed here).
+
+## 18. `limma_de` moved off SciPy-private gamma helpers
+
+`limma_de._prior` estimated the empirical-Bayes prior with
+`scipy.stats.distributions.gamma._digamma` / `._trigamma`, private helpers that
+are absent in current SciPy (local 1.18.1 and the remote 1.17 build):
+
+```
+AttributeError: 'gamma_gen' object has no attribute '_digamma'
+```
+
+This only triggers when `prior_df` is not supplied (automatic prior), which is
+why the fixed-`prior_df` route run did not expose it. The implementation now
+uses the public `scipy.special.digamma` and `scipy.special.polygamma(1, x)`;
+no formula or output contract changed.
+
+Evidence (fail first, then pass):
+
+```
+pytest tests/test_extension362.py
+  2 failed in 0.49s        # AttributeError + private-helper source check
+pytest tests/test_extension362.py tests/test_extension_operators.py \
+  -k "limma or prior or scipy"
+  3 passed, 9 deselected in 0.53s
+```
+
+The regression test exercises `_prior(..., prior_df=None)` on a six-feature
+variance vector and asserts a finite positive prior, and it rejects any
+remaining `stats.distributions.gamma._*` reference in the module source.
+Library registry was rebuilt after the change; no v3 definition, parameter or
+contract file was touched.
