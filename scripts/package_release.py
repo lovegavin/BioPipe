@@ -170,11 +170,12 @@ jobs; per-host memory and CPU admission prevents overcommitting the shared pool.
 See docs/EXECUTION_ENVIRONMENTS.md for settings, recovery and known limits.
 
 HI-C AND SSH SETUP
-Choose a server target in the top toolbar to browse server inputs. Ordinary SSH
+Open Settings > Servers to configure connections; choose a target in the toolbar
+to browse server inputs. Ordinary SSH
 connections reuse the registered server installation and negotiate compatible
 interfaces, operator manifests and cached dependency readiness. They do not upload
 desktop code or install packages. For first installation or an intentional upgrade,
-use Server maintenance > Install / upgrade server; no preconfigured Python is
+use Settings > Servers > Server maintenance > Install / upgrade server; no preconfigured Python is
 required on Linux x86_64. Installation needs writable storage and outbound HTTPS.
 Existing manual environments remain supported. Refresh operators and dependencies
 is a separate maintenance action. See docs/SERVER_HANDSHAKE.md for cache rules.
@@ -186,6 +187,17 @@ Plotting steps automatically save white-background PNG (300 DPI), PDF and SVG.
 Use Saved figures links to open the existing files; no extra export is required.
 Server originals stay on the server and are fetched only when opened. The small
 interactive data preview is not a publication export. See docs/PUBLICATION_FIGURES.md.
+
+APPLICATION SETTINGS AND SPECIALIST VIEWERS
+The toolbar gear groups Servers, Outputs and viewers, and Appearance.
+Configure installed EXE/GUI JAR paths and default viewers by file extension once.
+In Results, Open uses that preference; the arrow offers alternative desktop apps
+and manual web viewers. Third-party graphical apps and licenses are not bundled.
+Outputs remain retained task files; remote handoff fetches only selected outputs
+and required index siblings. See docs/result_viewers.md for format requirements.
+The independent library extends Export results with HIC/Cooler, GenBank, tracks,
+networks and trees. Conversion requires the documented original metadata; it does
+not reconstruct missing chromosome sizes, annotations or molecular structures.
 ''')
         guide.write('''
 UPGRADING FROM 0.4.1 / OLDER PROTOCOLS

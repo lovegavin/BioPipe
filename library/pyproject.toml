@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "biopipe-builtin-library"
-version = "2026.11.5.1"
+version = "2026.11.5.2"
 description = "Independent BioPipe reference operators, Readers and route templates"
 requires-python = ">=3.11"
 
