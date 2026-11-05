@@ -70,15 +70,42 @@ def segment_rows(records: list[dict]) -> list[dict]:
     return segments
 
 
-def run_dssp(binary: str, structure: Path, workdir: Path, *, timeout: int = 300) -> str:
-    output = workdir / "structure.dssp"
+def _pdb_to_mmcif(structure: Path, target: Path) -> None:
+    """Convert a PDB file to mmCIF for DSSP versions that only read mmCIF."""
+    from Bio.PDB import MMCIFIO, PDBParser
+
+    parser = PDBParser(QUIET=True)
+    model = parser.get_structure("structure", str(structure))
+    writer = MMCIFIO()
+    writer.set_structure(model)
+    writer.save(str(target))
+
+
+def _invoke_dssp(binary: str, structure: Path, output: Path, timeout: int):
     command = [binary, "--output-format", "dssp", str(structure), str(output)]
     try:
-        completed = subprocess.run(command, capture_output=True, text=True, timeout=timeout)
+        return subprocess.run(
+            command, capture_output=True, text=True, timeout=timeout
+        )
     except FileNotFoundError:
         raise StepError(f"structure_dssp_segments: DSSP executable '{binary}' was not found on PATH; install mkdssp") from None
     except subprocess.TimeoutExpired:
         raise StepError(f"structure_dssp_segments: DSSP timed out after {timeout} s") from None
+
+
+def run_dssp(binary: str, structure: Path, workdir: Path, *, timeout: int = 300) -> str:
+    output = workdir / "structure.dssp"
+    completed = _invoke_dssp(binary, structure, output, timeout)
+    if completed.returncode != 0 and structure.suffix.lower() in (".pdb", ".ent"):
+        # mkdssp 4.6 rejects some valid PDB files (REMARK/refine records) with
+        # an mmCIF parse error.  Convert once and retry before giving up.
+        converted = workdir / "structure.cif"
+        try:
+            _pdb_to_mmcif(structure, converted)
+        except Exception:
+            converted = None
+        if converted is not None and converted.is_file():
+            completed = _invoke_dssp(binary, converted, output, timeout)
     if completed.returncode != 0:
         tail = ((completed.stderr or completed.stdout).strip().splitlines() or [""])[-1]
         raise StepError(f"structure_dssp_segments: DSSP failed with exit code {completed.returncode}: {tail}")

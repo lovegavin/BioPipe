@@ -291,3 +291,49 @@ combined regression set finished with `47 passed, 6 skipped`. `registry
 check` still reports `717 operators / 101 Readers / 7 packages / 24 routes`
 with `errors []`. These five defects, together with the earlier
 `estimate_memory` contract fix, belong to the 3.0.2 patch candidate set.
+
+## 14. Reader/tool portability fixes (BGEN 4-plane, DSSP PDB fallback)
+
+Two defects were reproduced from the remote cluster and fixed in the library.
+
+### 14.1 BGEN reader: four-plane haplotype probabilities
+
+Remote `runs/route_bgen_qc/input/example.bgen` opened with `bgen_reader 4.0.9`
+returns `(2504, 648, 4)`: one-hot probabilities per haplotype
+(`[hap1 A, hap1 B, hap2 A, hap2 B]`, each haplotype sums to one).  The reader
+assumed the three-plane layout and computed `P(AB) + 2 P(BB)`, yielding
+`3.0` and a contract rejection:
+
+```
+StepError: invalid allele_count value np.float32(3.0)
+```
+
+Fix: when four planes are present, dosage is `P(hap1 B) + P(hap2 B)`; a
+haplotype with both allele probabilities zero marks the genotype missing.
+The three-plane path is unchanged.
+
+### 14.2 DSSP: mkdssp 4.6 rejects some valid PDB files
+
+`mkdssp 4.6.1` on `tests/fixtures/vhh_1mel.pdb` exits 1:
+
+```
+parse error at line 1: This file does not seem to be an mmCIF file
+>> Duplicate Key violation, cat: refine values: B_iso_mean
+```
+
+The same file is accepted by `mkdssp 4.2.2`; the same 4.6.1 binary accepts
+`1MEL.cif`.  `structure_dssp_segments` now retries once after converting a
+`.pdb/.ent` input to mmCIF with Biopython `MMCIFIO`.  If Biopython is absent
+or conversion fails, the original DSSP error is preserved.
+
+### 14.3 Regression evidence
+
+`tests/test_extension361.py` contains three tests: four-plane dosage,
+three-plane dosage, and the PDB->mmCIF retry (subprocess mocked).
+
+```
+before: 2 failed, 1 passed in 0.14s
+after:  3 passed in 0.11s
+focused suite (357-361, export_results, old five-form tests,
+mantel/dca/var_model, DSSP): 89 passed, 1 skipped in 3.81s
+```
