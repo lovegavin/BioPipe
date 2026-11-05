@@ -69,6 +69,7 @@ def liability_rows(
         rows.append(
             {
                 "position": int(position),
+                "residue": text[position - 1],
                 "kind": kind,
                 "severity": severity,
                 "severity_code": _SEVERITY_CODES[severity],

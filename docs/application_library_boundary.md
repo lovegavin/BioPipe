@@ -1,7 +1,8 @@
 # Application and operator library
 
 BioPipe has two versioned products in one repository. Application releases use
-`vX.Y.Z`; operator releases use `library-vYYYY.M.D`. Adding or correcting an
+`vX.Y.Z`; operator releases use `library-vYYYY.M.D`. The coordinated 3.0.0
+release uses `v3.0.0` and `library-v3.0.0` for both products. Adding or correcting an
 operator does not require an EXE release or an application version change.
 
 | Owner | Source | Published artifact |

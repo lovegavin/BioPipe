@@ -109,7 +109,7 @@ the row.
 
 1. Create an empty managed root (for example `/public/home/<user>/biopipe-accept`).
 2. Install from Studio and wait for "environment ready".
-3. Confirm first-connection counts: 709 operators, 101 Readers, 0 errors.
+3. Confirm first-connection counts: 717 operators, 101 Readers, 0 errors.
 4. Run the route above and download one artifact.
 5. Restart Studio; the connection and dependency counter must be restored without
    pressing refresh.

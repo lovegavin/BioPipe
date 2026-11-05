@@ -794,7 +794,7 @@
     },
     {
       "id": "route_27299bdee8dc",
-      "version": 2,
+      "version": 3,
       "name": "Sequence feature analysis",
       "graph": {
         "schema_version": 2,
@@ -1126,6 +1126,10 @@
                   },
                   "unknown_code": {
                     "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
                   }
                 },
                 "info_open": false,

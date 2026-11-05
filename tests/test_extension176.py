@@ -57,7 +57,7 @@ def main() -> None:
         )
         records.append(residue * 10)
     (out / "seqs" / (stem + ".fa")).write_text("\\n".join(records) + "\\n", encoding="utf-8")
-    Path(structure).with_suffix(".json").write_text(
+    (out / "bias.json").write_text(
         json.dumps({"bias": bias, "count": count}), encoding="utf-8"
     )
 

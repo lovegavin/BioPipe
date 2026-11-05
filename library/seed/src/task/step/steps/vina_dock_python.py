@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import shutil
 import tempfile
 from pathlib import Path
 
@@ -11,6 +12,7 @@ from src.core.errors import StepError
 from src.core.forms import Form
 from src.task.step.base import Step
 from src.task.step.steps._protein_common import decode_column
+from src.task.step.steps._native_results import output_directory, remember_native, result_file
 
 _AD4 = {
     "C": "A",
@@ -217,6 +219,9 @@ class VinaDockPythonStep(Step):
             workdir=Path(tempfile.mkdtemp(prefix="vina_")),
         )
         energies = result["energies"]
+        directory = output_directory(ctx, "vina")
+        native_pose = directory / "poses.pdbqt"
+        shutil.copyfile(result["pose_file"], native_pose)
         pose_dim = str(params.get("pose_dim", "pose"))
         out_name = str(params.get("output", "docking"))
         columns = _STATISTICS[: energies.shape[1]]
@@ -235,18 +240,21 @@ class VinaDockPythonStep(Step):
                 "size": [float(value) for value in result["size"]],
                 "ligand_path": str(ligand_path),
                 "flex_path": str(flex_path) if flex_path is not None else "",
-                "pose_file": result["pose_file"],
+                "pose_file": str(native_pose),
                 "receptor_file": result["receptor_file"],
                 "scoring": str(params.get("scoring", "vina")),
             },
         )
+        result_files = [result_file("poses", native_pose, "pdbqt", "Vina docking poses")]
+        remember_native(ctx, out_name, result_files)
         self._export_data = {
             "poses": [
                 {"pose": f"pose{index + 1}", "total": float(row[0]), "terms": [float(value) for value in row]}
                 for index, row in enumerate(energies)
             ],
             "best_affinity": float(energies[0, 0]),
-            "pose_file": result["pose_file"],
+            "pose_file": str(native_pose),
+            "result_files": result_files,
         }
 
     def export(self, ctx):

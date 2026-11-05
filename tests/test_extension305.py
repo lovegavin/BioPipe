@@ -50,6 +50,9 @@ def test_against_official_dockq_on_perturbed_model(tmp_path):
         binary = str(candidate) if candidate.is_file() else ""
     if not binary:
         pytest.skip("DockQ CLI is not installed")
+    probe = subprocess.run([binary, "--version"], capture_output=True, text=True)
+    if "compiled using NumPy 1.x" in probe.stdout + probe.stderr:
+        pytest.skip("official DockQ binary was built against NumPy 1.x")
     lines = FIXTURE.read_text().splitlines()
     shifted = []
     for line in lines:

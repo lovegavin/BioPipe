@@ -103,9 +103,14 @@ def test_rdkit_operators_through_runner() -> None:
 
 def test_esm_if_mutation_scan_through_runner() -> None:
     pytest.importorskip("torch")
-    pytest.importorskip("esm")
     pytest.importorskip("biotite")
-    pytest.importorskip("torch_scatter")
+    esm = pytest.importorskip("esm")
+    if not hasattr(esm, "pretrained"):
+        pytest.skip("fair-esm is shadowed by the ESM-3 package")
+    try:
+        pytest.importorskip("torch_scatter")
+    except OSError as exc:
+        pytest.skip(f"torch_scatter is ABI-incompatible: {exc}")
     checkpoint = Path("/home/gavin/models/esm_if1_gvp4_t16_142M_UR50.pt")
     if not checkpoint.is_file():
         pytest.skip("ESM-IF checkpoint is not available")

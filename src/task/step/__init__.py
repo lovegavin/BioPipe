@@ -8,8 +8,11 @@ if os.getenv("BIOPIPE_REGISTRY_MAINTENANCE") != "1":
     from biopipe.environments import proxy_step
 
     def _load(descriptor):
-        if (descriptor.get("resources") or {}).get("environment"):
-            return proxy_step(descriptor)
+        environment = (descriptor.get("resources") or {}).get("environment")
+        if environment:
+            from biopipe.environments import resolve
+            if resolve(environment) is not None:
+                return proxy_step(descriptor)
         return load_entry(descriptor)
 
     for _, descriptor in bundled_entries("operator"):

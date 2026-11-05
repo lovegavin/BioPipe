@@ -105,9 +105,14 @@ def test_pdb_dims_are_required() -> None:
 
 def test_real_checkpoint_scan_on_fixture() -> None:
     pytest.importorskip("torch")
-    pytest.importorskip("esm")
     pytest.importorskip("biotite")
-    pytest.importorskip("torch_scatter")
+    esm = pytest.importorskip("esm")
+    if not hasattr(esm, "pretrained"):
+        pytest.skip("fair-esm is shadowed by the ESM-3 package")
+    try:
+        pytest.importorskip("torch_scatter")
+    except OSError as exc:
+        pytest.skip(f"torch_scatter is ABI-incompatible: {exc}")
 
     from pathlib import Path
 

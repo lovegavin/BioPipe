@@ -81,21 +81,23 @@ class NmdsStep(Step):
             raise StepError(f"{self.name}: eps must be positive")
 
         parameters = inspect.signature(MDS.__init__).parameters
-        kwargs = {
+        candidate = {
             "n_components": components,
             "init": "classical_mds",
-            "n_init": 1,
+            "n_init": 10,
             "max_iter": max_iter,
             "eps": eps,
             "normalized_stress": False,
             "random_state": 0,
         }
         if "metric_mds" in parameters:
-            kwargs["metric_mds"] = False
-            kwargs["metric"] = "precomputed"
+            candidate["metric_mds"] = False
+            candidate["metric"] = "precomputed"
         else:  # pragma: no cover - older scikit-learn
-            kwargs["metric"] = False
-            kwargs["dissimilarity"] = "precomputed"
+            candidate["metric"] = False
+            candidate["dissimilarity"] = "precomputed"
+        # scikit-learn removes and renames MDS keywords between minor releases.
+        kwargs = {key: value for key, value in candidate.items() if key in parameters}
 
         model = MDS(**kwargs).fit(D)
         coords = np.asarray(model.embedding_, dtype=np.float64)

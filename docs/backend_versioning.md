@@ -26,6 +26,15 @@ Do not retroactively rename published versions or tags.
 - A library that needs new runtime features declares a tested minimum application
   version. Publish that application separately before depending on it.
 
+## Coordinated 3.0.0 release
+
+BioPipe 3.0.0 and BioPipe Operator Library v3.0.0 are released together. Both
+products use version `3.0.0`, published as annotated tags `v3.0.0` and
+`library-v3.0.0`. The library declares `minimum_application` and
+`build_application` `3.0.0`. This is a coordinated milestone, not a new
+versioning rule: later operator-only changes continue to use the library
+release process.
+
 ## Library rules
 
 Follow [independent library releases](library_releases.md). Use protocol-v3 code,
@@ -237,6 +246,7 @@ a library bundle does not silently replace saved routes.
 2.1.0    batch: genome annotation I - antiSMASH, Rfam, tRNAscan-SE and AMRFinderPlus (713 operators)
 2.1.1    patch: import Biopython lazily in the antiSMASH real test (no capability change)
 2.2.0    batch: genome assembly I - Flye, QUAST and minced CRISPR (716 operators)
+3.0.0  coordinated application + library release: native file export registration, sequence FASTA export
 1.118.9  docs: quickstart asks the agent to design, adjust, validate and submit the real-data route instead of reusing a fixed one
 1.119.0  feature: agent canvas writes into the user's tab with execution switching, water-safe structure defaults, richer interface/liability exports and MCP session recovery
 1.53.0  next expansion batch

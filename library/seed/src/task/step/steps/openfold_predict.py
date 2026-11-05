@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -15,6 +16,7 @@ from src.core.forms import Form
 from src.reader import read_source
 from src.task.step.base import Step
 from src.task.step.steps._sequence_common import decode_sequences
+from src.task.step.steps._native_results import output_directory, remember_native, result_file
 
 
 def write_fasta(path: Path, sequence: str, header: str = "query") -> None:
@@ -184,6 +186,10 @@ class OpenfoldPredictStep(Step):
             raise StepError("openfold_predict: inference failed with exit code " + str(completed.returncode) + ": " + " | ".join(tail))
 
         prediction = find_prediction(out_dir)
+        directory = output_directory(ctx, "openfold")
+        native_pdb = directory / "prediction.pdb"
+        shutil.copyfile(prediction, native_pdb)
+        prediction = native_pdb
         form = read_source(str(prediction), ["atom", "field"], {"atom": "auto", "field": "builtin"})
         fields = form.labels.get("field", {})
         plddt = np.zeros(0)
@@ -192,8 +198,11 @@ class OpenfoldPredictStep(Step):
         plddt = plddt[np.isfinite(plddt)]
         out_name = str(params.get("output", "structure"))
         form.info.update({"plddt_mean": (float(plddt.mean()) if plddt.size else 0.0), "model": "openfold", "config_preset": str(params.get("config_preset", "model_1_ptm"))})
+        result_files = [result_file("structure", prediction, "pdb", "OpenFold prediction")]
+        remember_native(ctx, out_name, result_files)
         ctx[out_name] = form
         self._export_data = {
+            "result_files": result_files,
             "plddt_mean": float(plddt.mean()) if plddt.size else 0.0,
             "plddt_min": float(plddt.min()) if plddt.size else 0.0,
             "plddt_max": float(plddt.max()) if plddt.size else 0.0,

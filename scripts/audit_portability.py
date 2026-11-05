@@ -19,7 +19,9 @@ EXCLUDED = {"__pycache__", "node_modules", "bin", "obj", ".git", ".venv", "venv"
 def active_files(root):
     for folder in ("src", "biopipe", "biopipe_sdk", "desktop", "scripts", "library/seed", "docs", "examples", "frontend"):
         for file in (root / folder).rglob("*"):
-            if not EXCLUDED.intersection(file.relative_to(root).parts) and file.is_file():
+            if (not EXCLUDED.intersection(file.relative_to(root).parts)
+                    and file.is_file()
+                    and not file.name.endswith((".test.ts", ".test.tsx", ".spec.ts", ".spec.tsx"))):
                 yield file
     for file in root.iterdir():
         if file.is_file():

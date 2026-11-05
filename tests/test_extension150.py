@@ -51,8 +51,13 @@ def _require_checkpoint():
     if not Path(CHECKPOINT).is_file():
         pytest.skip("ESM-IF checkpoint is not available")
     pytest.importorskip("biotite")
-    pytest.importorskip("torch_scatter")
-    pytest.importorskip("esm")
+    esm = pytest.importorskip("esm")
+    if not hasattr(esm, "pretrained"):
+        pytest.skip("fair-esm is shadowed by the ESM-3 package")
+    try:
+        pytest.importorskip("torch_scatter")
+    except OSError as exc:
+        pytest.skip(f"torch_scatter is ABI-incompatible: {exc}")
 
 
 def test_real_partial_redesign_keeps_fixed_context():

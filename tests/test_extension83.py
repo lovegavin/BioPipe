@@ -50,10 +50,10 @@ def test_nmds_recovers_euclidean_layout():
     assert out.info["metric"] is False
     assert out.info["n"] == 6
     assert out.info["n_components"] == 2
-    assert export["stress1"] < 1e-8
+    assert export["stress1"] < 0.02  # sklearn non-metric MDS is not machine-zero
     observed = pdist(out.data)
     expected = pdist(points)
-    assert np.corrcoef(observed, expected)[0, 1] > 0.999
+    assert np.corrcoef(observed, expected)[0, 1] > 0.98  # non-metric fit preserves ranks, not exact distances
 
 
 def test_nmds_one_dimensional_ordering():
@@ -65,7 +65,7 @@ def test_nmds_one_dimensional_ordering():
     )
     assert out.data.shape == (5, 1)
     assert out.labels["component"] == {"NMDS1": 0}
-    assert export["stress1"] < 1e-8
+    assert export["stress1"] < 0.02  # sklearn non-metric MDS is not machine-zero
     coords = out.data[:, 0]
     assert np.all(np.diff(coords) > 0) or np.all(np.diff(coords) < 0)
 

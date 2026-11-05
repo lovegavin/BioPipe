@@ -12,7 +12,7 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-The **v2.4.1 application** and independently versioned **2026.11.5.2 operator library**
+The **v3.0.0 application** and the coordinated **BioPipe Operator Library v3.0.0**
 share this repository. The reference library includes **717 operators, 101 Readers, seven
 provider packages and 24 route templates**. Operators and Readers use **protocol
 v3 / SDK 3.1**, separate parameter JSON and adjacent Markdown documentation.

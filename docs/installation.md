@@ -21,7 +21,7 @@ Already-bundled CPU analyses do not require downloads. New extensions may need
 internet access; package availability, OS support and GPU drivers still matter.
 Windows x64, macOS, Linux and Windows ARM need separate tested distributions.
 
-The 2.0.2 release integrates the author's 2.0.0 library (709 operators and 101
+The 3.0.0 release integrates BioPipe Operator Library v3.0.0 (717 operators and 101
 Readers). The runtime receipt lists Python dependency coverage, not a claim that
 every model or external executable is preinstalled. Large model weights,
 databases, Linux tools and declared dedicated environments remain separate.

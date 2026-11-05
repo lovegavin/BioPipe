@@ -13,6 +13,7 @@ import numpy as np
 from src.core.errors import StepError
 from src.core.forms.form import Form
 from src.task.step.base import Step
+from src.task.step.steps._native_results import output_directory, remember_native, result_file
 
 _ATOMIC_NUMBER = {
     "H": 1, "C": 6, "N": 7, "O": 8, "F": 9, "P": 15, "S": 16,
@@ -281,6 +282,8 @@ class VinaDockStep(Step):
 
         binary = str(params.get("vina_path") or "vina")
         timeout = int(params.get("timeout_seconds") or 1800)
+        import shutil
+
         with tempfile.TemporaryDirectory(prefix="vina_") as work:
             out = Path(work) / "poses.pdbqt"
             command = docking_command(params, binary, receptor, ligand, out, center)
@@ -305,6 +308,9 @@ class VinaDockStep(Step):
                 )
             if not out.is_file():
                 raise StepError(f"vina_dock: Vina produced no pose file at {out}")
+            directory = output_directory(ctx, "vina_dock")
+            native_pose = directory / "poses.pdbqt"
+            shutil.copyfile(out, native_pose)
             poses = parse_poses(out)
             log_path = out.with_suffix(".log")
             log = parse_vina_log(log_path.read_text(encoding="utf-8", errors="replace")) if log_path.is_file() else {"affinities": []}
@@ -328,6 +334,9 @@ class VinaDockStep(Step):
                 "vina_path": binary,
             },
         )
+        result_files = [result_file("poses", native_pose, "pdbqt", "Vina docking poses")]
+        remember_native(ctx, out_name, result_files)
+        self._result_files = result_files
         ctx[out_name] = form
         self._export_data = form
 
@@ -335,6 +344,7 @@ class VinaDockStep(Step):
         form = self._export_data
         return {
             "operator": "vina_dock",
+            "result_files": getattr(self, "_result_files", []),
             "n_poses": int(form.info["n_poses"]),
             "best_affinity": float(form.info["best_affinity"]),
         }

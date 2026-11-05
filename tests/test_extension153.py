@@ -53,7 +53,10 @@ def test_runner_accepts_esm_if_redesign(tmp_path):
     if not Path(CHECKPOINT).is_file():
         pytest.skip("ESM-IF checkpoint is not available")
     pytest.importorskip("biotite")
-    pytest.importorskip("torch_scatter")
+    try:
+        pytest.importorskip("torch_scatter")
+    except OSError as exc:
+        pytest.skip(f"torch_scatter is ABI-incompatible: {exc}")
     ctx = _ctx(tmp_path)
     ctx["structure"] = read_source(FIXTURE, dims=["atom", "field"], labels={"atom": "auto", "field": "builtin"})
     run(
