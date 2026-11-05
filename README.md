@@ -1,5 +1,9 @@
 # BioPipe
 
+Windows users can install **BioPipe_Setup.exe**, which includes its own Python
+and creates a fresh isolated profile. Existing profiles and analysis files remain
+available for explicit import. See [Windows Setup](docs/windows_setup.md).
+
 ## Application and library releases
 
 The application and operator library have separate source ownership, versions and
@@ -12,7 +16,7 @@ typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
 
-The **v2.4.1 application** and independently versioned **2026.11.5.2 operator library**
+The **v2.5.0 application** and independently versioned **2026.11.5.2 operator library**
 share this repository. The reference library includes **717 operators, 101 Readers, seven
 provider packages and 24 route templates**. Operators and Readers use **protocol
 v3 / SDK 3.1**, separate parameter JSON and adjacent Markdown documentation.
@@ -70,7 +74,7 @@ streaming implementation. See the [integration record](docs/UNIFIED_MAIN.md)
 and [documentation index](docs/README.md).
 
 Source version and downloadable desktop release are separate. The latest
-published Windows ZIP has the version shown on its Release page; updating
+published Windows installer has the version shown on its Release page; updating
 `main` does not silently replace an existing desktop package.
 
 The desktop editor also supports [SSH remote execution](docs/REMOTE_EXECUTION.md):
@@ -80,7 +84,7 @@ their data and computation there. Existing memory management and independent
 parameter JSON files are retained. Linux-only
 tool adapters are marked in the operator library and canvas.
 
-Both desktop packages include [execution environments and concurrent tasks](docs/EXECUTION_ENVIRONMENTS.md):
+The desktop includes [execution environments and concurrent tasks](docs/EXECUTION_ENVIRONMENTS.md):
 local inputs can be uploaded automatically with resumable transfers and verified
 reuse; manual or automatic placement can run complete routes or successive stages
 on local/SSH environments. Each saved workflow has its own `execution.json`.
@@ -88,7 +92,7 @@ The task manager shows upload/run progress and cancellation, while host-wide
 memory/CPU admission queues work that cannot safely run concurrently. The inspector
 puts analysis methods first and collapses tool and resource settings.
 
-Both desktop editions separate [server connection and maintenance](docs/SERVER_HANDSHAKE.md).
+The desktop separates [server connection and maintenance](docs/SERVER_HANDSHAKE.md).
 Ordinary SSH connection reads an installed server's registration, negotiates
 interface capabilities and reuses its operator/dependency manifests. It does not
 upload this desktop's source or install dependencies. Use **Server maintenance >

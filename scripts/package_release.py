@@ -12,6 +12,7 @@ import zipfile
 import urllib.request
 
 from audit_portability import audit_files
+from biopipe.bytecode import io_path
 
 
 def main():
@@ -27,7 +28,7 @@ def main():
         parser.error('Full releases require --runtime from build_runtime.py; use --lite only for an environment-free package')
     version = tomllib.loads((root / 'pyproject.toml').read_text(encoding='utf-8'))['project']['version']
     name = f'BioPipe-Studio-v{version}-Windows-x64' + ('-Lite' if args.lite else '')
-    destination = args.output.resolve() / name
+    destination = io_path(args.output.resolve() / name)
     if destination.exists():
         parser.error(f'Output already exists: {destination}')
     if not (args.desktop / 'BioPipe Studio.exe').is_file():
@@ -41,7 +42,7 @@ def main():
 
     copy(args.desktop / 'BioPipe Studio.exe', 'BioPipe Studio.exe')
     if not args.lite:
-        shutil.copytree(args.runtime, destination / 'runtime/python')
+        shutil.copytree(io_path(args.runtime), destination / 'runtime/python')
         bootstrapper = destination / 'runtime/MicrosoftEdgeWebview2Setup.exe'
         url = 'https://go.microsoft.com/fwlink/p/?LinkId=2124703'
         if args.webview_bootstrapper:
@@ -74,7 +75,7 @@ def main():
     for name_ in ('release.json', 'pyproject.toml', 'README.md'):
         if (root / 'library' / name_).is_file():
             copy(root / 'library' / name_, Path('library') / name_)
-    for name_ in ('desktop_server.py', 'run.py', 'diagnose_pins.py',
+    for name_ in ('desktop_server.py', 'install_maintenance.py', 'run.py', 'diagnose_pins.py',
                   'accept_igv_handoff.py', 'open_igv_handoff.ps1',
                   'verify_release_agent.py', 'verify_release_agent.md',
                   'check_resources.py', 'provision_resources.py'):

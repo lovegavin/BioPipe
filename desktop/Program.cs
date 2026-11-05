@@ -41,6 +41,8 @@ internal static class Program
         ProfilePaths profile;
         try {
             if (selectRuntime && (smoke || checkProfile)) return 2;
+            if (selectRuntime && RuntimeLocator.IsIsolated(AppContext.BaseDirectory))
+                throw new InvalidOperationException("此安装使用独立的内置环境，请重新运行 Setup 进行修复。");
             try {
                 if (selectRuntime) throw new RuntimeNotFoundException("Python 3.11+ · 已安装 requirements-studio.txt", true);
                 runtime = RuntimeLocator.Resolve(AppContext.BaseDirectory).GetAwaiter().GetResult();
@@ -98,7 +100,7 @@ internal sealed class StudioWindow : Form
     private readonly HttpClient http = new(new HttpClientHandler { UseProxy = false }) { Timeout = TimeSpan.FromSeconds(5) };
     private readonly TaskCompletionSource<string> ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly CancellationTokenSource stopped = new();
-    private readonly object logLock = new();
+    private readonly DesktopLog desktopLog;
     private readonly EventWaitHandle activation;
     private ProcessLifetime? lifetime;
     private Process? backend;
@@ -110,8 +112,10 @@ internal sealed class StudioWindow : Form
     public StudioWindow(ProfilePaths profile, RuntimePaths runtime, bool smoke, EventWaitHandle activation)
     {
         this.profile = profile; this.runtime = runtime; this.dataDir = profile.ProfileDir;
+        desktopLog = new DesktopLog(dataDir);
         this.smoke = smoke; this.activation = activation;
         Text = "BioPipe Studio";
+        Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         StartPosition = FormStartPosition.CenterScreen;
         var area = Screen.PrimaryScreen?.WorkingArea ?? new Rectangle(0, 0, 1600, 1000);
         Size = new Size(Math.Min(1440, area.Width - 60), Math.Min(960, area.Height - 60));
@@ -122,16 +126,7 @@ internal sealed class StudioWindow : Form
         FormClosing += ClosingStudio;
     }
 
-    private void Log(string text)
-    {
-        lock (logLock)
-        {
-            var directory = Path.Combine(dataDir, "logs");
-            Directory.CreateDirectory(directory);
-            File.AppendAllText(Path.Combine(directory, "desktop-" + DateTime.Now.ToString("yyyyMMdd") + ".log"),
-                DateTime.Now.ToString("O") + " " + text + Environment.NewLine, Encoding.UTF8);
-        }
-    }
+    private void Log(string text) => desktopLog.Write(text);
 
     private async Task StartStudio()
     {
@@ -161,6 +156,7 @@ internal sealed class StudioWindow : Form
             foreach (var value in new[] { "-I", "-X", "utf8", "-B", "-u", script, "--profile-dir", dataDir, "--frontend", frontend,
                 "--port", preferredPort.ToString(), "--wait-for-host" })
                 start.ArgumentList.Add(value);
+            RuntimeLocator.IsolateChild(start, runtime.BackendRoot);
             start.Environment["PYTHONIOENCODING"] = "utf-8";
             start.Environment["PYTHONUTF8"] = "1";
             start.Environment.Remove("PYTHONHOME");

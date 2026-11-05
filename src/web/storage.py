@@ -2,9 +2,9 @@
 import json
 import os
 from pathlib import Path
-import tempfile
 import threading
 import time
+import uuid
 
 from biopipe.bytecode import io_path
 
@@ -73,7 +73,19 @@ class FileLock:
 def atomic_json(path, value):
     path = io_path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    descriptor, temporary = tempfile.mkstemp(prefix=path.name + ".", suffix=".tmp", dir=path.parent)
+    # CPython's Windows mkstemp retries PermissionError when access(W_OK) says
+    # yes, potentially billions of times for an ACL/audit denial. Retry actual
+    # name collisions only; all write failures must reach the caller promptly.
+    for _ in range(16):
+        temporary = path.with_name(path.name + '.' + uuid.uuid4().hex + '.tmp')
+        try:
+            descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL |
+                                 getattr(os, 'O_BINARY', 0), 0o600)
+            break
+        except FileExistsError:
+            continue
+    else:
+        raise FileExistsError(f'Unable to allocate a temporary JSON file beside {path}')
     try:
         with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
             json.dump(value, stream, ensure_ascii=False, indent=2, allow_nan=False)

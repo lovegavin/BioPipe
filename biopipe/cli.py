@@ -387,6 +387,8 @@ def execute(args):
 
 
 def main(argv=None):
+    from .installation import configure_environment
+    configure_environment(Path(__file__).resolve().parents[1])
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8")

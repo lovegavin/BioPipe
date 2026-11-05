@@ -26,6 +26,18 @@ def resolve_profile(code_root, *, profile_dir=None, workspace=None, data_dir=Non
     home = Path.home() if home is None else Path(home)
     code_root, home = Path(code_root).resolve(), home.resolve()
 
+    # Setup-created installations own their profile. This marker contains only
+    # a random identity, never a developer path or a migrated legacy registry.
+    from biopipe.installation import isolated_root, profile_id
+    installation = isolated_root(code_root)
+    if installation is not None:
+        profile = home / '.biopipe/profiles' / profile_id(installation)
+        if ((workspace is not None and Path(workspace).resolve() != (profile / 'workspace').resolve()) or
+                (data_dir is not None and Path(data_dir).resolve() != (profile / 'workspace/.studio').resolve()) or
+                (profile_dir is not None and Path(profile_dir).resolve() != profile.resolve())):
+            raise ValueError('This installation uses its own profile. Import workflows into the new profile instead of attaching an old registry.')
+        return StudioProfile(profile, profile / 'workspace', profile / 'workspace/.studio')
+
     def expand(value, base):
         text = os.path.expandvars(str(value))
         if text == "~":

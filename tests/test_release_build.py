@@ -36,6 +36,7 @@ def test_lite_archive_preserves_operator_docs_and_frozen_task_parameters(tmp_pat
         "tasks/example/parameters.json": '{"value": 10}',
         "tasks/example/output/unrelated.json": '{"private": true}',
         "scripts/desktop_server.py": "# Desktop entry",
+        "scripts/install_maintenance.py": "# Setup runtime inspection",
         "scripts/run.py": "# Worker entry",
         "scripts/diagnose_pins.py": "# Diagnostic entry",
         "scripts/check_resources.py": "# Resource inspection",

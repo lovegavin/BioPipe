@@ -57,6 +57,10 @@ Thumbs.db
 # Desktop build output (source and build scripts remain tracked)
 desktop/bin/
 desktop/obj/
+installer/bin/
+installer/obj/
+tests/native_setup/bin/
+tests/native_setup/obj/
 dist/
 build/
 /rna.ps

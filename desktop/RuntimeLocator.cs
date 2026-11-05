@@ -22,6 +22,13 @@ internal sealed class RuntimeNotFoundException(string message, bool automatic) :
 
 internal static class RuntimeLocator
 {
+    public static bool IsIsolated(string install) => File.Exists(Path.Combine(install, "biopipe-install.json"));
+
+    public static void IsolateChild(ProcessStartInfo start, string install)
+    {
+        if (!IsIsolated(install)) return;
+        IsolatedEnvironment.Configure(start, install);
+    }
     public static async Task<ProfilePaths> ResolveProfile(RuntimePaths runtime, string? profileOverride)
     {
         // Python owns the directory policy. Do not duplicate home/AppData rules
@@ -35,6 +42,7 @@ internal static class RuntimeLocator
         if (profileOverride is not null) {
             start.ArgumentList.Add("--profile-dir"); start.ArgumentList.Add(profileOverride);
         }
+        IsolateChild(start, runtime.BackendRoot);
         start.Environment["PYTHONUTF8"] = "1";
         start.Environment["PYTHONIOENCODING"] = "utf-8";
         using var process = Process.Start(start) ?? throw new InvalidOperationException("无法解析 Studio 数据目录。");
@@ -56,6 +64,12 @@ internal static class RuntimeLocator
             File.ReadAllText(Path.Combine(install, "biopipe-desktop.json")),
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
             ?? throw new InvalidDataException("桌面配置文件无效。");
+        var isolated = IsIsolated(install);
+        if (isolated)
+        {
+            if (pythonOverride is not null) throw new InvalidOperationException("此安装使用独立的内置环境，请通过 Setup 修复运行环境。");
+            configuration.BundledRuntime = true; configuration.BackendRoot = ".";
+        }
         var backendRoot = Expand(configuration.BundledRuntime ? configuration.BackendRoot
             : Environment.GetEnvironmentVariable("BIOPIPE_BACKEND_ROOT") ?? configuration.BackendRoot, install);
         var script = Expand(configuration.EntryPoint, backendRoot);
@@ -172,6 +186,7 @@ internal static class RuntimeLocator
             StandardOutputEncoding = Encoding.UTF8, StandardErrorEncoding = Encoding.UTF8,
         };
         if (candidate.Argument is not null) start.ArgumentList.Add(candidate.Argument);
+        IsolateChild(start, root);
         start.ArgumentList.Add("-I");
         start.ArgumentList.Add("-c");
         start.ArgumentList.Add("import importlib.util,json,sys; " +

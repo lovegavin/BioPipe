@@ -11,6 +11,42 @@ from biopipe.bytecode import filesystem_path
 from src.web.storage import FileLock, atomic_json
 
 
+def test_atomic_json_permission_denial_is_not_retried_as_a_name_collision(tmp_path, monkeypatch):
+    """Windows access() can say writable while exclusive creation is denied."""
+    import tempfile
+    target = tmp_path / 'inspection.json'
+    target.write_bytes(b'{"previous": true}\n')
+    before = target.read_bytes()
+    calls = []
+    # Bound the old CPython loop so a regression fails quickly rather than hangs.
+    monkeypatch.setattr(tempfile, 'TMP_MAX', 4)
+    monkeypatch.setattr(os, 'access', lambda *args: True)
+
+    def denied(path, flags, mode=0o777):
+        calls.append(str(path))
+        raise PermissionError(13, 'Synthetic Windows create denial', str(path))
+
+    monkeypatch.setattr(os, 'open', denied)
+    with pytest.raises(PermissionError, match='Synthetic Windows create denial'):
+        atomic_json(target, {'new': True})
+    assert len(calls) == 1
+    assert target.read_bytes() == before
+    assert list(tmp_path.iterdir()) == [target]
+
+
+def test_atomic_json_real_name_collision_preserves_existing_file(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    target = tmp_path / 'inspection.json'
+    occupied = tmp_path / 'inspection.json.occupied.tmp'
+    occupied.write_bytes(b'owned by another writer')
+    names = iter(['occupied', 'fresh'])
+    monkeypatch.setattr('src.web.storage.uuid.uuid4', lambda: SimpleNamespace(hex=next(names)))
+    atomic_json(target, {'status': 'ready'})
+    assert json.loads(target.read_text()) == {'status': 'ready'}
+    assert occupied.read_bytes() == b'owned by another writer'
+    assert not (tmp_path / 'inspection.json.fresh.tmp').exists()
+
+
 def deep_directory(root):
     path = root
     while len(str(path.resolve())) < 280:

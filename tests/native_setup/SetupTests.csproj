@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0-windows</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../installer/InstallFiles.cs" Link="InstallFiles.cs" />
+    <Compile Include="../../installer/InstallEngine.cs" Link="InstallEngine.cs" />
+    <Compile Include="../../desktop/ProcessLifetime.cs" Link="ProcessLifetime.cs" />
+    <Compile Include="../../desktop/IsolatedEnvironment.cs" Link="IsolatedEnvironment.cs" />
+    <Compile Include="../../desktop/DesktopLog.cs" Link="DesktopLog.cs" />
+  </ItemGroup>
+</Project>

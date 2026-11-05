@@ -30,7 +30,14 @@ def remember_runtime(*, path=None):
 
     A read-only user home must not prevent a working Studio from starting.
     Diagnostics/CLI imports do not call this function; successful UI startup does.
+    Setup-owned runtimes never publish a machine-wide hint: their bundled
+    interpreter can disappear on uninstall and must not redirect portable copies.
     """
+    from .installation import isolated_root, profile_id
+    installation = isolated_root(Path(__file__).resolve().parents[1])
+    if installation is not None:
+        profile_id(installation)  # Invalid identities must still fail closed.
+        return False
     if sys.version_info < (3, 11) or any(importlib.util.find_spec(name) is None for name in CORE_MODULES):
         return False
     destination = Path(path) if path is not None else runtime_config_path()
