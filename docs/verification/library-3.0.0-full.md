@@ -446,6 +446,7 @@ Run on the release tree (library 3.0.1) on 2026-11-05.
 | Full suite | `pytest -q -rs` | 2873 passed, 220 skipped, 48 warnings in 1721.03s (0:28:41) |
 | Whitespace | `git diff --check` | clean |
 | Windows launcher check | `python -m pytest` (Windows 3.12.10) on `tests/test_extension350.py`…`test_extension356.py` + `tests/test_export_results.py` | 50 passed, 7 skipped; `tests/test_extension357.py` + `test_extension358.py`: 11 passed, 4 skipped |
+| Tag CI (final) | GitHub Actions run `42039684667` for `library-v3.0.1` | verify (ubuntu-latest) success, verify (windows-latest) success, publish success; assets: Linux bundle 20,178,876 B, Windows bundle 20,178,382 B, seed wheel 3,964,117 B, `SHA256SUMS.txt`, `verification-ubuntu-latest.json`, `verification-windows-latest.json`; both verification records report `passed: true`, 717 operators, 101 Readers |
 
 The full suite ran once on the final 3.0.1 tree with `-rs`. It reports 220
 skipped; the table below aggregates the 200 `SKIPPED` lines (parameterized
@@ -521,4 +522,4 @@ GPU/weights. Nothing is skipped because of a failure, and no test failed.
 | 1 | set BIOPIPE_TRNA_REAL=1 to run the real tRNAscan-SE check |
 | 1 | torch_scatter is ABI-incompatible: Could not load this library: <env>/lib/python3.12/site-packages/torch_scatter/_scatter_cpu.so |
 
-The Windows run reproduced the CI failure (`tests/test_extension355.py::test_run_with_fake_quast`, `WinError 193`) before the launcher fix and passes after it. The frozen-route set exercised by `scripts/verify_library_release.py` is the same 350–356 set, so the tag CI rerun is the final platform gate.
+The Windows run reproduced the CI failure (`tests/test_extension355.py::test_run_with_fake_quast`, `WinError 193`) before the launcher fix and passes after it. The frozen-route set exercised by `scripts/verify_library_release.py` is the same 350–356 set. The tag CI rerun (run `42039684667`) passed on both platforms and published the release, so the platform gate is closed.
