@@ -527,3 +527,24 @@ Caveat: a few bindings are contract-valid but semantically distant (for example
 `topic_lda` on 48x1 metadata or `antibody_numbering_imgt` on a pBR322 FASTA).
 The data and execution are real, but these rows are disclosed as coverage
 evidence, not as domain-meaningful routes.
+
+## 21. Final local gates
+
+Run on the library tree at the commit that carries this report (`a78652bc` plus
+documentation-only commits), after all fixes in sections 12-19:
+
+| gate | command | result |
+| --- | --- | --- |
+| registry | `python -m biopipe registry check` | 717 operators / 101 Readers / 7 packages / 24 routes, `errors []` |
+| operator docs | `python scripts/build_operator_docs.py --check` | `changed []`, `errors []`, 7 authored pages preserved |
+| full suite | `python -m pytest -q -rs` | **2896 passed, 220 skipped, 0 failed** in 1730.80 s |
+| packaging | `pytest tests/test_packages.py tests/test_release_build.py tests/test_release_agent_harness.py tests/test_library_release.py` | 26 passed in 93.64 s (section 14) |
+| portability | `pytest tests/test_portability.py::test_active_source_has_no_developer_paths` | 1 passed |
+| whitespace | `git diff --check` | clean |
+
+The 220 skips are environment gates, not failures. The largest groups are the
+120 R/limma oracles (`Rscript` is not installed on this host), 13 SOP fixture
+cases, 10 `hictkpy` cases, ESM-IF/fair-esm/OpenFold/ProteinMPNN/Foldseek/OpenMM
+opt-ins that need weights or dedicated environments, and a few optional
+libraries (mrcfile, torch_scatter ABI, DockQ numpy pin, Windows Job Object).
+The per-test reasons are in the `-rs` log written alongside this run.
