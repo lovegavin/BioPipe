@@ -71,7 +71,9 @@ CI uses two runners, Windows and Ubuntu, Python 3.11. Each runner:
    requires `python -I`; it verifies the installed application version.
 4. Runs `scripts/verify_library_release.py --bundle <bundle> --work
    build/library-verify`: imports the bundle into a fresh library home, checks
-   frozen routes and executes a worker end to end.
+   frozen routes and executes a worker end to end. When the application wheel
+   ships without a factory seed, the verifier installs the checkout seed as the
+   baseline first; the bundle then upgrades that baseline.
 5. On Linux, builds the portable seed wheel with `python -m build --wheel
    --outdir build/library library` and writes `SHA256SUMS-seed.txt`.
 
