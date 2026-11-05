@@ -157,8 +157,9 @@ class SequenceGcProfileStep(Step):
         "output_parameter": "output",
     }
 
-    def estimate_memory(self, inputs, params, profiles):
-        return {"full": 32 * 1024 * 1024}
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return (32 * 1024 * 1024, 0)
 
     def run(self, ctx, inputs) -> None:
         params = ctx.step_params

@@ -229,3 +229,42 @@ item; the repo was not modified here.
 
 `bgen_qc` remains the other reader-level 3.0.2 item: plink2 BGEN is decoded as
 four one-hot planes, so dosage reaches 3.0 and the output contract rejects it.
+
+## 12. `estimate_memory` contract fix (3.0.2 candidate)
+
+The graph planner calls `Step.estimate_memory(inputs, params, profiles)` as a
+class method returning `(workspace_bytes, output_bytes)`. Ten step modules
+declared an instance method that ignored `profiles` and returned a dict
+(`{"full": ...}` / `{"bytes": ...}`) or a bare int. Planning those nodes in a
+graph failed before execution with:
+
+```
+estimate_memory() missing 1 required positional argument: 'profiles'
+```
+
+Affected: `esm_embedding_outlier_scan`, `esm_if_masked_region_scan`,
+`esm_if_mutation_scan`, `proteinmpnn_interface_redesign`,
+`proteinmpnn_native_recovery_scan`, `proteinmpnn_perplexity`,
+`rdkit_pharmacophore_features`, `rdkit_scaffold_diversity`,
+`sequence_gc_profile`, `structure_helix_geometry`.
+
+Fix: each is now `@classmethod` with the base signature and returns
+`(estimate, 0)`, preserving the previous byte estimate as the workspace
+reservation. `tests/test_extension359.py` asserts the decorator and the
+two-int return for all ten (plus the two inheriting steps).
+
+Evidence (local `biopipe` env, library tree at commit 018fb29b + fix):
+
+| stage | result |
+| --- | --- |
+| before | `pytest tests/test_extension359.py` -> 12 failed |
+| after | `pytest tests/test_extension359.py` -> 12 passed |
+| focused regression | 357 + 358 + 359 + export_results -> 51 passed |
+| registry | 717 operators / 101 Readers / 7 packages / 24 routes, errors [] |
+
+Remaining 3.0.2 candidates from this verification: `bgen_qc` reader dosage
+(`invalid allele_count value 3.0`), five Form label defects (`cox_stuart`
+int64 serialization, `dca`, `var_model`, `mantel`, `nestedness`), DSSP
+parsing of mkdssp 4.x mmCIF output, `limma_de` on SciPy 1.17
+(`gamma_gen._digamma`), `gc_skew_profile` 10 kb default window, and
+`esm_masked_marginal` under torch 2.6 `weights_only=True`.

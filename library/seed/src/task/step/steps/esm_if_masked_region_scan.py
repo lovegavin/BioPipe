@@ -48,8 +48,9 @@ class EsmIfMaskedRegionScanStep(Step):
     provider = "biopipe-core"
     parameters_file = "esm_if_masked_region_scan.EsmIfMaskedRegionScanStep.parameters.json"
 
-    def estimate_memory(self, inputs, params, profiles):
-        return {"bytes": 600 * 1024 * 1024}
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return (600 * 1024 * 1024, 0)
 
     definition = {
         "protocol_version": 3,

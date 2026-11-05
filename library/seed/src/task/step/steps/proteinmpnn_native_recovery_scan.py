@@ -88,8 +88,9 @@ class ProteinmpnnNativeRecoveryScanStep(Step):
     provider = "biopipe-core"
     parameters_file = "proteinmpnn_native_recovery_scan.ProteinmpnnNativeRecoveryScanStep.parameters.json"
 
-    def estimate_memory(self, inputs, params, profiles):
-        return {"bytes": 200 * 1024 * 1024}
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return (200 * 1024 * 1024, 0)
 
     definition = {
         "protocol_version": 3,
