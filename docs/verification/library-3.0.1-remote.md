@@ -386,3 +386,47 @@ last:   M:coil[127-127],1.0
 Direct `mkdssp 4.6.1 --output-format dssp` on that PDB still exits 1, so the
 success proves the PDB -> mmCIF conversion and single retry ran in the real
 worker, not a different binary or input.
+
+## 17. Protocol v3 assessment: operator defects vs SDK hardening
+
+The question was whether the defects found in this campaign indicate a v3
+protocol problem. Short answer: **no v3 definition/parameter/contract grammar
+violation was found.** Every affected operator still passed registry
+validation (`717/101/7/24`, errors `[]`), and its `definition`/parameters JSON
+was structurally valid. The failures are at three other layers.
+
+| Layer | Examples | Verdict |
+|---|---|---|
+| Operator implementation vs its own output contract | five Form defects (`cox_stuart`, `dca`, `var_model`, `mantel`, `nestedness`) | operator bug: the produced Form did not match the labels/orientation the operator itself declared |
+| Reader decode | `BgenReader` treated a four-plane haplotype encoding as three-plane dosage and emitted 3.0 | reader bug; the output contract correctly rejected the out-of-range value |
+| External tool / third-party API | mkdssp 4.6.1 rejects the fixture PDB; `limma_de` calls SciPy-private `gamma._digamma/_trigamma` | tool-version / private-API fragility, not protocol |
+
+Two SDK/protocol hardening items are worth a collaborator change, because
+they let these bugs ship silently:
+
+1. **`estimate_memory` is an undocumented-in-protocol hook.** It is described
+   in `docs/step_extensions.md` as
+   `estimate_memory(inputs, params, profiles)`, and the planner requires a
+   classmethod returning `(workspace, output)`, but the v3 `definition` has no
+   field for it and registry build does not inspect it. Ten operators shipped
+   instance methods with dict/int returns and only failed at planning time with
+   `estimate_memory() missing 1 required positional argument: 'profiles'`.
+   Suggested enforcement: at plugin load (or registry build), assert
+   `inspect.getattr_static(cls, "estimate_memory")` is a `classmethod`, that
+   the signature accepts `(inputs, params, profiles)`, and that a probe call
+   with `({}, {}, {})` returns a 2-tuple of non-negative numbers. Cross-link
+   the hook from `docs/operator_protocol.md`.
+2. **No generic output-Form assertion before export.** Contracts declare output
+   dims/labels, but the runner does not verify that the returned Form's axis
+   sizes match its label maps and contract dims, nor that exported scalars are
+   JSON-safe. The five Form defects and the `np.int64` export failure would
+   have been caught at step completion instead of at a later export/consumer.
+   Suggested enforcement: validate `form.dims`, per-axis `len(labels)` and
+   `Form.validate()` on every declared output; optionally reject non-JSON
+   scalar types in `Step.export()`.
+
+Neither change alters v3 syntax or existing workflow files; both are
+registration/runtime checks plus documentation. The reader-side BGEN fix and
+the DSSP mmCIF fallback remain operator/library fixes (sections 14-16), and the
+`limma_de` private-SciPy dependency should be replaced with
+`scipy.special.polygamma` in a follow-up (not changed here).
