@@ -39,6 +39,8 @@ class Application:
         self.workflows = WorkflowService(self)
         self.jobs = TaskService(self)
         self.artifacts = ArtifactService(self)
+        from .viewers import ViewerService
+        self.viewers = ViewerService(self)
         from .operator_docs import OperatorDocs
         self.operator_docs = OperatorDocs(self.service.plugins)
 

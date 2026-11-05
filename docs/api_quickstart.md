@@ -12,6 +12,11 @@ For example, IGV uses native genome tracks; R/Python plotting can consume suitab
 tables; illustration tools can open retained PDF/SVG. Check the target tool's
 supported formats. BioPipe does not remotely control arbitrary applications.
 
+For an implemented desktop-first handoff, see [result viewers](result_viewers.md):
+discover compatible installed apps, configure their executable once, and open a
+retained file through `/api/v1/jobs/{job}/artifacts/{id}/open-viewer`. This tutorial
+still applies to third-party clients that prefer to fetch files themselves.
+
 ## 1. Choose the workspace and start/discover the service
 
 Install BioPipe into the Python environment used by your integration. With a

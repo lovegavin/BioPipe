@@ -2025,7 +2025,7 @@
     "title": "Export results",
     "category": "data",
     "version": "1.0.0",
-    "description": "Export a branch as native files, a labelled table, NPY or FASTA while other branches continue.",
+    "description": "Export native files or convert annotated data to contact maps, sequences, genome tracks, networks and trees while other branches continue.",
     "doc": "src/task/step/steps/export_results.ExportResultsStep.md",
     "status": "authored"
   },

@@ -47,6 +47,11 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
   return value as T;
 }
 export const api = {
+  viewers: (refresh = false) => request<{viewers: import('./ResultViewers').Viewer[]}>(`/api/v1/viewers?refresh=${refresh}`),
+  configureViewer: (id: string, executable: string | null) => request(`/api/v1/viewers/${encodeURIComponent(id)}/configure`, {executable}),
+  artifactViewers: (job: string, artifact: string, role: string) => request<{viewers: import('./ResultViewers').Viewer[]}>(`/api/v1/jobs/${encodeURIComponent(job)}/artifacts/${encodeURIComponent(artifact)}/viewers?role=${encodeURIComponent(role)}`),
+  openViewer: (job: string, artifact: string, role: string, viewer: string) => request<{status: string; mode: string; path: string}>(`/api/v1/jobs/${encodeURIComponent(job)}/artifacts/${encodeURIComponent(artifact)}/open-viewer`, {role, viewer}),
+  prepareViewer: (job: string, artifact: string, role: string) => request<{path: string}>(`/api/v1/jobs/${encodeURIComponent(job)}/artifacts/${encodeURIComponent(artifact)}/prepare-viewer`, {role}),
   executionPlan: (graph: Graph) => request<import('./types').ExecutionPlan>('/api/execution/plan', graph),
   executionResources: () => request<import('./types').ExecutionResources>('/api/execution/resources'),
   remoteStatus: () => request<import('./types').RemoteStatus[]>('/api/remote'),

@@ -29,6 +29,7 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 - [Server installation troubleshooting](SERVER_INSTALL_REPAIR.md) and [main/library separation audit](MAIN_LIBRARY_SEPARATION_AUDIT.md)
 - [Hi-C workflows](HIC.md) and [16S microbiome](microbiome.md)
 - [Publication figures](PUBLICATION_FIGURES.md) and [static plotting adapters](static_plotting.md)
+- [Domain exports and desktop-first specialist viewers](result_viewers.md)
 
 ## Automate and integrate
 

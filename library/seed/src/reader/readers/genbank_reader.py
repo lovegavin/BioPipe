@@ -1,7 +1,7 @@
 """GenBank flat-file summary reader.
 
-One output row per LOCUS record.  The sequence itself is not returned;
-``length``, GC fraction and the number of top-level feature keys are.
+One output row per LOCUS record. Original annotated records are retained as
+axis-aligned metadata unless retain_records=False; numeric fields stay unchanged.
 This is a dependency-free parser for the common GenBank flat-file layout.
 """
 from __future__ import annotations
@@ -34,13 +34,14 @@ class GenBankReader(Reader):
                    'output': {'version': 1,
                               'numeric': True,
                               'info': {'missing_code': {'type': ['number', 'null']},
-                                       'encoders': {'type': 'object', 'optional': True}},
+                                       'encoders': {'type': 'object', 'optional': True},
+                                       'genbank_records': {'type': 'array', 'optional': True}},
                               'dims': [],
                               'labels': [],
                               'parallel': [],
                               'ndim': 2,
                               'axis_fields': [],
-                              'info_open': False}},
+                              'info_open': True}},
      'resources': {'memory_modes': ['full'], 'supports_cuda': False},
      'description': 'Summary reader for GenBank (.gb/.gbk/.gbff) flat files.',
      'extensions': ['.gb', '.gbk', '.gbff'],
@@ -53,11 +54,16 @@ class GenBankReader(Reader):
     def read(self, path: Path, dims: list, labels: dict, **args) -> Form:
         if len(dims) != 2:
             raise ReaderError(f"GenBank reader requires exactly two dims, got {dims}")
-        records = []
-        current = None
-        in_features = False
-        in_origin = False
-        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        retain = args.get('retain_records', True)
+        # Line iteration avoids materializing a second whole-file copy.
+        with path.open(encoding='utf-8', errors='strict') as source:
+            lines = iter(source)
+            return self._read_records(lines, dims, labels, args, retain)
+
+    def _read_records(self, lines, dims, labels, args, retain):
+        records, current = [], None
+        in_features = in_origin = False
+        for line in lines:
             if line.startswith("LOCUS"):
                 if current is not None:
                     records.append(current)
@@ -69,12 +75,15 @@ class GenBankReader(Reader):
                     "declared_length": int(match.group(1)) if match else None,
                     "sequence": [],
                     "features": 0,
+                    "original": [line] if retain else [],
                 }
                 in_features = False
                 in_origin = False
                 continue
             if current is None:
                 continue
+            if retain:
+                current['original'].append(line)
             if line.startswith("FEATURES"):
                 in_features = True
                 in_origin = False
@@ -111,9 +120,13 @@ class GenBankReader(Reader):
             ids.append(record["id"] or f"record:{i}")
             rows.append({"length": float(length), "gc": float(gc), "features": float(record["features"])})
         frame = pd.DataFrame(rows)
-        return table_form(
+        form = table_form(
             frame, dims, labels, "GenBank",
             encoders_cfg=args.get("encoders") or {},
             row_labels=ids,
             info_extra={"format": "GenBank", "n_records": len(records)},
         )
+        if retain:
+            form.info['genbank_records'] = [''.join(r['original']) for r in records]
+            form.axis_info[dims[0]] = [*form.axis_info.get(dims[0], []), 'genbank_records']
+        return form

@@ -2,9 +2,110 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "format": {"type": "string", "enum": ["auto", "native", "csv", "tsv", "npy", "fasta", "pdb", "cif"], "default": "auto", "title": "Output format", "description": "Auto reuses original producer files; otherwise writes a 2D table as CSV or other tensors as NPY. PDB/mmCIF require an original file.", "x-ui-group": "basic", "x-ui-order": 10},
-    "filename": {"type": "string", "default": "", "title": "Filename stem", "description": "Optional basename without extension. Leave empty to reuse same-task original files without copying.", "x-ui-group": "basic", "x-ui-order": 20},
-    "include_labels": {"type": "boolean", "default": true, "title": "Include table labels", "description": "CSV/TSV header and row labels. NPY preserves array dtype and shape; labels remain in the workflow data.", "x-ui-group": "advanced", "x-ui-order": 30},
-    "buffer_mb": {"type": "number", "exclusiveMinimum": 0, "default": 1, "title": "Write buffer (MiB)", "description": "NPY writing buffer; does not replace the execution memory budget.", "x-ui-group": "advanced", "x-ui-order": 40}
+    "format": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "native",
+        "csv",
+        "tsv",
+        "npy",
+        "fasta",
+        "pdb",
+        "cif",
+        "hic",
+        "cool",
+        "genbank",
+        "bed",
+        "bedgraph",
+        "graphml",
+        "newick"
+      ],
+      "default": "auto",
+      "title": "Output format",
+      "description": "Reuse originals or convert data with explicit biological metadata. HIC/Cooler require raw counts and genomic bins; GenBank preserves annotated records or writes DNA sequences.",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "filename": {
+      "type": "string",
+      "default": "",
+      "title": "Filename stem",
+      "description": "Optional basename without extension. Leave empty to reuse same-task original files without copying.",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "include_labels": {
+      "type": "boolean",
+      "default": true,
+      "title": "Include table labels",
+      "description": "CSV/TSV header and row labels. NPY preserves array dtype and shape; labels remain in the workflow data.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    },
+    "buffer_mb": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 1,
+      "title": "Write buffer (MiB)",
+      "description": "Bounded NPY/contact I/O buffer. Native compression and bin metadata also use the execution memory budget.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "resolution": {
+      "type": "integer",
+      "minimum": 1,
+      "title": "Contact resolution (bp)",
+      "description": "Optional override; must match source bins. Required for multi-resolution Cooler.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 54
+    },
+    "chrom_sizes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "title": "Chromosome sizes",
+      "description": "Full chromosome lengths; usually supplied by the contact source. Never inferred from a window.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 55
+    },
+    "assembly": {
+      "type": "string",
+      "default": "",
+      "title": "Reference assembly",
+      "description": "Uses source assembly when empty.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 56
+    },
+    "topology": {
+      "type": "string",
+      "enum": [
+        "linear",
+        "circular"
+      ],
+      "default": "linear",
+      "title": "DNA topology",
+      "description": "For sequence-only GenBank export. Preserved GenBank records keep their original topology.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 57
+    },
+    "value_column": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "title": "bedGraph value column",
+      "description": "Zero-based numeric column to export.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 58
+    },
+    "directed": {
+      "type": "boolean",
+      "default": false,
+      "title": "Directed network",
+      "x-ui-group": "advanced",
+      "x-ui-order": 59
+    }
   }
 }

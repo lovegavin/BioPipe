@@ -20,3 +20,14 @@ coordinates, assembly, units and file roles before a viewer such as IGV can use 
 Do not invent a conversion or claim a viewer supports BioPipe authentication.
 See the api guide for a standalone application client and native-file handoff.
 Opening a viewer and scientifically interpreting the result are separate checks.
+
+Desktop-first handoff: `biopipe artifacts viewers <job> <artifact> --role <role>`
+or `biopipe_viewer(job_id, artifact_id, role)` lists compatible choices.
+Then `biopipe artifacts open <job> <artifact> --role <role> --viewer <id>` or the
+same MCP call with `viewer` launches an installed application (run permission).
+`started` means process launch, not successful rendering. `mode=manual` means
+open the returned path inside that application. Web entries never upload files
+automatically. Remote results are fetched to the client for desktop use.
+Use `biopipe viewers configure <id> --executable <absolute-path>` once if discovery
+misses an installation. Configuration belongs to the profile, never the workflow.
+The application API exposes the same operations; see `docs/result_viewers.md`.

@@ -110,6 +110,18 @@ def create_server(client):
                               + urlencode({'offset': offset, 'limit': limit}))
 
     @server.tool()
+    def biopipe_viewer(job_id: str, artifact_id: str, role: str, viewer: str | None = None) -> dict:
+        """List matching installed viewers; with viewer ID, launch one (requires --allow-run).
+
+        Use a retained file role from artifact preview. Desktop first; web entries are manual links.
+        status=started confirms process launch, not file rendering. Remote files are fetched locally.
+        """
+        path = '/v1/jobs/' + quote(job_id, safe='') + '/artifacts/' + quote(artifact_id, safe='')
+        if viewer:
+            return client.request(path + '/open-viewer', {'role': role, 'viewer': viewer})
+        return client.request(path + '/viewers?' + urlencode({'role': role}))
+
+    @server.tool()
     def biopipe_remote_status() -> dict:
         """List SSH execution profiles with their connected state."""
         return client.request('/remote')

@@ -87,9 +87,11 @@ def select_window(artifact, params, *, ctx=None):
                 raise StepError("Divisive balancing weights are not supported by this selection adapter")
             result *= weight[left[0]:left[1]][:, None]
             result *= weight[right[0]:right[1]][None, :]
+        resolution = group.attrs.get('bin-size') or artifact.info.get('resolution')
         labels, info = {}, {"representation": "contact_window", "missing_code": np.nan,
                             "region": params["region"], "region2": params.get("region2") or params["region"],
-                            "balanced": balanced, "resolution": artifact.info.get("resolution"),
+                            "balanced": balanced, "resolution": int(resolution) if isinstance(resolution, (int, np.integer)) and resolution > 0 else None,
+                            "chrom_sizes": dict(zip(group['chroms/name'].asstr()[:], map(int, group['chroms/length'][:]))),
                             "assembly": artifact.info.get("assembly", "unknown")}
         parallel = {}
         for axis, bounds in (("bin1", left), ("bin2", right)):

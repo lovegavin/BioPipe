@@ -7,6 +7,14 @@
       "title": "Encoders",
       "x-ui-group": "basic",
       "x-ui-order": 0
+    },
+    "retain_records": {
+      "type": "boolean",
+      "default": true,
+      "title": "Preserve annotated records",
+      "description": "Keep each original GenBank record as axis-aligned metadata for lossless export. Disable for summary-only analysis.",
+      "x-ui-group": "advanced",
+      "x-ui-order": 10
     }
   },
   "additionalProperties": false

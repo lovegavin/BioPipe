@@ -15,7 +15,17 @@ from biopipe.bytecode import io_path
 
 def canonical_format(value):
     value = str(value).lower().lstrip('.')
-    return {'fa': 'fasta', 'faa': 'fasta', 'fna': 'fasta', 'mmcif': 'cif'}.get(value, value)
+    return {'fa': 'fasta', 'faa': 'fasta', 'fna': 'fasta', 'mmcif': 'cif',
+            'gb': 'genbank', 'gbk': 'genbank', 'gbff': 'genbank',
+            'nwk': 'newick', 'new': 'newick'}.get(value, value)
+
+
+def native_suffix(path):
+    suffixes = path.suffixes
+    if len(suffixes) >= 2 and (suffixes[-1].lower() in {'.gz', '.bz2', '.xz', '.zip', '.bai', '.crai', '.tbi', '.csi'}
+                              or suffixes[-2].lower() == '.ome'):
+        return ''.join(suffixes[-2:])
+    return path.suffix
 
 
 def native_results(ctx, input_name):
@@ -107,9 +117,10 @@ class ExportResultsStep(Step):
     definition = {
         'protocol_version': 3, 'id': 'export_results', 'version': '1.0.0',
         'kind': 'operator', 'title': 'Export results', 'category': 'data',
-        'description': 'Export a branch as native files, a labelled table, NPY or FASTA while other branches continue.',
+        'description': 'Export native files or convert annotated data to contact maps, sequences, genome tracks, networks and trees while other branches continue.',
         'inputs_arity': 1, 'outputs': [], 'output_parameter': 'output',
-        'dependencies': ['numpy>=1.24'], 'dependency_imports': ['numpy'],
+        'dependencies': ['numpy>=1.24', 'hictkpy>=1.4,<2', 'h5py>=3.8', 'biopython>=1.81'],
+        'dependency_imports': ['numpy', 'hictkpy', 'h5py', 'Bio'],
         'contracts': {'version': 1, 'inputs': [{'kind': ['form', 'file']}],
                       'output': {'mode': 'declare', 'schema': {
                           'kind': 'file', 'numeric': False, 'ndim': 0, 'dims': [],
@@ -124,7 +135,30 @@ class ExportResultsStep(Step):
                        for item in inputs if hasattr(item, 'data'))
         row = max((item.data.shape[-1] * 128 for item in inputs
                    if hasattr(item, 'data') and item.data.ndim), default=0)
-        return 3 * buffer + metadata + row, 65536
+        # The native contact writer also owns compression buffers and a bin table.
+        contacts = params.get('format') in {'hic', 'cool'}
+        if contacts and any(isinstance(item, FileArtifact) and any(
+                canonical_format(item.info.get('formats', {}).get(role, Path(path).suffix)) == params['format']
+                for role, path in item.files.items()) for item in inputs):
+            contacts = False  # Original-file reuse needs no contact writer allocation.
+        if contacts:
+            for item in inputs:
+                info = dict(item.info)
+                if isinstance(item, FileArtifact):
+                    candidates = [p for p in item.files.values() if Path(p).suffix.lower() in {'.cool', '.mcool'}]
+                    if len(candidates) == 1:
+                        import h5py
+                        with h5py.File(candidates[0], 'r') as handle:
+                            resolution = params.get('resolution') or info.get('resolution')
+                            group = handle[f'/resolutions/{resolution}'] if 'resolutions' in handle and resolution else handle[info.get('group', '/')]
+                            if 'chroms' in group:
+                                info['chrom_sizes'] = dict(zip(group['chroms/name'].asstr()[:], map(int, group['chroms/length'][:])))
+                                info['resolution'] = int(group.attrs.get('bin-size', resolution or 0))
+                resolution = params.get('resolution') or info.get('resolution')
+                sizes = params.get('chrom_sizes') or info.get('chrom_sizes')
+                if resolution and isinstance(sizes, dict):
+                    metadata += sum((int(size) + int(resolution) - 1) // int(resolution) for size in sizes.values()) * 128
+        return (32 * 1024**2 if contacts else 0) + 3 * buffer + metadata + row, 65536
 
     def run(self, ctx, inputs):
         value = inputs[0]
@@ -148,8 +182,10 @@ class ExportResultsStep(Step):
         matched = candidates if requested in {'auto', 'native'} else [
             entry for entry in candidates if canonical_format(entry.get('format', Path(entry['path']).suffix)) == requested]
         directory = output_directory(ctx, 'exports')
+        conversion = dict(value.info.get('conversion') or {}) if isinstance(value, FileArtifact) else {}
         files, formats, reused = {}, {}, []
         if matched:
+            native_names = [Path(entry['path']).name.casefold() for entry in matched]
             for index, entry in enumerate(matched, 1):
                 source = Path(entry['path']).resolve()
                 if not io_path(source).is_file():
@@ -161,7 +197,8 @@ class ExportResultsStep(Step):
                     target = source
                     reused.append(role)
                 else:
-                    filename = ((name if len(matched) == 1 else f'{name}-{index}') + source.suffix) if name else f'{index}-{source.name}'
+                    original_name = source.name if native_names.count(source.name.casefold()) == 1 else f'{index}-{source.name}'
+                    filename = (name + native_suffix(source) if len(matched) == 1 else f'{name}-{original_name}') if name else original_name
                     target = directory / filename
                     pending = target.with_name(target.name + '.part')
                     try:
@@ -172,10 +209,12 @@ class ExportResultsStep(Step):
                 files[role] = str(target)
                 formats[role] = canonical_format(entry.get('format', source.suffix))
         else:
-            if isinstance(value, FileArtifact) or requested in {'native', 'pdb', 'cif'}:
+            if (isinstance(value, FileArtifact) and requested not in {'hic', 'cool'}) or requested in {'native', 'pdb', 'cif'}:
                 raise StepError(f'export_results: no matching original {requested} file; keep the producer and export in one task or supply a FileArtifact')
             actual = ('csv' if value.data.ndim == 2 else 'npy') if requested == 'auto' else requested
-            extension = {'fasta': 'fasta', 'csv': 'csv', 'tsv': 'tsv', 'npy': 'npy'}.get(actual)
+            extension = {'fasta': 'fasta', 'csv': 'csv', 'tsv': 'tsv', 'npy': 'npy',
+                         'hic': 'hic', 'cool': 'cool', 'genbank': 'gbk', 'bed': 'bed',
+                         'bedgraph': 'bedgraph', 'graphml': 'graphml', 'newick': 'nwk'}.get(actual)
             if extension is None:
                 raise StepError(f'export_results: unsupported format {actual}')
             target = directory / ((name or 'result') + '.' + extension)
@@ -185,19 +224,37 @@ class ExportResultsStep(Step):
                     write_table(pending, value, ',' if actual == 'csv' else '\t', params.get('include_labels', True))
                 elif actual == 'npy':
                     write_array(pending, value.data, int(float(params.get('buffer_mb', 1)) * 1024**2))
-                else:
+                elif actual == 'fasta':
                     write_fasta(pending, value)
+                elif actual in {'hic', 'cool'}:
+                    from src.task.step.steps._export_contacts import write_contacts
+                    conversion = write_contacts(pending, value, params, ctx, actual)
+                else:
+                    from src.task.step.steps import _export_domain as domain
+                    if actual == 'genbank':
+                        conversion = domain.write_genbank(pending, value, params)
+                    elif actual in {'bed', 'bedgraph'}:
+                        conversion = domain.write_track(pending, value, params, actual)
+                    elif actual == 'graphml':
+                        conversion = domain.write_graphml(pending, value, params)
+                    else:
+                        conversion = domain.write_newick(pending, value)
                 io_path(pending).replace(io_path(target))
             finally:
                 io_path(pending).unlink(missing_ok=True)
             files['data'], formats['data'] = str(target), actual
+            if conversion:
+                metadata = directory / ((name or 'result') + '.metadata.json')
+                io_path(metadata).write_text(json.dumps(conversion, ensure_ascii=False, indent=2), encoding='utf-8')
+                files['metadata'], formats['metadata'] = str(metadata), 'json'
         if isinstance(value, FileArtifact):
             value.validate()  # Do not publish a copy of an input changed during I/O.
         artifact = FileArtifact('exported_files', files, info={'formats': formats,
-                                  'source': source_name, 'requested_format': requested, 'reused_roles': reused})
+                                  'source': source_name, 'requested_format': requested, 'reused_roles': reused,
+                                  'conversion': conversion})
         ctx[str(params.get('output', self.name))] = artifact
         self._report = {'format': requested, 'files': files, 'formats': formats, 'reused_roles': reused,
-                        'bytes': artifact.file_bytes, 'source': source_name}
+                        'bytes': artifact.file_bytes, 'source': source_name, 'conversion': conversion}
 
     def export(self, ctx):
         return self._report

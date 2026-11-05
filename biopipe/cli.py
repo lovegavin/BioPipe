@@ -106,13 +106,19 @@ def parser():
     jobs.add_argument('--brief', action='store_true', help='Explicitly select the default brief status view')
     jobs.add_argument('--timeout', type=float, default=30, help='jobs wait timeout; 0 waits until terminal, never cancels')
     artifacts = commands.add_parser('artifacts')
-    artifacts.add_argument('action', choices=['list', 'get', 'preview', 'copy', 'report', 'figure'])
+    artifacts.add_argument('action', choices=['list', 'get', 'preview', 'copy', 'report', 'figure', 'viewers', 'open', 'prepare-viewer'])
     artifacts.add_argument('job')
     artifacts.add_argument('id', nargs='?')
     artifacts.add_argument('--output', type=Path)
     artifacts.add_argument('--role')
     artifacts.add_argument('--format')
     artifacts.add_argument('--figure-id')
+    artifacts.add_argument('--viewer')
+    viewers = commands.add_parser('viewers', help='Discover or configure desktop result viewers')
+    viewers.add_argument('action', choices=['list', 'configure'])
+    viewers.add_argument('id', nargs='?')
+    viewers.add_argument('--executable', help='Absolute executable/GUI JAR path; omit to clear a configured path')
+    viewers.add_argument('--refresh', action='store_true')
     servers = commands.add_parser('servers')
     servers.add_argument('action', choices=['list', 'save', 'connect', 'trust'])
     servers.add_argument('value', nargs='?')
@@ -193,6 +199,9 @@ def execute(args):
         from .mcp_server import serve
         return serve(args)
     scopes = ["context", "edit"]
+    if (args.command == 'viewers' and args.action == 'configure'
+            or args.command == 'artifacts' and args.action in ('open', 'prepare-viewer')):
+        scopes.append('run')
     if args.command == 'run' or args.command == 'jobs' and args.action == 'cancel' or args.command == 'service' and args.action == 'stop' or args.command == 'servers' and args.action == 'connect':
         scopes.append("run")
     directory = data_directory(args.profile_dir, args.workspace, args.data_dir)
@@ -203,7 +212,7 @@ def execute(args):
         return {'instances': [{k: v for k, v in instance.items() if k != 'secret'} for instance in instances(directory)]}
     client = Client(directory, instance=args.instance, name="BioPipe CLI", scopes=scopes,
                     auto_start=not (args.command == 'service' and args.action == 'stop'), workspace=profile.workspace,
-                    require_api=1 if args.command in ('operators', 'workflow', 'jobs', 'artifacts', 'servers', 'service') or args.command == 'run' and (args.file or args.workflow) else 0)
+                    require_api=1 if args.command in ('operators', 'workflow', 'jobs', 'artifacts', 'servers', 'service', 'viewers') or args.command == 'run' and (args.file or args.workflow) else 0)
     try:
         if args.command == 'service':
             return client.request('/v1/service/stop', {}) if args.action == 'stop' else client.request('/v1/service')
@@ -243,12 +252,29 @@ def execute(args):
             return _wait_job(client, job, args.timeout, view=view) if args.wait else job_view(job, view)
         if args.command == 'run' and not args.document:
             raise ValueError('run requires a workflow file, --workflow, or --document with --expected-revision')
+        if args.command == 'viewers':
+            if args.action == 'list':
+                return client.request('/v1/viewers' + ('?refresh=true' if args.refresh else ''))
+            if not args.id:
+                raise ValueError('A viewer ID is required')
+            return client.request('/v1/viewers/' + quote(args.id, safe='') + '/configure', {'executable': args.executable})
         if args.command == 'artifacts':
             prefix = '/v1/jobs/' + quote(args.job, safe='')
             if args.action == 'list':
                 return client.request(prefix + '/artifacts')
             if not args.id:
                 raise ValueError('An artifact ID or report index is required')
+            if args.action in ('viewers', 'open', 'prepare-viewer'):
+                if not args.role:
+                    raise ValueError('A retained file --role is required')
+                path = prefix + '/artifacts/' + quote(args.id, safe='')
+                if args.action == 'viewers':
+                    return client.request(path + '/viewers?' + urlencode({'role': args.role}))
+                if args.action == 'open':
+                    if not args.viewer:
+                        raise ValueError('Choose --viewer from artifacts viewers')
+                    return client.request(path + '/open-viewer', {'role': args.role, 'viewer': args.viewer})
+                return client.request(path + '/prepare-viewer', {'role': args.role})
             if args.action in ('report', 'figure'):
                 path = prefix + '/reports/' + str(int(args.id))
                 if args.action == 'figure':

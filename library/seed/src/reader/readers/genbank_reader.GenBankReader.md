@@ -1,52 +1,37 @@
-<!-- biopipe:generated -->
-# Summary reader for GenBank (.gb/.gbk/.gbff) flat files
+# GenBank Reader
 
 ## Purpose
 
-> GenBank flat-file summary reader.
->
-> One output row per LOCUS record.  The sequence itself is not returned;
-> ``length``, GC fraction and the number of top-level feature keys are.
-> This is a dependency-free parser for the common GenBank flat-file layout.
+`GenBankReader` reads `.gb`, `.gbk` and `.gbff` files into a numeric summary Form:
+one row per LOCUS record, with sequence length, GC fraction and feature count.
+With `retain_records: true` (default), it also preserves original annotated
+records as `info.genbank_records`, explicitly aligned with the record axis.
 
 ## Inputs and outputs
 
-Kind: `reader`. Operator ID: `GenBankReader`.
-This Reader opens files with extensions: `.gb`, `.gbk`, `.gbff`.
-Read the structured `contracts` section before connecting nodes. It includes
-the accepted data types, dimension constraints and output propagation rule.
+Supply two dimensions (normally `record`, `field`) and the standard label
+configuration. The output is a full-mode Form. Sequence, compound/fuzzy feature
+locations, qualifiers and circular/linear topology stay in the retained record
+text. Subsetting the record axis keeps this metadata aligned.
 
-## Parameter guidance
+## Parameters
 
-The adjacent parameter JSON owns defaults, valid choices, ranges and required
-fields. Request the generated `parameters` section and `parameters_schema` for
-the exact interface; do not infer parameter names from prose.
-Saved routes keep their own parameter values independently of current defaults.
+The adjacent JSON is authoritative. `retain_records: false` omits original text
+for summary-only analysis. `encoders` retains the standard table-reader behavior.
+Saved workflows own their values independently of future defaults.
 
-## Interpretation
+## Export example
 
-Check output metadata and labels before downstream analysis. The declared output
-contract describes the representation; it does not establish biological validity
-or statistical assumptions for a particular dataset.
+Read an annotated plasmid, optionally select records, then connect `export_results`
+with `format: genbank`. The resulting `.gbk` can be imported into SnapGene, ApE or
+UGENE. Summary-only Forms cannot reconstruct sequences/features. Numeric summary
+edits do not change original records; use a sequence-aware operation to edit them.
 
-## Runtime environment
+## Memory and validation
 
-Runs in the shared BioPipe interpreter.
-
-## Limitations
-
-Declared memory modes: full. BioPipe retains the existing planner, disk-backed
-inputs and emergency spill behavior; full-mode operators still require their
-declared working set. This generated reference has not been independently
-scientifically reviewed.
-
-## Examples
-
-Use the registry to discover compatible Readers and validate a complete workflow
-before execution. This generated page does not claim an executable scientific
-example. Add a tested example and replace this generated page with authored
-guidance when extending this operator.
-
-## Source
-
-Implementation: `src/reader/readers/genbank_reader.py` (`GenBankReader`).
+The parser iterates lines, but the summary and retained record text remain under
+the existing full-mode planner/spill policy. It does not claim streaming output.
+Original GenBank files can instead be carried as FileArtifacts. Export validates
+retained records with Biopython. Tests use synthetic circular plasmids with joined
+reverse-strand CDS features and verify a read/subset/export round trip; they do
+not establish biological annotation quality.

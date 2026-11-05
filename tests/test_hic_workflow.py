@@ -58,6 +58,19 @@ def test_cooler_symmetric_rectangle_weights_and_budget(tmp_path):
     artifact.validate()
 
 
+def test_window_without_fixed_resolution_still_selects(tmp_path):
+    import h5py
+    from src.core import FileArtifact
+    path = tiny_cool(tmp_path / 'variable.cool')
+    with h5py.File(path, 'r+') as handle:
+        del handle.attrs['bin-size']
+        handle.attrs['bin-type'] = 'variable'
+    artifact = FileArtifact('cool', {'data': str(path)})
+    form = select_window(artifact, {'source_type': 'contact_matrix', 'region': 'chr1:0-40', 'balanced': False})
+    assert form.data.shape == (4, 4) and form.info['resolution'] is None
+    assert form.info['chrom_sizes'] == {'chr1': 40}
+
+
 def test_pairs_schema_coordinates_flip_filter_and_missing_mapq(tmp_path):
     source=tmp_path/'a.pairs'; target=tmp_path/'out.pairs'
     source.write_text('#columns: chrom2 pos2 readID chrom1 pos1 strand1 strand2 pair_type mapq1 mapq2\n'

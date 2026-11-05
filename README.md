@@ -20,6 +20,11 @@ v3 / SDK 3.1**, separate parameter JSON and adjacent Markdown documentation.
 
 ## Why BioPipe
 
+Retained results can be handed to specialist applications through the desktop-first
+**Open with** menu, CLI or API. The unified output operator converts qualified data
+to HIC/Cooler, GenBank, genome tracks, networks and trees while other branches
+continue. See [formats, viewers and integration instructions](docs/result_viewers.md).
+
 **Core value:** a large, maintainable, validated tool library lets an agent call a
 verified analysis instead of writing analysis code — avoiding implementation logic
 errors and the extra token cost of generating code.

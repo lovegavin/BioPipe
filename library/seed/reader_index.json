@@ -317,7 +317,7 @@
     "version": "1.0.0",
     "description": "Summary reader for GenBank (.gb/.gbk/.gbff) flat files.",
     "doc": "src/reader/readers/genbank_reader.GenBankReader.md",
-    "status": "generated"
+    "status": "authored"
   },
   {
     "id": "GenePredReader",

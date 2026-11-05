@@ -17,6 +17,7 @@ import { bytes } from "./graph";
 import {isActiveJob, jobStatusLabel} from './execution';
 import {TaskManager, TaskProgress} from './TaskManager';
 import {FigureLinks, figureFormats, figureGroups, FigureGallery} from './FigureOutputs';
+import {ResultViewers} from './ResultViewers';
 import type { Job, Preview, RunEvent, SpillCounts } from "./types";
 
 export const statusLabel = jobStatusLabel;
@@ -574,9 +575,9 @@ export function Results({
                   </div>
                   <div className="data-preview">
                     {preview.files?.map(file => (
-                      file.downloadable ? <a key={file.role} className="text-button" href={api.url(`/api/jobs/${job.id}/artifacts/${selected}/files/${encodeURIComponent(file.role)}`)}>
+                      file.downloadable ? <div key={`${job.id}-${selected}-${file.role}`} className="native-result"><a className="text-button" href={api.url(`/api/jobs/${job.id}/artifacts/${selected}/files/${encodeURIComponent(file.role)}`)}>
                         <ArrowDown size={14} /> {file.name} · {(file.bytes / 1024 ** 2).toFixed(2)} MiB
-                      </a> : <span key={file.role}>{file.name} · {(file.bytes / 1024 ** 2).toFixed(2)} MiB</span>
+                      </a><ResultViewers job={job.id} artifact={selected!} role={file.role}/></div> : <span key={file.role}>{file.name} · {(file.bytes / 1024 ** 2).toFixed(2)} MiB</span>
                     ))}
                     {preview.points.length > 0 && (
                       <div className="chart-preview">

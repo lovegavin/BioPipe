@@ -48,6 +48,8 @@ class DescribeRequest(BaseModel):
 
 
 def mount_control(app, application, bridge):
+    from .viewer_api import mount_viewers
+    mount_viewers(app, application, bridge)
     def authorize(request, scope='context'):
         return bridge.actor(request, scope)
 
@@ -64,7 +66,7 @@ def mount_control(app, application, bridge):
     def capabilities(request: Request):
         authorize(request)
         return {'api_version': 1, 'operator_protocol': 3, 'headless': bool(getattr(app.state, 'headless', False)),
-                'capabilities': ['workflows', 'tasks', 'artifacts', 'operator-docs', 'canvas-sessions', 'agent-guides', 'brief-views'],
+                'capabilities': ['workflows', 'tasks', 'artifacts', 'operator-docs', 'canvas-sessions', 'agent-guides', 'brief-views', 'result-viewers'],
                 'guides_href': '/api/v1/guides', 'openapi_href': '/api/v1/openapi.json',
                 'permission_scopes': ['context', 'edit', 'run', 'plugins']}
 
