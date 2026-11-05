@@ -117,3 +117,55 @@ Tool/version defects:
 | logs/fix3.log | ProteinMPNN parameter fixes |
 | REPORT_NUM4.md, REPORT_DOM.md | sub-agent reports |
 | BIOPIPE_REMOTE_ASSETS.md | AF2/RFantibody/ESM resource locations |
+
+## 9. 24-route end-to-end verification (real data)
+
+The 24 built-in routes were executed on `master` / `node78` with the official
+classic datasets in `data/` (manifest: `data/MANIFEST.json`, 20 files with URL,
+bytes and sha256). Composite result: **19 complete / 5 skip**. Per-route evidence
+is in `ROUTES_E2E.jsonl` (16 routes), `ROUTES_HIC.jsonl` (3), `ROUTES_STRUCT.jsonl`
+(14 structure/docking graphs) and `ROUTES_GENOME.jsonl` (genome graphs), with
+`--check` results in `evidence/check_status.json`.
+
+| route | status | steps | elapsed (s) | classic data |
+|---|---|---|---|---|
+| single_cell | complete | 14 | 298.07 | 10x PBMC3k |
+| interval_analysis | complete | 9 | 66.87 | ENCODE cCREs + Ensembl regulatory |
+| rnaseq_de | complete | 12 | 62.13 | Bioconductor airway |
+| go_enrichment | complete | 5 | 26.32 | GOA human GAF |
+| single_cell_loom | complete | 11 | 10.13 | bundled |
+| survival | complete | 5 | 7.86 | TCGA-BRCA (Xena/GDC) |
+| microbiome | complete | 22 | 6.85 | QIIME moving-pictures |
+| single_cell_batch | complete | 7 | 4.48 | bundled |
+| gwas | complete | 16 | 3.58 | 1000G chr22 subset |
+| rnaseq_de_enrichment | complete | 7 | 3.19 | bundled |
+| sequence_features | complete | 9 | 2.53 | Ensembl yeast chr I |
+| proteomics_limma | complete | 7 | 2.02 | bundled |
+| microbiome_diff | complete | 8 | 1.93 | bundled |
+| rnaseq_ssgsea | complete | 6 | 1.48 | bundled |
+| gtf_annotation | complete | 8 | 1.35 | Ensembl yeast GTF |
+| gwas_meta_prs | complete | 4 | 0.17 | bundled |
+| hic_pairs | complete | 7 | 338.20 | open2c/cooler Aag2 pairs |
+| hic_fastq | complete | 10 | 48.74 | S. cerevisiae chrI synthetic reads |
+| hic_bam | complete | 8 | 31.84 | same reads, bwa mem -5SP BAM |
+| bgen_qc | skip | - | - | reader defect (below) |
+| ml_classification | skip | - | - | msdata has no protein x sample matrix |
+| ml_regression | skip | - | - | same data gap |
+| proteomics_de | skip | - | - | same data gap |
+| multi_omics | skip | - | - | 10x CITE-seq H5 (HTTP 403) |
+
+Hi-C export round trip: exported `.hic` re-read with hictkpy 1.4.0 (24 bins,
+296 nnz, sum 28,209, res 10,000) and `hictk validate` -> valid; exported `.cool`
+re-read with cooler 0.10.4 (24 bins, nnz 296, sum 28,209, symmetric-upper) and
+sha256-identical to the route's `contacts.cool`; CSV parse-checked 24x25
+(100x101 for pairs). The `.hic` writer scales with chromosome count: the
+3,579-contig/173,971-bin pairs matrix stalls (>15 min, 7.6 GB RSS; `hictk
+convert` shows the same), so that route exports cool+csv and the `.hic`
+roundtrip is evidenced on the 24-bin routes. This is a writer-scaling
+limitation, not a BioPipe defect.
+
+Known skip defect: `bgen_qc` with a plink2 BGEN. `bgen-reader` returns
+`(2504, 648, 4)` one-hot 2-bit planes instead of `(..., 3)`; dosage
+`P(AB) + 2*P(BB)` reaches 3.0 and the output contract rejects it
+(`invalid allele_count value np.float32(3.0)`). The official example BGEN host
+returned 403, so this is reproducible only with a locally generated plink2 file.
