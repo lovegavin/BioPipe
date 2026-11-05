@@ -361,3 +361,28 @@ This supersedes the `bgen_qc` row of section 9: the built-in route tally is
 now **20 complete / 4 skipped** (remaining skips: ml_classification,
 ml_regression, proteomics_de lack a protein x sample matrix; multi_omics
 requires a CITE-seq H5 that returned 403).
+
+## 16. DSSP route completes on mkdssp 4.6.1 via the mmCIF fallback
+
+Section 14.2 showed that `mkdssp` 4.6.1 rejects the repository fixture
+`tests/fixtures/vhh_1mel.pdb` with a `parse error`/`Duplicate Key` message.
+The fixed step was exercised end-to-end through the task runner on the same
+binary:
+
+```
+env PATH=$PWD/tools/bioconda/bin:$PATH \
+  venv/bin/python repo/biopipe/scripts/run.py runs/route_dssp_fix --memory-mb 4096
+```
+
+```
+status: complete, 2/2 steps, total_elapsed 5.1062 s, managed_peak 914,432 B
+structure_dssp_segments: n_segments 187, n_residues 518
+export_results: dssp_segments.csv, 3,735 B, 188 rows
+header: segment,length
+first:  A:coil[2-2],1.0
+last:   M:coil[127-127],1.0
+```
+
+Direct `mkdssp 4.6.1 --output-format dssp` on that PDB still exits 1, so the
+success proves the PDB -> mmCIF conversion and single retry ran in the real
+worker, not a different binary or input.
