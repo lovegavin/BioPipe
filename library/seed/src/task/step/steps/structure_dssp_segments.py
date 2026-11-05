@@ -17,20 +17,34 @@ _SS_CODES = {"H": "helix", "G": "helix", "I": "helix", "E": "strand", "B": "stra
 
 
 def parse_dssp(text: str) -> list[dict]:
+    """Parse the fixed-column DSSP residue table (mkdssp 4.x layout).
+
+    Columns are 1-based in the format documentation; Python slices below are
+    0-based: residue number ``[5:10]``, chain ``[11]``, one-letter residue
+    ``[13]`` and secondary-structure code ``[16]``.  Blank codes are coil.
+    """
+
     records = []
     for line in text.splitlines():
-        if len(line) < 17 or not line[:5].strip().isdigit():
+        if len(line) < 17:
             continue
-        tokens = line.split()
-        if len(tokens) < 6:
+        number_text = line[5:10].strip()
+        if not number_text.lstrip("-").isdigit():
             continue
-        try:
-            number = int(tokens[1])
-        except ValueError:
+        residue = line[13].strip()
+        if not residue.isalpha():
             continue
-        records.append({"chain": tokens[2], "number": number, "residue": tokens[3], "code": tokens[4], "state": _SS_CODES.get(tokens[4], "coil")})
+        code = line[16]
+        records.append(
+            {
+                "chain": line[11].strip(),
+                "number": int(number_text),
+                "residue": residue,
+                "code": code if code.strip() else "-",
+                "state": _SS_CODES.get(code, "coil"),
+            }
+        )
     return records
-
 
 def segment_rows(records: list[dict]) -> list[dict]:
     if not records:

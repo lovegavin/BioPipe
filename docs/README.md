@@ -58,6 +58,7 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 - [Library installation and maintenance](plugins.md)
 - [Independent software and operator-library releases](library_releases.md)
 - [Operator library release standard](library_release_standard.md)
+- [Library 3.x full verification](verification/library-3.0.0-full.md)
 - [Static registry maintenance](registry_maintenance.md)
 - [Backend versioning](backend_versioning.md)
 - [Selective frontend integration](FRONTEND_MERGE.md)

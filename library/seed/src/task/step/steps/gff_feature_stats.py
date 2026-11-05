@@ -30,6 +30,7 @@ from src.core import Form, StepError
 from src.core.forms.metadata import project_metadata
 from src.task.context import Context
 from src.task.step.base import Step
+from src.task.step.steps._annotation_columns import require_role
 
 
 _STAT_LABELS = (
@@ -85,24 +86,22 @@ class GffFeatureStatsStep(Step):
             )
 
         fld_labels = form.labels.get(fld_dim, {})
-        for required in ("type", "start", "end"):
-            if required not in fld_labels:
-                raise StepError(
-                    f"gff_feature_stats: field dim '{fld_dim}' has no "
-                    f"'{required}' label. Available: {sorted(fld_labels)}"
-                )
-
         encoders = form.info.get("encoders", {}).get(fld_dim, {})
-        type_enc = encoders.get("type")
-        if type_enc is None:
-            raise StepError(
-                "gff_feature_stats: 'type' column is not encoded; "
-                "Gff3Reader should have encoded it"
-            )
+        _, type_index, type_enc = require_role(
+            fld_labels, encoders, "type", "gff_feature_stats"
+        )
+        _, start_index, _ = require_role(
+            fld_labels, encoders, "start", "gff_feature_stats",
+            require_encoder=False,
+        )
+        _, end_index, _ = require_role(
+            fld_labels, encoders, "end", "gff_feature_stats",
+            require_encoder=False,
+        )
 
-        type_codes = form.data[:, fld_labels["type"]]
-        starts = form.data[:, fld_labels["start"]]
-        ends = form.data[:, fld_labels["end"]]
+        type_codes = form.data[:, type_index]
+        starts = form.data[:, start_index]
+        ends = form.data[:, end_index]
 
         lengths = ends - starts + 1.0
 

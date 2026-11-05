@@ -212,7 +212,7 @@ class VinaDockPythonStep(Step):
             size=size,
             exhaustiveness=int(params.get("exhaustiveness", 8)),
             num_modes=int(params.get("num_modes", 9)),
-            seed=int(params.get("seed", 0)),
+            seed=int(params.get("seed", 42)),
             cpu=int(params.get("cpu", 1)),
             scoring=str(params.get("scoring", "vina")),
             flex_path=flex_path,

@@ -94,11 +94,11 @@ def run_quast(
         contigs = folder / "contigs.fna"
         write_fasta(sequences, contigs)
         out_dir = folder / "quast_out"
-        launcher = (
-            [sys.executable, binary]
-            if str(binary).lower().endswith(".py")
-            else [binary]
-        )
+        launcher = [binary]
+        if str(binary).lower().endswith(".py") and not os.access(binary, os.X_OK):
+            # A plain script has no usable shebang on Windows; run it with the
+            # current interpreter as a fallback.
+            launcher = [sys.executable, binary]
         command = [
             *launcher,
             str(contigs),

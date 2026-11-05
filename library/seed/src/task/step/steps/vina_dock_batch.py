@@ -57,11 +57,13 @@ def run_ligand(
     *,
     timeout: int,
     operator: str = "vina_dock_batch",
+    tag: str | None = None,
 ) -> dict:
     """Dock one ligand and return the parsed score table."""
 
-    out_path = out_dir / f"{ligand.stem}_out.pdbqt"
-    log_path = out_dir / f"{ligand.stem}_vina.log"
+    stem = tag or ligand.stem
+    out_path = out_dir / f"{stem}_out.pdbqt"
+    log_path = out_dir / f"{stem}_vina.log"
     command = docking_command(params, binary, receptor, ligand, out_path, center)
     if binary.lower().endswith(".py"):
         # A script runner cannot be executed directly on Windows.
@@ -177,9 +179,19 @@ class VinaDockBatchStep(Step):
             center = tuple(float(value) for value in vectors.mean(axis=0))
         out_dir = Path(ctx.task_dir) / "docking"
         out_dir.mkdir(parents=True, exist_ok=True)
+        labels = unique_labels(ligand_files)
         records = [
-            run_ligand(binary, receptor, ligand, out_dir, params, center, timeout=timeout)
-            for ligand in ligand_files
+            run_ligand(
+                binary,
+                receptor,
+                ligand,
+                out_dir,
+                params,
+                center,
+                timeout=timeout,
+                tag=label,
+            )
+            for ligand, label in zip(ligand_files, labels)
         ]
         directory = output_directory(ctx, "vina_batch")
         native_poses = []
@@ -188,7 +200,6 @@ class VinaDockBatchStep(Step):
             shutil.copyfile(record["out_path"], target)
             record["out_path"] = str(target)
             native_poses.append(target)
-        labels = unique_labels(ligand_files)
         data = np.asarray(
             [
                 (

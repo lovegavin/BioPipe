@@ -16,6 +16,7 @@ from src.task.step.steps._sequence_common import decode_sequences
 
 _ALLOWED = set("ACGUTN")
 _RESULT = re.compile(r"^([.()\[\]{}<>A-Za-z]+)\s+\(\s*(-?\d+\.\d+)\)(?:\s+\[\s*(-?\d+\.\d+)\])?\s*$")
+_ENSEMBLE = re.compile(r"^([.()\[\]{}<>A-Za-z]+)\s+\[\s*(-?\d+\.\d+)\s*\]")
 
 
 def clean_sequence(sequence: str, operator: str) -> str:
@@ -44,6 +45,10 @@ def parse_output(text: str, operator: str) -> list[dict]:
                 structure = match.group(1).strip()
                 mfe = float(match.group(2))
                 ensemble = float(match.group(3)) if match.group(3) is not None else float("nan")
+                if index + 2 < len(lines):
+                    follow = _ENSEMBLE.match(lines[index + 2].strip())
+                    if follow and follow.group(1).strip() == structure:
+                        ensemble = float(follow.group(2))
                 pairs = sum(1 for char in structure if char in "([{<")
                 records.append(
                     {
@@ -79,7 +84,7 @@ def run_rnafold(
     resolved = binary if Path(binary).is_file() else which(binary)
     if not resolved:
         raise StepError(f"sequence_rna_fold: '{binary}' was not found on PATH")
-    command = [str(resolved), "--noPS", "-T", f"{float(temperature):.1f}", "-d", str(int(dangles))]
+    command = [str(resolved), "--noPS", "-p", "-T", f"{float(temperature):.1f}", "-d", str(int(dangles))]
     if no_lonely_pairs:
         command.append("--noLP")
     payload = "\n".join(sequences) + "\n"

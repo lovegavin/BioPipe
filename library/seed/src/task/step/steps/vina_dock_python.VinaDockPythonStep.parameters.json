@@ -94,7 +94,7 @@
     "seed": {
       "title": "随机种子",
       "type": "integer",
-      "default": 0,
+      "default": 42,
       "minimum": 0,
       "maximum": 2147483647,
       "x-ui-group": "对接",

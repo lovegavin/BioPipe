@@ -228,6 +228,12 @@ class ColabfoldPredictStep(Step):
                 {"atom": "auto", "field": "builtin"},
             )
             directory = output_directory(ctx, "colabfold")
+            if scores_path is not None:
+                saved_scores = directory / (
+                    "scores" + (Path(scores_path).suffix or ".json")
+                )
+                shutil.copyfile(scores_path, saved_scores)
+                scores_path = saved_scores
             native_pdb = directory / "prediction.pdb"
             shutil.copyfile(structure_path, native_pdb)
             structure_path = native_pdb
@@ -252,6 +258,8 @@ class ColabfoldPredictStep(Step):
             shutil.rmtree(workdir, ignore_errors=True)
 
         result_files = [result_file("structure", structure_path, "pdb", "ColabFold prediction")]
+        if scores_path is not None:
+            result_files.append(result_file("scores", scores_path, "json", "ColabFold scores"))
         remember_native(ctx, out_name, result_files)
         ctx[out_name] = form
         self._export_data = {

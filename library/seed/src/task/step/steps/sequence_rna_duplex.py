@@ -62,7 +62,7 @@ def run_duplex(
             raise StepError(f"sequence_rna_duplex: sequence {index + 1} contains non-RNA characters (expected ACGUN)")
         cleaned.append(text)
     workdir = Path(tempfile.mkdtemp(prefix="rnaduplex_"))
-    command = [binary, "-e", str(energy_range)]
+    command = [binary, "-e", str(max(float(energy_range), 0.1))]
     try:
         completed = subprocess.run(
             command,

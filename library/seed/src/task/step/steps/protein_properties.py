@@ -101,7 +101,7 @@ class ProteinPropertiesStep(Step):
         for seq in seqs:
             clean = "".join(aa for aa in seq if aa in _MW)
             n = len(clean)
-            mw = sum(_MW[aa] for aa in clean) + (18.01524 if n else 0.0)
+            mw = sum(_MW[aa] for aa in clean) - (18.01524 * (n - 1) if n else 0.0)
             gravy = (sum(_GRAVY[aa] for aa in clean) / n) if n else float("nan")
             aromatic = (sum(1 for aa in clean if aa in "FWY") / n) if n else float("nan")
             rows.append([float(n), float(mw), float(_isoelectric(clean) if clean else 7.0), float(gravy), float(aromatic)])

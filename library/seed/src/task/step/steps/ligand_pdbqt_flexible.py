@@ -226,6 +226,7 @@ class LigandPdbqtFlexibleStep(Step):
             "n_torsions": result["torsions"],
             "rdkit_num_rotatable_bonds": result["rdkit_torsions"],
             "output_path": path_text,
+            "result_files": result_files,
         }
 
     def export(self, ctx):

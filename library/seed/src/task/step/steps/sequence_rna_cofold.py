@@ -14,9 +14,9 @@ from src.core.forms import Form
 from src.task.step.base import Step
 from src.task.step.steps._sequence_common import decode_sequences
 
-_ENERGY = re.compile(r"\(\s*(?P<energy>-?\d+(?:\.\d+)?)\s*\)")
+_ENERGY = re.compile(r"[\(\[]\s*(?P<energy>-?\d+(?:\.\d+)?)\s*[\)\]]")
 _FREQ = re.compile(r"frequency of mfe structure in ensemble\s+(?P<freq>\d+(?:\.\d+)?);\s*delta G binding=\s*(?P<binding>-?\d+(?:\.\d+)?)")
-_STRUCTURE = re.compile(r"^[.(){}[\]]+&[.(){}[\]]+$")
+_STRUCTURE = re.compile(r"^[.(){}()\[\],]+&[.(){}()\[\],]+$")
 
 
 def parse_cofold(text: str) -> dict:

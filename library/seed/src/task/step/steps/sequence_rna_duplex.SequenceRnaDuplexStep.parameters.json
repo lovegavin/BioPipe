@@ -21,7 +21,7 @@
     "energy_range": {
       "title": "能量容差 (kcal/mol)",
       "type": "number",
-      "default": 0.0,
+      "default": 0.1,
       "minimum": 0.0,
       "maximum": 50.0,
       "x-ui-group": "搜索",
