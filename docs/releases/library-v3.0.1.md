@@ -18,8 +18,10 @@ release ships the fixes and evidence from the full 3.x verification campaign.
   other; output names use the unique label.
 - **Vina Python** — default seed is 42, so repeated docking runs are
   reproducible.
-- **Assembly stats** — QUAST is launched from its conda environment instead of
-  with `sys.executable`, fixing `ModuleNotFoundError: quast_libs`.
+- **Assembly stats** — QUAST is launched directly when its shebang is usable,
+  preserving the conda environment (`ModuleNotFoundError: quast_libs` on POSIX);
+  `.py` entry points always run with the current interpreter on Windows, fixing
+  `OSError: [WinError 193]`.
 - **antiSMASH** — genes present as both `gene` and `CDS` features are counted
   once.
 - **ColabFold** — scores are copied into the task artifact directory instead of
@@ -41,6 +43,8 @@ release ships the fixes and evidence from the full 3.x verification campaign.
   with byte-identical SHA-256.
 - External oracles: QUAST, Biopython, mkdssp, tmtools, ViennaRNA,
   ProtParam, statsmodels/SciPy, scanpy and scikit-bio.
+- Windows 3.12.10: frozen-route pytest set 50 passed / 7 skipped; the new
+  regression files 11 passed / 4 skipped.
 - Full suite: see `docs/verification/library-3.0.0-full.md`.
 
 ## Compatibility

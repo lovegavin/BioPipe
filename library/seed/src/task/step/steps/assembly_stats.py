@@ -78,6 +78,20 @@ def parse_report(text: str) -> dict[str, float]:
     return metrics
 
 
+def _launcher(binary: str, *, platform_name: str | None = None) -> list[str]:
+    """Return the command prefix used to execute an external tool.
+
+    Windows cannot execute a ``.py`` path directly, and on POSIX a script
+    without the executable bit ignores its shebang.  In both cases run the
+    script with the current interpreter instead.
+    """
+    name = os.name if platform_name is None else platform_name
+    path = str(binary)
+    if path.lower().endswith(".py") and (name == "nt" or not os.access(path, os.X_OK)):
+        return [sys.executable, path]
+    return [path]
+
+
 def run_quast(
     binary: str,
     sequences: list[str],
@@ -94,11 +108,7 @@ def run_quast(
         contigs = folder / "contigs.fna"
         write_fasta(sequences, contigs)
         out_dir = folder / "quast_out"
-        launcher = [binary]
-        if str(binary).lower().endswith(".py") and not os.access(binary, os.X_OK):
-            # A plain script has no usable shebang on Windows; run it with the
-            # current interpreter as a fallback.
-            launcher = [sys.executable, binary]
+        launcher = _launcher(binary)
         command = [
             *launcher,
             str(contigs),

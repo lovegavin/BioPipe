@@ -277,7 +277,7 @@ changes scientific output for existing workflows.
 ## 8. Defects fixed in 3.0.1
 
 Every fix has a failing-before / passing-after regression test. Tests live in
-`tests/test_extension357.py` (13 cases) and `tests/test_extension358.py`
+`tests/test_extension357.py` (14 cases) and `tests/test_extension358.py`
 (GTF roles), with the pinned values in `tests/test_extension11.py` and the DSSP
 contract in `tests/test_extension280.py`. Combined run: **26 passed**.
 
@@ -287,7 +287,7 @@ contract in `tests/test_extension280.py`. Combined run: **26 passed**.
 | B | `structure_dssp_segments` | line filter accepted DSSP statistics rows; `tokens[4]` read BP1 as chain; 192 segments / 524 residues with chains `"12"`, `"3"`, `"0"`… | fixed columns: resnum `[5:10]`, chain `[11]`, aa `[13]`, SS `[16]`; empty code → `-` | after: 187 segments / 518 residues, every state count equals the mkdssp oracle |
 | C | `ligand_pdbqt_flexible` | `export()` omitted `result_files`; `export_results(native)` failed with “no matching original native file” | add `"result_files": result_files` | T2.11/T2.11b PASS; sha256 match, 3 exports |
 | D | `vina_dock_batch` | two ligands with the same stem wrote `poses.pdbqt` to one path; `poses_1`/`poses_2` pointed at the same file | `run_ligand(tag=...)` uses the unique label as filename stem | two distinct output files, no overwrite |
-| E | `assembly_stats` | launched `quast.py` with `sys.executable`, losing the conda env → `ModuleNotFoundError: No module named 'quast_libs'` | execute the tool directly; only non-executable `.py` falls back to the interpreter | real QUAST run passes |
+| E | `assembly_stats` | launched `quast.py` with `sys.executable`, losing the conda env → `ModuleNotFoundError: No module named 'quast_libs'`; on Windows the old fallback never triggered because `os.access(X_OK)` is always true, so a `.py` entry point was executed directly → `OSError: [WinError 193]` | `_launcher()` executes the tool directly when its shebang is usable and always uses `sys.executable` for `.py` on Windows (`os.name == "nt"`) | real QUAST run passes; Windows `test_run_with_fake_quast` passes |
 | F | `antismash_bgc` | GenBank input with both `gene` and `CDS` features counted every gene twice (11 genes → 22) | deduplicate by `locus_tag`, falling back to span | n_genes 11, region count unchanged |
 | G | `vina_dock_python` | default `seed=0` made repeated runs differ (−5.131 vs −5.125, different pose hashes) | default seed 42 in code and parameter JSON | two runs identical energy and pose sha |
 | H | `colabfold_predict` | `info.scores_path` pointed into a `mkdtemp` directory removed in `finally` | copy scores into `output_directory(ctx,"colabfold")`, report the copy as a result file | file exists after run; `result_files` includes it |
@@ -445,6 +445,7 @@ Run on the release tree (library 3.0.1) on 2026-11-05.
 | Packaging group | `pytest -q tests/test_packages.py tests/test_release_build.py tests/test_release_agent_harness.py tests/test_library_release.py` | 26 passed in 93.64s (0:01:33) |
 | Full suite | `pytest -q -rs` | 2873 passed, 220 skipped, 48 warnings in 1721.03s (0:28:41) |
 | Whitespace | `git diff --check` | clean |
+| Windows launcher check | `python -m pytest` (Windows 3.12.10) on `tests/test_extension350.py`…`test_extension356.py` + `tests/test_export_results.py` | 50 passed, 7 skipped; `tests/test_extension357.py` + `test_extension358.py`: 11 passed, 4 skipped |
 
 The full suite ran once on the final 3.0.1 tree with `-rs`. It reports 220
 skipped; the table below aggregates the 200 `SKIPPED` lines (parameterized
@@ -519,3 +520,5 @@ GPU/weights. Nothing is skipped because of a failure, and no test failed.
 | 1 | set BIOPIPE_RUN_PROTEINMPNN=1 with a local ProteinMPNN checkout |
 | 1 | set BIOPIPE_TRNA_REAL=1 to run the real tRNAscan-SE check |
 | 1 | torch_scatter is ABI-incompatible: Could not load this library: <env>/lib/python3.12/site-packages/torch_scatter/_scatter_cpu.so |
+
+The Windows run reproduced the CI failure (`tests/test_extension355.py::test_run_with_fake_quast`, `WinError 193`) before the launcher fix and passes after it. The frozen-route set exercised by `scripts/verify_library_release.py` is the same 350–356 set, so the tag CI rerun is the final platform gate.

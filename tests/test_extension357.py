@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import shutil
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -145,7 +146,7 @@ def test_ligand_pdbqt_flexible_persists_native_result_files(tmp_path) -> None:
         ],
     )
     report = json.loads(
-        (ctx.out_dir / "steps/01_ligand_pdbqt_flexible.json").read_text()
+        (ctx.out_dir / "steps/01_ligand_pdbqt_flexible.json").read_text(encoding="utf-8")
     )
     files = report["result_files"]
     assert files and files[0]["format"] == "pdbqt"
@@ -208,6 +209,7 @@ def test_vina_dock_batch_keeps_duplicate_stems_distinct(tmp_path) -> None:
 QUAST = shutil.which("quast.py") or "/home/gavin/miniconda3/envs/assembly/bin/quast.py"
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="POSIX shebang execution only")
 @pytest.mark.skipif(not Path(QUAST).is_file(), reason="QUAST is not installed")
 def test_assembly_stats_runs_python_entry_point(tmp_path) -> None:
     ctx = Context(str(tmp_path / "task"), {"params": {}})
@@ -262,7 +264,7 @@ def test_vina_dock_python_default_seed_is_deterministic() -> None:
         / "library/seed/src/task/step/steps/"
         "vina_dock_python.VinaDockPythonStep.parameters.json"
     )
-    schema = json.loads(path.read_text())
+    schema = json.loads(path.read_text(encoding="utf-8"))
     assert schema["properties"]["seed"]["default"] == 42
 
 
@@ -380,3 +382,11 @@ def test_rna_duplex_default_energy_range_has_output() -> None:
         ],
     )
     assert ctx["duplex"].data.shape[0] >= 1
+
+
+def test_assembly_launcher_uses_interpreter_on_windows(tmp_path) -> None:
+    from src.task.step.steps.assembly_stats import _launcher
+
+    script = tmp_path / "quast.py"
+    script.write_text("print('ok')\n", encoding="utf-8")
+    assert _launcher(str(script), platform_name="nt") == [sys.executable, str(script)]
