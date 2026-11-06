@@ -873,3 +873,60 @@ logistic comparison (coefficient max abs 9.45e-9 against sklearn).
   features are strongly collinear.
 - `stats_fdr` implements BH, BY, Holm and Bonferroni; permutation-based
   correction is out of scope.
+
+## Batch 11 — read preprocessing (FASTQ quality, adapter, dedup)
+
+Operators: `fastq_quality_trim`, `fastq_adapter_trim`, `fastq_deduplicate`.
+Route: `read_preprocessing` (6 steps, one source and three export branches).
+
+### Data
+
+| File | Size | SHA-256 |
+| --- | --- | --- |
+| `input/reads_1.fastq.gz` | 8,291,336 B | `5b512b0b…` |
+| `input/reads_2.fastq.gz` | 9,356,844 B | `1e35a305…` |
+
+First 200,000 pairs of ENA `SRR001666` (Illumina 36 bp, *E. coli*); the route
+uses mate 1, mate 2 is retained for downstream alignment routes.
+
+### Results (200,000 reads)
+
+| Operator | Result | WSL | srv | Windows |
+| --- | --- | --- | --- | --- |
+| `fastq_quality_trim` | 194,355 kept / 6,687,525 bases / 512,475 trimmed bases | 0.385 s | 1.188 s | 0.432 s |
+| `fastq_adapter_trim` | 3,244 with adapter / 7,189,076 bases / 10,924 trimmed bases | 4.995 s | 9.954 s | 6.925 s |
+| `fastq_deduplicate` | 197,031 unique / 2,969 duplicates (0.014845) | 0.318 s | 0.904 s | 0.324 s |
+
+### Oracles
+
+- **cutadapt 5.2** (`-q 20 -m 20`): 194,355 reads / 6,687,525 bases; output
+  FASTQ md5 `d4c039de4822593401950fc92abb1f2c` — byte-identical to the operator.
+  `quality_trimmed` 433,109 excludes bases lost with dropped short reads; adding
+  those 79,366 bases gives 512,475.
+- **cutadapt 5.2** (`-a AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -O 3 -e 0 --no-indels`):
+  3,244 reads with adapter / 7,189,076 bases; output md5
+  `5b492c0d44347932bc7e79858c102a6f` — byte-identical.
+- **seqkit 2.9.0** (`fx2tab | cut -f2 | sort -u`): 197,031 unique sequences.
+  `seqkit rmdup -s` reports 195,398 because it also collapses reverse
+  complements; the operator offers `collapse_reverse_complements` (default
+  `false`) for that convention.
+
+### Cross-platform byte comparison
+
+| Artifact | Size | md5 (WSL / srv / Windows) |
+| --- | --- | --- |
+| `quality_trimmed.fastq` | 24,399,755 B | `d4c039de4822593401950fc92abb1f2c` |
+| `adapter_trimmed.fastq` | 25,723,743 B | `5b492c0d44347932bc7e79858c102a6f` |
+| `dedup_summary.fastq` | 25,362,382 B | `2482cad759730f347c837e9d24a8bcd0` |
+| `fastq_quality_trim.csv` | 373 B | `2819a3d3b87db36c828c658d4ac05f02` |
+| `fastq_adapter_trim.csv` | 355 B | `f04eff5feb9d55a515777232ac00652d` |
+| `fastq_deduplicate.csv` | 290 B | `03a778759c76b03d5382c7c922b28496` |
+
+### Notes and limitations
+
+- FASTQ export is a native artifact (`result_files`); the summary Form is
+  exported to CSV. `export_results` does not carry FASTQ text into CSV.
+- Adapter matching is ungapped and 3'-anchored; `max_mismatches` applies to
+  partial overlaps.
+- Deduplication is exact-sequence by default; UMI-aware collapse is out of
+  scope.
