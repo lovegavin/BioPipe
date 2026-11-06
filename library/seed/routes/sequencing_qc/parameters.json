@@ -1,0 +1,104 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "reads": {
+      "phred_offset": 33,
+      "mate_path": "reads_2.fastq.gz"
+    }
+  },
+  "steps": [
+    {
+      "name": "fastq_stats",
+      "inputs": ["reads"],
+      "params": {
+        "max_reads": 0,
+        "output": "fastq_stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["fastq_stats"],
+      "params": {
+        "format": "csv",
+        "filename": "fastq_stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "fastq_quality_profile",
+      "inputs": ["reads"],
+      "params": {
+        "max_reads": 0,
+        "max_positions": 0,
+        "output": "quality_profile"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["quality_profile"],
+      "params": {
+        "format": "csv",
+        "filename": "quality_profile"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "fastq_adapter_scan",
+      "inputs": ["reads"],
+      "params": {
+        "max_reads": 0,
+        "min_overlap": 8,
+        "max_mismatches": 0,
+        "adapters": "",
+        "output": "adapter_scan"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["adapter_scan"],
+      "params": {
+        "format": "csv",
+        "filename": "adapter_scan"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "align_reads",
+      "inputs": ["reads"],
+      "params": {
+        "executor": "auto",
+        "threads": 4,
+        "memory_mb": 2048,
+        "timeout_seconds": 0,
+        "assembly": "unknown",
+        "record_buffer_mb": 1,
+        "reference_fasta": "input/ecoli.fasta",
+        "output": "bam"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "bam_flagstat",
+      "inputs": ["bam"],
+      "params": {
+        "max_records": 0,
+        "output": "bam_flagstat"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["bam_flagstat"],
+      "params": {
+        "format": "csv",
+        "filename": "bam_flagstat"
+      },
+      "context_params": {}
+    }
+  ]
+}

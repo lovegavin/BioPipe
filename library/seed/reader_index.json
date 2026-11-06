@@ -30,6 +30,16 @@
     "status": "generated"
   },
   {
+    "id": "BamFileReader",
+    "kind": "reader",
+    "title": "BamFileReader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reference a BAM file without loading or decoding its records.",
+    "doc": "src/reader/readers/bam_file_reader.BamFileReader.md",
+    "status": "generated"
+  },
+  {
     "id": "BamReader",
     "kind": "reader",
     "title": "Binary Alignment/Map reader",

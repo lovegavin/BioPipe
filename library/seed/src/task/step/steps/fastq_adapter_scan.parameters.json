@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "properties": {
+    "max_reads": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Scan at most this many records (0 scans the whole file)."
+    },
+    "min_overlap": {
+      "type": "integer",
+      "default": 8,
+      "minimum": 1,
+      "description": "Adapter prefix length that must match the read."
+    },
+    "max_mismatches": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Allowed substitutions inside the matched adapter prefix."
+    },
+    "adapters": {
+      "type": "string",
+      "default": "",
+      "description": "Optional comma-separated name:SEQUENCE panel; empty uses Illumina, Nextera and small-RNA adapters."
+    },
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}

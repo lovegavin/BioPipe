@@ -470,6 +470,16 @@
     "status": "generated"
   },
   {
+    "id": "bam_flagstat",
+    "kind": "operator",
+    "title": "bam_flagstat",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Summarise BAM alignment flags like samtools flagstat (counts only).",
+    "doc": "src/task/step/steps/bam_flagstat.BamFlagstatStep.md",
+    "status": "generated"
+  },
+  {
     "id": "barnard_test",
     "kind": "operator",
     "title": "Barnard exact test",
@@ -2067,6 +2077,36 @@
     "version": "1.0.0",
     "description": "Faith's PD：接收 2 个输入，输出 Form；主要参数：样本维度、类群维度、节点维度、字段维度。",
     "doc": "src/task/step/steps/faith_pd.FaithPdStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fastq_adapter_scan",
+    "kind": "operator",
+    "title": "fastq_adapter_scan",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Count reads containing known sequencing adapter prefixes.",
+    "doc": "src/task/step/steps/fastq_adapter_scan.FastqAdapterScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fastq_quality_profile",
+    "kind": "operator",
+    "title": "fastq_quality_profile",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Per-cycle mean base quality of a FASTQ/FASTQ.gz file.",
+    "doc": "src/task/step/steps/fastq_quality_profile.FastqQualityProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fastq_stats",
+    "kind": "operator",
+    "title": "fastq_stats",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Read count, length, GC fraction and base quality of a FASTQ/FASTQ.gz file.",
+    "doc": "src/task/step/steps/fastq_stats.FastqStatsStep.md",
     "status": "generated"
   },
   {

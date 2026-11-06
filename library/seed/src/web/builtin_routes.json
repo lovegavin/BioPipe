@@ -101,6 +101,11 @@
       "sha256": "26d7cdfaab19ab378ff1c42c3da88597e0c9d571c245d2e48014061d11bddc3e",
       "parameters_sha256": "ea2030fcb6e2a49b578162aa9a55ac634deb5a127f319c5aa861dc20b449e1a4"
     },
+    "route_4242996c3052": {
+      "path": "routes/sequencing_qc/task.yaml",
+      "sha256": "500c0d597c5fa60b72a630371bd7a294d11607c40f9f323930f130eac0aed172",
+      "parameters_sha256": "640607782fb10a9efb6dbb498ab15215ed30d095ff9dfc82333ffc89c242d23d"
+    },
     "route_d6c3db6fe153": {
       "path": "routes/single_cell/task.yaml",
       "sha256": "832d0f49875d85c9201321dc826a9a7b5372023b39785049323b4c2867200f42",
@@ -3364,6 +3369,429 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_4242996c3052",
+      "version": 1,
+      "name": "Sequencing read QC and alignment flagstat",
+      "graph": {
+        "schema_version": 2,
+        "name": "Sequencing read QC and alignment flagstat",
+        "base_dir": ".studio/builtin-inputs/sequencing_qc",
+        "nodes": [
+          {
+            "id": "reads",
+            "kind": "source",
+            "operator": null,
+            "title": "reads",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": null,
+              "path": "input/reads_1.fastq.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {
+                "mate_path": "reads_2.fastq.gz",
+                "phred_offset": 33
+              },
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "fastq_stats_1",
+            "kind": "operator",
+            "operator": "fastq_stats",
+            "title": "fastq_stats",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "max_reads": 0,
+              "output": "fastq_stats"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "fastq_stats",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "fastq_quality_profile_3",
+            "kind": "operator",
+            "operator": "fastq_quality_profile",
+            "title": "fastq_quality_profile",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "max_reads": 0,
+              "max_positions": 0,
+              "output": "quality_profile"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "quality_profile",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "fastq_adapter_scan_5",
+            "kind": "operator",
+            "operator": "fastq_adapter_scan",
+            "title": "fastq_adapter_scan",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "max_reads": 0,
+              "min_overlap": 8,
+              "max_mismatches": 0,
+              "adapters": "",
+              "output": "adapter_scan"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "adapter_scan",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "align_reads_7",
+            "kind": "operator",
+            "operator": "align_reads",
+            "title": "Hi-C read alignment",
+            "position": {
+              "x": 360.0,
+              "y": 730.0
+            },
+            "params": {
+              "executor": "auto",
+              "threads": 4,
+              "memory_mb": 2048,
+              "timeout_seconds": 0,
+              "assembly": "unknown",
+              "record_buffer_mb": 1,
+              "output": "bam",
+              "reference_fasta": "input/ecoli.fasta"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "bam_flagstat_8",
+            "kind": "operator",
+            "operator": "bam_flagstat",
+            "title": "bam_flagstat",
+            "position": {
+              "x": 650.0,
+              "y": 730.0
+            },
+            "params": {
+              "max_records": 0,
+              "output": "bam_flagstat"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_9",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "bam_flagstat",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_7"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "reads-fastq_stats_1-0",
+            "source": "reads",
+            "target": "fastq_stats_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "fastq_stats_1-export_results_2-0",
+            "source": "fastq_stats_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reads-fastq_quality_profile_3-0",
+            "source": "reads",
+            "target": "fastq_quality_profile_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "fastq_quality_profile_3-export_results_4-0",
+            "source": "fastq_quality_profile_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reads-fastq_adapter_scan_5-0",
+            "source": "reads",
+            "target": "fastq_adapter_scan_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "fastq_adapter_scan_5-export_results_6-0",
+            "source": "fastq_adapter_scan_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reads-align_reads_7-0",
+            "source": "reads",
+            "target": "align_reads_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "align_reads_7-bam_flagstat_8-0",
+            "source": "align_reads_7",
+            "target": "bam_flagstat_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "bam_flagstat_8-export_results_9-0",
+            "source": "bam_flagstat_8",
+            "target": "export_results_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "reads",
+              "label": "reads",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "fastq"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_9",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]
