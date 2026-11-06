@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "properties": {
+    "adapter": {
+      "type": "string",
+      "default": "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
+      "description": "3-prime adapter sequence to remove (exact, no indels)."
+    },
+    "min_overlap": {
+      "type": "integer",
+      "default": 3,
+      "minimum": 1,
+      "maximum": 50,
+      "description": "Minimum 3-prime overlap for a partial adapter match."
+    },
+    "max_mismatches": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 3,
+      "description": "Allowed mismatches for a partial match."
+    },
+    "max_records": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Read at most this many records (0 reads the whole file)."
+    },
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}

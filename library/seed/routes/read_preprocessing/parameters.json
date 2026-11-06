@@ -1,0 +1,77 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "reads": {}
+  },
+  "steps": [
+    {
+      "name": "fastq_quality_trim",
+      "inputs": [
+        "reads"
+      ],
+      "params": {
+        "min_quality": 20,
+        "min_length": 20,
+        "output": "quality_trimmed"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "quality_trimmed"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "fastq_quality_trim"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "fastq_adapter_trim",
+      "inputs": [
+        "reads"
+      ],
+      "params": {
+        "adapter": "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
+        "min_overlap": 3,
+        "output": "adapter_trimmed"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "adapter_trimmed"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "fastq_adapter_trim"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "fastq_deduplicate",
+      "inputs": [
+        "reads"
+      ],
+      "params": {
+        "output": "dedup_summary"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "dedup_summary"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "fastq_deduplicate"
+      },
+      "context_params": {}
+    }
+  ]
+}

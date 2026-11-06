@@ -116,6 +116,11 @@
       "sha256": "2591e4f30580c51add61ea97682ba56561a0bec3fc003c314f61f0c8b61e1992",
       "parameters_sha256": "411cd7a4aded391f035700c55289f25edaa23bf35481d5e0acff02b0bfbed107"
     },
+    "route_bbd048357651": {
+      "path": "routes/read_preprocessing/task.yaml",
+      "sha256": "cd80a7fc3cd80abefe769d7b833b65385517c77c94a2a51d6e9399d7489614ea",
+      "parameters_sha256": "e7f70d9de0f92a5c9de158322d9e99ec9ecf93f334f74b94b5cb5773325911da"
+    },
     "route_274abd24ce8d": {
       "path": "routes/rnaseq_de/task.yaml",
       "sha256": "c250481c89c7acb9219ecddf6dd670d6993cfddf69bc5aa38feda90fcb4cb04e",
@@ -12442,6 +12447,322 @@
                 "axis_info_open": false,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_bbd048357651",
+      "version": 1,
+      "name": "Read preprocessing",
+      "graph": {
+        "schema_version": 2,
+        "name": "Read preprocessing",
+        "base_dir": ".studio/builtin-inputs/read_preprocessing",
+        "nodes": [
+          {
+            "id": "reads",
+            "kind": "source",
+            "operator": null,
+            "title": "reads",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastqReader",
+              "path": "input/reads_1.fastq.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "fastq_quality_trim_1",
+            "kind": "operator",
+            "operator": "fastq_quality_trim",
+            "title": "fastq_quality_trim",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_quality": 20,
+              "min_length": 20,
+              "max_records": 0,
+              "output": "quality_trimmed"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "fastq_quality_trim",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "fastq_adapter_trim_3",
+            "kind": "operator",
+            "operator": "fastq_adapter_trim",
+            "title": "fastq_adapter_trim",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "adapter": "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
+              "min_overlap": 3,
+              "max_mismatches": 0,
+              "max_records": 0,
+              "output": "adapter_trimmed"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "fastq_adapter_trim",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "fastq_deduplicate_5",
+            "kind": "operator",
+            "operator": "fastq_deduplicate",
+            "title": "fastq_deduplicate",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "max_records": 0,
+              "output": "dedup_summary",
+              "collapse_reverse_complements": false
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "fastq_deduplicate",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "reads-fastq_quality_trim_1-0",
+            "source": "reads",
+            "target": "fastq_quality_trim_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "fastq_quality_trim_1-export_results_2-0",
+            "source": "fastq_quality_trim_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reads-fastq_adapter_trim_3-0",
+            "source": "reads",
+            "target": "fastq_adapter_trim_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "fastq_adapter_trim_3-export_results_4-0",
+            "source": "fastq_adapter_trim_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reads-fastq_deduplicate_5-0",
+            "source": "reads",
+            "target": "fastq_deduplicate_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "fastq_deduplicate_5-export_results_6-0",
+            "source": "fastq_deduplicate_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {
+          "description": "Trim 3-prime low-quality bases, remove the Illumina adapter and collapse duplicate reads from a real 200k-read ENA subset.",
+          "version": "1.0.0"
+        },
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "reads",
+              "label": "reads",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "fastq"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

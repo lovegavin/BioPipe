@@ -2170,6 +2170,26 @@
     "status": "generated"
   },
   {
+    "id": "fastq_adapter_trim",
+    "kind": "operator",
+    "title": "fastq_adapter_trim",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Trim a 3-prime adapter using an exact, no-indel match.",
+    "doc": "src/task/step/steps/fastq_adapter_trim.FastqAdapterTrimStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fastq_deduplicate",
+    "kind": "operator",
+    "title": "fastq_deduplicate",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Collapse duplicate sequences, keeping the first read and its order.",
+    "doc": "src/task/step/steps/fastq_deduplicate.FastqDeduplicateStep.md",
+    "status": "generated"
+  },
+  {
     "id": "fastq_quality_profile",
     "kind": "operator",
     "title": "fastq_quality_profile",
@@ -2177,6 +2197,16 @@
     "version": "1.0.0",
     "description": "Per-cycle mean base quality of a FASTQ/FASTQ.gz file.",
     "doc": "src/task/step/steps/fastq_quality_profile.FastqQualityProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fastq_quality_trim",
+    "kind": "operator",
+    "title": "fastq_quality_trim",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Trim low-quality 3-prime ends using the BWA/cutadapt running-score rule.",
+    "doc": "src/task/step/steps/fastq_quality_trim.FastqQualityTrimStep.md",
     "status": "generated"
   },
   {

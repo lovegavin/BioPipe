@@ -1,0 +1,23 @@
+name: "Read preprocessing: quality and adapter trimming with deduplication"
+description: "Trim 3-prime low-quality bases, remove the Illumina adapter and collapse duplicate reads from a real 200k-read ENA subset."
+version: "1.0.0"
+sources:
+  reads:
+    path: input/reads_1.fastq.gz
+    dims: [file]
+    labels: {}
+    reader: FastqReader
+steps:
+  - name: fastq_quality_trim
+    inputs: [reads]
+  - name: export_results
+    inputs: [quality_trimmed]
+  - name: fastq_adapter_trim
+    inputs: [reads]
+  - name: export_results
+    inputs: [adapter_trimmed]
+  - name: fastq_deduplicate
+    inputs: [reads]
+  - name: export_results
+    inputs: [dedup_summary]
+parameters_file: parameters.json

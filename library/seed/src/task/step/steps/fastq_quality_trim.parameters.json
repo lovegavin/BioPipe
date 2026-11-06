@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "min_quality": {
+      "type": "integer",
+      "default": 20,
+      "minimum": 0,
+      "maximum": 41,
+      "description": "Trim 3-prime bases while the running score (cutoff minus quality) improves."
+    },
+    "min_length": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Drop reads shorter than this after trimming."
+    },
+    "max_records": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Read at most this many records (0 reads the whole file)."
+    },
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}
