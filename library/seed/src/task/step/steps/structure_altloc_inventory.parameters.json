@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StructureAltlocInventoryStep parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "atom_dim": {
+      "type": "string",
+      "default": "atom",
+      "title": "原子维度",
+      "description": "PDB Form 的原子维度名。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "字段维度",
+      "description": "PDB Form 的字段维度名。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "altloc_dim": {
+      "type": "string",
+      "default": "altloc",
+      "title": "构象维度",
+      "description": "输出矩阵的 altloc 维度名。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "altlocs",
+      "title": "输出参数",
+      "description": "写入上下文的结果参数名。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    }
+  }
+}

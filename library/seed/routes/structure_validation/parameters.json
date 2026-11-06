@@ -1,0 +1,60 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "structure_1mel": {},
+    "structure_3di3": {},
+    "structure_2vb1": {}
+  },
+  "steps": [
+    {
+      "name": "structure_missing_residues",
+      "inputs": ["structure_1mel"],
+      "params": {"chain": "", "output": "missing_1mel"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["missing_1mel"],
+      "params": {"format": "csv", "filename": "missing_residues_1mel"},
+      "context_params": {}
+    },
+    {
+      "name": "structure_missing_residues",
+      "inputs": ["structure_3di3"],
+      "params": {"chain": "", "output": "missing_3di3"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["missing_3di3"],
+      "params": {"format": "csv", "filename": "missing_residues_3di3"},
+      "context_params": {}
+    },
+    {
+      "name": "structure_altloc_inventory",
+      "inputs": ["structure_2vb1"],
+      "params": {"output": "altlocs_2vb1"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["altlocs_2vb1"],
+      "params": {"format": "csv", "filename": "altloc_inventory_2vb1"},
+      "context_params": {}
+    },
+    {
+      "name": "structure_cis_peptides",
+      "inputs": ["structure_1mel"],
+      "params": {"cis_threshold": 30.0, "output": "cis_1mel"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["cis_1mel"],
+      "params": {"format": "csv", "filename": "cis_peptides_1mel"},
+      "context_params": {}
+    }
+  ]
+}

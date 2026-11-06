@@ -5920,6 +5920,16 @@
     "status": "generated"
   },
   {
+    "id": "structure_altloc_inventory",
+    "kind": "operator",
+    "title": "Alternate conformer inventory",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Counts atoms and residues per altloc identifier and summarises occupancies, flagging structures that refine more than one conformer for a residue.",
+    "doc": "src/task/step/steps/structure_altloc_inventory.StructureAltlocInventoryStep.md",
+    "status": "generated"
+  },
+  {
     "id": "structure_amide_pi_bonds",
     "kind": "operator",
     "title": "Amide-pi interactions",
@@ -6017,6 +6027,16 @@
     "version": "1.0.0",
     "description": "Computes chi1, chi2 and chi3 side-chain torsion angles for every residue.",
     "doc": "src/task/step/steps/structure_chi_angles.StructureChiAnglesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_cis_peptides",
+    "kind": "operator",
+    "title": "Cis peptide bonds from omega dihedrals",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Computes the backbone omega dihedral of every consecutive peptide bond and flags bonds whose absolute angle is below the cis threshold. Bonds across missing-residue gaps are skipped.",
+    "doc": "src/task/step/steps/structure_cis_peptides.StructureCisPeptidesStep.md",
     "status": "generated"
   },
   {
@@ -6467,6 +6487,16 @@
     "version": "1.0.0",
     "description": "Reports coordinating atoms within a distance cutoff of each metal ion.",
     "doc": "src/task/step/steps/structure_metal_coordination.StructureMetalCoordinationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "structure_missing_residues",
+    "kind": "operator",
+    "title": "Missing residues between chain segments",
+    "category": "Structure",
+    "version": "1.0.0",
+    "description": "Detects internal gaps in the residue numbering of every polymer chain and reports the missing range and length. Terminal truncation is not detectable from the coordinate form.",
+    "doc": "src/task/step/steps/structure_missing_residues.StructureMissingResiduesStep.md",
     "status": "generated"
   },
   {

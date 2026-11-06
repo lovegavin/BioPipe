@@ -131,6 +131,11 @@
       "sha256": "af1e8f23c02e77372ffc16fbd39828f2b30c47de96c44fb09f7271d4e1993f73",
       "parameters_sha256": "3579b779117bbe5264987eb900b62804b452006c8bf1b049e7338e6e6338933b"
     },
+    "route_782510ea5f8a": {
+      "path": "routes/structure_validation/task.yaml",
+      "sha256": "27609012dd86cd128caf81e850120f3953acb15f1527037dcd364b38455ed4fb",
+      "parameters_sha256": "5511e63eed6c3a13ea2fcf2ec793384c3e1256df2aacfa3976144c89f49f845c"
+    },
     "route_bf78f7a6e12f": {
       "path": "routes/survival/task.yaml",
       "sha256": "9155552512ad5b6f4c0f51086cd1cf3628c092ea7fbc4e81c0d2237baaa2e7f3",
@@ -7998,6 +8003,520 @@
                 "axis_info_open": false,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_782510ea5f8a",
+      "version": 1,
+      "name": "Structure validation: missing residues, alternate conformers and cis peptides",
+      "graph": {
+        "schema_version": 2,
+        "name": "Structure validation: missing residues, alternate conformers and cis peptides",
+        "base_dir": ".studio/builtin-inputs/structure_validation",
+        "nodes": [
+          {
+            "id": "structure_1mel",
+            "kind": "source",
+            "operator": null,
+            "title": "structure_1mel",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "PdbReader",
+              "path": "input/1mel.pdb",
+              "dims": [
+                "atom",
+                "field"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "structure_2vb1",
+            "kind": "source",
+            "operator": null,
+            "title": "structure_2vb1",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "PdbReader",
+              "path": "input/2vb1.pdb",
+              "dims": [
+                "atom",
+                "field"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "structure_3di3",
+            "kind": "source",
+            "operator": null,
+            "title": "structure_3di3",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "PdbReader",
+              "path": "input/3di3.pdb",
+              "dims": [
+                "atom",
+                "field"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "structure_missing_residues_1",
+            "kind": "operator",
+            "operator": "structure_missing_residues",
+            "title": "Missing residues between chain segments",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "atom_dim": "atom",
+              "field_dim": "field",
+              "gap_dim": "gap",
+              "chain": "",
+              "output": "missing_1mel"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "missing_residues_1mel",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "structure_missing_residues_3",
+            "kind": "operator",
+            "operator": "structure_missing_residues",
+            "title": "Missing residues between chain segments",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "atom_dim": "atom",
+              "field_dim": "field",
+              "gap_dim": "gap",
+              "chain": "",
+              "output": "missing_3di3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "missing_residues_3di3",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "structure_altloc_inventory_5",
+            "kind": "operator",
+            "operator": "structure_altloc_inventory",
+            "title": "Alternate conformer inventory",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "atom_dim": "atom",
+              "field_dim": "field",
+              "altloc_dim": "altloc",
+              "output": "altlocs_2vb1"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "altloc_inventory_2vb1",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "structure_cis_peptides_7",
+            "kind": "operator",
+            "operator": "structure_cis_peptides",
+            "title": "Cis peptide bonds from omega dihedrals",
+            "position": {
+              "x": 360.0,
+              "y": 730.0
+            },
+            "params": {
+              "atom_dim": "atom",
+              "field_dim": "field",
+              "bond_dim": "bond",
+              "cis_threshold": 30.0,
+              "chain": "",
+              "output": "cis_1mel"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 730.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "cis_peptides_1mel",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_7"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "structure_1mel-structure_missing_residues_1-0",
+            "source": "structure_1mel",
+            "target": "structure_missing_residues_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "structure_missing_residues_1-export_results_2-0",
+            "source": "structure_missing_residues_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "structure_3di3-structure_missing_residues_3-0",
+            "source": "structure_3di3",
+            "target": "structure_missing_residues_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "structure_missing_residues_3-export_results_4-0",
+            "source": "structure_missing_residues_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "structure_2vb1-structure_altloc_inventory_5-0",
+            "source": "structure_2vb1",
+            "target": "structure_altloc_inventory_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "structure_altloc_inventory_5-export_results_6-0",
+            "source": "structure_altloc_inventory_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "structure_1mel-structure_cis_peptides_7-0",
+            "source": "structure_1mel",
+            "target": "structure_cis_peptides_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "structure_cis_peptides_7-export_results_8-0",
+            "source": "structure_cis_peptides_7",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "structure_1mel",
+              "label": "structure_1mel",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "atom",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "structure_2vb1",
+              "label": "structure_2vb1",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "atom",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "structure_3di3",
+              "label": "structure_3di3",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "atom",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

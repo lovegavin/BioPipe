@@ -1,0 +1,35 @@
+name: "Structure validation: missing residues, alternate conformers and cis peptides"
+sources:
+  structure_1mel:
+    path: input/1mel.pdb
+    dims: [atom, field]
+    labels: {}
+    reader: PdbReader
+  structure_3di3:
+    path: input/3di3.pdb
+    dims: [atom, field]
+    labels: {}
+    reader: PdbReader
+  structure_2vb1:
+    path: input/2vb1.pdb
+    dims: [atom, field]
+    labels: {}
+    reader: PdbReader
+steps:
+- name: structure_missing_residues
+  inputs: [structure_1mel]
+- name: export_results
+  inputs: [missing_1mel]
+- name: structure_missing_residues
+  inputs: [structure_3di3]
+- name: export_results
+  inputs: [missing_3di3]
+- name: structure_altloc_inventory
+  inputs: [structure_2vb1]
+- name: export_results
+  inputs: [altlocs_2vb1]
+- name: structure_cis_peptides
+  inputs: [structure_1mel]
+- name: export_results
+  inputs: [cis_1mel]
+parameters_file: parameters.json
