@@ -8,7 +8,8 @@ evidence.
 Registry baseline after the first batch: **721 operators / 102 readers / 7
 packages / 25 routes**, `errors 0`, `warnings 108`. After the second batch:
 **725 operators / 103 readers / 7 packages / 26 routes**, `errors 0`, `warnings
-108`.
+108`. After the third batch: **729 operators / 104 readers / 7 packages / 27
+routes**, `errors 0`, `warnings 108`.
 
 ## Batch 1 - variant_qc_concordance
 
@@ -211,3 +212,86 @@ random background, while cutadapt and the 3-prime implementation both report 2.
   scope for this operator.
 - Windows cannot execute `align_reads` without bwa/samtools; this is an
   environment gate, not an operator failure.
+
+## Batch 3 - ecoli_resequencing
+
+### Data provenance
+
+| Source | Dataset | Subset | Size | SHA256 |
+| --- | --- | --- | --- | --- |
+| `alignment` | ENA `SRR001666` (E. coli K-12 MG1655 paired-end), first 200,000 pairs | aligned with `bwa mem -5SP` to `GCF_000005845.2` | 19,134,169 B, unsorted BAM | `79e4140a615f96f839b065a9684bfe37939c056349da01772584f0e1d54b481e` |
+| `reference` | `GCF_000005845.2_ASM584v2_genomic.fna` | complete genome | 4,699,745 B | `53bb6a51b6e92139ced1e38f74b7938781027c52200922ff03718c2237d23bb4` |
+
+The BAM is the `sequencing_qc` output from batch 2 and is deliberately left
+unsorted: every operator in this batch walks the records once and does not
+require a coordinate-sorted file. Rebuild it with:
+
+```bash
+bwa index ecoli.fasta
+bwa mem -5SP -t 4 ecoli.fasta reads_1.fastq.gz reads_2.fastq.gz \
+  | samtools view -b -o alignment.bam
+```
+
+### Route
+
+`library/seed/routes/ecoli_resequencing/` contains the eight-step route:
+`alignment_coverage -> export_results -> alignment_insert_size ->
+export_results -> pileup_variants -> export_results(native VCF) ->
+consensus_sequence -> export_results(native FASTA)`.
+
+| Operator | WSL | srv | Windows |
+| --- | --- | --- | --- |
+| `alignment_coverage` | 4,641,652 bp, 2.888806399x mean, 93.85117626% at 1x, 17.24461463% at 5x, 0.12829484% at 10x, max 16 | same | same |
+| `alignment_insert_size` | 177,197 pairs, mean 37,955.427033, median 489, std 299,454.819115, p25 475, p75 503 | same | same |
+| `pileup_variants` | 0 variants across 481,205 covered positions | same | same |
+| `consensus_sequence` | 4,641,652 bases, 481,205 called, 0 substitutions | same | same |
+| elapsed | 12.299 s | 28.416 s | 13.408 s |
+
+### Byte identity
+
+| Artifact | Size | MD5 |
+| --- | --- | --- |
+| `alignment_coverage.csv` | 265 B | `98a509ef3f676435a083b69b183d9dc7` |
+| `alignment_insert_size.csv` | 226 B | `579ce9008724b364b7d55650d618ba9c` |
+| `consensus_genome.fasta` | 4,719,059 B | `fea8bdcce398048b3fe26a2345fd66f4` |
+| `consensus_variants.vcf` | 134 B | `9e2e2c8fe97ca3d5783cdecf279f4936` |
+
+All four files are byte-identical on WSL, srv and Windows.
+
+### Oracle
+
+| Oracle | Version | Metric | Comparison |
+| --- | --- | --- | --- |
+| `samtools coverage` | 1.19.2 | mean depth / covered bases / coverage | 2.88881 / 4,356,245 / 93.8512% - exact |
+| `samtools depth -a` | 1.19.2 | 1x / 5x / 10x bases, max depth | 4,356,245 / 800,435 / 5,955 / 16 - exact |
+| `samtools view -f 0x41 -F 0x904` | 1.19.2 | insert-size n, mean, median, std, p25, p75 | 177,197 / 37,955.427033 / 489 / 299,454.819 / 475 / 503 - exact |
+| `bcftools mpileup -q 0 -Q 20 -d 10000 \| bcftools call -mv` | 1.19.2 | variant calls | 0 calls - exact |
+| `samtools consensus -m simple -d 5 -c 0.6 --min-BQ 20 --show-del yes -a` | 1.19.2 | consensus bases and substitutions | identical sequence, 481,205 called, 0 differences |
+
+The consensus comparison exposed a real parsing trap in the oracle: without
+`--show-del yes`, `samtools consensus` omits four deletion columns, shifts every
+downstream base and produces 226,762 false differences. With the flag, the two
+sequences agree at every position.
+
+### Platform notes
+
+- WSL: Ubuntu 24.04, Python 3.12.14, samtools 1.19.2, bcftools 1.19.
+- srv: Python 3.11.18 virtual environment; the same commit was synced as a
+  source archive and the route ran in 28.416 s.
+- Windows: Python 3.12.10. The operators are pure Python, so the platform ran
+  the full route against the same BAM bytes. The first Windows run produced
+  CRLF files because `Path.write_text` translates newlines; both
+  `consensus_sequence` and `pileup_variants` now use `write_bytes` with explicit
+  `\n`, and all four artifacts are byte-identical again.
+
+### Known limits
+
+- `pileup_variants` and `consensus_sequence` work in reference coordinates:
+  insertions are not represented, deletions keep the reference base, and a
+  multi-allelic position is reduced to the majority base.
+- Insert-size statistics do not require proper pairs; this BAM has zero properly
+  paired reads by construction, so the median is the robust summary and the mean
+  is inflated by chimeric pairs.
+- Zero variants is the expected biological result here: SRR001666 is K-12
+  MG1655 matching the reference at 2.9x mean depth, and `bcftools call` also
+  reports zero.
