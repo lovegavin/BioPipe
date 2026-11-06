@@ -8,7 +8,7 @@ Route key: `ml_validation`.
 |---|---|---|
 | `input/X.csv` | 122,657 | 30 standardized-by-operator features for 569 samples |
 | `input/y.csv` | 4,566 | binary diagnosis (357 benign, 212 malignant) |
-| `input/pvalues.csv` | 1,777 | Welch t-test p-value per feature (30 tests) |
+| `input/pvalues.csv` | 844 | Welch t-test p-value per feature (30 tests) |
 
 The table is the public scikit-learn breast-cancer dataset (WDBC features,
 569 samples), exported once and versioned with the route. The p-values are
