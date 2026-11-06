@@ -295,3 +295,99 @@ sequences agree at every position.
 - Zero variants is the expected biological result here: SRR001666 is K-12
   MG1655 matching the reference at 2.9x mean depth, and `bcftools call` also
   reports zero.
+
+## Batch 4 - pbmc_trajectory
+
+### Data provenance
+
+| Source | Dataset | Subset | Size | MD5 |
+| --- | --- | --- | --- | --- |
+| `embedding` | 10x Genomics PBMC3k (`pbmc3k_filtered_gene_bc_matrices.tar.gz`, 7,621,991 B) | PCA scores of 1,200 cells | 249,229 B | `34a94892dea773b88e9a51c8e229689e` |
+| `clusters` | same | Leiden cluster id, 13 clusters | 23,095 B | `aa4df2e789e3f872e51b2cf46838d217` |
+| `expression` | same | 300 highly variable genes | 2,542,469 B | `10a345c0631c53824840492acb187479` |
+| `communication` | same | 29 ligand/receptor genes | 264,164 B | `8f163606afa7fd7350f98f9322f748e3` |
+| `pairs` | 20 canonical immune ligand-receptor pairs | curated panel | 218 B | `7542f90474960d296ac6179ee068b7dd` |
+
+Preparation (scanpy 1.12.5, igraph 1.0.0, leidenalg 0.12.0): keep cells with
+>= 200 genes and genes in >= 3 cells (2,700 x 13,714); `normalize_total(1e4)`
+and `log1p`; 300 HVG; `scale(max_value=10)`; PCA 20; 15-neighbour graph; Leiden
+resolution 1.0 (13 clusters); fixed subsample of 1,200 cells with
+`numpy.random.default_rng(0)`. The four CSV files and the pair panel are the
+route inputs; they are reproduced by the steps above and are not shipped in the
+repository.
+
+### Route
+
+`library/seed/routes/pbmc_trajectory/`:
+
+```
+pseudotime_dpt -> export_results -> paga_connectivity -> export_results
+  -> trajectory_gene_trends -> export_results -> cell_communication
+  -> export_results
+```
+
+The root cell is `AAACATACAACCAC-1`, the first barcode of the filtered matrix.
+
+| Operator | WSL | srv | Windows |
+| --- | --- | --- | --- |
+| `pseudotime_dpt` | 1,200 cells, root `AAACATACAACCAC-1`, range 0..1 | same | same |
+| `paga_connectivity` | 13 clusters, 1,200 cells | same | same |
+| `trajectory_gene_trends` | 300 genes x 10 bins | same | same |
+| `cell_communication` | 734 interactions, 13 clusters, 15/20 pairs | same | same |
+| elapsed | 0.229 s | 6.175 s | 0.239 s |
+
+The three export tables (PAGA, trends, communication) are byte-identical on all
+three platforms:
+
+| Artifact | Size | MD5 |
+| --- | --- | --- |
+| `paga_connectivity.csv` | 3,090 B | `55670bb0dc751630e551d1bf3f3fe95e` |
+| `trajectory_gene_trends.csv` | 19,387 B | `67cd17e4aa94e8f500408475aa9854fc` |
+| `cell_communication.csv` | 26,652 B | `35aa9b1425ca14994d3d2b640a3907c2` |
+
+The pseudotime table differs only in floating-point text formatting across the
+three NumPy builds (2.1.3, 2.4.6, 2.5.4); the values agree to 4.4e-16 (WSL vs
+srv) and 4.0e-16 (WSL vs Windows), with Pearson 1.0 in both comparisons.
+
+### Oracle
+
+| Operator | Oracle | Version | Comparison |
+| --- | --- | --- | --- |
+| `pseudotime_dpt` | `sc.pp.neighbors(method="gauss")` + `sc.tl.diffmap(n_comps=10)` + `sc.tl.dpt` with the same root | scanpy 1.12.5 | Spearman **0.9507**, Pearson 0.5883, max abs 0.5915 |
+| `paga_connectivity` | `sc.tl.paga(groups="cluster")` on the same neighbours and clusters | scanpy 1.12.5 | Pearson **0.9635**, max abs 0.4381 after max-scaling |
+| `trajectory_gene_trends` | independent pandas groupby over the same bin edges | pandas 2.2.3 | max abs **9.9e-17**, identical NaN mask |
+| `cell_communication` | independent pandas per-cluster means and the same product formula | pandas 2.2.3 | **734/734** interactions, 0 missing, 0 extra, max abs **2.2e-16** |
+
+Pseudotime is ordinal: the rank correlation is the agreement measure and the
+absolute scale differs because the operator builds an adaptive kNN graph
+symmetric by maximum while scanpy builds a Gaussian-kernel graph. Both use the
+Haghverdi et al. (2016) `lambda/(1-lambda)` component weights. PAGA
+connectivities are normalised differently (our off-diagonal maximum is 1), so
+the matrices are compared after the same scaling. There is no external
+command-line oracle for pseudotime or communication scores on this dataset; the
+scanpy implementations are independent codebases and the pandas recomputations
+check the arithmetic directly.
+
+### Platform notes
+
+- WSL: Ubuntu 24.04, Python 3.12.14, NumPy 2.1.3.
+- srv: Python 3.11.18 environment, NumPy 2.4.6. The route took 6.175 s because
+  the DPT eigendecomposition uses a different LAPACK build; results are
+  numerically identical.
+- Windows: Python 3.12.10, NumPy 2.5.4, registry 733 operators / 104 readers /
+  7 packages / 28 routes with `errors []`, `tests/test_extension366.py` 13
+  passed. The first Windows attempt failed on a stale unquoted `task.yaml` left
+  in the scratch directory, not in the builtin route; copying the route file
+  fixed it.
+
+### Known limits
+
+- `pseudotime_dpt` uses the supplied embedding; it does not normalise, select
+  genes or compute the embedding itself.
+- `paga_connectivity` is a normalised kNN edge count, not a statistical test.
+- `trajectory_gene_trends` averages equal-width pseudotime bins; empty bins are
+  `NaN`, which is why the earliest bins are sparse.
+- `cell_communication` scores ligand/receptor co-expression between clusters; it
+  is not a permutation test and does not model complexes or diffusion.
+- The 1,200-cell subsample is a runtime compromise; the pair panel is a
+  demonstration subset, not a complete interaction database.
