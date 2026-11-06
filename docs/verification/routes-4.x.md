@@ -391,3 +391,81 @@ check the arithmetic directly.
   is not a permutation test and does not model complexes or diffusion.
 - The 1,200-cell subsample is a runtime compromise; the pair panel is a
   demonstration subset, not a complete interaction database.
+
+## Batch 5 — Structure validation (missing residues, alternate conformers, cis peptides)
+
+Three coordinate-level checks that only read the atoms present in a PDB file.
+No coordinates are rebuilt from a tensor and no structure file is written.
+
+### Inputs
+
+| Source | PDB | Size | SHA256 | Why it is used |
+| --- | --- | --- | --- | --- |
+| `structure_1mel` | [1MEL](https://files.rcsb.org/download/1MEL.pdb) | 361,017 B | `321aa847a20535c018b12cf340d2e057628dce42b4005c185916dd17bdd24de4` | Camelid VHH dimer with contiguous numbering; gap negative control and cis-peptide positive control |
+| `structure_3di3` | [3DI3](https://files.rcsb.org/download/3DI3.pdb) | 256,365 B | `9ef4a39b6c66186cc5efb17d0b2a12f08b0b0ebd6c4ec851c6b0b68c0efd03b9` | IL-7 / IL-7R-alpha complex with one internal gap in chain A |
+| `structure_2vb1` | [2VB1](https://files.rcsb.org/download/2VB1.pdb) | 447,444 B | `cb971a808effff36ae4c2e7030a6608e7a78f55a1c4eb9ccd669872dbd66aa37` | 0.65 A lysozyme with four alternate-location labels |
+
+Downloaded from RCSB on 2026-11-07.  Inputs stay in the run directory and are
+not committed.
+
+### Route
+
+`structure_validation` (8 steps): `structure_missing_residues` on 1MEL and
+3DI3, `structure_altloc_inventory` on 2VB1, `structure_cis_peptides` on 1MEL;
+each operator is followed by `export_results`.
+
+### Results
+
+| Step | Result | WSL | srv | Windows |
+| --- | --- | --- | --- | --- |
+| `structure_missing_residues` (1MEL) | 0 gaps, 0 missing residues, 4 chains | same | same | same |
+| `structure_missing_residues` (3DI3) | 1 gap `A:99-121`, 23 missing residues | same | same | same |
+| `structure_altloc_inventory` (2VB1) | 4 conformers, 1,440 altloc atoms, 49 residues with alternates | same | same | same |
+| `structure_cis_peptides` (1MEL) | 514 bonds, 2 cis (`A:30-31`, `B:30-31`), 0 skipped | same | same | same |
+| elapsed | | 0.066 s | 0.350 s | 0.076 s |
+
+The four exported CSV files are byte-identical on WSL, srv and Windows:
+
+| Artifact | Size | MD5 |
+| --- | --- | --- |
+| `missing_residues_1mel.csv` | 25 B | `59038a06a0ed30bd5d8a1ad3c795b96f` |
+| `missing_residues_3di3.csv` | 51 B | `87f672f88193e95dd7c1f1890b35bf61` |
+| `altloc_inventory_2vb1.csv` | 345 B | `23010e91a328bb534d470e4a40ac25d7` |
+| `cis_peptides_1mel.csv` | 26,121 B | `261a9dff0d651e4f78fb158ad22e2e56` |
+
+### Oracle
+
+`gemmi` 0.6.5 parses the same PDB files through an independent code path and
+recomputes residue numbering, alternate locations and omega dihedrals.
+
+| Operator | Oracle | Comparison |
+| --- | --- | --- |
+| `structure_missing_residues` | gemmi residue numbering plus RCSB `REMARK 465` | identical gap `A:99-121` / 23 missing; every missing residue is declared in `REMARK 465` (66 entries); 1MEL and 2VB1 have zero internal gaps |
+| `structure_altloc_inventory` | gemmi altloc inventory | identical labels `{_, A, B, C}`; max abs difference 1.5e-8 across atom counts, residue counts, min/max/mean occupancy |
+| `structure_cis_peptides` | gemmi `calculate_dihedral` converted from radians, `abs(omega) <= 30` | 514 bonds on both sides; 2 cis on both sides (`A:30-31`, `B:30-31`); max abs omega difference 7.6e-6 degrees; 0 label or cis-flag mismatches |
+
+Raw comparison output: `workdir/b5_oracle.json`.  The oracle needs `gemmi`, which
+is installed in the WSL analysis environment but not in the Windows runtime, so
+the oracle comparison is a WSL-side check; the byte-identical exports above
+carry the same values to the other two platforms.
+
+### Platform notes
+
+- WSL: Ubuntu 24.04, Python 3.12.14, NumPy 2.1.3, gemmi 0.6.5.
+- srv: Python 3.11.18, the same 8/8 result, 0.350 s.
+- Windows: Python 3.12.10; registry 736 operators / 104 readers / 7 packages /
+  29 routes with `errors []`; `tests/test_extension367.py` 10 passed.
+- An earlier ad-hoc inspection script reported spurious gaps for 1MEL and 3DI3;
+  the raw PDB numbering and the gemmi recount above replace those numbers.
+
+### Known limits
+
+- Only internal numbering gaps are visible; terminal truncation leaves no trace
+  in a coordinate file and cannot be inferred.
+- Non-standard residues and insertion codes are reported by PDB numbering; a
+  chain that restarts numbering is reported as one gap.
+- Alternate conformers are reported as they appear in the file.  A structure
+  without `altloc` identifiers yields a single blank row, which is the correct
+  result for that file; it does not prove the crystal had no disorder.
+- Cis-peptide detection needs `CA`, `C`, `N`, `CA` on both sides of the bond;
+  bonds across a gap or with missing backbone atoms are counted in `n_skipped`.
