@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ml_grid_search",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "C_values": {
+      "type": "string",
+      "default": "0.001,0.01,0.1,1,10",
+      "title": "C 候选值",
+      "x-ui-order": 10
+    },
+    "n_splits": {
+      "type": "integer",
+      "default": 5,
+      "minimum": 2,
+      "maximum": 20,
+      "title": "折数",
+      "x-ui-order": 11
+    },
+    "standardize": {
+      "type": "boolean",
+      "default": true,
+      "title": "标准化特征",
+      "x-ui-order": 12
+    },
+    "metric": {
+      "type": "string",
+      "enum": [
+        "accuracy",
+        "roc_auc"
+      ],
+      "default": "accuracy",
+      "title": "评分指标",
+      "x-ui-order": 13
+    },
+    "seed": {
+      "type": "integer",
+      "default": 0,
+      "title": "随机种子",
+      "x-ui-order": 14
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本轴名",
+      "x-ui-group": "Dimensions",
+      "x-ui-order": 1
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征轴名",
+      "x-ui-group": "Dimensions",
+      "x-ui-order": 2
+    },
+    "label_dim": {
+      "type": "string",
+      "default": "label",
+      "title": "标签轴名",
+      "x-ui-group": "Dimensions",
+      "x-ui-order": 3
+    },
+    "output": {
+      "type": "string",
+      "default": "output",
+      "title": "输出参数名",
+      "x-ui-group": "Output",
+      "x-ui-order": 90
+    }
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "features": {},
+    "labels": {},
+    "pvalues": {}
+  },
+  "steps": [
+    {
+      "name": "ml_learning_curve",
+      "inputs": [
+        "features",
+        "labels"
+      ],
+      "params": {
+        "n_splits": 5,
+        "train_sizes": "0.2,0.4,0.6,0.8,1.0",
+        "C": 0.01,
+        "standardize": true,
+        "metric": "accuracy",
+        "seed": 0,
+        "output": "curve"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "curve"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "ml_learning_curve"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "ml_grid_search",
+      "inputs": [
+        "features",
+        "labels"
+      ],
+      "params": {
+        "C_values": "0.001,0.01,0.1,1,10",
+        "n_splits": 5,
+        "standardize": true,
+        "metric": "accuracy",
+        "seed": 0,
+        "output": "grid"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "grid"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "ml_grid_search"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "stats_fdr",
+      "inputs": [
+        "pvalues"
+      ],
+      "params": {
+        "method": "bh",
+        "alpha": 0.05,
+        "output": "fdr"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "fdr"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "stats_fdr"
+      },
+      "context_params": {}
+    }
+  ]
+}

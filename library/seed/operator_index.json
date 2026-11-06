@@ -3720,6 +3720,26 @@
     "status": "generated"
   },
   {
+    "id": "ml_grid_search",
+    "kind": "operator",
+    "title": "ml_grid_search",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Exhaustive cross-validated search over logistic-regression C values.",
+    "doc": "src/task/step/steps/ml_grid_search.MlGridSearchStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ml_learning_curve",
+    "kind": "operator",
+    "title": "ml_learning_curve",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Training and test scores as a function of training-set size, stratified K-fold.",
+    "doc": "src/task/step/steps/ml_learning_curve.MlLearningCurveStep.md",
+    "status": "generated"
+  },
+  {
     "id": "ml_logistic_fit",
     "kind": "operator",
     "title": "ml_logistic_fit",
@@ -6047,6 +6067,16 @@
     "version": "1.0.0",
     "description": "Standardized residuals：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、响应变量。",
     "doc": "src/task/step/steps/standardized_residuals.StandardizedResidualsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "stats_fdr",
+    "kind": "operator",
+    "title": "stats_fdr",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Multiple-testing adjusted p-values and rejections (BH, BY, Holm, Bonferroni).",
+    "doc": "src/task/step/steps/stats_fdr.StatsFdrStep.md",
     "status": "generated"
   },
   {

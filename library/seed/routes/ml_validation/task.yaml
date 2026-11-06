@@ -1,0 +1,37 @@
+name: "Model validation on breast cancer: learning curve, grid search and FDR"
+sources:
+  features:
+    path: input/X.csv
+    dims: [sample, feature]
+    labels:
+      sample: {feature: 0}
+      feature: builtin
+    reader: CsvReader
+  labels:
+    path: input/y.csv
+    dims: [sample, label]
+    labels:
+      sample: {label: 0}
+      label: builtin
+    reader: CsvReader
+  pvalues:
+    path: input/pvalues.csv
+    dims: [test, pvalue]
+    labels:
+      test: {pvalue: 0}
+      pvalue: builtin
+    reader: CsvReader
+steps:
+  - name: ml_learning_curve
+    inputs: [features, labels]
+  - name: export_results
+    inputs: [curve]
+  - name: ml_grid_search
+    inputs: [features, labels]
+  - name: export_results
+    inputs: [grid]
+  - name: stats_fdr
+    inputs: [pvalues]
+  - name: export_results
+    inputs: [fdr]
+parameters_file: parameters.json

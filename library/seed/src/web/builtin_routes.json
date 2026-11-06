@@ -91,6 +91,11 @@
       "sha256": "2c556b20ee879462429f1db241ece490ab4b80790bb5dcdea45b9e7dae6a5bbc",
       "parameters_sha256": "130283d834471d064758ab23767b57d18819779d002a9a55982c655a7aad721e"
     },
+    "route_e54b59c961d5": {
+      "path": "routes/ml_validation/task.yaml",
+      "sha256": "b56ff8f4dd9a0ece33db9bd07921a44cd5452d99eaafdec4ea2622e493a937f0",
+      "parameters_sha256": "1944e2bfbea2a90f3a8aebb1f6e847b70d4d1082a1ef556cdbe733316025c0f8"
+    },
     "route_3dedbe0d6655": {
       "path": "routes/multi_omics/task.yaml",
       "sha256": "508c63db53b66e81a3489ea1b3dc9e0c104da92661699ae78cb20984fb82aa41",
@@ -15143,6 +15148,477 @@
                 "kind": "form",
                 "numeric": true,
                 "ndim": 2
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_e54b59c961d5",
+      "version": 1,
+      "name": "ML validation and multiple testing",
+      "graph": {
+        "schema_version": 2,
+        "name": "ML validation and multiple testing",
+        "base_dir": ".studio/builtin-inputs/ml_validation",
+        "nodes": [
+          {
+            "id": "features",
+            "kind": "source",
+            "operator": null,
+            "title": "features",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/X.csv",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "labels",
+            "kind": "source",
+            "operator": null,
+            "title": "labels",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/y.csv",
+              "dims": [
+                "sample",
+                "label"
+              ],
+              "labels": {
+                "label": "builtin",
+                "sample": {
+                  "label": 0
+                }
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pvalues",
+            "kind": "source",
+            "operator": null,
+            "title": "pvalues",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/pvalues.csv",
+              "dims": [
+                "test",
+                "pvalue"
+              ],
+              "labels": {
+                "pvalue": "builtin",
+                "test": {
+                  "pvalue": 0
+                }
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ml_learning_curve_1",
+            "kind": "operator",
+            "operator": "ml_learning_curve",
+            "title": "ml_learning_curve",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "n_splits": 5,
+              "train_sizes": "0.2,0.4,0.6,0.8,1.0",
+              "C": 0.01,
+              "standardize": true,
+              "metric": "accuracy",
+              "seed": 0,
+              "sample_dim": "sample",
+              "feature_dim": "feature",
+              "label_dim": "label",
+              "output": "curve"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "ml_learning_curve",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ml_grid_search_3",
+            "kind": "operator",
+            "operator": "ml_grid_search",
+            "title": "ml_grid_search",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "C_values": "0.001,0.01,0.1,1,10",
+              "n_splits": 5,
+              "standardize": true,
+              "metric": "accuracy",
+              "seed": 0,
+              "sample_dim": "sample",
+              "feature_dim": "feature",
+              "label_dim": "label",
+              "output": "grid"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "ml_grid_search",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "stats_fdr_5",
+            "kind": "operator",
+            "operator": "stats_fdr",
+            "title": "stats_fdr",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "method": "bh",
+              "alpha": 0.05,
+              "test_dim": "test",
+              "pvalue_dim": "pvalue",
+              "output": "fdr"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "stats_fdr",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "features-ml_learning_curve_1-0",
+            "source": "features",
+            "target": "ml_learning_curve_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "labels-ml_learning_curve_1-1",
+            "source": "labels",
+            "target": "ml_learning_curve_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "ml_learning_curve_1-export_results_2-0",
+            "source": "ml_learning_curve_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "features-ml_grid_search_3-0",
+            "source": "features",
+            "target": "ml_grid_search_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "labels-ml_grid_search_3-1",
+            "source": "labels",
+            "target": "ml_grid_search_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "ml_grid_search_3-export_results_4-0",
+            "source": "ml_grid_search_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pvalues-stats_fdr_5-0",
+            "source": "pvalues",
+            "target": "stats_fdr_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "stats_fdr_5-export_results_6-0",
+            "source": "stats_fdr_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "features",
+              "label": "features",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "labels",
+              "label": "labels",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "label"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "pvalues",
+              "label": "pvalues",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "test",
+                  "pvalue"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

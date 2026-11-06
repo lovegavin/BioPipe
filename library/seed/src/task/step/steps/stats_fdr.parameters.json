@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "stats_fdr",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "method": {
+      "type": "string",
+      "enum": [
+        "bh",
+        "by",
+        "holm",
+        "bonferroni"
+      ],
+      "default": "bh",
+      "title": "校正方法",
+      "x-ui-order": 10
+    },
+    "alpha": {
+      "type": "number",
+      "default": 0.05,
+      "minimum": 0,
+      "maximum": 1,
+      "exclusiveMinimum": 0,
+      "title": "显著性阈值",
+      "x-ui-order": 11
+    },
+    "test_dim": {
+      "type": "string",
+      "default": "test",
+      "title": "检验轴名",
+      "x-ui-group": "Dimensions",
+      "x-ui-order": 1
+    },
+    "pvalue_dim": {
+      "type": "string",
+      "default": "pvalue",
+      "title": "p 值轴名",
+      "x-ui-group": "Dimensions",
+      "x-ui-order": 2
+    },
+    "output": {
+      "type": "string",
+      "default": "output",
+      "title": "输出参数名",
+      "x-ui-group": "Output",
+      "x-ui-order": 90
+    }
+  }
+}
