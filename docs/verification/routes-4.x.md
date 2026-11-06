@@ -1299,3 +1299,73 @@ All five exported CSVs are **byte-identical** across the three platforms:
 - QUAST is not used as an oracle in this batch: it is an external tool wrapper
   (`assembly_stats`) already covered by packaging tests; `seqkit` plus the
   independent Biopython implementation provide the two required oracles.
+
+## Batch 17 — SSU rRNA phylogeny (distance matrix, neighbour joining, tree distance)
+
+**Operators:** `phylo_distance_matrix`, `phylo_neighbor_joining`,
+`phylo_tree_distance` (3 new). Route: `ssu_phylogeny`.
+
+| Item | Value |
+| --- | --- |
+| Family | Rfam RF00177 (SSU_rRNA_bacteria) seed alignment |
+| Source | <https://rfam.org/family/RF00177/alignment> |
+| Stockholm | 477,373 B, SHA-256 `efe8d15fab12034e79aa5c8599b1018de2ac8a98257ec0df94a1347112177276` |
+| Alignment | 1,980 columns, 99 seed sequences |
+| Route input | 24 taxa, `input/ssu_aligned.fasta`, 48,899 B, MD5 `d63358e9c42a1a7566666058b9d3ddda` |
+| Model | complete deletion (1,396 columns), JC69 and p distances |
+
+The route runs 11 steps: JC69 matrix, NJ tree (Newick + node table),
+p-distance matrix, NJ tree, then a tree comparison between the two NJ trees.
+
+### Results (WSL)
+
+| Output | Value |
+| --- | --- |
+| `ssu_distance_jc69.csv` | 24 x 24 symmetric matrix, 12,023 B |
+| `ssu_nj_jc69.nwk` | 24-tip rooted tree, 1,247 B |
+| `ssu_nj_p.nwk` | 24-tip rooted tree, 1,257 B |
+| `ssu_tree_distance.csv` | `rf=14`, `max_rf=42`, `normalized_rf=0.333333`, `shared_splits=14`, `splits=21/21`, `branch_score=0.024637590466330808`, `identical=0` |
+
+### Oracles
+
+| Oracle | Version | Check | Result |
+| --- | --- | --- | --- |
+| Biopython `DistanceCalculator("identity")` | 1.88 | p-distance matrix | max abs **5.55e-17** |
+| Biopython `DistanceTreeConstructor().nj` | 1.88 | unrooted splits | RF **0**, 21/21 shared |
+| Biopython NJ branch lengths | 1.88 | split lengths (root edge summed) | max abs **4.06e-12** |
+| R `ape` `dist.dna(model="JC69")` | 5.8.1 | JC69 matrix | max abs **0** |
+| R `ape` `nj` + `dist.topo(PH85)` | 5.8.1 | unrooted topology | RF **0** |
+| R `ape` `cophenetic` | 5.8.1 | tip-to-tip distances | max abs **9.17e-11** |
+
+Biopython 1.88 dropped the `jc69` model from `DistanceCalculator`, so it
+oracles p-distances and neighbour joining; JC69 is checked with R `ape`.
+Oracle scripts: `workdir/b17_oracle.py`, `workdir/b17_oracle.R`,
+results in `workdir/b17_oracle.json`.
+
+### Defect found and fixed
+
+`phylo_distance_matrix` narrowed the distance matrix to float32
+(`matrix.astype(np.float32)`), shifting p-distances by up to 1.5e-8 and NJ
+branch lengths by 2.9e-4. The matrix is now float64;
+`tests/test_extension379.py::test_distance_matrix_operator_keeps_float64_precision`
+pins the 361/1396 p-distance exactly (it would have failed before the fix).
+
+### Three platforms
+
+| Platform | Steps | Time | Notes |
+| --- | --- | --- | --- |
+| WSL (Python 3.12, Biopython 1.88) | 11/11 | 1.10 s | oracle host |
+| srv (Python 3.11) | 11/11 | 0.95 s | real cluster |
+| Windows (py -3.12) | 11/11 | 0.42 s | `registry check` 775/104/7/41, errors 0 |
+
+MD5 of the six exports is identical on all three platforms, except the two
+Newick files on Windows, which use CRLF line endings; after stripping `\r`
+their MD5 is identical (`9516b49d...`, `e57ddcef...`).
+
+### Limitations
+
+- The alignment is the curated Rfam seed alignment; the route does not align
+  sequences de novo.
+- Neighbour joining, not maximum likelihood; no bootstrap support.
+- 24 of 99 seed sequences are sampled by equal stride to keep the route small.
+- `U` is treated as a base; JC69 uses only the mismatch fraction.
