@@ -193,6 +193,16 @@ def proxy_step(descriptor: dict):
 
     class EnvironmentStep(Step):
         name = descriptor["id"]
+        definition = descriptor
+        version = str(descriptor.get("version") or "1.0.0")
+        inputs_arity = descriptor.get("inputs_arity", 0)
+        outputs = list(descriptor.get("outputs") or [])
+        output_parameter = descriptor.get("output_parameter")
+        parameters_schema = descriptor.get("parameters_schema")
+        dependencies = descriptor.get("dependencies")
+        dependency_imports = descriptor.get("dependency_imports")
+        category = descriptor.get("category")
+        icon = descriptor.get("icon")
         input_contracts = descriptor["contracts"]["inputs"]
         output_contract = descriptor["contracts"]["output"]
         supports_streaming = False

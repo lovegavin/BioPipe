@@ -21,7 +21,7 @@ ROUTES = [
 
 @pytest.mark.parametrize("route", ROUTES)
 def test_extension_route_runs(route, tmp_path):
-    source = ROOT / "routes" / route
+    source = ROOT / "library" / "seed" / "routes" / route
     target = tmp_path / route
     shutil.copytree(source, target, ignore=shutil.ignore_patterns("output"))
     result = subprocess.run(

@@ -84,8 +84,9 @@ class RdkitPharmacophoreFeaturesStep(Step):
     provider = "biopipe-core"
     parameters_file = "rdkit_pharmacophore_features.RdkitPharmacophoreFeaturesStep.parameters.json"
 
-    def estimate_memory(self, inputs, params, profiles):
-        return {"bytes": 64 * 1024 * 1024}
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return (64 * 1024 * 1024, 0)
 
     definition = {
         "protocol_version": 3,

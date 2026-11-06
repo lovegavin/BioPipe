@@ -185,6 +185,9 @@ def test_dims_error(tmp_path, monkeypatch):
     reason="ESM-IF1 checkpoint is not available",
 )
 def test_official_interface_redesign(tmp_path):
+    esm = pytest.importorskip("esm")
+    if not hasattr(esm, "pretrained"):
+        pytest.skip("fair-esm is shadowed by the ESM-3 package")
     path = complex_pdb(tmp_path / "complex.pdb")
     form = _form(path)
     step = EsmIfInterfaceRedesignStep()

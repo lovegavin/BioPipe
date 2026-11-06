@@ -9,6 +9,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.task.step.steps._native_results import output_directory, remember_native, result_file
 
 _STATISTICS = ("x", "y", "z", "charge", "atomic_number")
 
@@ -195,6 +196,9 @@ class LigandPdbqtPrepareStep(Step):
         )
         name = str(params.get("resname", "LIG") or "LIG").strip().upper()[:3] or "LIG"
         lines = pdbqt_lines(molecule, name=name)
+        directory = output_directory(ctx, "ligand_pdbqt")
+        native_path = directory / f"{name}.pdbqt"
+        native_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
         output_text = str(params.get("output_path", "") or "").strip()
         written: str | None = None
         if output_text:
@@ -230,11 +234,15 @@ class LigandPdbqtPrepareStep(Step):
                 "n_atoms": len(rows),
                 "resname": name,
                 "output_path": written,
+                "native_path": str(native_path),
                 "atom_types": sorted({ad4_type(atom) for atom in molecule.GetAtoms()}),
             },
         )
         self._export_data = _export_summary(result)
+        result_files = [result_file("ligand", native_path, "pdbqt", "Prepared ligand")]
+        remember_native(ctx, str(out_name), result_files)
+        self._result_files = result_files
         ctx[out_name] = result
 
     def export(self, ctx: Context):
-        return self._export_data
+        return {**self._export_data, "result_files": getattr(self, "_result_files", [])}

@@ -11,9 +11,10 @@ def test_source_ids_and_parameter_schemas_match_static_manifest():
     manifest = json.loads((ROOT / 'library/seed/biopipe/builtin_packages.json').read_text(encoding='utf-8'))
     indexed = {d['id']: d for p in manifest['packages'] for d in p['descriptors']}
     found = {}
+    base = ROOT / 'library/seed' if (ROOT / 'library/seed/src').is_dir() else ROOT
     for directory in ('src/task/step/steps', 'src/reader/readers'):
-        for path in (ROOT / directory).glob('[!_]*.py'):
-            for source in source_declarations(path, path.relative_to(ROOT).as_posix()[:-3].replace('/', '.')):
+        for path in (base / directory).glob('[!_]*.py'):
+            for source in source_declarations(path, path.relative_to(base).as_posix()[:-3].replace('/', '.')):
                 assert source['id'] not in found
                 found[source['id']] = source
     assert found.keys() == indexed.keys()

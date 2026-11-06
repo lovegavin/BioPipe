@@ -42,5 +42,9 @@ def test_wrong_released_application_is_rejected(tmp_path):
                                   'rdkit_fragment_profile', 'rdkit_reaction_smarts_apply')]])
 def test_optional_dependencies_are_not_imported_during_registration(name, dependency):
     source = Path(__file__).resolve().parents[1] / 'library/seed/src/task/step/steps' / (name + '.py')
-    code = "import runpy,sys; sys.modules[sys.argv[1]]=None; runpy.run_path(sys.argv[2])"
-    subprocess.run([sys.executable, '-I', '-c', code, dependency, str(source)], check=True)
+    code = ("import os,runpy,sys; sys.modules[sys.argv[1]]=None; "
+            "import src.task.step.steps as steps; "
+            "steps.__path__.append(os.path.join(sys.argv[3], 'src', 'task', 'step', 'steps')); "
+            "runpy.run_path(sys.argv[2])")
+    subprocess.run([sys.executable, '-I', '-c', code, dependency, str(source),
+                    str(source.parents[4])], check=True)

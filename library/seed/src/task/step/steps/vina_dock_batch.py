@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -11,6 +12,7 @@ import numpy as np
 from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
+from src.task.step.steps._native_results import output_directory, remember_native, result_file
 
 from .vina_dock import docking_command, ligand_centroid, parse_vina_log
 
@@ -55,11 +57,13 @@ def run_ligand(
     *,
     timeout: int,
     operator: str = "vina_dock_batch",
+    tag: str | None = None,
 ) -> dict:
     """Dock one ligand and return the parsed score table."""
 
-    out_path = out_dir / f"{ligand.stem}_out.pdbqt"
-    log_path = out_dir / f"{ligand.stem}_vina.log"
+    stem = tag or ligand.stem
+    out_path = out_dir / f"{stem}_out.pdbqt"
+    log_path = out_dir / f"{stem}_vina.log"
     command = docking_command(params, binary, receptor, ligand, out_path, center)
     if binary.lower().endswith(".py"):
         # A script runner cannot be executed directly on Windows.
@@ -175,11 +179,27 @@ class VinaDockBatchStep(Step):
             center = tuple(float(value) for value in vectors.mean(axis=0))
         out_dir = Path(ctx.task_dir) / "docking"
         out_dir.mkdir(parents=True, exist_ok=True)
-        records = [
-            run_ligand(binary, receptor, ligand, out_dir, params, center, timeout=timeout)
-            for ligand in ligand_files
-        ]
         labels = unique_labels(ligand_files)
+        records = [
+            run_ligand(
+                binary,
+                receptor,
+                ligand,
+                out_dir,
+                params,
+                center,
+                timeout=timeout,
+                tag=label,
+            )
+            for ligand, label in zip(ligand_files, labels)
+        ]
+        directory = output_directory(ctx, "vina_batch")
+        native_poses = []
+        for record in records:
+            target = directory / Path(record["out_path"]).name
+            shutil.copyfile(record["out_path"], target)
+            record["out_path"] = str(target)
+            native_poses.append(target)
         data = np.asarray(
             [
                 (
@@ -209,12 +229,15 @@ class VinaDockBatchStep(Step):
                 "best_affinity": float(np.min(data[:, 0])),
             },
         )
+        result_files = [result_file(f"poses_{index + 1}", path, "pdbqt", f"Docking poses {index + 1}") for index, path in enumerate(native_poses)]
+        remember_native(ctx, str(out_name), result_files)
         ctx[out_name] = form_out
         self._export_data = {
             "n_ligands": len(records),
             "best_affinity": float(np.min(data[:, 0])),
             "receptor_path": str(receptor),
             "ligands": [str(path) for path in ligand_files],
+            "result_files": result_files,
         }
         print(
             f"[{self.name}] docked {len(records)} ligand(s), best "

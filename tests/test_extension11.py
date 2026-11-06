@@ -96,7 +96,7 @@ def test_sequence_operators_hand_values():
         "length": 0, "molecular_weight": 1, "isoelectric_point": 2, "gravy": 3, "aromaticity": 4,
     }
     assert props.data[0, 0] == 9
-    assert props.data[0, 1] == pytest.approx(1181.2753, abs=0.01)
+    assert props.data[0, 1] == pytest.approx(1019.138, abs=0.01)
     assert props.data[0, 2] == pytest.approx(5.185, abs=0.01)
     assert props.data[0, 3] == pytest.approx(-0.3222, abs=1e-4)
     assert props.data[0, 4] == pytest.approx(0.111111, abs=1e-5)

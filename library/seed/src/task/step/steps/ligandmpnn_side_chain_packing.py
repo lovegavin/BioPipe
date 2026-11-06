@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import os
 import sys
@@ -15,6 +16,7 @@ from src.core import Form, StepError
 from src.task.context import Context
 from src.reader import read_source
 from src.task.step.base import Step
+from src.task.step.steps._native_results import output_directory, remember_native, result_file
 
 
 
@@ -186,9 +188,15 @@ class LigandmpnnSideChainPackingStep(Step):
             form = read_source(
                 packed[0], ["atom", "field"], {"atom": "auto", "field": "builtin"}
             )
+            directory = output_directory(ctx, "ligandmpnn_packing")
+            native_pdb = directory / "packed.pdb"
+            shutil.copyfile(packed[0], native_pdb)
 
+        result_files = [result_file("structure", native_pdb, "pdb", "LigandMPNN packed structure")]
+        remember_native(ctx, str(out_name), result_files)
         ctx[out_name] = form
         self._export_data = {
+            "result_files": result_files,
             "packed_path": packed[0].name,
             "n_atoms": int(form.data.shape[0]),
             "model_type": model_type,

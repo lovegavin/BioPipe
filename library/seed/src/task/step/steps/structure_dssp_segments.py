@@ -17,20 +17,34 @@ _SS_CODES = {"H": "helix", "G": "helix", "I": "helix", "E": "strand", "B": "stra
 
 
 def parse_dssp(text: str) -> list[dict]:
+    """Parse the fixed-column DSSP residue table (mkdssp 4.x layout).
+
+    Columns are 1-based in the format documentation; Python slices below are
+    0-based: residue number ``[5:10]``, chain ``[11]``, one-letter residue
+    ``[13]`` and secondary-structure code ``[16]``.  Blank codes are coil.
+    """
+
     records = []
     for line in text.splitlines():
-        if len(line) < 17 or not line[:5].strip().isdigit():
+        if len(line) < 17:
             continue
-        tokens = line.split()
-        if len(tokens) < 6:
+        number_text = line[5:10].strip()
+        if not number_text.lstrip("-").isdigit():
             continue
-        try:
-            number = int(tokens[1])
-        except ValueError:
+        residue = line[13].strip()
+        if not residue.isalpha():
             continue
-        records.append({"chain": tokens[2], "number": number, "residue": tokens[3], "code": tokens[4], "state": _SS_CODES.get(tokens[4], "coil")})
+        code = line[16]
+        records.append(
+            {
+                "chain": line[11].strip(),
+                "number": int(number_text),
+                "residue": residue,
+                "code": code if code.strip() else "-",
+                "state": _SS_CODES.get(code, "coil"),
+            }
+        )
     return records
-
 
 def segment_rows(records: list[dict]) -> list[dict]:
     if not records:
@@ -56,15 +70,42 @@ def segment_rows(records: list[dict]) -> list[dict]:
     return segments
 
 
-def run_dssp(binary: str, structure: Path, workdir: Path, *, timeout: int = 300) -> str:
-    output = workdir / "structure.dssp"
+def _pdb_to_mmcif(structure: Path, target: Path) -> None:
+    """Convert a PDB file to mmCIF for DSSP versions that only read mmCIF."""
+    from Bio.PDB import MMCIFIO, PDBParser
+
+    parser = PDBParser(QUIET=True)
+    model = parser.get_structure("structure", str(structure))
+    writer = MMCIFIO()
+    writer.set_structure(model)
+    writer.save(str(target))
+
+
+def _invoke_dssp(binary: str, structure: Path, output: Path, timeout: int):
     command = [binary, "--output-format", "dssp", str(structure), str(output)]
     try:
-        completed = subprocess.run(command, capture_output=True, text=True, timeout=timeout)
+        return subprocess.run(
+            command, capture_output=True, text=True, timeout=timeout
+        )
     except FileNotFoundError:
         raise StepError(f"structure_dssp_segments: DSSP executable '{binary}' was not found on PATH; install mkdssp") from None
     except subprocess.TimeoutExpired:
         raise StepError(f"structure_dssp_segments: DSSP timed out after {timeout} s") from None
+
+
+def run_dssp(binary: str, structure: Path, workdir: Path, *, timeout: int = 300) -> str:
+    output = workdir / "structure.dssp"
+    completed = _invoke_dssp(binary, structure, output, timeout)
+    if completed.returncode != 0 and structure.suffix.lower() in (".pdb", ".ent"):
+        # mkdssp 4.6 rejects some valid PDB files (REMARK/refine records) with
+        # an mmCIF parse error.  Convert once and retry before giving up.
+        converted = workdir / "structure.cif"
+        try:
+            _pdb_to_mmcif(structure, converted)
+        except Exception:
+            converted = None
+        if converted is not None and converted.is_file():
+            completed = _invoke_dssp(binary, converted, output, timeout)
     if completed.returncode != 0:
         tail = ((completed.stderr or completed.stdout).strip().splitlines() or [""])[-1]
         raise StepError(f"structure_dssp_segments: DSSP failed with exit code {completed.returncode}: {tail}")

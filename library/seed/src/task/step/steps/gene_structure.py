@@ -31,6 +31,7 @@ from src.core import Form, StepError
 from src.core.forms.metadata import project_metadata
 from src.task.context import Context
 from src.task.step.base import Step
+from src.task.step.steps._annotation_columns import require_role, try_role, parse_direct_gene_id
 
 
 _STAT_LABELS = ("n_exons", "n_introns", "gene_length", "cds_total", "strand")
@@ -83,44 +84,46 @@ class GeneStructureStep(Step):
             )
 
         fld_labels = form.labels.get(fld_dim, {})
-        for required in ("seqid", "type", "start", "end", "strand"):
-            if required not in fld_labels:
-                raise StepError(
-                    f"gene_structure: field dim '{fld_dim}' has no "
-                    f"'{required}' label. Available: {sorted(fld_labels)}"
-                )
-
         encoders = form.info.get("encoders", {}).get(fld_dim, {})
-        type_enc = encoders.get("type")
-        seqid_enc = encoders.get("seqid")
-        strand_enc = encoders.get("strand")
-        for name, enc in (("type", type_enc), ("seqid", seqid_enc),
-                          ("strand", strand_enc)):
-            if enc is None:
-                raise StepError(
-                    f"gene_structure: '{name}' column is not encoded"
-                )
+        _, type_index, type_enc = require_role(
+            fld_labels, encoders, "type", "gene_structure"
+        )
+        _, seqid_index, seqid_enc = require_role(
+            fld_labels, encoders, "seqid", "gene_structure"
+        )
+        _, strand_index, strand_enc = require_role(
+            fld_labels, encoders, "strand", "gene_structure"
+        )
+        _, start_index, _ = require_role(
+            fld_labels, encoders, "start", "gene_structure",
+            require_encoder=False,
+        )
+        _, end_index, _ = require_role(
+            fld_labels, encoders, "end", "gene_structure",
+            require_encoder=False,
+        )
 
-        type_codes = form.data[:, fld_labels["type"]]
-        seqid_codes = form.data[:, fld_labels["seqid"]]
-        starts = form.data[:, fld_labels["start"]]
-        ends = form.data[:, fld_labels["end"]]
-        strand_codes = form.data[:, fld_labels["strand"]]
+        type_codes = form.data[:, type_index]
+        seqid_codes = form.data[:, seqid_index]
+        starts = form.data[:, start_index]
+        ends = form.data[:, end_index]
+        strand_codes = form.data[:, strand_index]
 
         # Parse attributes if present, to get gene_id linkage.
-        attr_col = fld_labels.get("attributes")
+        _, attr_col, attr_enc = try_role(
+            fld_labels, encoders, "attributes"
+        )
         gene_id_by_record: list[str] | None = None
-        if attr_col is not None:
-            attr_enc = encoders.get("attributes")
-            if attr_enc is not None:
-                attr_codes = form.data[:, attr_col]
-                raw_attrs = [
-                    attr_enc.inverse.get(int(round(float(c))), "")
-                    for c in attr_codes
-                ]
-                gene_id_by_record = []
-                for a in raw_attrs:
-                    gid = None
+        if attr_col is not None and attr_enc is not None:
+            attr_codes = form.data[:, attr_col]
+            raw_attrs = [
+                attr_enc.inverse.get(int(round(float(c))), "")
+                for c in attr_codes
+            ]
+            gene_id_by_record = []
+            for a in raw_attrs:
+                gid = parse_direct_gene_id(a)
+                if not gid:
                     for part in str(a).split(";"):
                         if part.startswith("gene_id="):
                             gid = part.split("=", 1)[1]
@@ -128,7 +131,7 @@ class GeneStructureStep(Step):
                         if part.startswith("Parent="):
                             gid = part.split("=", 1)[1].split(",")[0]
                             break
-                    gene_id_by_record.append(gid if gid else "")
+                gene_id_by_record.append(gid if gid else "")
 
         # Collect gene records.
         gene_records: list[dict] = []

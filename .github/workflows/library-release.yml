@@ -83,6 +83,6 @@ jobs:
         run: |
           cat artifacts/SHA256SUMS-*.txt > artifacts/SHA256SUMS.txt
           gh release create "$GITHUB_REF_NAME" --verify-tag --latest=false \
-            --title "BioPipe Operator Library ${GITHUB_REF_NAME#library-v}" \
+            --title "BioPipe Operator Library v${GITHUB_REF_NAME#library-v}" \
             --notes-file "docs/releases/${GITHUB_REF_NAME}.md" \
             artifacts/*.biopipe-library.zip artifacts/*.whl artifacts/SHA256SUMS.txt artifacts/verification-*.json

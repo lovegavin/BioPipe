@@ -105,9 +105,18 @@ class BgenReader(Reader):
             sample_ids = [str(s) for s in bgen.samples]
         n_samples, n_variants, _ = probs.shape
 
-        data = (probs[:, :, 1] + 2.0 * probs[:, :, 2]).T.astype(np.float32)
-
-        all_zero = (probs.sum(axis=2) == 0).T
+        if probs.shape[2] == 4:
+            # BGEN stores unphased probabilities per haplotype in four
+            # planes: [hap1 A, hap1 B, hap2 A, hap2 B].  Dosage counts the
+            # B alleles across both haplotypes.
+            data = (probs[:, :, 1] + probs[:, :, 3]).T.astype(np.float32)
+            all_zero = (
+                (probs[:, :, 0] + probs[:, :, 1] == 0)
+                | (probs[:, :, 2] + probs[:, :, 3] == 0)
+            ).T
+        else:
+            data = (probs[:, :, 1] + 2.0 * probs[:, :, 2]).T.astype(np.float32)
+            all_zero = (probs.sum(axis=2) == 0).T
         data[all_zero] = np.nan
 
         if len(variant_ids) != n_variants:

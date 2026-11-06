@@ -38,12 +38,25 @@ def relative_sasa(
     radii: np.ndarray,
     side_masks: list[np.ndarray],
     *,
+    complex_mask: np.ndarray | None = None,
     probe_radius: float = 1.4,
     n_points: int = 92,
 ) -> tuple[np.ndarray, list[np.ndarray]]:
-    """Complex SASA and the SASA of every side in isolation."""
+    """Complex SASA and the SASA of every side in isolation.
 
-    complex_sasa = sasa_per_atom(coordinates, radii, probe_radius=probe_radius, n_points=n_points)
+    ``complex_mask`` restricts the complex to the two selected sides so that
+    unrelated chains cannot bury surface area and inflate the interface.
+    """
+
+    if complex_mask is None:
+        complex_mask = np.ones(coordinates.shape[0], dtype=bool)
+    complex_sasa = np.zeros(coordinates.shape[0], dtype=np.float64)
+    complex_sasa[complex_mask] = sasa_per_atom(
+        coordinates[complex_mask],
+        radii[complex_mask],
+        probe_radius=probe_radius,
+        n_points=n_points,
+    )
     isolated = []
     for mask in side_masks:
         if not mask.any():
@@ -218,7 +231,12 @@ class StructureInterfaceCoreStep(Step):
         side_of_atom = np.where(side_masks[0], 0, 1)
         radii = vdw_radii(elements)
         complex_sasa, isolated = relative_sasa(
-            coordinates, radii, side_masks, probe_radius=probe_radius, n_points=n_points
+            coordinates,
+            radii,
+            side_masks,
+            complex_mask=side_masks[0] | side_masks[1],
+            probe_radius=probe_radius,
+            n_points=n_points,
         )
         total_isolated = isolated[0] + isolated[1]
         delta = total_isolated - complex_sasa

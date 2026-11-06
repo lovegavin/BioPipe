@@ -95,7 +95,8 @@ class FastaReader(Reader):
                                        'alphabet': {'type': 'string'},
                                        'representation': {'type': 'string', 'const': 'sequence_codes'},
                                        'alphabet_map': {'type': 'object'},
-                                       'unknown_code': {'type': 'integer'}},
+                                       'unknown_code': {'type': 'integer'},
+                                       'sequences': {'type': 'array', 'optional': True}},
                               'dims': [],
                               'labels': [],
                               'parallel': [],
@@ -178,6 +179,7 @@ class FastaReader(Reader):
 
         info: dict = {
             "missing_code": np.nan,
+            "sequences": list(seqs),
             "alphabet": alphabet,
             "representation": "sequence_codes",
             "alphabet_map": dict(codes),

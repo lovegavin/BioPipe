@@ -13,6 +13,11 @@ remain unchanged.
 | One provider | provider version | `.whl` | Same library manager |
 | Saved route | route's own revision | saved route and frozen parameter JSON | Import route |
 
+BioPipe 3.0.0 is a coordinated release: application `v3.0.0` and library
+`library-v3.0.0` share version `3.0.0`, and the library declares
+`minimum_application`/`build_application` `2.4.1`. Later operator-only
+changes continue to use the independent library process.
+
 `main` is a source branch, not an instruction to replace installed software.
 The library release branch/tag identifies the exact library sources used; the
 builder reads only the operator/Reader trees and provider index. Engine and

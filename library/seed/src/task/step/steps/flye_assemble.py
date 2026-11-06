@@ -15,6 +15,7 @@ from src.core import Form, StepError
 from src.task.context import Context
 from src.task.step.base import Step
 from src.task.step.steps._sequence_common import decode_sequences
+from src.task.step.steps._native_results import output_directory, remember_native, result_file
 
 _MODES = (
     "nano-raw",
@@ -265,6 +266,8 @@ class FlyeAssembleStep(Step):
                 "flye_assemble: the Flye executable was not found; set flye_path "
                 "to its location"
             )
+        directory = output_directory(ctx, "flye")
+        native_fasta = directory / "assembly.fasta"
         records, contigs = run_flye(
             resolved,
             sequences,
@@ -274,6 +277,7 @@ class FlyeAssembleStep(Step):
             min_overlap=int(params.get("min_overlap", 1000)),
             timeout=float(params.get("timeout_seconds", 1800)),
         )
+        write_fasta([sequence for _, sequence in contigs], native_fasta)
         by_name = {record["name"]: record for record in records}
         rows: list[list[float]] = []
         labels: dict[str, int] = {}
@@ -313,8 +317,11 @@ class FlyeAssembleStep(Step):
                 "contigs": names,
             },
         )
+        result_files = [result_file("assembly", native_fasta, "fasta", "Flye assembly")]
+        remember_native(ctx, str(out_name), result_files)
         self._export_data = {
             "output": out_name,
+            "result_files": result_files,
             "n_contigs": len(rows),
             "total_length": int(sum(lengths)),
             "n50": int(n50_value),

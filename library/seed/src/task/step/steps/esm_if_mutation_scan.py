@@ -171,8 +171,9 @@ class EsmIfMutationScanStep(Step):
             raise StepError("max_positions must be at least 1")
         return atom_dim, field_dim, chain, model_path, positions_text, max_positions
 
-    def estimate_memory(self, inputs, params, profiles) -> int:
-        return 8 * 1024**3
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return (8 * 1024**3, 0)
 
     def run(self, ctx: Context, inputs) -> None:
         self.ctx = ctx

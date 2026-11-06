@@ -13,6 +13,7 @@ from src.core.forms import Form
 from src.reader import read_source
 from src.task.step.base import Step
 from src.task.step.steps._sequence_common import decode_sequences
+from src.task.step.steps._native_results import output_directory, remember_native, result_file
 
 _CACHE: dict[tuple[str, str], object] = {}
 
@@ -101,6 +102,10 @@ class Esm3FoldStep(Step):
         model = load_model("esm3_sm_open_v1", device)
         result, path = fold_sequence(model, sequence, num_steps=steps)
         form = read_source(str(path), ["atom", "field"], {"atom": "auto", "field": "builtin"})
+        directory = output_directory(ctx, "esm3_fold")
+        native_pdb = directory / "prediction.pdb"
+        shutil.copyfile(path, native_pdb)
+        path = native_pdb
         if form.data.size == 0:
             raise StepError("esm3_fold: the predicted structure carries no atoms")
         plddt = getattr(result, "plddt", None)
@@ -128,8 +133,11 @@ class Esm3FoldStep(Step):
             }
         )
         out_name = str(params.get("output", "structure"))
+        result_files = [result_file("structure", path, "pdb", "ESM-3 prediction")]
+        remember_native(ctx, out_name, result_files)
         ctx[out_name] = form
         self._export_data = {
+            "result_files": result_files,
             "n_atoms": int(form.data.shape[0]),
             "mean_plddt": mean_plddt if mean_plddt == mean_plddt else None,
             "ptm": float(ptm) if ptm is not None else None,

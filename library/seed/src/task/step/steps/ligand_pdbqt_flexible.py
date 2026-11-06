@@ -10,6 +10,7 @@ from src.core.errors import StepError
 from src.core.forms import Form
 from src.task.step.base import Step
 from src.task.step.steps.ligand_pdbqt_prepare import ad4_type, prepare_molecule
+from src.task.step.steps._native_results import output_directory, remember_native, result_file
 
 _ROTATABLE = "[!$(*#*)&!D1]-&!@[!$(*#*)&!D1]"
 _AMIDE = "[NX3][CX3](=[OX1])"
@@ -187,6 +188,9 @@ class LigandPdbqtFlexibleStep(Step):
         if not smiles:
             raise StepError("ligand_pdbqt_flexible: smiles is required")
         result = prepare_flexible(smiles, seed=int(params.get("seed", 0)), optimize=bool(params.get("optimize", True)))
+        directory = output_directory(ctx, "ligand_pdbqt_flexible")
+        native_path = directory / "ligand.pdbqt"
+        native_path.write_text("\n".join(result["lines"]) + "\n", encoding="utf-8")
         path_text = str(params.get("output_path", "")).strip()
         if path_text:
             path = Path(path_text).expanduser()
@@ -212,13 +216,17 @@ class LigandPdbqtFlexibleStep(Step):
                 "rdkit_num_rotatable_bonds": result["rdkit_torsions"],
                 "n_atoms": int(molecule.GetNumAtoms()),
                 "output_path": path_text,
+                "native_path": str(native_path),
                 "pdbqt": result["lines"],
             },
         )
+        result_files = [result_file("ligand", native_path, "pdbqt", "Flexible ligand")]
+        remember_native(ctx, out_name, result_files)
         self._export_data = {
             "n_torsions": result["torsions"],
             "rdkit_num_rotatable_bonds": result["rdkit_torsions"],
             "output_path": path_text,
+            "result_files": result_files,
         }
 
     def export(self, ctx):

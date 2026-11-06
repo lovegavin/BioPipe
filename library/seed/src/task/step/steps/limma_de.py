@@ -17,7 +17,7 @@ df_residual, df_prior.
 from __future__ import annotations
 
 import numpy as np
-from scipy import stats
+from scipy import special, stats
 
 from src.core import StepError
 from src.task.context import Context
@@ -44,7 +44,7 @@ def _trigamma_inverse(value: float) -> float:
     low, high = 1e-6, 1e6
     for _ in range(80):
         mid = (low + high) / 2
-        if stats.distributions.gamma._trigamma(mid) < value:
+        if special.polygamma(1, mid) < value:
             low = mid
         else:
             high = mid
@@ -60,13 +60,13 @@ def _prior(s2: np.ndarray, df: int, prior_df: int | None):
     if finite.size < 3:
         return 0.0, float(np.median(finite)) if finite.size else 0.0
     z = np.log(finite)
-    e = stats.distributions.gamma._digamma(df / 2) - np.log(df / 2)
+    e = special.digamma(df / 2) - np.log(df / 2)
     var_z = float(np.var(z, ddof=1))
-    var_prior = var_z - stats.distributions.gamma._trigamma(df / 2)
+    var_prior = var_z - special.polygamma(1, df / 2)
     if var_prior <= 0:
         return 0.0, float(np.exp(np.mean(z) - e))
     df_prior = 2.0 * _trigamma_inverse(var_prior)
-    s2_prior = float(np.exp(np.mean(z) - (stats.distributions.gamma._digamma(df_prior / 2) - np.log(df_prior / 2))))
+    s2_prior = float(np.exp(np.mean(z) - (special.digamma(df_prior / 2) - np.log(df_prior / 2))))
     return df_prior, s2_prior
 
 

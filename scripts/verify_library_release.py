@@ -57,12 +57,26 @@ def probe(lock, work):
         raise SystemExit(status)
 
 
+def ensure_bundled_seed(source):
+    """Give a slim application wheel the factory seed it has not installed yet."""
+    from biopipe.library_location import source_root
+    if source_root() is not None:
+        return
+    import biopipe
+    import shutil
+    host = Path(biopipe.__file__).resolve().parent.parent
+    target = host / 'library' / 'seed'
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(source / 'library' / 'seed', target)
+
+
 def verify(source, bundle, work):
     # Load this release helper without making the repository importable.
     import runpy
     helper = runpy.run_path(str(source / 'scripts/release_library.py'))
     config = helper['configuration'](source)
     helper['released_application'](source, config)
+    ensure_bundled_seed(source)
     if work.exists():
         raise ValueError('Use a new empty verification directory')
     work.mkdir(parents=True)
@@ -82,11 +96,14 @@ def verify(source, bundle, work):
     old = manager.state()
     old_graph = manager.pin(Graph.model_validate({'nodes': [{'id': 'pca', 'kind': 'operator', 'operator': 'pca',
         'position': {'x': 0, 'y': 0}, 'params': {'n_components': 2}}], 'edges': []}))
-    manager.manage('biopipe-microbiome', 'disable')
+    installed = {package['name'] for package in old['packages']}
+    if 'biopipe-microbiome' in installed:
+        manager.manage('biopipe-microbiome', 'disable')
     state = manager.install(bundle)
     assert state['library_release']['version'] == config['version']
     assert manager.source_root.is_relative_to(work / 'profile')
-    assert next(p for p in state['packages'] if p['name'] == 'biopipe-microbiome')['enabled'] is False
+    if 'biopipe-microbiome' in installed:
+        assert next(p for p in state['packages'] if p['name'] == 'biopipe-microbiome')['enabled'] is False
     assert manager.install(bundle)['generation'] == state['generation']
     historical = manager.snapshot(old_graph)
     pinned_pca = next(d for d in historical['descriptors'] if d['id'] == 'pca')

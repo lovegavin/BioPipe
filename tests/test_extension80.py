@@ -51,22 +51,22 @@ def test_dca_matches_net_benefit_formula():
         },
         _form(np.column_stack([Y, P]), ("y", "p")),
     )
-    assert out.data.shape == (4, 7)
+    assert out.data.shape == (4, 6)
     np.testing.assert_allclose(
-        out.data[:, 1],
+        out.data[:, 0],
         [0.4583333333333333, 0.4375, 0.5, 0.25],
         rtol=0,
         atol=1e-12,
     )
     np.testing.assert_allclose(
-        out.data[:, 2],
+        out.data[:, 1],
         [0.4444444444444444, 0.375, 0.0, -1.5],
         rtol=0,
         atol=1e-12,
     )
-    assert np.all(out.data[:, 3] == 0.0)
-    np.testing.assert_array_equal(out.data[:, 4], [4, 4, 4, 2])
-    np.testing.assert_array_equal(out.data[:, 5], [3, 2, 0, 0])
+    assert np.all(out.data[:, 2] == 0.0)
+    np.testing.assert_array_equal(out.data[:, 3], [4, 4, 4, 2])
+    np.testing.assert_array_equal(out.data[:, 4], [3, 2, 0, 0])
     assert export["prevalence"] == pytest.approx(0.5)
     assert export["n"] == 8
 

@@ -7,6 +7,7 @@ import numpy as np
 from src.core.errors import StepError
 from src.core.forms import Form
 from src.task.step.base import Step
+from src.task.step.steps._native_results import output_directory, remember_native, result_file
 
 
 import json
@@ -198,17 +199,24 @@ class BoltzPredictStep(Step):
             tail = ((completed.stderr or completed.stdout).strip().splitlines() or [""])[-1]
             raise StepError(f"boltz_predict: Boltz failed with exit code {completed.returncode}: {tail}")
         outputs = find_outputs(out_dir)
+        directory = output_directory(ctx, "boltz")
+        pdb_path = directory / "prediction.pdb"
+        shutil.copyfile(outputs["pdb"], pdb_path)
+        outputs["pdb"] = pdb_path
         confidence = parse_confidence(outputs["confidence"])
         affinity = parse_affinity(outputs["affinity"])
         values = [confidence["confidence_score"], confidence["ptm"], confidence["iptm"], confidence["complex_plddt"], affinity["affinity_pred_value"], affinity["affinity_probability_binary"]]
         data = np.asarray([values], dtype=np.float32)
-        ctx[params.get("output", "structure")] = Form(
+        out_name = str(params.get("output", "structure"))
+        ctx[out_name] = Form(
             data=data,
             dims=["model", "statistic"],
             labels={"model": {"model_0": 0}, "statistic": {"confidence_score": 0, "ptm": 1, "iptm": 2, "complex_plddt": 3, "affinity_pred_value": 4, "affinity_probability_binary": 5}},
             info={"missing_code": np.nan, "pdb": str(outputs["pdb"]), "confidence_json": str(outputs["confidence"]), "affinity_json": str(outputs["affinity"]) if outputs["affinity"] else "", "model": str(params.get("model", "boltz2")), "ligand": bool(params.get("ligand_smiles", "")), "sequence": sequences[0]},
         )
-        self._export_data = {"pdb": str(outputs["pdb"]), "confidence": confidence}
+        result_files = [result_file("structure", pdb_path, "pdb", "Boltz prediction")]
+        remember_native(ctx, out_name, result_files)
+        self._export_data = {"pdb": str(outputs["pdb"]), "confidence": confidence, "result_files": result_files}
 
     def export(self, ctx):
         return dict(getattr(self, "_export_data", {}))

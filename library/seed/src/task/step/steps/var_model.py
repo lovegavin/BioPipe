@@ -110,9 +110,15 @@ class VarModelStep(Step):
             dims=["equation", "term"],
             labels={
                 "equation": {
-                    name: index for index, name in enumerate(equations)
+                    f"{equation}:{term}": index
+                    for index, (equation, term) in enumerate(
+                        (eq, term) for eq in equations for term in terms
+                    )
                 },
-                "term": {name: index for index, name in enumerate(terms)},
+                "term": {
+                    name: index
+                    for index, name in enumerate(["coef", "se", "t", "p"])
+                },
             },
             info={
                 "method": "VAR",

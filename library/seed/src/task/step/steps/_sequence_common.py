@@ -109,6 +109,7 @@ def encode_sequences(
         "alphabet": alphabet,
         "alphabet_map": amap,
         "unknown_code": unknown,
+        "sequences": [str(sequence) for sequence in sequences],
     }
     if info_extra:
         info.update(info_extra)

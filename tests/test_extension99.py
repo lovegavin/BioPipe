@@ -166,7 +166,7 @@ def _nestedness_form():
 
 def test_nestedness_matches_vegan_reference():
     out, export = _run(NestednessStep(), (_nestedness_form(),))
-    values = out.data[0]
+    values = out.data[:, 0]
     np.testing.assert_allclose(values, [90.0, 60.0, 72.0, 0.4666666666666667],
                                atol=1e-6)
     assert export["N.columns"] == pytest.approx(90.0, abs=1e-9)

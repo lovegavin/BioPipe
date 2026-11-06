@@ -17,6 +17,7 @@ from src.core.forms.form import Form
 from src.reader import read_source
 from src.task.step.base import Step
 from src.task.step.steps._sequence_common import decode_sequences
+from src.task.step.steps._native_results import output_directory, remember_native, result_file
 
 _MSA_MODES = ("mmseqs2_uniref_env", "mmseqs2_uniref", "single_sequence")
 
@@ -226,6 +227,16 @@ class ColabfoldPredictStep(Step):
                 ["atom", "field"],
                 {"atom": "auto", "field": "builtin"},
             )
+            directory = output_directory(ctx, "colabfold")
+            if scores_path is not None:
+                saved_scores = directory / (
+                    "scores" + (Path(scores_path).suffix or ".json")
+                )
+                shutil.copyfile(scores_path, saved_scores)
+                scores_path = saved_scores
+            native_pdb = directory / "prediction.pdb"
+            shutil.copyfile(structure_path, native_pdb)
+            structure_path = native_pdb
             metrics = (
                 parse_scores(scores_path)
                 if scores_path is not None
@@ -246,8 +257,13 @@ class ColabfoldPredictStep(Step):
         finally:
             shutil.rmtree(workdir, ignore_errors=True)
 
+        result_files = [result_file("structure", structure_path, "pdb", "ColabFold prediction")]
+        if scores_path is not None:
+            result_files.append(result_file("scores", scores_path, "json", "ColabFold scores"))
+        remember_native(ctx, out_name, result_files)
         ctx[out_name] = form
         self._export_data = {
+            "result_files": result_files,
             "mean_plddt": metrics["mean_plddt"],
             "ptm": metrics["ptm"],
             "max_pae": metrics["max_pae"],
