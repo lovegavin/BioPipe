@@ -7,7 +7,7 @@ Window density, intergenic gaps, stranded promoters and CDS integrity for the
 
 | Input | Source | Size | SHA256 |
 |---|---|---|---|
-| `input/ecoli.gff` | NCBI RefSeq `GCF_000005845.2_ASM584v2_genomic.gff.gz` (unpacked, 9,531 lines) | 3,536,864 B | `68d25735ccde6d37af68613dca57a588ae69423f0ecee99b0f29d596eff7accb` |
+| `input/ecoli.gff` | NCBI RefSeq `GCF_000005845.2_ASM584v2_genomic.gff.gz` (unpacked, 9,531 lines) | 2,314,238 B | `68d25735ccde6d37af68613dca57a588ae69423f0ecee99b0f29d596eff7accb` |
 | `input/ecoli.fasta` | NCBI RefSeq `GCF_000005845.2_ASM584v2_genomic.fna.gz` (unpacked, `NC_000913.3`) | 4,699,745 B | `53bb6a51b6e92139ced1e38f74b7938781027c52200922ff03718c2237d23bb4` |
 
 Oracle-only input: `GCF_000005845.2_ASM584v2_protein.faa.gz` (902,395 B).
