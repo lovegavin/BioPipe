@@ -1,0 +1,80 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "reference": {},
+    "related": {}
+  },
+  "steps": [
+    {
+      "name": "genome_kmer_spectrum",
+      "inputs": [
+        "reference"
+      ],
+      "params": {
+        "k": 21,
+        "max_frequency": 50,
+        "output": "spectrum"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "spectrum"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "kmer_spectrum"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "genome_kmer_similarity",
+      "inputs": [
+        "reference",
+        "related"
+      ],
+      "params": {
+        "k": 21,
+        "output": "similarity"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "similarity"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "kmer_similarity"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "genome_mash_distance",
+      "inputs": [
+        "reference",
+        "related"
+      ],
+      "params": {
+        "k": 21,
+        "output": "distance"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "distance"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "mash_distance"
+      },
+      "context_params": {}
+    }
+  ]
+}

@@ -2600,6 +2600,36 @@
     "status": "generated"
   },
   {
+    "id": "genome_kmer_similarity",
+    "kind": "operator",
+    "title": "Genome k-mer Jaccard similarity",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Compare two genomes by the exact Jaccard index and bidirectional containment of their canonical k-mer sets.",
+    "doc": "src/task/step/steps/genome_kmer_similarity.GenomeKmerSimilarityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "genome_kmer_spectrum",
+    "kind": "operator",
+    "title": "Genome k-mer spectrum",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Count canonical k-mers across a genome and report the multiplicity spectrum used to estimate genome size and repeats.",
+    "doc": "src/task/step/steps/genome_kmer_spectrum.GenomeKmerSpectrumStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "genome_mash_distance",
+    "kind": "operator",
+    "title": "Mash distance and ANI",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Compute the Mash distance and average nucleotide identity from the exact canonical k-mer Jaccard index of two genomes.",
+    "doc": "src/task/step/steps/genome_mash_distance.GenomeMashDistanceStep.md",
+    "status": "generated"
+  },
+  {
     "id": "genome_promoter_extract",
     "kind": "operator",
     "title": "Promoter window extraction",

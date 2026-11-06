@@ -1,0 +1,8 @@
+{
+  "reference": "/home/gavin/BioPipe-4.0/workdir/b15_route/input/ecoli.fasta",
+  "related": "/home/gavin/BioPipe-4.0/workdir/b15_route/input/o157.fna",
+  "sha256": {
+    "reference": "53bb6a51b6e92139ced1e38f74b7938781027c52200922ff03718c2237d23bb4",
+    "related": "71c2e5c364293c9ba36fc2c7acbcaa75cd6884295fe06260ba198826a8b1ddd3"
+  }
+}

@@ -1,0 +1,38 @@
+name: K-12 and O157 genome k-mer spectra, Jaccard and Mash distance
+sources:
+  reference:
+    path: input/ecoli.fasta
+    dims:
+    - sequence
+    - position
+    labels: {}
+    reader: FastaReader
+  related:
+    path: input/o157.fna
+    dims:
+    - sequence
+    - position
+    labels: {}
+    reader: FastaReader
+parameters_file: parameters.json
+steps:
+- name: genome_kmer_spectrum
+  inputs:
+  - reference
+- name: export_results
+  inputs:
+  - spectrum
+- name: genome_kmer_similarity
+  inputs:
+  - reference
+  - related
+- name: export_results
+  inputs:
+  - similarity
+- name: genome_mash_distance
+  inputs:
+  - reference
+  - related
+- name: export_results
+  inputs:
+  - distance

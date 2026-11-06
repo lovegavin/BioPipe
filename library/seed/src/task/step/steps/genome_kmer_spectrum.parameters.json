@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "title": "Sequence dimension",
+      "default": "sequence",
+      "x-ui-group": "Dimensions"
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "Position dimension",
+      "default": "position",
+      "x-ui-group": "Dimensions"
+    },
+    "k": {
+      "type": "integer",
+      "title": "K-mer length",
+      "default": 21,
+      "minimum": 3,
+      "maximum": 31,
+      "x-ui-group": "K-mers"
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "out",
+      "x-ui-group": "Output"
+    },
+    "max_frequency": {
+      "type": "integer",
+      "title": "Maximum multiplicity bin",
+      "default": 50,
+      "minimum": 1,
+      "x-ui-group": "K-mers"
+    }
+  },
+  "additionalProperties": false
+}
