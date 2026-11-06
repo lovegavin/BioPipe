@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "min_depth": {
+      "type": "integer",
+      "default": 5,
+      "minimum": 1,
+      "description": "Minimum depth at a position before it can be called."
+    },
+    "min_base_quality": {
+      "type": "integer",
+      "default": 20,
+      "minimum": 0,
+      "description": "Ignore bases below this Phred quality."
+    },
+    "min_fraction": {
+      "type": "number",
+      "default": 0.6,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Minimum majority-allele fraction required to call a base."
+    },
+    "min_mapq": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Skip alignments below this mapping quality."
+    },
+    "max_records": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Read at most this many alignments (0 reads the whole file)."
+    },
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}

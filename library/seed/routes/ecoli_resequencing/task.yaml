@@ -1,0 +1,45 @@
+name: E. coli resequencing coverage, insert size, variants and consensus
+sources:
+  bam:
+    path: input/alignment.bam
+    dims:
+    - file
+    labels: {}
+    reader: BamFileReader
+  reference:
+    path: input/ecoli.fasta
+    dims:
+    - file
+    labels: {}
+    reader: FastaFileReader
+parameters_file: parameters.json
+steps:
+- name: alignment_coverage
+  inputs:
+  - bam
+- name: export_results
+  inputs:
+  - coverage
+- name: alignment_insert_size
+  inputs:
+  - bam
+- name: export_results
+  inputs:
+  - insert_size
+- name: pileup_variants
+  inputs:
+  - bam
+  - reference
+- name: export_results
+  inputs:
+  - variants
+- name: consensus_sequence
+  inputs:
+  - bam
+  - reference
+- name: export_results
+  inputs:
+  - consensus
+runtime:
+  memory:
+    enabled: true

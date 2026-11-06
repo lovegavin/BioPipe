@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "properties": {
+    "min_mapq": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Skip alignments below this mapping quality."
+    },
+    "max_records": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Read at most this many alignments (0 reads the whole file)."
+    },
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}

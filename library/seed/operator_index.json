@@ -160,6 +160,26 @@
     "status": "generated"
   },
   {
+    "id": "alignment_coverage",
+    "kind": "operator",
+    "title": "alignment_coverage",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Summarise mapped depth across the reference (samtools coverage compatible).",
+    "doc": "src/task/step/steps/alignment_coverage.AlignmentCoverageStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "alignment_insert_size",
+    "kind": "operator",
+    "title": "alignment_insert_size",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Summarise paired-read insert sizes (samtools stats compatible).",
+    "doc": "src/task/step/steps/alignment_insert_size.AlignmentInsertSizeStep.md",
+    "status": "generated"
+  },
+  {
     "id": "amrfinder_plus",
     "kind": "operator",
     "title": "AMRFinderPlus resistance genes",
@@ -1187,6 +1207,16 @@
     "version": "1.0.0",
     "description": "All-pairwise Conover comparisons for every feature.",
     "doc": "src/task/step/steps/conover_test.ConoverTestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "consensus_sequence",
+    "kind": "operator",
+    "title": "consensus_sequence",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Build a majority-allele consensus FASTA from a BAM pileup and reference.",
+    "doc": "src/task/step/steps/consensus_sequence.ConsensusSequenceStep.md",
     "status": "generated"
   },
   {
@@ -4107,6 +4137,16 @@
     "version": "1.0.0",
     "description": "Phillips-Perron Z-tau test with Newey-West long-run variance.",
     "doc": "src/task/step/steps/phillips_perron.PhillipsPerronStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pileup_variants",
+    "kind": "operator",
+    "title": "pileup_variants",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Call simple threshold-based variants from a BAM pileup and write a VCF.",
+    "doc": "src/task/step/steps/pileup_variants.PileupVariantsStep.md",
     "status": "generated"
   },
   {

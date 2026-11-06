@@ -270,6 +270,16 @@
     "status": "generated"
   },
   {
+    "id": "FastaFileReader",
+    "kind": "reader",
+    "title": "FastaFileReader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reference a FASTA file without loading or decoding its sequences.",
+    "doc": "src/reader/readers/fasta_file_reader.FastaFileReader.md",
+    "status": "generated"
+  },
+  {
     "id": "FastaReader",
     "kind": "reader",
     "title": "FastaReader",

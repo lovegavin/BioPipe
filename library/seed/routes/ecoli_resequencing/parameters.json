@@ -1,0 +1,112 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "bam": {},
+    "reference": {}
+  },
+  "steps": [
+    {
+      "name": "alignment_coverage",
+      "inputs": [
+        "bam"
+      ],
+      "params": {
+        "min_mapq": 0,
+        "max_records": 0,
+        "output": "coverage"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "coverage"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "alignment_coverage"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "alignment_insert_size",
+      "inputs": [
+        "bam"
+      ],
+      "params": {
+        "min_mapq": 0,
+        "max_records": 0,
+        "output": "insert_size"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "insert_size"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "alignment_insert_size"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "pileup_variants",
+      "inputs": [
+        "bam",
+        "reference"
+      ],
+      "params": {
+        "min_depth": 5,
+        "min_base_quality": 20,
+        "min_alt_fraction": 0.8,
+        "min_alt_count": 2,
+        "min_mapq": 0,
+        "max_records": 0,
+        "output": "variants"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "variants"
+      ],
+      "params": {
+        "format": "native",
+        "filename": "consensus_variants"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "consensus_sequence",
+      "inputs": [
+        "bam",
+        "reference"
+      ],
+      "params": {
+        "min_depth": 5,
+        "min_base_quality": 20,
+        "min_fraction": 0.6,
+        "min_mapq": 0,
+        "max_records": 0,
+        "output": "consensus"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "consensus"
+      ],
+      "params": {
+        "format": "native",
+        "filename": "consensus_genome"
+      },
+      "context_params": {}
+    }
+  ]
+}
