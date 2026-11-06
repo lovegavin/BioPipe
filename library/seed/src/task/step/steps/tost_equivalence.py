@@ -14,7 +14,10 @@ from ._ext_common import group_values, labels_in_order, make_form, reorder, requ
 class TostEquivalenceStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'tost_equivalence.TostEquivalenceStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'tost_equivalence',
      'version': '1.0.0',
      'kind': 'operator',

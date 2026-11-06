@@ -17,7 +17,10 @@ class GrpReader(Reader):
     encoded phenotype column.
     """
     parameters_file = 'grp_reader.GrpReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'GrpReader',
      'version': '1.0.0',
      'kind': 'reader',

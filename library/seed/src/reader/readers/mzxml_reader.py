@@ -62,7 +62,10 @@ class MzxmlReader(Reader):
     provider = 'biopipe-readers'
     """One row per mzXML scan; peak arrays are only counted."""
     parameters_file = 'mzxml_reader.MzxmlReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'MzxmlReader',
      'version': '1.0.0',
      'kind': 'reader',

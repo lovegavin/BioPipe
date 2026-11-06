@@ -14,7 +14,10 @@ from ._ext_common import make_form
 class PoissonRegressionStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'poisson_regression.PoissonRegressionStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['statsmodels>=0.14'],
+     'dependency_imports': ['statsmodels'],
+     'protocol_version': 3,
      'id': 'poisson_regression',
      'version': '1.0.0',
      'kind': 'operator',

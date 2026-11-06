@@ -14,7 +14,10 @@ class BimReader(Reader):
     provider = 'biopipe-readers'
     """PLINK BIM reader (six standard columns)."""
     parameters_file = 'bim_reader.BimReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'BimReader',
      'version': '1.0.0',
      'kind': 'reader',

@@ -110,7 +110,10 @@ class Ab1Reader(Reader):
     provider = 'biopipe-readers'
     """Reader for ABI .ab1 Sanger trace files."""
     parameters_file = 'ab1_reader.Ab1Reader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'Ab1Reader',
      'version': '1.0.0',
      'kind': 'reader',

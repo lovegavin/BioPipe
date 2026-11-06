@@ -51,7 +51,10 @@ class EnrichGoStep(Step):
     """Hypergeometric enrichment of one term axis over two inputs."""
     provider = 'biopipe-core'
     parameters_file = 'enrich_go.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11', 'statsmodels>=0.14'],
+     'dependency_imports': ['scipy', 'statsmodels'],
+     'protocol_version': 3,
      'id': 'enrich_go',
      'version': '1.0.0',
      'kind': 'operator',

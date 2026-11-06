@@ -14,6 +14,9 @@ Graph editing and task execution remain separate operations.
 
 For a complete connection-to-result example, see the [third-party API tutorial](api_quickstart.md).
 For agents, use the [installed three-layer guide](agent_operations.md).
+For YAML-first batch use and environment configuration, follow the
+[Linux server and terminal quickstart](server_cli.md), also available through
+`operon help server`.
 
 ## Run without a desktop window
 
@@ -42,6 +45,11 @@ the existing data-root validation is not bypassed by the CLI. Self-contained
 graph JSON and `.biopipe.zip` bundles are accepted. Saved JSON records containing
 a `graph` member are also accepted. Portable workflow bundles preserve independent
 parameter values but do not automatically contain large input datasets.
+Public workflow YAML is also accepted. `--workspace .` resolves against the
+terminal's current directory; YAML metadata sidecars resolve beside the YAML.
+Use `environment check` for read-only route readiness, or explicit
+`environment prepare` to install registered-provider dependencies. Blocked
+readiness exits 1. `environment status` reports the live service interpreter.
 
 The first command reuses a compatible running service or starts a hidden,
 detached loopback service. The selected directory controls discovery; no fixed

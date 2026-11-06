@@ -18,8 +18,8 @@ export function copyFragment(graph: Graph, selected: string[]): Fragment {
 export function parseFragment(text: string): Fragment {
   const value = JSON.parse(text) as Fragment;
   if (value.format !== FORMAT || !Array.isArray(value.nodes) || !Array.isArray(value.edges) ||
-      value.nodes.length > 1000 || value.edges.length > 5000 || !value.nodes.every(n => n.id && n.position && ["source", "operator", "route"].includes(n.kind)))
-    throw Error(t("剪贴板中没有 BioPipe 节点。"));
+      value.nodes.length > 1000 || value.edges.length > 5000 || !value.nodes.every(n => n.id && n.position && ["source", "operator", "route", "script"].includes(n.kind)))
+    throw Error(t("剪贴板中没有 Operon 节点。"));
   return value;
 }
 function rebaseSource(path: string, from: string, to: string): string {

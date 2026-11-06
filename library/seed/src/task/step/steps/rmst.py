@@ -14,7 +14,10 @@ from ._ext_common import group_values, make_form
 class RmstStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'rmst.RmstStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'rmst',
      'version': '1.0.0',
      'kind': 'operator',

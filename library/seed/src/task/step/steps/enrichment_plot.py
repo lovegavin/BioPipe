@@ -38,7 +38,10 @@ class EnrichmentPlotStep(Step):
     """Horizontal bar plot of enrichment results."""
     provider = 'biopipe-core'
     parameters_file = 'enrichment_plot.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['matplotlib>=3.8'],
+     'dependency_imports': ['matplotlib'],
+     'protocol_version': 3,
      'id': 'enrichment_plot',
      'version': '1.0.0',
      'kind': 'operator',

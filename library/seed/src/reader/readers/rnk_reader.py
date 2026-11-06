@@ -21,7 +21,10 @@ class RnkReader(Reader):
     preranked GSEA.
     """
     parameters_file = 'rnk_reader.RnkReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'RnkReader',
      'version': '1.0.0',
      'kind': 'reader',

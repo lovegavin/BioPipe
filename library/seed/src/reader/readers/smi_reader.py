@@ -20,7 +20,10 @@ class SmiReader(Reader):
     provider = 'biopipe-readers'
     """SMILES .smi reader with length and approximate heavy-atom count."""
     parameters_file = 'smi_reader.SmiReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'SmiReader',
      'version': '1.0.0',
      'kind': 'reader',

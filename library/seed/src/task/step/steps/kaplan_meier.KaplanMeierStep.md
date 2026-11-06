@@ -54,6 +54,8 @@ or statistical assumptions for a particular dataset.
 
 ## Runtime environment
 
+Declared Python requirements: `matplotlib>=3.8`. Prepare them explicitly in the selected execution environment; registration and application startup do not install them.
+
 Runs in the shared BioPipe interpreter.
 
 ## Limitations

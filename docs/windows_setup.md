@@ -1,9 +1,24 @@
 # Windows Setup and isolated installations
 
-Download **BioPipe_Setup.exe** and double-click it. The installer contains the
+Download **Operon_Setup.exe** and double-click it. The installer contains the
 Windows application, a tested Python runtime and the reference library seed.
 There is no Python selector or Lite/Full decision. Setup installs for the current
 Windows user and creates desktop and Start menu shortcuts.
+
+The default 3.0 candidate includes a **management runtime**, not a complete
+scientific environment. It contains HTTP/MCP/SSH management dependencies and
+NumPy for Form, the memory store and bounded previews. It excludes PyTorch,
+Pandas, SciPy, Statsmodels, Matplotlib and specialized analysis packages.
+Operator manifests, code and documentation remain available without those packages.
+
+Choose local or SSH execution in the application. Validate checks only the route
+on the selected host. If blocked, explicitly prepare that route's dependencies;
+local packages go into profile-owned immutable dependency directories, and remote
+packages stay on the server. Run itself never grants installation permission.
+The first analysis preparation requires internet access. Local workers reuse the
+bundled Python executable with separate dependency paths; the management runtime
+is not modified. Arbitrary local Python selection and a custom dependency-storage
+directory UI remain later work, not capabilities of this candidate.
 
 ## A clean environment on every installation
 
@@ -18,8 +33,11 @@ The tool search path contains the bundled runtime and Windows system directories
 Optional dependencies use managed targets inside this installation's profile;
 conflicting requirements continue to use separate subprocesses.
 
-The new profile is `%USERPROFILE%\.biopipe\profiles\<installation-id>`.
+The new Operon profile is `%USERPROFILE%\.operon\profiles\<installation-id>`.
 The random ID is recorded in `biopipe-install.json` beside the installed EXE.
+New receipts include `product: "operon"`. Older BioPipe receipts without this
+marker retain their `.biopipe/profiles` behavior; the new installer does not
+rename or migrate those profiles. See [naming compatibility](rebranding.md).
 No machine-specific path is embedded in the distributed installer. Moving the
 software folder on the same account retains its profile identity.
 
@@ -47,10 +65,10 @@ new staging directory is removed only after ownership verification. No profile
 migration or old registry rewrite is required for installation.
 
 Setup logs and its inspection report are under
-`%LOCALAPPDATA%\BioPipe\Setup\<timestamp-id>`. Choose **View installation log**
+`%LOCALAPPDATA%\Operon\Setup\<timestamp-id>`. Choose **View installation log**
 in the installer. The receipt records the active EXE and profile; previous profiles
-remain independently accessible under `.biopipe\profiles`.
-If LocalAppData is not writable, Setup uses `%TEMP%\BioPipeSetup` for its logs
+remain independently accessible under their original profile roots.
+If LocalAppData is not writable, Setup uses `%TEMP%\OperonSetup` for its logs
 and payload cache instead. The report and installer log link show the actual path.
 The Python inspection returns its JSON report through stdout; the native installer
 saves `inspection.json` in its own log directory. The child does not need write
@@ -63,7 +81,7 @@ locks the daily log against writes, the host uses
 `desktop-YYYYMMDD-<process-id>.fallback.log` there. An unavailable log directory
 does not interrupt startup, backend output handling or shutdown.
 
-Use Windows **Installed apps > BioPipe Studio > Uninstall** to remove managed
+Use Windows **Installed apps > Operon Studio > Uninstall** to remove managed
 software. Uninstall preserves profiles, analysis data and unexpected files.
 
 ## Connectivity and scope
@@ -79,11 +97,12 @@ The desktop and installer share the embedded icon in `assets/branding/biopipe.ic
 Its editable SVG, generated PNG and rebuilding instructions are in that directory.
 Normal builds use the committed icon and need no extra graphics libraries.
 
-Build a Full payload with `scripts/build_desktop.ps1` and
+Build the application runtime with `scripts/build_runtime.py --mode management`
+(the default), then a Python-bundled payload with `scripts/build_desktop.ps1` and
 `scripts/package_release.py --runtime ...`. Then run:
 
 ```powershell
-python scripts/build_setup.py --payload <full-release.zip> --output <output>/BioPipe_Setup.exe --build-dir <temporary-build-directory>
+python scripts/build_setup.py --payload <full-release.zip> --output <output>/Operon_Setup.exe --build-dir <temporary-build-directory>
 ```
 
 The build verifies every payload file, embeds its checksum and appends the archive

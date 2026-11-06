@@ -15,7 +15,10 @@ class MgfReader(Reader):
     provider = 'biopipe-readers'
     """MGF reader returning one row per spectrum (peak lists are summarized)."""
     parameters_file = 'mgf_reader.MgfReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'MgfReader',
      'version': '1.0.0',
      'kind': 'reader',

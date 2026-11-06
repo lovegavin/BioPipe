@@ -21,7 +21,10 @@ def _rss(y: np.ndarray, x: np.ndarray) -> float:
 class ChowTestStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'chow_test.ChowTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'chow_test',
      'version': '1.0.0',
      'kind': 'operator',

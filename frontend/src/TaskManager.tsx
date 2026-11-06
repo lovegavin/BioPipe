@@ -29,7 +29,7 @@ export function TaskManager({jobs, selectedId, onSelect, onCancel, onLogs, cance
       {group.jobs.map(job => <div className={`task-row ${selectedId === job.id ? 'selected' : ''}`} key={job.id}>
         <button className="task-select" aria-label={t("查看任务 {v0}", {v0: job.name})} aria-pressed={selectedId === job.id} onClick={() => onSelect(job.id)}>
           {isActiveJob(job) ? job.status === 'queued' ? <Clock size={18}/> : <CircleNotch size={18} className="spin"/> : <span className={`status-dot ${job.status}`}/>}
-          <span><strong>{job.name}</strong><small>{job.remote?.name || 'BioPipe'} · {job.id.slice(-8)}</small></span>
+          <span><strong>{job.name}</strong><small>{job.remote?.name || 'Operon'} · {job.id.slice(-8)}</small></span>
         </button>
         <TaskProgress job={job}/>
         <span className={`status-label ${job.status}`}>{t(jobStatusLabel[job.status])}</span>

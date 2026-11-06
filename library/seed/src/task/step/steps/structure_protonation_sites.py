@@ -88,6 +88,9 @@ class StructureProtonationSitesStep(Step):
     parameters_file = "structure_protonation_sites.StructureProtonationSitesStep.parameters.json"
 
     definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+
         "protocol_version": 3,
         "id": "structure_protonation_sites",
         "version": "1.0.0",

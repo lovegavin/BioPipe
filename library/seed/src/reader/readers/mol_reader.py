@@ -20,7 +20,10 @@ class MolReader(Reader):
     provider = 'biopipe-readers'
     """Read one MDL MOL V2000 file and summarize its atom/bond block."""
     parameters_file = 'mol_reader.MolReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'MolReader',
      'version': '1.0.0',
      'kind': 'reader',

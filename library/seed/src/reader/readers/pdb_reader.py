@@ -19,7 +19,10 @@ class PdbReader(Reader):
     provider = 'biopipe-readers'
     """ATOM/HETATM coordinate reader using fixed PDB columns."""
     parameters_file = 'pdb_reader.PdbReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'PdbReader',
      'version': '1.0.0',
      'kind': 'reader',

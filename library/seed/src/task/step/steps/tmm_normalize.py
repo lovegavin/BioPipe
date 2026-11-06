@@ -24,7 +24,10 @@ class TmmNormalizeStep(Step):
     provider = 'biopipe-expression'
     """Normalize a count matrix with edgeR-style TMM factors."""
     parameters_file = 'tmm_normalize.TmmNormalizeStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11', 'statsmodels>=0.14'],
+     'dependency_imports': ['scipy', 'statsmodels'],
+     'protocol_version': 3,
      'id': 'tmm_normalize',
      'version': '1.0.0',
      'kind': 'operator',

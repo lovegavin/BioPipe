@@ -40,7 +40,10 @@ class MaPlotStep(Step):
     """Draw an MA plot."""
     provider = 'biopipe-plots'
     parameters_file = 'ma_plot.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['matplotlib>=3.8'],
+     'dependency_imports': ['matplotlib'],
+     'protocol_version': 3,
      'id': 'ma_plot',
      'version': '1.0.0',
      'kind': 'operator',

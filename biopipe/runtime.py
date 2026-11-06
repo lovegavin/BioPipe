@@ -13,7 +13,9 @@ import sys
 import tempfile
 
 
-CORE_MODULES = ("numpy", "pandas", "yaml", "scipy", "statsmodels", "matplotlib", "psutil",
+# NumPy backs Form, the memory store and bounded matrix previews. Scientific
+# Readers/analyses beyond that core are prepared in managed execution targets.
+CORE_MODULES = ("numpy", "yaml", "psutil",
                 "fastapi", "uvicorn", "jsonschema", "pydantic", "packaging", "httpx", "paramiko")
 
 

@@ -108,8 +108,8 @@ class CompareGroupsStep(Step):
                                'labels_any': [{'param': 'group_label', 'default': None}]}],
                    'output': {'mode': 'compare_groups'}},
      'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
-     'dependencies': ['pydeseq2==0.5.4'],
-     'dependency_imports': ['pydeseq2'],
+     'dependencies': ['pandas>=2.0', 'pydeseq2==0.5.4', 'scipy>=1.11'],
+     'dependency_imports': ['pandas', 'pydeseq2', 'scipy'],
      'inputs_arity': 2,
      'outputs': [],
      'output_parameter': 'output'}

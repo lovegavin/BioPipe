@@ -60,6 +60,8 @@ or statistical assumptions for a particular dataset.
 
 ## Runtime environment
 
+Declared Python requirements: `bgen-reader>=4.0`. Prepare them explicitly in the selected execution environment; registration and application startup do not install them.
+
 Runs in the shared BioPipe interpreter.
 
 ## Limitations

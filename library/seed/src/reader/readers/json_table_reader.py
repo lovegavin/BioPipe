@@ -15,7 +15,10 @@ class JsonTableReader(Reader):
     provider = 'biopipe-readers'
     """Reader for a JSON array of records or a mapping of column -> list."""
     parameters_file = 'json_table_reader.JsonTableReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'JsonTableReader',
      'version': '1.0.0',
      'kind': 'reader',

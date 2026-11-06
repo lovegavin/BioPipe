@@ -14,7 +14,10 @@ from ._ext_common import make_form
 class CochranArmitageStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'cochran_armitage.CochranArmitageStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'cochran_armitage',
      'version': '1.0.0',
      'kind': 'operator',

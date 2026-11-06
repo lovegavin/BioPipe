@@ -20,7 +20,10 @@ class BedMethylReader(Reader):
     provider = 'biopipe-readers'
     """bedMethyl reader (15-column ENCODE layout)."""
     parameters_file = 'bedmethyl_reader.BedMethylReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'BedMethylReader',
      'version': '1.0.0',
      'kind': 'reader',

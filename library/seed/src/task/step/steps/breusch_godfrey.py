@@ -13,7 +13,10 @@ from ._ext_common import make_form
 class BreuschGodfreyStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'breusch_godfrey.BreuschGodfreyStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['statsmodels>=0.14'],
+     'dependency_imports': ['statsmodels'],
+     'protocol_version': 3,
      'id': 'breusch_godfrey',
      'version': '1.0.0',
      'kind': 'operator',

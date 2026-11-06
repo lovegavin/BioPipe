@@ -18,7 +18,10 @@ class MztabReader(Reader):
     provider = 'biopipe-readers'
     """One section of an mzTab file as a record x feature table."""
     parameters_file = 'mztab_reader.MztabReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'MztabReader',
      'version': '1.0.0',
      'kind': 'reader',

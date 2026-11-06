@@ -27,7 +27,7 @@ HANDSHAKE_VERSION = 1
 OPERATOR_PROTOCOL = 3
 CAPABILITIES = (
     'manifest_handshake', 'dependency_readiness', 'registry_refresh', 'jobs',
-    'execution_pins', 'streaming', 'spill', 'upload',
+    'execution_pins', 'streaming', 'spill', 'upload', 'workflow_readiness',
 )
 
 

@@ -40,3 +40,7 @@ their working set. Duplicate labels are disambiguated with positional suffixes.
 `examples/documented_operators/run_example.py` creates and reads a compressed CSV
 with feature headers, then runs normalization and PCA. It verifies that sample
 labels survive the workflow and stores the synthetic results as JSON.
+
+## Runtime environment
+
+Declared Python requirements: `pandas>=2.0`. Prepare them explicitly in the selected execution environment; registration and application startup do not install them.

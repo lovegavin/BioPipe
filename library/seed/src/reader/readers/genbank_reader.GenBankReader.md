@@ -35,3 +35,7 @@ Original GenBank files can instead be carried as FileArtifacts. Export validates
 retained records with Biopython. Tests use synthetic circular plasmids with joined
 reverse-strand CDS features and verify a read/subset/export round trip; they do
 not establish biological annotation quality.
+
+## Runtime environment
+
+Declared Python requirements: `pandas>=2.0`. Prepare them explicitly in the selected execution environment; registration and application startup do not install them.

@@ -32,7 +32,10 @@ class HistogramStep(Step):
     """
     provider = 'biopipe-plots'
     parameters_file = 'histogram.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['matplotlib>=3.8'],
+     'dependency_imports': ['matplotlib'],
+     'protocol_version': 3,
      'id': 'histogram',
      'version': '1.0.0',
      'kind': 'operator',

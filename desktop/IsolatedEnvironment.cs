@@ -8,6 +8,7 @@ internal static class IsolatedEnvironment
     {
         foreach (var key in start.Environment.Keys.ToArray())
             if (key.StartsWith("BIOPIPE_", StringComparison.OrdinalIgnoreCase) ||
+                key.StartsWith("OPERON_", StringComparison.OrdinalIgnoreCase) ||
                 key.StartsWith("PYTHON", StringComparison.OrdinalIgnoreCase) ||
                 key.StartsWith("CONDA", StringComparison.OrdinalIgnoreCase) ||
                 key is "VIRTUAL_ENV" or "R_HOME" or "R_LIBS" or "R_LIBS_USER" or "R_PROFILE" or "R_ENVIRON" or

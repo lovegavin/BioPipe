@@ -54,7 +54,10 @@ class AnnotateStep(Step):
     """Attach reference fields onto a target by key label."""
     provider = 'biopipe-core'
     parameters_file = 'annotate.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'annotate',
      'version': '1.0.0',
      'kind': 'operator',

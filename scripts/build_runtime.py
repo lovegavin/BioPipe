@@ -1,4 +1,4 @@
-"""Build a relocatable Windows Python runtime for the full desktop archive.
+"""Build the relocatable Windows application runtime (management by default).
 
 Supply a clean python-build-standalone installation, not a venv or developer
 environment. Dependencies are resolved here, never on the recipient's first run.
@@ -25,7 +25,17 @@ def windows_descriptors(manifest):
             if 'windows' in supported_systems(d) and not d.get('resources', {}).get('environment')]
 
 
-def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, bundle_wheels=None):
+def runtime_requirements(project, manifest, mode='management'):
+    """Do not make a library update silently enlarge the application runtime."""
+    if mode not in {'management', 'analysis'}:
+        raise ValueError('Unknown runtime mode: ' + mode)
+    specs = set(project['dependencies'] + project['optional-dependencies']['agent'] + ['build>=1.2', 'setuptools>=69'])
+    descriptors = windows_descriptors(manifest) if mode == 'analysis' else []
+    specs.update(r for descriptor in descriptors for r in descriptor.get('dependencies', []))
+    return sorted(specs), descriptors
+
+
+def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, bundle_wheels=None, mode='management'):
     source, destination, root = map(Path, (source, destination, root))
     if destination.exists():
         raise ValueError(f'Runtime output already exists: {destination}')
@@ -61,9 +71,7 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
     subprocess.run([python, '-I', '-m', 'ensurepip', '--upgrade'], check=True)
     project = tomllib.loads((root / 'pyproject.toml').read_text(encoding='utf-8'))['project']
     manifest = json.loads((root / 'library/seed/biopipe/builtin_packages.json').read_text(encoding='utf-8'))
-    descriptors = windows_descriptors(manifest)
-    specs = sorted(set(project['dependencies'] + project['optional-dependencies']['agent'] + ['build>=1.2', 'setuptools>=69']) |
-                   {r for d in descriptors for r in d.get('dependencies', [])})
+    specs, descriptors = runtime_requirements(project, manifest, mode)
     requested = destination / 'biopipe-requirements.txt'
     requested.write_text('\n'.join(specs) + '\n', encoding='utf-8')
     wheel_options = ['--find-links', str(Path(wheelhouse).resolve())] if wheelhouse else []
@@ -104,7 +112,8 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
     versions = json.loads(subprocess.check_output([python, '-I', '-c',
         'import importlib.metadata as m,json; print(json.dumps({d.metadata["Name"]:d.version for d in m.distributions()}))'], text=True))
     (destination / 'biopipe-lock.txt').write_text('\n'.join(f'{k}=={v}' for k, v in sorted(versions.items()))+'\n', encoding='utf-8')
-    imports = sorted({i for d in descriptors for i in d.get('dependency_imports', [])})
+    from biopipe.runtime import CORE_MODULES
+    imports = sorted(set(CORE_MODULES) | {'mcp'} | {i for d in descriptors for i in d.get('dependency_imports', [])})
     subprocess.run([python, '-I', '-c', 'import importlib; ' + '; '.join(f'importlib.import_module({name!r})' for name in imports)], check=True)
     # Entry-point launchers contain absolute build paths. Studio and the SDK use
     # python -m, so omit them rather than ship launchers that break after moving.
@@ -119,7 +128,7 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
             raise ValueError(f'Local dependency source is not portable: {path.name}')
     # Locally built native wheels also remain available for later isolated
     # dependency targets. Resolve this directory relative to Python at runtime.
-    if bundle_wheels:
+    if bundle_wheels and mode == 'analysis':
         target = destination / 'wheelhouse'
         target.mkdir()
         for path in Path(bundle_wheels).glob('*.whl'):
@@ -129,7 +138,8 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
     subprocess.run([python, '-I', '-m', 'compileall', '-q', '-f',
                     '-x', r'torch[\\/]testing[\\/]_internal[\\/]py312_intrinsics\.py$',
                     '--invalidation-mode', 'unchecked-hash', '-s', str(destination), str(destination / 'Lib')], check=True)
-    info = {'schema_version': 1, 'python_version': '.'.join(map(str, probe[0])),
+    info = {'schema_version': 1, 'product': 'operon', 'mode': mode, 'application_version': project['version'],
+            'python_version': '.'.join(map(str, probe[0])),
             'platform': 'windows-x86_64', 'provider': 'astral-sh/python-build-standalone',
             'bootstrap_archives': bootstrap_archives,
             'included_extensions': sorted(d['id'] for d in descriptors),
@@ -147,6 +157,8 @@ if __name__ == '__main__':
     parser.add_argument('--wheelhouse', type=Path, help='Optional directory of previously built and tested native wheels')
     parser.add_argument('--offline', action='store_true', help='Resolve only from the supplied complete wheelhouse')
     parser.add_argument('--bundle-wheels', type=Path, help='Retain these locally built wheels for later dependency repair/isolation')
+    parser.add_argument('--mode', choices=['management', 'analysis'], default='management',
+                        help='Management-only application runtime by default; analysis is an explicit offline distribution')
     args = parser.parse_args()
     print(json.dumps(build_runtime(args.python_home.resolve(), args.output.resolve(), Path(__file__).resolve().parents[1],
-        wheelhouse=args.wheelhouse, offline=args.offline, bundle_wheels=args.bundle_wheels)))
+        wheelhouse=args.wheelhouse, offline=args.offline, bundle_wheels=args.bundle_wheels, mode=args.mode)))

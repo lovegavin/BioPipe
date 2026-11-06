@@ -40,7 +40,10 @@ class ForestPlotStep(Step):
     """Draw a forest plot of hazard ratios."""
     provider = 'biopipe-plots'
     parameters_file = 'forest_plot.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['matplotlib>=3.8'],
+     'dependency_imports': ['matplotlib'],
+     'protocol_version': 3,
      'id': 'forest_plot',
      'version': '1.0.0',
      'kind': 'operator',

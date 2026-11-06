@@ -29,6 +29,8 @@ or statistical assumptions for a particular dataset.
 
 ## Runtime environment
 
+Declared Python requirements: `torch`, `esm`. Prepare them explicitly in the selected execution environment; registration and application startup do not install them.
+
 This operator executes in the dedicated `esm3` interpreter; see docs/large_resources.md for resolution and overrides.
 
 ## Limitations

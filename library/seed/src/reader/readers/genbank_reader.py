@@ -23,7 +23,10 @@ class GenBankReader(Reader):
     provider = 'biopipe-readers'
     """Summary reader for GenBank (.gb/.gbk/.gbff) flat files."""
     parameters_file = 'genbank_reader.GenBankReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'GenBankReader',
      'version': '1.0.0',
      'kind': 'reader',

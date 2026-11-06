@@ -49,7 +49,10 @@ class PdbqtReader(Reader):
     provider = 'biopipe-readers'
     """AutoDock PDBQT coordinate reader with partial charges and atom types."""
     parameters_file = 'pdbqt_reader.PdbqtReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'PdbqtReader',
      'version': '1.0.0',
      'kind': 'reader',

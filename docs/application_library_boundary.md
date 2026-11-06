@@ -42,6 +42,14 @@ The seed wheel is for administrators building a new installation or updating its
 factory templates/isolated-environment recipes. It does not replace profile-owned
 provider versions.
 
+An unchanged refresh compares the editable factory copy with its installed seed
+and reuses the compiled registry. It does not rebuild provider wheels, reinstall
+them, precompile them again, or change workflow pins. Byte comparisons include
+parameter JSON and documentation, so an edit made before the first refresh is
+not missed. Once editable sources change, refresh uses the existing transactional
+snapshot/install path and detaches those providers from the factory library.
+Explicitly installed library bundles remain independently versioned as before.
+
 ## Compatibility
 
 Protocol v3 is unchanged. Workflows keep their independent frozen parameter JSON;

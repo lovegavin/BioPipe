@@ -14,7 +14,10 @@ from ._ext_common import make_form
 class ResetTestStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'reset_test.ResetTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['statsmodels>=0.14'],
+     'dependency_imports': ['statsmodels'],
+     'protocol_version': 3,
      'id': 'reset_test',
      'version': '1.0.0',
      'kind': 'operator',

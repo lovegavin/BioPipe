@@ -16,7 +16,10 @@ class StuartMaxwellStep(Step):
     provider = 'biopipe-core'
     """Test whether two raters have the same marginal distribution."""
     parameters_file = 'stuart_maxwell.StuartMaxwellStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'stuart_maxwell',
      'version': '1.0.0',
      'kind': 'operator',

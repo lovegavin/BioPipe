@@ -59,6 +59,8 @@ or statistical assumptions for a particular dataset.
 
 ## Runtime environment
 
+Declared Python requirements: `networkx>=3.2`, `scikit-learn>=1.5`, `scipy>=1.11`. Prepare them explicitly in the selected execution environment; registration and application startup do not install them.
+
 Runs in the shared BioPipe interpreter.
 
 ## Limitations

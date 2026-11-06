@@ -15,7 +15,10 @@ from ._stats21_common import numeric_column, table_frame
 class LjungBoxStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'ljung_box.LjungBoxStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'ljung_box',
      'version': '1.0.0',
      'kind': 'operator',

@@ -17,7 +17,10 @@ class SamReader(Reader):
     provider = 'biopipe-readers'
     """Sequence Alignment/Map text reader."""
     parameters_file = 'sam_reader.SamReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'SamReader',
      'version': '1.0.0',
      'kind': 'reader',

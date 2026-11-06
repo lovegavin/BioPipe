@@ -75,6 +75,8 @@ or statistical assumptions for a particular dataset.
 
 ## Runtime environment
 
+Declared Python requirements: `pandas>=2.0`, `pydeseq2==0.5.4`, `scipy>=1.11`. Prepare them explicitly in the selected execution environment; registration and application startup do not install them.
+
 Runs in the shared BioPipe interpreter.
 
 ## Limitations

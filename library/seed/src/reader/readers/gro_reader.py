@@ -14,7 +14,10 @@ class GroReader(Reader):
     provider = 'biopipe-readers'
     """GROMACS GRO reader, one row per atom."""
     parameters_file = 'gro_reader.GroReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'GroReader',
      'version': '1.0.0',
      'kind': 'reader',

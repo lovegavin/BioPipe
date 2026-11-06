@@ -55,7 +55,11 @@ import {
 } from "@phosphor-icons/react";
 import { api, ApiError, downloadText, downloadBlob } from "./api";
 import { CanvasBridge } from "./agentBridge";
-import type { AgentState } from "./agentBridge";
+import type { AgentState, CanvasEvent } from "./agentBridge";
+import {CollaborationActivity, mergeActivity} from './CollaborationActivity';
+import {droppedNodes, fileDropEffect} from './scriptDrop';
+import {CatalogUpdates} from './catalogUpdates';
+import {PortTemplateMenu} from './PortTemplateMenu';
 import { AgentPanel } from "./AgentPanel";
 import { RemoteFilePicker, remoteId } from './RemotePanel';
 import { SettingsPage, type SettingsSection } from './SettingsPage';
@@ -185,6 +189,8 @@ function Studio() {
   const documentHistory = useRef<Record<string, {past: Graph[]; future: Graph[]; selection: string[]}>>({});
   const agentBridge = useRef<CanvasBridge | null>(null);
   const [agentReady, setAgentReady] = useState(false), [agentPanel, setAgentPanel] = useState(false);
+  const [collaborationEvents, setCollaborationEvents] = useState<CanvasEvent[]>([]);
+  const [agentHighlights, setAgentHighlights] = useState<string[]>([]);
   const [routes, setRoutes] = useState<RouteDefinition[]>([]);
   const [servers, setServers] = useState<RemoteStatus[]>([]);
   const [appSettings, setAppSettings] = useState<SettingsSection | null>(null);
@@ -204,6 +210,10 @@ function Studio() {
   };
   const [pluginsOpen, setPluginsOpen] = useState<"manage" | "add" | null>(null);
   const [refreshingPlugins, setRefreshingPlugins] = useState(false);
+  const catalogUpdates = useRef(new CatalogUpdates());
+  const bootstrapCatalog = useRef(bootstrap?.catalog);
+  bootstrapCatalog.current = bootstrap?.catalog;
+  const [importingFiles, setImportingFiles] = useState(0);
   const [libraryState, setLibraryState] = useState<LibraryState>({disabled: [], hidden: []});
   const [showHidden, setShowHidden] = useState(false);
   const [panelWidths, setPanelWidths] = useState<PanelWidths>(automaticPanels);
@@ -220,7 +230,7 @@ function Studio() {
   }
   const [picker, setPicker] = useState<"open" | "register" | null>(null);
   const [saveDialog, setSaveDialog] = useState<Graph | null>(null);
-  const [contextMenu, setContextMenu] = useState<{x: number; y: number; route?: RouteDefinition; nodeId?: string; libraryKey?: string} | null>(null);
+  const [contextMenu, setContextMenu] = useState<{x: number; y: number; route?: RouteDefinition; nodeId?: string; libraryKey?: string; port?: {direction: 'input' | 'output'; index: number}} | null>(null);
   const clipboard = useRef<Fragment | null>(null), routeImport = useRef<HTMLInputElement>(null);
   const [past, setPast] = useState<Graph[]>([]),
     [future, setFuture] = useState<Graph[]>([]);
@@ -280,6 +290,16 @@ function Studio() {
     }
     return presentCatalog({schema_version: 1, operators: [...operators.values()], readers: [...readers.values()]});
   }, [bootstrap?.catalog, selectedServerId, servers, locale]);
+  function acceptCatalog(latest: Bootstrap['catalog'], createdId?: string, expected?: number) {
+    const applied = catalogUpdates.current.apply(latest, value => setBootstrap(current => current ? {...current, catalog: value} : current), expected);
+    if (applied && createdId) {
+      // Reveal the result even when a prior search/category hid it. Searching
+      // the exact ID expands its category without changing saved preferences.
+      setSearch(createdId);
+      setLibraryOpen(true);
+    }
+    return applied;
+  }
   const inspectNode = useCallback((id: string | null) => {
     setSelected(id);
     setInspected(id);
@@ -397,7 +417,13 @@ function Studio() {
     if (!readyForAgent) return;
     let alive = true, timer: ReturnType<typeof setTimeout>;
     const bridge = new CanvasBridge(() => captureRef.current(), () => presenceRef.current(),
-      state => receiveAgentRef.current(state), message => notify(message));
+      state => receiveAgentRef.current(state), message => notify(message), (incoming, reset) => {
+        if (!alive) return;
+        setCollaborationEvents(previous => mergeActivity(previous, incoming, reset));
+        const recent = incoming.filter(event => event.actor !== 'user' && Date.now() - Date.parse(event.time) < 10000);
+        if (recent.length) setAgentHighlights(recent.flatMap(event => event.affected || [])
+          .filter(item => item.document_id === activeIdRef.current).flatMap(item => item.nodes));
+      });
     agentBridge.current = bridge;
     const tick = async () => {
       try {await bridge.tick();} catch (error) {if (alive) notify((error as Error).message);}
@@ -406,6 +432,11 @@ function Studio() {
     void bridge.start().then(() => {if (alive) {setAgentReady(true); void tick();}}).catch(error => notify(t("Agent 接口连接失败：{v0}", {v0: (error as Error).message})));
     return () => {alive = false; clearTimeout(timer); bridge.stop(); if (agentBridge.current === bridge) agentBridge.current = null;};
   }, [readyForAgent, notify]);
+  useEffect(() => {
+    if (!agentHighlights.length) return;
+    const timer = setTimeout(() => setAgentHighlights([]), 6000);
+    return () => clearTimeout(timer);
+  }, [agentHighlights]);
   async function copyAgentContext() {
     try {
       const context = await agentBridge.current?.context();
@@ -475,8 +506,9 @@ function Studio() {
         operation = await api.pluginOperation(operation.id);
       }
       if (operation.status === "failed") throw Error(operation.error || t("算子库刷新失败"));
+      const expected = catalogUpdates.current.checkpoint();
       const latest = await api.catalog();
-      setBootstrap(current => current ? {...current, catalog: latest} : current);
+      acceptCatalog(latest, undefined, expected);
       const count = operation.result?.updated.length || 0;
       notify(count ? t("算子库已更新，即刻可用。") : t("算子库已是最新。"), "success");
     } catch (error) {failure(error);}
@@ -525,7 +557,7 @@ function Studio() {
       if (!duplicate) {
         try {const text = await navigator.clipboard.readText(); if(text.includes('"biopipe/graph-fragment-v1"')) fragment = parseFragment(text);} catch { /* use internal clipboard */ }
       }
-      if (!fragment?.nodes.length) return notify(t("剪贴板中没有 BioPipe 节点。"));
+      if (!fragment?.nodes.length) return notify(t("剪贴板中没有 Operon 节点。"));
       if (page !== activeIdRef.current) return;
       const value = pasteFragment(graphRef.current, fragment, anchor); commit(value.graph); setSelection(value.ids); setSelected(value.ids[0] || null); setSelectedEdges([]);
       setContextMenu(null);
@@ -576,11 +608,19 @@ function Studio() {
   useEffect(() => {
     if (!bootstrap) return;
     let active = true;
+    let pending = false;
     const refresh = () => {
       if (document.visibilityState === "hidden") return;
-      void Promise.all([api.routes(), api.libraryState(), api.catalog()]).then(([value, state, latest]) => {if (active) {setRoutes(value); setLibraryState(state); setBootstrap(current => current ? {...current, catalog: latest} : current);}}).catch(() => {
+      if (pending) return;
+      pending = true;
+      const expected = catalogUpdates.current.checkpoint();
+      void Promise.all([api.routes(), api.libraryState(), api.catalogIfChanged(bootstrapCatalog.current?.plugin_generation)]).then(([value, state, latest]) => {
+        if (!active || expected !== catalogUpdates.current.checkpoint()) return;
+        if (latest) acceptCatalog(latest, undefined, expected);
+        setRoutes(value); setLibraryState(state);
+      }).catch(() => {
         // Preserve the visible registry during a transient connection failure.
-      });
+      }).finally(() => {pending = false;});
     };
     window.addEventListener("focus", refresh);
     document.addEventListener("visibilitychange", refresh);
@@ -590,7 +630,7 @@ function Studio() {
       window.removeEventListener("focus", refresh);
       document.removeEventListener("visibilitychange", refresh);
     };
-  }, [bootstrap]);
+  }, [!!bootstrap]);
   useEffect(() => {
     if (!bootstrap || !documentsRef.current.length) return;
     const timer = setTimeout(async () => {
@@ -729,6 +769,7 @@ function Studio() {
     type: "block",
     position: model.position,
     selected: selection.includes(model.id),
+    className: agentHighlights.includes(model.id) ? 'is-agent-modified' : undefined,
     ariaLabel: displayTitle(model, specFor(model, catalog)),
     width: NODE_LAYOUT.width,
     measured: nodeMeasurements[model.id],
@@ -762,6 +803,7 @@ function Studio() {
     return {
       ...edge,
       type: "workflow",
+      data: {conversion_plan: contracts?.edges.find(check => check.id === edge.id)?.conversion_plan},
       selected: selectedEdges.includes(edge.id),
       deletable: !busy,
       animated: isActiveJob(job) && statuses[edge.target] === "running",
@@ -918,6 +960,28 @@ function Studio() {
     setSelected(node.id);
     setSelection([node.id]);
   }
+  async function dropFiles(files: File[], position: {x: number; y: number}) {
+    if (busy || !files.length) return;
+    const documentId = activeIdRef.current;
+    const original = clone(graphRef.current);
+    setImportingFiles(value => value + 1);
+    try {
+      const nodes = await droppedNodes(files, original, position);
+      commitDocument(documentId, current => {
+        const existing = new Set(current.nodes.map(node => node.id));
+        const unique = nodes.map(node => {
+          let id = node.id;
+          let suffix = 1;
+          while (existing.has(id)) id = `${node.id}_${suffix++}`;
+          existing.add(id);
+          return {...node, id};
+        });
+        return {...current, nodes: [...current.nodes, ...unique]};
+      });
+      notify(t('已导入 {count} 个节点', {count: nodes.length}), 'success');
+    } catch (error) {failure(error);}
+    finally {setImportingFiles(value => value - 1);}
+  }
   function undo() {
     if (agentBridge.current?.state && !busy) {void agentBridge.current.undo(activeIdRef.current).catch(failure); return;}
     if (!past.length || busy) return;
@@ -973,6 +1037,9 @@ function Studio() {
     setAction("validate");
     try {
       const result = await api.validate(graphRef.current);
+      if (result.readiness.status !== 'ready') {
+        throw new Error(t('运行环境未就绪') + ': ' + result.readiness.blocked.map(item => `${item.id || item.target}: ${item.message}`).join('; '));
+      }
       setInvalid(undefined);
       notify(
         t("检查通过 · {v0} 个步骤，按固定顺序执行", {v0: result.order.length}),
@@ -1132,7 +1199,7 @@ function Studio() {
         <div className="brand-mark">
           <Dna size={31} />
         </div>
-        <h1>BioPipe Studio</h1>
+        <h1>Operon</h1>
         <p>{bootError || t("正在连接本地工作台…")}</p>
         {bootError ? (
           <button className="primary-button" onClick={() => void load()}>{t("重新连接")}</button>
@@ -1160,7 +1227,7 @@ function Studio() {
           </div>
           <div>
             <strong>
-              BioPipe<span>Studio</span>
+              Operon
             </strong>
           </div>
         </div>
@@ -1221,6 +1288,11 @@ function Studio() {
                     <ArrowDown size={16} />{t("导出路线包")}</button>
                   <button onClick={() => void exportYaml()}>
                     <ArrowDown size={16} />{t("导出执行 YAML")}</button>
+                  <button onClick={() => {
+                    const graph = graphRef.current;
+                    void api.exportWorkflow(graph, 'yaml').then(blob => downloadBlob(`${graph.name.replace(/[\\/:*?"<>|]/g, '_')}.workflow.zip`, blob)).catch(failure);
+                    setExportOpen(false);
+                  }}><ArrowDown size={16}/>{t('导出可编辑 YAML 项目')}</button>
                   <div className="menu-line" />
                   <button
                     disabled={busy}
@@ -1411,7 +1483,18 @@ function Studio() {
             onReset={() => resizePanel("library", null)} onResizing={setResizingPanel}/>
         </aside>
         <div className="canvas-column">
-          <main className="canvas-area" id="workflow-canvas" role="tabpanel" aria-label={graph.name} ref={canvas}>
+          <main className="canvas-area" id="workflow-canvas" role="tabpanel" aria-label={graph.name} ref={canvas}
+            onDragOver={(event) => {
+              event.preventDefault();
+              event.dataTransfer.dropEffect = fileDropEffect(Array.from(event.dataTransfer.types));
+            }}
+            onDrop={(event) => {
+              event.preventDefault();
+              const type = event.dataTransfer.getData("application/biopipe");
+              const position = flow.screenToFlowPosition({x: event.clientX, y: event.clientY});
+              if (type) add(type === "source" ? undefined : type, position);
+              else if (event.dataTransfer.files.length) void dropFiles(Array.from(event.dataTransfer.files), position);
+            }}>
             <div className="canvas-header">
               <div className="canvas-topline">
                 <div>
@@ -1419,6 +1502,7 @@ function Studio() {
                   {documents.find(doc=>doc.id===activeId)?.workflow_id && <span className="canvas-route-label"><Stack size={11}/>{t("路线图 · v")}{documents.find(doc=>doc.id===activeId)?.workflow_version}</span>}
                 </div>
                 <div className="canvas-meta">
+                  {importingFiles > 0 && <span role="status"><ArrowClockwise size={13} className="spin"/> {t('正在导入文件…')}</span>}
                   <span>{graph.nodes.length} {t("个节点")}</span>
                   <span className="meta-dot" />
                   <span>{graph.edges.length} {t("条连接")}</span>
@@ -1507,7 +1591,16 @@ function Studio() {
               onConnect={connect}
               onNodeMouseEnter={(_, node) => setHoveredNode(node.id)}
               onNodeMouseLeave={() => setHoveredNode(null)}
-              onNodeContextMenu={(event, node) => {event.preventDefault(); if(!selection.includes(node.id)) {setSelection([node.id]); setSelected(node.id);} setContextMenu({x: event.clientX, y: event.clientY, route: node.data.model.route || undefined, nodeId: node.id});}}
+              onNodeContextMenu={(event, node) => {
+                event.preventDefault();
+                if(!selection.includes(node.id)) {setSelection([node.id]); setSelected(node.id);}
+                const target = event.target as HTMLElement;
+                const row = target.closest('.node-port-row');
+                const handle = target.closest('.react-flow__handle')?.getAttribute('data-handleid') || '';
+                const port = row ? {direction: row.classList.contains('input-row') ? 'input' as const : 'output' as const,
+                  index: Number(handle.split('-')[1]) || 0} : undefined;
+                setContextMenu({x: event.clientX, y: event.clientY, route: node.data.model.route || undefined, nodeId: node.id, port});
+              }}
               onPaneContextMenu={event => {event.preventDefault(); setContextMenu({x: event.clientX, y: event.clientY});}}
               onNodeClick={(_, node) => {
                 setSelected(node.id);
@@ -1544,22 +1637,6 @@ function Studio() {
                   setFuture([]);
                 }
                 dragOrigin.current = null;
-              }}
-              onDragOver={(event) => {
-                event.preventDefault();
-                event.dataTransfer.dropEffect = "move";
-              }}
-              onDrop={(event) => {
-                event.preventDefault();
-                const type = event.dataTransfer.getData("application/biopipe");
-                if (type)
-                  add(
-                    type === "source" ? undefined : type,
-                    flow.screenToFlowPosition({
-                      x: event.clientX,
-                      y: event.clientY,
-                    }),
-                  );
               }}
               minZoom={0.2}
               maxZoom={1.6}
@@ -1662,6 +1739,13 @@ function Studio() {
                 </button>
               </div>
             </div>
+            <CollaborationActivity events={collaborationEvents} sessionId={agentBridge.current?.state?.id}
+              onLocate={(document, node) => {
+                if (!documentsRef.current.some(item => item.id === document)) return;
+                if (document !== activeIdRef.current) activatePage(document, documentsRef.current);
+                if (node) {setSelection([node]); setSelected(node); inspectNode(node);}
+              }}
+              onUndo={async (document, transaction) => {await agentBridge.current?.undo(document, false, transaction);}}/>
           </main>
           <Results
             onViewerSettings={() => setAppSettings('viewers')}
@@ -1717,6 +1801,7 @@ function Studio() {
             automaticMemoryBudget={selectedServerId ? selectedServer?.info?.automatic_memory_budget_bytes : bootstrap.automatic_memory_budget_bytes}
             onBrowseRemote={servers.length ? browseRemote : undefined}
             onNode={(id, patch) => updateNode(id, patch, activeId)}
+            onCatalog={(latest, createdId) => acceptCatalog(latest, createdId)}
             servers={servers}
             onExecution={patch => commitDocument(activeId, current => withExecution(current, patch))}
             onFileLocation={(key, target) => commitDocument(activeId, current => withFileLocation(current, key, target))}
@@ -1739,14 +1824,18 @@ function Studio() {
           <span className="meta-dot" />
           {order.length}{t("个算子")}</span>
         <span>
-          BioPipe Studio <span className="mono">{studioVersion}</span>
+          Operon <span className="mono">{studioVersion}</span>
         </span>
       </footer>
       {contextMenu && <>
         <div className="context-dismiss" onMouseDown={() => setContextMenu(null)} onContextMenu={e => {e.preventDefault(); setContextMenu(null);}}/>
         <div className="canvas-context" role="menu" aria-label={contextMenu.libraryKey ? t("算子库操作") : t("画布操作")} style={{left: Math.max(8, Math.min(contextMenu.x, window.innerWidth-244)), top: Math.max(8, Math.min(contextMenu.y, window.innerHeight-460))}}>
-          {contextMenu.route && <><button role="menuitem" onClick={() => {openRoute(contextMenu.route!); setContextMenu(null);}}><Stack size={16}/>{t("打开路线的算子图")}</button><div className="context-caption">{contextMenu.route.name} · v{contextMenu.route.version}</div><div className="menu-line"/></>}
-          {contextMenu.libraryKey ? <>
+          {contextMenu.port && contextMenu.nodeId && <><PortTemplateMenu key={`${contextMenu.nodeId}:${contextMenu.port.direction}:${contextMenu.port.index}`}
+            ports={contracts?.nodes[contextMenu.nodeId]?.[contextMenu.port.direction === 'input' ? 'inputs' : 'outputs'] || []}
+            direction={contextMenu.port.direction} initialIndex={contextMenu.port.index}
+            onCopy={code => {void navigator.clipboard.writeText(code).then(() => {notify(t('已复制接头模板'), 'success'); setContextMenu(null);}, failure);}}/><div className="menu-line"/></>}
+          {contextMenu.route && !contextMenu.port && <><button role="menuitem" onClick={() => {openRoute(contextMenu.route!); setContextMenu(null);}}><Stack size={16}/>{t("打开路线的算子图")}</button><div className="context-caption">{contextMenu.route.name} · v{contextMenu.route.version}</div><div className="menu-line"/></>}
+          {!contextMenu.port && (contextMenu.libraryKey ? <>
             {libraryState.hidden.includes(contextMenu.libraryKey) ? <button role="menuitem" onClick={() => void manageLibrary(contextMenu.libraryKey!, "restore")}><ArrowCounterClockwise size={16}/>{t("恢复到算子库")}</button> : <>
               <button role="menuitem" disabled={busy || libraryState.disabled.includes(contextMenu.libraryKey)} onClick={() => {add(contextMenu.libraryKey); setContextMenu(null);}}><Plus size={16}/>{t("添加到画布")}</button>
               <button role="menuitem" onClick={() => void manageLibrary(contextMenu.libraryKey!, libraryState.disabled.includes(contextMenu.libraryKey!) ? "enable" : "disable")}>{libraryState.disabled.includes(contextMenu.libraryKey) ? <PlayCircle size={16}/> : <PauseCircle size={16}/>} {libraryState.disabled.includes(contextMenu.libraryKey) ? t("启用算子") : t("禁用算子")}</button>
@@ -1761,10 +1850,10 @@ function Studio() {
             <button role="menuitem" disabled={!selection.length || busy} onClick={() => void pasteSelection(true)}><SquaresFour size={16}/>{t("复制副本")} <kbd>Ctrl D</kbd></button>
             {contextMenu.nodeId && <EnvironmentMenu graph={graph} nodeId={contextMenu.nodeId} servers={servers}
               onSelect={target => {commit(current => assignNodeTarget(current, contextMenu.nodeId!, target)); setContextMenu(null);}}/>}
-          </>}
+          </>)}
         </div>
       </>}
-      {pluginsOpen && <PluginPanel initialTab={pluginsOpen} onClose={() => setPluginsOpen(null)} onChanged={async () => {const latest = await api.catalog(); setBootstrap(current => current ? {...current, catalog: latest} : current); await refreshRoutes();}}/>}
+      {pluginsOpen && <PluginPanel initialTab={pluginsOpen} onClose={() => setPluginsOpen(null)} onChanged={async () => {const expected = catalogUpdates.current.checkpoint(); const latest = await api.catalog(); acceptCatalog(latest, undefined, expected); await refreshRoutes();}}/>}
       {picker && <WorkflowPicker mode={picker} onClose={() => setPicker(null)} onOpen={openSaved} onRegister={refreshRoutes} onImport={() => routeImport.current?.click()}/>}
       {saveDialog && <SaveWorkflowDialog graph={saveDialog} catalog={catalog} workflowId={documents.find(doc=>doc.id===activeId)?.workflow_id} version={documents.find(doc=>doc.id===activeId)?.workflow_version} onClose={() => setSaveDialog(null)} onSaved={savedWorkflow}/>}
       {agentPanel && <AgentPanel sessionId={agentBridge.current?.state?.id} command={bootstrap.agent_config} onClose={() => setAgentPanel(false)} onCopySelection={() => void copyAgentContext()}/>}

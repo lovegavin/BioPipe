@@ -34,6 +34,12 @@ def port_index(handle):
 def output_names(node, registry):
     if node.kind == "source":
         return [node.id]
+    if node.kind == "script":
+        from biopipe.script_operators import validate_script
+        snapshot = validate_script(node.script)
+        if len(snapshot["outputs"]) != 1:
+            fail("Script route nodes require one declared file output", node.id)
+        return [node.id]
     if node.kind == "route":
         definition = require_route(node)
         return [f"{node.id}__out_{i+1}" for i in range(len(definition.graph.interface.outputs))]
@@ -230,7 +236,7 @@ def expand_routes(graph, catalog):
             if serial > 5000:
                 fail("路线展开后超过 5000 条连接。", owner)
             flat_edges.append(GraphEdge(id=f"expanded_{serial}", source=source_id, target=target_id,
-                                        sourceHandle=handle, targetHandle=edge.targetHandle))
+                                        sourceHandle=handle, targetHandle=edge.targetHandle, adaptation=edge.adaptation))
         for name in current.memory.get("keep", []):
             if name not in local_names:
                 # A placeholder source may have been requested as a retained value.

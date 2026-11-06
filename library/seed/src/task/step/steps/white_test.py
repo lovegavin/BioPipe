@@ -15,7 +15,10 @@ from ._stats21_common import design_matrix, numeric_column, table_frame
 class WhiteTestStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'white_test.WhiteTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'white_test',
      'version': '1.0.0',
      'kind': 'operator',

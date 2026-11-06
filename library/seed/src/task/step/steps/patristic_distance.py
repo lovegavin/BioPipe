@@ -16,6 +16,9 @@ class PatristicDistanceStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'patristic_distance.PatristicDistanceStep.parameters.json'
     definition = {
+     'dependencies': ['scipy>=1.11', 'statsmodels>=0.14'],
+     'dependency_imports': ['scipy', 'statsmodels'],
+
         'protocol_version': 3,
         'id': 'patristic_distance',
         'version': '1.0.0',

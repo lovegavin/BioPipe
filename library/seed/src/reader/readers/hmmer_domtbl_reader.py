@@ -27,7 +27,10 @@ class HmmerDomtblReader(Reader):
     provider = 'biopipe-readers'
     """HMMER3 --domtblout reader, one row per domain."""
     parameters_file = 'hmmer_domtbl_reader.HmmerDomtblReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'HmmerDomtblReader',
      'version': '1.0.0',
      'kind': 'reader',

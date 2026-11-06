@@ -36,15 +36,37 @@ def test_sources_are_lazy_persistent_and_outside_application(tmp_path):
     assert json.loads((source_root(ROOT) / parameter.relative_to(target)).read_text(encoding='utf-8')) != {'author_edit': True}
 
 
-def test_explicit_refresh_detaches_factory_without_changing_application(tmp_path):
+def test_unchanged_factory_refresh_preserves_pins_and_skips_build_install(tmp_path, monkeypatch):
     manager = PluginManager(tmp_path)
     original = manager.state()
+    def forbidden(*args, **kwargs):
+        pytest.fail('Unmodified factory refresh tried to rebuild or install providers')
+    monkeypatch.setattr(manager, '_install_many', forbidden)
+    monkeypatch.setattr('biopipe.registry.scan_sources', forbidden)
+    monkeypatch.setattr('biopipe.source_library.provider_wheel', forbidden)
+    for instance in (manager, PluginManager(tmp_path)):
+        result = instance.refresh()
+        assert not result['updated'] and result['unchanged']
+        assert result['generation'] == original['generation']
+        assert instance.state()['descriptors'] == original['descriptors']
+    assert not (manager.directory / 'environments').exists()
+
+
+def test_edited_source_refresh_detaches_factory_without_changing_application(tmp_path):
+    manager = PluginManager(tmp_path)
+    original = manager.state()
+    root = manager.ensure_source_root()
+    parameter = root / 'src/task/step/steps/pca.parameters.json'
+    value = json.loads(parameter.read_text(encoding='utf-8'))
+    value['properties']['n_components']['default'] = 7
+    parameter.write_text(json.dumps(value), encoding='utf-8')
     result = manager.refresh()
     assert result['updated']
     state = manager.state()
     assert state['library_detached']
     assert all(p['origin'] == 'wheel' for p in state['packages'])
     assert {d['id'] for d in state['descriptors']} == {d['id'] for d in original['descriptors']}
+    assert next(d for d in state['descriptors'] if d['id'] == 'pca')['parameters_schema']['properties']['n_components']['default'] == 7
     assert manager.refresh()['generation'] == state['generation']
     # Simulate a profile already refreshed by 0.8.2, before source-root receipts.
     from biopipe.plugins import atomic_json

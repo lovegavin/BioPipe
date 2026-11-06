@@ -25,6 +25,10 @@ def render(source, cls, declaration, module_doc=None):
     environment = declaration.get('resources', {}).get('environment')
     environment = ('This operator executes in the dedicated `' + environment + '` interpreter; see docs/large_resources.md for resolution and overrides.'
                    if environment else 'Runs in the shared BioPipe interpreter.')
+    requirements = declaration.get('dependencies', [])
+    if requirements:
+        environment = ('Declared Python requirements: ' + ', '.join('`' + d + '`' for d in requirements) +
+                       '. Prepare them explicitly in the selected execution environment; registration and application startup do not install them.\n\n' + environment)
     return f'''<!-- biopipe:generated -->
 # {declaration.get('title') or name}
 

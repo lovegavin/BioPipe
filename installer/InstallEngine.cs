@@ -27,7 +27,7 @@ internal sealed class InstallLease : IDisposable
             using var mutex = new Mutex(false, name);
             var owned = false;
             try { try { owned = mutex.WaitOne(0); } catch (AbandonedMutexException) { owned = true; }
-                if (!owned) throw new InvalidOperationException("BioPipe 或另一个安装程序正在使用此目录，请关闭后重试。"); }
+                if (!owned) throw new InvalidOperationException("Operon 或另一个安装程序正在使用此目录，请关闭后重试。"); }
             catch (Exception e) { error = e; }
             finally { acquired.Set(); }
             if (owned) { release.Wait(); mutex.ReleaseMutex(); }
@@ -52,18 +52,18 @@ internal sealed class InstallEngine
         this.spec = spec; this.progress = progress;
         var local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         var baseDir = Path.GetFullPath(workRoot ?? (string.IsNullOrWhiteSpace(local)
-            ? Path.Combine(Path.GetTempPath(), "BioPipeSetup") : Path.Combine(local, "BioPipe", "Setup")));
+            ? Path.Combine(Path.GetTempPath(), "OperonSetup") : Path.Combine(local, "Operon", "Setup")));
         try { InstallFiles.NoLinks(baseDir); Directory.CreateDirectory(baseDir); }
         catch (Exception error) when (workRoot is null && error is UnauthorizedAccessException or IOException)
         {
             // Restricted or redirected accounts may deny LocalAppData. Keep
             // installation diagnostics available in the user's writable temp.
-            baseDir = Path.Combine(Path.GetTempPath(), "BioPipeSetup");
+            baseDir = Path.Combine(Path.GetTempPath(), "OperonSetup");
             InstallFiles.NoLinks(baseDir); Directory.CreateDirectory(baseDir);
         }
         work = Path.Combine(baseDir, DateTime.UtcNow.ToString("yyyyMMddTHHmmss") + "-" + Guid.NewGuid().ToString("N")[..8]);
         Directory.CreateDirectory(work); LogPath = Path.Combine(work, "setup.log");
-        Log("BioPipe Setup " + spec.Version + " initialized.");
+        Log("Operon Setup " + spec.Version + " initialized.");
     }
     private void Log(string line)
     {
@@ -190,7 +190,7 @@ internal sealed class InstallEngine
                 throw new IOException($"安装盘空间不足，需要约 {required / 1073741824.0:F1} GiB 可用空间。");
             if (!reuseCache && !sameDrive && cacheDrive.AvailableFreeSpace < spec.Bytes + 128L * 1024 * 1024)
                 throw new IOException("安装缓存所在磁盘空间不足，请释放空间后重试。");
-            Report("准备安装 BioPipe " + spec.Version, 0);
+            Report("准备安装 Operon " + spec.Version, 0);
             var payload = await InstallFiles.MaterializePayload(spec, cache, options.Payload, progress, token);
             Directory.CreateDirectory(root);
             InstallFiles.AtomicJson(Path.Combine(root, ".biopipe-setup.json"), new { owner = InstallFiles.Owner });
@@ -201,7 +201,7 @@ internal sealed class InstallEngine
             Report("正在核对已安装文件…", 76); InstallFiles.VerifyPackage(stage, spec, token);
             var profileId = Guid.NewGuid().ToString("N");
             InstallFiles.AtomicJson(Path.Combine(stage, "biopipe-install.json"),
-                new { schema_version = 1, isolated = true, profile_id = profileId });
+                new { schema_version = 1, isolated = true, profile_id = profileId, product = "operon" });
             Report("正在验证独立运行环境…", 82);
             var inspection = await Inspect(stage, token);
             resolvedProfile = inspection.GetProperty("profile").GetProperty("profile_dir").GetString()
@@ -221,27 +221,27 @@ internal sealed class InstallEngine
             {
                 Report("正在创建快捷方式…", 96);
                 foreach (var folder in new[] { Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
-                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "BioPipe") })
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "Operon") })
                 {
                     InstallFiles.NoLinks(folder);
                     Directory.CreateDirectory(folder);
-                    var link = Path.Combine(folder, "BioPipe Studio.lnk");
+                    var link = Path.Combine(folder, "Operon Studio.lnk");
                     priorLinks[link] = File.Exists(link) ? File.ReadAllBytes(link) : null;
-                    CreateShortcut(link, Path.Combine(installed, "BioPipe Studio.exe"), resolvedProfile);
+                    CreateShortcut(link, Path.Combine(installed, "Operon Studio.exe"), resolvedProfile);
                     shortcuts[link] = InstallFiles.Hash(link);
                 }
-                var uninstall = Path.Combine(root, "BioPipe_Uninstall.exe");
+                var uninstall = Path.Combine(root, "Operon_Uninstall.exe");
                 if (File.Exists(uninstall)) { savedUninstaller = Path.Combine(work, "previous-uninstaller.exe"); File.Copy(uninstall, savedUninstaller); }
                 SaveUninstaller(uninstall);
                 wroteUninstaller = true;
-                registrationKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\BioPipeStudio-" + InstallLease.Identity(root);
+                registrationKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\OperonStudio-" + InstallLease.Identity(root);
                 using (var previous = Registry.CurrentUser.OpenSubKey(registrationKey))
                     if (previous is not null) priorRegistration = previous.GetValueNames().ToDictionary(k => k,
                         k => (previous.GetValue(k, null, RegistryValueOptions.DoNotExpandEnvironmentNames)!, previous.GetValueKind(k)));
                 using var key = Registry.CurrentUser.CreateSubKey(registrationKey);
-                key.SetValue("DisplayName", "BioPipe Studio"); key.SetValue("DisplayVersion", spec.Version);
-                key.SetValue("Publisher", "BioPipe contributors"); key.SetValue("InstallLocation", root);
-                key.SetValue("DisplayIcon", Path.Combine(installed, "BioPipe Studio.exe"));
+                key.SetValue("DisplayName", "Operon Studio"); key.SetValue("DisplayVersion", spec.Version);
+                key.SetValue("Publisher", "Operon contributors"); key.SetValue("InstallLocation", root);
+                key.SetValue("DisplayIcon", Path.Combine(installed, "Operon Studio.exe"));
                 key.SetValue("UninstallString", $"\"{uninstall}\" --uninstall --install-dir \"{root}\"");
                 key.SetValue("NoModify", 1, RegistryValueKind.DWord); key.SetValue("NoRepair", 1, RegistryValueKind.DWord);
             }
@@ -259,7 +259,7 @@ internal sealed class InstallEngine
                     catch (Exception cleanupError) { Log("Old version retained: " + cleanupError.Message); }
             }
             Report("安装完成", 100);
-            return new("installed", root, Path.Combine(installed, "BioPipe Studio.exe"), resolvedProfile, LogPath);
+            return new("installed", root, Path.Combine(installed, "Operon Studio.exe"), resolvedProfile, LogPath);
         }
         catch (Exception error)
         {
@@ -275,7 +275,7 @@ internal sealed class InstallEngine
                             foreach (var (name, value) in priorRegistration) key.SetValue(name, value.Value, value.Kind); }
                     } catch (Exception e) { Log("Registration restore: " + e.Message); }
                 if (wroteUninstaller)
-                    try { var target = Path.Combine(root, "BioPipe_Uninstall.exe");
+                    try { var target = Path.Combine(root, "Operon_Uninstall.exe");
                         if (savedUninstaller is not null) File.Copy(savedUninstaller, target, true); else File.Delete(target);
                     } catch (Exception e) { Log("Uninstaller restore: " + e.Message); }
                 foreach (var candidate in new[] { stage, installed }.Where(p => p is not null))
@@ -294,7 +294,7 @@ internal sealed class InstallEngine
             dynamic shortcut = shell.CreateShortcut(path);
             try { shortcut.TargetPath = executable; shortcut.Arguments = $"--profile-dir \"{profile}\"";
                 shortcut.IconLocation = executable + ",0";
-                shortcut.WorkingDirectory = Path.GetDirectoryName(executable); shortcut.Description = "BioPipe Studio"; shortcut.Save(); }
+                shortcut.WorkingDirectory = Path.GetDirectoryName(executable); shortcut.Description = "Operon Studio"; shortcut.Save(); }
             finally { System.Runtime.InteropServices.Marshal.FinalReleaseComObject(shortcut); }
         } finally { System.Runtime.InteropServices.Marshal.FinalReleaseComObject(shell); }
     }
@@ -321,13 +321,13 @@ internal sealed class InstallEngine
     {
         string root = Path.GetFullPath(installDir).TrimEnd(Path.DirectorySeparatorChar);
         using var lease = new InstallLease("Local\\BioPipeSetup-" + InstallLease.Identity(root));
-        var receipt = ReadReceipt(root) ?? throw new InvalidOperationException("此目录没有 BioPipe 安装记录。");
+        var receipt = ReadReceipt(root) ?? throw new InvalidOperationException("此目录没有 Operon 安装记录。");
         using var profileLease = new InstallLease("Local\\BioPipeStudio-" + InstallLease.Identity(receipt.Profile));
         Report("正在卸载软件；用户档案和分析数据会保留…", 0);
-        var expectedKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\BioPipeStudio-" + InstallLease.Identity(root);
+        var expectedKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\OperonStudio-" + InstallLease.Identity(root);
         if (receipt.UninstallKey is not null && receipt.UninstallKey != expectedKey) throw new InvalidDataException("卸载注册信息无效。");
-        var allowedLinks = new[] { Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "BioPipe Studio.lnk"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "BioPipe", "BioPipe Studio.lnk") };
+        var allowedLinks = new[] { Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "Operon Studio.lnk"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "Operon", "Operon Studio.lnk") };
         foreach (var path in receipt.Shortcuts.Keys) {
             if (!allowedLinks.Contains(path, StringComparer.OrdinalIgnoreCase)) throw new InvalidDataException("快捷方式记录无效。");
             InstallFiles.NoLinks(path);
@@ -341,9 +341,9 @@ internal sealed class InstallEngine
         }
         File.Delete(ReceiptPath(root));
         File.Delete(Path.Combine(root, ".biopipe-setup.json"));
-        var uninstaller = Path.Combine(root,"BioPipe_Uninstall.exe");
+        var uninstaller = Path.Combine(root,"Operon_Uninstall.exe");
         if (File.Exists(uninstaller) && !string.Equals(uninstaller, Environment.ProcessPath, StringComparison.OrdinalIgnoreCase)) File.Delete(uninstaller);
-        Report("已卸载 BioPipe；用户档案、路线、数据和任务记录均已保留。",100);
+        Report("已卸载 Operon；用户档案、路线、数据和任务记录均已保留。",100);
         return new("uninstalled", root, null, receipt.Profile, LogPath);
     }
 

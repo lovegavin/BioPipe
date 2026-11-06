@@ -44,7 +44,10 @@ class BoxplotStep(Step):
     """Boxplot of one value column split by groups."""
     provider = 'biopipe-plots'
     parameters_file = 'boxplot.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['matplotlib>=3.8'],
+     'dependency_imports': ['matplotlib'],
+     'protocol_version': 3,
      'id': 'boxplot',
      'version': '1.0.0',
      'kind': 'operator',

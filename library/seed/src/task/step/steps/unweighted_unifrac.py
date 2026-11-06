@@ -22,6 +22,9 @@ class UnweightedUnifracStep(Step):
     provider = 'biopipe-microbiome'
     parameters_file = 'unweighted_unifrac.UnweightedUnifracStep.parameters.json'
     definition = {
+     'dependencies': ['scipy>=1.11', 'statsmodels>=0.14'],
+     'dependency_imports': ['scipy', 'statsmodels'],
+
         'protocol_version': 3,
         'id': 'unweighted_unifrac',
         'version': '1.0.0',

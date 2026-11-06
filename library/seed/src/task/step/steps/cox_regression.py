@@ -83,8 +83,8 @@ class CoxRegressionStep(Step):
                                                 'values': {'param': 'covariates', 'default': []}}]}],
                    'output': {'mode': 'cox_regression'}},
      'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
-     'dependencies': ['lifelines<0.31,>=0.30'],
-     'dependency_imports': ['lifelines'],
+     'dependencies': ['lifelines<0.31,>=0.30', 'pandas>=2.0'],
+     'dependency_imports': ['lifelines', 'pandas'],
      'inputs_arity': 1,
      'outputs': [],
      'output_parameter': 'output'}

@@ -57,7 +57,7 @@ internal static class Program
                 Console.WriteLine(JsonSerializer.Serialize(profile)); return 0;
             }
         } catch (Exception error) {
-            if (!smoke && !checkProfile) MessageBox.Show(error.Message, "BioPipe Studio", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (!smoke && !checkProfile) MessageBox.Show(error.Message, "Operon Studio", MessageBoxButtons.OK, MessageBoxIcon.Error);
             else { Console.SetError(new StreamWriter(Console.OpenStandardError(), new UTF8Encoding(false)) { AutoFlush = true }); Console.Error.WriteLine(error.Message); }
             return 1;
         }
@@ -81,8 +81,8 @@ internal static class Program
         }
         catch (Exception error)
         {
-            if (!smoke) MessageBox.Show("BioPipe Studio 无法启动。\n\n" + error.Message,
-                "BioPipe Studio", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (!smoke) MessageBox.Show("Operon Studio 无法启动。\n\n" + error.Message,
+                "Operon Studio", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;
         }
     }
@@ -96,7 +96,7 @@ internal sealed class StudioWindow : Form
     private readonly bool smoke;
     private readonly WebView2 view = new() { Dock = DockStyle.Fill, DefaultBackgroundColor = Color.White, Visible = false };
     private readonly Label status = new() { AutoSize = false, Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter,
-        Font = new Font("Segoe UI", 14), Text = "BioPipe Studio\n\n正在启动本地运行时…" };
+        Font = new Font("Segoe UI", 14), Text = "Operon Studio\n\n正在启动工作台服务…" };
     private readonly HttpClient http = new(new HttpClientHandler { UseProxy = false }) { Timeout = TimeSpan.FromSeconds(5) };
     private readonly TaskCompletionSource<string> ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly CancellationTokenSource stopped = new();
@@ -114,7 +114,7 @@ internal sealed class StudioWindow : Form
         this.profile = profile; this.runtime = runtime; this.dataDir = profile.ProfileDir;
         desktopLog = new DesktopLog(dataDir);
         this.smoke = smoke; this.activation = activation;
-        Text = "BioPipe Studio";
+        Text = "Operon Studio";
         Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         StartPosition = FormStartPosition.CenterScreen;
         var area = Screen.PrimaryScreen?.WorkingArea ?? new Rectangle(0, 0, 1600, 1000);
@@ -181,9 +181,9 @@ internal sealed class StudioWindow : Form
             };
             backend.ErrorDataReceived += (_, e) => { if (e.Data is not null) Log("Backend: " + e.Data); };
             backend.Exited += (_, _) => {
-                ready.TrySetException(new InvalidOperationException("本地运行时提前退出。详情见 logs 文件夹。"));
+                ready.TrySetException(new InvalidOperationException("工作台服务提前退出。详情见 logs 文件夹。"));
                 if (!closing && frontReady && !IsDisposed)
-                    BeginInvoke(() => { frontReady = false; view.Visible = false; status.Text = "本地运行时已退出，请重新打开 BioPipe Studio。\n\n日志位置：" + Path.Combine(dataDir, "logs"); });
+                    BeginInvoke(() => { frontReady = false; view.Visible = false; status.Text = "工作台服务已退出，请重新打开 Operon Studio。\n\n日志位置：" + Path.Combine(dataDir, "logs"); });
             };
             backend.Start();
             Log("Backend started; pid=" + backend.Id);
@@ -196,10 +196,10 @@ internal sealed class StudioWindow : Form
             var url = new Uri(origin);
             if (url.Scheme != "http" || url.Host != "127.0.0.1") throw new InvalidOperationException("运行时地址无效。");
             using var health = JsonDocument.Parse(await http.GetStringAsync(origin + "/ready", stopped.Token));
-            if (health.RootElement.GetProperty("status").GetString() != "ok") throw new InvalidOperationException("本地运行时尚未就绪。");
+            if (health.RootElement.GetProperty("status").GetString() != "ok") throw new InvalidOperationException("工作台服务尚未就绪。");
             File.WriteAllText(portFile, url.Port.ToString());
             Log("Backend ready; " + origin);
-            status.Text = "BioPipe Studio\n\n正在打开工作台…";
+            status.Text = "Operon Studio\n\n正在打开工作台…";
             var environment = await CoreWebView2Environment.CreateAsync(null, Path.Combine(dataDir, "browser"));
             if (stopped.IsCancellationRequested) return;
             await view.EnsureCoreWebView2Async(environment);
@@ -233,7 +233,7 @@ internal sealed class StudioWindow : Form
                 catch (JsonException) { }
             };
             view.CoreWebView2.NavigationCompleted += (_, e) => {
-                if (!e.IsSuccess) { status.Text = "工作台加载失败：" + e.WebErrorStatus + "\n请重新打开 BioPipe Studio。"; Log(status.Text); }
+                if (!e.IsSuccess) { status.Text = "工作台加载失败：" + e.WebErrorStatus + "\n请重新打开 Operon Studio。"; Log(status.Text); }
             };
             view.CoreWebView2.Navigate(origin + "/");
             _ = Task.Run(() => {
@@ -251,7 +251,7 @@ internal sealed class StudioWindow : Form
             Log(error.ToString());
             await StopBackend();
             if (smoke) { allowClose = true; Close(); return; }
-            status.Text = "BioPipe Studio 启动失败\n\n" +
+            status.Text = "Operon Studio 启动失败\n\n" +
                 (error is WebView2RuntimeNotFoundException ? "请安装 Microsoft Edge WebView2 Runtime 后重试。\nhttps://developer.microsoft.com/microsoft-edge/webview2/" : error.Message)
                 + "\n\n日志位置：" + Path.Combine(dataDir, "logs");
         }
@@ -292,7 +292,7 @@ internal sealed class StudioWindow : Form
                 using var jobs = JsonDocument.Parse(await http.GetStringAsync(origin + "/api/jobs"));
                 if (jobs.RootElement.EnumerateArray().Any(job => job.GetProperty("status").GetString() == "running") && !smoke &&
                     MessageBox.Show(this, "工作流仍在运行。退出会停止当前任务，已保存的记录和结果会保留。\n\n确定退出吗？",
-                        "退出 BioPipe Studio", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                        "退出 Operon Studio", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 { closing = false; return; }
                 draftSaved = new(TaskCreationOptions.RunContinuationsAsynchronously);
                 view.CoreWebView2.PostWebMessageAsJson("{\"type\":\"prepare-close\"}");
@@ -301,7 +301,7 @@ internal sealed class StudioWindow : Form
                 {
                     Log("Draft flush failed");
                     if (smoke) ExitCode = 1;
-                    else if (MessageBox.Show(this, "最新草稿未能保存。仍然退出吗？", "BioPipe Studio",
+                    else if (MessageBox.Show(this, "最新草稿未能保存。仍然退出吗？", "Operon Studio",
                         MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) { closing = false; return; }
                 }
                 else Log("Draft flushed to workspace");

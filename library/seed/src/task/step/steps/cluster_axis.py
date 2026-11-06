@@ -72,8 +72,8 @@ class ClusterAxisStep(Step):
                               'keep_dims': [{'param': 'dim', 'default': None}],
                               'append_dims': [{'name': 'cluster', 'labels': ['cluster']}]}},
      'resources': {'memory_modes': ['full'], 'supports_cuda': False, 'estimate': 'estimate_memory'},
-     'dependencies': ['networkx>=3.2', 'scikit-learn>=1.5'],
-     'dependency_imports': ['networkx', 'sklearn'],
+     'dependencies': ['networkx>=3.2', 'scikit-learn>=1.5', 'scipy>=1.11'],
+     'dependency_imports': ['networkx', 'scipy', 'sklearn'],
      'inputs_arity': 1,
      'outputs': [],
      'output_parameter': 'output'}

@@ -1,7 +1,7 @@
-# BioPipe
+# Operon
 
-Windows users can install **BioPipe_Setup.exe**, which includes its own Python
-and creates a fresh isolated profile. Existing profiles and analysis files remain
+Windows users can install **Operon_Setup.exe**, which includes its own Python
+for management, Form/memory infrastructure and agent interfaces, and creates a fresh isolated profile. Scientific dependencies are prepared explicitly for the chosen route/host; PyTorch, Pandas, SciPy and plotting packages are not bundled by default. Existing profiles and analysis files remain
 available for explicit import. See [Windows Setup](docs/windows_setup.md).
 
 ## Application and library releases
@@ -11,18 +11,32 @@ release artifacts. See [Application/library boundary](docs/application_library_b
 Operators, Readers, their parameter JSON and route templates live in `library/seed/`.
 
 
-BioPipe is a local bioinformatics pipeline engine with a visual desktop workspace,
+Operon (formerly BioPipe) is a local bioinformatics pipeline engine with a visual desktop workspace,
 typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
-AI agent through CLI or MCP. BioPipe itself does not supply an AI service.
+AI agent through CLI or MCP. Operon itself does not supply an AI service.
+Existing `biopipe` Python modules, CLI commands, MCP tools and protocol identifiers
+remain compatible; see [rebranding and compatibility](docs/rebranding.md).
 
-The **v2.6.0 application** and independently versioned **2026.11.5.2 operator library**
+The **v3.0.0 application candidate** and independently versioned **2026.11.6.1 operator library**
 share this repository. The reference library includes **717 operators, 101 Readers, seven
 provider packages and 24 route templates**. Operators and Readers use **protocol
-v3 / SDK 3.5**, separate parameter JSON and adjacent Markdown documentation.
+v3 / SDK 3.6**, separate parameter JSON and adjacent Markdown documentation.
+
+Operon 3.0 adds [editable workflow YAML](docs/workflow_yaml_v3.md),
+[workflow-local scripts](docs/script_operators_v3.md), [target readiness](docs/readiness.md),
+[explicit format adaptation](docs/data_formats.md), and
+[bidirectional canvas activity](docs/canvas_collaboration.md).
+For unattended execution, follow the [Linux server and terminal quickstart](docs/server_cli.md):
+`operon --workspace . environment check workflow.yaml`, then
+`operon --workspace . run workflow.yaml --progress --brief`.
+See the [3.0 implementation and validation checklist](docs/V3_IMPLEMENTATION.md)
+for verified behavior and remaining roadmap work. The [3.0 release notes](docs/releases/v3.0.0.md)
+explain the application/library boundary. The [Operon 3.0 Setup acceptance guide](docs/OPERON_3_TEST_ACCEPTANCE.md)
+defines the actual double-click installation and feature checks required before release.
 
 
-## Why BioPipe
+## Why Operon
 
 Retained results can be handed to specialist applications through the desktop-first
 **Open with** menu, CLI or API. The unified output operator converts qualified data
@@ -33,7 +47,7 @@ continue. See [formats, viewers and integration instructions](docs/result_viewer
 verified analysis instead of writing analysis code — avoiding implementation logic
 errors and the extra token cost of generating code.
 
-> Other systems ask an agent to write the analysis. BioPipe asks the agent to call a
+> Other systems ask an agent to write the analysis. Operon asks the agent to call a
 > validated tool.
 
 The value rests on five supports:

@@ -141,6 +141,25 @@ class PluginManager:
         """Use one discovery policy for live, restored, and archived catalogs."""
         return bundled_state(manifest_only=True) if self.manifest_only else bundled_state()
 
+    def catalog_stamp(self):
+        """Cheap invalidation for metadata-only readers, including external writes.
+
+        Source-aware developer instances keep their full existing detection policy.
+        Worker code/pin validation is independent of this presentation cache.
+        """
+        if not self.manifest_only:
+            return None
+        from .library_location import asset_path
+        paths = (self.registry, asset_path('biopipe/builtin_packages.json'))
+        result = []
+        for path in paths:
+            try:
+                info = io_path(path).stat()
+                result.append((str(path), info.st_ino, info.st_mtime_ns, info.st_ctime_ns, info.st_size))
+            except FileNotFoundError:
+                result.append((str(path), None))
+        return tuple(result)
+
     def state(self):
         # atomic_json publishes a complete generation. Readers must NOT wait on
         # the installation lock while pip prepares a new environment.

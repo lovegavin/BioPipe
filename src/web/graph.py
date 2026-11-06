@@ -43,7 +43,13 @@ def relative_manifest(manifest, directory, catalog=None):
     if catalog:
         operators = {item['id']: item for item in catalog['operators']}
         for step in result['steps']:
-            schema = operators[step['name']]['parameters_schema']
+            if step['name'].startswith('biopipe.script.'):
+                from biopipe.script_operators import validate_script
+                validate_script(step['params']['script'])
+                # Script paths are named file ports; code/values are frozen data.
+                schema = {}
+            else:
+                schema = operators[step['name']]['parameters_schema']
             for key, field in schema.get('properties', {}).items():
                 if field.get('x-biopipe-path') == 'workflow' and step.get('params', {}).get(key):
                     step['params'][key] = _relative_or_absolute(step['params'][key], directory)
@@ -77,13 +83,16 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
     def read_path(value, base):
         return input_path(root, value, base, input_roots)
     from .parameters import freeze_graph
+    if any(node.kind == "script" for node in graph.nodes):
+        from biopipe.script_operators import prepare_script_graph
+        graph, catalog = prepare_script_graph(graph, catalog)
     graph = freeze_graph(graph, catalog, root, input_roots=input_roots)
     if any(node.kind == "route" for node in graph.nodes):
         from .contracts import analyze_graph
         from .routes import expand_routes
         analysis = analyze_graph(graph, catalog, root, input_roots=input_roots)
         for edge in analysis["edges"]:
-            if edge["status"] == "incompatible":
+            if edge["status"] == "incompatible" or edge.get("format_unresolved"):
                 raise GraphError("；".join(edge["reasons"]), edge["target"])
         expanded, owners = expand_routes(graph, catalog)
         try:
@@ -228,17 +237,28 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
     # UI/agent graphs already contain concrete values; external sidecar paths
     # cannot override them through arbitrary manifest metadata.
     manifest.pop("parameters_file", None)
-    _validate_sources(sources)
-    _validate_steps(steps)
-    MemoryConfig.parse(manifest, detect_available=False)
+    from src.core.errors.errors import ManifestError
+    try:
+        _validate_sources(sources)
+        _validate_steps(steps)
+        MemoryConfig.parse(manifest, detect_available=False)
+    except ManifestError as error:
+        raise GraphError(str(error)) from error
     unknown_keep = set(memory.get("keep", [])) - used_names
     if unknown_keep:
         raise GraphError(f"保留列表引用了未知数据：{sorted(unknown_keep)}。")
     from .contracts import analyze_graph
     analysis = analyze_graph(graph, catalog, root, input_roots=input_roots)
     for edge in analysis["edges"]:
-        if edge["status"] == "incompatible":
+        if edge["status"] == "incompatible" or edge.get("format_unresolved"):
             raise GraphError("输入输出契约不兼容：" + "；".join(edge["reasons"]), edge["target"])
+    edge_specs = {edge.id: edge for edge in graph.edges}
+    for step, node_id in zip(steps, step_ids):
+        plans = [{"port": int(edge_specs[check["id"]].targetHandle[3:]), "edge_id": check["id"],
+                  "plan": check["conversion_plan"]} for check in analysis["edges"]
+                 if check["target"] == node_id and check.get("conversion_plan")]
+        if plans:
+            step["conversions"] = plans
     return manifest, step_ids
 
 

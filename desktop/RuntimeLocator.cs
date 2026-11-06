@@ -75,7 +75,7 @@ internal static class RuntimeLocator
         var script = Expand(configuration.EntryPoint, backendRoot);
         var frontend = Expand(configuration.Frontend, install);
         if (!File.Exists(script))
-            throw new FileNotFoundException("找不到后端入口。请将客户端保留在项目的 dist/BioPipe Studio 目录，" +
+            throw new FileNotFoundException("找不到后端入口。请将客户端保留在项目的 dist/Operon Studio 目录，" +
                 "或设置 biopipe-desktop.json 的 backendRoot / BIOPIPE_BACKEND_ROOT。\n" + script);
         if (!File.Exists(Path.Combine(frontend, "index.html")))
             throw new FileNotFoundException("前端资源不完整。请保留 exe 旁边的 frontend 文件夹。");
@@ -102,7 +102,7 @@ internal static class RuntimeLocator
         if (bundled)
             throw new RuntimeNotFoundException("随附运行环境不完整或无法启动。请重新解压完整发行包，并保留 runtime 文件夹。\n\n" +
                 string.Join("\n", failures), false);
-        throw new RuntimeNotFoundException("未找到可运行 BioPipe 的 Python 3.11+ 环境。" +
+        throw new RuntimeNotFoundException("未找到可运行 Operon 的 Python 3.11+ 环境。" +
             "请在已有环境安装 requirements-studio.txt，或用 BIOPIPE_PYTHON / biopipe-desktop.json 的 python 指定解释器。" +
             (automatic ? "\n已检查已记住的环境、项目环境、活动环境、PATH、Conda 环境记录和 Windows Python 注册项。"
                 : "\n明确指定的解释器未通过检查。") +
@@ -190,7 +190,7 @@ internal static class RuntimeLocator
         start.ArgumentList.Add("-I");
         start.ArgumentList.Add("-c");
         start.ArgumentList.Add("import importlib.util,json,sys; " +
-            "modules=['numpy','pandas','yaml','scipy','statsmodels','matplotlib','psutil','fastapi','uvicorn','jsonschema','pydantic','packaging','httpx','paramiko']; " +
+            "modules=['numpy','yaml','psutil','fastapi','uvicorn','jsonschema','pydantic','packaging','httpx','paramiko']; " +
             "print(json.dumps({'python':sys.executable,'version':list(sys.version_info[:2])," +
             "'missing':[m for m in modules if importlib.util.find_spec(m) is None]}))");
         start.Environment["PYTHONIOENCODING"] = "utf-8";

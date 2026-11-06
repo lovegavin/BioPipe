@@ -36,7 +36,10 @@ class ScatterStep(Step):
     """
     provider = 'biopipe-plots'
     parameters_file = 'scatter.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['matplotlib>=3.8'],
+     'dependency_imports': ['matplotlib'],
+     'protocol_version': 3,
      'id': 'scatter',
      'version': '1.0.0',
      'kind': 'operator',

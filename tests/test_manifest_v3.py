@@ -210,6 +210,16 @@ print(json.dumps(run_operator(STEPS['example.fresh_scale'],[form],{}).data.tolis
     assert manager.registry.read_bytes() == original
 
 
+def test_metadata_refresh_still_rejects_incompatible_host_sdk():
+    from biopipe.dropins import metadata_candidate
+    old = {'id': 'example.scale', 'distribution': 'example', 'dependencies': []}
+    state = {'packages': [{'name': 'example', 'version': '1.0.0'}], 'descriptors': [old]}
+    changed = {**old, 'dependencies': ['biopipe-studio>=99']}
+    with pytest.raises(ValueError, match='incompatible BioPipe SDK'):
+        metadata_candidate(state, 'example', [changed], version='1.0.0')
+    assert old['dependencies'] == []
+
+
 def test_source_parameter_refresh_and_unrelated_install_preserve_metadata(tmp_path, monkeypatch):
     import shutil
     from biopipe.plugins import PluginManager

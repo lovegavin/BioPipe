@@ -19,7 +19,10 @@ class MafReader(Reader):
     provider = 'biopipe-readers'
     """Mutation Annotation Format table reader."""
     parameters_file = 'maf_reader.MafReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'MafReader',
      'version': '1.0.0',
      'kind': 'reader',

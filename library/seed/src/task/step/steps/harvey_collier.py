@@ -13,7 +13,10 @@ from ._ext_common import make_form
 class HarveyCollierStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'harvey_collier.HarveyCollierStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['statsmodels>=0.14'],
+     'dependency_imports': ['statsmodels'],
+     'protocol_version': 3,
      'id': 'harvey_collier',
      'version': '1.0.0',
      'kind': 'operator',

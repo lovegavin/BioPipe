@@ -17,7 +17,10 @@ class BlastTabularReader(Reader):
     provider = 'biopipe-readers'
     """BLAST outfmt 6 reader."""
     parameters_file = 'blast_tabular_reader.BlastTabularReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'BlastTabularReader',
      'version': '1.0.0',
      'kind': 'reader',

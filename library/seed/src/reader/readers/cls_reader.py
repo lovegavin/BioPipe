@@ -17,7 +17,10 @@ class ClsReader(Reader):
     recover them for differential-expression operators.
     """
     parameters_file = 'cls_reader.ClsReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'ClsReader',
      'version': '1.0.0',
      'kind': 'reader',

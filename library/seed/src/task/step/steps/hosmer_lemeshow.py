@@ -15,7 +15,10 @@ from ._ext_common import make_form
 class HosmerLemeshowStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'hosmer_lemeshow.HosmerLemeshowStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'hosmer_lemeshow',
      'version': '1.0.0',
      'kind': 'operator',

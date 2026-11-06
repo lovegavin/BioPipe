@@ -15,7 +15,10 @@ class MmcifReader(Reader):
     provider = 'biopipe-readers'
     """Reader for mmCIF atom_site loops; output is atom x field."""
     parameters_file = 'mmcif_reader.MmcifReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'MmcifReader',
      'version': '1.0.0',
      'kind': 'reader',

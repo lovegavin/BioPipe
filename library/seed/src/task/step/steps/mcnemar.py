@@ -14,7 +14,10 @@ from ._ext_common import make_form
 class McnemarStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'mcnemar.McnemarStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'mcnemar',
      'version': '1.0.0',
      'kind': 'operator',

@@ -16,7 +16,10 @@ class CytobandReader(Reader):
     provider = 'biopipe-readers'
     """Cytogenetic band reader."""
     parameters_file = 'cytoband_reader.CytobandReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'CytobandReader',
      'version': '1.0.0',
      'kind': 'reader',

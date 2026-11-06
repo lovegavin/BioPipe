@@ -18,7 +18,10 @@ class PafReader(Reader):
     provider = 'biopipe-readers'
     """Pairwise mapping format (PAF) reader."""
     parameters_file = 'paf_reader.PafReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'PafReader',
      'version': '1.0.0',
      'kind': 'reader',

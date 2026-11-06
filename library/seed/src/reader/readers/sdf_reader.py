@@ -20,7 +20,10 @@ class SdfReader(Reader):
     provider = 'biopipe-readers'
     """Reader for SDF records; output is molecule x [atoms, bonds, molecular_weight]."""
     parameters_file = 'sdf_reader.SdfReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'SdfReader',
      'version': '1.0.0',
      'kind': 'reader',

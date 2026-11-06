@@ -23,7 +23,10 @@ class WigReader(Reader):
     provider = 'biopipe-readers'
     """Reader for fixedStep and variableStep WIG tracks; output is region x field."""
     parameters_file = 'wig_reader.WigReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'WigReader',
      'version': '1.0.0',
      'kind': 'reader',

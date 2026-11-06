@@ -22,7 +22,10 @@ class PslReader(Reader):
     provider = 'biopipe-readers'
     """UCSC PSL reader, one row per alignment."""
     parameters_file = 'psl_reader.PslReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'PslReader',
      'version': '1.0.0',
      'kind': 'reader',

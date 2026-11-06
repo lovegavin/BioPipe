@@ -20,7 +20,10 @@ class GenePredReader(Reader):
     provider = 'biopipe-readers'
     """UCSC genePred reader, one row per gene/transcript."""
     parameters_file = 'genepred_reader.GenePredReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'GenePredReader',
      'version': '1.0.0',
      'kind': 'reader',

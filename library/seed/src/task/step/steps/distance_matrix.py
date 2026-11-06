@@ -64,7 +64,10 @@ class DistanceMatrixStep(Step):
     """Pairwise distance matrix along one axis."""
     provider = 'biopipe-microbiome'
     parameters_file = 'distance_matrix.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'distance_matrix',
      'version': '1.0.0',
      'kind': 'operator',

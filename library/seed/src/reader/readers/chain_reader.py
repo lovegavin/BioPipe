@@ -24,7 +24,10 @@ class ChainReader(Reader):
     provider = 'biopipe-readers'
     """UCSC chain alignment reader."""
     parameters_file = 'chain_reader.ChainReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'ChainReader',
      'version': '1.0.0',
      'kind': 'reader',

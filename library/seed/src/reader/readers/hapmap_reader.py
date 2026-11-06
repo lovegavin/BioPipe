@@ -15,7 +15,10 @@ class HapmapReader(Reader):
     provider = 'biopipe-readers'
     """HapMap genotype table, returned as variant x sample dosage."""
     parameters_file = 'hapmap_reader.HapmapReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'HapmapReader',
      'version': '1.0.0',
      'kind': 'reader',

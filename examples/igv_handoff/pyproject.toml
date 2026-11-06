@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "biopipe-igv-example"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["biopipe-studio>=0.116.0,<3"]
+dependencies = ["biopipe-studio>=3.0.0,<4"]
 
 [project.entry-points."biopipe.operators"]
 genome_tracks = "biopipe_igv_example.tracks:GenomeTracks"

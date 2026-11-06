@@ -27,7 +27,10 @@ class XyzReader(Reader):
     provider = 'biopipe-readers'
     """XYZ reader, one row per atom."""
     parameters_file = 'xyz_reader.XyzReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'XyzReader',
      'version': '1.0.0',
      'kind': 'reader',

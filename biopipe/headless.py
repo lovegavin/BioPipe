@@ -34,7 +34,7 @@ def create_headless_app(settings):
             bridge.close()
             application.shutdown()
 
-    app = FastAPI(title='BioPipe application service', version=__version__, lifespan=lifespan,
+    app = FastAPI(title='Operon application service', version=__version__, lifespan=lifespan,
                   docs_url=None, redoc_url=None, openapi_url=None)
     app.state.headless = True
     app.state.application, app.state.service = application, service
@@ -125,6 +125,6 @@ def ensure_service(directory, *, workspace=None, require_api=1):
             if available:
                 return available
             if process.poll() is not None:
-                raise ClientError(f'BioPipe service exited during startup. See {log}', 'service_start_failed')
+                raise ClientError(f'Operon service exited during startup. See {log}', 'service_start_failed')
             time.sleep(.2)
-        raise ClientError(f'BioPipe service is still starting. See {log}; retry service status.', 'service_start_timeout')
+        raise ClientError(f'Operon service is still starting. See {log}; retry service status.', 'service_start_timeout')

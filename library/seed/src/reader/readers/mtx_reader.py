@@ -59,7 +59,10 @@ class MtxReader(Reader):
     """Reader for MatrixMarket .mtx files."""
     provider = 'biopipe-readers'
     parameters_file = 'mtx_reader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0', 'scipy>=1.11'],
+     'dependency_imports': ['pandas', 'scipy'],
+     'protocol_version': 3,
      'id': 'MtxReader',
      'version': '1.0.0',
      'kind': 'reader',

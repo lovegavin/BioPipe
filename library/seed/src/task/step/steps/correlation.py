@@ -70,7 +70,10 @@ class CorrelationStep(Step):
     """Pairwise correlation matrix along one axis."""
     provider = 'biopipe-microbiome'
     parameters_file = 'correlation.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'correlation',
      'version': '1.0.0',
      'kind': 'operator',

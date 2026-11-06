@@ -199,9 +199,9 @@ class ExecutionService:
             raise ValueError('File does not exist')
         return info['bytes']
 
-    def plan(self, graph):
+    def plan(self, graph, *, validation_only=False):
         graph = self.prepare(graph)
-        plan = make_plan(graph, self.infos(graph=graph), stat_file=self._size)
+        plan = make_plan(graph, self.infos(graph=graph), stat_file=self._size, validation_only=validation_only)
         self._validate_structure(graph)
         return plan
 
@@ -238,7 +238,9 @@ class ExecutionService:
 
     def validate(self, graph, *, require_files=True):
         graph = self.prepare(graph)
-        plan = self.plan(graph)
+        # Missing dependencies must reach ReadinessService, where users can
+        # explicitly prepare them. Launch always recomputes a strict plan.
+        plan = self.plan(graph, validation_only=True)
         _, order = self._validate_structure(graph)
         return {'valid': True, 'order': order, 'contracts': analyze_graph(graph, self.catalog(graph), self.service.root,
                                                                       input_roots=self.service.settings.input_roots),

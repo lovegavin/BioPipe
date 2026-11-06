@@ -61,6 +61,9 @@ class ProteinmpnnInterfaceTemperatureScanStep(Step):
     parameters_file = "proteinmpnn_interface_temperature_scan.ProteinmpnnInterfaceTemperatureScanStep.parameters.json"
 
     definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+
         "protocol_version": 3,
         "id": "proteinmpnn_interface_temperature_scan",
         "version": "1.0.0",

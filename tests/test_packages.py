@@ -74,6 +74,42 @@ def test_pre_package_registry_requires_explicit_migration(tmp_path):
     assert manager.registry.read_text() == original
 
 
+@pytest.mark.parametrize('requirement,accepted', [
+    ('biopipe-studio>=999', False),
+    ('biopipe-studio>=3.0.0,<4', True),
+    ('biopipe-studio>=999; python_version < "0"', True),
+])
+def test_static_install_enforces_host_version_without_dependency_repair(tmp_path, monkeypatch, requirement, accepted):
+    from extension_fixtures import write_extension
+    from biopipe.dropins import single_file_wheel
+    source = tmp_path / 'future.py'
+    monkeypatch.setenv('TEMP', str(tmp_path))
+    monkeypatch.setenv('TMP', str(tmp_path))
+    write_extension(source, 'BIOPIPE_PLUGIN = ' + repr({'name': 'future-host', 'dependencies': [requirement]}) + '\n' + '''
+from biopipe_sdk import Step
+class Future(Step):
+    name = 'test.future_host'
+    input_contracts = []
+    output_contract = {'mode': 'report'}
+    parameters_schema = {'type': 'object'}
+    def run(self, ctx, inputs):
+        raise AssertionError('Registration must not execute user code')
+''')
+    manager = PluginManager(tmp_path / 'state', source_root=None)
+    manager.state()
+    original = manager.registry.read_bytes()
+    monkeypatch.setattr('biopipe.targets.TargetBuilder.prepare', lambda *a, **kw: pytest.fail('Static registration cannot resolve dependencies'))
+    wheel = single_file_wheel(source, tmp_path / 'future-wheel')
+    if accepted:
+        state = manager.install(wheel)
+        assert any(d['id'] == 'test.future_host' for d in state['descriptors'])
+        assert not state.get('shared_paths')
+    else:
+        with pytest.raises(ValueError, match='incompatible BioPipe SDK'):
+            manager.install(wheel)
+        assert manager.registry.read_bytes() == original
+
+
 def test_resource_claims_require_real_hooks():
     from biopipe_sdk import Step, Reader, port, reader_contract
     class BrokenStream(Step):

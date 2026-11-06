@@ -19,6 +19,14 @@ def run(ctx: Context, steps: list[dict]) -> None:
     ctx._run_status = "running"
     global_params = ctx.params
     try:
+        # Workflow-local scripts are frozen assets, not globally installed
+        # providers. Register their execution adapter only inside this worker.
+        from biopipe.script_operators import PREFIX, script_step_class
+        for specification in steps:
+            if specification['name'].startswith(PREFIX):
+                snapshot = specification.get('params', {}).get('script')
+                implementation = script_step_class(specification['name'], snapshot)
+                STEPS[specification['name']] = implementation
         if ctx.memory:
             ctx.memory.configure(steps, STEPS)
         for i, spec in enumerate(steps, start=1):
@@ -53,6 +61,11 @@ def run(ctx: Context, steps: list[dict]) -> None:
                     forms, stream = ctx.memory.prepare(i - 1, spec, cls)
                 else:
                     forms = [_resolve(ctx, n, name) for n in names]
+                if spec.get("conversions"):
+                    if stream is not None:
+                        raise StepError("A full-Form converter cannot adapt a streaming input")
+                    from biopipe.conversions import apply_step_conversions
+                    forms = apply_step_conversions(ctx, forms, spec["conversions"])
                 requirements = [resolve(rule, ctx.step_params) for rule in (cls.input_contracts or [])]
                 schemas = []
                 if stream is not None:

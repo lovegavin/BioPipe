@@ -39,7 +39,10 @@ _DIRECTIONS = ("up", "down", "both")
 class OraStep(Step):
     provider = 'biopipe-expression'
     parameters_file = 'ora.OraStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'ora',
      'version': '1.0.0',
      'kind': 'operator',

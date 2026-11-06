@@ -14,7 +14,10 @@ class GffReader(Reader):
     provider = 'biopipe-readers'
     """Reader for 9-column GFF files; output is feature x field."""
     parameters_file = 'gff_reader.GffReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'GffReader',
      'version': '1.0.0',
      'kind': 'reader',

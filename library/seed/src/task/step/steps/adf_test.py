@@ -14,7 +14,10 @@ from ._stats21_common import numeric_column, table_frame
 class AdfTestStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'adf_test.AdfTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['statsmodels>=0.14'],
+     'dependency_imports': ['statsmodels'],
+     'protocol_version': 3,
      'id': 'adf_test',
      'version': '1.0.0',
      'kind': 'operator',

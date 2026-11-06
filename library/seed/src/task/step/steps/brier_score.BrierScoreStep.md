@@ -27,6 +27,8 @@ or statistical assumptions for a particular dataset.
 
 ## Runtime environment
 
+Declared Python requirements: `lifelines<0.31,>=0.30`, `pandas>=2`. Prepare them explicitly in the selected execution environment; registration and application startup do not install them.
+
 Runs in the shared BioPipe interpreter.
 
 ## Limitations

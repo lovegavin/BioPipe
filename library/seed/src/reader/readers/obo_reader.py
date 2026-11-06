@@ -14,7 +14,10 @@ class OboReader(Reader):
     provider = 'biopipe-readers'
     """Reader for [Term] stanzas in OBO files; output is term x field."""
     parameters_file = 'obo_reader.OboReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'OboReader',
      'version': '1.0.0',
      'kind': 'reader',

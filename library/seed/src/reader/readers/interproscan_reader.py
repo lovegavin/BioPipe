@@ -20,7 +20,10 @@ class InterProScanReader(Reader):
     provider = 'biopipe-readers'
     """InterProScan tabular output reader."""
     parameters_file = 'interproscan_reader.InterProScanReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'InterProScanReader',
      'version': '1.0.0',
      'kind': 'reader',

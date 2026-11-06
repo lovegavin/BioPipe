@@ -17,7 +17,10 @@ class ClustalReader(Reader):
     provider = 'biopipe-readers'
     """Reader for .aln / .clustal block alignments."""
     parameters_file = 'clustal_reader.ClustalReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'ClustalReader',
      'version': '1.0.0',
      'kind': 'reader',

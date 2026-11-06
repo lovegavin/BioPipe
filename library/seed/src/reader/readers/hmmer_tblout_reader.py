@@ -23,7 +23,10 @@ class HmmerTbloutReader(Reader):
     provider = 'biopipe-readers'
     """HMMER3 --tblout reader."""
     parameters_file = 'hmmer_tblout_reader.HmmerTbloutReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'HmmerTbloutReader',
      'version': '1.0.0',
      'kind': 'reader',

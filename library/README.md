@@ -2,6 +2,14 @@
 
 This directory is independently owned and versioned from the BioPipe application.
 
+Library **2026.11.6.1** makes previously implicit Pandas/SciPy/Statsmodels/Matplotlib
+requirements explicit for 175 Readers/operators (including shared helper imports).
+This supports the management-only Operon Setup: route validation now reports
+missing requirements and explicit preparation installs them in execution targets.
+Algorithms and parameter values are unchanged. The manifest and generated guides
+remain maintenance outputs; the application does not scan implementation imports
+or install scientific dependencies at startup.
+
 Library 2026.11.5.1 adds `export_results`: a single parameterized output operator
 for intermediate branches, native-file reuse and CSV/TSV/NPY/FASTA/PDB/mmCIF
 exports. See its [operator guide](seed/src/task/step/steps/export_results.ExportResultsStep.md).

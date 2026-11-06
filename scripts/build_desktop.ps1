@@ -1,7 +1,7 @@
-param([switch]$SkipFrontend, [string]$OutputDirectory)
+param([switch]$SkipFrontend, [string]$OutputDirectory, [switch]$NoRestore)
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
-$output = if ($OutputDirectory) { [System.IO.Path]::GetFullPath($OutputDirectory, $repo) } else { Join-Path $repo 'dist\BioPipe Studio' }
+$output = if ($OutputDirectory) { [System.IO.Path]::GetFullPath($OutputDirectory, $repo) } else { Join-Path $repo 'dist\Operon Studio' }
 if (-not $env:DOTNET_CLI_HOME) { $env:DOTNET_CLI_HOME = Join-Path $repo '.local\dotnet' }
 if (-not $env:NUGET_PACKAGES) { $env:NUGET_PACKAGES = Join-Path $repo '.local\nuget' }
 $env:DOTNET_CLI_TELEMETRY_OPTOUT = '1'
@@ -14,7 +14,8 @@ if (-not $SkipFrontend) {
         if ($LASTEXITCODE -ne 0) { throw 'Frontend build failed' }
     } finally { Pop-Location }
 }
-& dotnet publish (Join-Path $repo 'desktop\BioPipeStudio.csproj') -c Release -o $output
+[string[]]$restoreOptions = if ($NoRestore) { @('--no-restore') } else { @() }
+& dotnet publish (Join-Path $repo 'desktop\BioPipeStudio.csproj') -c Release -o $output @restoreOptions
 if ($LASTEXITCODE -ne 0) { throw 'Desktop build failed' }
 $frontendOutput = Join-Path $output 'frontend'
 New-Item -ItemType Directory -Path $frontendOutput -Force | Out-Null
@@ -24,4 +25,4 @@ $config = Join-Path $output 'biopipe-desktop.json'
 if (-not (Test-Path -LiteralPath $config)) {
     Copy-Item -LiteralPath (Join-Path $repo 'desktop\biopipe-desktop.json') -Destination $config
 }
-Write-Output (Join-Path $output 'BioPipe Studio.exe')
+Write-Output (Join-Path $output 'Operon Studio.exe')

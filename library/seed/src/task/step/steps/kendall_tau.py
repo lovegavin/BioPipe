@@ -14,7 +14,10 @@ from ._ext_common import labels_in_order, make_form, reorder
 class KendallTauStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'kendall_tau.KendallTauStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'kendall_tau',
      'version': '1.0.0',
      'kind': 'operator',

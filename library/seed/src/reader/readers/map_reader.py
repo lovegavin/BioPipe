@@ -17,7 +17,10 @@ class MapReader(Reader):
     provider = 'biopipe-readers'
     """Reader for the four-column PLINK .map format."""
     parameters_file = 'map_reader.MapReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'MapReader',
      'version': '1.0.0',
      'kind': 'reader',

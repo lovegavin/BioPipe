@@ -104,12 +104,12 @@ def descriptor_capability(spec, info, pin=None):
     if info.get('system') not in spec.get('supported_systems', [info.get('system')]):
         return f"{name} requires {' / '.join(spec['supported_systems'])}"
     absent = [tool for tool in spec.get('resources', {}).get('external_tools', []) if not info.get('tools', {}).get(tool)]
-    if absent:
+    if absent and not info.get('_validation_only'):
         return 'Missing executable: ' + ', '.join(absent)
     states = info.get('_dependencies')
     if states is None:
         states = {item['id']: item for item in info.get('dependencies', {}).get('entries', [])}
-    if states.get(name, {}).get('status') in ('failed', 'missing', 'unavailable'):
+    if not info.get('_validation_only') and states.get(name, {}).get('status') in ('failed', 'missing', 'unavailable'):
         return f'{name} dependencies are not ready'
     if pin:
         current = spec.get('implementation') or {}
@@ -269,7 +269,12 @@ def _metadata(graph, infos, stat_file, warnings):
     return requirements, references, source_references, source_readers, source_sizes
 
 
-def make_plan(graph, infos, *, stat_file=None):
+def make_plan(graph, infos, *, stat_file=None, validation_only=False):
+    """Place for execution, or select hosts whose missing dependencies need checking.
+
+    Validation placement never authorizes a job. OS, pinned code, declarations
+    and connected host availability remain strict in either mode.
+    """
     config = settings(graph)
     nodes, order, incoming, outgoing = ordered_nodes(graph)
     default = target_key(config)
@@ -280,6 +285,7 @@ def make_plan(graph, infos, *, stat_file=None):
     assigned, choices, reasons, sizes, warnings = {}, {}, {}, {}, []
     requirements, references, source_references, source_readers, source_sizes = _metadata(graph, info_by_key, stat_file, warnings)
     for info in info_by_key.values():
+        info['_validation_only'] = validation_only
         info['_operators'] = {spec['id']: spec for spec in info['catalog']['operators']}
         info['_readers'] = {spec['id']: spec for spec in info['catalog'].get('readers', [])}
         info['_dependencies'] = {item['id']: item for item in info.get('dependencies', {}).get('entries', [])}
@@ -313,7 +319,7 @@ def make_plan(graph, infos, *, stat_file=None):
             assigned[key] = target_key(location)
             sizes[key] = source_sizes.get(key)
             continue
-        candidates, failures = [], []
+        candidates, failures, ready_candidates = [], [], []
         for name, info in info_by_key.items():
             if name not in allowed:
                 continue
@@ -328,6 +334,19 @@ def make_plan(graph, infos, *, stat_file=None):
                 failures.append(f"{info.get('name', name)}: {failure}")
             else:
                 candidates.append(name)
+                if validation_only and config['mode'] == 'auto':
+                    strict_info = {**info, '_validation_only': False}
+                    strict_failure = capability(node, strict_info)
+                    if not strict_failure:
+                        for source_id in incoming[key]:
+                            if nodes[source_id].kind == 'source':
+                                strict_failure = reader_capability(source_id, strict_info)
+                                if strict_failure:
+                                    break
+                    if not strict_failure:
+                        ready_candidates.append(name)
+        if validation_only and config['mode'] == 'auto' and ready_candidates:
+            candidates = ready_candidates
         desired = target_key(config["node_targets"].get(key, config))
         if config["mode"] == "manual":
             if desired not in candidates:
@@ -389,7 +408,9 @@ def make_plan(graph, infos, *, stat_file=None):
         dest = assigned[key]
         if not units or target_key(units[-1]["target"]) != dest:
             units.append({"id": f"stage_{len(units)+1}", "node_ids": [], "target": target(info_by_key[dest]["target"]),
-                          "reason": "Manual selection" if config["mode"] == "manual" else "Compatible dependencies; input locality and queue cost",
+                          "reason": ("Manual selection" if config["mode"] == "manual" else
+                                     "Target selection pending dependency validation; input locality and queue cost" if validation_only else
+                                     "Compatible dependencies; input locality and queue cost"),
                           "estimated_bytes": 0, "depends_on": []})
         unit = units[-1]; unit["node_ids"].append(key); owner[key] = unit["id"]
         unit["estimated_bytes"] += sizes.get(key) or 0
@@ -417,4 +438,5 @@ def make_plan(graph, infos, *, stat_file=None):
     if not units:
         raise GraphError("Add at least one analysis operator")
     return {"mode": config["mode"], "units": units, "transfers": transfers, "warnings": warnings,
+            **({'validation_only': True} if validation_only else {}),
             "algorithm": "bounded-locality-v1", "optimality": "heuristic"}

@@ -14,7 +14,10 @@ from ._ext_common import make_form
 class BlandAltmanStep(Step):
     provider = 'biopipe-core'
     parameters_file = 'bland_altman.BlandAltmanStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'bland_altman',
      'version': '1.0.0',
      'kind': 'operator',

@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+from biopipe_sdk.formats import Adaptation
 
 
 class StrictModel(BaseModel):
@@ -30,7 +31,8 @@ class Source(StrictModel):
 
 class GraphNode(StrictModel):
     id: str = Field(pattern=r"^[A-Za-z_][A-Za-z0-9_.-]{0,79}$")
-    kind: Literal["source", "operator", "route"]
+    kind: Literal["source", "operator", "route", "script"]
+    script: dict[str, Any] | None = None
     operator: str | None = None
     title: str = Field(default="", max_length=120)
     position: Position
@@ -42,6 +44,7 @@ class GraphNode(StrictModel):
 
 
 class GraphEdge(StrictModel):
+    adaptation: Adaptation | None = None
     id: str = Field(max_length=200)
     source: str = Field(max_length=80)
     target: str = Field(max_length=80)

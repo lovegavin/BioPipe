@@ -1,0 +1,21 @@
+format: biopipe.workflow
+schema_version: 1
+name: Script parameter and branch demo
+parameters_file: parameters.json
+execution_file: execution.json
+sources: {}
+steps:
+  generate:
+    script: generate.py
+    inputs: {}
+  branch_a:
+    script: scale.py
+    inputs:
+      in0: steps.generate.out
+  branch_b:
+    script: scale.py
+    inputs:
+      in0: steps.generate.out
+outputs:
+  scaled_a: steps.branch_a.out
+  scaled_b: steps.branch_b.out

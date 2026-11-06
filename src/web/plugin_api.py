@@ -34,18 +34,20 @@ def mount_plugins(app, service):
     async def execute(key, wheel=None, remove=None, temporary=None, name=None, action=None):
         try:
             if action == 'dependencies':
-                pass
+                await asyncio.to_thread(service.dependencies.check, repair=not service.settings.testing)
             elif action == "refresh":
                 operations[key]["result"] = await asyncio.to_thread(service.plugins.refresh)
             elif action:
                 await asyncio.to_thread(service.plugins.manage, name, action)
             else:
                 await asyncio.to_thread(service.plugins.install, wheel, remove=remove)
-            await asyncio.to_thread(service.dependencies.check, repair=not service.settings.testing)
+            # Registration is metadata-only. Installation/refresh must not
+            # prepare a scientific environment before an execution target exists.
+            service.dependencies.sync(service.plugins.state())
             if service.dependencies.cancel.is_set():
                 operations[key].update(status="failed", error="Studio is closing")
                 return
-            service.refresh_catalog()
+            await asyncio.to_thread(service.refresh_catalog)
             operations[key].update(status="complete")
         except Exception as exc:
             operations[key].update(status="failed", error=str(exc))
@@ -86,7 +88,7 @@ def mount_plugins(app, service):
         check_idle()
         try:
             state = await asyncio.to_thread(service.plugins.update_declarations, await request.json())
-            service.refresh_catalog()
+            await asyncio.to_thread(service.refresh_catalog)
             return {'generation': state['generation']}
         except ValueError as exc:
             raise HTTPException(422, str(exc)) from exc

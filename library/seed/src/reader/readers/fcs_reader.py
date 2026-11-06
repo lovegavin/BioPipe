@@ -80,7 +80,10 @@ class FcsReader(Reader):
     provider = 'biopipe-readers'
     """Reader for .fcs flow-cytometry files."""
     parameters_file = 'fcs_reader.FcsReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'FcsReader',
      'version': '1.0.0',
      'kind': 'reader',

@@ -208,7 +208,7 @@ class DependencySession:
                                      'python': str(python),
                                      'ids': [entry['id'] for entry in entries]}, ensure_ascii=False) + '\n')
 
-    def check(self, *, repair=True, repair_r=None):
+    def check(self, *, repair=True, repair_r=None, ids=None):
         # Shared with source/wheel transactions so the runtime cannot change
         # between probing and committing a repair. HTTP reads remain lock-free.
         if self.cancel.is_set():
@@ -220,11 +220,15 @@ class DependencySession:
                 return self.snapshot()
             state = self.manager.state()
             self.sync(state)
+            selected = None if ids is None else set(ids)
+            if selected is not None and selected - self.entries.keys():
+                raise ValueError('Unknown dependency declarations: ' + ', '.join(sorted(selected - self.entries.keys())))
             with self.lock:
                 if self.running:
                     return self.snapshot()
                 self.running = True
-                pending = deepcopy([v for v in self.entries.values() if v['status'] != 'passed'])
+                pending = deepcopy([v for v in self.entries.values()
+                                    if v['status'] != 'passed' and (selected is None or v['id'] in selected)])
             from biopipe.plugins import process_context
             previous_cancel = getattr(process_context, 'cancel', None)
             process_context.cancel = self.cancel

@@ -1,5 +1,6 @@
 import { memo, useId } from "react";
 import { BaseEdge, getBezierPath, Position } from "@xyflow/react";
+import type { ConversionPlan } from "./types";
 import type { EdgeProps } from "@xyflow/react";
 
 const ARROW_LENGTH = 8;
@@ -19,11 +20,12 @@ export const WorkflowEdge = memo(function WorkflowEdge({
   sourcePosition,
   targetPosition,
   interactionWidth,
+  data,
 }: EdgeProps) {
   const markerId = `workflow-arrow-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const [outwardX, outwardY] = targetOutward[targetPosition];
   // End the curve at the arrow's base; its tip reaches the original port.
-  const [path] = getBezierPath({
+  const [path, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
     targetX: targetX + outwardX * ARROW_LENGTH,
@@ -31,6 +33,9 @@ export const WorkflowEdge = memo(function WorkflowEdge({
     sourcePosition,
     targetPosition,
   });
+
+  const conversion = data?.conversion_plan as ConversionPlan | undefined;
+  const details = conversion?.converters?.map(item => `${item.source} → ${item.target} (${item.id}@${item.version})`).join("\n");
 
   return (
     <>
@@ -59,6 +64,11 @@ export const WorkflowEdge = memo(function WorkflowEdge({
         markerEnd={`url(#${markerId})`}
         interactionWidth={interactionWidth}
       />
+      {details && <g transform={`translate(${labelX}, ${labelY})`} role="img" aria-label={details}>
+        <title>{details}</title>
+        <circle r="10" fill="var(--panel, #242424)" stroke="currentColor" strokeWidth="1" />
+        <text textAnchor="middle" dominantBaseline="central" fontSize="12" fill="currentColor">⇄</text>
+      </g>}
     </>
   );
 });

@@ -35,7 +35,10 @@ class MzmlReader(Reader):
     provider = 'biopipe-readers'
     """One row per mzML spectrum, with peak lists summarized."""
     parameters_file = 'mzml_reader.MzmlReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'MzmlReader',
      'version': '1.0.0',
      'kind': 'reader',

@@ -1,5 +1,5 @@
 {
-  "version": "2026.11.5.2",
+  "version": "2026.11.6.1",
   "minimum_application": "2.0.4",
-  "build_application": "2.0.4"
+  "build_application": "3.0.0"
 }

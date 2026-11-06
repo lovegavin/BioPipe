@@ -27,6 +27,8 @@ or statistical assumptions for a particular dataset.
 
 ## Runtime environment
 
+Declared Python requirements: `scipy>=1.11`. Prepare them explicitly in the selected execution environment; registration and application startup do not install them.
+
 This operator executes in the dedicated `boltz` interpreter; see docs/large_resources.md for resolution and overrides.
 
 ## Limitations

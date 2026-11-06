@@ -41,7 +41,10 @@ class KaplanMeierStep(Step):
     """Draw Kaplan-Meier survival curves."""
     provider = 'biopipe-plots'
     parameters_file = 'kaplan_meier.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['matplotlib>=3.8'],
+     'dependency_imports': ['matplotlib'],
+     'protocol_version': 3,
      'id': 'kaplan_meier',
      'version': '1.0.0',
      'kind': 'operator',

@@ -27,7 +27,7 @@ internal static class Program
             values.TryGetValue("--result", out resultFile);
             var spec = InstallFiles.EmbeddedSpec();
             var options = new InstallOptions(values.GetValueOrDefault("--install-dir") ?? Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "BioPipe Studio"),
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "Operon Studio"),
                 values.GetValueOrDefault("--payload"), !flags.Contains("--no-register"));
             bool uninstall = flags.Contains("--uninstall");
             // A running executable cannot remove itself. Only copy this small
@@ -35,8 +35,8 @@ internal static class Program
             if (uninstall && !flags.Contains("--uninstall-worker") &&
                 string.Equals(Path.GetDirectoryName(Environment.ProcessPath), Path.GetFullPath(options.InstallDir), StringComparison.OrdinalIgnoreCase))
             {
-                var folder = Path.Combine(Path.GetTempPath(), "BioPipe-Uninstall-" + Guid.NewGuid().ToString("N"));
-                Directory.CreateDirectory(folder); var helper = Path.Combine(folder, "BioPipe_Uninstall.exe");
+                var folder = Path.Combine(Path.GetTempPath(), "Operon-Uninstall-" + Guid.NewGuid().ToString("N"));
+                Directory.CreateDirectory(folder); var helper = Path.Combine(folder, "Operon_Uninstall.exe");
                 File.Copy(Environment.ProcessPath!, helper);
                 var start = new ProcessStartInfo(helper) { UseShellExecute = false, CreateNoWindow = true };
                 foreach (var arg in args) start.ArgumentList.Add(arg);
@@ -64,7 +64,7 @@ internal static class Program
         catch (Exception error)
         {
             if (resultFile is not null) InstallFiles.AtomicJson(Path.GetFullPath(resultFile), new { status = "failed", message = error.Message });
-            if (!args.Contains("--quiet")) MessageBox.Show(error.Message, "BioPipe Setup", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (!args.Contains("--quiet")) MessageBox.Show(error.Message, "Operon Setup", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;
         }
     }
@@ -89,20 +89,20 @@ internal sealed class SetupWindow : Form
     internal SetupWindow(PayloadSpec spec, InstallOptions options, bool uninstall, string? resultFile)
     {
         this.options = options; this.uninstall = uninstall; this.resultFile = resultFile;
-        Text = uninstall ? "Uninstall BioPipe" : "BioPipe Setup";
+        Text = uninstall ? "Uninstall Operon" : "Operon Setup";
         Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         ClientSize = new Size(630, 400); MinimumSize = MaximumSize = Size;
         FormBorderStyle = FormBorderStyle.FixedDialog; MaximizeBox = false;
         StartPosition = FormStartPosition.CenterScreen; BackColor = Color.FromArgb(249, 249, 250);
         Font = new Font("Microsoft YaHei UI", 10); AutoScaleMode = AutoScaleMode.Dpi;
-        var title = new Label { Text = uninstall ? "卸载 BioPipe Studio" : "安装 BioPipe Studio", AutoSize = true,
+        var title = new Label { Text = uninstall ? "卸载 Operon Studio" : "安装 Operon Studio", AutoSize = true,
             Location = new Point(32, 28), Font = new Font("Microsoft YaHei UI", 22, FontStyle.Bold) };
         var subtitle = new Label { Text = uninstall ? "软件将被移除，用户档案和分析数据会保留。" :
             $"{spec.Version}  ·  内置运行环境，无需预先安装 Python", Location = new Point(34, 88), Size = new Size(560, 30), ForeColor = Color.DimGray };
         var label = new Label { Text = "安装位置", AutoSize = true, Location = new Point(34, 145) };
         destination.SetBounds(34, 175, 462, 32); destination.Text = options.InstallDir; destination.ReadOnly = uninstall;
         browse.SetBounds(506, 173, 90, 34); browse.Text = "更改"; browse.Enabled = !uninstall;
-        browse.Click += (_, _) => { using var dialog = new FolderBrowserDialog { InitialDirectory = destination.Text, Description = "选择 BioPipe 安装目录" };
+        browse.Click += (_, _) => { using var dialog = new FolderBrowserDialog { InitialDirectory = destination.Text, Description = "选择 Operon 安装目录" };
             if (dialog.ShowDialog(this) == DialogResult.OK) destination.Text = dialog.SelectedPath; };
         state.SetBounds(34, 222, 562, 52); state.Text = uninstall ? "仅移除本安装程序管理的软件文件。" : "创建独立环境。旧档案保留，可稍后导入路线。";
         progress.SetBounds(34, 284, 562, 6); progress.Style = ProgressBarStyle.Continuous;
@@ -130,13 +130,13 @@ internal sealed class SetupWindow : Form
                 completed = await Task.Run(async () => uninstall ? engine.Uninstall(target) :
                     await engine.Install(options with { InstallDir = target }, cancellation.Token));
                 if (resultFile is not null) InstallFiles.AtomicJson(Path.GetFullPath(resultFile), completed);
-                ExitCode = 0; action.Text = uninstall ? "完成" : "打开 BioPipe"; action.Enabled = true; cancel.Text = "关闭"; cancel.Enabled = true;
+                ExitCode = 0; action.Text = uninstall ? "完成" : "打开 Operon"; action.Enabled = true; cancel.Text = "关闭"; cancel.Enabled = true;
             }
             catch (Exception error)
             {
                 state.Text = error is OperationCanceledException ? "安装已取消。原有软件与用户档案已保留。" : "安装未完成，请查看日志。";
                 if (resultFile is not null) InstallFiles.AtomicJson(Path.GetFullPath(resultFile), new InstallResult("failed", destination.Text, null, null, engine.LogPath, error.Message));
-                if (error is not OperationCanceledException) MessageBox.Show(this, error.Message, "BioPipe Setup", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (error is not OperationCanceledException) MessageBox.Show(this, error.Message, "Operon Setup", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 cancel.Text = "关闭"; cancel.Enabled = true;
             }
             finally { running = false; }

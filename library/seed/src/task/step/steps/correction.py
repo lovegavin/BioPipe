@@ -25,7 +25,10 @@ class CorrectionStep(Step):
     """
     provider = 'biopipe-genetics'
     parameters_file = 'correction.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['statsmodels>=0.14'],
+     'dependency_imports': ['statsmodels'],
+     'protocol_version': 3,
      'id': 'correction',
      'version': '1.0.0',
      'kind': 'operator',

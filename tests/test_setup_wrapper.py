@@ -11,11 +11,11 @@ from scripts.build_setup import append_payload, payload_spec, MAGIC
 def archive(tmp_path, *, full=True, extra=False):
     payload = tmp_path / 'payload.zip'
     with zipfile.ZipFile(payload, 'w') as z:
-        z.writestr('BioPipe Studio/example.txt', b'hello')
-        z.writestr('BioPipe Studio/package-manifest.json', json.dumps({'version': '2.5.0', 'python_bundled': full,
+        z.writestr('Operon Studio/example.txt', b'hello')
+        z.writestr('Operon Studio/package-manifest.json', json.dumps({'version': '3.0.0', 'python_bundled': full,
             'files': [{'path': 'example.txt', 'bytes': 5, 'sha256': hashlib.sha256(b'hello').hexdigest()}]}))
         if extra:
-            z.writestr('BioPipe Studio/unlisted.py', 'unexpected')
+            z.writestr('Operon Studio/unlisted.py', 'unexpected')
     return payload
 
 

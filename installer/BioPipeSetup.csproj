@@ -5,7 +5,10 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>BioPipe_Setup</AssemblyName>
+    <AssemblyName>Operon_Setup</AssemblyName>
+    <Product>Operon Setup</Product>
+    <Title>Operon Setup</Title>
+    <Version>3.0.0</Version>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>

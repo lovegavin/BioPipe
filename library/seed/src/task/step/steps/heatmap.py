@@ -52,7 +52,10 @@ class HeatmapStep(Step):
     """Draw a heatmap of a 2D form."""
     provider = 'biopipe-plots'
     parameters_file = 'heatmap.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['matplotlib>=3.8', 'scipy>=1.11'],
+     'dependency_imports': ['matplotlib', 'scipy'],
+     'protocol_version': 3,
      'id': 'heatmap',
      'version': '1.0.0',
      'kind': 'operator',

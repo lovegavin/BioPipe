@@ -74,7 +74,10 @@ class BedReader(Reader):
     """Reader for UCSC .bed files."""
     provider = 'biopipe-readers'
     parameters_file = 'bed_reader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['pandas>=2.0'],
+     'dependency_imports': ['pandas'],
+     'protocol_version': 3,
      'id': 'BedReader',
      'version': '1.0.0',
      'kind': 'reader',

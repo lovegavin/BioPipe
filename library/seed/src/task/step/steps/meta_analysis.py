@@ -36,7 +36,10 @@ _CORRECTIONS = ("fdr", "bonferroni", "holm", "hommel", "fdr_by")
 class MetaAnalysisStep(Step):
     provider = 'biopipe-genetics'
     parameters_file = 'meta_analysis.MetaAnalysisStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+     'dependencies': ['scipy>=1.11'],
+     'dependency_imports': ['scipy'],
+     'protocol_version': 3,
      'id': 'meta_analysis',
      'version': '1.0.0',
      'kind': 'operator',
