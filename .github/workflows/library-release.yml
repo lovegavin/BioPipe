@@ -102,7 +102,9 @@ jobs:
           ls -l artifacts
           cat artifacts/SHA256SUMS-*.txt > artifacts/SHA256SUMS.txt
           sha256sum QUICKSTART.md QUICKSTART.zh.md >> artifacts/SHA256SUMS.txt
+          cp install_dependencies.py install-dependencies.sh install-dependencies.ps1 artifacts/
+          sha256sum install_dependencies.py install-dependencies.sh install-dependencies.ps1 >> artifacts/SHA256SUMS.txt
           gh release create "$GITHUB_REF_NAME" --verify-tag --latest=false \
             --title "BioPipe Operator Library v${GITHUB_REF_NAME#library-v}" \
             --notes-file "docs/releases/${GITHUB_REF_NAME}.md" \
-            artifacts/*.biopipe-library.zip artifacts/*.whl artifacts/*Routes*.zip QUICKSTART.md QUICKSTART.zh.md artifacts/SHA256SUMS.txt artifacts/verification-*.json
+            artifacts/*.biopipe-library.zip artifacts/*.whl artifacts/*Routes*.zip QUICKSTART.md QUICKSTART.zh.md install_dependencies.py install-dependencies.sh install-dependencies.ps1 artifacts/SHA256SUMS.txt artifacts/verification-*.json
