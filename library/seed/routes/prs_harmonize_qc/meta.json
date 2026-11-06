@@ -1,0 +1,10 @@
+{
+  "reference": "input/chr22_prs.vcf.gz",
+  "weights": "input/PGS000297.txt.gz",
+  "reference_sha256": "293c63f8dd89f5e37ef946c48f1662a2aa3598c85497c0980fb438653b2d0cd2",
+  "weights_sha256": "5c06a400efaedae89d8e526924fe2af315b481ea73bb1ad8ab23b935b4bc5e41",
+  "genome_build": "GRCh37",
+  "samples": 50,
+  "variants": 291205,
+  "weights_on_chr22": 37
+}

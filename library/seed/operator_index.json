@@ -5060,6 +5060,36 @@
     "status": "generated"
   },
   {
+    "id": "prs_af_filter",
+    "kind": "operator",
+    "title": "prs_af_filter",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Drop PRS weights whose variants are monomorphic, missing or too rare.",
+    "doc": "src/task/step/steps/prs_af_filter.PrsAfFilterStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "prs_harmonize",
+    "kind": "operator",
+    "title": "prs_harmonize",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Match score-file weights to VCF variants and orient them to the ALT allele.",
+    "doc": "src/task/step/steps/prs_harmonize.PrsHarmonizeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "prs_ld_clump",
+    "kind": "operator",
+    "title": "prs_ld_clump",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Keep the strongest weights per LD window using genotype r-squared.",
+    "doc": "src/task/step/steps/prs_ld_clump.PrsLdClumpStep.md",
+    "status": "generated"
+  },
+  {
     "id": "pseudobulk",
     "kind": "operator",
     "title": "Pseudobulk aggregation",

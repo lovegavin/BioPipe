@@ -156,6 +156,11 @@
       "sha256": "2591e4f30580c51add61ea97682ba56561a0bec3fc003c314f61f0c8b61e1992",
       "parameters_sha256": "411cd7a4aded391f035700c55289f25edaa23bf35481d5e0acff02b0bfbed107"
     },
+    "route_76a068a2f86e": {
+      "path": "routes/prs_harmonize_qc/task.yaml",
+      "sha256": "1a8bf5770a9340f72492838a67bb773275c1c0a5588bd32ef5cfa2b8ed6f7b1a",
+      "parameters_sha256": "fa93f8abd650c802bc61435ea9b34daa4cfe048017aac126e081e57af8d28511"
+    },
     "route_bbd048357651": {
       "path": "routes/read_preprocessing/task.yaml",
       "sha256": "cd80a7fc3cd80abefe769d7b833b65385517c77c94a2a51d6e9399d7489614ea",
@@ -12758,6 +12763,555 @@
       }
     },
     {
+      "id": "route_76a068a2f86e",
+      "version": 1,
+      "name": "Polygenic score harmonisation and LD clumping",
+      "graph": {
+        "schema_version": 2,
+        "name": "Polygenic score harmonisation and LD clumping",
+        "base_dir": ".studio/builtin-inputs/prs_harmonize_qc",
+        "nodes": [
+          {
+            "id": "genotypes",
+            "kind": "source",
+            "operator": null,
+            "title": "genotypes",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfReader",
+              "path": "input/chr22_prs.vcf.gz",
+              "dims": [
+                "variant",
+                "sample"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genotypes_file",
+            "kind": "source",
+            "operator": null,
+            "title": "genotypes_file",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfFileReader",
+              "path": "input/chr22_prs.vcf.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "weights",
+            "kind": "source",
+            "operator": null,
+            "title": "weights",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "TsvFileReader",
+              "path": "input/PGS000297.txt.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "prs_harmonize_1",
+            "kind": "operator",
+            "operator": "prs_harmonize",
+            "title": "prs_harmonize",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "variant_dim": "variant",
+              "statistic_dim": "statistic",
+              "output": "harmonized"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "prs_harmonized",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "prs_af_filter_3",
+            "kind": "operator",
+            "operator": "prs_af_filter",
+            "title": "prs_af_filter",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "variant_dim": "variant",
+              "statistic_dim": "statistic",
+              "weight_label": "weight",
+              "min_maf": 0.01,
+              "max_missing_rate": 0.1,
+              "output": "filtered"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "prs_filtered",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "prs_ld_clump_5",
+            "kind": "operator",
+            "operator": "prs_ld_clump",
+            "title": "prs_ld_clump",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "variant_dim": "variant",
+              "statistic_dim": "statistic",
+              "weight_label": "weight",
+              "r2_threshold": 0.2,
+              "window_bp": 100000,
+              "max_variants": 0,
+              "output": "clumped"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "prs_clumped",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "prs_7",
+            "kind": "operator",
+            "operator": "prs",
+            "title": "Polygenic risk score",
+            "position": {
+              "x": 1230.0,
+              "y": 310.0
+            },
+            "params": {
+              "variant_dim": "variant",
+              "sample_dim": "sample",
+              "stat_dim": "statistic",
+              "weight_label": "weight",
+              "output": "scores"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 1520.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "prs_scores",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_7"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "genotypes_file-prs_harmonize_1-0",
+            "source": "genotypes_file",
+            "target": "prs_harmonize_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "weights-prs_harmonize_1-1",
+            "source": "weights",
+            "target": "prs_harmonize_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "prs_harmonize_1-export_results_2-0",
+            "source": "prs_harmonize_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genotypes_file-prs_af_filter_3-0",
+            "source": "genotypes_file",
+            "target": "prs_af_filter_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "prs_harmonize_1-prs_af_filter_3-1",
+            "source": "prs_harmonize_1",
+            "target": "prs_af_filter_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "prs_af_filter_3-export_results_4-0",
+            "source": "prs_af_filter_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genotypes_file-prs_ld_clump_5-0",
+            "source": "genotypes_file",
+            "target": "prs_ld_clump_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "prs_af_filter_3-prs_ld_clump_5-1",
+            "source": "prs_af_filter_3",
+            "target": "prs_ld_clump_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "prs_ld_clump_5-export_results_6-0",
+            "source": "prs_ld_clump_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genotypes-prs_7-0",
+            "source": "genotypes",
+            "target": "prs_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "prs_ld_clump_5-prs_7-1",
+            "source": "prs_ld_clump_5",
+            "target": "prs_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "prs_7-export_results_8-0",
+            "source": "prs_7",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "genotypes",
+              "label": "genotypes",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "variant",
+                  "sample"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "hard_call"
+                  },
+                  "ploidy": {
+                    "type": "integer",
+                    "min": 1
+                  },
+                  "chrom": {
+                    "type": "array",
+                    "items": "string"
+                  },
+                  "pos": {
+                    "type": "array",
+                    "items": "integer"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": [
+                  {
+                    "dim": "variant",
+                    "fields": [
+                      "chrom",
+                      "pos"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "node_id": "genotypes_file",
+              "label": "genotypes_file",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "weights",
+              "label": "weights",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "tsv"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
       "id": "route_782510ea5f8a",
       "version": 1,
       "name": "Structure validation: missing residues, alternate conformers and cis peptides",
@@ -15335,7 +15889,7 @@
     },
     {
       "id": "route_88fb083f4238",
-      "version": 6,
+      "version": 7,
       "name": "Proteomics DE",
       "graph": {
         "schema_version": 2,
@@ -15735,27 +16289,15 @@
               "label": "meta",
               "contract": {
                 "version": 1,
-                "ndim": 2,
-                "numeric": true,
                 "dims": [
                   "sample",
                   "feature"
                 ],
                 "labels": [],
-                "info": {
-                  "missing_code": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "encoders": {
-                    "type": "object",
-                    "optional": true
-                  }
-                },
-                "info_open": false,
-                "axis_info_open": false,
+                "info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
                 "parallel": []
               }
             },
@@ -15764,27 +16306,15 @@
               "label": "proteins",
               "contract": {
                 "version": 1,
-                "ndim": 2,
-                "numeric": true,
                 "dims": [
                   "protein",
                   "sample"
                 ],
                 "labels": [],
-                "info": {
-                  "missing_code": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "encoders": {
-                    "type": "object",
-                    "optional": true
-                  }
-                },
-                "info_open": false,
-                "axis_info_open": false,
+                "info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
                 "parallel": []
               }
             }
@@ -15796,8 +16326,6 @@
               "label": "FDR",
               "contract": {
                 "version": 1,
-                "ndim": 2,
-                "numeric": true,
                 "dims": [
                   "protein",
                   "statistic"
@@ -15831,9 +16359,10 @@
                     "const": "fdr"
                   }
                 },
-                "info_open": false,
-                "axis_info_open": false,
-                "axis_info": {}
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2
               }
             },
             {
@@ -15842,15 +16371,12 @@
               "label": "维度转置",
               "contract": {
                 "version": 1,
-                "ndim": 2,
-                "numeric": true,
                 "dims": [
                   "sample",
                   "protein"
                 ],
                 "labels": {
-                  "protein": null,
-                  "sample": null
+                  "protein": null
                 },
                 "info": {
                   "missing_code": {
@@ -15864,9 +16390,10 @@
                     "const": "normalize"
                   }
                 },
-                "info_open": false,
-                "axis_info_open": false,
-                "axis_info": {}
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2
               }
             }
           ]
@@ -17603,7 +18130,7 @@
     },
     {
       "id": "route_bf78f7a6e12f",
-      "version": 5,
+      "version": 6,
       "name": "生存分析",
       "graph": {
         "schema_version": 2,
@@ -17849,27 +18376,15 @@
               "label": "clinical",
               "contract": {
                 "version": 1,
-                "ndim": 2,
-                "numeric": true,
                 "dims": [
                   "sample",
                   "feature"
                 ],
                 "labels": [],
-                "info": {
-                  "missing_code": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "encoders": {
-                    "type": "object",
-                    "optional": true
-                  }
-                },
-                "info_open": false,
-                "axis_info_open": false,
+                "info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
                 "parallel": []
               }
             }
@@ -17881,8 +18396,6 @@
               "label": "Log-rank",
               "contract": {
                 "version": 1,
-                "ndim": 2,
-                "numeric": true,
                 "dims": [
                   "comparison",
                   "statistic"
@@ -17907,9 +18420,10 @@
                     "const": "logrank_test"
                   }
                 },
-                "info_open": false,
-                "axis_info_open": false,
-                "axis_info": {}
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2
               }
             },
             {
@@ -17918,8 +18432,6 @@
               "label": "Cox",
               "contract": {
                 "version": 1,
-                "ndim": 2,
-                "numeric": true,
                 "dims": [
                   "covariate",
                   "statistic"
@@ -17948,9 +18460,10 @@
                     "const": "cox_regression"
                   }
                 },
-                "info_open": false,
-                "axis_info_open": false,
-                "axis_info": {}
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2
               }
             }
           ]

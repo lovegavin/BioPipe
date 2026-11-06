@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "variant_dim": {
+      "type": "string",
+      "default": "variant",
+      "title": "Variant dimension",
+      "description": "Name of the variant axis."
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "title": "Statistic dimension",
+      "description": "Name of the weight axis."
+    },
+    "output": {
+      "type": "string",
+      "default": "harmonized",
+      "title": "Output name",
+      "description": "Name assigned to the harmonised weights."
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

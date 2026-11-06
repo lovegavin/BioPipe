@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "variant_dim": {
+      "type": "string",
+      "default": "variant",
+      "title": "Variant dimension",
+      "description": "Name of the variant axis."
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "title": "Statistic dimension",
+      "description": "Name of the weight axis."
+    },
+    "weight_label": {
+      "type": "string",
+      "default": "weight",
+      "title": "Weight column",
+      "description": "Column holding the score weight."
+    },
+    "r2_threshold": {
+      "type": "number",
+      "default": 0.2,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "title": "r-squared threshold",
+      "description": "Prune weights in linkage disequilibrium above this value."
+    },
+    "window_bp": {
+      "type": "integer",
+      "default": 100000,
+      "minimum": 0,
+      "title": "Window (bp)",
+      "description": "Only variants within this distance are compared."
+    },
+    "max_variants": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "title": "Maximum variants",
+      "description": "Optional cap applied by absolute weight before clumping (0 = all)."
+    },
+    "output": {
+      "type": "string",
+      "default": "clumped",
+      "title": "Output name",
+      "description": "Name assigned to the clumped weights."
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

@@ -980,6 +980,16 @@
     "status": "generated"
   },
   {
+    "id": "TsvFileReader",
+    "kind": "reader",
+    "title": "TsvFileReader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reference a TSV/whitespace table without loading or decoding it.",
+    "doc": "src/reader/readers/tsv_file_reader.TsvFileReader.md",
+    "status": "generated"
+  },
+  {
     "id": "TsvReader",
     "kind": "reader",
     "title": "TsvReader",

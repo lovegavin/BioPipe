@@ -1,0 +1,110 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "genotypes": {},
+    "genotypes_file": {},
+    "weights": {}
+  },
+  "steps": [
+    {
+      "name": "prs_harmonize",
+      "inputs": [
+        "genotypes_file",
+        "weights"
+      ],
+      "params": {
+        "output": "harmonized"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "harmonized"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "prs_harmonized"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "prs_af_filter",
+      "inputs": [
+        "genotypes_file",
+        "harmonized"
+      ],
+      "params": {
+        "output": "filtered",
+        "min_maf": 0.01,
+        "max_missing_rate": 0.1,
+        "weight_label": "weight"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "filtered"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "prs_filtered"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "prs_ld_clump",
+      "inputs": [
+        "genotypes_file",
+        "filtered"
+      ],
+      "params": {
+        "output": "clumped",
+        "r2_threshold": 0.2,
+        "window_bp": 100000,
+        "weight_label": "weight"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "clumped"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "prs_clumped"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "prs",
+      "inputs": [
+        "genotypes",
+        "clumped"
+      ],
+      "params": {
+        "output": "scores",
+        "weight_label": "weight",
+        "variant_dim": "variant",
+        "sample_dim": "sample",
+        "stat_dim": "statistic"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "scores"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "prs_scores"
+      },
+      "context_params": {}
+    }
+  ]
+}

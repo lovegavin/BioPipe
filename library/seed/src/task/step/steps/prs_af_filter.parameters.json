@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "variant_dim": {
+      "type": "string",
+      "default": "variant",
+      "title": "Variant dimension",
+      "description": "Name of the variant axis."
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "title": "Statistic dimension",
+      "description": "Name of the weight axis."
+    },
+    "weight_label": {
+      "type": "string",
+      "default": "weight",
+      "title": "Weight column",
+      "description": "Column holding the score weight."
+    },
+    "min_maf": {
+      "type": "number",
+      "default": 0.0,
+      "minimum": 0.0,
+      "maximum": 0.5,
+      "title": "Minimum MAF",
+      "description": "Drop variants below this minor allele frequency."
+    },
+    "max_missing_rate": {
+      "type": "number",
+      "default": 1.0,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "title": "Maximum missing rate",
+      "description": "Drop variants above this missing rate."
+    },
+    "output": {
+      "type": "string",
+      "default": "filtered",
+      "title": "Output name",
+      "description": "Name assigned to the filtered weights."
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

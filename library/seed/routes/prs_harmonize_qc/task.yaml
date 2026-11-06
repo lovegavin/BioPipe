@@ -1,0 +1,51 @@
+name: Polygenic score harmonisation on 1000 Genomes chr22
+sources:
+  genotypes:
+    path: input/chr22_prs.vcf.gz
+    dims:
+    - variant
+    - sample
+    labels: {}
+    reader: VcfReader
+  genotypes_file:
+    path: input/chr22_prs.vcf.gz
+    dims:
+    - file
+    labels: {}
+    reader: VcfFileReader
+  weights:
+    path: input/PGS000297.txt.gz
+    dims:
+    - file
+    labels: {}
+    reader: TsvFileReader
+parameters_file: parameters.json
+steps:
+- name: prs_harmonize
+  inputs:
+  - genotypes_file
+  - weights
+- name: export_results
+  inputs:
+  - harmonized
+- name: prs_af_filter
+  inputs:
+  - genotypes_file
+  - harmonized
+- name: export_results
+  inputs:
+  - filtered
+- name: prs_ld_clump
+  inputs:
+  - genotypes_file
+  - filtered
+- name: export_results
+  inputs:
+  - clumped
+- name: prs
+  inputs:
+  - genotypes
+  - clumped
+- name: export_results
+  inputs:
+  - scores
