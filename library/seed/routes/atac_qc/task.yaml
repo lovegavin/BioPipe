@@ -1,0 +1,48 @@
+name: GM12878 ATAC-seq fragment, TSS and peak quality
+sources:
+  bam:
+    path: input/ENCFF415FEC.bam
+    dims:
+    - file
+    labels: {}
+    reader: BamFileReader
+  peaks:
+    path: input/peaks.bed
+    dims:
+    - region
+    - field
+    labels:
+      region: auto
+      field: builtin
+    reader: BedReader
+  tss:
+    path: input/tss.bed
+    dims:
+    - region
+    - field
+    labels:
+      region: auto
+      field: builtin
+    reader: BedReader
+parameters_file: parameters.json
+steps:
+- name: atac_fragment_size
+  inputs:
+  - bam
+- name: export_results
+  inputs:
+  - fragment_size
+- name: atac_tss_enrichment
+  inputs:
+  - bam
+  - tss
+- name: export_results
+  inputs:
+  - tss_enrichment
+- name: atac_peak_quality
+  inputs:
+  - bam
+  - peaks
+- name: export_results
+  inputs:
+  - peak_quality

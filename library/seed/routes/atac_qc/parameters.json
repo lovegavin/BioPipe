@@ -1,0 +1,86 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "bam": {},
+    "peaks": {},
+    "tss": {}
+  },
+  "steps": [
+    {
+      "name": "atac_fragment_size",
+      "inputs": [
+        "bam"
+      ],
+      "params": {
+        "min_mapq": 30,
+        "max_length": 1000,
+        "exclude_duplicates": true,
+        "output": "fragment_size"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "fragment_size"
+      ],
+      "params": {
+        "format": "csv",
+        "output": "fragment_size_table"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "atac_tss_enrichment",
+      "inputs": [
+        "bam",
+        "tss"
+      ],
+      "params": {
+        "flank": 500,
+        "bin_size": 10,
+        "min_mapq": 30,
+        "exclude_duplicates": true,
+        "output": "tss_enrichment"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "tss_enrichment"
+      ],
+      "params": {
+        "format": "csv",
+        "output": "tss_enrichment_table"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "atac_peak_quality",
+      "inputs": [
+        "bam",
+        "peaks"
+      ],
+      "params": {
+        "min_mapq": 30,
+        "exclude_duplicates": true,
+        "output": "peak_quality"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "peak_quality"
+      ],
+      "params": {
+        "format": "csv",
+        "output": "peak_quality_table"
+      },
+      "context_params": {}
+    }
+  ]
+}

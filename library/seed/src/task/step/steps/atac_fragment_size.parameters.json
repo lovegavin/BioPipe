@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "properties": {
+    "min_mapq": {
+      "type": "integer",
+      "title": "Minimum mapping quality",
+      "description": "Fragments from reads below this MAPQ are ignored.",
+      "default": 30,
+      "minimum": 0,
+      "maximum": 255,
+      "x-ui-group": "Filters",
+      "x-ui-order": 0
+    },
+    "min_length": {
+      "type": "integer",
+      "title": "Minimum fragment length",
+      "description": "Shortest fragment kept in the histogram.",
+      "default": 0,
+      "minimum": 0,
+      "x-ui-group": "Histogram",
+      "x-ui-order": 1
+    },
+    "max_length": {
+      "type": "integer",
+      "title": "Maximum fragment length",
+      "description": "Longest fragment kept in the histogram.",
+      "default": 1000,
+      "minimum": 1,
+      "x-ui-group": "Histogram",
+      "x-ui-order": 2
+    },
+    "exclude_duplicates": {
+      "type": "boolean",
+      "title": "Exclude duplicate reads",
+      "description": "Skip records carrying the duplicate flag (0x400).",
+      "default": true,
+      "x-ui-group": "Filters",
+      "x-ui-order": 3
+    },
+    "max_records": {
+      "type": "integer",
+      "title": "Maximum records",
+      "description": "Stop after this many fragments (0 = no limit).",
+      "default": 0,
+      "minimum": 0,
+      "x-ui-group": "Filters",
+      "x-ui-order": 4
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "description": "Context key that receives the histogram.",
+      "default": "fragment_size"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,70 @@
+{
+  "type": "object",
+  "properties": {
+    "min_mapq": {
+      "type": "integer",
+      "title": "Minimum mapping quality",
+      "description": "Fragments from reads below this MAPQ are ignored.",
+      "default": 30,
+      "minimum": 0,
+      "maximum": 255,
+      "x-ui-group": "Filters",
+      "x-ui-order": 0
+    },
+    "exclude_duplicates": {
+      "type": "boolean",
+      "title": "Exclude duplicate reads",
+      "description": "Skip records carrying the duplicate flag (0x400).",
+      "default": true,
+      "x-ui-group": "Filters",
+      "x-ui-order": 1
+    },
+    "max_records": {
+      "type": "integer",
+      "title": "Maximum records",
+      "description": "Stop after this many fragments (0 = no limit).",
+      "default": 0,
+      "minimum": 0,
+      "x-ui-group": "Filters",
+      "x-ui-order": 2
+    },
+    "peak_region_dim": {
+      "type": "string",
+      "title": "Peak region dim",
+      "description": "Record axis of the peak BED Form.",
+      "default": "region"
+    },
+    "peak_field_dim": {
+      "type": "string",
+      "title": "Peak field dim",
+      "description": "Field axis of the peak BED Form.",
+      "default": "field"
+    },
+    "peak_chrom_field": {
+      "type": "string",
+      "title": "Chromosome column",
+      "default": "chrom"
+    },
+    "peak_start_field": {
+      "type": "string",
+      "title": "Start column",
+      "default": "chromStart"
+    },
+    "peak_end_field": {
+      "type": "string",
+      "title": "End column",
+      "default": "chromEnd"
+    },
+    "peak_strand_field": {
+      "type": "string",
+      "title": "Strand column",
+      "default": "strand"
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "peak_quality"
+    }
+  },
+  "additionalProperties": false
+}

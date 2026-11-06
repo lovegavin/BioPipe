@@ -1,6 +1,11 @@
 {
   "schema_version": 1,
   "sources": {
+    "route_3810eea93c97": {
+      "path": "routes/atac_qc/task.yaml",
+      "sha256": "1ab6e60de37ec0ba61f3a667c8f158c1d47ac913d859cb539865951f9f9f9ca7",
+      "parameters_sha256": "bafd585e67835c4da9ca3ec90982eb2ae82bb016bef86f28476c19c48b7f407d"
+    },
     "route_134972672309": {
       "path": "routes/bgen_qc/task.yaml",
       "sha256": "f4419972e650aefa52a3fda16b1cb054dca42885ca887eb2902c1c53124659f2",
@@ -3206,6 +3211,463 @@
                 "axis_info_open": true,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_3810eea93c97",
+      "version": 1,
+      "name": "ATAC-seq quality control",
+      "graph": {
+        "schema_version": 2,
+        "name": "ATAC-seq quality control",
+        "base_dir": ".studio/builtin-inputs/atac_qc",
+        "nodes": [
+          {
+            "id": "bam",
+            "kind": "source",
+            "operator": null,
+            "title": "bam",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "BamFileReader",
+              "path": "input/ENCFF415FEC.bam",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "peaks",
+            "kind": "source",
+            "operator": null,
+            "title": "peaks",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "BedReader",
+              "path": "input/peaks.bed",
+              "dims": [
+                "region",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin",
+                "region": "auto"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "tss",
+            "kind": "source",
+            "operator": null,
+            "title": "tss",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "BedReader",
+              "path": "input/tss.bed",
+              "dims": [
+                "region",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin",
+                "region": "auto"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "atac_fragment_size_1",
+            "kind": "operator",
+            "operator": "atac_fragment_size",
+            "title": "atac_fragment_size",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_mapq": 30,
+              "min_length": 0,
+              "max_length": 1000,
+              "exclude_duplicates": true,
+              "max_records": 0,
+              "output": "fragment_size"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "fragment_size_table"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "atac_tss_enrichment_3",
+            "kind": "operator",
+            "operator": "atac_tss_enrichment",
+            "title": "atac_tss_enrichment",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "flank": 500,
+              "bin_size": 10,
+              "min_mapq": 30,
+              "exclude_duplicates": true,
+              "max_records": 0,
+              "tss_region_dim": "region",
+              "tss_field_dim": "field",
+              "tss_chrom_field": "chrom",
+              "tss_start_field": "chromStart",
+              "tss_end_field": "chromEnd",
+              "tss_strand_field": "strand",
+              "output": "tss_enrichment"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "tss_enrichment_table"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "atac_peak_quality_5",
+            "kind": "operator",
+            "operator": "atac_peak_quality",
+            "title": "atac_peak_quality",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "min_mapq": 30,
+              "exclude_duplicates": true,
+              "max_records": 0,
+              "peak_region_dim": "region",
+              "peak_field_dim": "field",
+              "peak_chrom_field": "chrom",
+              "peak_start_field": "chromStart",
+              "peak_end_field": "chromEnd",
+              "peak_strand_field": "strand",
+              "output": "peak_quality"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "peak_quality_table"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "bam-atac_fragment_size_1-0",
+            "source": "bam",
+            "target": "atac_fragment_size_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "atac_fragment_size_1-export_results_2-0",
+            "source": "atac_fragment_size_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "bam-atac_tss_enrichment_3-0",
+            "source": "bam",
+            "target": "atac_tss_enrichment_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "tss-atac_tss_enrichment_3-1",
+            "source": "tss",
+            "target": "atac_tss_enrichment_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "atac_tss_enrichment_3-export_results_4-0",
+            "source": "atac_tss_enrichment_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "bam-atac_peak_quality_5-0",
+            "source": "bam",
+            "target": "atac_peak_quality_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "peaks-atac_peak_quality_5-1",
+            "source": "peaks",
+            "target": "atac_peak_quality_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "atac_peak_quality_5-export_results_6-0",
+            "source": "atac_peak_quality_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "bam",
+              "label": "bam",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "bam"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "peaks",
+              "label": "peaks",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "region",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "tss",
+              "label": "tss",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "region",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

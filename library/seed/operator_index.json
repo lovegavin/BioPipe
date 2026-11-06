@@ -470,6 +470,36 @@
     "status": "generated"
   },
   {
+    "id": "atac_fragment_size",
+    "kind": "operator",
+    "title": "atac_fragment_size",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Fragment length histogram and NFR/mono/dinucleosome fractions (ATAC-seq QC).",
+    "doc": "src/task/step/steps/atac_fragment_size.AtacFragmentSizeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "atac_peak_quality",
+    "kind": "operator",
+    "title": "atac_peak_quality",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "FRiP and peak width statistics for ATAC-seq (BAM + peak BED).",
+    "doc": "src/task/step/steps/atac_peak_quality.AtacPeakQualityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "atac_tss_enrichment",
+    "kind": "operator",
+    "title": "atac_tss_enrichment",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Per-TSS fragment-density matrix and TSS enrichment score (ATAC-seq QC).",
+    "doc": "src/task/step/steps/atac_tss_enrichment.AtacTssEnrichmentStep.md",
+    "status": "generated"
+  },
+  {
     "id": "attach_info",
     "kind": "operator",
     "title": "附加注释",
