@@ -1,0 +1,54 @@
+name: Multiple sequence alignment statistics (Pfam kinase and Rfam SSU)
+sources:
+  protein_msa:
+    path: input/pf00069_aligned.fasta
+    dims:
+    - sequence
+    - position
+    labels: {}
+    reader: FastaReader
+  rna_msa:
+    path: input/ssu_aligned.fasta
+    dims:
+    - sequence
+    - position
+    labels: {}
+    reader: FastaReader
+parameters_file: parameters.json
+steps:
+- name: msa_column_stats
+  inputs:
+  - protein_msa
+- name: export_results
+  inputs:
+  - col_p
+- name: msa_consensus
+  inputs:
+  - protein_msa
+- name: export_results
+  inputs:
+  - cons_p
+- name: msa_identity_matrix
+  inputs:
+  - protein_msa
+- name: export_results
+  inputs:
+  - ident_p
+- name: msa_trim
+  inputs:
+  - protein_msa
+- name: export_results
+  inputs:
+  - trim_p
+- name: msa_column_stats
+  inputs:
+  - rna_msa
+- name: export_results
+  inputs:
+  - col_r
+- name: msa_consensus
+  inputs:
+  - rna_msa
+- name: export_results
+  inputs:
+  - cons_r

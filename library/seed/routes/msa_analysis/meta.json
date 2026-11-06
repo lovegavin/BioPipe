@@ -1,0 +1,21 @@
+{
+  "name": "MSA analysis",
+  "datasets": [
+    {
+      "id": "pf00069",
+      "source": "Pfam PF00069 seed alignment via the InterPro API",
+      "url": "https://www.ebi.ac.uk/interpro/wwwapi/entry/pfam/PF00069/?annotation=alignment:seed",
+      "stored": "input/pf00069_aligned.fasta",
+      "sha256": "b6e130f45be1e63a1c6bda22fcdce7641781a1b8a2dbbd056a55df344f95228f",
+      "notes": "37 sequences x 419 columns; 36,601 B Stockholm converted to FASTA with gaps preserved"
+    },
+    {
+      "id": "rfam_rf00177",
+      "source": "Rfam RF00177 (SSU_rRNA_bacteria) seed alignment",
+      "url": "https://rfam.org/family/RF00177/alignment",
+      "stored": "input/ssu_aligned.fasta",
+      "sha256": "6df770ce70b0e6e6dac180266929c5f61d2929cb93c846fc4809d18945772c44",
+      "notes": "24 of 99 sequences at an even stride, gap fraction <= 0.5, alignment length 1,980"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "protein_msa": {},
+    "rna_msa": {}
+  },
+  "steps": [
+    {
+      "name": "msa_column_stats",
+      "inputs": ["protein_msa"],
+      "params": {"alphabet": "auto", "output": "col_p"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["col_p"],
+      "params": {"format": "csv", "filename": "msa_columns_pf00069"},
+      "context_params": {}
+    },
+    {
+      "name": "msa_consensus",
+      "inputs": ["protein_msa"],
+      "params": {"output": "cons_p", "max_gap_fraction": 0.5, "min_major_fraction": 0.4},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["cons_p"],
+      "params": {"format": "fasta", "filename": "msa_consensus_pf00069"},
+      "context_params": {}
+    },
+    {
+      "name": "msa_identity_matrix",
+      "inputs": ["protein_msa"],
+      "params": {"output": "ident_p"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["ident_p"],
+      "params": {"format": "csv", "filename": "msa_identity_pf00069"},
+      "context_params": {}
+    },
+    {
+      "name": "msa_trim",
+      "inputs": ["protein_msa"],
+      "params": {"output": "trim_p", "max_gap_fraction": 0.3, "min_row_fraction": 0.7},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["trim_p"],
+      "params": {"format": "fasta", "filename": "msa_trimmed_pf00069"},
+      "context_params": {}
+    },
+    {
+      "name": "msa_column_stats",
+      "inputs": ["rna_msa"],
+      "params": {"alphabet": "auto", "output": "col_r"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["col_r"],
+      "params": {"format": "csv", "filename": "msa_columns_rfam"},
+      "context_params": {}
+    },
+    {
+      "name": "msa_consensus",
+      "inputs": ["rna_msa"],
+      "params": {"output": "cons_r", "max_gap_fraction": 0.5, "min_major_fraction": 0.4},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["cons_r"],
+      "params": {"format": "fasta", "filename": "msa_consensus_rfam"},
+      "context_params": {}
+    }
+  ]
+}

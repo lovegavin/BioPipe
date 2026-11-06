@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Alignment identity matrix parameters",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "description": "Name of the sequence axis."
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "description": "Name of the alignment position axis."
+    },
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "description": "Name of the taxon axis in the output matrix."
+    },
+    "output": {
+      "type": "string",
+      "default": "identity_matrix",
+      "description": "Name of the output form."
+    }
+  }
+}

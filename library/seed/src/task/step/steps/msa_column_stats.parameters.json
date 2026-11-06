@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Alignment column statistics parameters",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "description": "Name of the sequence axis."
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "description": "Name of the alignment position axis."
+    },
+    "alphabet": {
+      "type": "string",
+      "enum": ["auto", "dna", "rna", "protein"],
+      "default": "auto",
+      "description": "Residue alphabet used for the entropy normalisation."
+    },
+    "column_dim": {
+      "type": "string",
+      "default": "column",
+      "description": "Name of the output column axis."
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "description": "Name of the output statistic axis."
+    },
+    "output": {
+      "type": "string",
+      "default": "column_stats",
+      "description": "Name of the output form."
+    }
+  }
+}

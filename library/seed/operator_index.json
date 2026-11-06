@@ -4020,6 +4020,46 @@
     "status": "generated"
   },
   {
+    "id": "msa_column_stats",
+    "kind": "operator",
+    "title": "Alignment column statistics",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Compute per-column gap fraction, Shannon entropy (bits), conservation (1 - H/log2 alphabet) and majority residue fraction for a multiple sequence alignment.",
+    "doc": "src/task/step/steps/msa_column_stats.MsaColumnStatsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "msa_consensus",
+    "kind": "operator",
+    "title": "Alignment consensus sequence",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Build a consensus sequence from an alignment, emitting the majority residue per column unless the column is too gappy or the majority is too weak (then N for nucleotides, X for protein).",
+    "doc": "src/task/step/steps/msa_consensus.MsaConsensusStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "msa_identity_matrix",
+    "kind": "operator",
+    "title": "Alignment identity matrix",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Compute pairwise sequence identity over columns where both sequences have a residue (gaps ignored), returning a square matrix.",
+    "doc": "src/task/step/steps/msa_identity_matrix.MsaIdentityMatrixStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "msa_trim",
+    "kind": "operator",
+    "title": "Trim alignment columns and rows",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Drop alignment columns whose gap fraction exceeds a threshold and rows that do not cover enough of the retained columns; writes a trimmed aligned FASTA artifact.",
+    "doc": "src/task/step/steps/msa_trim.MsaTrimStep.md",
+    "status": "generated"
+  },
+  {
     "id": "multinomial_logit",
     "kind": "operator",
     "title": "Multinomial logistic regression",
