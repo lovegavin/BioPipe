@@ -1004,3 +1004,82 @@ All three exports are byte-identical across platforms:
 - Annotation assigns the first class in priority order and does not split a
   peak across classes.
 - Jaccard uses merged intervals and ignores peak confidence and multi-mapping.
+
+## Batch 13 — PBMC3k marker genes (single-cell differential expression)
+
+Route `pbmc_markers` on the 10x PBMC3k subset already used by the trajectory
+route: 1,200 cells, 300 highly variable genes, 13 Leiden clusters. Three new
+operators compare every cluster against the rest and describe marker
+specificity:
+
+| Operator | Inputs | Output |
+| --- | --- | --- |
+| `sc_rank_genes` | expression `[cell,gene]`, clusters `[cell,cluster]` | `[test,statistic]`, 8 columns, top 50 per cluster |
+| `sc_marker_specificity` | expression, clusters | `[gene,statistic]`, tau, top cluster, detection |
+| `sc_cluster_profile` | expression, clusters | `[cluster_gene,statistic]`, mean and detection |
+
+### Data
+
+| File | Bytes | SHA256 |
+| --- | ---: | --- |
+| `input/expression.csv` | 2,542,469 | `fb411e375814117824bf3a1d0653f674549990ce59bb357f3e21593e17810292` |
+| `input/clusters.csv` | 23,095 | `758437a38f1c02cb84a440b5ea43f4aac4aedd0baccce08d4d8195dbda859ece` |
+
+Inputs are log-normalised (scale factor 10,000, log1p) and are not shipped with
+the operator library.
+
+### Results
+
+The route completes six steps and writes three CSV exports: 650 cluster-gene
+tests (13 x top 50), 300 gene specificity rows and 3,900 cluster-gene profile
+rows. `GP9` (cluster 11), `RP11-211G3.2` and `TRPM4` (cluster 10), `ARVCF`
+(cluster 10) and `CLDN5` (cluster 11) reach tau 1.0. The maximum tau in the
+table is exactly 1.0 after the degenerate-gene fix described below.
+
+### Oracles
+
+SciPy 1.16 `mannwhitneyu(method="asymptotic", use_continuity=False)`,
+statsmodels BH and direct pandas group means recompute every statistic from the
+same inputs:
+
+| Check | Rows | Max abs difference |
+| --- | ---: | ---: |
+| Wilcoxon p-value | 650 | 1.67e-16 |
+| BH adjusted p | 650 | 0.0 |
+| log2 fold change | 650 | 3.55e-15 |
+| Cluster/rest means | 650 | 1.78e-15 |
+| Tau specificity | 300 | 1.11e-16 |
+| Top cluster | 300 | 0 mismatches |
+| Detection fraction | 300 | 9.71e-17 |
+| Profile mean | 3,900 | 4.44e-16 |
+| Profile detection | 3,900 | 9.71e-17 |
+
+### Three platforms
+
+| Platform | Steps | Time | `sc_rank_genes.csv` | Marker CSV | Profile CSV |
+| --- | ---: | ---: | --- | --- | --- |
+| WSL (NumPy 2.1.3) | 6/6 | 0.783 s | 95,749 B `38193627…` | 25,109 B `cd7c5e95…` | 166,576 B `79199ee5…` |
+| srv (NumPy 2.4.6) | 6/6 | 1.911 s | 95,748 B `21e6d6f1…` | 25,109 B `cd7c5e95…` | 166,576 B `79199ee5…` |
+| Windows (NumPy 2.5.4) | 6/6 | 0.811 s | 95,702 B `2579e0ce…` | 25,109 B `cd7c5e95…` | 166,576 B `79199ee5…` |
+
+Marker and profile exports are byte-identical on all three platforms. The rank
+export differs only in floating-point text formatting: column-wise maximum
+absolute differences are 0.0 between WSL and srv, and at most 2.22e-16 for
+`log2fc`/`adjusted_p` and 1.11e-16 for `p_value` between WSL and Windows.
+
+### Defect found and fixed
+
+The first run reported tau 1.0833 for `RP1-28O10.1`, a gene with no detected
+expression in any cluster. With `peaks = 0` every scaled value was 0, so the
+formula produced `k / (k - 1)` instead of a bounded specificity. `tau` is now
+set to 0 when a gene has no positive cluster mean, and
+`test_marker_specificity_zero_gene_has_zero_tau` covers the case (11 tests
+pass). The oracle applies the same documented convention. Fix commit
+`16e50fa6`; operator commit `30e52c0f`.
+
+### Limitations
+
+Wilcoxon uses the asymptotic normal approximation without continuity
+correction; the route covers 300 HVG rather than the full transcriptome; tau is
+defined as 0 for genes with no detected expression; cluster labels are numeric
+codes from the companion route.
