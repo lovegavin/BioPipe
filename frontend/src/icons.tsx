@@ -88,6 +88,25 @@ const icons: Record<string, ComponentType<IconProps>> = {  Atom,
   Sigma,
   SquaresFour,
   GridNine,
+
+  // Backend operator definitions may name Lucide icons that are not part of the
+  // shipped subset; map them onto the closest available glyph instead of
+  // silently falling back to the generic placeholder.
+  BarChart3: ChartBar,
+  ListChecks: CheckSquare,
+  MessagesSquare: ListBullets,
+  Network: ShareNetwork,
+  FileText: File,
+  MagnifyingGlass: Selection,
+  Layers: Stack,
+  Table: Columns,
+  Share2: ShareNetwork,
+  Route: TreeStructure,
+  Compass: CirclesThree,
+  TrendingUp: TrendUp,
+  GitCompare: ArrowsDownUp,
+  Filter: Funnel,
+  Users: CirclesThree,
 };
 export function OperatorIcon({
   name,
