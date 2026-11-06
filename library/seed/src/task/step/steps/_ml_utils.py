@@ -181,8 +181,7 @@ def roc_auc(y: np.ndarray, scores: np.ndarray) -> float:
         raise StepError("ROC AUC is undefined with a single class")
     tpr = np.r_[0.0, tps / tps[-1]]
     fpr = np.r_[0.0, fps / fps[-1]]
-    trapezoid = getattr(np, "trapezoid", np.trapz)
-    return float(trapezoid(tpr, fpr))
+    return float(np.sum((tpr[1:] + tpr[:-1]) * np.diff(fpr) / 2.0))
 
 
 def log_loss(y: np.ndarray, proba: np.ndarray) -> float:
