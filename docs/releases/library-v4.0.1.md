@@ -9,16 +9,17 @@ that accompanies the wave-6 closure verification.
 
 ## Coverage
 
-- Contract execution coverage: **716 / 717** operators (99.8%).
-- Evidence: **157 real-data runs**, **137 contract-valid synthetic runs**.
-- Remaining blocker: `rfdiffusion_design` (the available RFantibody tree is
-  not compatible with the generic RFdiffusion checkpoint paths).
+- Contract execution coverage: **717 / 717** operators (100%).
+- Evidence: **158 real-data runs**, **137 contract-valid synthetic runs**.
+- No remaining coverage blocker.
 - Product defects recorded, not worked around in the library:
   `ligandmpnn_side_chain_packing` packed-file glob, ESM-IF masked-region length,
   aromatic-stacking duplicate bond labels, MD rotamer topology line indexing.
 
-`openfold_predict` completed after this release was published (30 aa peptide,
-OpenFold `finetuning_ptm_2.pt`, CPU, 252.7 s); the library assets are unchanged.
+`openfold_predict` (30 aa peptide, OpenFold `finetuning_ptm_2.pt`, CPU,
+252.7 s) and `rfdiffusion_design` (official RFdiffusion, `Base_ckpt.pt`, CPU,
+69.7 s, contig A2-31 on 1MEL chain A) completed after this release was
+published; the library assets are unchanged.
 
 See `docs/verification/library-3.0.1-remote.md` §19 and
 `docs/verification/biological-issues-4.0.0.md` for evidence and issue details.
