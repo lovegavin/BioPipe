@@ -145,6 +145,19 @@ def test_marker_specificity_tau_and_top_cluster():
     assert out.data[rows["g2"], 0] in (0.0, 1.0)
 
 
+def test_marker_specificity_zero_gene_has_zero_tau():
+    cells = [f"c{i}" for i in range(4)]
+    genes = ["g0", "g1", "g2"]
+    expression = _expression([[4, 0, 0], [4, 0, 0], [0, 4, 0], [0, 4, 0]], genes, cells)
+    clusters = _clusters(["A", "A", "B", "B"], cells)
+    step = ScMarkerSpecificityStep()
+    ctx = Ctx({"min_cells": 1})
+    step.run(ctx, [expression, clusters])
+    out = ctx["out"]
+    rows = {name: int(position) for name, position in out.labels["gene"].items()}
+    assert out.data[rows["g2"], 1] == 0.0
+
+
 def test_cluster_profile_means_and_detection():
     cells = [f"c{i}" for i in range(6)]
     genes = ["g0", "g1"]

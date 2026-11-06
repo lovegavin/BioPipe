@@ -33,10 +33,10 @@ The CSV files are not shipped with the operator library.
 
 | Gene | Top cluster | Tau | Max mean |
 | --- | ---: | ---: | ---: |
-| RP1-28O10.1 | 0 | 1.0833 | 0.000 |
 | GP9 | 11 | 1.0000 | 1.381 |
 | RP11-211G3.2 | 10 | 1.0000 | 0.016 |
 | TRPM4 | 10 | 1.0000 | 0.018 |
+| ARVCF | 10 | 1.0000 | 0.006 |
 | CLDN5 | 11 | 1.0000 | 0.845 |
 
 ## Oracles

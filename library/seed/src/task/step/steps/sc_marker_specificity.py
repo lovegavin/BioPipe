@@ -114,6 +114,7 @@ class ScMarkerSpecificityStep(Step):
         safe = np.where(peaks > 0, peaks, 1.0)
         scaled = means / safe
         tau = np.sum(1.0 - scaled, axis=0) / (len(keep) - 1)
+        tau = np.where(peaks > 0, tau, 0.0)
         top = means.argmax(axis=0)
         rows = []
         for index in range(matrix.shape[1]):
