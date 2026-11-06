@@ -1369,3 +1369,87 @@ their MD5 is identical (`9516b49d...`, `e57ddcef...`).
 - Neighbour joining, not maximum likelihood; no bootstrap support.
 - 24 of 99 seed sequences are sampled by equal stride to keep the route small.
 - `U` is treated as a base; JC69 uses only the mismatch fraction.
+
+## Batch 18 — MSA analysis route (Pfam PF00069 + Rfam RF00177)
+
+Four operators summarise and clean an existing alignment without calling an
+aligner: `msa_column_stats`, `msa_consensus`, `msa_identity_matrix` and
+`msa_trim`. The route key is `msa_analysis`.
+
+### Data
+
+| Source | File | Size | SHA-256 |
+| --- | --- | --- | --- |
+| Pfam PF00069 seed | `input/pf00069_aligned.fasta` | 16,491 B | `b6e130f45be1e63a1c6bda22fcdce7641781a1b8a2dbbd056a55df344f95228f` |
+| Rfam RF00177 subset | `input/ssu_aligned.fasta` | 48,899 B | `6df770ce70b0e6e6dac180266929c5f61d2929cb93c846fc4809d18945772c44` |
+
+PF00069 was fetched as the raw seed Stockholm file from the InterPro API
+(`https://www.ebi.ac.uk/interpro/wwwapi/entry/pfam/PF00069/?annotation=alignment:seed`,
+36,601 B, gzip encoded) and converted to FASTA with gaps preserved: 37
+sequences x 419 columns. The RNA alignment is the 24-sequence Rfam RF00177
+subset already used by the phylogeny route (alignment length 1,980).
+
+`FastaReader` decodes `-` as an unknown base (N), so the operators read
+`info["sequences"]` through `_annotation_utils.fasta_sequences`; decoding the
+numeric codes would silently erase every gap.
+
+### Steps
+
+12 steps: protein column statistics -> CSV, consensus -> FASTA, identity
+matrix -> CSV, trim -> FASTA; then RNA column statistics -> CSV and consensus
+-> FASTA.
+
+### Results
+
+| Platform | Steps | total_elapsed | managed_peak_bytes |
+| --- | --- | --- | --- |
+| WSL (3.12) | 12 | 0.0471 s | 699,530 |
+| Windows (3.12) | 12 | 0.0747 s | 699,512 |
+| srv (3.11) | 12 | 0.2078 s | 732,204 |
+
+| Output | Bytes | MD5 (WSL = Windows) |
+| --- | --- | --- |
+| `msa_columns_pf00069.csv` | 27,155 | `fb4b7dada33209ea3b11723a8e95d899` |
+| `msa_columns_rfam.csv` | 86,775 | `9a093e24f7f49f12ea635fb18141b065` |
+| `msa_consensus_pf00069.fasta` | 436 | `c7ac6457c1fafe642df9a14c82018230` |
+| `msa_consensus_rfam.fasta` | 2,016 | `8a0724cc3c95b76ea156054583a70d8c` |
+| `msa_identity_pf00069.csv` | 26,756 | `7b17509334b1a8743d31a07da1e462a6` |
+| `msa_trimmed_pf00069.fasta` | 10,016 | `58029201417399d72ef478f6920da845` |
+
+The protein consensus is 419 characters, 309 of them `X` (gap > 0.5 or major
+fraction < 0.4); the RNA consensus is 1,980 characters, 526 of them `N`.
+Trimming keeps 246 of 419 protein columns and all 37 sequences.
+
+srv writes the two column-statistics CSVs with different text (113 and 143
+rows differ in the last decimal) because `math.log2` comes from a different
+libm; the numeric difference is at most **1.33e-15** (entropy) and
+**3.33e-16** (conservation), and gap fraction and major fraction are identical.
+The other four outputs are byte-identical on all three platforms.
+
+### Oracles
+
+| Oracle | Implementation | Result |
+| --- | --- | --- |
+| Pure Python | `workdir/b18_oracle.py`, own FASTA/CSV parsing, no Biopython | gap/entropy/conservation/major max abs **0.0** on both alignments; consensus identical; identity max abs **0.0**; trimmed alignment identical (246 columns, 37 rows) |
+| Base R 4.3.3 | `workdir/b18_oracle.R`, no R packages | same four statistics **0.0** on both alignments; consensus identical (309 `X`, 526 `N`); identity max abs **0.0** |
+
+### Fixes
+
+- `_msa_utils` DNA/RNA alphabets now accept IUPAC ambiguity codes
+  (`ACGTRYSWKMBDHVN` / `ACGURYSWKMBDHVN`); the Rfam seed alignment contains
+  `M`, `R`, `W`, `Y` and `U`.
+- `msa_trim` declares its FASTA output as `kind: file, numeric: false, ndim: 0`
+  with `representation.const: fasta`; a plain tensor contract made the runner
+  reject the artifact with "needs form data; needs a numeric tensor".
+- Trim rows are filtered by the fraction of residues over the retained columns,
+  not over the original width.
+
+### Limitations
+
+- The operators never align sequences; input must already be aligned.
+- Trimming removes whole columns only.
+- Consensus thresholds are per-run parameters, not biological recommendations.
+- Identity counts only columns where both sequences carry a residue; short
+  overlaps can give high identity.
+- The alphabet is inferred once per alignment; mixed nucleotide/protein input is
+  rejected.
