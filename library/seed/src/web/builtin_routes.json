@@ -26,6 +26,11 @@
       "sha256": "b37ab2efe559605c2323af3b402b5f71ee29fb612bcc7e2e0eb66780f19c7d77",
       "parameters_sha256": "16967af63ea2bd91dc383a813d953e77fb69f0fefc999db659d3c31e6a460b0c"
     },
+    "route_5497ce1401e0": {
+      "path": "routes/gm12878_interval_annotation/task.yaml",
+      "sha256": "8dd0279ef95085eae24bb2f02a9d329e294d107ada3db37a417fff96f4dcd3a5",
+      "parameters_sha256": "c0a7413f51d8855e034f6bd86d125e96b8a857a73531ab0247026fd96ea48d8f"
+    },
     "route_60b00ddcef5b": {
       "path": "routes/go_enrichment/task.yaml",
       "sha256": "d820ed06f7e7b88da224121a3f2c7948f14d09d950f1f3aef015fd2af7fb64fc",
@@ -5186,6 +5191,492 @@
             },
             {
               "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_5497ce1401e0",
+      "version": 1,
+      "name": "GM12878 peak annotation versus gene features",
+      "graph": {
+        "schema_version": 2,
+        "name": "GM12878 peak annotation versus gene features",
+        "base_dir": ".studio/builtin-inputs/gm12878_interval_annotation",
+        "nodes": [
+          {
+            "id": "features",
+            "kind": "source",
+            "operator": null,
+            "title": "features",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "BedReader",
+              "path": "input/features.bed",
+              "dims": [
+                "region",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin",
+                "region": "auto"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "peaks",
+            "kind": "source",
+            "operator": null,
+            "title": "peaks",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "BedReader",
+              "path": "input/peaks.bed",
+              "dims": [
+                "region",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin",
+                "region": "auto"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "rep1",
+            "kind": "source",
+            "operator": null,
+            "title": "rep1",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "BedReader",
+              "path": "input/rep1.bed.gz",
+              "dims": [
+                "region",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin",
+                "region": "auto"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "interval_annotate_1",
+            "kind": "operator",
+            "operator": "interval_annotate",
+            "title": "Annotate intervals by feature class",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "interval_region_dim": "region",
+              "interval_field_dim": "field",
+              "interval_chrom_field": "chrom",
+              "interval_start_field": "chromStart",
+              "interval_end_field": "chromEnd",
+              "feature_region_dim": "region",
+              "feature_field_dim": "field",
+              "feature_chrom_field": "chrom",
+              "feature_start_field": "chromStart",
+              "feature_end_field": "chromEnd",
+              "class_field": "name",
+              "class_names": "promoter,utr5,cds,utr3,exon,intron",
+              "priority": "promoter,utr5,cds,utr3,exon,intron",
+              "output": "annotation"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "interval_annotate",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "interval_coverage_3",
+            "kind": "operator",
+            "operator": "interval_coverage",
+            "title": "Coverage of feature classes by intervals",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "feature_region_dim": "region",
+              "feature_field_dim": "field",
+              "feature_chrom_field": "chrom",
+              "feature_start_field": "chromStart",
+              "feature_end_field": "chromEnd",
+              "interval_region_dim": "region",
+              "interval_field_dim": "field",
+              "interval_chrom_field": "chrom",
+              "interval_start_field": "chromStart",
+              "interval_end_field": "chromEnd",
+              "class_field": "name",
+              "class_names": "promoter,utr5,cds,utr3,exon,intron",
+              "output": "coverage"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "interval_coverage",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "interval_jaccard_5",
+            "kind": "operator",
+            "operator": "interval_jaccard",
+            "title": "Jaccard similarity of two interval sets",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "a_region_dim": "region",
+              "a_field_dim": "field",
+              "a_chrom_field": "chrom",
+              "a_start_field": "chromStart",
+              "a_end_field": "chromEnd",
+              "b_region_dim": "region",
+              "b_field_dim": "field",
+              "b_chrom_field": "chrom",
+              "b_start_field": "chromStart",
+              "b_end_field": "chromEnd",
+              "output": "similarity"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "interval_jaccard",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "peaks-interval_annotate_1-0",
+            "source": "peaks",
+            "target": "interval_annotate_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "features-interval_annotate_1-1",
+            "source": "features",
+            "target": "interval_annotate_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "interval_annotate_1-export_results_2-0",
+            "source": "interval_annotate_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "features-interval_coverage_3-0",
+            "source": "features",
+            "target": "interval_coverage_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "peaks-interval_coverage_3-1",
+            "source": "peaks",
+            "target": "interval_coverage_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "interval_coverage_3-export_results_4-0",
+            "source": "interval_coverage_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "peaks-interval_jaccard_5-0",
+            "source": "peaks",
+            "target": "interval_jaccard_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "rep1-interval_jaccard_5-1",
+            "source": "rep1",
+            "target": "interval_jaccard_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "interval_jaccard_5-export_results_6-0",
+            "source": "interval_jaccard_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "features",
+              "label": "features",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "region",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "peaks",
+              "label": "peaks",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "region",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "rep1",
+              "label": "rep1",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "region",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
               "handle": "out",
               "label": "Export results",
               "contract": {

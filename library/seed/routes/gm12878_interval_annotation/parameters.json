@@ -1,0 +1,81 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "peaks": {},
+    "features": {},
+    "rep1": {}
+  },
+  "steps": [
+    {
+      "name": "interval_annotate",
+      "inputs": [
+        "peaks",
+        "features"
+      ],
+      "params": {
+        "class_names": "promoter,utr5,cds,utr3,exon,intron",
+        "priority": "promoter,utr5,cds,utr3,exon,intron",
+        "output": "annotation"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "annotation"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "interval_annotate"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "interval_coverage",
+      "inputs": [
+        "features",
+        "peaks"
+      ],
+      "params": {
+        "class_names": "promoter,utr5,cds,utr3,exon,intron",
+        "output": "coverage"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "coverage"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "interval_coverage"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "interval_jaccard",
+      "inputs": [
+        "peaks",
+        "rep1"
+      ],
+      "params": {
+        "output": "similarity"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "similarity"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "interval_jaccard"
+      },
+      "context_params": {}
+    }
+  ]
+}

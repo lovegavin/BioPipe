@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Annotate intervals by feature class",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "interval_region_dim": {
+      "type": "string",
+      "default": "region",
+      "title": "Region axis",
+      "description": "Name of the region axis."
+    },
+    "interval_field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "Field axis",
+      "description": "Name of the field axis."
+    },
+    "interval_chrom_field": {
+      "type": "string",
+      "default": "chrom",
+      "title": "Chromosome column",
+      "description": "Field holding the chromosome name."
+    },
+    "interval_start_field": {
+      "type": "string",
+      "default": "chromStart",
+      "title": "Start column",
+      "description": "Field holding the 0-based start."
+    },
+    "interval_end_field": {
+      "type": "string",
+      "default": "chromEnd",
+      "title": "End column",
+      "description": "Field holding the end coordinate."
+    },
+    "feature_region_dim": {
+      "type": "string",
+      "default": "region",
+      "title": "Region axis",
+      "description": "Name of the region axis."
+    },
+    "feature_field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "Field axis",
+      "description": "Name of the field axis."
+    },
+    "feature_chrom_field": {
+      "type": "string",
+      "default": "chrom",
+      "title": "Chromosome column",
+      "description": "Field holding the chromosome name."
+    },
+    "feature_start_field": {
+      "type": "string",
+      "default": "chromStart",
+      "title": "Start column",
+      "description": "Field holding the 0-based start."
+    },
+    "feature_end_field": {
+      "type": "string",
+      "default": "chromEnd",
+      "title": "End column",
+      "description": "Field holding the end coordinate."
+    },
+    "class_field": {
+      "type": "string",
+      "default": "name",
+      "title": "Feature class column",
+      "description": "Feature field holding the class name."
+    },
+    "class_names": {
+      "type": "string",
+      "default": "promoter,utr5,cds,utr3,exon,intron",
+      "title": "Class names",
+      "description": "Comma-separated class names in output order."
+    },
+    "priority": {
+      "type": "string",
+      "default": "promoter,utr5,cds,utr3,exon,intron",
+      "title": "Class priority",
+      "description": "Comma-separated priority order used to choose one class per interval."
+    },
+    "output": {
+      "type": "string",
+      "default": "annotation",
+      "title": "Output name",
+      "description": "Name of the annotation form."
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Jaccard similarity of two interval sets",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "a_region_dim": {
+      "type": "string",
+      "default": "region",
+      "title": "Region axis",
+      "description": "Name of the region axis."
+    },
+    "a_field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "Field axis",
+      "description": "Name of the field axis."
+    },
+    "a_chrom_field": {
+      "type": "string",
+      "default": "chrom",
+      "title": "Chromosome column",
+      "description": "Field holding the chromosome name."
+    },
+    "a_start_field": {
+      "type": "string",
+      "default": "chromStart",
+      "title": "Start column",
+      "description": "Field holding the 0-based start."
+    },
+    "a_end_field": {
+      "type": "string",
+      "default": "chromEnd",
+      "title": "End column",
+      "description": "Field holding the end coordinate."
+    },
+    "b_region_dim": {
+      "type": "string",
+      "default": "region",
+      "title": "Region axis",
+      "description": "Name of the region axis."
+    },
+    "b_field_dim": {
+      "type": "string",
+      "default": "field",
+      "title": "Field axis",
+      "description": "Name of the field axis."
+    },
+    "b_chrom_field": {
+      "type": "string",
+      "default": "chrom",
+      "title": "Chromosome column",
+      "description": "Field holding the chromosome name."
+    },
+    "b_start_field": {
+      "type": "string",
+      "default": "chromStart",
+      "title": "Start column",
+      "description": "Field holding the 0-based start."
+    },
+    "b_end_field": {
+      "type": "string",
+      "default": "chromEnd",
+      "title": "End column",
+      "description": "Field holding the end coordinate."
+    },
+    "output": {
+      "type": "string",
+      "default": "similarity",
+      "title": "Output name",
+      "description": "Name of the similarity form."
+    }
+  }
+}

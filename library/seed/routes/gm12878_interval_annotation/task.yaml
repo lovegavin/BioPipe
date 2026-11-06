@@ -1,0 +1,37 @@
+name: "GM12878 interval annotation: peaks versus gene features"
+sources:
+  peaks:
+    path: input/peaks.bed
+    dims: [region, field]
+    labels:
+      region: auto
+      field: builtin
+    reader: BedReader
+  features:
+    path: input/features.bed
+    dims: [region, field]
+    labels:
+      region: auto
+      field: builtin
+    reader: BedReader
+  rep1:
+    path: input/rep1.bed.gz
+    dims: [region, field]
+    labels:
+      region: auto
+      field: builtin
+    reader: BedReader
+steps:
+  - name: interval_annotate
+    inputs: [peaks, features]
+  - name: export_results
+    inputs: [annotation]
+  - name: interval_coverage
+    inputs: [features, peaks]
+  - name: export_results
+    inputs: [coverage]
+  - name: interval_jaccard
+    inputs: [peaks, rep1]
+  - name: export_results
+    inputs: [similarity]
+parameters_file: parameters.json

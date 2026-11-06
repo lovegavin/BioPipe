@@ -2990,6 +2990,16 @@
     "status": "generated"
   },
   {
+    "id": "interval_annotate",
+    "kind": "operator",
+    "title": "Annotate intervals by feature class",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Assign every BED interval to the highest-priority genomic feature class it overlaps (for example promoter before exon before intron), and report the number of classes and overlapped bases.",
+    "doc": "src/task/step/steps/interval_annotate.IntervalAnnotateStep.md",
+    "status": "generated"
+  },
+  {
     "id": "interval_censored_regression",
     "kind": "operator",
     "title": "Interval-censored Weibull AFT",
@@ -2997,6 +3007,26 @@
     "version": "1.0.0",
     "description": "Fit a Weibull AFT model to interval-censored observations.",
     "doc": "src/task/step/steps/interval_censored_regression.IntervalCensoredRegressionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interval_coverage",
+    "kind": "operator",
+    "title": "Coverage of feature classes by intervals",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "For every genomic feature class (promoter, exon, intron, ...) compute how many bases are covered by a set of intervals and the fraction of the class that is covered.",
+    "doc": "src/task/step/steps/interval_coverage.IntervalCoverageStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "interval_jaccard",
+    "kind": "operator",
+    "title": "Jaccard similarity of two interval sets",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Merge two BED interval sets, then report intersection and union bases, Jaccard similarity, the number of intervals overlapping the other set, and reciprocal covered fractions.",
+    "doc": "src/task/step/steps/interval_jaccard.IntervalJaccardStep.md",
     "status": "generated"
   },
   {
