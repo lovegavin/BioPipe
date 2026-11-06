@@ -1642,3 +1642,90 @@ Export md5 (identical on all three platforms): `oligo_tm.csv`
 - Specificity is exact-match by default; `max_mismatches` allows near
   matches. Primer-dimers, hairpins and template secondary structure are
   not modelled.
+
+## Batch 21: genotype filtering and LD analysis (`ld_analysis`)
+
+Seven-step route over a 1000 Genomes phase 3 chr22 slice: MAF/missingness
+filter, r-squared matrix, LD decay by distance, and variant pruning.
+
+### Data
+
+| File | Size | SHA-256 |
+| --- | --- | --- |
+| `input/query.vcf.gz` | 620,892 B | `1b7c66cf2ba8e0aa0e683d4f89e98b9a9fa9fb7db74e428b1c58c975f4589a93` |
+
+1000 Genomes phase 3 chr22 17-18 Mb, 50 samples, 30,104 records. Splitting
+multiallelic records yields 30,287 alternate alleles, which is the variant
+count entering the route.
+
+### Route
+
+| # | Operator | Key parameters |
+| --- | --- | --- |
+| 1 | `genotype_filter` | min_maf 0.05, max_missing_rate 0.05 |
+| 2 | `ld_matrix` | max_variants 500 |
+| 3 | `export_results` | csv, `ld_matrix` |
+| 4 | `ld_decay` | max_distance 200,000, n_bins 10 |
+| 5 | `export_results` | csv, `ld_decay` |
+| 6 | `ld_prune` | window 50 variants, r2 0.2 |
+| 7 | `export_results` | csv, `ld_prune` |
+
+### Results (WSL)
+
+| Step | Result |
+| --- | --- |
+| `genotype_filter` | 30,287 in, 3,306 retained, 26,981 dropped for MAF, 0 for missingness |
+| `ld_matrix` | 500 x 500; 124,750 pairs; mean r2 0.0350392, max 1.0, q90 0.0740741 |
+| `ld_decay` | 1,950,591 pairs; first bin 237,973 pairs, mean r2 0.205632; last bin 175,965 pairs, mean r2 0.023407 |
+| `ld_prune` | 430 variants retained |
+
+The retained set has 3,305 distinct `CHROM:POS:ALT` labels: three records share
+`22:17996285:ATCTC` after multiallelic splitting and are renamed by the VCF
+reader. `ld_matrix` takes the first 500 labels in file order.
+
+### Independent checks
+
+| Check | Implementation | Result |
+| --- | --- | --- |
+| Matrix pairs | plink2 v2.0.0-b.1.3, `--r2-unphased --ld-window-r2 0` | 124,750 pairs; max abs diff 5.0e-7, mean 2.8e-8 (plink prints 6 decimals) |
+| Decay bins | plink2 on the `--maf 0.05 --geno 0.05` subset | same 3,306 variants, 1,950,591 pairs; per-bin pair count within 6, mean r2 within 4.6e-6, median within 1.5e-6 |
+| MAF membership | NumPy recomputation from the VCF dosages | identical 3,305 unique labels (no platform-only variant) |
+| Prune property | NumPy r2 on retained pairs with input index gap <= 50 | 2,819 pairs, max r2 0.1994479 <= 0.2 |
+| Prune count | independent NumPy greedy | 431 vs 430 retained; the difference is the three duplicated labels, not a threshold difference |
+
+### Three platforms
+
+| Platform | Steps | Elapsed (s) | Peak RSS | Export md5 |
+| --- | --- | --- | --- | --- |
+| WSL (Python 3.12) | 7/7 | 4.74 wall | 202,540 KB | `ld_decay` and `ld_prune` byte-identical |
+| srv (Python 3.11) | 7/7 | 3.0319 task | 182,812 KB | `ld_decay` and `ld_prune` byte-identical |
+| Windows (py 3.12) | 7/7 | 0.9448 task | - | `ld_decay` and `ld_prune` byte-identical |
+
+`ld_decay.csv` `64d04fc1b466fed9ab4b5532b1fd32d4` (854 B) and `ld_prune.csv`
+`4878f9dccfa872eedf27cbd215ecacc0` (92,920 B) are byte-identical on all three
+platforms. `ld_matrix.csv` differs only in floating-point text formatting:
+WSL 5,225,551 B (`7dc5d834d15d5639e1d96462d077c479`), srv 5,225,571 B
+(`80743026ade2c2345257fee06bd714a3`), Windows 5,225,589 B
+(`81d37ee41b7f8e4b55aa3b7bef43d35f`); labels are identical and the numeric
+difference is 5.6e-17 (srv) and 1.0e-17 (Windows) at most.
+
+### Fixes during the batch
+
+- `genotype_filter` dropped `axis_info` when rebuilding the filtered form, so
+  the downstream `ld_decay` could not read `info["pos"]`
+  (`ld_decay: info['pos'] is required`). The filter now copies and reindexes
+  `axis_info` together with the per-variant info fields.
+- The route initially referenced a stale parameter set; the registry rejected
+  `max_variants`/`min_maf` for operators that no longer take them. The route was
+  rebuilt around `genotype_filter` and re-checked.
+- `ld_decay` and `ld_prune` already exist in the bundled `biopipe-genetics`
+  package. Overwrites were reverted with `git checkout` and the route reuses the
+  bundled operators instead of shadowing them.
+
+### Limits
+
+- r-squared is unphased and computed from dosages; it matches `--r2-unphased`
+  but not haplotype-based estimates.
+- MAF uses alternate-allele dosages after splitting multiallelic records.
+- `ld_prune` windows count variants, not base pairs.
+- plink2 writes six decimals, which bounds the matrix comparison at 5e-7.
