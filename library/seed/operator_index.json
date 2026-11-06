@@ -2480,6 +2480,46 @@
     "status": "generated"
   },
   {
+    "id": "genome_cds_check",
+    "kind": "operator",
+    "title": "CDS translation check",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Translate every CDS from the genome FASTA and report frame, start codon, stop codon and internal stop statistics.",
+    "doc": "src/task/step/steps/genome_cds_check.GenomeCdsCheckStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "genome_gene_density",
+    "kind": "operator",
+    "title": "Windowed gene density",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Count genes or CDS features per fixed window on every sequence and report the aligned fraction of each window.",
+    "doc": "src/task/step/steps/genome_gene_density.GenomeGeneDensityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "genome_intergenic_regions",
+    "kind": "operator",
+    "title": "Intergenic regions",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Merge genes (or CDS) on every sequence and report the regions between them, excluding the sequence ends.",
+    "doc": "src/task/step/steps/genome_intergenic_regions.GenomeIntergenicRegionsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "genome_promoter_extract",
+    "kind": "operator",
+    "title": "Promoter window extraction",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Extract the upstream window of every gene or CDS, reverse complementing minus-strand features, and return an aligned sequence Form with FASTA-ready info.sequences.",
+    "doc": "src/task/step/steps/genome_promoter_extract.GenomePromoterExtractStep.md",
+    "status": "generated"
+  },
+  {
     "id": "gff_feature_stats",
     "kind": "operator",
     "title": "gff_feature_stats",

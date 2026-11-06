@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CDS translation check",
+  "description": "Check CDS frame, start codon, stop codon and internal stops against the genome.",
+  "type": "object",
+  "properties": {
+    "feature_type": {
+      "type": "string",
+      "title": "Feature type",
+      "description": "Third GFF column value used to select coding records.",
+      "default": "CDS",
+      "minLength": 1,
+      "x-ui-group": "Coding",
+      "x-ui-order": 1
+    },
+    "record_dim": {
+      "type": "string",
+      "title": "Record axis",
+      "description": "Name of the annotation record axis.",
+      "default": "record",
+      "x-ui-group": "Advanced",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "Field axis",
+      "description": "Name of the GFF field axis.",
+      "default": "field",
+      "x-ui-group": "Advanced",
+      "x-ui-order": 2
+    },
+    "sequence_dim": {
+      "type": "string",
+      "title": "Sequence axis",
+      "description": "Name of the FASTA sequence axis.",
+      "default": "sequence",
+      "x-ui-group": "Advanced",
+      "x-ui-order": 3
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "Position axis",
+      "description": "Name of the FASTA position axis.",
+      "default": "position",
+      "x-ui-group": "Advanced",
+      "x-ui-order": 4
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "description": "Name of the produced CDS check table.",
+      "default": "cds_check"
+    }
+  },
+  "additionalProperties": false
+}

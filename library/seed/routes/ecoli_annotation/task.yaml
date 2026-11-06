@@ -1,0 +1,47 @@
+name: E. coli K-12 gene density, intergenic regions, promoters and CDS checks
+sources:
+  annotation:
+    path: input/ecoli.gff
+    dims:
+    - feature
+    - field
+    labels: {}
+    reader: GffReader
+  genome:
+    path: input/ecoli.fasta
+    dims:
+    - sequence
+    - position
+    labels: {}
+    reader: FastaReader
+parameters_file: parameters.json
+steps:
+- name: genome_gene_density
+  inputs:
+  - annotation
+- name: export_results
+  inputs:
+  - density
+- name: genome_intergenic_regions
+  inputs:
+  - annotation
+- name: export_results
+  inputs:
+  - intergenic
+- name: genome_promoter_extract
+  inputs:
+  - annotation
+  - genome
+- name: export_results
+  inputs:
+  - promoters
+- name: genome_cds_check
+  inputs:
+  - annotation
+  - genome
+- name: export_results
+  inputs:
+  - cds
+runtime:
+  memory:
+    enabled: true

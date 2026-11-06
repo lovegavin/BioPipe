@@ -1,0 +1,100 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "annotation": {},
+    "genome": {}
+  },
+  "steps": [
+    {
+      "name": "genome_gene_density",
+      "inputs": ["annotation"],
+      "params": {
+        "window": 10000,
+        "feature_type": "gene",
+        "record_dim": "feature",
+        "field_dim": "field",
+        "output": "density"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["density"],
+      "params": {
+        "format": "csv",
+        "filename": "gene_density"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "genome_intergenic_regions",
+      "inputs": ["annotation"],
+      "params": {
+        "feature_type": "gene",
+        "min_length": 0,
+        "record_dim": "feature",
+        "field_dim": "field",
+        "output": "intergenic"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["intergenic"],
+      "params": {
+        "format": "csv",
+        "filename": "intergenic_regions"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "genome_promoter_extract",
+      "inputs": ["annotation", "genome"],
+      "params": {
+        "upstream": 100,
+        "feature_type": "gene",
+        "strand_aware": true,
+        "include_feature": false,
+        "record_dim": "feature",
+        "field_dim": "field",
+        "sequence_dim": "sequence",
+        "position_dim": "position",
+        "output": "promoters"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["promoters"],
+      "params": {
+        "format": "fasta",
+        "filename": "promoters"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "genome_cds_check",
+      "inputs": ["annotation", "genome"],
+      "params": {
+        "feature_type": "CDS",
+        "record_dim": "feature",
+        "field_dim": "field",
+        "sequence_dim": "sequence",
+        "position_dim": "position",
+        "output": "cds"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["cds"],
+      "params": {
+        "format": "csv",
+        "filename": "cds_check"
+      },
+      "context_params": {}
+    }
+  ]
+}

@@ -6,6 +6,11 @@
       "sha256": "f4419972e650aefa52a3fda16b1cb054dca42885ca887eb2902c1c53124659f2",
       "parameters_sha256": "5f889ce7f7f62034902914a4ad4d45d462dd5547660949a31594e4bcbaede301"
     },
+    "route_cf7d79a424a3": {
+      "path": "routes/ecoli_annotation/task.yaml",
+      "sha256": "bc334c1025363fe77c807ea967540e821f19aa18f9aa10c1ff711faf5932cf89",
+      "parameters_sha256": "b6831833c042a71d2ac3923277fd0ef433f55437f198d3f781d00c9fc664bca7"
+    },
     "route_233ac53c7b12": {
       "path": "routes/ecoli_resequencing/task.yaml",
       "sha256": "b37ab2efe559605c2323af3b402b5f71ee29fb612bcc7e2e0eb66780f19c7d77",
@@ -12174,6 +12179,502 @@
                 "axis_info_open": true,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_cf7d79a424a3",
+      "version": 1,
+      "name": "E. coli K-12 annotation structure and promoter windows",
+      "graph": {
+        "schema_version": 2,
+        "name": "E. coli K-12 annotation structure and promoter windows",
+        "base_dir": ".studio/builtin-inputs/ecoli_annotation",
+        "nodes": [
+          {
+            "id": "annotation",
+            "kind": "source",
+            "operator": null,
+            "title": "annotation",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "GffReader",
+              "path": "input/ecoli.gff",
+              "dims": [
+                "feature",
+                "field"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genome",
+            "kind": "source",
+            "operator": null,
+            "title": "genome",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/ecoli.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genome_gene_density_1",
+            "kind": "operator",
+            "operator": "genome_gene_density",
+            "title": "Windowed gene density",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "window": 10000,
+              "feature_type": "gene",
+              "record_dim": "feature",
+              "field_dim": "field",
+              "output": "density"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "gene_density",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genome_intergenic_regions_3",
+            "kind": "operator",
+            "operator": "genome_intergenic_regions",
+            "title": "Intergenic regions",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "feature_type": "gene",
+              "min_length": 0,
+              "record_dim": "feature",
+              "field_dim": "field",
+              "output": "intergenic"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "intergenic_regions",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genome_promoter_extract_5",
+            "kind": "operator",
+            "operator": "genome_promoter_extract",
+            "title": "Promoter window extraction",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "upstream": 100,
+              "feature_type": "gene",
+              "strand_aware": true,
+              "include_feature": false,
+              "record_dim": "feature",
+              "field_dim": "field",
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "promoters"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "fasta",
+              "filename": "promoters",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genome_cds_check_7",
+            "kind": "operator",
+            "operator": "genome_cds_check",
+            "title": "CDS translation check",
+            "position": {
+              "x": 360.0,
+              "y": 730.0
+            },
+            "params": {
+              "feature_type": "CDS",
+              "record_dim": "feature",
+              "field_dim": "field",
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "cds"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 730.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "cds_check",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_7"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "annotation-genome_gene_density_1-0",
+            "source": "annotation",
+            "target": "genome_gene_density_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genome_gene_density_1-export_results_2-0",
+            "source": "genome_gene_density_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "annotation-genome_intergenic_regions_3-0",
+            "source": "annotation",
+            "target": "genome_intergenic_regions_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genome_intergenic_regions_3-export_results_4-0",
+            "source": "genome_intergenic_regions_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "annotation-genome_promoter_extract_5-0",
+            "source": "annotation",
+            "target": "genome_promoter_extract_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genome-genome_promoter_extract_5-1",
+            "source": "genome",
+            "target": "genome_promoter_extract_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "genome_promoter_extract_5-export_results_6-0",
+            "source": "genome_promoter_extract_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "annotation-genome_cds_check_7-0",
+            "source": "annotation",
+            "target": "genome_cds_check_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genome-genome_cds_check_7-1",
+            "source": "genome",
+            "target": "genome_cds_check_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "genome_cds_check_7-export_results_8-0",
+            "source": "genome_cds_check_7",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "annotation",
+              "label": "annotation",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "feature",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "genome",
+              "label": "genome",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Intergenic regions",
+  "description": "Gaps left between merged feature intervals on each sequence.",
+  "type": "object",
+  "properties": {
+    "feature_type": {
+      "type": "string",
+      "title": "Feature type",
+      "description": "Third GFF column value whose intervals are merged (gene, CDS, ...).",
+      "default": "gene",
+      "minLength": 1,
+      "x-ui-group": "Regions",
+      "x-ui-order": 1
+    },
+    "min_length": {
+      "type": "integer",
+      "title": "Minimum gap length (bp)",
+      "description": "Gaps shorter than this are dropped.",
+      "default": 0,
+      "minimum": 0,
+      "x-ui-group": "Regions",
+      "x-ui-order": 2
+    },
+    "record_dim": {
+      "type": "string",
+      "title": "Record axis",
+      "description": "Name of the annotation record axis.",
+      "default": "record",
+      "x-ui-group": "Advanced",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "Field axis",
+      "description": "Name of the GFF field axis.",
+      "default": "field",
+      "x-ui-group": "Advanced",
+      "x-ui-order": 2
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "description": "Name of the produced intergenic region table.",
+      "default": "intergenic"
+    }
+  },
+  "additionalProperties": false
+}

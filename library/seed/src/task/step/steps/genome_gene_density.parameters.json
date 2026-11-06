@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Windowed gene density",
+  "description": "Count genes or CDS features per fixed window along each sequence.",
+  "type": "object",
+  "properties": {
+    "window": {
+      "type": "integer",
+      "title": "Window length (bp)",
+      "description": "Fixed window size used along each sequence.",
+      "default": 10000,
+      "minimum": 1,
+      "x-ui-group": "Windows",
+      "x-ui-order": 1
+    },
+    "feature_type": {
+      "type": "string",
+      "title": "Feature type",
+      "description": "Third GFF column value to count (gene, CDS, ...).",
+      "default": "gene",
+      "minLength": 1,
+      "x-ui-group": "Windows",
+      "x-ui-order": 2
+    },
+    "record_dim": {
+      "type": "string",
+      "title": "Record axis",
+      "description": "Name of the annotation record axis.",
+      "default": "record",
+      "x-ui-group": "Advanced",
+      "x-ui-order": 1
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "Field axis",
+      "description": "Name of the GFF field axis.",
+      "default": "field",
+      "x-ui-group": "Advanced",
+      "x-ui-order": 2
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "description": "Name of the produced window density table.",
+      "default": "density"
+    }
+  },
+  "additionalProperties": false
+}
