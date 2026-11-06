@@ -639,3 +639,98 @@ name-based.
 - CDS rows sharing a `locus_tag` are disambiguated with `#2`, `#3` suffixes.
 - Internal stops are reported, not treated as errors (pseudogene fragments).
 - The final density window of a contig may be shorter than 10 kb.
+
+## Batch 8 — ATAC-seq QC (fragment size, TSS enrichment, peak quality)
+
+New operators `atac_fragment_size`, `atac_tss_enrichment` and
+`atac_peak_quality` under route `atac_qc`. Before this batch the library had no
+ATAC-specific operator (only `motif_scan`, `peak_nearest_gene` and
+`genome_promoter_extract`).
+
+### Data
+
+| Input | Source | Size | SHA256 |
+|---|---|---|---|
+| `ENCFF415FEC.bam` (GM12878 ATAC rep1, GRCh38, ENCODE4 v1.9.1) | `https://encode-public.s3.amazonaws.com/2021/02/24/e49caba2-1585-4e61-bafa-ff922467202c/ENCFF415FEC.bam` | 2,515,550,487 B | `08078e26e6cce95bf959d38941ff37693134601566193ef06851a9a3da910485` |
+| `ENCFF945SYZ.bed.gz` (IDR thresholded peaks) | `https://encode-public.s3.amazonaws.com/2021/02/24/daad6883-45c9-4063-a558-fcd2596e66a1/ENCFF945SYZ.bed.gz` | 3,476,303 B (gzip) | `d3312c42b0cc241d25b56fd032b026039388d7e3cfe4a1c8457b84a7b49d6fb9` (BED, 9,819,405 B) |
+| `tss.bed` (UCSC hg38 refGene, gene-level TSS) | `https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/refGene.txt.gz` | 8,668,756 B (gzip) | `a8ef7e106bd0c6ac2173302050fc8248def177dafdc17b42ab3f3a93b4d40b14` (BED, 998,500 B) |
+
+The BAM md5 `aca6bde5b395777573e7cf94a04c2024` equals the ENCODE-published
+checksum and `samtools quickcheck` passes. Peaks are the released IDR set
+(155,153 regions). TSS positions are gene-level: `txStart` on the plus strand,
+`txEnd - 1` on the minus strand, restricted to chr1–22, X and Y (28,278 genes).
+
+### Route
+
+| Step | Operator | Inputs | Parameters |
+|---|---|---|---|
+| 1 | `atac_fragment_size` | BAM | `min_mapq=30`, `max_length=1000`, `exclude_duplicates=true` |
+| 2 | `export_results` | step 1 | CSV |
+| 3 | `atac_tss_enrichment` | BAM, TSS BED | `flank=500`, `bin_size=10`, `min_mapq=30` |
+| 4 | `export_results` | step 3 | CSV |
+| 5 | `atac_peak_quality` | BAM, peak BED | `min_mapq=30` |
+| 6 | `export_results` | step 5 | CSV |
+
+### Results (WSL)
+
+| Metric | Value |
+|---|---|
+| fragments (<= 1000 bp) | 22,737,035 |
+| mean / median length | 266.7552 / 209 |
+| NFR (< 100 bp) | 0.269817 |
+| mononucleosome (180–247) | 0.155362 |
+| dinucleosome (300–400) | 0.111612 |
+| nucleosome (>= 147) | 0.635754 |
+| TSS bins | 28,278 x 100 |
+| TSS center mean | 3.938662564537803 |
+| TSS flank mean | 1.1012766107928424 |
+| TSS score (center/flank) | 3.576451661587764 |
+| peaks | 155,153 |
+| total peak bp / mean / median | 138,896,175 / 895.2207 / 847 |
+| fragments in peaks | 14,522,524 |
+| FRiP | 0.6353586420248108 |
+| fragments per peak | 93.6013 |
+
+### Oracles
+
+| Quantity | Oracle | Agreement |
+|---|---|---|
+| Fragment lengths | `samtools view -f 0x1 -F 0xD04 -q 30` + awk: 22,857,207 fragments; per-length histogram 0..1000 | max abs per length **0**; sum 6,065,222,189 identical |
+| Fragment count <= 1000 bp | same oracle | 22,737,035 = 22,857,207 - 120,172 long fragments |
+| Peak widths / counts | direct BED parsing | n, total bp, mean, median identical |
+| FRiP numerator | `bedtools intersect -u -a fragments -b peaks` 2.31.1 | 14,522,524 identical; FRiP exact |
+| TSS profile | `bedtools makewindows` (100 x 10 bp around each TSS) + `bedtools intersect -sorted -c` | max abs profile **0.0**, Pearson **1.0** |
+
+The first TSS oracle run disagreed only in bin 0 (offset -495) because windows
+whose start was negative were dropped; clamping the window start to 0 made all
+100 offsets exact.
+
+### Three-platform runs
+
+| Platform | fragment | TSS | peak | Note |
+|---|---|---|---|---|
+| WSL (Python 3.12, NumPy 2.1.3) | 96.5 s | 100.5 s | 97.4 s | 6/6 |
+| srv (Python 3.11.18, NumPy 2.4.6) | 210.0 s | 223.0 s | 218.9 s | 6/6, total 652.4 s |
+| Windows (Python 3.12, NumPy 2.5.4) | 106.993 s | 113.242 s | 107.844 s | 6/6, total 328.0 s |
+
+| Export | WSL md5 | srv md5 | Windows md5 |
+|---|---|---|---|
+| fragment histogram | `8aaf381251b6794de1088979d9d60d5c` | same | same |
+| peak statistics | `62093a237b5e98792069a210dd31934c` | same | same |
+| TSS matrix | `db313a0be3ededf0daff48a05b86add7` (12,043,431 B) | `b771402786a8d93dbc7db7f96a5be738` (12,043,529 B) | same as srv |
+
+The TSS matrix differs only in text length (pandas float formatting between
+NumPy/pandas versions); the parsed matrices agree with `max abs 0.0` and
+Pearson `1.0`.
+
+### Known limits
+
+- `max_length` defaults to 1000 bp; 120,172 longer fragments are excluded. Use
+  `max_length >= 2000` for full fragment counts.
+- Only primary, mapped, non-duplicate read pairs with `TLEN > 0` are counted;
+  singleton and secondary alignments are ignored.
+- TSS windows are clipped at contig boundaries; a TSS closer than `flank` to
+  the start contributes fewer positions but stays in the matrix.
+- Peaks are taken as given (ENCODE IDR here); FRiP uses any overlap between a
+  fragment and a peak, not midpoint containment.
+- The BAM must be coordinate-sorted for sensible results (not enforced).
