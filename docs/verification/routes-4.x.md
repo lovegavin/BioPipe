@@ -469,3 +469,107 @@ carry the same values to the other two platforms.
   result for that file; it does not prove the crystal had no disorder.
 - Cis-peptide detection needs `CA`, `C`, `N`, `CA` on both sides of the bond;
   bonds across a gap or with missing backbone atoms are counted in `n_skipped`.
+
+---
+
+## Batch 6 — Golub co-expression network (WGCNA-style)
+
+`golub_coexpression` adds four co-expression operators on top of the Golub
+(1999) acute leukemia cohort: scale-free topology fit, TOM-based module
+detection, module eigengenes and module-trait correlation.
+
+### Data
+
+| Source | Bytes | SHA256 |
+| --- | ---: | --- |
+| `input/expression.csv` | 4,103,343 | `1331609e00d99943803f45f3b5677cfd6cc798600dd9bbf305e0893a01a82731` |
+| `input/traits.csv` | 364 | `9b9c1df4a2c471dd54457b9b05cc4244441ac6e418996d78fba0cd9ca54151dd` |
+
+The matrix is the `Golub1999.rds` ExpressionSet distributed by the
+IowaBiostat `golub` package (Git LFS object
+`de43dd8798c09a681b593c052ebf83acda9f0a691ca8e3ccd779a3a4ae0633b0`,
+3,712,634 B), converted with `rdata` 0.5.2: 72 samples (47 ALL, 25 AML) x
+7,129 Affymetrix probes. `traits.csv` carries the AML indicator (AML = 1).
+
+### Route
+
+| # | Step | Key parameters |
+| --- | --- | --- |
+| 1 | `wgcna_soft_threshold` | `max_features=2000`, powers 1-10,12,14,16,18,20 |
+| 3 | `coexpression_modules` | `beta=6`, `cut_height=0.99`, `merge_threshold=0.75`, `min_module_size=30` |
+| 5 | `module_eigengenes` | `scale=true` |
+| 7 | `module_trait_correlation` | Pearson vs `class` |
+
+Every operator is followed by `export_results` to CSV. WSL reference run:
+8/8 steps, 0.734 s total (0.201 / 0.291 / 0.010 / 0.224 s).
+
+### Results
+
+Modules: `0:1518 1:126 2:96 3:91 4:68 5:54 6:47` (module 0 is grey).
+
+| Module | r (AML) | p |
+| --- | ---: | ---: |
+| 1 | 0.827996 | 2.951607e-19 |
+| 2 | -0.721153 | 9.034709e-13 |
+| 3 | -0.474847 | 2.504351e-05 |
+| 4 | 0.176259 | 1.385925e-01 |
+| 5 | -0.120287 | 3.141929e-01 |
+| 6 | 0.518194 | 3.127378e-06 |
+
+### Cross-platform
+
+| Artifact | WSL | srv | Windows |
+| --- | --- | --- | --- |
+| `coexpression_modules.csv` | `9ca09112dd69fbdb0a91ee17a05acce7` (24,586 B) | same bytes | same bytes |
+| `wgcna_soft_threshold.csv` | `fb88b54ab184fef543c1ba430ae4e530` (1,846 B) | `bd6c5176966dbf2f68d40b170cf4a4dc` (1,842 B) | `de7a116637bf5798b73506c578c8b266` (1,839 B) |
+| `module_eigengenes.csv` | `5720ff6300d2ff4f0b07fca8bec3e9cf` (8,510 B) | `3ff4fded0fbdf05cd39edeab679ddc24` (8,534 B) | `05600983743ddad0589b377e3b50d222` (8,526 B) |
+| `module_trait_correlation.csv` | `66627a7e4b175a593a39f8937cea91cc` (376 B) | `ed15c5b749b9625fa71cd657f69a232e` (374 B) | `893758ec5765cfececf7b7a594ecd9b6` (374 B) |
+
+Only the module table is byte-identical: the other three files differ in
+float text length because the three hosts use different NumPy/Pandas builds
+(2.1.3/2.2.3/2.5.x). Values agree after parsing:
+
+| Comparison | Max abs difference |
+| --- | --- |
+| soft threshold (WSL vs srv) | `r_squared` 1.1e-16, `slope` 3.1e-15, k columns 0 |
+| soft threshold (WSL vs Windows) | `r_squared` 1.1e-16, `slope` 3.1e-15, `max_k` 7.1e-15 |
+| eigengenes (both) | 1.78e-14 |
+| trait correlation (both) | r 2.2e-16, p 4.4e-16 (srv) / 3.9e-16 (Windows) |
+| module labels (both) | 2,000/2,000 in the same order |
+
+Elapsed: srv 4.334 s (0.588 / 1.699 / 0.698 / 1.338 s; the eigengene SVD is
+slower on the cluster BLAS), Windows 1.516 s (0.678 / 0.286 / 0.013 / 0.522 s).
+Windows ran the same tarball (`repo_b6.tgz`) and reported registry
+`740 operators / 104 readers / 7 packages / 30 routes`, errors 0,
+108 pre-existing warnings.
+
+### Oracles
+
+Independent implementation: **WGCNA 1.73** (R 4.3, conda-forge), same 2,000
+variable probes, unsigned network, `pickSoftThreshold` +
+`adjacency` + `TOMsimilarity` + `hclust`/`cutree` + `mergeCloseModules`.
+
+| Quantity | Max abs difference |
+| --- | --- |
+| `mean_k`, `median_k`, `max_k` | 1.7e-13 / 1.7e-13 / 4.0e-13 |
+| scale-free `r_squared`, `slope` | 5.6e-16, 2.3e-14 |
+| module labels | identical, 2,000/2,000 |
+| eigengene correlation with `ME1`-`ME6` | 1.0 (sign-aligned z 3.1e-14) |
+| trait `correlation` / `p_value` | 4.8e-15 / 4.0e-13 relative |
+
+`tests/test_extension368.py::test_scale_free_fit_matches_wgcna_reference` pins
+the histogram regression against values printed by `scaleFreeFitIndex()`.
+The scale-free fit reproduces R's `cut(k, 10)` behaviour, including the
+minimum k in the first bin; dropping it changes `r_squared` by 0.0016.
+
+Duplicate probe names are renamed differently by Pandas (`ACTB.1`) and R
+`write.csv` (`ACTB.1`, `ACTB.3`, ...), so a raw name join overcounts
+mismatches; labels agree for all 1,900 base names.
+
+### Known limits
+
+- Unsigned network restricted to the 2,000 most variable probes.
+- `cut_height` and `merge_threshold` are fixed in the route, not tuned.
+- The grey module is excluded from the eigengene table.
+- Module-trait correlation is unadjusted Pearson; no batch, sex or age
+  covariates exist in this ExpressionSet.

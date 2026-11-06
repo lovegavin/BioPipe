@@ -35,9 +35,8 @@ All three files were downloaded from RCSB on 2026-11-07.  Copies are stored in
 | Alternate conformers | gemmi 0.6.5 altloc inventory | labels _, A, B, C; max abs difference 1.5e-8 over atom counts, residue counts and occupancy extremes |
 | Cis peptides | gemmi 0.6.5 calculate_dihedral (converted from radians), abs(omega) <= 30 degrees | 514 bonds; 2 cis (A:30-31, B:30-31) on both sides; max abs omega difference 7.6e-6 degrees; 0 label or cis-flag mismatches |
 
-Raw comparison output: `workdir/b5_oracle.json`.  The oracle script is
-`D:/bp_tmp/b5/oracle.py` in the development tree and is not part of the
-installed library.
+Raw comparison output is kept with the development evidence and is not part
+of the installed library.
 
 ## Limits
 
