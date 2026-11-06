@@ -28,6 +28,7 @@ input/
 *.fq
 *.fa
 *.fasta
+!examples/quickstart/data/vhh.fasta
 
 # 表格数据，按需保留
 *.csv
