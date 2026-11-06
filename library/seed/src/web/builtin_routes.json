@@ -21,6 +21,11 @@
       "sha256": "bc334c1025363fe77c807ea967540e821f19aa18f9aa10c1ff711faf5932cf89",
       "parameters_sha256": "b6831833c042a71d2ac3923277fd0ef433f55437f198d3f781d00c9fc664bca7"
     },
+    "route_4ce5b10c88ca": {
+      "path": "routes/ecoli_gene_counts/task.yaml",
+      "sha256": "5bee93d0d4f99f2f07d35c510409628d0189d2a997c4107b20d63e6f1571a60c",
+      "parameters_sha256": "b941d2484d119c75578f845e39efdb5e97058700afac3d3420dc404b08fb8b1b"
+    },
     "route_233ac53c7b12": {
       "path": "routes/ecoli_resequencing/task.yaml",
       "sha256": "b37ab2efe559605c2323af3b402b5f71ee29fb612bcc7e2e0eb66780f19c7d77",
@@ -5607,6 +5612,396 @@
             },
             {
               "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_4ce5b10c88ca",
+      "version": 1,
+      "name": "E. coli gene-level counts and normalisation",
+      "graph": {
+        "schema_version": 2,
+        "name": "E. coli gene-level counts and normalisation",
+        "base_dir": ".studio/builtin-inputs/ecoli_gene_counts",
+        "nodes": [
+          {
+            "id": "annotation",
+            "kind": "source",
+            "operator": null,
+            "title": "annotation",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "GffReader",
+              "path": "input/ecoli.gff",
+              "dims": [
+                "feature",
+                "field"
+              ],
+              "labels": {
+                "feature": "auto",
+                "field": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "bam",
+            "kind": "source",
+            "operator": null,
+            "title": "bam",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "BamFileReader",
+              "path": "input/ecoli.sorted.bam",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "bam_gene_counts_1",
+            "kind": "operator",
+            "operator": "bam_gene_counts",
+            "title": "bam_gene_counts",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "feature_type": "gene",
+              "id_attribute": "locus_tag",
+              "min_mapq": 30,
+              "count_pairs": false,
+              "max_records": 0,
+              "output": "gene_counts"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "bam_gene_counts",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "counts_normalize_3",
+            "kind": "operator",
+            "operator": "counts_normalize",
+            "title": "counts_normalize",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "count_column": "counts",
+              "length_column": "length",
+              "output": "normalized"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "counts_normalize",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "bam_gene_bias_5",
+            "kind": "operator",
+            "operator": "bam_gene_bias",
+            "title": "bam_gene_bias",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "feature_type": "gene",
+              "id_attribute": "locus_tag",
+              "min_mapq": 30,
+              "bins": 5,
+              "count_pairs": false,
+              "max_records": 0,
+              "output": "gene_bias"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "bam_gene_bias",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "bam-bam_gene_counts_1-0",
+            "source": "bam",
+            "target": "bam_gene_counts_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "annotation-bam_gene_counts_1-1",
+            "source": "annotation",
+            "target": "bam_gene_counts_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "bam_gene_counts_1-export_results_2-0",
+            "source": "bam_gene_counts_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "bam_gene_counts_1-counts_normalize_3-0",
+            "source": "bam_gene_counts_1",
+            "target": "counts_normalize_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "counts_normalize_3-export_results_4-0",
+            "source": "counts_normalize_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "bam-bam_gene_bias_5-0",
+            "source": "bam",
+            "target": "bam_gene_bias_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "annotation-bam_gene_bias_5-1",
+            "source": "annotation",
+            "target": "bam_gene_bias_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "bam_gene_bias_5-export_results_6-0",
+            "source": "bam_gene_bias_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {
+          "description": "Count alignments per gene, normalise to TPM/FPKM/CPM and check 5'/3' bias."
+        },
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "annotation",
+              "label": "annotation",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "feature",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "bam",
+              "label": "bam",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "bam"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
               "handle": "out",
               "label": "Export results",
               "contract": {

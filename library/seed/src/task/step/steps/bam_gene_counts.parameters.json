@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "bam_gene_counts parameters",
+  "type": "object",
+  "properties": {
+    "feature_type": {
+      "type": "string",
+      "title": "注释类型",
+      "description": "只统计 GFF/GTF 第三列等于该类型的记录。",
+      "default": "gene",
+      "x-ui-group": "annotation",
+      "x-ui-order": 1
+    },
+    "id_attribute": {
+      "type": "string",
+      "title": "基因 ID 属性",
+      "description": "从 attributes 中读取该键作为基因 ID（如 locus_tag、gene_id、ID）。",
+      "default": "locus_tag",
+      "x-ui-group": "annotation",
+      "x-ui-order": 2
+    },
+    "min_mapq": {
+      "type": "integer",
+      "title": "最小比对质量",
+      "description": "低于该 MAPQ 的比对不计入。",
+      "default": 30,
+      "minimum": 0,
+      "maximum": 255,
+      "x-ui-group": "filter",
+      "x-ui-order": 3
+    },
+    "count_pairs": {
+      "type": "boolean",
+      "title": "按片段计数",
+      "description": "开启时只统计 read1，使双端数据按片段而不是按 read 计数。",
+      "default": false,
+      "x-ui-group": "filter",
+      "x-ui-order": 4
+    },
+    "max_records": {
+      "type": "integer",
+      "title": "最大记录数",
+      "description": "0 表示读取全部记录，正整数用于快速抽样。",
+      "default": 0,
+      "minimum": 0,
+      "x-ui-group": "filter",
+      "x-ui-order": 5
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "description": "输出 Form 在工作流中的名称。",
+      "default": "gene_counts",
+      "x-ui-group": "output",
+      "x-ui-order": 6
+    }
+  },
+  "additionalProperties": false
+}

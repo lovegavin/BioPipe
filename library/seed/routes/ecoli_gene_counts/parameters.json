@@ -1,0 +1,63 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "bam": {},
+    "annotation": {}
+  },
+  "steps": [
+    {
+      "name": "bam_gene_counts",
+      "inputs": ["bam", "annotation"],
+      "params": {
+        "feature_type": "gene",
+        "id_attribute": "locus_tag",
+        "min_mapq": 30,
+        "count_pairs": false,
+        "output": "gene_counts"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["gene_counts"],
+      "params": {"format": "csv", "filename": "bam_gene_counts"},
+      "context_params": {}
+    },
+    {
+      "name": "counts_normalize",
+      "inputs": ["gene_counts"],
+      "params": {
+        "count_column": "counts",
+        "length_column": "length",
+        "output": "normalized"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["normalized"],
+      "params": {"format": "csv", "filename": "counts_normalize"},
+      "context_params": {}
+    },
+    {
+      "name": "bam_gene_bias",
+      "inputs": ["bam", "annotation"],
+      "params": {
+        "feature_type": "gene",
+        "id_attribute": "locus_tag",
+        "min_mapq": 30,
+        "bins": 5,
+        "output": "gene_bias"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["gene_bias"],
+      "params": {"format": "csv", "filename": "bam_gene_bias"},
+      "context_params": {}
+    }
+  ]
+}

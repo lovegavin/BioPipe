@@ -1,0 +1,40 @@
+name: "E. coli gene-level counting"
+description: "Count alignments per gene, normalise to TPM/FPKM/CPM and check 5'/3' bias."
+sources:
+  bam:
+    path: input/ecoli.sorted.bam
+    dims: [file]
+    labels: {}
+    reader: BamFileReader
+  annotation:
+    path: input/ecoli.gff
+    dims: [feature, field]
+    labels:
+      feature: auto
+      field: builtin
+    reader: GffReader
+parameters_file: parameters.json
+steps:
+- name: bam_gene_counts
+  inputs:
+  - bam
+  - annotation
+- name: export_results
+  inputs:
+  - gene_counts
+- name: counts_normalize
+  inputs:
+  - gene_counts
+- name: export_results
+  inputs:
+  - normalized
+- name: bam_gene_bias
+  inputs:
+  - bam
+  - annotation
+- name: export_results
+  inputs:
+  - gene_bias
+runtime:
+  memory:
+    enabled: true

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "counts_normalize parameters",
+  "type": "object",
+  "properties": {
+    "count_column": {
+      "type": "string",
+      "title": "计数列",
+      "description": "输入表中保存原始计数的列名。",
+      "default": "counts",
+      "x-ui-group": "columns",
+      "x-ui-order": 1
+    },
+    "length_column": {
+      "type": "string",
+      "title": "长度列",
+      "description": "输入表中保存基因长度（bp）的列名。",
+      "default": "length",
+      "x-ui-group": "columns",
+      "x-ui-order": 2
+    },
+    "output": {
+      "type": "string",
+      "title": "输出名称",
+      "description": "输出 Form 在工作流中的名称。",
+      "default": "normalized",
+      "x-ui-group": "output",
+      "x-ui-order": 3
+    }
+  },
+  "additionalProperties": false
+}

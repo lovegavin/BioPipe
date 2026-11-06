@@ -530,6 +530,26 @@
     "status": "generated"
   },
   {
+    "id": "bam_gene_bias",
+    "kind": "operator",
+    "title": "bam_gene_bias",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "5' versus 3' alignment density bias across annotated genes.",
+    "doc": "src/task/step/steps/bam_gene_bias.BamGeneBiasStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bam_gene_counts",
+    "kind": "operator",
+    "title": "bam_gene_counts",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Per-gene alignment counts, gene length and CPM from a BAM and GFF/GTF.",
+    "doc": "src/task/step/steps/bam_gene_counts.BamGeneCountsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "barnard_test",
     "kind": "operator",
     "title": "Barnard exact test",
@@ -1327,6 +1347,16 @@
     "version": "1.0.0",
     "description": "Row and column principal coordinates from a contingency table.",
     "doc": "src/task/step/steps/correspondence_analysis.CorrespondenceAnalysisStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "counts_normalize",
+    "kind": "operator",
+    "title": "counts_normalize",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "TPM, FPKM and CPM from a gene count table with lengths.",
+    "doc": "src/task/step/steps/counts_normalize.CountsNormalizeStep.md",
     "status": "generated"
   },
   {
