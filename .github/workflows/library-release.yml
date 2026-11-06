@@ -74,6 +74,12 @@ jobs:
           cp -r examples/quickstart build/library/quickstart-staging/quickstart
           python -c "import shutil; shutil.make_archive('build/library/BioPipe-Quickstart-v${version}', 'zip', 'build/library/quickstart-staging')"
           cd build/library && sha256sum BioPipe-Quickstart-*.zip > SHA256SUMS-quickstart.txt
+      - name: Package builtin route bundles
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          mkdir -p frontend/dist
+          python scripts/package_routes.py --output build/library
       - uses: actions/upload-artifact@v4
         with:
           name: library-${{ matrix.os }}
@@ -83,6 +89,7 @@ jobs:
             build/library/SHA256SUMS-*.txt
             build/library/verification-*.json
             build/library/BioPipe-Quickstart-*.zip
+            build/library/BioPipe-Routes-*.zip
           if-no-files-found: error
   publish:
     if: startsWith(github.ref, 'refs/tags/library-v')
@@ -108,4 +115,4 @@ jobs:
           gh release create "$GITHUB_REF_NAME" --verify-tag --latest=false \
             --title "BioPipe Operator Library v${GITHUB_REF_NAME#library-v}" \
             --notes-file "docs/releases/${GITHUB_REF_NAME}.md" \
-            artifacts/*.biopipe-library.zip artifacts/*.whl artifacts/*Quickstart*.zip artifacts/SHA256SUMS.txt artifacts/verification-*.json
+            artifacts/*.biopipe-library.zip artifacts/*.whl artifacts/*Quickstart*.zip artifacts/*Routes*.zip artifacts/SHA256SUMS.txt artifacts/verification-*.json

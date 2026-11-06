@@ -87,7 +87,20 @@ python -m biopipe --workspace "$PWD" run examples/quickstart/vhh_interface.route
 
 Exported files appear under `output/artifacts/exports/<hash>/`.
 
-## 4. Expected results
+## 4. Import ready-made routes (optional)
+
+Release assets also include `BioPipe-Routes-v<version>.zip`. Unzip it; every
+`routes/<key>.biopipe.zip` inside is one complete builtin route.
+
+- Studio: **File -> Import workflow bundle or JSON**, pick a bundle, then point
+  its Source nodes at your own files.
+- CLI: `biopipe graph open routes/<key>.biopipe.zip` (or `biopipe run` once its
+  source files exist).
+
+The pack covers the builtin routes shipped with this library, including variant
+QC/concordance, single-cell, and RNA-seq analyses.
+
+## 5. Expected results
 
 | Quantity | Value |
 | --- | --- |
@@ -106,7 +119,7 @@ Exported tables:
 The first interface row is `A:ILE:29` (buried fraction 0.537); the first liability
 is `33:oxidation` (motif `M` in context `PYCMGWF`).
 
-## 5. Let an agent drive it
+## 6. Let an agent drive it
 
 If you connected an agent through MCP (Studio's **Agent** panel generates the
 configuration; see `docs/quickstart_full_flow.md`, section 5), paste this prompt:
@@ -130,7 +143,7 @@ The agent must read the documentation first, inspect the canvas before editing,
 make one revision-checked transaction, and wait for explicit approval before
 starting a run. These rules are enforced by `docs/agent_bootstrap.md`.
 
-## 6. Troubleshooting
+## 7. Troubleshooting
 
 | Symptom | Cause and fix |
 | --- | --- |

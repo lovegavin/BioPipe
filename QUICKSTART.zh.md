@@ -78,7 +78,17 @@ python -m biopipe --workspace "$PWD" run examples/quickstart/vhh_interface.route
 
 导出的文件位于 `output/artifacts/exports/<hash>/`。
 
-## 4. 预期结果
+## 4. 导入现成路线（可选）
+
+发行资产还包含 `BioPipe-Routes-v<version>.zip`。解压后，其中每个
+`routes/<key>.biopipe.zip` 就是一条完整的内置路线。
+
+- Studio：**文件 -> 导入路线包或 JSON**，选择一个包，再把 Source 节点指向你的文件。
+- 命令行：`biopipe graph open routes/<key>.biopipe.zip`（源文件就绪后也可 `biopipe run`）。
+
+该包覆盖本算子库内置的路线，包括变异 QC/一致性、单细胞与 RNA-seq 分析。
+
+## 5. 预期结果
 
 | 指标 | 数值 |
 | --- | --- |
@@ -97,7 +107,7 @@ python -m biopipe --workspace "$PWD" run examples/quickstart/vhh_interface.route
 界面表第一行是 `A:ILE:29`（埋藏比例 0.537）；风险表第一行是 `33:oxidation`
 （基序 `M`，上下文 `PYCMGWF`）。
 
-## 5. 让 agent 来驱动
+## 6. 让 agent 来驱动
 
 如果已经通过 MCP 接入 agent（Studio 的 **Agent 面板**会生成配置；详见
 `docs/quickstart_full_flow.zh.md` 第 5 节），把下面的提示词粘贴进去：
@@ -118,7 +128,7 @@ n_interface/n_core/n_rim、风险位点数量，并列出导出的文件。
 agent 必须先读文档、先查看画布再编辑、用一次带 revision 校验的事务完成修改，并且在
 真正运行前等待用户明确确认——这些规则写在 `docs/agent_bootstrap.md` 中。
 
-## 6. 常见问题
+## 7. 常见问题
 
 | 现象 | 原因与处理 |
 | --- | --- |

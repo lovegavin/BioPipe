@@ -120,6 +120,11 @@
       "path": "routes/survival/task.yaml",
       "sha256": "9155552512ad5b6f4c0f51086cd1cf3628c092ea7fbc4e81c0d2237baaa2e7f3",
       "commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95"
+    },
+    "route_476483f1a42f": {
+      "path": "routes/variant_qc_concordance/task.yaml",
+      "sha256": "286554c6aea9eb540c82af7791b1aa582ac0f125e46131f305ab5ac6540b568a",
+      "parameters_sha256": "d220eef1af8ddb4d77299a58ff2e43338d021d2f81086875be72e2ae493279f8"
     }
   },
   "routes": [
@@ -3359,6 +3364,460 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_476483f1a42f",
+      "version": 1,
+      "name": "Variant QC and concordance",
+      "graph": {
+        "schema_version": 2,
+        "name": "Variant QC and concordance",
+        "base_dir": ".studio/builtin-inputs/variant_qc_concordance",
+        "nodes": [
+          {
+            "id": "query",
+            "kind": "source",
+            "operator": null,
+            "title": "query",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfFileReader",
+              "path": "input/query.vcf.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "truth",
+            "kind": "source",
+            "operator": null,
+            "title": "truth",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfFileReader",
+              "path": "input/truth.vcf.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "vcf_stats_1",
+            "kind": "operator",
+            "operator": "vcf_stats",
+            "title": "vcf_stats",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "region": "",
+              "max_records": 0,
+              "output": "stats"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "variant_stats",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "vcf_filter_3",
+            "kind": "operator",
+            "operator": "vcf_filter",
+            "title": "vcf_filter",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "min_qual": 20,
+              "require_pass": true,
+              "biallelic_only": false,
+              "variant_type": "any",
+              "min_dp": 0,
+              "max_missing_rate": 1.0,
+              "region": "",
+              "max_records": 0,
+              "output": "filtered"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "native",
+              "filename": "filtered_variants",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "vcf_concordance_5",
+            "kind": "operator",
+            "operator": "vcf_concordance",
+            "title": "vcf_concordance",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "sample_query": "NA12878",
+              "sample_truth": "HG001",
+              "region": "",
+              "min_qual": 0,
+              "require_pass": false,
+              "output": "concordance"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "concordance",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "vcf_relatedness_7",
+            "kind": "operator",
+            "operator": "vcf_relatedness",
+            "title": "vcf_relatedness",
+            "position": {
+              "x": 360.0,
+              "y": 730.0
+            },
+            "params": {
+              "samples": "",
+              "max_samples": 50,
+              "min_maf": 0.05,
+              "min_call_rate": 0.9,
+              "region": "",
+              "max_variants": 0,
+              "output": "kinship"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 730.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "kinship",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_7"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "query-vcf_stats_1-0",
+            "source": "query",
+            "target": "vcf_stats_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "vcf_stats_1-export_results_2-0",
+            "source": "vcf_stats_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "query-vcf_filter_3-0",
+            "source": "query",
+            "target": "vcf_filter_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "vcf_filter_3-export_results_4-0",
+            "source": "vcf_filter_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "query-vcf_concordance_5-0",
+            "source": "query",
+            "target": "vcf_concordance_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "truth-vcf_concordance_5-1",
+            "source": "truth",
+            "target": "vcf_concordance_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "vcf_concordance_5-export_results_6-0",
+            "source": "vcf_concordance_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "query-vcf_relatedness_7-0",
+            "source": "query",
+            "target": "vcf_relatedness_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "vcf_relatedness_7-export_results_8-0",
+            "source": "vcf_relatedness_7",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "query",
+              "label": "query",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "truth",
+              "label": "truth",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]
@@ -11192,7 +11651,7 @@
     },
     {
       "id": "route_f6f466bace35",
-      "version": 6,
+      "version": 7,
       "name": "GWAS",
       "graph": {
         "schema_version": 2,
@@ -11801,52 +12260,16 @@
               "label": "geno",
               "contract": {
                 "version": 1,
-                "ndim": 2,
-                "numeric": true,
                 "dims": [
                   "variant",
                   "sample"
                 ],
                 "labels": [],
-                "info": {
-                  "missing_code": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "encoders": {
-                    "type": "object",
-                    "optional": true
-                  },
-                  "representation": {
-                    "type": "string",
-                    "const": "hard_call"
-                  },
-                  "ploidy": {
-                    "type": "integer",
-                    "min": 1
-                  },
-                  "chrom": {
-                    "type": "array",
-                    "items": "string"
-                  },
-                  "pos": {
-                    "type": "array",
-                    "items": "integer"
-                  }
-                },
-                "info_open": false,
-                "axis_info_open": false,
-                "parallel": [
-                  {
-                    "dim": "variant",
-                    "fields": [
-                      "chrom",
-                      "pos"
-                    ]
-                  }
-                ]
+                "info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2,
+                "parallel": []
               }
             },
             {
@@ -11886,8 +12309,6 @@
               "label": "PCA",
               "contract": {
                 "version": 1,
-                "ndim": 2,
-                "numeric": true,
                 "dims": [
                   "sample",
                   "component"
@@ -11908,9 +12329,10 @@
                     "const": "scores"
                   }
                 },
-                "info_open": false,
-                "axis_info_open": false,
-                "axis_info": {}
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2
               }
             },
             {
@@ -11919,8 +12341,6 @@
               "label": "附加注释",
               "contract": {
                 "version": 1,
-                "ndim": 2,
-                "numeric": true,
                 "dims": [
                   "feature",
                   "statistic"
@@ -11958,14 +12378,15 @@
                     "type": "array"
                   }
                 },
-                "info_open": false,
-                "axis_info_open": true,
                 "axis_info": {
                   "feature": [
                     "chrom",
                     "pos"
                   ]
-                }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "ndim": 2
               }
             }
           ]
