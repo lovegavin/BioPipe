@@ -1144,3 +1144,69 @@ Primary alignments only (secondary/supplementary/qcfail excluded); reads are
 counted once per overlapped gene; duplicate-flagged reads are kept to match
 `bedtools multicov` defaults; `count_pairs` uses read 1 only. The bias metric
 is a 5'/3' edge-window density ratio, not a full gene-body coverage model.
+
+## Batch 15 - genome k-mer comparison (K-12 vs O157:H7)
+
+**Operators:** `genome_kmer_spectrum`, `genome_kmer_similarity`,
+`genome_mash_distance` (category Genome).
+**Route:** `genome_kmer_comparison` (builtin, 6 steps).
+
+### Data
+
+| Source | File | Bytes | SHA256 |
+| --- | --- | --- | --- |
+| *E. coli* K-12 MG1655, `GCF_000005845.2` | `input/ecoli.fasta` | 4,699,745 | `53bb6a51b6e92139ced1e38f74b7938781027c52200922ff03718c2237d23bb4` |
+| *E. coli* O157:H7 Sakai, `GCF_000008865.2` | `input/o157.fna` | 5,664,775 | `71c2e5c364293c9ba36fc2c7acbcaa75cd6884295fe06260ba198826a8b1ddd3` |
+
+Both assemblies are public NCBI RefSeq downloads; O157 includes its plasmids,
+all records are canonicalised into 21-mers.
+
+### Route and results
+
+| Step | Result |
+| --- | --- |
+| `genome_kmer_spectrum` (k=21, max 50) | 4,543,891 distinct canonical 21-mers, 4,641,632 occurrences, 37 observed multiplicities, 15 k-mers in the `50+` bucket |
+| `genome_kmer_similarity` (k=21) | K-12 4,543,891 unique, O157 5,302,382 unique, shared 3,064,483, union 6,781,790, Jaccard 0.4518693442291784 |
+| `genome_mash_distance` (k=21) | distance 0.0225746167074651, ANI 0.9774253832925349, shared 3,064,483 |
+
+No step failed; WSL total 5.8886 s (1.317 / 2.282 / 2.285 s).
+
+### Oracles
+
+| Oracle | Version | Agreement |
+| --- | --- | --- |
+| jellyfish spectrum (`jellyfish count -m 21 -C`, `histo`) | 2.3.1 | dense 1..51 buckets: `n_kmers` max abs diff 0.0, fraction 9.56e-17, total 4,543,891 both, overflow bucket 15 both |
+| jellyfish set intersection (`dump -c`) | 2.3.1 | shared 3,064,483, union 6,781,790, Jaccard 0.4518693442291784 (0.0 diff) |
+| Mash formula on exact Jaccard | published formula | distance 0.0225746167074651 (0.0 diff), ANI diff 1.1e-16 |
+| `mash dist -k 21 -s 1000000` | 2.3 | 0.0225412, delta 3.34e-5; MinHash sketch estimate, recorded as approximation only |
+
+### Three-platform check
+
+| Platform | Time | Notes |
+| --- | --- | --- |
+| WSL (Ubuntu 24.04, numpy 2.1.3) | 5.8886 s | reference run |
+| srv (Linux, python 3.11, numpy 2.4.6) | 33.6087 s | 4.6 / 14.0 / 15.0 s per operator |
+| Windows (py 3.12) | 17.7794 s | 1.8 / 7.9 / 8.1 s per operator |
+
+All three exports are byte-identical across platforms:
+
+| File | Bytes | MD5 |
+| --- | --- | --- |
+| `kmer_spectrum.csv` | 1,180 | `246461869187019e6541ed46c45d4b0f` |
+| `kmer_similarity.csv` | 208 | `6ce3108f075d99d8ddcc14140fb5578d` |
+| `mash_distance.csv` | 172 | `1cf37646e132cce03829650e2da0315e` |
+
+Registry after the batch: **769 operators / 104 readers / 7 packages / 39
+routes**, errors 0, warnings 113 (all pre-existing).
+
+### Limits
+
+- The spectrum table is sparse plus a `50+` overflow bucket; dense histogram
+  comparisons must fill missing multiplicities with zero.
+- `k` is limited to 3-31 by the 2-bit encoding; windows containing non-ACGT
+  characters are skipped.
+- Mash distance and ANI are alignment-free and computed from the exact Jaccard
+  index, so they are deliberately slightly different from sketch-based
+  `mash dist` output (delta 3.34e-5 here).
+- k-mers are canonicalised, so strand-specific or CpG-aware analyses are out of
+  scope.
