@@ -618,7 +618,7 @@ absolute step-JSON paths), `WAVE5_SUMMARY.md`, `WAVE5_EXPORTS.json`, refreshed
 `UNCOVERED.md` (295) and `ROUTE_OPERATOR_MATRIX.csv` (68x422); the wave-4
 versions are retained as `.wave4` copies.
 
-## 19. Wave-6 closure coverage (715/717)
+## 19. Wave-6 closure coverage (716/717)
 
 The remaining operators after wave 5 (295) were executed directly against the
 installed 3.0.1 library with `Context` + `run()`, not through route graphs. Four
@@ -628,14 +628,19 @@ locally against 1MEL plus explicit synthetic binders. Every row records
 `status`, `mode=real|synthetic`, `elapsed`, `evidence`, and `error` when it
 failed.
 
-Result: **717 total, 422 baseline, 715 covered (99.7 %), 2 uncovered**;
-293 wave-6 rows are ok (156 real, 137 synthetic). All categories except Machine
+Result: **717 total, 422 baseline, 716 covered (99.8 %), 1 uncovered**;
+294 wave-6 rows are ok (157 real, 137 synthetic). All categories except Machine
 Learning are at 100 %; ML is 222/224.
 
 | operator | blocker |
 |---|---|
-| `openfold_predict` | AF2 `.npz` parameters are unavailable and OpenFold expects a PyTorch `.pt` checkpoint, while the operator forwards the npz path; `modelcif` is also missing. |
-| `rfdiffusion_design` | The official base checkpoint is present, but RFdiffusion requires `dgl`; no wheel matches the environment and `data.dgl.ai` is unreachable. |
+| `rfdiffusion_design` | The available RFantibody tree hard-codes the antibody sampler and rejects the generic `Complex_beta_ckpt.pt` configuration, while the official RFdiffusion source tree is not retrievable from this host. |
+
+`openfold_predict` completed after the v4.0.1 publication (30 aa peptide,
+OpenFold `finetuning_ptm_2.pt`, CPU, 252.7 s, 194 atoms) after installing
+`modelcif`, guarding the TensorRT import, and adding a CPU attention fallback;
+the library assets are unchanged. `dgl` 1.1.3 installs on the cluster, so the
+remaining RFdiffusion block is the incompatible upstream tree, not the wheel.
 
 `ligandmpnn_side_chain_packing` was executed through a filename-normalizing
 wrapper: the packer writes `<name>_packed_<design>_<pack>.pdb`, while the
