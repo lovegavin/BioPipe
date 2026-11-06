@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "properties": {
+    "root_cell": {
+      "type": "string",
+      "default": "",
+      "description": "Cell label used as the pseudotime root; the first cell is used when empty."
+    },
+    "n_neighbors": {
+      "type": "integer",
+      "default": 15,
+      "minimum": 2,
+      "description": "Number of nearest neighbours in the diffusion graph."
+    },
+    "n_dcs": {
+      "type": "integer",
+      "default": 10,
+      "minimum": 1,
+      "description": "Number of diffusion components used for the distance."
+    },
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}

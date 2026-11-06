@@ -1,0 +1,70 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "embedding": {},
+    "clusters": {},
+    "expression": {},
+    "communication": {}
+  },
+  "steps": [
+    {
+      "name": "pseudotime_dpt",
+      "inputs": ["embedding"],
+      "params": {
+        "root_cell": "AAACATACAACCAC-1",
+        "n_neighbors": 15,
+        "n_dcs": 10,
+        "output": "pseudotime"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["pseudotime"],
+      "params": {"format": "csv", "filename": "pseudotime_dpt"},
+      "context_params": {}
+    },
+    {
+      "name": "paga_connectivity",
+      "inputs": ["embedding", "clusters"],
+      "params": {"n_neighbors": 15, "output": "paga"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["paga"],
+      "params": {"format": "csv", "filename": "paga_connectivity"},
+      "context_params": {}
+    },
+    {
+      "name": "trajectory_gene_trends",
+      "inputs": ["expression", "pseudotime"],
+      "params": {"n_bins": 10, "output": "trends"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["trends"],
+      "params": {"format": "csv", "filename": "trajectory_gene_trends"},
+      "context_params": {}
+    },
+    {
+      "name": "cell_communication",
+      "inputs": ["communication", "clusters"],
+      "params": {
+        "pairs_table": "input/pairs.csv",
+        "min_mean": 0.1,
+        "output": "communication_scores"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["communication_scores"],
+      "params": {"format": "csv", "filename": "cell_communication"},
+      "context_params": {}
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "properties": {
+    "n_bins": {
+      "type": "integer",
+      "default": 10,
+      "minimum": 2,
+      "description": "Number of equal-width bins along the pseudotime axis."
+    },
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}

@@ -910,6 +910,16 @@
     "status": "generated"
   },
   {
+    "id": "cell_communication",
+    "kind": "operator",
+    "title": "cell_communication",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Ligand-receptor communication scores between cell clusters.",
+    "doc": "src/task/step/steps/cell_communication.CellCommunicationStep.md",
+    "status": "generated"
+  },
+  {
     "id": "cell_cycle_score",
     "kind": "operator",
     "title": "Cell cycle score",
@@ -3920,6 +3930,16 @@
     "status": "generated"
   },
   {
+    "id": "paga_connectivity",
+    "kind": "operator",
+    "title": "paga_connectivity",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "PAGA-style connectivity between clusters on a cell embedding.",
+    "doc": "src/task/step/steps/paga_connectivity.PagaConnectivityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "page_test",
     "kind": "operator",
     "title": "Page test for ordered alternatives",
@@ -4607,6 +4627,16 @@
     "version": "1.0.0",
     "description": "Pseudobulk aggregation：接收 2 个输入，输出 Form；主要参数：Cell Dim、Gene Dim、分组字段、方法。",
     "doc": "src/task/step/steps/pseudobulk.PseudobulkStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pseudotime_dpt",
+    "kind": "operator",
+    "title": "pseudotime_dpt",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Diffusion pseudotime over a low-dimensional cell embedding.",
+    "doc": "src/task/step/steps/pseudotime_dpt.PseudotimeDptStep.md",
     "status": "generated"
   },
   {
@@ -6767,6 +6797,16 @@
     "version": "1.0.0",
     "description": "TOST equivalence test：接收 2 个输入，输出 Form；主要参数：特征维度、样本维度、分组维度、分组字段、A 组、B 组。",
     "doc": "src/task/step/steps/tost_equivalence.TostEquivalenceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "trajectory_gene_trends",
+    "kind": "operator",
+    "title": "trajectory_gene_trends",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Mean gene expression across equal-width pseudotime bins.",
+    "doc": "src/task/step/steps/trajectory_gene_trends.TrajectoryGeneTrendsStep.md",
     "status": "generated"
   },
   {

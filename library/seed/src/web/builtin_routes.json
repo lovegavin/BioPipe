@@ -6,6 +6,11 @@
       "sha256": "f4419972e650aefa52a3fda16b1cb054dca42885ca887eb2902c1c53124659f2",
       "parameters_sha256": "5f889ce7f7f62034902914a4ad4d45d462dd5547660949a31594e4bcbaede301"
     },
+    "route_233ac53c7b12": {
+      "path": "routes/ecoli_resequencing/task.yaml",
+      "sha256": "b37ab2efe559605c2323af3b402b5f71ee29fb612bcc7e2e0eb66780f19c7d77",
+      "parameters_sha256": "16967af63ea2bd91dc383a813d953e77fb69f0fefc999db659d3c31e6a460b0c"
+    },
     "route_60b00ddcef5b": {
       "path": "routes/go_enrichment/task.yaml",
       "sha256": "d820ed06f7e7b88da224121a3f2c7948f14d09d950f1f3aef015fd2af7fb64fc",
@@ -70,6 +75,11 @@
       "path": "routes/multi_omics/task.yaml",
       "sha256": "508c63db53b66e81a3489ea1b3dc9e0c104da92661699ae78cb20984fb82aa41",
       "parameters_sha256": "0f16da20bc55e32c660e287b89c1aa9c3de6ad6da3d8d8d6e9627562824d9a79"
+    },
+    "route_d9121b3aa34c": {
+      "path": "routes/pbmc_trajectory/task.yaml",
+      "sha256": "91fd44d1538a72c3fd45b11b011d7e32ab3f647e0e17e5f70716d09107c8ea0b",
+      "parameters_sha256": "987ef5fb59f65e0e8d413a811571709b7bb371f61c607aaa74ce1c6c8d34d3d0"
     },
     "route_88fb083f4238": {
       "path": "routes/proteomics_de/task.yaml",
@@ -462,6 +472,461 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_233ac53c7b12",
+      "version": 1,
+      "name": "E. coli resequencing: coverage, insert size, variants and consensus",
+      "graph": {
+        "schema_version": 2,
+        "name": "E. coli resequencing: coverage, insert size, variants and consensus",
+        "base_dir": ".studio/builtin-inputs/ecoli_resequencing",
+        "nodes": [
+          {
+            "id": "bam",
+            "kind": "source",
+            "operator": null,
+            "title": "bam",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "BamFileReader",
+              "path": "input/alignment.bam",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "reference",
+            "kind": "source",
+            "operator": null,
+            "title": "reference",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaFileReader",
+              "path": "input/ecoli.fasta",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "alignment_coverage_1",
+            "kind": "operator",
+            "operator": "alignment_coverage",
+            "title": "alignment_coverage",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_mapq": 0,
+              "max_records": 0,
+              "output": "coverage"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "alignment_coverage",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "alignment_insert_size_3",
+            "kind": "operator",
+            "operator": "alignment_insert_size",
+            "title": "alignment_insert_size",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "min_mapq": 0,
+              "max_records": 0,
+              "output": "insert_size"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "alignment_insert_size",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pileup_variants_5",
+            "kind": "operator",
+            "operator": "pileup_variants",
+            "title": "pileup_variants",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "min_depth": 5,
+              "min_base_quality": 20,
+              "min_alt_fraction": 0.8,
+              "min_alt_count": 2,
+              "min_mapq": 0,
+              "max_records": 0,
+              "output": "variants"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "native",
+              "filename": "consensus_variants",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "consensus_sequence_7",
+            "kind": "operator",
+            "operator": "consensus_sequence",
+            "title": "consensus_sequence",
+            "position": {
+              "x": 360.0,
+              "y": 730.0
+            },
+            "params": {
+              "min_depth": 5,
+              "min_base_quality": 20,
+              "min_fraction": 0.6,
+              "min_mapq": 0,
+              "max_records": 0,
+              "output": "consensus"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 730.0
+            },
+            "params": {
+              "format": "native",
+              "filename": "consensus_genome",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_7"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "bam-alignment_coverage_1-0",
+            "source": "bam",
+            "target": "alignment_coverage_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "alignment_coverage_1-export_results_2-0",
+            "source": "alignment_coverage_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "bam-alignment_insert_size_3-0",
+            "source": "bam",
+            "target": "alignment_insert_size_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "alignment_insert_size_3-export_results_4-0",
+            "source": "alignment_insert_size_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "bam-pileup_variants_5-0",
+            "source": "bam",
+            "target": "pileup_variants_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reference-pileup_variants_5-1",
+            "source": "reference",
+            "target": "pileup_variants_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "pileup_variants_5-export_results_6-0",
+            "source": "pileup_variants_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "bam-consensus_sequence_7-0",
+            "source": "bam",
+            "target": "consensus_sequence_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reference-consensus_sequence_7-1",
+            "source": "reference",
+            "target": "consensus_sequence_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "consensus_sequence_7-export_results_8-0",
+            "source": "consensus_sequence_7",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "bam",
+              "label": "bam",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "bam"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "reference",
+              "label": "reference",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "fasta"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]
@@ -11271,6 +11736,606 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_d9121b3aa34c",
+      "version": 1,
+      "name": "PBMC3k trajectory: pseudotime, PAGA, gene trends and cell communication",
+      "graph": {
+        "schema_version": 2,
+        "name": "PBMC3k trajectory: pseudotime, PAGA, gene trends and cell communication",
+        "base_dir": ".studio/builtin-inputs/pbmc_trajectory",
+        "nodes": [
+          {
+            "id": "clusters",
+            "kind": "source",
+            "operator": null,
+            "title": "clusters",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/clusters.csv",
+              "dims": [
+                "cell",
+                "cluster"
+              ],
+              "labels": {
+                "cell": {
+                  "cluster": 0
+                },
+                "cluster": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "communication",
+            "kind": "source",
+            "operator": null,
+            "title": "communication",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/communication.csv",
+              "dims": [
+                "cell",
+                "gene"
+              ],
+              "labels": {
+                "cell": {
+                  "gene": 0
+                },
+                "gene": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "embedding",
+            "kind": "source",
+            "operator": null,
+            "title": "embedding",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/embedding.csv",
+              "dims": [
+                "cell",
+                "component"
+              ],
+              "labels": {
+                "cell": {
+                  "component": 0
+                },
+                "component": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "expression",
+            "kind": "source",
+            "operator": null,
+            "title": "expression",
+            "position": {
+              "x": 70.0,
+              "y": 730.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/expression.csv",
+              "dims": [
+                "cell",
+                "gene"
+              ],
+              "labels": {
+                "cell": {
+                  "gene": 0
+                },
+                "gene": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pseudotime_dpt_1",
+            "kind": "operator",
+            "operator": "pseudotime_dpt",
+            "title": "pseudotime_dpt",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "root_cell": "AAACATACAACCAC-1",
+              "n_neighbors": 15,
+              "n_dcs": 10,
+              "output": "pseudotime"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "pseudotime_dpt",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "paga_connectivity_3",
+            "kind": "operator",
+            "operator": "paga_connectivity",
+            "title": "paga_connectivity",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "n_neighbors": 15,
+              "output": "paga"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "paga_connectivity",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "trajectory_gene_trends_5",
+            "kind": "operator",
+            "operator": "trajectory_gene_trends",
+            "title": "trajectory_gene_trends",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "n_bins": 10,
+              "output": "trends"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "trajectory_gene_trends",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "cell_communication_7",
+            "kind": "operator",
+            "operator": "cell_communication",
+            "title": "cell_communication",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "pairs_table": "input/pairs.csv",
+              "min_mean": 0.1,
+              "output": "communication_scores"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 730.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "cell_communication",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_7"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "embedding-pseudotime_dpt_1-0",
+            "source": "embedding",
+            "target": "pseudotime_dpt_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pseudotime_dpt_1-export_results_2-0",
+            "source": "pseudotime_dpt_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "embedding-paga_connectivity_3-0",
+            "source": "embedding",
+            "target": "paga_connectivity_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clusters-paga_connectivity_3-1",
+            "source": "clusters",
+            "target": "paga_connectivity_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "paga_connectivity_3-export_results_4-0",
+            "source": "paga_connectivity_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "expression-trajectory_gene_trends_5-0",
+            "source": "expression",
+            "target": "trajectory_gene_trends_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pseudotime_dpt_1-trajectory_gene_trends_5-1",
+            "source": "pseudotime_dpt_1",
+            "target": "trajectory_gene_trends_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "trajectory_gene_trends_5-export_results_6-0",
+            "source": "trajectory_gene_trends_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "communication-cell_communication_7-0",
+            "source": "communication",
+            "target": "cell_communication_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clusters-cell_communication_7-1",
+            "source": "clusters",
+            "target": "cell_communication_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "cell_communication_7-export_results_8-0",
+            "source": "cell_communication_7",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "clusters",
+              "label": "clusters",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "cell",
+                  "cluster"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "communication",
+              "label": "communication",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "cell",
+                  "gene"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "embedding",
+              "label": "embedding",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "cell",
+                  "component"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "expression",
+              "label": "expression",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "cell",
+                  "gene"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

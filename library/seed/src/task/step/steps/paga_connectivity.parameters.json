@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "properties": {
+    "n_neighbors": {
+      "type": "integer",
+      "default": 15,
+      "minimum": 2,
+      "description": "Number of nearest neighbours used to build the cluster graph."
+    },
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}

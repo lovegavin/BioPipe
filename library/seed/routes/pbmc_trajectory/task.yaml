@@ -1,0 +1,74 @@
+name: "PBMC3k trajectory: diffusion pseudotime, PAGA, gene trends and cell communication"
+sources:
+  embedding:
+    path: input/embedding.csv
+    dims:
+    - cell
+    - component
+    labels:
+      cell:
+        component: 0
+      component: builtin
+    reader: CsvReader
+  clusters:
+    path: input/clusters.csv
+    dims:
+    - cell
+    - cluster
+    labels:
+      cell:
+        cluster: 0
+      cluster: builtin
+    reader: CsvReader
+  expression:
+    path: input/expression.csv
+    dims:
+    - cell
+    - gene
+    labels:
+      cell:
+        gene: 0
+      gene: builtin
+    reader: CsvReader
+  communication:
+    path: input/communication.csv
+    dims:
+    - cell
+    - gene
+    labels:
+      cell:
+        gene: 0
+      gene: builtin
+    reader: CsvReader
+parameters_file: parameters.json
+steps:
+- name: pseudotime_dpt
+  inputs:
+  - embedding
+- name: export_results
+  inputs:
+  - pseudotime
+- name: paga_connectivity
+  inputs:
+  - embedding
+  - clusters
+- name: export_results
+  inputs:
+  - paga
+- name: trajectory_gene_trends
+  inputs:
+  - expression
+  - pseudotime
+- name: export_results
+  inputs:
+  - trends
+- name: cell_communication
+  inputs:
+  - communication
+  - clusters
+- name: export_results
+  inputs:
+  - communication_scores
+runtime:
+  memory:
+    enabled: true
