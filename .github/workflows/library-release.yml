@@ -64,16 +64,6 @@ jobs:
           python -m build --wheel --outdir build/library library
           cd build/library
           sha256sum biopipe_builtin_library-*.whl > SHA256SUMS-seed.txt
-      - name: Package quickstart example
-        if: runner.os == 'Linux'
-        shell: bash
-        run: |
-          version=$(python -c 'import json; print(json.load(open("library/release.json"))["version"])')
-          mkdir -p build/library/quickstart-staging
-          cp QUICKSTART.md QUICKSTART.zh.md build/library/quickstart-staging/
-          cp -r examples/quickstart build/library/quickstart-staging/quickstart
-          python -c "import shutil; shutil.make_archive('build/library/BioPipe-Quickstart-v${version}', 'zip', 'build/library/quickstart-staging')"
-          cd build/library && sha256sum BioPipe-Quickstart-*.zip > SHA256SUMS-quickstart.txt
       - name: Package builtin route bundles
         if: runner.os == 'Linux'
         shell: bash
@@ -88,7 +78,6 @@ jobs:
             build/library/*.whl
             build/library/SHA256SUMS-*.txt
             build/library/verification-*.json
-            build/library/BioPipe-Quickstart-*.zip
             build/library/BioPipe-Routes-*.zip
           if-no-files-found: error
   publish:
@@ -112,7 +101,8 @@ jobs:
           set -euo pipefail
           ls -l artifacts
           cat artifacts/SHA256SUMS-*.txt > artifacts/SHA256SUMS.txt
+          sha256sum QUICKSTART.md QUICKSTART.zh.md >> artifacts/SHA256SUMS.txt
           gh release create "$GITHUB_REF_NAME" --verify-tag --latest=false \
             --title "BioPipe Operator Library v${GITHUB_REF_NAME#library-v}" \
             --notes-file "docs/releases/${GITHUB_REF_NAME}.md" \
-            artifacts/*.biopipe-library.zip artifacts/*.whl artifacts/*Quickstart*.zip artifacts/*Routes*.zip artifacts/SHA256SUMS.txt artifacts/verification-*.json
+            artifacts/*.biopipe-library.zip artifacts/*.whl artifacts/*Routes*.zip QUICKSTART.md QUICKSTART.zh.md artifacts/SHA256SUMS.txt artifacts/verification-*.json

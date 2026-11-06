@@ -1,141 +1,234 @@
-# BioPipe 快速开始
+# BioPipe 快速开始（应用 2.6.0 + 算子库 4.0.4）
 
-从一台干净的 Windows 电脑出发，大约五分钟完成：安装桌面应用、导入当前算子库、在
-RCSB 结构 **1MEL** 上跑通一个真实的界面分析流程，并导出结果。
+从一台干净的 Windows 电脑出发，大约五分钟完成：安装桌面应用、导入 4.0.4 算子库、
+在 **1MEL** 上跑通一个真实的 VHH/溶菌酶界面分析，并导出结果。
 
 BioPipe 完全在本地运行，不上传数据，也不需要单独安装 Python。
+
+## 0. 版本
+
+| 组件 | 版本 |
+| --- | --- |
+| 桌面应用 / 前端 | **2.6.0** |
+| 算子库（后端） | **4.0.4**（717 个算子、101 个 Reader、7 个包、24 条路线） |
+| 协议 | v3 |
+| 最低应用版本 | 2.6.0 |
+
+应用和算子库独立升级：应用升级不覆盖已导入的库。快速开始只提供本文件和
+`QUICKSTART.md` 两份文档；示例数据就在源码仓库里，不再单独打包。
 
 ## 1. 安装桌面应用
 
 1. 从 [v2.6.0 发行版](https://github.com/lovegavin/BioPipe/releases/tag/v2.6.0)
    下载 **`BioPipe_Setup.exe`**（约 793 MB）。
-2. 双击运行。Windows SmartScreen 可能提示“未知发布者”，选择
-   **更多信息 → 仍要运行**；安装包目前尚未做代码签名。
+2. 双击运行。SmartScreen 提示“未知发布者”时选择 **更多信息 → 仍要运行**；
+   安装包目前尚未代码签名。
 3. 安装按当前用户进行：程序位于
    `%LOCALAPPDATA%\Programs\BioPipe Studio`，并创建桌面快捷方式，不需要管理员权限。
-4. 每次安装都会生成全新配置目录
-   `%USERPROFILE%\.biopipe\profiles\<installation-id>`；重装不会覆盖旧配置和分析文件。
+4. 每次安装生成独立配置目录
+   `%USERPROFILE%\.biopipe\profiles\<installation-id>`；重装不会覆盖旧配置。
 
-支持平台：64 位 Windows 10 / 11。
+支持 64 位 Windows 10 / 11。
 
-## 2. 导入算子库
+## 2. 导入算子库 4.0.4
 
-应用自带一份种子算子库，保证首次启动即可使用。本发行版对应的完整库是
-**4.0.2**：717 个算子、101 个 Reader。
+1. 从 [library-v4.0.4 发行版](https://github.com/lovegavin/BioPipe/releases/tag/library-v4.0.4)
+   下载对应平台的库包：
+   - Windows：`BioPipe-Library-v4.0.4-Windows.biopipe-library.zip`
+   - Linux：`BioPipe-Library-v4.0.4-Linux.biopipe-library.zip`
+2. Studio → **算子库 → 导入包**，选中 zip，等待完成。
+3. 面板显示 **4.0.4** 即成功。导入是事务性的：失败会保留原库，不会半装。
+4. 平台必须匹配；装错会报 `Library source does not match wheel`。
 
-1. 从 [library-v4.0.2 发行版](https://github.com/lovegavin/BioPipe/releases/tag/library-v4.0.2)
-   下载 **`BioPipe-Library-v4.0.2-Windows.biopipe-library.zip`**；Linux 用户下载
-   `Linux` 版本。
-2. 在 Studio 中打开 **算子库（Operator Library）→ 导入包（Import package）**。
-3. 选择该 zip，等待导入完成。算子库面板会显示版本 **4.0.2**，它与软件版本相互独立。
-4. 导入是事务性的：失败时保留原有算子库，不会出现半装状态。
-
-已安装 BioPipe 的 Python 环境也可以用命令行：
+已安装的 Python 环境也可以：
 
 ```bash
-biopipe plugin install BioPipe-Library-v4.0.2-Windows.biopipe-library.zip
+biopipe --profile-dir <profile> plugin install \
+  BioPipe-Library-v4.0.4-Windows.biopipe-library.zip
 ```
 
-## 3. 运行示例流程
+验证注册表：
 
-发行版中的快速开始包 `BioPipe-Quickstart-v4.0.2.zip` 包含下面两个输入文件和一个可直接
-导入的流程图。
+```bash
+biopipe --profile-dir <profile> registry check
+# operators 717 / readers 101 / packages 7 / routes 24 / errors 0
+```
 
-**输入数据**（均为公开数据）：
+`registry check` 只校验协议与注册表，不校验分析依赖；依赖面板里的缺失项按需安装，
+不影响本快速开始。
 
-| 文件 | 内容 |
+## 3. 连接方式一：agent + MCP（推荐）
+
+### 3.1 启动 MCP 服务
+
+打开 Studio 的 **Agent 面板**，它会生成当前 profile 的 MCP 配置。把类似下面的 JSON
+粘贴到 agent 客户端（Claude Desktop、Cursor、DeepSeek Harness 等）的 MCP 配置中：
+
+```json
+{
+  "mcpServers": {
+    "biopipe": {
+      "command": "<安装目录>\\biopipe.exe",
+      "args": ["mcp", "--allow-run"]
+    }
+  }
+}
+```
+
+- `command` 用面板生成的绝对路径；Linux 上通常是已安装环境里的 `biopipe`。
+- `--allow-run` 允许 agent 提交任务；只读场景改成 `--read-only`。
+- 需要安装插件时再加 `--allow-plugins`。
+- 改完配置后**重启 agent 客户端**，新会话里应出现 `biopipe_*` 工具。
+
+### 3.2 验证连接
+
+在 agent 里依次调用：
+
+```text
+biopipe_status()             # 连接、版本、workspace
+biopipe_sessions()           # 当前画布会话
+biopipe_context(session_id)  # 选中节点、参数、revision
+```
+
+能返回当前 workspace、717 个算子与 101 个 Reader，即连接成功。
+
+### 3.3 让 agent 跑 1MEL
+
+确认已连通后，把下面这段**原样**发给 agent：
+
+```text
+使用本快速开始包中的 vhh_1mel.pdb 与 vhh.fasta（源码仓库中位于examples/smoke_real_data/input），提出一个有深度研究价值的科学问题，先输出得到确认，再设计分析图，在远程服务器或本地运行，自行检查算子的输出与结果，得到严谨的科学结论
+```
+
+说明（不要混进上面的命令）：
+
+- 数据在源码仓库的 `examples/smoke_real_data/input/`；没有源码 checkout 时，可在
+  Studio 里用任意本地路径的同名文件。
+- agent 会先给科学问题与图，**等你确认后**才运行；运行位置由当前执行目标决定
+  （本地，或第 4 节的服务器）。
+- agent 的硬规则在 `docs/agent_bootstrap.md`：先读画布、用 `expected_revision` 做事务、
+  运行前等确认、结果必须来自 `biopipe_artifacts` / `biopipe_artifact_table`。
+
+## 4. 连接方式二：远程 Linux 服务器
+
+数据在服务器、或本机算力不够时使用。桌面端负责编辑与展示，计算在服务器执行。
+
+### 4.1 首次安装服务器
+
+1. Studio 顶部工具栏选择 **执行目标 → 服务器维护 → 安装 / 升级服务器**。
+2. 填 SSH 地址、端口、用户名，选择密钥或密码；首次连接确认主机指纹。
+3. 安装器自动下载 micromamba，在服务器创建 Python 3.11 环境（含 BWA、samtools、
+   pairtools、cooler、cooltools），不需要 sudo，也不改系统 Python。
+4. 默认安装目录 `$HOME/.local/share/biopipe`，运行目录是其下的 `workspace/`；
+   可在连接面板修改。
+5. 安装成功会写入稳定的 `server.json`；以后连接直接复用，不重复安装。
+
+安装日志在服务器 `managed-v1/setup-<digest>.log`。安装失败不会发布新的安装指针，
+可重试。已有环境可手动注册：
+
+```bash
+python -m biopipe.remote.installation register \
+  --app-dir /srv/biopipe --workspace /srv/biopipe-work
+```
+
+然后在桌面端选择 **手动指定环境**。
+
+### 4.2 在服务器上运行
+
+1. 工具栏把执行目标切到该服务器。
+2. Source 节点可以直接浏览服务器上的文件；Check / Run 通过 SSH 执行。
+3. 结果与日志仍在 Studio 中查看，不需要手动 scp。
+
+### 4.3 agent 走服务器
+
+agent 仍连本地 Studio，只需切换执行设备：
+
+```text
+biopipe_remote_status()                 # profile 是否已连接
+biopipe_remote_ensure(profile_id)       # 断线时重连
+biopipe_set_execution(session_id, document_id, expected_revision,
+                      {"kind": "ssh", "profile_id": "<id>"})
+```
+
+之后 `biopipe_validate` / `biopipe_run` / `biopipe_submit` 在服务器执行；
+`biopipe_artifacts`、`biopipe_artifact_table`、`biopipe_logs` 直接读远端结果。
+
+## 5. 不用 agent：画布与 CLI
+
+数据与路线都在源码仓库：
+
+| 文件 | 位置 |
 | --- | --- |
-| `data/vhh_1mel.pdb` | RCSB 条目 [1MEL](https://doi.org/10.2210/pdb1MEL/pdb)：羊驼源 VHH 结构域（链 A、B）与鸡蛋清溶菌酶（链 L、M）的复合物，3,908 个原子 |
-| `data/vhh.fasta` | 链 A 的 VHH 序列，132 个残基 |
+| 结构 | `examples/smoke_real_data/input/vhh_1mel.pdb` |
+| 序列 | `examples/smoke_real_data/input/vhh.fasta` |
+| 路线 | `examples/quickstart/vhh_interface.route.json` |
 
-**流程图**（`vhh_interface.route.json`）：
-
-```
-vhh_1mel.pdb ──▶ structure_interface_core ──▶ export_results（interface_residues.csv）
-vhh.fasta   ──▶ sequence_liability_scan ──▶ export_results（liabilities.csv）
-```
-
-`structure_interface_core` 计算 VHH/溶菌酶界面每个残基埋藏的可及表面积，并把残基分为
-核心（core）与边缘（rim）；`sequence_liability_scan` 标注 VHH 序列中的氧化、异构化
-和脱酰胺基序。整个流程在普通笔记本 CPU 上只需几秒。
+1MEL 是羊驼源 VHH（链 A、B）与鸡蛋清溶菌酶（链 L、M）的复合物，3,908 个原子；
+FASTA 是链 A 的 132 个残基。
 
 ### 方式 A —— 画布
 
-1. 解压快速开始包。
-2. 在 Studio 中选择 **文件 → 导入路线包或 JSON（File → Import workflow bundle or JSON）**，
-   选中 `vhh_interface.route.json`。
-3. 依次选中两个 **Source** 节点，把路径改指到 `data/` 中对应的文件（流程图保存的是相对
-   快速开始包的路径，导入后需要重新选择一次）。
-4. 点击 **运行（Run）**。
+1. Studio → **文件 → 导入路线包或 JSON**，选择 `vhh_interface.route.json`。
+2. 选中两个 **Source** 节点，把路径改到 `examples/smoke_real_data/input/` 下的
+   `vhh_1mel.pdb` 与 `vhh.fasta`（路线保存的是相对旧位置的路径，导入后需重选一次）。
+3. 点击 **运行**，普通笔记本 CPU 约 4 秒。
 
-### 方式 B —— 命令行（源码仓库）
+### 方式 B —— 命令行
 
-在包含 `library/` 与 `examples/` 的仓库根目录执行：
+在仓库根目录，先把路线里两个 Source 的 `path` 改到 `examples/smoke_real_data/input/`，
+然后：
 
 ```bash
-python -m biopipe --workspace "$PWD" run examples/quickstart/vhh_interface.route.json --wait
+python -m biopipe --workspace "$PWD" \
+  run examples/quickstart/vhh_interface.route.json --wait
 ```
 
-导出的文件位于 `output/artifacts/exports/<hash>/`。
+导出位于 `output/artifacts/exports/<hash>/`。
 
-## 4. 导入现成路线（可选）
+## 6. 预期结果与自查
 
-发行资产还包含 `BioPipe-Routes-v<version>.zip`。解压后，其中每个
-`routes/<key>.biopipe.zip` 就是一条完整的内置路线。
+| 指标 | 数值 | 容差 |
+| --- | --- | --- |
+| 界面残基总数 | **88** | 精确 |
+| 核心残基（core） | **52** | 精确 |
+| 边缘残基（rim） | **36** | 精确 |
+| 序列风险位点 | **10**（5 氧化、3 异构化、2 脱酰胺） | 精确 |
+| 全结构 SASA（518 残基） | **21,803.1 Å²** | ±0.5% |
 
-- Studio：**文件 -> 导入路线包或 JSON**，选择一个包，再把 Source 节点指向你的文件。
-- 命令行：`biopipe graph open routes/<key>.biopipe.zip`（源文件就绪后也可 `biopipe run`）。
+- `interface_residues.csv`：88 行，列
+  `residue,delta_sasa,isolated_sasa,buried_fraction,is_core`；
+  第一行 `A:ILE:29`，`buried_fraction = 0.537`，`is_core = 1`。
+- `liabilities.csv`：10 行，列
+  `liability,position,severity_code,motif_length`；
+  第一行 `33:oxidation`，基序 `M`，上下文 `PYCMGWF`。
 
-该包覆盖本算子库内置的路线，包括变异 QC/一致性、单细胞与 RNA-seq 分析。
-
-## 5. 预期结果
-
-| 指标 | 数值 |
-| --- | --- |
-| 界面残基总数 | **88** |
-| 核心残基（core） | **52** |
-| 边缘残基（rim） | **36** |
-| 序列风险位点 | **10**（5 个氧化、3 个异构化、2 个脱酰胺） |
-
-导出的两张表：
-
-- `interface_residues.csv` —— 88 行，列为
-  `residue,delta_sasa,isolated_sasa,buried_fraction,is_core`。
-- `liabilities.csv` —— 10 行，列为
-  `liability,position,severity_code,motif_length`。
-
-界面表第一行是 `A:ILE:29`（埋藏比例 0.537）；风险表第一行是 `33:oxidation`
-（基序 `M`，上下文 `PYCMGWF`）。
-
-## 6. 让 agent 来驱动
-
-如果已经通过 MCP 接入 agent（Studio 的 **Agent 面板**会生成配置；详见
-`docs/quickstart_full_flow.zh.md` 第 5 节），把下面的提示词粘贴进去：
-
-```text
-在做任何事之前，先阅读 QUICKSTART.zh.md 和 docs/agent_bootstrap.md。
-然后调用 biopipe_status，列出当前会话，并用 biopipe_context 查看画布现状；
-此时不要修改任何内容。
-
-使用本快速开始包中的 vhh_1mel.pdb 与 vhh.fasta（源码仓库中位于
-examples/quickstart/data），提出一个四算子流程图：
-  PdbReader -> structure_interface_core -> export_results（CSV）
-  FastaReader -> sequence_liability_scan -> export_results（CSV）
-告诉我算子参数和预期输出，然后等待我确认。确认后再运行，汇报
-n_interface/n_core/n_rim、风险位点数量，并列出导出的文件。
+```python
+import pandas as pd
+i = pd.read_csv("interface_residues.csv")
+l = pd.read_csv("liabilities.csv")
+assert len(i) == 88 and int(i.is_core.sum()) == 52
+assert abs(i.iloc[0].buried_fraction - 0.537) < 0.002
+assert len(l) == 10 and l.iloc[0].liability == "33:oxidation"
+print("OK", i.residue.iloc[0], l.liability.iloc[0])
 ```
-
-agent 必须先读文档、先查看画布再编辑、用一次带 revision 校验的事务完成修改，并且在
-真正运行前等待用户明确确认——这些规则写在 `docs/agent_bootstrap.md` 中。
 
 ## 7. 常见问题
 
 | 现象 | 原因与处理 |
 | --- | --- |
-| SmartScreen 阻止安装 | 选择 **更多信息 → 仍要运行**；安装包未签名。 |
-| 报 `Missing operator definition: export_results` | 当前 workspace 没有算子库。启动 Studio 并导入库 zip，或把 `--workspace` 指向包含 `library/` 的仓库根目录。 |
-| 任务一直 `queued`，提示 “Waiting for available host memory” | 长时间运行的 Studio 可能持有过期的内存快照。完全退出 Studio 后重新打开，启动时会重新扫描主机内存。 |
-| 导入 zip 被拒绝 | 请使用 `.biopipe-library.zip` 资产，而不是 seed `.whl`；库包会校验自身 checksum 与包版本。 |
+| agent 看不到 `biopipe_*` 工具 | MCP 配置未生效；检查 command 路径与 `--allow-run`，重启客户端。 |
+| `Missing operator definition: export_results` | 当前 workspace 没加载库；先在 Studio 导入 4.0.4，或用 `--profile-dir` 指向已导入库的 profile。 |
+| `Library source does not match wheel` | 平台包用错；Windows/Linux 选对应 zip，原库不变。 |
+| 服务器安装失败 | 看 `managed-v1/setup-<digest>.log`；确认 SSH、磁盘、出站 HTTPS。 |
+| 服务器连上但算子不可用 | 服务器 profile 未导入 4.0.4，或依赖未装；先导入库，再按依赖面板安装。 |
+| 任务长时间 `queued` | 长时间运行的 Studio 可能持有过期内存快照；完全退出后重开。 |
 
-日志位置：安装日志在 `%LOCALAPPDATA%\BioPipe\Setup\<timestamp>`，运行日志在配置目录对应的
-作业目录下。
+日志：安装日志在 `%LOCALAPPDATA%\BioPipe\Setup\<timestamp>`；运行日志在配置目录的
+`logs/` 下；服务器日志在 `managed-v1/setup-<digest>.log`。
+
+## 8. 下一步
+
+- 24 条内置路线：**文件 → 打开路线**。
+- 参数、端口与错误：选中节点看 **Inspector** 与运行日志。
+- 协议与扩展：`docs/operator_protocol.md`、`docs/step_extensions.md`。
+- agent 规则与工具：`docs/agent_bootstrap.md`、`docs/agent_api.md`。
