@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CoexpressionModulesStep parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "description": "表达矩阵的样本维度名。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "description": "表达矩阵的基因/特征维度名。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "beta": {
+      "type": "number",
+      "default": 6,
+      "minimum": 1,
+      "maximum": 30,
+      "title": "软阈值幂",
+      "description": "邻接矩阵使用 |r|^beta。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "cut_height": {
+      "type": "number",
+      "default": 0.9,
+      "minimum": 0.05,
+      "maximum": 0.999,
+      "title": "树切割高度",
+      "description": "在 1-TOM 平均连接树上按该高度切分模块。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "merge_threshold": {
+      "type": "number",
+      "default": 0.75,
+      "minimum": 0,
+      "maximum": 0.99,
+      "title": "模块合并阈值",
+      "description": "模块特征基因相关性不低于该值时合并。",
+      "x-ui-group": "basic",
+      "x-ui-order": 40
+    },
+    "min_module_size": {
+      "type": "integer",
+      "default": 30,
+      "minimum": 2,
+      "title": "最小模块大小",
+      "description": "小于该规模的模块归入 grey（0）。",
+      "x-ui-group": "basic",
+      "x-ui-order": 50
+    },
+    "max_features": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "title": "最大特征数",
+      "description": "按方差保留前 N 个特征；0 表示全部使用。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "default": "modules",
+      "title": "输出参数",
+      "description": "写入上下文的结果参数名。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    }
+  }
+}

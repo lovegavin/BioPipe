@@ -1,0 +1,53 @@
+name: "Golub leukemia co-expression network: soft threshold, modules, eigengenes and traits"
+sources:
+  expression:
+    path: input/expression.csv
+    dims:
+    - sample
+    - feature
+    labels:
+      sample:
+        feature: 0
+      feature: builtin
+    reader: CsvReader
+  traits:
+    path: input/traits.csv
+    dims:
+    - sample
+    - trait
+    labels:
+      sample:
+        trait: 0
+      trait: builtin
+    reader: CsvReader
+parameters_file: parameters.json
+steps:
+- name: wgcna_soft_threshold
+  inputs:
+  - expression
+- name: export_results
+  inputs:
+  - thresholds
+- name: coexpression_modules
+  inputs:
+  - expression
+- name: export_results
+  inputs:
+  - modules
+- name: module_eigengenes
+  inputs:
+  - expression
+  - modules
+- name: export_results
+  inputs:
+  - eigengenes
+- name: module_trait_correlation
+  inputs:
+  - eigengenes
+  - traits
+- name: export_results
+  inputs:
+  - module_traits
+runtime:
+  memory:
+    enabled: true

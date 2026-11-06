@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ModuleTraitCorrelationStep parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "description": "两个输入共享的样本维度名。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "trait_dim": {
+      "type": "string",
+      "default": "trait",
+      "title": "性状维度",
+      "description": "性状矩阵的性状维度名。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "output": {
+      "type": "string",
+      "default": "module_traits",
+      "title": "输出参数",
+      "description": "写入上下文的结果参数名。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 20
+    }
+  }
+}

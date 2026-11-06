@@ -16,6 +16,11 @@
       "sha256": "d820ed06f7e7b88da224121a3f2c7948f14d09d950f1f3aef015fd2af7fb64fc",
       "parameters_sha256": "3af2662ced959f4bbb9ac235ae3745c0dba8618a3ae8c206a21ddc3e6f848810"
     },
+    "route_82aacd126ab1": {
+      "path": "routes/golub_coexpression/task.yaml",
+      "sha256": "9562f1da63f039c482f8fa7386a99bd55ab5f61511d26ae28d306f9fc3b0c9ae",
+      "parameters_sha256": "4f2b1df1c5a3ef19592ff6c9ec5e96cf177e003432f95abd8f784ae144d7d5a4"
+    },
     "route_ce61ce2c7fb5": {
       "path": "routes/gtf_annotation/task.yaml",
       "sha256": "20c33160fcebddf4a8740b9b2575348acceb37d2c887f8b9f6eaa3df3e5e34ca",
@@ -8978,6 +8983,493 @@
                 "axis_info_open": false,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_82aacd126ab1",
+      "version": 1,
+      "name": "Golub leukemia co-expression network",
+      "graph": {
+        "schema_version": 2,
+        "name": "Golub leukemia co-expression network",
+        "base_dir": ".studio/builtin-inputs/golub_coexpression",
+        "nodes": [
+          {
+            "id": "expression",
+            "kind": "source",
+            "operator": null,
+            "title": "expression",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/expression.csv",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "traits",
+            "kind": "source",
+            "operator": null,
+            "title": "traits",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/traits.csv",
+              "dims": [
+                "sample",
+                "trait"
+              ],
+              "labels": {
+                "sample": {
+                  "trait": 0
+                },
+                "trait": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "wgcna_soft_threshold_1",
+            "kind": "operator",
+            "operator": "wgcna_soft_threshold",
+            "title": "Scale-free topology fit for soft-threshold powers",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "feature_dim": "feature",
+              "powers": "1,2,3,4,5,6,7,8,9,10,12,14,16,18,20",
+              "max_features": 2000,
+              "n_bins": 10,
+              "r2_cut": 0.8,
+              "slope_cut": -1.5,
+              "output": "thresholds"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "wgcna_soft_threshold",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "coexpression_modules_3",
+            "kind": "operator",
+            "operator": "coexpression_modules",
+            "title": "Co-expression modules from topological overlap",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "feature_dim": "feature",
+              "beta": 6,
+              "cut_height": 0.99,
+              "merge_threshold": 0.75,
+              "min_module_size": 30,
+              "max_features": 2000,
+              "output": "modules"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "coexpression_modules",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "module_eigengenes_5",
+            "kind": "operator",
+            "operator": "module_eigengenes",
+            "title": "Module eigengenes",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "feature_dim": "feature",
+              "scale": true,
+              "output": "eigengenes"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "module_eigengenes",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "module_trait_correlation_7",
+            "kind": "operator",
+            "operator": "module_trait_correlation",
+            "title": "Module-trait correlations",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "trait_dim": "trait",
+              "output": "module_traits"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "module_trait_correlation",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_7"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "expression-wgcna_soft_threshold_1-0",
+            "source": "expression",
+            "target": "wgcna_soft_threshold_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "wgcna_soft_threshold_1-export_results_2-0",
+            "source": "wgcna_soft_threshold_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "expression-coexpression_modules_3-0",
+            "source": "expression",
+            "target": "coexpression_modules_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "coexpression_modules_3-export_results_4-0",
+            "source": "coexpression_modules_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "expression-module_eigengenes_5-0",
+            "source": "expression",
+            "target": "module_eigengenes_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "coexpression_modules_3-module_eigengenes_5-1",
+            "source": "coexpression_modules_3",
+            "target": "module_eigengenes_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "module_eigengenes_5-export_results_6-0",
+            "source": "module_eigengenes_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "module_eigengenes_5-module_trait_correlation_7-0",
+            "source": "module_eigengenes_5",
+            "target": "module_trait_correlation_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "traits-module_trait_correlation_7-1",
+            "source": "traits",
+            "target": "module_trait_correlation_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "module_trait_correlation_7-export_results_8-0",
+            "source": "module_trait_correlation_7",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "expression",
+              "label": "expression",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "traits",
+              "label": "traits",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "trait"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

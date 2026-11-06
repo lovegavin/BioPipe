@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WgcnaSoftThresholdStep parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "description": "表达矩阵的样本维度名。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "description": "表达矩阵的基因/特征维度名。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "powers": {
+      "type": "string",
+      "default": "1,2,3,4,5,6,7,8,9,10,12,14,16,18,20",
+      "title": "候选软阈值幂",
+      "description": "逗号分隔的正整数幂列表。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "max_features": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "title": "最大特征数",
+      "description": "按方差保留前 N 个特征；0 表示全部使用。",
+      "x-ui-group": "basic",
+      "x-ui-order": 30
+    },
+    "n_bins": {
+      "type": "integer",
+      "default": 10,
+      "minimum": 3,
+      "maximum": 50,
+      "title": "分箱数",
+      "description": "连通度分布离散化的箱数（对应 WGCNA nBreaks）。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 40
+    },
+    "r2_cut": {
+      "type": "number",
+      "default": 0.8,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "title": "R² 阈值",
+      "description": "推荐幂所需的最小无标度拟合 R²。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 50
+    },
+    "slope_cut": {
+      "type": "number",
+      "default": -1.5,
+      "title": "斜率下限",
+      "description": "推荐幂所需的最小拟合斜率。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 60
+    },
+    "output": {
+      "type": "string",
+      "default": "thresholds",
+      "title": "输出参数",
+      "description": "写入上下文的结果参数名。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 70
+    }
+  }
+}

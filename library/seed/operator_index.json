@@ -1070,6 +1070,16 @@
     "status": "generated"
   },
   {
+    "id": "coexpression_modules",
+    "kind": "operator",
+    "title": "Co-expression modules from topological overlap",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Builds the signed adjacency and topological overlap matrix, cuts an average-linkage dendrogram at a fixed height, merges modules with correlated eigengenes and assigns small modules to grey.",
+    "doc": "src/task/step/steps/coexpression_modules.CoexpressionModulesStep.md",
+    "status": "generated"
+  },
+  {
     "id": "cohens_d",
     "kind": "operator",
     "title": "Cohen's d",
@@ -3627,6 +3637,26 @@
     "version": "1.0.0",
     "description": "按指定维度过滤缺失比例过高的样本或特征。",
     "doc": "src/task/step/steps/missing.MissingStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "module_eigengenes",
+    "kind": "operator",
+    "title": "Module eigengenes",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Computes the first principal component of every module after per-gene scaling, sign-aligns it to the module average expression and reports the explained variance per module.",
+    "doc": "src/task/step/steps/module_eigengenes.ModuleEigengenesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "module_trait_correlation",
+    "kind": "operator",
+    "title": "Module-trait correlations",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Correlates every module eigengene with every sample trait, reports Pearson r, the two-sided p-value and the sample count, and returns the strongest association.",
+    "doc": "src/task/step/steps/module_trait_correlation.ModuleTraitCorrelationStep.md",
     "status": "generated"
   },
   {
@@ -7257,6 +7287,16 @@
     "version": "1.0.0",
     "description": "Per-feature Welch one-way ANOVA.",
     "doc": "src/task/step/steps/welch_anova.WelchAnovaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "wgcna_soft_threshold",
+    "kind": "operator",
+    "title": "Scale-free topology fit for soft-threshold powers",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Computes the signed correlation network for a range of powers, derives the connectivity distribution and reports the scale-free fit R^2, slope and truncated-exponential adjusted R^2, together with a suggested power.",
+    "doc": "src/task/step/steps/wgcna_soft_threshold.WgcnaSoftThresholdStep.md",
     "status": "generated"
   },
   {

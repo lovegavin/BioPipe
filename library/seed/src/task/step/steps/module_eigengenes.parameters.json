@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ModuleEigengenesStep parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "default": "sample",
+      "title": "样本维度",
+      "description": "表达矩阵的样本维度名。",
+      "x-ui-group": "basic",
+      "x-ui-order": 0
+    },
+    "feature_dim": {
+      "type": "string",
+      "default": "feature",
+      "title": "特征维度",
+      "description": "表达矩阵与模块分配的基因/特征维度名。",
+      "x-ui-group": "basic",
+      "x-ui-order": 10
+    },
+    "scale": {
+      "type": "boolean",
+      "default": true,
+      "title": "逐基因标准化",
+      "description": "计算主成分前是否对每个基因做 z-score。",
+      "x-ui-group": "basic",
+      "x-ui-order": 20
+    },
+    "output": {
+      "type": "string",
+      "default": "eigengenes",
+      "title": "输出参数",
+      "description": "写入上下文的结果参数名。",
+      "x-ui-group": "advanced",
+      "x-ui-order": 30
+    }
+  }
+}

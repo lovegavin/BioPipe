@@ -1,0 +1,70 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "expression": {},
+    "traits": {}
+  },
+  "steps": [
+    {
+      "name": "wgcna_soft_threshold",
+      "inputs": ["expression"],
+      "params": {
+        "max_features": 2000,
+        "powers": "1,2,3,4,5,6,7,8,9,10,12,14,16,18,20",
+        "output": "thresholds"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["thresholds"],
+      "params": {"format": "csv", "filename": "wgcna_soft_threshold"},
+      "context_params": {}
+    },
+    {
+      "name": "coexpression_modules",
+      "inputs": ["expression"],
+      "params": {
+        "beta": 6,
+        "cut_height": 0.99,
+        "merge_threshold": 0.75,
+        "min_module_size": 30,
+        "max_features": 2000,
+        "output": "modules"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["modules"],
+      "params": {"format": "csv", "filename": "coexpression_modules"},
+      "context_params": {}
+    },
+    {
+      "name": "module_eigengenes",
+      "inputs": ["expression", "modules"],
+      "params": {"scale": true, "output": "eigengenes"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["eigengenes"],
+      "params": {"format": "csv", "filename": "module_eigengenes"},
+      "context_params": {}
+    },
+    {
+      "name": "module_trait_correlation",
+      "inputs": ["eigengenes", "traits"],
+      "params": {"output": "module_traits"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["module_traits"],
+      "params": {"format": "csv", "filename": "module_trait_correlation"},
+      "context_params": {}
+    }
+  ]
+}
