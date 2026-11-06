@@ -1083,3 +1083,64 @@ Wilcoxon uses the asymptotic normal approximation without continuity
 correction; the route covers 300 HVG rather than the full transcriptome; tau is
 defined as 0 for genes with no detected expression; cluster labels are numeric
 codes from the companion route.
+
+## Batch 14 — E. coli gene-level counts (`ecoli_gene_counts`)
+
+Operators added: `bam_gene_counts`, `counts_normalize`, `bam_gene_bias`
+(commit `bf4ee08e`). Registry after the batch: **766 operators / 104 readers /
+7 packages / 38 routes**, `errors []`.
+
+### Data
+
+| Input | Size | SHA256 | Source |
+| --- | --- | --- | --- |
+| `input/ecoli.sorted.bam` | 19,134,169 B | `79e4140a…` | B3 route: `bwa mem` of ENA SRR001666 200k pairs, coordinate sorted + indexed |
+| `input/ecoli.gff` | 2,314,238 B | `68d25735ccde6d37af68613dca57a588ae69423f0ecee99b0f29d596eff7accb` | NCBI `GCF_000005845.2_ASM584v2_genomic.gff.gz` (9,531 lines, 4,506 genes with `locus_tag`) |
+
+### Route (6 steps)
+
+`bam_gene_counts` (BAM + GFF) → CSV; `counts_normalize` (counts) → CSV;
+`bam_gene_bias` (BAM + GFF) → CSV. Parameters: `min_mapq 30`,
+`feature_type gene`, `id_attribute locus_tag`, `bins 5`.
+
+### Results
+
+- 4,506 genes, **328,624** counted alignments.
+- `b0001`: counts 10, length 66, CPM 30.429914, TPM 397.275958,
+  FPKM 461.059300; bias 5' 0.227273, 3' 0.303030, ratio 0.75.
+- Three-platform runtime: WSL 2.0314 s (counts 0.941, bias 1.062); srv
+  5.263 s (counts 2.331, bias 2.843); Windows 2.447 s (counts 1.137,
+  bias 1.271).
+
+### Oracles
+
+| Comparison | Method | Result |
+| --- | --- | --- |
+| counts | `bedtools multicov` on `samtools view -q 30 -F 0xB04` filtered BAM | 4,506/4,506 genes, **0 mismatches**, total 328,624 |
+| TPM / FPKM / CPM | recomputed from counts and length | **max abs diff 0.0** |
+| 5'/3' density ratio | independent `samtools view` CIGAR/midpoint parser, same 5-bin rule | **max abs diff 0.0** (4,506 genes) |
+
+### Defect found by the oracle
+
+The first version passed GFF `start` (1-based) straight into the 0-based
+overlap test, so every feature was shifted by one base and its reported length
+was one base short (b0001 read 65 instead of 66). Counts were 388 lower than
+`bedtools multicov` (328,236 vs 328,624, 371 genes affected) and the bias
+ratio differed by up to 2.0. Converting `start - 1` fixed all three outputs
+and the oracle then matched exactly. This is the value of the independent
+`bedtools` comparison: the unit tests alone accepted the off-by-one.
+
+### Byte identity
+
+| File | Size | MD5 (WSL = srv = Windows) |
+| --- | --- | --- |
+| `bam_gene_counts.csv` | 165,533 B | `2a1e39cbd50100136ce59df9114de8ad` |
+| `counts_normalize.csv` | 279,099 B | `741c7588cefe7c401343d7a7e1e382c1` |
+| `bam_gene_bias.csv` | 267,533 B | `4ff440340ccb18781a713bccc4e7ef94` |
+
+### Limitations
+
+Primary alignments only (secondary/supplementary/qcfail excluded); reads are
+counted once per overlapped gene; duplicate-flagged reads are kept to match
+`bedtools multicov` defaults; `count_pairs` uses read 1 only. The bias metric
+is a 5'/3' edge-window density ratio, not a full gene-body coverage model.
