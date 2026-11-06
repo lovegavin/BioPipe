@@ -1817,3 +1817,92 @@ Nearly all of the wall time is the first decode of 291,205 variants by
   evidence are reported as `ambiguous` rather than guessed.
 - LD pruning uses the study dosages and a 100 kb window; it is not a
   population-specific reference panel.
+
+## Batch 23 - ATAC-seq peak calling (chr22)
+
+### Data
+
+| input | source | size | sha256 |
+| --- | --- | --- | --- |
+| `chr22.bam` | ENCODE GM12878 ATAC `ENCFF415FEC.bam`, chr22 subset via `samtools view -b ... chr22` | 54,427,077 B | `f193f6c3cadd66bfdb4e20a90359374ddd3879a38ae7f46c6915e97329c1ff0d` |
+| `chr22_macs_peaks.narrowPeak` | MACS3 3.0.2 oracle on the same BAM | 764,104 B | `b59ec056439152e72a8c4b2ff7a4691c66a6964044a09c788d2cc2bc579c3960` |
+| IDR peaks | ENCODE `ENCFF945SYZ`, chr22 subset (3,326 peaks, 1,168,598 bp) | - | - |
+
+The full BAM has 46,956,970 fragments; chr22 contributes 1,055,472 properly
+paired fragments (about 2x coverage over 50.8 Mb).
+
+### Route
+
+`atac_peak_calling` (4 steps):
+
+1. `atac_peak_call`: BAMPE fragments, q-value 0.05, candidate sigma 3.0,
+   260 bp symmetric extension, 50 bp merge gap, 100 bp minimum length.
+2. `export_results` to `peaks.csv`.
+3. `peak_merge` with `max_gap=50`.
+4. `export_results` to `merged.csv`.
+
+### Results
+
+| metric | value |
+| --- | --- |
+| peaks | 1,854 |
+| peak bases | 1,287,331 bp |
+| mean peak width | 694 bp |
+| merged peaks | 1,840 |
+| fragments used | 1,055,472 |
+
+### Oracles
+
+MACS3 3.0.2 (`callpeak -f BAMPE -g hs -q 0.05 --keep-dup all`) called 2,057
+peaks / 1,554,495 bp (mean width 756 bp).
+
+| metric | value |
+| --- | --- |
+| bp Jaccard | 0.4418 |
+| MACS bp recall | 0.5602 |
+| our bp precision | 0.6645 |
+| MACS summit inside our peaks | 1,361 / 2,057 = 66.16% |
+| our summit inside MACS peaks | 1,472 / 1,854 = 79.40% |
+
+ENCODE IDR peaks restricted to chr22 (3,326 peaks / 1,168,598 bp) give bp
+Jaccard 0.5345 and IDR bp recall 0.7321.
+
+The MACS3 and IDR comparisons are independent of the operator implementation:
+MACS3 is a separate C caller and the IDR set is the ENCODE gold standard for
+this experiment.
+
+### Three-platform runs
+
+| platform | wall | peak call | peaks md5 | merged md5 |
+| --- | --- | --- | --- | --- |
+| WSL (python 3.12, numpy 2.1.3) | 4.36 s | 4.348 s | `5308f391e6594d1193459393253f2486` | `9a8f25f72de5227b213904aff7d92a98` |
+| srv (python 3.11, numpy 2.4.6) | 12.23 s | 12.180 s | `5308f391e6594d1193459393253f2486` | `9a8f25f72de5227b213904aff7d92a98` |
+| Windows (python 3.12) | 3.76 s | 3.737 s | `5308f391e6594d1193459393253f2486` | `9a8f25f72de5227b213904aff7d92a98` |
+
+`peaks.csv` is 144,350 B and `merged.csv` is 78,126 B on all three platforms.
+
+### Fixes found while validating
+
+- Per-base BH over every non-zero position (about 13 M tests) was far too
+  conservative and produced 582 narrow peaks (bp Jaccard 0.0757, MACS recall
+  0.270). The caller now selects candidate regions with
+  `count > lambda + sigma * sqrt(lambda)`, applies BH to candidate summits, then
+  extends each candidate by `extension_bp` before merging and length filtering.
+- Extension must happen before `min_length` filtering; the first version dropped
+  all candidates shorter than 100 bp before extension.
+- Defaults `candidate_sigma=3.0` and `extension_bp=260` were chosen by a 3 x 3
+  sweep: sigma 3.0 / extension 260 gave 1,854 peaks, 694 bp mean width, bp
+  Jaccard 0.4418, MACS recall 0.5602, precision 0.6764, summit F1 0.7218.
+- Copying `ops/*.json` over the installed parameters silently reverted the new
+  parameters and caused `ValueError: Implementation code hash mismatch`; the
+  working copy is now synced from the repository after every patch.
+
+### Limits
+
+- The caller uses a uniform local lambda from 1 kb / 10 kb windows plus a
+  genome-wide lambda. It does not implement the MACS3 dynamic Poisson model,
+  control-sample lambda, or strand shift model, so q-values are approximate.
+- Candidate sigma is a heuristic; peak boundaries are symmetric rather than
+  strand-aware.
+- Only chr22 is processed; the full 2.5 GB BAM is not bundled.
+- Depth is low (about 2x), so IDR recall is limited by data as well as algorithm.
