@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "annotated",
+      "x-ui-group": "Output"
+    },
+    "max_variants": {
+      "type": "integer",
+      "title": "Maximum variants",
+      "description": "Annotate at most this many records; 0 means all.",
+      "minimum": 0,
+      "default": 0,
+      "x-ui-group": "Limits"
+    }
+  },
+  "additionalProperties": false
+}

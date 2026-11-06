@@ -1,0 +1,36 @@
+name: Variant consequence annotation on 1000 Genomes chr22
+sources:
+  variants:
+    path: input/subset.vcf
+    dims:
+    - file
+    labels: {}
+    reader: VcfFileReader
+  annotation:
+    path: input/gencode19_22.csq.gff
+    dims:
+    - file
+    labels: {}
+    reader: GffFileReader
+  reference:
+    path: input/chr22_1000g.fa
+    dims:
+    - file
+    labels: {}
+    reader: FastaFileReader
+parameters_file: parameters.json
+steps:
+- name: variant_consequence
+  inputs:
+  - variants
+  - annotation
+  - reference
+- name: variant_impact_summary
+  inputs:
+  - annotated
+- name: export_results
+  inputs:
+  - summary
+- name: coding_variant_filter
+  inputs:
+  - annotated

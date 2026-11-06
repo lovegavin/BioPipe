@@ -1,0 +1,10 @@
+{
+  "reference": "1000 Genomes Phase 3 chr22 subset (GRCh37)",
+  "annotation": "GENCODE v19 chr22",
+  "genome": "UCSC hg19 chr22",
+  "sha256": {
+    "subset.vcf": "88e6d3337c6e60ef0cce65ebe8852cda8e0b64c6186ba206a5bb9828f6672716",
+    "gencode19_22.csq.gff": "0df1955a627990254262c21e91f61d30b1720203257108409604dce8d6020f29",
+    "chr22_1000g.fa": "51c376f6c0b898b23bc067f53d93ca801beabfb1d846898372837d37d5578829"
+  }
+}

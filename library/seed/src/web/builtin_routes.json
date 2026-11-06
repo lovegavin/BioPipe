@@ -206,6 +206,11 @@
       "sha256": "9155552512ad5b6f4c0f51086cd1cf3628c092ea7fbc4e81c0d2237baaa2e7f3",
       "commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95"
     },
+    "route_238455b2dd0d": {
+      "path": "routes/variant_annotation/task.yaml",
+      "sha256": "6ce010e144eab3ffca3978f5a458341130200e7fadb8a85e1c024f6b7656e580",
+      "parameters_sha256": "98a5f3fe0e21b48d385add27833d889b1a6332da3ef51fec3999c85eb46f62e2"
+    },
     "route_476483f1a42f": {
       "path": "routes/variant_qc_concordance/task.yaml",
       "sha256": "286554c6aea9eb540c82af7791b1aa582ac0f125e46131f305ab5ac6540b568a",
@@ -989,6 +994,334 @@
                 "info": {
                   "representation": {
                     "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_238455b2dd0d",
+      "version": 1,
+      "name": "Variant consequence annotation",
+      "graph": {
+        "schema_version": 2,
+        "name": "Variant consequence annotation",
+        "base_dir": ".studio/builtin-inputs/variant_annotation",
+        "nodes": [
+          {
+            "id": "annotation",
+            "kind": "source",
+            "operator": null,
+            "title": "annotation",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "GffFileReader",
+              "path": "input/gencode19_22.csq.gff",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "reference",
+            "kind": "source",
+            "operator": null,
+            "title": "reference",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaFileReader",
+              "path": "input/chr22_1000g.fa",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "variants",
+            "kind": "source",
+            "operator": null,
+            "title": "variants",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfFileReader",
+              "path": "input/subset.vcf",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "variant_consequence_1",
+            "kind": "operator",
+            "operator": "variant_consequence",
+            "title": "variant_consequence",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "output": "annotated",
+              "max_variants": 0
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 3,
+            "route": null
+          },
+          {
+            "id": "variant_impact_summary_2",
+            "kind": "operator",
+            "operator": "variant_impact_summary",
+            "title": "variant_impact_summary",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "consequence_dim": "consequence",
+              "statistic_dim": "statistic",
+              "output": "summary"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_3",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "impact_summary",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "coding_variant_filter_4",
+            "kind": "operator",
+            "operator": "coding_variant_filter",
+            "title": "coding_variant_filter",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "keep": "",
+              "output": "coding"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "variants-variant_consequence_1-0",
+            "source": "variants",
+            "target": "variant_consequence_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "annotation-variant_consequence_1-1",
+            "source": "annotation",
+            "target": "variant_consequence_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "reference-variant_consequence_1-2",
+            "source": "reference",
+            "target": "variant_consequence_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-2"
+          },
+          {
+            "id": "variant_consequence_1-variant_impact_summary_2-0",
+            "source": "variant_consequence_1",
+            "target": "variant_impact_summary_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "variant_impact_summary_2-export_results_3-0",
+            "source": "variant_impact_summary_2",
+            "target": "export_results_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "variant_consequence_1-coding_variant_filter_4-0",
+            "source": "variant_consequence_1",
+            "target": "coding_variant_filter_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "annotation",
+              "label": "annotation",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "gff3"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "reference",
+              "label": "reference",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "fasta"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "variants",
+              "label": "variants",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_3",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "coding_variant_filter_4",
+              "handle": "out",
+              "label": "coding_variant_filter",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
                   }
                 },
                 "axis_info": {},

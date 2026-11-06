@@ -1,0 +1,16 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {"variants": {}, "annotation": {}, "reference": {}},
+  "steps": [
+    {"name": "variant_consequence", "inputs": ["variants", "annotation", "reference"],
+     "params": {"output": "annotated"}, "context_params": {}},
+    {"name": "variant_impact_summary", "inputs": ["annotated"],
+     "params": {"output": "summary"}, "context_params": {}},
+    {"name": "export_results", "inputs": ["summary"],
+     "params": {"format": "csv", "filename": "impact_summary"}, "context_params": {}},
+    {"name": "coding_variant_filter", "inputs": ["annotated"],
+     "params": {"output": "coding"}, "context_params": {}}
+  ]
+}

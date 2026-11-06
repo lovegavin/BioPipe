@@ -1140,6 +1140,16 @@
     "status": "generated"
   },
   {
+    "id": "coding_variant_filter",
+    "kind": "operator",
+    "title": "coding_variant_filter",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Keep annotated VCF records with coding or splice-site consequences.",
+    "doc": "src/task/step/steps/coding_variant_filter.CodingVariantFilterStep.md",
+    "status": "generated"
+  },
+  {
     "id": "codon_usage",
     "kind": "operator",
     "title": "Codon usage",
@@ -7447,6 +7457,26 @@
     "version": "1.0.0",
     "description": "Variance ratio F test：接收 2 个输入，输出 Form；主要参数：样本维度、Value Dim、First Label、Second Label、Alternative、Confidence。",
     "doc": "src/task/step/steps/variance_ratio.VarianceRatioStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "variant_consequence",
+    "kind": "operator",
+    "title": "variant_consequence",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Annotate VCF records with the most severe transcript consequence.",
+    "doc": "src/task/step/steps/variant_consequence.VariantConsequenceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "variant_impact_summary",
+    "kind": "operator",
+    "title": "variant_impact_summary",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Count consequence classes and genes in an annotated VCF.",
+    "doc": "src/task/step/steps/variant_impact_summary.VariantImpactSummaryStep.md",
     "status": "generated"
   },
   {

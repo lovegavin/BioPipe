@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "consequence_dim": {
+      "type": "string",
+      "title": "Consequence dimension",
+      "default": "consequence",
+      "x-ui-group": "Dimensions"
+    },
+    "statistic_dim": {
+      "type": "string",
+      "title": "Statistic dimension",
+      "default": "statistic",
+      "x-ui-group": "Dimensions"
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "summary",
+      "x-ui-group": "Output"
+    }
+  },
+  "additionalProperties": false
+}

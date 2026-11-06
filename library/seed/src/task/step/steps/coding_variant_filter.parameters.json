@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "keep": {
+      "type": "string",
+      "title": "Kept consequences",
+      "description": "Comma-separated consequence classes to keep; empty keeps coding and splice-site classes.",
+      "default": "",
+      "x-ui-group": "Filter"
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "filtered",
+      "x-ui-group": "Output"
+    }
+  },
+  "additionalProperties": false
+}

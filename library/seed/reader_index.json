@@ -370,6 +370,16 @@
     "status": "generated"
   },
   {
+    "id": "GffFileReader",
+    "kind": "reader",
+    "title": "GffFileReader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reference a GFF3 annotation file without parsing it into a table.",
+    "doc": "src/reader/readers/gff_file_reader.GffFileReader.md",
+    "status": "generated"
+  },
+  {
     "id": "GffReader",
     "kind": "reader",
     "title": "Reader for 9-column GFF files; output is feature x field",
