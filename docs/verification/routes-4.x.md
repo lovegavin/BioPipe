@@ -1533,3 +1533,112 @@ the operator follows the VEP-style split and reports `intron` for those sites.
   modelled.
 - Start-lost and in-frame deletion amino-acid strings follow this operator's display
   convention (VEP/csq differ on two CECR transcripts and one IL17RA deletion).
+
+## Batch 20: primer Tm, PCR design and specificity (`primer_design_qc`)
+
+Date: 2026-11-07. Operators: `primer_tm`, `primer_design`,
+`primer_specificity` (3). Registry after this batch: 785 operators /
+105 readers / 7 packages / 44 routes, errors [].
+
+### Data
+
+| Role | File | Size | SHA-256 |
+| --- | --- | --- | --- |
+| Template and specificity genome | `ecoli.fasta` | 4,699,745 B | `53bb6a51b6e92139ced1e38f74b7938781027c52200922ff03718c2237d23bb4` |
+| Tm probes (6 oligos, 18-25 nt) | `oligos.fasta` | 178 B | `50b9df552bf8140a28c624271f9148ee35140a96137445cd64e8966e703664a1` |
+| Specificity pair (dnaA) | `pair_dnaA.fasta` | 73 B | `5ccdac4cc74293f45e2a85a8ad5eb1fbb16892eb4854bbc78d7f4dc1fa87d6ec` |
+
+Source: *E. coli* K-12 MG1655 (NCBI RefSeq `GCF_000005845.2`), the same
+assembly used by batches 3, 7 and 14. Tm probes and the specificity pair
+are exact substrings of that assembly.
+
+### Route (14 steps)
+
+1. `primer_tm` over the six oligos (SantaLucia 1998, 50 mM Na+, 25 nM
+   strands) -> `export_results` (`oligo_tm.csv`).
+2. Five `primer_design` branches for targets `lacZ` 363800-363899,
+   `gyrA` 2337200-2337299, `recA` 2823000-2823099, `dnaA`
+   3882800-3882899, `thrA` 800-899 (flank 250, 18-24 nt, Tm 57-63 C,
+   GC 40-60%, product 120-320 bp, 5 pairs) -> `export_results`.
+3. `primer_specificity` for dnaA pair 1 against the whole genome (both
+   strands, 0 mismatches, product 100-1000 bp) -> `export_results`.
+
+Commands (WSL):
+
+```
+python scripts/run.py workdir/b20_route --check
+python scripts/run.py workdir/b20_route --memory-mb 4096
+```
+
+### Results
+
+| Probe | Length | GC | Tm (C) |
+| --- | --- | --- | --- |
+| oligo1 | 20 | 0.600 | 60.041530 |
+| oligo2 | 22 | 0.636 | 61.362942 |
+| oligo3 | 18 | 0.500 | 51.023410 |
+| oligo4 | 25 | 0.440 | 55.848580 |
+| oligo5 | 20 | 0.700 | 62.183404 |
+| oligo6 | 19 | 0.474 | 48.475429 |
+
+First designed pair per target (all five pairs satisfy every declared
+bound):
+
+| Target | Left (1-based) | Right (1-based) | Tm left/right (C) | Product |
+| --- | --- | --- | --- | --- |
+| lacZ | 363795-363818 | 363922-363945 | 59.707 / 59.828 | 151 |
+| gyrA | 2337179-2337199 | 2337305-2337327 | 59.713 / 59.996 | 149 |
+| recA | 2822995-2823020 | 2823117-2823140 | 59.319 / 59.692 | 145 |
+| dnaA | 3882782-3882805 | 3882912-3882935 | 59.715 / 58.881 | 154 |
+| thrA | 791-814 | 918-941 | 60.055 / 59.526 | 151 |
+
+Specificity: exactly one amplicon for the dnaA pair,
+`NC_000913.3:3882782-3882935`, 154 bp, plus strand, 0 mismatches on
+both primers.
+
+### Independent oracles
+
+| Oracle | Version | Input | Result |
+| --- | --- | --- | --- |
+| Biopython `MeltingTemp.Tm_NN` (DNA_NN3, Na=50, dnac1=dnac2=25, saltcorr=5) | 1.8x | 6 probes | max abs difference 0.0 C |
+| EMBOSS `oligotm` (`-mv 50 -dv 0 -n 0`) | 6.6.0 | 6 probes + 10 design primers | max abs difference 4.986933745954047e-07 C (six-decimal output) |
+| `primer3_core` with `SEQUENCE_TARGET` and identical bounds | 2.6.1 | 5 targets | 5/5 targets returned 5 pairs; every primer3 pair is inside Tm 57-63 C and product 120-320 bp |
+| `bwa mem -k 12 -T 0 -a` exact 24M alignments | 0.7.17 | dnaA pair vs genome | one product 3882782-3882935 (154 bp), identical to `amplicons.csv` |
+
+primer3 selects different pairs (e.g. dnaA 3882679-3882940, 262 bp)
+because its objective is its own weighted penalty; the operator uses
+explicit relative penalties. Both sets satisfy all constraints, so the
+design operator is validated on feasibility and bounds, not on choosing
+the same pair.
+
+`primersearch` (EMBOSS) was probed with several input layouts but did not
+report amplimers for a known positive pair, so `bwa mem` is used as the
+independent specificity oracle and `primersearch` is recorded as
+unresolved.
+
+### Three platforms
+
+| Platform | Steps | Elapsed (s) | primer_specificity (s) | Export md5 |
+| --- | --- | --- | --- | --- |
+| WSL (Python 3.12) | 14/14 | 2.4623 | 1.693 | all identical |
+| srv (Python 3.11) | 14/14 | 5.2862 | 3.689 | all identical |
+| Windows (py 3.12) | 14/14 | 3.2578 | 2.379 | all identical |
+
+Export md5 (identical on all three platforms): `oligo_tm.csv`
+`5bf7037bd808339f358685209295d257`, `pairs_lacZ.csv`
+`e68246540e5939c3e06a4da7319a7a85`, `pairs_gyrA.csv`
+`d7f25b1ccad1e800e65e89321d761019`, `pairs_recA.csv`
+`c6463c040d3082fa22b4e4e9758f405b`, `pairs_dnaA.csv`
+`874d884ec4628835c990a9bc5cc60cec`, `pairs_thrA.csv`
+`e040646ab18bc85f6f5b6486708942d7`, `amplicons.csv`
+`843351ce280e1c34d2753657841c72dc`.
+
+### Limits
+
+- Tm uses the SantaLucia 1998 nearest-neighbour model at 50 mM Na+,
+  0 mM Mg2+, 0.25 uM strands; other salt conditions shift Tm.
+- Design enumerates pairs inside `target +/- flank`; runtime grows with
+  the number of candidate primers.
+- Specificity is exact-match by default; `max_mismatches` allows near
+  matches. Primer-dimers, hairpins and template secondary structure are
+  not modelled.
