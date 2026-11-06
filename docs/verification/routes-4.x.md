@@ -930,3 +930,77 @@ uses mate 1, mate 2 is retained for downstream alignment routes.
   partial overlaps.
 - Deduplication is exact-sequence by default; UMI-aware collapse is out of
   scope.
+
+## Batch 12 - GM12878 interval annotation
+
+### Data
+
+| Source | File | Size | SHA256 | Records |
+| --- | --- | --- | --- | --- |
+| IDR peaks | `input/peaks.bed` | 9,819,405 B | `d3312c42b0cc241d25b56fd032b026039388d7e3cfe4a1c8457b84a7b49d6fb9` | 155,153 |
+| Feature classes | `input/features.bed` | 15,479,361 B | `32cd7272ca283b67785ddc2f5acdc00d3b7f795e1aa2f791f7e793588f3b685e` | 520,033 |
+| rep1 peaks | `input/rep1.bed.gz` | 2,427,146 B | `d54b59dfd4efbc3459e6e14bb9fdc45df5927c94f9ac428be517b83e0fbb9979` | 107,121 |
+
+`features.bed` is derived from UCSC hg38 `refGene.txt.gz` (8,668,756 B): a
+strand-aware promoter (TSS +/- 1 kb), 5' UTR, CDS, 3' UTR, exons and introns
+per transcript, merged per class with the class name in column 4. Merged rows:
+promoter 29,879, utr5 23,580, cds 18,764, utr3 23,547, exon 242,251,
+intron 182,012.
+
+### Route
+
+`gm12878_interval_annotation`: peaks -> `interval_annotate` -> export;
+peaks + features -> `interval_coverage` -> export; rep1 + peaks ->
+`interval_jaccard` -> export. Six steps.
+
+### Results
+
+Annotation priority promoter, utr5, cds, utr3, exon, intron; 155,153 peaks,
+class index and overlap length recorded per peak.
+
+| Class | Features | Feature bp | Covered bp | Fraction | Covered features |
+| --- | --- | --- | --- | --- | --- |
+| promoter | 29,879 | 33,532,013 | 8,641,127 | 0.257698 | 13,910 |
+| utr5 | 23,580 | 439,521,297 | 14,196,925 | 0.032301 | 14,544 |
+| cds | 18,764 | 1,013,121,551 | 21,447,983 | 0.021170 | 12,000 |
+| utr3 | 23,547 | 232,996,937 | 5,252,568 | 0.022544 | 4,522 |
+| exon | 242,251 | 88,190,761 | 6,212,941 | 0.070449 | 24,706 |
+| intron | 182,012 | 1,302,227,186 | 28,230,794 | 0.021679 | 31,004 |
+
+Jaccard, rep1 vs IDR: intersection 38,126,042 bp, union 54,681,989 bp,
+Jaccard 0.6972321727360722; 123,851 IDR peaks overlap rep1 (0.707052) and
+105,924 rep1 peaks overlap IDR (0.980470).
+
+### Oracles (bedtools 2.31.1)
+
+| Quantity | Operator | bedtools | Difference |
+| --- | --- | --- | --- |
+| annotation class (155,153) | priority sweep | intersect + merge, same priority | 0 mismatches |
+| annotation overlap bp | per-peak overlap | intersect, same sweep | 0 mismatches |
+| coverage bp, 6 classes | per-class sweep | `bedtools coverage` | exact |
+| coverage features / covered features | per-class rows | same | exact |
+| Jaccard intersection | 38,126,042 | 38,126,042 | 0 |
+| Jaccard union | 54,681,989 | 54,681,989 | 0 |
+| Jaccard | 0.6972321727 | 0.697232 | print rounding only |
+
+### Three platforms
+
+| Platform | Elapsed | annotate | coverage | jaccard |
+| --- | --- | --- | --- | --- |
+| WSL (Ubuntu 24.04) | 71.491 s | 1.956 | 68.949 | 0.489 |
+| srv (Slurm login) | 135.495 s | 3.978 | 130.338 | 0.966 |
+| Windows (py 3.12) | 83.977 s | 2.212 | 81.094 | 0.543 |
+
+All three exports are byte-identical across platforms:
+`interval_annotate.csv` 3,233,068 B `3482ba02fb1020a5c88f5b62d0d890c0`,
+`interval_coverage.csv` 470 B `1061f015a9920de02f6bb94f00f59111`,
+`interval_jaccard.csv` 285 B `7666007bcaddafc6879f28dfac5cbb37`.
+
+### Limits
+
+- Primary chromosomes only (chr1-22, X, Y); alternate contigs are dropped.
+- Coverage uses merged class intervals, so overlapping transcripts of one class
+  count once.
+- Annotation assigns the first class in priority order and does not split a
+  peak across classes.
+- Jaccard uses merged intervals and ignores peak confidence and multi-mapping.
