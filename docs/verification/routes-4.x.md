@@ -1210,3 +1210,92 @@ routes**, errors 0, warnings 113 (all pre-existing).
   `mash dist` output (delta 3.34e-5 here).
 - k-mers are canonicalised, so strand-specific or CpG-aware analyses are out of
   scope.
+
+## Batch 16 — assembly contiguity and gap quality control
+
+**Commit:** `34a43879` (operators + route) — three-platform runs below.
+**Operators:** `assembly_contig_stats`, `assembly_contiguity`, `assembly_gap_stats`
+(3 new; library registry **772 operators / 104 readers / 7 packages / 40 routes**,
+errors 0, warnings 113).
+
+### Data
+
+| Source | Content | Size (B) | SHA-256 |
+| --- | --- | --- | --- |
+| `input/genome.fna` | *S. cerevisiae* S288C, GCF_000146045.2, 17 records (16 chromosomes + mitochondrion) | 12,310,392 | `fe42735d3e6242f8c40b457a232940e34ef15eb4502717e54a34ed118face4c1` |
+| `input/ecoli.fasta` | *E. coli* K-12 MG1655, GCF_000005845.2, 1 record | 4,699,745 | `53bb6a51b6e92139ced1e38f74b7938781027c52200922ff03718c2237d23bb4` |
+
+Both are public RefSeq assemblies already used by earlier batches (the yeast
+genome was fetched for batch 8; the E. coli genome is the batch 3 reference).
+The E. coli single-contig input is the zero-gap negative control.
+
+### Route `assembly_qc` (10 steps)
+
+`assembly_contig_stats` (yeast) → export → `assembly_contiguity` → export →
+`assembly_gap_stats` (yeast) → export → the same two operators on E. coli →
+export. `assembly_contig_stats` emits per-contig `length`, `gc_fraction`,
+`n_fraction`, `n_runs`; `assembly_contiguity` reduces that table to
+`n_contigs`, `total_bp`, min/mean/median/max length, `n50`/`l50`, `n90`/`l90`,
+`auN` and length-weighted GC; `assembly_gap_stats` counts `N` runs per contig
+and reports genome-wide gap totals.
+
+### Results
+
+| Metric | Yeast S288C | E. coli K-12 |
+| --- | --- | --- |
+| Contigs | 17 | 1 |
+| Total bp | 12,157,105 | 4,641,652 |
+| Min / median / max length | 85,779 / 745,751 / 1,531,933 | 4,641,652 / 4,641,652 / 4,641,652 |
+| N50 / L50 | 924,431 / 6 | 4,641,652 / 1 |
+| N90 / L90 | 439,888 / 13 | 4,641,652 / 1 |
+| auN | 904,609.4998252462 | 4,641,652.0 |
+| GC fraction | 0.3814786497 | 0.5079070986 |
+| Gap runs / gap bp | 0 / 0 | 0 / 0 |
+
+### Oracles
+
+| Oracle | Version | Compared | Result |
+| --- | --- | --- | --- |
+| `seqkit stats -a` | 2.9.0 | num_seqs, sum_len, min/avg/max, Q1/Q2/Q3, N50, N50_num, GC%, sum_n | identical (17/12,157,105/85,779/715,123.8/1,531,933/439,888/745,751/948,066/924,431/6/38.15%/0; E. coli 1/4,641,652/…/50.79%/0) |
+| Biopython `SeqIO` + independent N50 and `N+` regex gap code | 1.86 | per-contig lengths, n50/l50, auN, weighted GC, gap runs and gap bp | max abs diff **0.0** for every value; gap counts equal; `workdir/b16_oracle.json` `passed: true` |
+
+The Biopython script recomputes N50 with its own cumulative loop and finds gaps
+with `re.finditer("N+", …)`; it does not import the operator helpers, so the two
+implementations are independent code paths. `seqkit` is a third, external
+implementation.
+
+### Three platforms
+
+| Platform | Steps | Total (s) | Notes |
+| --- | --- | --- | --- |
+| WSL (Python 3.12, numpy 2.3) | 10/10 | 0.7903 | contig stats 0.296 s, gaps 0.269 s (yeast); 0.116 / 0.103 s (E. coli) |
+| srv (Python 3.11, venv 3.0.1) | 10/10 | 1.4888 | contig stats 0.554 s, gaps 0.491 s (yeast) |
+| Windows (py 3.12) | 10/10 | 1.1493 | contig stats 0.251 s, gaps 0.395 s (yeast); registry 772/104/7/40, errors 0 |
+
+All five exported CSVs are **byte-identical** across the three platforms:
+
+| File | MD5 |
+| --- | --- |
+| `yeast_contiguity.csv` | `b34c57050b4eef746220f984763baa1d` |
+| `yeast_contig_stats.csv` | `9bf57f9c2da54eaec27622941b447a53` |
+| `yeast_gaps.csv` | `b30e8320f229f67b7c73b5923c1401a0` |
+| `ecoli_contig_stats.csv` | `72b6a0312a539d44bd058f0076bf4560` |
+| `ecoli_gaps.csv` | `e5d4898840a713e9a0308c23c5330c22` |
+
+### Notes and limitations
+
+- No product defect was found in this batch; the only code change during
+  bring-up was making `estimate_memory` tolerate an empty `inputs` list (the
+  planner passes `[]` in unit tests), covered by
+  `tests/test_extension378.py::test_estimate_memory_contract`.
+- `assembly_contiguity` requires a `length` column in the contig table and
+  rejects a table without it; `gc_fraction` is optional and length-weighted.
+- N/L statistics count `N` runs at full contig length; gaps are reported
+  separately and are not subtracted from `total_bp`.
+- `auN` is contig-length based and is not assembly-graph aware.
+- Both inputs are finished reference assemblies, so the gap operator is
+  exercised only on its zero-gap path here; the >0 gap path is covered by unit
+  tests with synthetic `N` runs.
+- QUAST is not used as an oracle in this batch: it is an external tool wrapper
+  (`assembly_stats`) already covered by packaging tests; `seqkit` plus the
+  independent Biopython implementation provide the two required oracles.
