@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "properties": {
+    "C": {
+      "type": "number",
+      "title": "Inverse regularization",
+      "default": 1.0,
+      "exclusiveMinimum": 0
+    },
+    "max_iter": {
+      "type": "integer",
+      "title": "Maximum iterations",
+      "default": 1000,
+      "minimum": 10
+    },
+    "fit_intercept": {
+      "type": "boolean",
+      "title": "Fit intercept",
+      "default": true
+    },
+    "standardize": {
+      "type": "boolean",
+      "title": "Standardize features",
+      "description": "Z-score each feature before fitting.",
+      "default": false
+    },
+    "feature_dim": {
+      "type": "string",
+      "title": "Feature dim",
+      "description": "Axis holding features.",
+      "default": "feature"
+    },
+    "sample_dim": {
+      "type": "string",
+      "title": "Sample dim",
+      "description": "Axis holding samples.",
+      "default": "sample"
+    },
+    "label_dim": {
+      "type": "string",
+      "title": "Label dim",
+      "description": "Axis holding the class label.",
+      "default": "label"
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "description": "Name of the coefficient output.",
+      "default": "coefficients"
+    }
+  },
+  "additionalProperties": false
+}

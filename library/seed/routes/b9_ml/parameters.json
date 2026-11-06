@@ -1,0 +1,111 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "features": {},
+    "labels": {}
+  },
+  "steps": [
+    {
+      "name": "ml_stratified_folds",
+      "inputs": [
+        "labels"
+      ],
+      "params": {
+        "n_splits": 5,
+        "shuffle": true,
+        "seed": 0,
+        "output": "folds"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "folds"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "ml_stratified_folds"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "ml_train_test_split",
+      "inputs": [
+        "labels"
+      ],
+      "params": {
+        "test_fraction": 0.25,
+        "seed": 0,
+        "output": "split"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "split"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "ml_train_test_split"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "ml_logistic_fit",
+      "inputs": [
+        "features",
+        "labels"
+      ],
+      "params": {
+        "C": 0.01,
+        "max_iter": 1000,
+        "fit_intercept": true,
+        "standardize": true,
+        "output": "coefficients"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "coefficients"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "ml_logistic_fit"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "ml_feature_ablation",
+      "inputs": [
+        "features",
+        "labels"
+      ],
+      "params": {
+        "C": 0.01,
+        "max_iter": 1000,
+        "fit_intercept": true,
+        "standardize": true,
+        "metric": "log_loss",
+        "output": "importance"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "importance"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "ml_feature_ablation"
+      },
+      "context_params": {}
+    }
+  ]
+}

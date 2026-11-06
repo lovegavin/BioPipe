@@ -3710,6 +3710,46 @@
     "status": "generated"
   },
   {
+    "id": "ml_feature_ablation",
+    "kind": "operator",
+    "title": "ml_feature_ablation",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Drop-one feature importance by refitting the logistic model.",
+    "doc": "src/task/step/steps/ml_feature_ablation.MlFeatureAblationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ml_logistic_fit",
+    "kind": "operator",
+    "title": "ml_logistic_fit",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Binary logistic regression with L2 penalty and fit diagnostics.",
+    "doc": "src/task/step/steps/ml_logistic_fit.MlLogisticFitStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ml_stratified_folds",
+    "kind": "operator",
+    "title": "ml_stratified_folds",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Stratified K-fold assignment with sklearn-compatible fold allocation.",
+    "doc": "src/task/step/steps/ml_stratified_folds.MlStratifiedFoldsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ml_train_test_split",
+    "kind": "operator",
+    "title": "ml_train_test_split",
+    "category": "Machine Learning",
+    "version": "1.0.0",
+    "description": "Stratified train/test split with a reproducible seed.",
+    "doc": "src/task/step/steps/ml_train_test_split.MlTrainTestSplitStep.md",
+    "status": "generated"
+  },
+  {
     "id": "module_eigengenes",
     "kind": "operator",
     "title": "Module eigengenes",

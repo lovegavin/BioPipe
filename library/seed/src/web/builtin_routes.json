@@ -6,6 +6,11 @@
       "sha256": "1ab6e60de37ec0ba61f3a667c8f158c1d47ac913d859cb539865951f9f9f9ca7",
       "parameters_sha256": "bafd585e67835c4da9ca3ec90982eb2ae82bb016bef86f28476c19c48b7f407d"
     },
+    "route_9a8c1cb620de": {
+      "path": "routes/b9_ml/task.yaml",
+      "sha256": "036fb95e95b12f1c6343fca0b86b674b2cea80bdcc8fb0bf650949e9a531c7cf",
+      "parameters_sha256": "2125e1a1cdff63697addbe9a457fde4305e6f43557f5041f17507b034a1e8f41"
+    },
     "route_134972672309": {
       "path": "routes/bgen_qc/task.yaml",
       "sha256": "f4419972e650aefa52a3fda16b1cb054dca42885ca887eb2902c1c53124659f2",
@@ -11488,6 +11493,498 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_9a8c1cb620de",
+      "version": 1,
+      "name": "Breast cancer model selection",
+      "graph": {
+        "schema_version": 2,
+        "name": "Breast cancer model selection",
+        "base_dir": ".studio/builtin-inputs/b9_ml",
+        "nodes": [
+          {
+            "id": "features",
+            "kind": "source",
+            "operator": null,
+            "title": "features",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/X.csv",
+              "dims": [
+                "sample",
+                "feature"
+              ],
+              "labels": {
+                "feature": "builtin",
+                "sample": {
+                  "feature": 0
+                }
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "labels",
+            "kind": "source",
+            "operator": null,
+            "title": "labels",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/y.csv",
+              "dims": [
+                "sample",
+                "label"
+              ],
+              "labels": {
+                "label": "builtin",
+                "sample": {
+                  "label": 0
+                }
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ml_stratified_folds_1",
+            "kind": "operator",
+            "operator": "ml_stratified_folds",
+            "title": "ml_stratified_folds",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "n_splits": 5,
+              "shuffle": true,
+              "seed": 0,
+              "sample_dim": "sample",
+              "label_dim": "label",
+              "output": "folds"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "ml_stratified_folds",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ml_train_test_split_3",
+            "kind": "operator",
+            "operator": "ml_train_test_split",
+            "title": "ml_train_test_split",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "test_fraction": 0.25,
+              "seed": 0,
+              "sample_dim": "sample",
+              "label_dim": "label",
+              "output": "split"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "ml_train_test_split",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ml_logistic_fit_5",
+            "kind": "operator",
+            "operator": "ml_logistic_fit",
+            "title": "ml_logistic_fit",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "C": 0.01,
+              "max_iter": 1000,
+              "fit_intercept": true,
+              "standardize": true,
+              "feature_dim": "feature",
+              "sample_dim": "sample",
+              "label_dim": "label",
+              "output": "coefficients"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "ml_logistic_fit",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ml_feature_ablation_7",
+            "kind": "operator",
+            "operator": "ml_feature_ablation",
+            "title": "ml_feature_ablation",
+            "position": {
+              "x": 360.0,
+              "y": 730.0
+            },
+            "params": {
+              "C": 0.01,
+              "max_iter": 1000,
+              "fit_intercept": true,
+              "standardize": true,
+              "metric": "log_loss",
+              "feature_dim": "feature",
+              "sample_dim": "sample",
+              "label_dim": "label",
+              "output": "importance"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 730.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "ml_feature_ablation",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_7"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "labels-ml_stratified_folds_1-0",
+            "source": "labels",
+            "target": "ml_stratified_folds_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ml_stratified_folds_1-export_results_2-0",
+            "source": "ml_stratified_folds_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "labels-ml_train_test_split_3-0",
+            "source": "labels",
+            "target": "ml_train_test_split_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ml_train_test_split_3-export_results_4-0",
+            "source": "ml_train_test_split_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "features-ml_logistic_fit_5-0",
+            "source": "features",
+            "target": "ml_logistic_fit_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "labels-ml_logistic_fit_5-1",
+            "source": "labels",
+            "target": "ml_logistic_fit_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "ml_logistic_fit_5-export_results_6-0",
+            "source": "ml_logistic_fit_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "features-ml_feature_ablation_7-0",
+            "source": "features",
+            "target": "ml_feature_ablation_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "labels-ml_feature_ablation_7-1",
+            "source": "labels",
+            "target": "ml_feature_ablation_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "ml_feature_ablation_7-export_results_8-0",
+            "source": "ml_feature_ablation_7",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "features",
+              "label": "features",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "feature"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "labels",
+              "label": "labels",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "label"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "properties": {
+    "test_fraction": {
+      "type": "number",
+      "title": "Test fraction",
+      "default": 0.25,
+      "minimum": 0.05,
+      "maximum": 0.95
+    },
+    "seed": {
+      "type": "integer",
+      "title": "Random seed",
+      "default": 0,
+      "minimum": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "title": "Sample dim",
+      "description": "Axis holding samples.",
+      "default": "sample"
+    },
+    "label_dim": {
+      "type": "string",
+      "title": "Label dim",
+      "description": "Axis holding the class label.",
+      "default": "label"
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "description": "Name of the split assignment output.",
+      "default": "split"
+    }
+  },
+  "additionalProperties": false
+}

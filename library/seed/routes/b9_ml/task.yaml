@@ -1,0 +1,53 @@
+name: "Breast cancer model selection: stratified folds, split, logistic fit and feature ablation"
+sources:
+  features:
+    path: input/X.csv
+    dims:
+    - sample
+    - feature
+    labels:
+      sample:
+        feature: 0
+      feature: builtin
+    reader: CsvReader
+  labels:
+    path: input/y.csv
+    dims:
+    - sample
+    - label
+    labels:
+      sample:
+        label: 0
+      label: builtin
+    reader: CsvReader
+parameters_file: parameters.json
+steps:
+- name: ml_stratified_folds
+  inputs:
+  - labels
+- name: export_results
+  inputs:
+  - folds
+- name: ml_train_test_split
+  inputs:
+  - labels
+- name: export_results
+  inputs:
+  - split
+- name: ml_logistic_fit
+  inputs:
+  - features
+  - labels
+- name: export_results
+  inputs:
+  - coefficients
+- name: ml_feature_ablation
+  inputs:
+  - features
+  - labels
+- name: export_results
+  inputs:
+  - importance
+runtime:
+  memory:
+    enabled: true

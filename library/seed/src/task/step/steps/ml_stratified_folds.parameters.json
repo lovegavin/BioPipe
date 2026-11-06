@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "n_splits": {
+      "type": "integer",
+      "title": "Number of folds",
+      "default": 5,
+      "minimum": 2,
+      "description": "Each class is split across this many folds."
+    },
+    "shuffle": {
+      "type": "boolean",
+      "title": "Shuffle fold assignment",
+      "default": true
+    },
+    "seed": {
+      "type": "integer",
+      "title": "Random seed",
+      "default": 0,
+      "minimum": 0
+    },
+    "sample_dim": {
+      "type": "string",
+      "title": "Sample dim",
+      "description": "Axis holding samples.",
+      "default": "sample"
+    },
+    "label_dim": {
+      "type": "string",
+      "title": "Label dim",
+      "description": "Axis holding the class label.",
+      "default": "label"
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "description": "Name of the fold assignment output.",
+      "default": "folds"
+    }
+  },
+  "additionalProperties": false
+}
