@@ -6,6 +6,11 @@
       "sha256": "c924cc266d719a13fe0f47f687d03f5087b414ef034266edb374995d0724ca0c",
       "parameters_sha256": "789aed7515b5c9a21ad199dee2c5bd1ab09e5a06a21321afbf73c6870be56b0c"
     },
+    "route_bfec4582392d": {
+      "path": "routes/atac_peak_calling/task.yaml",
+      "sha256": "c8924d21e37a4cbfd3469b634f82bebf9c8925e16f92f48e2093291900ce6f9f",
+      "parameters_sha256": "cbdeffa698789f16dc88871ece5284107d66f8f29e2f14dfe57261284ed91286"
+    },
     "route_3810eea93c97": {
       "path": "routes/atac_qc/task.yaml",
       "sha256": "1ab6e60de37ec0ba61f3a667c8f158c1d47ac913d859cb539865951f9f9f9ca7",
@@ -18464,6 +18469,245 @@
                 "info_open": true,
                 "axis_info_open": true,
                 "ndim": 2
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_bfec4582392d",
+      "version": 1,
+      "name": "ATAC-seq peak calling",
+      "graph": {
+        "schema_version": 2,
+        "name": "ATAC-seq peak calling",
+        "base_dir": ".studio/builtin-inputs/atac_peak_calling",
+        "nodes": [
+          {
+            "id": "bam",
+            "kind": "source",
+            "operator": null,
+            "title": "bam",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "BamFileReader",
+              "path": "input/chr22.bam",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "atac_peak_call_1",
+            "kind": "operator",
+            "operator": "atac_peak_call",
+            "title": "atac_peak_call",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "min_mapq": 30,
+              "qvalue": 0.05,
+              "max_gap": 50,
+              "min_length": 100,
+              "window_1kb": 1000,
+              "window_10kb": 10000,
+              "max_fragments": 0,
+              "output": "peaks",
+              "candidate_sigma": 3.0,
+              "extension_bp": 260
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "peaks",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "peak_merge_3",
+            "kind": "operator",
+            "operator": "peak_merge",
+            "title": "peak_merge",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "peak_dim": "peak",
+              "field_dim": "field",
+              "max_gap": 100,
+              "output": "merged"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "merged",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "bam-atac_peak_call_1-0",
+            "source": "bam",
+            "target": "atac_peak_call_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "atac_peak_call_1-export_results_2-0",
+            "source": "atac_peak_call_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "atac_peak_call_1-peak_merge_3-0",
+            "source": "atac_peak_call_1",
+            "target": "peak_merge_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "peak_merge_3-export_results_4-0",
+            "source": "peak_merge_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "bam",
+              "label": "bam",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "bam"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

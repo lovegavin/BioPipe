@@ -1,0 +1,22 @@
+name: ATAC peak calling on chr22
+sources:
+  bam:
+    path: input/chr22.bam
+    dims:
+    - file
+    labels: {}
+    reader: BamFileReader
+parameters_file: parameters.json
+steps:
+- name: atac_peak_call
+  inputs:
+  - bam
+- name: export_results
+  inputs:
+  - peaks
+- name: peak_merge
+  inputs:
+  - peaks
+- name: export_results
+  inputs:
+  - merged

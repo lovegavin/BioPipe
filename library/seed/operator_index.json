@@ -510,6 +510,16 @@
     "status": "generated"
   },
   {
+    "id": "atac_peak_call",
+    "kind": "operator",
+    "title": "atac_peak_call",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Call ATAC/ChIP peaks from a BAM file with a local Poisson model and BH q-values.",
+    "doc": "src/task/step/steps/atac_peak_call.AtacPeakCallStep.md",
+    "status": "generated"
+  },
+  {
     "id": "atac_peak_quality",
     "kind": "operator",
     "title": "atac_peak_quality",
@@ -4457,6 +4467,16 @@
     "version": "1.0.0",
     "description": "Principal coordinates from a symmetric distance matrix.",
     "doc": "src/task/step/steps/pcoa.PcoaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "peak_merge",
+    "kind": "operator",
+    "title": "peak_merge",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Merge peaks that overlap or are closer than max_gap on the same chromosome.",
+    "doc": "src/task/step/steps/peak_merge.PeakMergeStep.md",
     "status": "generated"
   },
   {

@@ -1,0 +1,61 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "bam": {}
+  },
+  "steps": [
+    {
+      "name": "atac_peak_call",
+      "inputs": [
+        "bam"
+      ],
+      "params": {
+        "min_mapq": 30,
+        "qvalue": 0.05,
+        "max_gap": 50,
+        "min_length": 100,
+        "window_1kb": 1000,
+        "window_10kb": 10000,
+        "output": "peaks",
+        "candidate_sigma": 3.0,
+        "extension_bp": 260
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "peaks"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "peaks"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "peak_merge",
+      "inputs": [
+        "peaks"
+      ],
+      "params": {
+        "max_gap": 100,
+        "output": "merged"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "merged"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "merged"
+      },
+      "context_params": {}
+    }
+  ]
+}

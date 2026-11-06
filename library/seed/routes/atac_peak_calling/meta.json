@@ -1,0 +1,12 @@
+{
+  "reference": "input/chr22.bam",
+  "genome": "GRCh38",
+  "related": [
+    "workdir/b23_prep/macs_out/chr22_macs_peaks.narrowPeak",
+    "workdir/b8_route/input/peaks.bed"
+  ],
+  "sha256": {
+    "chr22.bam": "f193f6c3cadd66bfdb4e20a90359374ddd3879a38ae7f46c6915e97329c1ff0d",
+    "chr22_macs_peaks.narrowPeak": "b59ec056439152e72a8c4b2ff7a4691c66a6964044a09c788d2cc2bc579c3960"
+  }
+}

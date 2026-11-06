@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "peak_merge parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "peak_dim": {"type": "string", "minLength": 1, "default": "peak",
+                 "description": "Name of the peak dimension."},
+    "field_dim": {"type": "string", "minLength": 1, "default": "field",
+                  "description": "Name of the field dimension."},
+    "max_gap": {"type": "integer", "minimum": 0, "maximum": 1000000, "default": 50,
+                "description": "Maximum gap between peaks that are still merged."},
+    "output": {"type": "string", "minLength": 1, "default": "merged",
+               "description": "Name of the merged peak table."}
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "atac_peak_call parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "min_mapq": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 60,
+      "default": 30,
+      "description": "Minimum mapping quality for fragments."
+    },
+    "qvalue": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "default": 0.05,
+      "description": "Benjamini-Hochberg q-value threshold."
+    },
+    "max_gap": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100000,
+      "default": 50,
+      "description": "Maximum gap between significant bases merged into one peak."
+    },
+    "min_length": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100000,
+      "default": 100,
+      "description": "Minimum peak length in base pairs."
+    },
+    "window_1kb": {
+      "type": "integer",
+      "minimum": 101,
+      "maximum": 100001,
+      "default": 1000,
+      "description": "Short local window for the Poisson rate."
+    },
+    "window_10kb": {
+      "type": "integer",
+      "minimum": 1001,
+      "maximum": 1000001,
+      "default": 10000,
+      "description": "Long local window for the Poisson rate."
+    },
+    "max_fragments": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "description": "Optional cap on the number of fragments (0 = all)."
+    },
+    "output": {
+      "type": "string",
+      "minLength": 1,
+      "default": "peaks",
+      "description": "Name of the output peak table."
+    },
+    "candidate_sigma": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "default": 3.0,
+      "description": "Candidate enrichment threshold in local standard deviations."
+    },
+    "extension_bp": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 260,
+      "description": "Bases added on each side of a significant region."
+    }
+  }
+}
