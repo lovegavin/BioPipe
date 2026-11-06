@@ -573,3 +573,69 @@ mismatches; labels agree for all 1,900 base names.
 - The grey module is excluded from the eigengene table.
 - Module-trait correlation is unadjusted Pearson; no batch, sex or age
   covariates exist in this ExpressionSet.
+
+## Batch 7 — E. coli genome annotation (density, intergenic, promoters, CDS)
+
+Operators: `genome_gene_density`, `genome_intergenic_regions`,
+`genome_promoter_extract`, `genome_cds_check`; route `ecoli_annotation`
+(8 steps, every result exported through `export_results`; promoters export as
+FASTA from `info.sequences`).
+
+### Inputs
+
+| File | Source | Size | SHA256 |
+|---|---|---|---|
+| `ecoli.gff` | NCBI RefSeq `GCF_000005845.2_ASM584v2_genomic.gff.gz` (unpacked, 9,531 lines) | 2,314,238 B | `68d25735ccde6d37af68613dca57a588ae69423f0ecee99b0f29d596eff7accb` |
+| `ecoli.fasta` | NCBI RefSeq `GCF_000005845.2_ASM584v2_genomic.fna.gz` (`NC_000913.3`, 4,641,628 bp) | 4,699,745 B | `53bb6a51b6e92139ced1e38f74b7938781027c52200922ff03718c2237d23bb4` |
+| `protein.faa.gz` (oracle only) | NCBI RefSeq `GCF_000005845.2_ASM584v2_protein.faa.gz` | 902,395 B | — |
+
+### Results (WSL)
+
+| Step | Value | Time |
+|---|---|---|
+| `genome_gene_density` | 465 windows, 4,506 gene records, 4,918 feature hits | 0.012 s |
+| `genome_intergenic_regions` | 3,680 gaps, 611,155 bp | 0.043 s |
+| `genome_promoter_extract` | 4,506 promoters, mean 100.0 bp | 0.119 s |
+| `genome_cds_check` | 4,340 CDS; length_ok 4,319, start_ok 4,311, stop_ok 4,319, internal stops 12 | 0.185 s |
+
+### Three platforms
+
+| Platform | Steps | Total | Result |
+|---|---|---|---|
+| WSL (Python 3.12, bedtools 2.31.1) | 8/8 | 0.37 s | reference |
+| srv (Python 3.11.18, numpy 2.4.6) | 8/8 | 0.92 s | identical |
+| Windows (Python 3.12) | 8/8 | 0.55 s | identical |
+
+Every exported artifact is byte-identical on all three platforms:
+`gene_density.csv` 43,885 B `82f02ba5c1610c46b22164f6fdd70987`,
+`intergenic_regions.csv` 124,971 B `cfed512078dabe00c8d013cedc7e6a1e`,
+`promoters.fasta` 500,166 B `64dc55e375d16b3f9183d503204520c1`,
+`cds_check.csv` 125,504 B `b73adcb3a055b572a95f23a1a957cbd0`.
+
+Registry after the batch: **744 operators / 104 readers / 7 packages / 31 routes**,
+errors 0, warnings 108; Windows check reports the same counts.
+
+### Oracle checks
+
+| Check | Implementation | Result |
+|---|---|---|
+| Window density | `bedtools makewindows` + `bedtools coverage` 2.31.1 | 465/465 windows, 0 mismatched (4,918 hits) |
+| Intergenic gaps | `bedtools complement` 2.31.1 | 3,680 gaps / 611,155 bp identical |
+| Promoters | `bedtools getfasta -s` 2.31.1 | 4,506/4,506 sequences identical, 0 mismatched |
+| CDS length/start/stop | Biopython 1.88 `Seq.translate(table=11)` | 4,340/4,340 records identical |
+| Protein identity | RefSeq proteome (4,259 proteins) | 4,288/4,340 CDS translate to an exact RefSeq protein |
+
+The 52 unmatched CDS are 21 partial records (length not a multiple of three)
+and 31 duplicate/alternative-frame annotations, plus selenocysteine entries
+that RefSeq renders with `U`. Alternative CDS rows share a `locus_tag`
+(`b0149`, `b0240`, `b4587`), so comparisons are positional rather than
+name-based.
+
+### Known limits
+
+- Promoters come from GFF `gene` features only; no operon, UTR or TSS data.
+- Upstream windows are clipped at contig boundaries; matrix rows are padded
+  with `N`, `info.sequences` keeps the clipped string.
+- CDS rows sharing a `locus_tag` are disambiguated with `#2`, `#3` suffixes.
+- Internal stops are reported, not treated as errors (pseudogene fragments).
+- The final density window of a contig may be shorter than 10 kb.
