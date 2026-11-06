@@ -106,6 +106,11 @@
       "sha256": "508c63db53b66e81a3489ea1b3dc9e0c104da92661699ae78cb20984fb82aa41",
       "parameters_sha256": "0f16da20bc55e32c660e287b89c1aa9c3de6ad6da3d8d8d6e9627562824d9a79"
     },
+    "route_24a65dc7aa03": {
+      "path": "routes/pbmc_markers/task.yaml",
+      "sha256": "d8fd6c5c6bca6895c245fe98f5b423ff92a0f8e8eade6b48e11ac39a90b62029",
+      "parameters_sha256": "e80af72fe587af5fc87a6add5bc7da198b47343cfb064966337ee09d7e7c1638"
+    },
     "route_d9121b3aa34c": {
       "path": "routes/pbmc_trajectory/task.yaml",
       "sha256": "91fd44d1538a72c3fd45b11b011d7e32ab3f647e0e17e5f70716d09107c8ea0b",
@@ -1300,6 +1305,417 @@
                 "kind": "form",
                 "numeric": true,
                 "ndim": 2
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_24a65dc7aa03",
+      "version": 1,
+      "name": "PBMC3k marker genes",
+      "graph": {
+        "schema_version": 2,
+        "name": "PBMC3k marker genes",
+        "base_dir": ".studio/builtin-inputs/pbmc_markers",
+        "nodes": [
+          {
+            "id": "clusters",
+            "kind": "source",
+            "operator": null,
+            "title": "clusters",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/clusters.csv",
+              "dims": [
+                "cell",
+                "cluster"
+              ],
+              "labels": {
+                "cell": {
+                  "cluster": 0
+                },
+                "cluster": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "expression",
+            "kind": "source",
+            "operator": null,
+            "title": "expression",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/expression.csv",
+              "dims": [
+                "cell",
+                "gene"
+              ],
+              "labels": {
+                "cell": {
+                  "gene": 0
+                },
+                "gene": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "sc_rank_genes_1",
+            "kind": "operator",
+            "operator": "sc_rank_genes",
+            "title": "sc_rank_genes",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "cell_dim": "cell",
+              "gene_dim": "gene",
+              "cluster_dim": "cluster",
+              "min_cells": 3,
+              "output": "rank_genes",
+              "top_n": 50
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "sc_rank_genes",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "sc_marker_specificity_3",
+            "kind": "operator",
+            "operator": "sc_marker_specificity",
+            "title": "sc_marker_specificity",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "cell_dim": "cell",
+              "gene_dim": "gene",
+              "cluster_dim": "cluster",
+              "min_cells": 3,
+              "output": "markers"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "sc_marker_specificity",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "sc_cluster_profile_5",
+            "kind": "operator",
+            "operator": "sc_cluster_profile",
+            "title": "sc_cluster_profile",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "cell_dim": "cell",
+              "gene_dim": "gene",
+              "cluster_dim": "cluster",
+              "min_cells": 1,
+              "output": "profile"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "sc_cluster_profile",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "expression-sc_rank_genes_1-0",
+            "source": "expression",
+            "target": "sc_rank_genes_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clusters-sc_rank_genes_1-1",
+            "source": "clusters",
+            "target": "sc_rank_genes_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "sc_rank_genes_1-export_results_2-0",
+            "source": "sc_rank_genes_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "expression-sc_marker_specificity_3-0",
+            "source": "expression",
+            "target": "sc_marker_specificity_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clusters-sc_marker_specificity_3-1",
+            "source": "clusters",
+            "target": "sc_marker_specificity_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "sc_marker_specificity_3-export_results_4-0",
+            "source": "sc_marker_specificity_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "expression-sc_cluster_profile_5-0",
+            "source": "expression",
+            "target": "sc_cluster_profile_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "clusters-sc_cluster_profile_5-1",
+            "source": "clusters",
+            "target": "sc_cluster_profile_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "sc_cluster_profile_5-export_results_6-0",
+            "source": "sc_cluster_profile_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "clusters",
+              "label": "clusters",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "cell",
+                  "cluster"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "expression",
+              "label": "expression",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "cell",
+                  "gene"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

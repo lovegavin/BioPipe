@@ -1,0 +1,48 @@
+name: "PBMC3k markers: cluster rank genes, specificity and profiles"
+sources:
+  expression:
+    path: input/expression.csv
+    dims:
+    - cell
+    - gene
+    labels:
+      cell:
+        gene: 0
+      gene: builtin
+    reader: CsvReader
+  clusters:
+    path: input/clusters.csv
+    dims:
+    - cell
+    - cluster
+    labels:
+      cell:
+        cluster: 0
+      cluster: builtin
+    reader: CsvReader
+parameters_file: parameters.json
+steps:
+- name: sc_rank_genes
+  inputs:
+  - expression
+  - clusters
+- name: export_results
+  inputs:
+  - rank_genes
+- name: sc_marker_specificity
+  inputs:
+  - expression
+  - clusters
+- name: export_results
+  inputs:
+  - markers
+- name: sc_cluster_profile
+  inputs:
+  - expression
+  - clusters
+- name: export_results
+  inputs:
+  - profile
+runtime:
+  memory:
+    enabled: true

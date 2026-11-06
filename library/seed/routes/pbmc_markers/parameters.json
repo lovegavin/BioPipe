@@ -1,0 +1,81 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "expression": {},
+    "clusters": {}
+  },
+  "steps": [
+    {
+      "name": "sc_rank_genes",
+      "inputs": [
+        "expression",
+        "clusters"
+      ],
+      "params": {
+        "min_cells": 3,
+        "top_n": 50,
+        "output": "rank_genes"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "rank_genes"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "sc_rank_genes"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "sc_marker_specificity",
+      "inputs": [
+        "expression",
+        "clusters"
+      ],
+      "params": {
+        "min_cells": 3,
+        "output": "markers"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "markers"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "sc_marker_specificity"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "sc_cluster_profile",
+      "inputs": [
+        "expression",
+        "clusters"
+      ],
+      "params": {
+        "min_cells": 1,
+        "output": "profile"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "profile"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "sc_cluster_profile"
+      },
+      "context_params": {}
+    }
+  ]
+}

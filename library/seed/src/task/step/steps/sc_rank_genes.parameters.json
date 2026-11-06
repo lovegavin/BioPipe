@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "title": "Single-cell rank genes",
+  "description": "Cluster-versus-rest Wilcoxon rank-sum test with BH adjustment.",
+  "properties": {
+    "cell_dim": {
+      "type": "string",
+      "title": "Cell axis",
+      "default": "cell"
+    },
+    "gene_dim": {
+      "type": "string",
+      "title": "Gene axis",
+      "default": "gene"
+    },
+    "cluster_dim": {
+      "type": "string",
+      "title": "Cluster axis",
+      "default": "cluster"
+    },
+    "min_cells": {
+      "type": "integer",
+      "title": "Minimum cells per cluster",
+      "minimum": 1,
+      "default": 3
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "out"
+    },
+    "top_n": {
+      "type": "integer",
+      "title": "Top genes per cluster",
+      "minimum": 1,
+      "default": 50
+    }
+  },
+  "additionalProperties": false
+}

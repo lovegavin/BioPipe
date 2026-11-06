@@ -5540,6 +5540,36 @@
     "status": "generated"
   },
   {
+    "id": "sc_cluster_profile",
+    "kind": "operator",
+    "title": "sc_cluster_profile",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Per-cluster mean expression and detection fraction.",
+    "doc": "src/task/step/steps/sc_cluster_profile.ScClusterProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sc_marker_specificity",
+    "kind": "operator",
+    "title": "sc_marker_specificity",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Tau specificity and detection rates of genes across clusters.",
+    "doc": "src/task/step/steps/sc_marker_specificity.ScMarkerSpecificityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "sc_rank_genes",
+    "kind": "operator",
+    "title": "sc_rank_genes",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Cluster-versus-rest Wilcoxon differential expression for single-cell matrices.",
+    "doc": "src/task/step/steps/sc_rank_genes.ScRankGenesStep.md",
+    "status": "generated"
+  },
+  {
     "id": "scale_features",
     "kind": "operator",
     "title": "scale_features",

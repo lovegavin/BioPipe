@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "title": "Single-cell marker specificity",
+  "description": "Tau specificity across clusters plus detection rates.",
+  "properties": {
+    "cell_dim": {
+      "type": "string",
+      "title": "Cell axis",
+      "default": "cell"
+    },
+    "gene_dim": {
+      "type": "string",
+      "title": "Gene axis",
+      "default": "gene"
+    },
+    "cluster_dim": {
+      "type": "string",
+      "title": "Cluster axis",
+      "default": "cluster"
+    },
+    "min_cells": {
+      "type": "integer",
+      "title": "Minimum cells per cluster",
+      "minimum": 1,
+      "default": 3
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "out"
+    }
+  },
+  "additionalProperties": false
+}
