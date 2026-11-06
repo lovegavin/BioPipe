@@ -1,0 +1,31 @@
+{
+  "type": "object",
+  "properties": {
+    "variant_dim": {
+      "type": "string",
+      "default": "variant"
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample"
+    },
+    "min_maf": {
+      "type": "number",
+      "default": 0.0,
+      "minimum": 0.0,
+      "maximum": 0.5
+    },
+    "max_missing_rate": {
+      "type": "number",
+      "default": 1.0,
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "output": {
+      "type": "string",
+      "default": "filtered"
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

@@ -1,0 +1,32 @@
+name: Linkage disequilibrium analysis on 1000 Genomes chr22
+sources:
+  genotypes:
+    path: input/query.vcf.gz
+    dims:
+    - variant
+    - sample
+    labels: {}
+    reader: VcfReader
+parameters_file: parameters.json
+steps:
+- name: genotype_filter
+  inputs:
+  - genotypes
+- name: ld_matrix
+  inputs:
+  - filtered
+- name: export_results
+  inputs:
+  - matrix
+- name: ld_decay
+  inputs:
+  - filtered
+- name: export_results
+  inputs:
+  - decay
+- name: ld_prune
+  inputs:
+  - filtered
+- name: export_results
+  inputs:
+  - pruned

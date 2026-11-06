@@ -2680,6 +2680,16 @@
     "status": "generated"
   },
   {
+    "id": "genotype_filter",
+    "kind": "operator",
+    "title": "genotype_filter",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Filter genotype variants by minor allele frequency and missing-call rate.",
+    "doc": "src/task/step/steps/genotype_filter.GenotypeFilterStep.md",
+    "status": "generated"
+  },
+  {
     "id": "gff_feature_stats",
     "kind": "operator",
     "title": "gff_feature_stats",
@@ -3397,6 +3407,16 @@
     "version": "1.0.0",
     "description": "LD decay: binned mean r^2 between variant dosages by distance.",
     "doc": "src/task/step/steps/ld_decay.LdDecayStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "ld_matrix",
+    "kind": "operator",
+    "title": "ld_matrix",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Pairwise linkage-disequilibrium r^2 matrix (plink2 --r2-unphased compatible).",
+    "doc": "src/task/step/steps/ld_matrix.LdMatrixStep.md",
     "status": "generated"
   },
   {

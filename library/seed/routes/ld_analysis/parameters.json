@@ -1,0 +1,70 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "genotypes": {}
+  },
+  "steps": [
+    {
+      "name": "genotype_filter",
+      "inputs": ["genotypes"],
+      "params": {
+        "output": "filtered",
+        "min_maf": 0.05,
+        "max_missing_rate": 0.05
+      },
+      "context_params": {}
+    },
+    {
+      "name": "ld_matrix",
+      "inputs": ["filtered"],
+      "params": {
+        "output": "matrix",
+        "max_variants": 500,
+        "min_maf": 0.0
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["matrix"],
+      "params": {"format": "csv", "filename": "ld_matrix"},
+      "context_params": {}
+    },
+    {
+      "name": "ld_decay",
+      "inputs": ["filtered"],
+      "params": {
+        "output": "decay",
+        "max_distance": 200000,
+        "n_bins": 10,
+        "max_pairs": 20000000
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["decay"],
+      "params": {"format": "csv", "filename": "ld_decay"},
+      "context_params": {}
+    },
+    {
+      "name": "ld_prune",
+      "inputs": ["filtered"],
+      "params": {
+        "output": "pruned",
+        "dim": "variant",
+        "window": 50,
+        "r2": 0.2
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["pruned"],
+      "params": {"format": "csv", "filename": "ld_prune"},
+      "context_params": {}
+    }
+  ]
+}

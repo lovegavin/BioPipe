@@ -91,6 +91,11 @@
       "sha256": "c5f05ad8dd06c5b963d8037512cd294a26f4a1039cde1729f4f375029eec57d5",
       "parameters_sha256": "7723e31bfde9d440acd251e2c4c1b843785f6c710bebdb12397ae04900f7eef7"
     },
+    "route_f8e21faf91b1": {
+      "path": "routes/ld_analysis/task.yaml",
+      "sha256": "67eaaa7e348b2ee576143839f6a72966521cd327325a691ea5e8e6cd5ce2b41e",
+      "parameters_sha256": "c7f0cba042765ae6936fa13fd3493f96600833b93b9aaa63a1d2d00dbadd9449"
+    },
     "route_5d8f861d9506": {
       "path": "routes/microbiome/task.yaml",
       "sha256": "7679048c80c791c3b3de810b9f76ebb07877a257e44ff24a576627642c00a25c",
@@ -21974,6 +21979,383 @@
                 "info_open": true,
                 "axis_info_open": true,
                 "ndim": 2
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_f8e21faf91b1",
+      "version": 1,
+      "name": "Linkage disequilibrium analysis",
+      "graph": {
+        "schema_version": 2,
+        "name": "Linkage disequilibrium analysis",
+        "base_dir": ".studio/builtin-inputs/ld_analysis",
+        "nodes": [
+          {
+            "id": "genotypes",
+            "kind": "source",
+            "operator": null,
+            "title": "genotypes",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfReader",
+              "path": "input/query.vcf.gz",
+              "dims": [
+                "variant",
+                "sample"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genotype_filter_1",
+            "kind": "operator",
+            "operator": "genotype_filter",
+            "title": "genotype_filter",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "variant_dim": "variant",
+              "sample_dim": "sample",
+              "min_maf": 0.05,
+              "max_missing_rate": 0.05,
+              "output": "filtered"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ld_matrix_2",
+            "kind": "operator",
+            "operator": "ld_matrix",
+            "title": "ld_matrix",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "variant_dim": "variant",
+              "sample_dim": "sample",
+              "max_variants": 500,
+              "min_maf": 0.0,
+              "output": "matrix"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_3",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "ld_matrix",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ld_decay_4",
+            "kind": "operator",
+            "operator": "ld_decay",
+            "title": "LD decay",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "variant_dim": "variant",
+              "sample_dim": "sample",
+              "max_distance": 200000,
+              "n_bins": 10,
+              "max_pairs": 20000000,
+              "output": "decay"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_5",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "ld_decay",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_2"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "ld_prune_6",
+            "kind": "operator",
+            "operator": "ld_prune",
+            "title": "LD pruning",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "window": 50,
+              "r2": 0.2,
+              "dim": "variant",
+              "output": "pruned"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_7",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "ld_prune",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_4"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "genotypes-genotype_filter_1-0",
+            "source": "genotypes",
+            "target": "genotype_filter_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genotype_filter_1-ld_matrix_2-0",
+            "source": "genotype_filter_1",
+            "target": "ld_matrix_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ld_matrix_2-export_results_3-0",
+            "source": "ld_matrix_2",
+            "target": "export_results_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genotype_filter_1-ld_decay_4-0",
+            "source": "genotype_filter_1",
+            "target": "ld_decay_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ld_decay_4-export_results_5-0",
+            "source": "ld_decay_4",
+            "target": "export_results_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genotype_filter_1-ld_prune_6-0",
+            "source": "genotype_filter_1",
+            "target": "ld_prune_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ld_prune_6-export_results_7-0",
+            "source": "ld_prune_6",
+            "target": "export_results_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "genotypes",
+              "label": "genotypes",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "variant",
+                  "sample"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "hard_call"
+                  },
+                  "ploidy": {
+                    "type": "integer",
+                    "min": 1
+                  },
+                  "chrom": {
+                    "type": "array",
+                    "items": "string"
+                  },
+                  "pos": {
+                    "type": "array",
+                    "items": "integer"
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": [
+                  {
+                    "dim": "variant",
+                    "fields": [
+                      "chrom",
+                      "pos"
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_3",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_5",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_7",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

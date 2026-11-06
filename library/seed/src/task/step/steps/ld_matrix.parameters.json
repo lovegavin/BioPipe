@@ -1,0 +1,31 @@
+{
+  "type": "object",
+  "properties": {
+    "variant_dim": {
+      "type": "string",
+      "default": "variant"
+    },
+    "sample_dim": {
+      "type": "string",
+      "default": "sample"
+    },
+    "max_variants": {
+      "type": "integer",
+      "default": 300,
+      "minimum": 2,
+      "maximum": 100000
+    },
+    "min_maf": {
+      "type": "number",
+      "default": 0.01,
+      "minimum": 0.0,
+      "maximum": 0.5
+    },
+    "output": {
+      "type": "string",
+      "default": "ld_matrix"
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}
