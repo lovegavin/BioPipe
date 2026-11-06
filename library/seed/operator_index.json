@@ -6910,6 +6910,46 @@
     "status": "generated"
   },
   {
+    "id": "vcf_concordance",
+    "kind": "operator",
+    "title": "vcf_concordance",
+    "category": "Genome",
+    "version": "1.0.1",
+    "description": "Site and genotype concordance between a query VCF and a truth VCF.",
+    "doc": "src/task/step/steps/vcf_concordance.VcfConcordanceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vcf_filter",
+    "kind": "operator",
+    "title": "vcf_filter",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Filter VCF records by quality, FILTER, variant type, depth, missingness and region.",
+    "doc": "src/task/step/steps/vcf_filter.VcfFilterStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vcf_relatedness",
+    "kind": "operator",
+    "title": "vcf_relatedness",
+    "category": "Genome",
+    "version": "1.0.1",
+    "description": "KING-robust between-family kinship coefficients between samples of a VCF (plink2 --make-king-table compatible).",
+    "doc": "src/task/step/steps/vcf_relatedness.VcfRelatednessStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vcf_stats",
+    "kind": "operator",
+    "title": "vcf_stats",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Allele-level summary statistics for a VCF/VCF.gz file.",
+    "doc": "src/task/step/steps/vcf_stats.VcfStatsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "vecm",
     "kind": "operator",
     "title": "Vector error correction model",

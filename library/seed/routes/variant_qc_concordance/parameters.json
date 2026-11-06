@@ -1,0 +1,117 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "query": {},
+    "truth": {}
+  },
+  "steps": [
+    {
+      "name": "vcf_stats",
+      "inputs": [
+        "query"
+      ],
+      "params": {
+        "region": "",
+        "max_records": 0,
+        "output": "stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "stats"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "variant_stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "vcf_filter",
+      "inputs": [
+        "query"
+      ],
+      "params": {
+        "min_qual": 20,
+        "require_pass": true,
+        "biallelic_only": false,
+        "variant_type": "any",
+        "min_dp": 0,
+        "max_missing_rate": 1.0,
+        "region": "",
+        "max_records": 0,
+        "output": "filtered"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "filtered"
+      ],
+      "params": {
+        "format": "native",
+        "filename": "filtered_variants"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "vcf_concordance",
+      "inputs": [
+        "query",
+        "truth"
+      ],
+      "params": {
+        "sample_query": "NA12878",
+        "sample_truth": "HG001",
+        "region": "",
+        "min_qual": 0,
+        "require_pass": false,
+        "output": "concordance"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "concordance"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "concordance"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "vcf_relatedness",
+      "inputs": [
+        "query"
+      ],
+      "params": {
+        "samples": "",
+        "max_samples": 50,
+        "min_maf": 0.05,
+        "min_call_rate": 0.9,
+        "region": "",
+        "max_variants": 0,
+        "output": "kinship"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "kinship"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "kinship"
+      },
+      "context_params": {}
+    }
+  ]
+}

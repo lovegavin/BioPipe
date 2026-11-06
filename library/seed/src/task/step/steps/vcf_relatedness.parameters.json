@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "properties": {
+    "samples": {
+      "type": "string",
+      "default": ""
+    },
+    "max_samples": {
+      "type": "integer",
+      "default": 50,
+      "minimum": 0
+    },
+    "min_maf": {
+      "type": "number",
+      "default": 0.05,
+      "minimum": 0.0,
+      "maximum": 0.5
+    },
+    "min_call_rate": {
+      "type": "number",
+      "default": 0.9,
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "region": {
+      "type": "string",
+      "default": ""
+    },
+    "max_variants": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0
+    },
+    "output": {
+      "type": "string",
+      "default": "vcf_relatedness"
+    }
+  },
+  "additionalProperties": false
+}

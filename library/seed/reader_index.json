@@ -970,6 +970,16 @@
     "status": "generated"
   },
   {
+    "id": "VcfFileReader",
+    "kind": "reader",
+    "title": "VcfFileReader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reference a VCF file without loading or decoding its records.",
+    "doc": "src/reader/readers/vcf_file_reader.VcfFileReader.md",
+    "status": "generated"
+  },
+  {
     "id": "VcfReader",
     "kind": "reader",
     "title": "VcfReader",

@@ -1,0 +1,31 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_query": {
+      "type": "string",
+      "default": ""
+    },
+    "sample_truth": {
+      "type": "string",
+      "default": ""
+    },
+    "region": {
+      "type": "string",
+      "default": ""
+    },
+    "min_qual": {
+      "type": "number",
+      "default": 0.0,
+      "minimum": 0.0
+    },
+    "require_pass": {
+      "type": "boolean",
+      "default": false
+    },
+    "output": {
+      "type": "string",
+      "default": "vcf_concordance"
+    }
+  },
+  "additionalProperties": false
+}

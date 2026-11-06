@@ -1,0 +1,48 @@
+{
+  "type": "object",
+  "properties": {
+    "min_qual": {
+      "type": "number",
+      "default": 0.0,
+      "minimum": 0.0
+    },
+    "require_pass": {
+      "type": "boolean",
+      "default": false
+    },
+    "biallelic_only": {
+      "type": "boolean",
+      "default": false
+    },
+    "variant_type": {
+      "type": "string",
+      "enum": ["any", "snps", "indels"],
+      "default": "any"
+    },
+    "min_dp": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0
+    },
+    "max_missing_rate": {
+      "type": "number",
+      "default": 1.0,
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "region": {
+      "type": "string",
+      "default": ""
+    },
+    "max_records": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0
+    },
+    "output": {
+      "type": "string",
+      "default": "vcf_filter"
+    }
+  },
+  "additionalProperties": false
+}

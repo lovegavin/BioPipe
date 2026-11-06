@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "region": {
+      "type": "string",
+      "default": ""
+    },
+    "max_records": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0
+    },
+    "output": {
+      "type": "string",
+      "default": "vcf_stats"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,41 @@
+name: Variant QC and concordance
+sources:
+  query:
+    path: input/query.vcf.gz
+    dims:
+    - file
+    labels: {}
+    reader: VcfFileReader
+  truth:
+    path: input/truth.vcf.gz
+    dims:
+    - file
+    labels: {}
+    reader: VcfFileReader
+steps:
+- name: vcf_stats
+  inputs:
+  - query
+- name: export_results
+  inputs:
+  - stats
+- name: vcf_filter
+  inputs:
+  - query
+- name: export_results
+  inputs:
+  - filtered
+- name: vcf_concordance
+  inputs:
+  - query
+  - truth
+- name: export_results
+  inputs:
+  - concordance
+- name: vcf_relatedness
+  inputs:
+  - query
+- name: export_results
+  inputs:
+  - kinship
+parameters_file: parameters.json
