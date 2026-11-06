@@ -1729,3 +1729,91 @@ difference is 5.6e-17 (srv) and 1.0e-17 (Windows) at most.
 - MAF uses alternate-allele dosages after splitting multiallelic records.
 - `ld_prune` windows count variants, not base pairs.
 - plink2 writes six decimals, which bounds the matrix comparison at 5e-7.
+
+
+## Batch 22: polygenic score harmonisation and scoring (`prs_harmonize_qc`)
+
+### Data
+
+| Input | Source | Size | SHA-256 |
+|---|---|---|---|
+| `chr22_prs.vcf.gz` | 1000 Genomes phase 3 chr22, 25 regions (+/-150 kb around the PGS000297 chr22 sites), 50 samples, 291,205 variants | 5,672,930 B | `293c63f8dd89f5e37ef946c48f1662a2aa3598c85497c0980fb438653b2d0cd2` |
+| `PGS000297.txt.gz` | PGS Catalog GRS3290_Height, GRCh37, 3,290 weights (37 on chr22) | 49,501 B | `5c06a400efaedae89d8e526924fe2af315b481ea73bb1ad8ab23b935b4bc5e41` |
+
+The genotype file uses the same 50 samples as the earlier 1000 Genomes
+routes, so the scores are comparable with those runs. Only chr22 weights are
+present, so the scores are a chr22 subset of the published score.
+
+### Route
+
+`genotypes` (VcfReader), `genotypes_file` (VcfFileReader) and `weights`
+(TsvFileReader) feed `prs_harmonize`; its output goes to `prs_af_filter`,
+`prs_ld_clump` and the bundled `biopipe-genetics` operator `prs`, with one CSV
+export per branch (8 steps).
+
+### Results
+
+| Step | Outcome |
+|---|---|
+| `prs_harmonize` | 37/37 weights placed: 24 matched, 13 flipped, 0 ambiguous, 0 absent |
+| `prs_af_filter` | 37/37 kept (minimum MAF 0.02, maximum missing 0.0) |
+| `prs_ld_clump` | 37/37 kept (largest within-window r2 0.0257) |
+| `prs` | 50 samples; score min 0.038704, max 0.278134, mean 0.149621; 37 variants per sample |
+
+Exports: `prs_harmonized.csv` 950 B, `prs_filtered.csv` 950 B,
+`prs_clumped.csv` 950 B, `prs_scores.csv` 1,711 B.
+
+### Independent checks
+
+| Check | Implementation | Result |
+|---|---|---|
+| Scores | independent NumPy dosage x weight | 50/50 samples, max abs 7.35e-09 (engine stores float32) |
+| Scores | `plink2 --score` with the same weights | max abs 3.47e-07 (six-decimal output) |
+| Alignment | independent PGS/VCF parser | 0 sign errors, 24 matched / 13 flipped |
+| MAF filter | independent dosage computation | 37/37 kept, minimum MAF 0.02 |
+| Clumping | pairwise r2 inside 100 kb windows | 0 violations, max r2 0.0257 |
+
+`plink2` reports `SCORE1_AVG`; the summed score is
+`SCORE1_AVG * ALLELE_CT`. This development build rejects the `sum` modifier,
+so the comparison multiplies explicitly.
+
+### Three platforms
+
+| Platform | Steps | Wall time | Export MD5 |
+|---|---|---|---|
+| WSL (Python 3.12) | 8/8 | 130.0 s | all four identical |
+| srv (Python 3.11) | 8/8 | 308 s | all four identical |
+| Windows (Python 3.12) | 8/8 | 146.3 s | all four identical |
+
+MD5: `prs_harmonized.csv`, `prs_filtered.csv` and `prs_clumped.csv`
+`114fedb8bf8d66adb34391abc4743059`; `prs_scores.csv`
+`a96208993780a20aa43f3d4cf7e5eff9`.
+
+Nearly all of the wall time is the first decode of 291,205 variants by
+`VcfReader`; the operators themselves take a few seconds.
+
+### Fixes during the batch
+
+- Form ports declared `"kind": "numeric"` and the registry rejected them
+  (`Port kind must be form, file, or a list of these kinds`); they now use
+  `"form"`.
+- `export()` was defined without `ctx`; the runner passes the context, so all
+  three operators now use `export(self, ctx)`.
+- The first registry build failed because the new operators reused ids
+  `ld_decay` / `ld_prune` that already belong to `biopipe-genetics`. The
+  overwritten files were restored and the route now reuses the bundled
+  operators.
+- `prs` expects weights already aligned to the effect allele; this batch adds
+  the harmonisation step instead of modifying `prs`.
+
+### Limits
+
+- Only chr22 weights are available; the full GRS3290 score cannot be
+  reproduced from this subset.
+- `prs` sums dosage x weight and treats missing dosages as zero, while
+  `plink2 --score` imputes the mean. The two agree here because every call is
+  present.
+- Alignment uses rsID or chrom:pos plus REF/ALT identity. Allele swaps without
+  evidence are reported as `ambiguous` rather than guessed.
+- LD pruning uses the study dosages and a 100 kb window; it is not a
+  population-specific reference panel.
