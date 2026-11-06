@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Primer pair design parameters",
+  "additionalProperties": false,
+  "required": ["target_start", "target_end"],
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "description": "Name of the template sequence axis."
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "description": "Name of the template position axis."
+    },
+    "pair_dim": {
+      "type": "string",
+      "default": "pair",
+      "description": "Name of the output pair axis."
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "description": "Name of the output statistic axis."
+    },
+    "target_start": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "First template position (1-based, inclusive) to keep free of primers."
+    },
+    "target_end": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Last template position (1-based, inclusive) to keep free of primers."
+    },
+    "flank": {
+      "type": "integer",
+      "default": 200,
+      "minimum": 10,
+      "description": "Number of bases searched upstream and downstream of the target."
+    },
+    "min_length": {"type": "integer", "default": 18, "minimum": 10},
+    "max_length": {"type": "integer", "default": 25, "maximum": 40},
+    "opt_length": {"type": "number", "default": 20.0},
+    "min_tm": {"type": "number", "default": 57.0},
+    "opt_tm": {"type": "number", "default": 60.0},
+    "max_tm": {"type": "number", "default": 63.0},
+    "min_gc": {"type": "number", "default": 40.0, "minimum": 0, "maximum": 100},
+    "max_gc": {"type": "number", "default": 60.0, "minimum": 0, "maximum": 100},
+    "min_product": {"type": "integer", "default": 100, "minimum": 20},
+    "max_product": {"type": "integer", "default": 300, "minimum": 20},
+    "opt_product": {"type": "number", "default": 150.0},
+    "na_mm": {"type": "number", "default": 50.0, "exclusiveMinimum": 0},
+    "dnac_nm": {"type": "number", "default": 25.0, "exclusiveMinimum": 0},
+    "tm_weight": {"type": "number", "default": 3.0, "minimum": 0},
+    "length_weight": {"type": "number", "default": 1.0, "minimum": 0},
+    "gc_weight": {"type": "number", "default": 0.5, "minimum": 0},
+    "product_weight": {"type": "number", "default": 0.1, "minimum": 0},
+    "max_pairs": {"type": "integer", "default": 10, "minimum": 1, "maximum": 100},
+    "output": {
+      "type": "string",
+      "default": "primer_pairs",
+      "description": "Name of the output form."
+    }
+  }
+}

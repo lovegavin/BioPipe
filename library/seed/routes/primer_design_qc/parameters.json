@@ -1,0 +1,227 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "genome": {},
+    "oligos": {},
+    "primers": {}
+  },
+  "steps": [
+    {
+      "name": "primer_tm",
+      "inputs": [
+        "oligos"
+      ],
+      "params": {
+        "output": "oligo_tm",
+        "na_mm": 50.0,
+        "dnac_nm": 25.0
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "oligo_tm"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "oligo_tm"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "primer_design",
+      "inputs": [
+        "genome"
+      ],
+      "params": {
+        "output": "pair_lacZ",
+        "target_start": 363800,
+        "target_end": 363899,
+        "flank": 250,
+        "min_length": 18,
+        "max_length": 24,
+        "min_tm": 57.0,
+        "max_tm": 63.0,
+        "min_gc": 40.0,
+        "max_gc": 60.0,
+        "min_product": 120,
+        "max_product": 320,
+        "max_pairs": 5
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pair_lacZ"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "pairs_lacZ"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "primer_design",
+      "inputs": [
+        "genome"
+      ],
+      "params": {
+        "output": "pair_gyrA",
+        "target_start": 2337200,
+        "target_end": 2337299,
+        "flank": 250,
+        "min_length": 18,
+        "max_length": 24,
+        "min_tm": 57.0,
+        "max_tm": 63.0,
+        "min_gc": 40.0,
+        "max_gc": 60.0,
+        "min_product": 120,
+        "max_product": 320,
+        "max_pairs": 5
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pair_gyrA"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "pairs_gyrA"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "primer_design",
+      "inputs": [
+        "genome"
+      ],
+      "params": {
+        "output": "pair_recA",
+        "target_start": 2823000,
+        "target_end": 2823099,
+        "flank": 250,
+        "min_length": 18,
+        "max_length": 24,
+        "min_tm": 57.0,
+        "max_tm": 63.0,
+        "min_gc": 40.0,
+        "max_gc": 60.0,
+        "min_product": 120,
+        "max_product": 320,
+        "max_pairs": 5
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pair_recA"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "pairs_recA"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "primer_design",
+      "inputs": [
+        "genome"
+      ],
+      "params": {
+        "output": "pair_dnaA",
+        "target_start": 3882800,
+        "target_end": 3882899,
+        "flank": 250,
+        "min_length": 18,
+        "max_length": 24,
+        "min_tm": 57.0,
+        "max_tm": 63.0,
+        "min_gc": 40.0,
+        "max_gc": 60.0,
+        "min_product": 120,
+        "max_product": 320,
+        "max_pairs": 5
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pair_dnaA"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "pairs_dnaA"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "primer_design",
+      "inputs": [
+        "genome"
+      ],
+      "params": {
+        "output": "pair_thrA",
+        "target_start": 800,
+        "target_end": 899,
+        "flank": 250,
+        "min_length": 18,
+        "max_length": 24,
+        "min_tm": 57.0,
+        "max_tm": 63.0,
+        "min_gc": 40.0,
+        "max_gc": 60.0,
+        "min_product": 120,
+        "max_product": 320,
+        "max_pairs": 5
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pair_thrA"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "pairs_thrA"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "primer_specificity",
+      "inputs": [
+        "primers",
+        "genome"
+      ],
+      "params": {
+        "output": "amplicons",
+        "max_mismatches": 0,
+        "min_product": 100,
+        "max_product": 1000,
+        "both_strands": true,
+        "max_hits": 50
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "amplicons"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "amplicons"
+      },
+      "context_params": {}
+    }
+  ]
+}

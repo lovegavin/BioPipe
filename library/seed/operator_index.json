@@ -4670,6 +4670,36 @@
     "status": "generated"
   },
   {
+    "id": "primer_design",
+    "kind": "operator",
+    "title": "Primer pair design",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Enumerate primer pairs flanking a target interval, filter by length, melting temperature and GC content, and rank pairs by a weighted penalty on Tm, length, GC and product size.",
+    "doc": "src/task/step/steps/primer_design.PrimerDesignStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "primer_specificity",
+    "kind": "operator",
+    "title": "Primer specificity (in-silico PCR)",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Search a genome for amplicons produced by a primer pair on both strands, allowing a bounded number of mismatches per primer, and report every product within the configured size window.",
+    "doc": "src/task/step/steps/primer_specificity.PrimerSpecificityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "primer_tm",
+    "kind": "operator",
+    "title": "Primer melting temperature",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Compute nearest-neighbour melting temperatures (SantaLucia 1998) with an entropy salt correction, plus GC fraction and the enthalpy/entropy terms for each input oligo.",
+    "doc": "src/task/step/steps/primer_tm.PrimerTmStep.md",
+    "status": "generated"
+  },
+  {
     "id": "prioritize",
     "kind": "operator",
     "title": "prioritize",

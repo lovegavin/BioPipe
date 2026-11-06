@@ -1,0 +1,30 @@
+{
+  "genome": "Escherichia coli K-12 MG1655, GCF_000005845.2",
+  "targets": [
+    {
+      "gene": "lacZ",
+      "start": 363800,
+      "end": 363899
+    },
+    {
+      "gene": "gyrA",
+      "start": 2337200,
+      "end": 2337299
+    },
+    {
+      "gene": "recA",
+      "start": 2823000,
+      "end": 2823099
+    },
+    {
+      "gene": "dnaA",
+      "start": 3882800,
+      "end": 3882899
+    },
+    {
+      "gene": "thrA",
+      "start": 800,
+      "end": 899
+    }
+  ]
+}

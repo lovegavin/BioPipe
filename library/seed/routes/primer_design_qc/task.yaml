@@ -1,0 +1,138 @@
+{
+  "name": "Primer design and in-silico specificity on E. coli K-12",
+  "sources": {
+    "genome": {
+      "path": "input/ecoli.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {
+        "sequence": {
+          "ecoli": 0
+        }
+      },
+      "reader": "FastaReader"
+    },
+    "oligos": {
+      "path": "input/oligos.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {
+        "sequence": {
+          "oligo1": 0,
+          "oligo2": 1,
+          "oligo3": 2,
+          "oligo4": 3,
+          "oligo5": 4,
+          "oligo6": 5
+        }
+      },
+      "reader": "FastaReader"
+    },
+    "primers": {
+      "path": "input/pair_dnaA.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {
+        "sequence": {
+          "dnaA_left": 0,
+          "dnaA_right": 1
+        }
+      },
+      "reader": "FastaReader"
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "primer_tm",
+      "inputs": [
+        "oligos"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "oligo_tm"
+      ]
+    },
+    {
+      "name": "primer_design",
+      "inputs": [
+        "genome"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pair_lacZ"
+      ]
+    },
+    {
+      "name": "primer_design",
+      "inputs": [
+        "genome"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pair_gyrA"
+      ]
+    },
+    {
+      "name": "primer_design",
+      "inputs": [
+        "genome"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pair_recA"
+      ]
+    },
+    {
+      "name": "primer_design",
+      "inputs": [
+        "genome"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pair_dnaA"
+      ]
+    },
+    {
+      "name": "primer_design",
+      "inputs": [
+        "genome"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pair_thrA"
+      ]
+    },
+    {
+      "name": "primer_specificity",
+      "inputs": [
+        "primers",
+        "genome"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "amplicons"
+      ]
+    }
+  ]
+}

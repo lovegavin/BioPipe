@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Primer specificity parameters",
+  "additionalProperties": false,
+  "properties": {
+    "primer_dim": {
+      "type": "string",
+      "default": "sequence",
+      "description": "Name of the primer sequence axis."
+    },
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "description": "Name of the genome sequence axis."
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "description": "Name of the position axis."
+    },
+    "amplicon_dim": {
+      "type": "string",
+      "default": "amplicon",
+      "description": "Name of the output amplicon axis."
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "description": "Name of the output statistic axis."
+    },
+    "max_mismatches": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "maximum": 3,
+      "description": "Maximum mismatches allowed per primer."
+    },
+    "min_product": {"type": "integer", "default": 100, "minimum": 20},
+    "max_product": {"type": "integer", "default": 1000, "minimum": 20},
+    "both_strands": {
+      "type": "boolean",
+      "default": true,
+      "description": "Also search the reverse-complement orientation."
+    },
+    "max_hits": {
+      "type": "integer",
+      "default": 50,
+      "minimum": 1,
+      "maximum": 10000,
+      "description": "Maximum number of amplicons reported."
+    },
+    "output": {
+      "type": "string",
+      "default": "amplicons",
+      "description": "Name of the output form."
+    }
+  }
+}

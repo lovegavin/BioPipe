@@ -136,6 +136,11 @@
       "sha256": "91fd44d1538a72c3fd45b11b011d7e32ab3f647e0e17e5f70716d09107c8ea0b",
       "parameters_sha256": "987ef5fb59f65e0e8d413a811571709b7bb371f61c607aaa74ce1c6c8d34d3d0"
     },
+    "route_4bf816613c56": {
+      "path": "routes/primer_design_qc/task.yaml",
+      "sha256": "23a04b3bba899843ea59588a45dc6babbf1a9b59e6951154101f79573a390915",
+      "parameters_sha256": "f65a5c93821a89f36a4d6344aec5ccdfc2a399a6bf7d9004f5463b7529119f2e"
+    },
     "route_88fb083f4238": {
       "path": "routes/proteomics_de/task.yaml",
       "sha256": "92020573ced5e395004973b35656b8374fb3cd5a905105454971b36cf3b38963",
@@ -6624,6 +6629,952 @@
             },
             {
               "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_4bf816613c56",
+      "version": 1,
+      "name": "Primer design and specificity",
+      "graph": {
+        "schema_version": 2,
+        "name": "Primer design and specificity",
+        "base_dir": ".studio/builtin-inputs/primer_design_qc",
+        "nodes": [
+          {
+            "id": "genome",
+            "kind": "source",
+            "operator": null,
+            "title": "genome",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/ecoli.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {
+                "sequence": {
+                  "ecoli": 0
+                }
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "oligos",
+            "kind": "source",
+            "operator": null,
+            "title": "oligos",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/oligos.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {
+                "sequence": {
+                  "oligo1": 0,
+                  "oligo2": 1,
+                  "oligo3": 2,
+                  "oligo4": 3,
+                  "oligo5": 4,
+                  "oligo6": 5
+                }
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "primers",
+            "kind": "source",
+            "operator": null,
+            "title": "primers",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/pair_dnaA.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {
+                "sequence": {
+                  "dnaA_left": 0,
+                  "dnaA_right": 1
+                }
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "primer_tm_1",
+            "kind": "operator",
+            "operator": "primer_tm",
+            "title": "Primer melting temperature",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "sequence_label_dim": "sequence",
+              "statistic_dim": "statistic",
+              "na_mm": 50.0,
+              "dnac_nm": 25.0,
+              "output": "oligo_tm"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "oligo_tm",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "primer_design_3",
+            "kind": "operator",
+            "operator": "primer_design",
+            "title": "Primer pair design",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "pair_dim": "pair",
+              "statistic_dim": "statistic",
+              "flank": 250,
+              "min_length": 18,
+              "max_length": 24,
+              "opt_length": 20.0,
+              "min_tm": 57.0,
+              "opt_tm": 60.0,
+              "max_tm": 63.0,
+              "min_gc": 40.0,
+              "max_gc": 60.0,
+              "min_product": 120,
+              "max_product": 320,
+              "opt_product": 150.0,
+              "na_mm": 50.0,
+              "dnac_nm": 25.0,
+              "tm_weight": 3.0,
+              "length_weight": 1.0,
+              "gc_weight": 0.5,
+              "product_weight": 0.1,
+              "max_pairs": 5,
+              "output": "pair_lacZ",
+              "target_end": 363899,
+              "target_start": 363800
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "pairs_lacZ",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "primer_design_5",
+            "kind": "operator",
+            "operator": "primer_design",
+            "title": "Primer pair design",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "pair_dim": "pair",
+              "statistic_dim": "statistic",
+              "flank": 250,
+              "min_length": 18,
+              "max_length": 24,
+              "opt_length": 20.0,
+              "min_tm": 57.0,
+              "opt_tm": 60.0,
+              "max_tm": 63.0,
+              "min_gc": 40.0,
+              "max_gc": 60.0,
+              "min_product": 120,
+              "max_product": 320,
+              "opt_product": 150.0,
+              "na_mm": 50.0,
+              "dnac_nm": 25.0,
+              "tm_weight": 3.0,
+              "length_weight": 1.0,
+              "gc_weight": 0.5,
+              "product_weight": 0.1,
+              "max_pairs": 5,
+              "output": "pair_gyrA",
+              "target_end": 2337299,
+              "target_start": 2337200
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "pairs_gyrA",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "primer_design_7",
+            "kind": "operator",
+            "operator": "primer_design",
+            "title": "Primer pair design",
+            "position": {
+              "x": 360.0,
+              "y": 730.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "pair_dim": "pair",
+              "statistic_dim": "statistic",
+              "flank": 250,
+              "min_length": 18,
+              "max_length": 24,
+              "opt_length": 20.0,
+              "min_tm": 57.0,
+              "opt_tm": 60.0,
+              "max_tm": 63.0,
+              "min_gc": 40.0,
+              "max_gc": 60.0,
+              "min_product": 120,
+              "max_product": 320,
+              "opt_product": 150.0,
+              "na_mm": 50.0,
+              "dnac_nm": 25.0,
+              "tm_weight": 3.0,
+              "length_weight": 1.0,
+              "gc_weight": 0.5,
+              "product_weight": 0.1,
+              "max_pairs": 5,
+              "output": "pair_recA",
+              "target_end": 2823099,
+              "target_start": 2823000
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 730.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "pairs_recA",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_7"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "primer_design_9",
+            "kind": "operator",
+            "operator": "primer_design",
+            "title": "Primer pair design",
+            "position": {
+              "x": 360.0,
+              "y": 940.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "pair_dim": "pair",
+              "statistic_dim": "statistic",
+              "flank": 250,
+              "min_length": 18,
+              "max_length": 24,
+              "opt_length": 20.0,
+              "min_tm": 57.0,
+              "opt_tm": 60.0,
+              "max_tm": 63.0,
+              "min_gc": 40.0,
+              "max_gc": 60.0,
+              "min_product": 120,
+              "max_product": 320,
+              "opt_product": 150.0,
+              "na_mm": 50.0,
+              "dnac_nm": 25.0,
+              "tm_weight": 3.0,
+              "length_weight": 1.0,
+              "gc_weight": 0.5,
+              "product_weight": 0.1,
+              "max_pairs": 5,
+              "output": "pair_dnaA",
+              "target_end": 3882899,
+              "target_start": 3882800
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_10",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 940.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "pairs_dnaA",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_9"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "primer_design_11",
+            "kind": "operator",
+            "operator": "primer_design",
+            "title": "Primer pair design",
+            "position": {
+              "x": 360.0,
+              "y": 1150.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "pair_dim": "pair",
+              "statistic_dim": "statistic",
+              "flank": 250,
+              "min_length": 18,
+              "max_length": 24,
+              "opt_length": 20.0,
+              "min_tm": 57.0,
+              "opt_tm": 60.0,
+              "max_tm": 63.0,
+              "min_gc": 40.0,
+              "max_gc": 60.0,
+              "min_product": 120,
+              "max_product": 320,
+              "opt_product": 150.0,
+              "na_mm": 50.0,
+              "dnac_nm": 25.0,
+              "tm_weight": 3.0,
+              "length_weight": 1.0,
+              "gc_weight": 0.5,
+              "product_weight": 0.1,
+              "max_pairs": 5,
+              "output": "pair_thrA",
+              "target_end": 899,
+              "target_start": 800
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_12",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 1150.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "pairs_thrA",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_11"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "primer_specificity_13",
+            "kind": "operator",
+            "operator": "primer_specificity",
+            "title": "Primer specificity (in-silico PCR)",
+            "position": {
+              "x": 360.0,
+              "y": 1360.0
+            },
+            "params": {
+              "primer_dim": "sequence",
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "amplicon_dim": "amplicon",
+              "statistic_dim": "statistic",
+              "max_mismatches": 0,
+              "min_product": 100,
+              "max_product": 1000,
+              "both_strands": true,
+              "max_hits": 50,
+              "output": "amplicons"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_14",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 1360.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "amplicons",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_13"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "oligos-primer_tm_1-0",
+            "source": "oligos",
+            "target": "primer_tm_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "primer_tm_1-export_results_2-0",
+            "source": "primer_tm_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genome-primer_design_3-0",
+            "source": "genome",
+            "target": "primer_design_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "primer_design_3-export_results_4-0",
+            "source": "primer_design_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genome-primer_design_5-0",
+            "source": "genome",
+            "target": "primer_design_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "primer_design_5-export_results_6-0",
+            "source": "primer_design_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genome-primer_design_7-0",
+            "source": "genome",
+            "target": "primer_design_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "primer_design_7-export_results_8-0",
+            "source": "primer_design_7",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genome-primer_design_9-0",
+            "source": "genome",
+            "target": "primer_design_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "primer_design_9-export_results_10-0",
+            "source": "primer_design_9",
+            "target": "export_results_10",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genome-primer_design_11-0",
+            "source": "genome",
+            "target": "primer_design_11",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "primer_design_11-export_results_12-0",
+            "source": "primer_design_11",
+            "target": "export_results_12",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "primers-primer_specificity_13-0",
+            "source": "primers",
+            "target": "primer_specificity_13",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genome-primer_specificity_13-1",
+            "source": "genome",
+            "target": "primer_specificity_13",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "primer_specificity_13-export_results_14-0",
+            "source": "primer_specificity_13",
+            "target": "export_results_14",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "genome",
+              "label": "genome",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "oligos",
+              "label": "oligos",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "primers",
+              "label": "primers",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_10",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_12",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_14",
               "handle": "out",
               "label": "Export results",
               "contract": {

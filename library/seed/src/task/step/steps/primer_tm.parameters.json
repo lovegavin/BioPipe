@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Primer melting temperature parameters",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "description": "Name of the sequence axis."
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "description": "Name of the position axis."
+    },
+    "sequence_label_dim": {
+      "type": "string",
+      "default": "sequence",
+      "description": "Name of the output sequence axis."
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "description": "Name of the output statistic axis."
+    },
+    "na_mm": {
+      "type": "number",
+      "default": 50.0,
+      "exclusiveMinimum": 0,
+      "description": "Sodium ion concentration in millimolar."
+    },
+    "dnac_nm": {
+      "type": "number",
+      "default": 25.0,
+      "exclusiveMinimum": 0,
+      "description": "Total strand concentration in nanomolar."
+    },
+    "output": {
+      "type": "string",
+      "default": "primer_tm",
+      "description": "Name of the output form."
+    }
+  }
+}
