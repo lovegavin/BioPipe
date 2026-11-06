@@ -130,7 +130,7 @@ class ConsensusSequenceStep(Step):
 
         directory = output_directory(ctx, out_name)
         fasta_out = directory / f'{out_name}.fasta'
-        fasta_out.write_text('\n'.join(records) + '\n', encoding='utf-8')
+        fasta_out.write_bytes(('\n'.join(records) + '\n').encode('utf-8'))
         result_files = [result_file('genome', str(fasta_out), 'fasta', 'Consensus genome')]
         remember_native(ctx, out_name, result_files)
         ctx[out_name] = FileArtifact('fasta', {'genome': str(fasta_out)}, info={'source': 'consensus_sequence'})

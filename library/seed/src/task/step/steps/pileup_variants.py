@@ -132,7 +132,7 @@ class PileupVariantsStep(Step):
 
         directory = output_directory(ctx, out_name)
         vcf_path = directory / f'{out_name}.vcf'
-        vcf_path.write_text('\n'.join(header + lines) + '\n', encoding='utf-8')
+        vcf_path.write_bytes(('\n'.join(header + lines) + '\n').encode('utf-8'))
         result_files = [result_file('variants', str(vcf_path), 'vcf', 'Consensus variants')]
         remember_native(ctx, out_name, result_files)
         ctx[out_name] = FileArtifact('vcf', {'variants': str(vcf_path)}, info={'source': 'pileup_variants'})
