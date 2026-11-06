@@ -1453,3 +1453,83 @@ The other four outputs are byte-identical on all three platforms.
   overlaps can give high identity.
 - The alphabet is inferred once per alignment; mixed nucleotide/protein input is
   rejected.
+
+## Batch 19 - Variant consequence annotation on 1000 Genomes chr22
+
+### Data
+
+| Role | File | Size (B) | SHA-256 |
+| --- | --- | ---: | --- |
+| Variants | `subset.vcf` | 10,350,044 | `88e6d3337c6e60ef0cce65ebe8852cda8e0b64c6186ba206a5bb9828f6672716` |
+| Annotation | `gencode19_22.csq.gff` | 26,601,604 | `0df1955a627990254262c21e91f61d30b1720203257108409604dce8d6020f29` |
+| Reference | `chr22_1000g.fa` | 52,330,662 | `51c376f6c0b898b23bc067f53d93ca801beabfb1d846898372837d37d5578829` |
+
+30,104 records from 1000 Genomes Phase 3, chr22:17,000,000-18,000,000 (GRCh37). GENCODE
+v19 chr22 carries `biotype` copied from `gene_type`/`transcript_type` so that
+`bcftools csq` can index it; the FASTA is UCSC hg19 chr22 renamed to `22`.
+
+### Route
+
+`variant_consequence` (VCF + GFF3 + FASTA) -> annotated VCF with `CSQ`/`GENE`/`TX`/`AA`
+INFO fields -> `variant_impact_summary` -> `export_results` (CSV) ->
+`coding_variant_filter` (444 coding/splice records). `export_results` has no VCF writer,
+so both VCFs are native `result_files`; only the summary is exported.
+
+### Results
+
+- 16,732 non-intergenic annotations (55.6%): stop_gained 7, start_lost 2,
+  splice_acceptor 5, splice_donor 9, inframe_deletion 1, missense 258, synonymous 162,
+  5_prime_UTR 74, 3_prime_UTR 475, non_coding 1,679, intron 14,060, intergenic 13,372.
+- Runtime: WSL 1.1037 s (0.982/0.077/0.001/0.043), srv 1.9897 s
+  (1.558/0.271/0.004/0.157), Windows 1.1658 s (0.981/0.108/0.003/0.075).
+- Three-platform md5, all identical:
+  `annotated.vcf` 11,294,645 B `e3bd77bbb36b59ca8e4ca1545f09ff83`,
+  `coding.vcf` 198,502 B `8c7adbf0820fc6624ec2a837cf3c795d`,
+  `impact_summary.csv` 509 B `236220bb46238869ad56c7ae904c0024`.
+
+### Oracles
+
+Ensembl VEP GRCh37 REST (`grch37.rest.ensembl.org`; the default host ignores
+`assembly=GRCh37`):
+
+| Sample | Compared | Class agreement | AA agreement |
+| --- | ---: | ---: | ---: |
+| 500 random SNVs (275 with VEP terms) | 275 | 275/275 (100%) | - |
+| 428 coding variants | 427 | 427/427 (100%) | 426/427 (99.77%) |
+
+`bcftools csq` 1.19 (4,459 transcripts indexed, 16,721 sites annotated):
+
+| Metric | Value |
+| --- | --- |
+| Sites with matching transcript | 429 |
+| Coding/splice union | 407 |
+| Consequence agreement | 391/407 (96.07%) |
+| Amino-acid agreement | 388/391 (99.23%) |
+
+The residual convention differences are documented in the route README: `csq` folds
+non-coding transcript introns into `non_coding` and emits a wider `splice_region` class;
+the operator follows the VEP-style split and reports `intron` for those sites.
+
+### Defects fixed while building this batch
+
+- GFF3 CDS phase was ignored, shifting codon numbering on 5'-incomplete transcripts
+  (`ENST00000465611.1` reported 166P where VEP and csq report 165A/166A). `Transcript`
+  now records per-segment phase and `cds_index`/`codon_positions` apply the first-segment
+  offset; `22:17468873 G>A` now yields `165A GCC>GCT`, matching `bcftools csq`.
+- Minus-strand codons were translated without reverse-complementing the three genomic
+  bases, turning synonymous changes into missense calls.
+- Output contracts for file-producing steps must nest the declaration under
+  `contracts.output.schema`; a flat contract produced
+  `输入输出契约不兼容：需要 file 类型数据`.
+- Step declarations need `inputs_arity` plus `resources`, otherwise registry build fails
+  with `Declare one input contract per port`.
+
+### Limitations
+
+- One consequence per variant, taken from the most severe overlapping transcript;
+  `csq` uses the canonical transcript, so cohort-wide agreement is not meaningful and
+  comparisons are restricted to matched transcripts.
+- Splice donor/acceptor cover two intronic bases; a wider `splice_region` class is not
+  modelled.
+- Start-lost and in-frame deletion amino-acid strings follow this operator's display
+  convention (VEP/csq differ on two CECR transcripts and one IL17RA deletion).
