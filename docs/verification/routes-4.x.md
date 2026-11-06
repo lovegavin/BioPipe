@@ -734,3 +734,65 @@ Pearson `1.0`.
 - Peaks are taken as given (ENCODE IDR here); FRiP uses any overlap between a
   fragment and a peak, not midpoint containment.
 - The BAM must be coordinate-sorted for sensible results (not enforced).
+
+## Batch 9 - model selection and feature ablation (breast cancer)
+
+### Data
+
+| File | Bytes | SHA256 |
+| --- | ---: | --- |
+| `input/X.csv` | 122,657 | 30 standardized-input features for 569 samples (sklearn breast_cancer, public) |
+| `input/y.csv` | 4,566 | 569 labels, 357 benign / 212 malignant |
+
+Both files are derived from the public scikit-learn 1.6.1 dataset (no private data).
+
+### Route `b9_ml` (8 steps)
+
+`ml_stratified_folds` -> export, `ml_train_test_split` -> export,
+`ml_logistic_fit` (standardized, C=0.01) -> export,
+`ml_feature_ablation` (log-loss delta) -> export.
+
+### Results
+
+- folds: 5 stratified folds, sizes 114/114/114/114/113 (seed 0).
+- split: 426 train / 143 test.
+- logistic: accuracy 0.956063, ROC AUC 0.994160, 16 L-BFGS iterations.
+- ablation top-3: worst texture, worst concave points, worst radius.
+
+### Oracle (scikit-learn 1.6.1)
+
+| Comparison | Result |
+| --- | --- |
+| StratifiedKFold assignment | identical, 0 mismatches |
+| StratifiedShuffleSplit assignment | identical, 426/143 |
+| logistic coef / intercept | max abs 9.45e-09 / 2.29e-09 |
+| predicted probability | max abs 2.90e-08 |
+| per-feature log-loss delta | max abs 3.34e-09, top-3 identical |
+
+### Three platforms
+
+| Platform | Elapsed (s) | Notes |
+| --- | ---: | --- |
+| WSL (numpy 2.1.3) | 1.74 | folds 0.001, split 0.001, logistic 0.057, ablation 1.683 |
+| srv (numpy 2.4.6) | 0.13 | 8/8 |
+| Windows (numpy 2.5.4) | 1.42 | 8/8 |
+
+Fold and split exports are byte-identical on all three platforms. Logistic and
+ablation CSVs differ only in last-digit float formatting: WSL vs srv max abs
+1.1e-13 (coef 1.1e-16), WSL vs Windows 1.1e-16.
+
+### Fixes found by the batch
+
+- `fit_logistic` gradient was missing the `C` factor: correct at C=1, wrong at
+  any other regularization strength. Regression: coefficient error dropped from
+  0.09 to 9.5e-09 at C=0.01.
+- `roc_auc` used `getattr(np, "trapezoid", np.trapz)`, which evaluates the eager
+  default and crashes on numpy >= 2.4 where `np.trapz` is removed; replaced by
+  an explicit trapezoid sum.
+- `log_loss` clip aligned with scikit-learn (1e-15).
+
+### Limitations
+
+- Unstandardized coefficients are not identifiable because features are highly
+  collinear; only probabilities are comparable. The route standardizes both.
+- Ablation is a refit-cost importance, not a causal effect.
