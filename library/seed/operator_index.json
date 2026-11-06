@@ -2084,7 +2084,7 @@
     "kind": "operator",
     "title": "fastq_adapter_scan",
     "category": "Quality Control",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Count reads containing known sequencing adapter prefixes.",
     "doc": "src/task/step/steps/fastq_adapter_scan.FastqAdapterScanStep.md",
     "status": "generated"

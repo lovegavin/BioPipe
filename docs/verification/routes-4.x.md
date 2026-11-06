@@ -6,7 +6,9 @@ publicly available dataset; synthetic inputs are never counted as biological
 evidence.
 
 Registry baseline after the first batch: **721 operators / 102 readers / 7
-packages / 25 routes**, `errors 0`, `warnings 108`.
+packages / 25 routes**, `errors 0`, `warnings 108`. After the second batch:
+**725 operators / 103 readers / 7 packages / 26 routes**, `errors 0`, `warnings
+108`.
 
 ## Batch 1 - variant_qc_concordance
 
@@ -112,3 +114,100 @@ from 101 to 102; operator code and protocol v3 semantics are unchanged.
   separately.
 - Duplicate query records with the same ALT are skipped and reported as
   `n_query_duplicates` instead of aborting the run.
+
+## Batch 2 - sequencing_qc
+
+### Data provenance
+
+| Source | Dataset | Subset | Size | SHA256 |
+| --- | --- | --- | --- | --- |
+| `reads_1` | ENA `SRR001666`, Escherichia coli K-12 MG1655 paired-end reads | first 200,000 pairs | 8,291,336 B | `5b512b0bd02c906186c48aa76d20b3ba4d6f3423a317671523c0d01005571586` |
+| `reads_2` | same run, mate 2 | first 200,000 pairs | 9,356,844 B | `1e35a3053055b4d229fa37b9367028251860c47b06a9a947309fc287722d8088` |
+| `ecoli.fasta` | NCBI `GCF_000005845.2` (ASM584v2), E. coli K-12 MG1655 | complete genome | 4,699,745 B | `53bb6a51b6e92139ced1e38f74b7938781027c52200922ff03718c2237d23bb4` |
+
+The 200,000-pair subset is a prefix of the real run, not synthetic data. Rebuild
+it with:
+
+```bash
+curl -O https://ftp.sra.ebi.ac.uk/vol1/fastq/SRR001/SRR001666/SRR001666_1.fastq.gz
+curl -O https://ftp.sra.ebi.ac.uk/vol1/fastq/SRR001/SRR001666/SRR001666_2.fastq.gz
+gzip -dc SRR001666_1.fastq.gz | head -n 800000 | gzip -1 > reads_1.fastq.gz
+gzip -dc SRR001666_2.fastq.gz | head -n 800000 | gzip -1 > reads_2.fastq.gz
+```
+
+### Route
+
+`library/seed/routes/sequencing_qc/` contains the nine-step route:
+`fastq_stats -> export_results -> fastq_quality_profile -> export_results ->
+fastq_adapter_scan -> export_results -> align_reads -> bam_flagstat ->
+export_results`. `align_reads` runs `bwa index`, `bwa mem -5SP` and
+`samtools view -b`; the `reads` source declares `mate_path: reads_2.fastq.gz`.
+
+```bash
+python scripts/run.py workdir/b2_route --check
+python scripts/run.py workdir/b2_route --memory-mb 4096 --disk-mb 4096
+```
+
+### Results (identical on all three platforms)
+
+| Step | Metric | Value |
+| --- | --- | --- |
+| `fastq_stats` | reads / bases | 200,000 / 7,200,000 |
+| | length min / max / mean | 36 / 36 / 36 |
+| | GC fraction | 0.5080722222 |
+| | mean quality / Q20 / Q30 | 34.71771889 / 0.8753909722 / 0.7919225 |
+| | reads containing N | 1,231 |
+| `fastq_quality_profile` | cycles | 36 |
+| | first-cycle mean quality | 39.893625 |
+| `fastq_adapter_scan` | illumina / nextera / small-RNA reads | 2 / 2 / 2 |
+| `align_reads` | BAM records | 400,000 |
+| | wall time (WSL / srv) | 6.829 s / 16.119 s |
+| `bam_flagstat` | total / primary / mapped | 400,000 / 400,000 / 372,959 |
+| | read1 / read2 | 200,000 / 200,000 |
+| | properly paired / both mapped | 0 / 354,394 |
+| | singletons / duplicates / secondary / supplementary | 18,565 / 0 / 0 / 0 |
+
+The four exported CSVs are byte-identical on all three platforms:
+
+| Artifact | MD5 |
+| --- | --- |
+| `fastq_stats.csv` | `65e64ac9328a9cedb2985f94af00b5f1` |
+| `quality_profile.csv` | `0aa3198dc73232eaa30b47f59ba06352` |
+| `adapter_scan.csv` | `13547050dc7f753e2209f7097e67ea72` |
+| `bam_flagstat.csv` | `59e1ce934f4e25256f546410ee8d7327` |
+
+### Independent oracles
+
+| Oracle | Version | Comparison | Result |
+| --- | --- | --- | --- |
+| Biopython `SeqIO` re-implementation | 1.86 | 10 summary statistics + 36 per-cycle mean qualities | abs delta 0.0 for every value |
+| `seqkit stats -a` | 2.9.0 | reads, bases, length, Q20, Q30, GC, N bases | matches to the printed precision (87.54%, 79.19%, 50.81%, 6,153 N bases) |
+| `cutadapt -a <adapter> -O 8 -e 0` | 5.2 | reads carrying each 3-prime adapter | exact: 2 / 2 / 2 |
+| `samtools flagstat` | 1.19.2 | all 16 flagstat counters | exact for every counter |
+
+The adapter comparison is the reason the operator anchors matches at the 3-prime
+end: an anywhere-in-read 8-mer search reported 52 / 32 / 58 reads, which is
+random background, while cutadapt and the 3-prime implementation both report 2.
+
+### Platform notes
+
+- WSL: Ubuntu 24.04, Python 3.12.14, bwa 0.7.17-r1188, samtools 1.19.2.
+- srv: Python 3.11.18 virtual environment, bwa 0.7.19-r1273, samtools 1.22.1.
+  The same commit was synced as a source archive; step reports differ only in
+  artifact paths and `mtime_ns`.
+- Windows: Python 3.12.10. bwa and samtools are not installed, so the alignment
+  step is recorded as `SKIP(no bwa/samtools)` and the platform runs two
+  sub-routes: `b2_fastq` (six FASTQ steps) and `b2_bam` (`BamFileReader` over the
+  BAM produced on srv, then `bam_flagstat`). Both finish and reproduce the same
+  CSV bytes.
+- The Studio control API (`POST /api/v1/jobs`) is covered in batch 1; batch 2
+  uses the task runner on all three platforms.
+
+### Known limits
+
+- `fastq_adapter_scan` reports reads whose 3-prime end matches an adapter
+  prefix; internal adapter fragments are deliberately not counted.
+- `bam_flagstat` parses BAM (BGZF) directly. SAM and CRAM inputs are out of
+  scope for this operator.
+- Windows cannot execute `align_reads` without bwa/samtools; this is an
+  environment gate, not an operator failure.
