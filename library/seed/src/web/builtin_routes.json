@@ -1,6 +1,11 @@
 {
   "schema_version": 1,
   "sources": {
+    "route_7dbe8ad2cc0f": {
+      "path": "routes/assembly_qc/task.yaml",
+      "sha256": "c924cc266d719a13fe0f47f687d03f5087b414ef034266edb374995d0724ca0c",
+      "parameters_sha256": "789aed7515b5c9a21ad199dee2c5bd1ab09e5a06a21321afbf73c6870be56b0c"
+    },
     "route_3810eea93c97": {
       "path": "routes/atac_qc/task.yaml",
       "sha256": "1ab6e60de37ec0ba61f3a667c8f158c1d47ac913d859cb539865951f9f9f9ca7",
@@ -30,6 +35,11 @@
       "path": "routes/ecoli_resequencing/task.yaml",
       "sha256": "b37ab2efe559605c2323af3b402b5f71ee29fb612bcc7e2e0eb66780f19c7d77",
       "parameters_sha256": "16967af63ea2bd91dc383a813d953e77fb69f0fefc999db659d3c31e6a460b0c"
+    },
+    "route_6f14d485f5e8": {
+      "path": "routes/genome_kmer_comparison/task.yaml",
+      "sha256": "04081f4987279188eea6b07f47a7b8f18c9a1219849538d0253c862c42e788fd",
+      "parameters_sha256": "603eb631b213a8aef2eb1d4d0a9cc688dffc3aee85b9977945da45f0ada755ac"
     },
     "route_5497ce1401e0": {
       "path": "routes/gm12878_interval_annotation/task.yaml",
@@ -8782,6 +8792,431 @@
       }
     },
     {
+      "id": "route_6f14d485f5e8",
+      "version": 1,
+      "name": "K-12 and O157 genome k-mer spectra, Jaccard and Mash distance",
+      "graph": {
+        "schema_version": 2,
+        "name": "K-12 and O157 genome k-mer spectra, Jaccard and Mash distance",
+        "base_dir": ".studio/builtin-inputs/genome_kmer_comparison",
+        "nodes": [
+          {
+            "id": "reference",
+            "kind": "source",
+            "operator": null,
+            "title": "reference",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/ecoli.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "related",
+            "kind": "source",
+            "operator": null,
+            "title": "related",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/o157.fna",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genome_kmer_spectrum_1",
+            "kind": "operator",
+            "operator": "genome_kmer_spectrum",
+            "title": "Genome k-mer spectrum",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "k": 21,
+              "output": "spectrum",
+              "max_frequency": 50
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "kmer_spectrum",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genome_kmer_similarity_3",
+            "kind": "operator",
+            "operator": "genome_kmer_similarity",
+            "title": "Genome k-mer Jaccard similarity",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "k": 21,
+              "output": "similarity"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "kmer_similarity",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genome_mash_distance_5",
+            "kind": "operator",
+            "operator": "genome_mash_distance",
+            "title": "Mash distance and ANI",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "k": 21,
+              "output": "distance"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "mash_distance",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "reference-genome_kmer_spectrum_1-0",
+            "source": "reference",
+            "target": "genome_kmer_spectrum_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genome_kmer_spectrum_1-export_results_2-0",
+            "source": "genome_kmer_spectrum_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reference-genome_kmer_similarity_3-0",
+            "source": "reference",
+            "target": "genome_kmer_similarity_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "related-genome_kmer_similarity_3-1",
+            "source": "related",
+            "target": "genome_kmer_similarity_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "genome_kmer_similarity_3-export_results_4-0",
+            "source": "genome_kmer_similarity_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reference-genome_mash_distance_5-0",
+            "source": "reference",
+            "target": "genome_mash_distance_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "related-genome_mash_distance_5-1",
+            "source": "related",
+            "target": "genome_mash_distance_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "genome_mash_distance_5-export_results_6-0",
+            "source": "genome_mash_distance_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "reference",
+              "label": "reference",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "related",
+              "label": "related",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
       "id": "route_7219caa8ef7d",
       "version": 5,
       "name": "Hi-C from FASTQ",
@@ -10767,6 +11202,577 @@
                 "axis_info_open": false,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_7dbe8ad2cc0f",
+      "version": 1,
+      "name": "Assembly contiguity and gap QC",
+      "graph": {
+        "schema_version": 2,
+        "name": "Assembly contiguity and gap QC",
+        "base_dir": ".studio/builtin-inputs/assembly_qc",
+        "nodes": [
+          {
+            "id": "ecoli",
+            "kind": "source",
+            "operator": null,
+            "title": "ecoli",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/ecoli.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "yeast",
+            "kind": "source",
+            "operator": null,
+            "title": "yeast",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/genome.fna",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "assembly_contig_stats_1",
+            "kind": "operator",
+            "operator": "assembly_contig_stats",
+            "title": "Assembly contig statistics",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "contig_dim": "contig",
+              "output": "yeast_stats"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "yeast_contig_stats",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "assembly_contiguity_3",
+            "kind": "operator",
+            "operator": "assembly_contiguity",
+            "title": "Assembly contiguity metrics",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "contig_dim": "contig",
+              "statistic_dim": "statistic",
+              "length_column": "length",
+              "gc_column": "gc_fraction",
+              "output": "yeast_contiguity"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "yeast_contiguity",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "assembly_gap_stats_5",
+            "kind": "operator",
+            "operator": "assembly_gap_stats",
+            "title": "Assembly gap statistics",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "contig_dim": "contig",
+              "output": "yeast_gaps"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "yeast_gaps",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "assembly_contig_stats_7",
+            "kind": "operator",
+            "operator": "assembly_contig_stats",
+            "title": "Assembly contig statistics",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "contig_dim": "contig",
+              "output": "ecoli_stats"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 730.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "ecoli_contig_stats",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_7"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "assembly_gap_stats_9",
+            "kind": "operator",
+            "operator": "assembly_gap_stats",
+            "title": "Assembly gap statistics",
+            "position": {
+              "x": 360.0,
+              "y": 730.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "contig_dim": "contig",
+              "output": "ecoli_gaps"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_10",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 940.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "ecoli_gaps",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_9"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "yeast-assembly_contig_stats_1-0",
+            "source": "yeast",
+            "target": "assembly_contig_stats_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "assembly_contig_stats_1-export_results_2-0",
+            "source": "assembly_contig_stats_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "assembly_contig_stats_1-assembly_contiguity_3-0",
+            "source": "assembly_contig_stats_1",
+            "target": "assembly_contiguity_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "assembly_contiguity_3-export_results_4-0",
+            "source": "assembly_contiguity_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "yeast-assembly_gap_stats_5-0",
+            "source": "yeast",
+            "target": "assembly_gap_stats_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "assembly_gap_stats_5-export_results_6-0",
+            "source": "assembly_gap_stats_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ecoli-assembly_contig_stats_7-0",
+            "source": "ecoli",
+            "target": "assembly_contig_stats_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "assembly_contig_stats_7-export_results_8-0",
+            "source": "assembly_contig_stats_7",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "ecoli-assembly_gap_stats_9-0",
+            "source": "ecoli",
+            "target": "assembly_gap_stats_9",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "assembly_gap_stats_9-export_results_10-0",
+            "source": "assembly_gap_stats_9",
+            "target": "export_results_10",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "ecoli",
+              "label": "ecoli",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "yeast",
+              "label": "yeast",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_10",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

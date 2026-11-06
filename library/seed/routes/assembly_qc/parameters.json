@@ -1,0 +1,77 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "yeast": {},
+    "ecoli": {}
+  },
+  "steps": [
+    {
+      "name": "assembly_contig_stats",
+      "inputs": ["yeast"],
+      "params": {"output": "yeast_stats"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["yeast_stats"],
+      "params": {"format": "csv", "filename": "yeast_contig_stats"},
+      "context_params": {}
+    },
+    {
+      "name": "assembly_contiguity",
+      "inputs": ["yeast_stats"],
+      "params": {
+        "contig_dim": "contig",
+        "statistic_dim": "statistic",
+        "length_column": "length",
+        "gc_column": "gc_fraction",
+        "output": "yeast_contiguity"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["yeast_contiguity"],
+      "params": {"format": "csv", "filename": "yeast_contiguity"},
+      "context_params": {}
+    },
+    {
+      "name": "assembly_gap_stats",
+      "inputs": ["yeast"],
+      "params": {"output": "yeast_gaps"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["yeast_gaps"],
+      "params": {"format": "csv", "filename": "yeast_gaps"},
+      "context_params": {}
+    },
+    {
+      "name": "assembly_contig_stats",
+      "inputs": ["ecoli"],
+      "params": {"output": "ecoli_stats"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["ecoli_stats"],
+      "params": {"format": "csv", "filename": "ecoli_contig_stats"},
+      "context_params": {}
+    },
+    {
+      "name": "assembly_gap_stats",
+      "inputs": ["ecoli"],
+      "params": {"output": "ecoli_gaps"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["ecoli_gaps"],
+      "params": {"format": "csv", "filename": "ecoli_gaps"},
+      "context_params": {}
+    }
+  ]
+}

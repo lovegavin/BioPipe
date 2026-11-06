@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contig_dim": {
+      "type": "string",
+      "title": "Contig dimension",
+      "default": "contig",
+      "x-ui-group": "Dimensions"
+    },
+    "statistic_dim": {
+      "type": "string",
+      "title": "Statistic dimension",
+      "default": "statistic",
+      "x-ui-group": "Dimensions"
+    },
+    "length_column": {
+      "type": "string",
+      "title": "Length column",
+      "default": "length",
+      "x-ui-group": "Columns"
+    },
+    "gc_column": {
+      "type": "string",
+      "title": "GC column (optional)",
+      "default": "gc_fraction",
+      "x-ui-group": "Columns"
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "out",
+      "x-ui-group": "Output"
+    }
+  },
+  "additionalProperties": false
+}

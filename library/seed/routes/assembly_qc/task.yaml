@@ -1,0 +1,48 @@
+name: Yeast and E. coli assembly contiguity and gap statistics
+sources:
+  yeast:
+    path: input/genome.fna
+    dims:
+    - sequence
+    - position
+    labels: {}
+    reader: FastaReader
+  ecoli:
+    path: input/ecoli.fasta
+    dims:
+    - sequence
+    - position
+    labels: {}
+    reader: FastaReader
+parameters_file: parameters.json
+steps:
+- name: assembly_contig_stats
+  inputs:
+  - yeast
+- name: export_results
+  inputs:
+  - yeast_stats
+- name: assembly_contiguity
+  inputs:
+  - yeast_stats
+- name: export_results
+  inputs:
+  - yeast_contiguity
+- name: assembly_gap_stats
+  inputs:
+  - yeast
+- name: export_results
+  inputs:
+  - yeast_gaps
+- name: assembly_contig_stats
+  inputs:
+  - ecoli
+- name: export_results
+  inputs:
+  - ecoli_stats
+- name: assembly_gap_stats
+  inputs:
+  - ecoli
+- name: export_results
+  inputs:
+  - ecoli_gaps

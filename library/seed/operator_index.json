@@ -460,6 +460,36 @@
     "status": "generated"
   },
   {
+    "id": "assembly_contig_stats",
+    "kind": "operator",
+    "title": "Assembly contig statistics",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Compute length, GC fraction, N fraction and gap-run counts for every contig of a FASTA assembly.",
+    "doc": "src/task/step/steps/assembly_contig_stats.AssemblyContigStatsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "assembly_contiguity",
+    "kind": "operator",
+    "title": "Assembly contiguity metrics",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Summarise N50/L50, N90/L90, auN, length distribution and weighted GC from an assembly contig table.",
+    "doc": "src/task/step/steps/assembly_contiguity.AssemblyContiguityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "assembly_gap_stats",
+    "kind": "operator",
+    "title": "Assembly gap statistics",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Count N gaps, gap bases and the largest gap for every contig of a FASTA assembly, plus genome-wide gap totals.",
+    "doc": "src/task/step/steps/assembly_gap_stats.AssemblyGapStatsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "assembly_stats",
     "kind": "operator",
     "title": "Assembly quality metrics (QUAST)",
