@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Tree topology distance parameters",
+  "additionalProperties": false,
+  "properties": {
+    "node_dim": {
+      "type": "string",
+      "default": "node",
+      "description": "Name of the node axis in both input trees."
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "description": "Name of the field axis in both input trees."
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "description": "Name of the statistic axis in the output."
+    },
+    "output": {
+      "type": "string",
+      "default": "tree_distance",
+      "description": "Name of the output form."
+    }
+  }
+}

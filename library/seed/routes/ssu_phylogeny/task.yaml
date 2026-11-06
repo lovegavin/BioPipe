@@ -1,0 +1,45 @@
+name: SSU rRNA phylogeny from a Rfam seed alignment
+sources:
+  alignment:
+    path: input/ssu_aligned.fasta
+    dims:
+    - sequence
+    - position
+    labels: {}
+    reader: FastaReader
+parameters_file: parameters.json
+steps:
+- name: phylo_distance_matrix
+  inputs:
+  - alignment
+- name: export_results
+  inputs:
+  - dm_jc69
+- name: phylo_neighbor_joining
+  inputs:
+  - dm_jc69
+- name: export_results
+  inputs:
+  - tree_jc69
+- name: export_results
+  inputs:
+  - tree_jc69
+- name: phylo_distance_matrix
+  inputs:
+  - alignment
+- name: export_results
+  inputs:
+  - dm_p
+- name: phylo_neighbor_joining
+  inputs:
+  - dm_p
+- name: export_results
+  inputs:
+  - tree_p
+- name: phylo_tree_distance
+  inputs:
+  - tree_jc69
+  - tree_p
+- name: export_results
+  inputs:
+  - tree_distance

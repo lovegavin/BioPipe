@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Phylogenetic distance matrix parameters",
+  "additionalProperties": false,
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "description": "Name of the sequence axis."
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "description": "Name of the alignment position axis."
+    },
+    "model": {
+      "type": "string",
+      "enum": ["p", "jc69", "k2p", "protein"],
+      "default": "jc69",
+      "description": "Substitution model used for the pairwise distance."
+    },
+    "deletion": {
+      "type": "string",
+      "enum": ["complete", "pairwise"],
+      "default": "complete",
+      "description": "Gap handling: drop columns with any gap, or ignore gaps per pair."
+    },
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "description": "Name of the taxon axis in the output matrix."
+    },
+    "output": {
+      "type": "string",
+      "default": "distance_matrix",
+      "description": "Name of the output form."
+    }
+  }
+}

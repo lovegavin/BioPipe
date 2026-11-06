@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "Neighbour-joining tree parameters",
+  "additionalProperties": false,
+  "properties": {
+    "taxon_dim": {
+      "type": "string",
+      "default": "taxon",
+      "description": "Name of the row taxon axis in the distance matrix."
+    },
+    "taxon_b_dim": {
+      "type": "string",
+      "default": "taxon_b",
+      "description": "Name of the column taxon axis in the distance matrix."
+    },
+    "node_dim": {
+      "type": "string",
+      "default": "node",
+      "description": "Name of the node axis in the output tree table."
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "description": "Name of the field axis in the output tree table."
+    },
+    "output": {
+      "type": "string",
+      "default": "tree",
+      "description": "Name of the output form."
+    }
+  }
+}

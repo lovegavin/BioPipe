@@ -4470,6 +4470,36 @@
     "status": "generated"
   },
   {
+    "id": "phylo_distance_matrix",
+    "kind": "operator",
+    "title": "Phylogenetic distance matrix",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Compute pairwise p-distance, JC69 or K2P distances from aligned sequences, with complete or pairwise gap deletion.",
+    "doc": "src/task/step/steps/phylo_distance_matrix.PhyloDistanceMatrixStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "phylo_neighbor_joining",
+    "kind": "operator",
+    "title": "Neighbour-joining tree",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Build a neighbour-joining tree from a square distance matrix and emit a node/field tree table plus a Newick representation.",
+    "doc": "src/task/step/steps/phylo_neighbor_joining.PhyloNeighborJoiningStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "phylo_tree_distance",
+    "kind": "operator",
+    "title": "Tree topology distance",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Compare two trees on the same tips: Robinson-Foulds distance, normalised RF and Kuhner-Felsenstein branch score.",
+    "doc": "src/task/step/steps/phylo_tree_distance.PhylotreeDistanceStep.md",
+    "status": "generated"
+  },
+  {
     "id": "pileup_variants",
     "kind": "operator",
     "title": "pileup_variants",
