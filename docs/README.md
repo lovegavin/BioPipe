@@ -17,6 +17,8 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 
 ## Use BioPipe
 
+- [Quick start: install, import the operator library, run the example](../QUICKSTART.md)
+  ([中文](../QUICKSTART.zh.md))
 - [End-to-end quick start](quickstart_full_flow.md)
 - [Installation and dependencies](installation.md)
 - [Windows Setup and isolated installations](windows_setup.md)

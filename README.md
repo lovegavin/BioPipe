@@ -4,6 +4,10 @@ Windows users can install **BioPipe_Setup.exe**, which includes its own Python
 and creates a fresh isolated profile. Existing profiles and analysis files remain
 available for explicit import. See [Windows Setup](docs/windows_setup.md).
 
+For a five-minute walkthrough that installs the app, imports the operator library
+and runs a real workflow, see [Quick Start](QUICKSTART.md) (also in
+[Chinese](QUICKSTART.zh.md)).
+
 ## Application and library releases
 
 The application and operator library have separate source ownership, versions and

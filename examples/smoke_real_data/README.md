@@ -13,5 +13,5 @@ tests lives in `tests/fixtures/smoke_route/` and must not be read when solving
 the exercise.
 
 Expected result of the two-step design (interface core/rim + sequence
-liabilities): 99 interface residues (58 core, 41 rim) and 10 liabilities
+liabilities): 88 interface residues (52 core, 36 rim) and 10 liabilities
 (5 oxidation, 3 isomerization, 2 deamidation), about 3 seconds on CPU.

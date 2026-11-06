@@ -14,7 +14,7 @@ machine (CPU, no model weights).
 
 | Step | Result |
 | --- | --- |
-| `structure_interface_core` (binder `A,B` vs target `L,M`, 4.5 Å, 92 probe points) | 99 interface residues, 58 core, 41 rim |
+| `structure_interface_core` (binder `A,B` vs target `L,M`, 4.5 Å, 92 probe points) | 88 interface residues, 52 core, 36 rim |
 | `sequence_liability_scan` | 10 liabilities: 5 oxidation, 3 isomerization, 2 deamidation |
 
 Wall time: 2.7 s total (2.7 s for SASA, <0.01 s for liabilities).

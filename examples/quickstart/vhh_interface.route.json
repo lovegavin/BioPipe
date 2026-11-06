@@ -1,0 +1,150 @@
+{
+  "schema_version": 2,
+  "name": "Quickstart: VHH/1MEL interface and liabilities",
+  "base_dir": "examples/quickstart",
+  "memory": {
+    "enabled": true,
+    "auto_spill": true
+  },
+  "nodes": [
+    {
+      "id": "complex",
+      "kind": "source",
+      "title": "1MEL structure",
+      "position": {
+        "x": 60,
+        "y": 140
+      },
+      "source": {
+        "path": "data/vhh_1mel.pdb",
+        "dims": [
+          "atom",
+          "field"
+        ],
+        "labels": {
+          "atom": "auto",
+          "field": "builtin"
+        },
+        "args": {}
+      }
+    },
+    {
+      "id": "sequence",
+      "kind": "source",
+      "title": "VHH sequence",
+      "position": {
+        "x": 60,
+        "y": 360
+      },
+      "source": {
+        "path": "data/vhh.fasta",
+        "dims": [
+          "sequence",
+          "position"
+        ],
+        "labels": {
+          "sequence": "builtin",
+          "position": "auto"
+        },
+        "args": {}
+      }
+    },
+    {
+      "id": "interface",
+      "kind": "operator",
+      "operator": "structure_interface_core",
+      "title": "Interface core/rim",
+      "position": {
+        "x": 380,
+        "y": 140
+      },
+      "params": {
+        "atom_dim": "atom",
+        "field_dim": "field",
+        "binder_chains": "A,B",
+        "target_chains": "L,M",
+        "core_fraction": 0.5,
+        "probe_radius": 1.4,
+        "n_points": 92,
+        "output": "iface"
+      }
+    },
+    {
+      "id": "liabilities",
+      "kind": "operator",
+      "operator": "sequence_liability_scan",
+      "title": "Sequence liabilities",
+      "position": {
+        "x": 380,
+        "y": 360
+      },
+      "params": {
+        "sequence_dim": "sequence",
+        "position_dim": "position",
+        "include_oxidation": true,
+        "context": 3,
+        "output": "liabilities"
+      }
+    },
+    {
+      "id": "export_iface",
+      "kind": "operator",
+      "operator": "export_results",
+      "title": "Export interface residues",
+      "position": {
+        "x": 700,
+        "y": 140
+      },
+      "params": {
+        "format": "csv",
+        "filename": "interface_residues",
+        "include_labels": true
+      }
+    },
+    {
+      "id": "export_liab",
+      "kind": "operator",
+      "operator": "export_results",
+      "title": "Export liabilities",
+      "position": {
+        "x": 700,
+        "y": 360
+      },
+      "params": {
+        "format": "csv",
+        "filename": "liabilities",
+        "include_labels": true
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "complex-interface",
+      "source": "complex",
+      "target": "interface",
+      "targetHandle": "in-0",
+      "sourceHandle": "out"
+    },
+    {
+      "id": "sequence-liabilities",
+      "source": "sequence",
+      "target": "liabilities",
+      "targetHandle": "in-0",
+      "sourceHandle": "out"
+    },
+    {
+      "id": "iface-export",
+      "source": "interface",
+      "target": "export_iface",
+      "targetHandle": "in-0",
+      "sourceHandle": "out"
+    },
+    {
+      "id": "liab-export",
+      "source": "liabilities",
+      "target": "export_liab",
+      "targetHandle": "in-0",
+      "sourceHandle": "out"
+    }
+  ]
+}
