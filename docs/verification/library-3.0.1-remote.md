@@ -617,3 +617,42 @@ Evidence: `coverage/WAVE5_ROUTES.jsonl` (4 graph rows and 30 step rows with
 absolute step-JSON paths), `WAVE5_SUMMARY.md`, `WAVE5_EXPORTS.json`, refreshed
 `UNCOVERED.md` (295) and `ROUTE_OPERATOR_MATRIX.csv` (68x422); the wave-4
 versions are retained as `.wave4` copies.
+
+## 19. Wave-6 closure coverage (714/717)
+
+The remaining operators after wave 5 (295) were executed directly against the
+installed 3.0.1 library with `Context` + `run()`, not through route graphs. Four
+parallel agents covered Statistics semantics, Machine Learning, the remaining
+categories, and label/sample-size/arity repairs; the structure set was run
+locally against 1MEL plus explicit synthetic binders. Every row records
+`status`, `mode=real|synthetic`, `elapsed`, `evidence`, and `error` when it
+failed.
+
+Result: **717 total, 422 baseline, 714 covered (99.6 %), 3 uncovered**;
+292 wave-6 rows are ok (155 real, 137 synthetic). All categories except Machine
+Learning are at 100 %; ML is 221/224.
+
+| operator | blocker |
+|---|---|
+| `ligandmpnn_side_chain_packing` | Library defect: the operator globs `out_dir/packed/*_packed.pdb` while LigandMPNN writes `<name>_packed_<design>_<pack>.pdb`; the packer itself succeeds (manual run: `runs/sc_manual/packed/vhh_1mel_packed_1_1.pdb`). |
+| `openfold_predict` | AF2 `.npz` parameters are unavailable and OpenFold expects a PyTorch `.pt` checkpoint, while the operator forwards the npz path; `modelcif` is also missing. |
+| `rfdiffusion_design` | The official base checkpoint is present, but RFdiffusion requires `dgl`; no wheel matches the environment and `data.dgl.ai` is unreachable. |
+
+Library defects found during the sweep (recorded, not patched): the
+`ligandmpnn_side_chain_packing` glob above, `esm_if_masked_region_scan` asserting
+132 positions against a 136-position sample (non-standard residues),
+`structure_aromatic_stacking` collapsing duplicate bond labels,
+`structure_md_rotamer_states` using topology line numbers as atom indices, and
+`structure_ligand_pose_qc` handing a PDB to PoseBusters (which expects
+sdf/mol/mol2 on this path).
+
+Notable real runs in this wave: Boltz-2 prediction (20 aa, confidence 0.4897,
+pTM 0.0797, pLDDT 0.5922), Boltz-2 complex confidence (2 x 10 aa, iPTM 0.0584,
+18 interface residues), ColabFold (33 aa, pLDDT 85.55, pTM 0.440), AntiFold
+(68.97 s), ProteinMPNN score/ensemble, LigandMPNN design, Rfam/infernal,
+antiSMASH, AMRFinderPlus, and the 18 MD analysis operators (synthetic 20-frame
+trajectory, explicitly labelled).
+
+Artifacts: `coverage/WAVE6_FINAL.json`, `WAVE6_FINAL_TABLE.csv`,
+`WAVE6_FINAL_SUMMARY.md`, `WAVE6_FINAL_REPORT.md`, and per-agent
+`coverage/WAVE6_{A,B,C,D}.jsonl` plus `WAVE6_MAIN.jsonl`.
