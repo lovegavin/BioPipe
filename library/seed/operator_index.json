@@ -4670,6 +4670,16 @@
     "status": "generated"
   },
   {
+    "id": "phylo_bootstrap",
+    "kind": "operator",
+    "title": "phylo_bootstrap",
+    "category": "Phylogenetics",
+    "version": "1.0.0",
+    "description": "Bootstrap support for a neighbour-joining tree (JC69).",
+    "doc": "src/task/step/steps/phylo_bootstrap.PhyloBootstrapStep.md",
+    "status": "generated"
+  },
+  {
     "id": "phylo_contrasts",
     "kind": "operator",
     "title": "phylo_contrasts",
@@ -4707,6 +4717,26 @@
     "version": "1.0.0",
     "description": "Build a neighbour-joining tree from a square distance matrix and emit a node/field tree table plus a Newick representation.",
     "doc": "src/task/step/steps/phylo_neighbor_joining.PhyloNeighborJoiningStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "phylo_support_filter",
+    "kind": "operator",
+    "title": "phylo_support_filter",
+    "category": "Phylogenetics",
+    "version": "1.0.0",
+    "description": "Collapse bootstrap splits below a support threshold.",
+    "doc": "src/task/step/steps/phylo_support_filter.PhyloSupportFilterStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "phylo_support_summary",
+    "kind": "operator",
+    "title": "phylo_support_summary",
+    "category": "Phylogenetics",
+    "version": "1.0.0",
+    "description": "Counts and quantiles of bootstrap split support.",
+    "doc": "src/task/step/steps/phylo_support_summary.PhyloSupportSummaryStep.md",
     "status": "generated"
   },
   {

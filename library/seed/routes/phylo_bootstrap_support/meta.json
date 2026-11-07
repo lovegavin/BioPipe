@@ -1,0 +1,5 @@
+{
+  "key": "phylo_bootstrap_support",
+  "title": "Bootstrap support for an SSU rRNA phylogeny",
+  "summary": "JC69/NJ tree with 100-replicate bootstrap support, support summary and a support-filtered tree for 24 SSU rRNA sequences."
+}

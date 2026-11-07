@@ -166,6 +166,11 @@
       "sha256": "f42f842bce0f552a97f5718b807c7db06dc7de8bb38799d166b8904e2059c746",
       "parameters_sha256": "26ef80d61888e445e61983fcc05be5fbd4f299bf1a6360a56a1fb29b84ab6f10"
     },
+    "route_ef160254d8c5": {
+      "path": "routes/phylo_bootstrap_support/task.yaml",
+      "sha256": "a194a9baa13b7c23c9fad7bc2b84123bbb1788c62f00a33545a1723007e646e2",
+      "parameters_sha256": "1992eda5a613e3d5117db17145e92a3402e8d0195c269e6d5672bf276fd65eeb"
+    },
     "route_4b1925d81460": {
       "path": "routes/phylo_comparative/task.yaml",
       "sha256": "3f4ae49448de33f76ac357306496aab5eb149821d0c936b3c67e1a90bd2f0d59",
@@ -25719,6 +25724,424 @@
                 "axis_info_open": false,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_ef160254d8c5",
+      "version": 1,
+      "name": "Bootstrap support for an SSU rRNA phylogeny",
+      "graph": {
+        "schema_version": 2,
+        "name": "Bootstrap support for an SSU rRNA phylogeny",
+        "base_dir": ".studio/builtin-inputs/phylo_bootstrap_support",
+        "nodes": [
+          {
+            "id": "alignment",
+            "kind": "source",
+            "operator": null,
+            "title": "alignment",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/ssu_aligned.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "phylo_distance_matrix_1",
+            "kind": "operator",
+            "operator": "phylo_distance_matrix",
+            "title": "Phylogenetic distance matrix",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "model": "jc69",
+              "deletion": "complete",
+              "taxon_dim": "taxon",
+              "output": "distance_matrix"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "phylo_neighbor_joining_2",
+            "kind": "operator",
+            "operator": "phylo_neighbor_joining",
+            "title": "Neighbour-joining tree",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "taxon_dim": "taxon",
+              "taxon_b_dim": "taxon_b",
+              "node_dim": "node",
+              "field_dim": "field",
+              "output": "tree"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "phylo_bootstrap_3",
+            "kind": "operator",
+            "operator": "phylo_bootstrap",
+            "title": "phylo_bootstrap",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "node_dim": "node",
+              "field_dim": "field",
+              "split_dim": "split",
+              "statistic_dim": "statistic",
+              "resamples": 100,
+              "seed": 0,
+              "output": "bootstrap"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "phylo_bootstrap",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "phylo_support_summary_5",
+            "kind": "operator",
+            "operator": "phylo_support_summary",
+            "title": "phylo_support_summary",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "node_dim": "node",
+              "field_dim": "field",
+              "split_dim": "split",
+              "statistic_dim": "statistic",
+              "support_field": "support",
+              "threshold": 0.5,
+              "output": "summary"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "phylo_support_summary",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_2"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "phylo_support_filter_7",
+            "kind": "operator",
+            "operator": "phylo_support_filter",
+            "title": "phylo_support_filter",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "node_dim": "node",
+              "field_dim": "field",
+              "split_dim": "split",
+              "statistic_dim": "statistic",
+              "support_field": "support",
+              "min_support": 0.5,
+              "output": "supported_tree"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "newick",
+              "filename": "phylo_supported",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "alignment-phylo_distance_matrix_1-0",
+            "source": "alignment",
+            "target": "phylo_distance_matrix_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "phylo_distance_matrix_1-phylo_neighbor_joining_2-0",
+            "source": "phylo_distance_matrix_1",
+            "target": "phylo_neighbor_joining_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "alignment-phylo_bootstrap_3-0",
+            "source": "alignment",
+            "target": "phylo_bootstrap_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "phylo_bootstrap_3-export_results_4-0",
+            "source": "phylo_bootstrap_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "phylo_bootstrap_3-phylo_support_summary_5-0",
+            "source": "phylo_bootstrap_3",
+            "target": "phylo_support_summary_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "phylo_support_summary_5-export_results_6-0",
+            "source": "phylo_support_summary_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "phylo_neighbor_joining_2-phylo_support_filter_7-0",
+            "source": "phylo_neighbor_joining_2",
+            "target": "phylo_support_filter_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "phylo_bootstrap_3-phylo_support_filter_7-1",
+            "source": "phylo_bootstrap_3",
+            "target": "phylo_support_filter_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "phylo_support_filter_7-export_results_8-0",
+            "source": "phylo_support_filter_7",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "alignment",
+              "label": "alignment",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

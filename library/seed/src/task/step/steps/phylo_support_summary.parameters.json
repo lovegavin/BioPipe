@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "title": "Sequence dimension",
+      "default": "sequence"
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "Position dimension",
+      "default": "position"
+    },
+    "node_dim": {
+      "type": "string",
+      "title": "Node dimension",
+      "default": "node"
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "Field dimension",
+      "default": "field"
+    },
+    "split_dim": {
+      "type": "string",
+      "title": "Split dimension",
+      "default": "split"
+    },
+    "statistic_dim": {
+      "type": "string",
+      "title": "Statistic dimension",
+      "default": "statistic"
+    },
+    "support_field": {
+      "type": "string",
+      "title": "Support column",
+      "default": "support"
+    },
+    "threshold": {
+      "type": "number",
+      "title": "Support threshold",
+      "default": 0.5,
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "output": {
+      "type": "string",
+      "title": "Output summary",
+      "default": "summary"
+    }
+  },
+  "required": [
+    "threshold"
+  ],
+  "additionalProperties": false,
+  "x-ui-group": "Phylogenetics"
+}

@@ -1,0 +1,66 @@
+{
+  "name": "Bootstrap support for an SSU rRNA phylogeny",
+  "sources": {
+    "alignment": {
+      "path": "input/ssu_aligned.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {},
+      "reader": "FastaReader"
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "phylo_distance_matrix",
+      "inputs": [
+        "alignment"
+      ]
+    },
+    {
+      "name": "phylo_neighbor_joining",
+      "inputs": [
+        "distance_matrix"
+      ]
+    },
+    {
+      "name": "phylo_bootstrap",
+      "inputs": [
+        "alignment"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "bootstrap"
+      ]
+    },
+    {
+      "name": "phylo_support_summary",
+      "inputs": [
+        "bootstrap"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "summary"
+      ]
+    },
+    {
+      "name": "phylo_support_filter",
+      "inputs": [
+        "tree",
+        "bootstrap"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "supported_tree"
+      ]
+    }
+  ]
+}

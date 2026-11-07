@@ -1,0 +1,100 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "alignment": {}
+  },
+  "steps": [
+    {
+      "name": "phylo_distance_matrix",
+      "inputs": [
+        "alignment"
+      ],
+      "params": {
+        "model": "jc69",
+        "deletion": "complete",
+        "output": "distance_matrix"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "phylo_neighbor_joining",
+      "inputs": [
+        "distance_matrix"
+      ],
+      "params": {
+        "output": "tree"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "phylo_bootstrap",
+      "inputs": [
+        "alignment"
+      ],
+      "params": {
+        "resamples": 100,
+        "seed": 0,
+        "output": "bootstrap"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "bootstrap"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "phylo_bootstrap"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "phylo_support_summary",
+      "inputs": [
+        "bootstrap"
+      ],
+      "params": {
+        "threshold": 0.5,
+        "output": "summary"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "summary"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "phylo_support_summary"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "phylo_support_filter",
+      "inputs": [
+        "tree",
+        "bootstrap"
+      ],
+      "params": {
+        "min_support": 0.5,
+        "output": "supported_tree"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "supported_tree"
+      ],
+      "params": {
+        "format": "newick",
+        "filename": "phylo_supported"
+      },
+      "context_params": {}
+    }
+  ]
+}
