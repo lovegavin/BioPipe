@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}

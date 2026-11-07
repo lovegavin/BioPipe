@@ -1090,6 +1090,16 @@
     "status": "generated"
   },
   {
+    "id": "chain_coverage_summary",
+    "kind": "operator",
+    "title": "Chain coverage summary",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Per-chromosome aligned bases and non-redundant chain coverage.",
+    "doc": "src/task/step/steps/chain_coverage_summary.ChainCoverageSummaryStep.md",
+    "status": "generated"
+  },
+  {
     "id": "chao1",
     "kind": "operator",
     "title": "Chao1 richness estimator",
@@ -3817,6 +3827,26 @@
     "version": "1.0.0",
     "description": "OLS leverage：接收 1 个输入，输出 Form；主要参数：样本维度、特征维度、响应变量。",
     "doc": "src/task/step/steps/leverage.LeverageStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "liftover_intervals",
+    "kind": "operator",
+    "title": "liftOver intervals",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Map BED intervals to another assembly with a UCSC chain file.",
+    "doc": "src/task/step/steps/liftover_intervals.LiftoverIntervalsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "liftover_variants",
+    "kind": "operator",
+    "title": "liftOver variants",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Map VCF records to another assembly with a UCSC chain file.",
+    "doc": "src/task/step/steps/liftover_variants.LiftoverVariantsStep.md",
     "status": "generated"
   },
   {

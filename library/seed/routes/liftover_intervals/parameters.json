@@ -1,0 +1,77 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "intervals": {},
+    "variants": {},
+    "chain": {}
+  },
+  "steps": [
+    {
+      "name": "liftover_intervals",
+      "inputs": [
+        "intervals",
+        "chain"
+      ],
+      "params": {
+        "output": "lifted_intervals"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "lifted_intervals"
+      ],
+      "params": {
+        "format": "native",
+        "filename": "liftover_intervals"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "liftover_variants",
+      "inputs": [
+        "variants",
+        "chain"
+      ],
+      "params": {
+        "output": "lifted_variants"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "lifted_variants"
+      ],
+      "params": {
+        "format": "native",
+        "filename": "liftover_variants"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "chain_coverage_summary",
+      "inputs": [
+        "chain"
+      ],
+      "params": {
+        "output": "chain_coverage"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "chain_coverage"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "chain_coverage_summary"
+      },
+      "context_params": {}
+    }
+  ]
+}

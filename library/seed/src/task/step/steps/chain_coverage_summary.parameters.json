@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "properties": {
+    "chrom": {
+      "type": "string",
+      "default": "",
+      "description": "Restrict the summary to one target chromosome; empty reports every chromosome."
+    },
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,76 @@
+{
+  "name": "liftOver: BED intervals, variants and chain coverage",
+  "description": "Lift chr22 intervals and variants from hg19 to hg38 with a UCSC chain and summarise chain coverage.",
+  "version": "1.0.0",
+  "sources": {
+    "intervals": {
+      "path": "input/intervals.bed",
+      "dims": [
+        "region",
+        "field"
+      ],
+      "labels": {
+        "region": "auto",
+        "field": "builtin"
+      },
+      "reader": "BedReader"
+    },
+    "variants": {
+      "path": "input/truth.vcf.gz",
+      "dims": [
+        "file"
+      ],
+      "labels": {},
+      "reader": "VcfFileReader"
+    },
+    "chain": {
+      "path": "input/hg19ToHg38.over.chain.gz",
+      "dims": [
+        "file"
+      ],
+      "labels": {},
+      "reader": "ChainFileReader"
+    }
+  },
+  "steps": [
+    {
+      "name": "liftover_intervals",
+      "inputs": [
+        "intervals",
+        "chain"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "lifted_intervals"
+      ]
+    },
+    {
+      "name": "liftover_variants",
+      "inputs": [
+        "variants",
+        "chain"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "lifted_variants"
+      ]
+    },
+    {
+      "name": "chain_coverage_summary",
+      "inputs": [
+        "chain"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "chain_coverage"
+      ]
+    }
+  ],
+  "parameters_file": "parameters.json"
+}

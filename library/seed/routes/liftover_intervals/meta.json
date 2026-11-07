@@ -1,0 +1,25 @@
+{
+  "key": "liftover_intervals",
+  "title": "liftOver intervals and variants",
+  "category": "Genome",
+  "description": "Lift BED intervals and VCF records between assemblies with a UCSC chain file.",
+  "inputs": [
+    "intervals",
+    "variants",
+    "chain"
+  ],
+  "data": {
+    "intervals": {
+      "bytes": 10500,
+      "sha256": "b8fa22c598cde0b7db5553f3a238e6b910ca55f95f7a2ce0d8f821a2185806f1"
+    },
+    "variants": {
+      "bytes": 30805,
+      "sha256": "3479819a02009dca99eac878a6280bd674c27c829c4c44f8830e49e484a457f8"
+    },
+    "chain": {
+      "bytes": 227698,
+      "sha256": "5c0598e500ceb5a78c73086929e8ef993aec309bcafb595139b53d440b125a1d"
+    }
+  }
+}

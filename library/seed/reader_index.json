@@ -160,6 +160,16 @@
     "status": "generated"
   },
   {
+    "id": "ChainFileReader",
+    "kind": "reader",
+    "title": "ChainFileReader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reference a UCSC chain file without parsing it in the reader layer.",
+    "doc": "src/reader/readers/chain_file_reader.ChainFileReader.md",
+    "status": "generated"
+  },
+  {
     "id": "ChainReader",
     "kind": "reader",
     "title": "UCSC chain alignment reader",

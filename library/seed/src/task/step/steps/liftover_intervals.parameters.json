@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "properties": {
+    "region_dim": {
+      "type": "string",
+      "default": "region",
+      "description": "Dimension of the interval input that holds the regions."
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "description": "Dimension of the interval input that holds the fields."
+    },
+    "chrom_field": {
+      "type": "string",
+      "default": "chrom",
+      "description": "Column holding the source chromosome name."
+    },
+    "start_field": {
+      "type": "string",
+      "default": "chromStart",
+      "description": "Column holding the 0-based interval start."
+    },
+    "end_field": {
+      "type": "string",
+      "default": "chromEnd",
+      "description": "Column holding the exclusive interval end."
+    },
+    "strand_field": {
+      "type": "string",
+      "default": "strand",
+      "description": "Optional strand column; empty disables skipping of unmapped rows."
+    },
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}
