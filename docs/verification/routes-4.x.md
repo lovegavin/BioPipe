@@ -2541,3 +2541,77 @@ Windows `5.55e-17`); `rscu_table` is byte-identical everywhere.
 - RSCU aggregates every CDS equally and is not expression weighted.
 - 96 CDS (2.2%) cannot be assigned an ENC value under the CodonW definition.
 - Only one organism is covered; cross-species claims are out of scope.
+
+## Batch 33 — Bootstrap support for an SSU rRNA phylogeny
+
+### Data
+
+| Source | File | Size | SHA256 |
+| --- | --- | --- | --- |
+| Rfam/NCBI SSU rRNA alignment (B17) | `workdir/b33_route/input/ssu_aligned.fasta` | 48,899 B | `6df770ce70b0e6e6dac180266929c5f61d2929cb93c846fc4809d18945772c44` |
+
+24 sequences, 1,980 columns; 1,396 complete columns after complete deletion.
+
+### Route
+
+`phylo_bootstrap_support` (8 steps):
+
+| # | Step | Elapsed (WSL) |
+| --- | --- | --- |
+| 1 | phylo_distance_matrix (JC69, complete) | 0.0406 s |
+| 2 | phylo_neighbor_joining | 0.0014 s |
+| 3 | phylo_bootstrap (100 resamples, seed 0) | 0.3204 s |
+| 4 | export bootstrap CSV | 0.0016 s |
+| 5 | phylo_support_summary (threshold 0.5) | 0.0004 s |
+| 6 | export summary CSV | 0.0009 s |
+| 7 | phylo_support_filter (0.5) | 0.0006 s |
+| 8 | export support-filtered Newick | 0.0333 s |
+
+### Results
+
+| Quantity | Value |
+| --- | --- |
+| Non-trivial splits | 21 |
+| Mean support | 0.3962 |
+| Median support | 0.25 |
+| Max support | 1.00 |
+| Splits below 0.5 | 13 |
+| Internal nodes after collapse | 9 |
+
+### Oracle (R ape 5.8.1, independent implementation)
+
+The R script parses the FASTA, computes JC69 distances on complete-deletion
+columns, builds the NJ tree and runs 1,000 bootstrap replicates with its own
+RNG; splits are canonicalised the same way (smaller side, lexicographic ties).
+
+| Comparison | Result |
+| --- | --- |
+| Splits recovered (ours / R) | 21 / 21 |
+| Symmetric difference | 0 |
+| Mean absolute support difference | 0.0223 |
+| Max absolute support difference | 0.0750 (tolerance 0.20) |
+
+### Three platforms
+
+| Platform | Status | total_elapsed | Notes |
+| --- | --- | --- | --- |
+| WSL (Ubuntu 24.04, Python 3.12) | 8/8 complete | 0.3992 s | bootstrap 0.3204 s |
+| srv (Slurm login, Python 3.11 venv) | 8/8 complete | 2.2205 s | same four file MD5s |
+| Windows (D:\BioPipe-4.x, Python 3.12) | 8/8 complete | 0.5667 s | same CSV/Newick MD5s |
+
+MD5: `phylo_bootstrap.csv` `192a38adb80caad307033958c4d84404`,
+`phylo_support_summary.csv` `f424cd7034af62059f81fdd66b8cca41`,
+`phylo_supported.nwk` `6697e3932b4e18a2d632ce286b2d258e`.
+`phylo_supported.metadata.json` differs only by CRLF on Windows.
+
+Registry: 823 operators / 106 readers / 7 packages / 57 routes, errors 0.
+
+### Fixes and limitations
+
+- A low-support bipartition can be represented by both children of the root;
+  the filter therefore collapses two nodes for one split and reports
+  `n_collapsed` nodes rather than splits (documented, covered by a test).
+- Unrooted NJ topology only, JC69 with complete deletion; no model selection or
+  rate heterogeneity.
+- Bootstrap RNG differs across implementations, so support is compared with a
+  Monte-Carlo tolerance (0.20) rather than bit-for-bit; topologies match exactly.
