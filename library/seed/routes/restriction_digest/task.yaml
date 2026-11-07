@@ -1,0 +1,74 @@
+{
+  "name": "Restriction digest of phage lambda and pBR322",
+  "sources": {
+    "lambda": {
+      "path": "input/lambda.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {},
+      "reader": "FastaReader"
+    },
+    "plasmid": {
+      "path": "input/pbr322.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {},
+      "reader": "FastaReader"
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "restriction_digest",
+      "inputs": [
+        "lambda"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "fragments"
+      ]
+    },
+    {
+      "name": "restriction_fragment_stats",
+      "inputs": [
+        "fragments"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "stats"
+      ]
+    },
+    {
+      "name": "restriction_digest",
+      "inputs": [
+        "plasmid"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "plasmid_fragments"
+      ]
+    },
+    {
+      "name": "restriction_fragment_stats",
+      "inputs": [
+        "plasmid_fragments"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "plasmid_stats"
+      ]
+    }
+  ]
+}

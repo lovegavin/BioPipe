@@ -5900,6 +5900,26 @@
     "status": "generated"
   },
   {
+    "id": "restriction_digest",
+    "kind": "operator",
+    "title": "restriction_digest",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Restriction fragments for a panel of enzymes.",
+    "doc": "src/task/step/steps/restriction_digest.RestrictionDigestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "restriction_fragment_stats",
+    "kind": "operator",
+    "title": "restriction_fragment_stats",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Summary statistics of restriction fragment lengths.",
+    "doc": "src/task/step/steps/restriction_fragment_stats.RestrictionFragmentStatsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "restriction_sites",
     "kind": "operator",
     "title": "Restriction sites",

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "title": "Sequence dimension",
+      "default": "sequence"
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "Position dimension",
+      "default": "position"
+    },
+    "fragment_dim": {
+      "type": "string",
+      "title": "Fragment dimension",
+      "default": "fragment"
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "Field dimension",
+      "default": "field"
+    },
+    "statistic_dim": {
+      "type": "string",
+      "title": "Statistic dimension",
+      "default": "statistic"
+    },
+    "enzymes": {
+      "type": "string",
+      "title": "Comma-separated enzyme names",
+      "default": "EcoRI,BamHI,HindIII"
+    },
+    "circular": {
+      "type": "boolean",
+      "title": "Treat the DNA as circular",
+      "default": false
+    },
+    "output": {
+      "type": "string",
+      "title": "Output fragments",
+      "default": "fragments"
+    }
+  },
+  "required": [
+    "enzymes"
+  ],
+  "additionalProperties": false,
+  "x-ui-group": "Sequence"
+}

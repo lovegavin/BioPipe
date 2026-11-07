@@ -1,0 +1,13 @@
+{
+  "key": "restriction_digest",
+  "name": "Restriction digest of phage lambda and pBR322",
+  "description": "Digest linear lambda and circular pBR322 with EcoRI, BamHI and HindIII, then summarise fragment lengths.",
+  "tags": [
+    "restriction",
+    "digest",
+    "lambda",
+    "pbr322",
+    "sequence"
+  ],
+  "source": "BioPipe built-in"
+}

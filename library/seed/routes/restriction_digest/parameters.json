@@ -1,0 +1,101 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "lambda": {},
+    "plasmid": {}
+  },
+  "steps": [
+    {
+      "name": "restriction_digest",
+      "inputs": [
+        "lambda"
+      ],
+      "params": {
+        "enzymes": "EcoRI,BamHI,HindIII",
+        "circular": false,
+        "output": "fragments"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "fragments"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "lambda_fragments"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "restriction_fragment_stats",
+      "inputs": [
+        "fragments"
+      ],
+      "params": {
+        "length_field": "length",
+        "output": "stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "stats"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "lambda_stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "restriction_digest",
+      "inputs": [
+        "plasmid"
+      ],
+      "params": {
+        "enzymes": "EcoRI,BamHI,HindIII",
+        "circular": true,
+        "output": "plasmid_fragments"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "plasmid_fragments"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "plasmid_fragments"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "restriction_fragment_stats",
+      "inputs": [
+        "plasmid_fragments"
+      ],
+      "params": {
+        "length_field": "length",
+        "output": "plasmid_stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "plasmid_stats"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "plasmid_stats"
+      },
+      "context_params": {}
+    }
+  ]
+}

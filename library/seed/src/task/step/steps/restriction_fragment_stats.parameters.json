@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "title": "Sequence dimension",
+      "default": "sequence"
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "Position dimension",
+      "default": "position"
+    },
+    "fragment_dim": {
+      "type": "string",
+      "title": "Fragment dimension",
+      "default": "fragment"
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "Field dimension",
+      "default": "field"
+    },
+    "statistic_dim": {
+      "type": "string",
+      "title": "Statistic dimension",
+      "default": "statistic"
+    },
+    "length_field": {
+      "type": "string",
+      "title": "Length column",
+      "default": "length"
+    },
+    "output": {
+      "type": "string",
+      "title": "Output statistics",
+      "default": "stats"
+    }
+  },
+  "required": [
+    "length_field"
+  ],
+  "additionalProperties": false,
+  "x-ui-group": "Sequence"
+}
