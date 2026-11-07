@@ -21,6 +21,11 @@
       "sha256": "036fb95e95b12f1c6343fca0b86b674b2cea80bdcc8fb0bf650949e9a531c7cf",
       "parameters_sha256": "2125e1a1cdff63697addbe9a457fde4305e6f43557f5041f17507b034a1e8f41"
     },
+    "route_7632e301b486": {
+      "path": "routes/bam_alignment_qc/task.yaml",
+      "sha256": "e81b7dceb06860f31b7d24a206a884f3f1109fa115002685b9e7faed382ec100",
+      "parameters_sha256": "fb0d1372910954b1e636a683decd343363813026d4a1765ff66f0d61b7df8bbb"
+    },
     "route_134972672309": {
       "path": "routes/bgen_qc/task.yaml",
       "sha256": "f4419972e650aefa52a3fda16b1cb054dca42885ca887eb2902c1c53124659f2",
@@ -15383,6 +15388,328 @@
                 "kind": "form",
                 "numeric": true,
                 "ndim": 2
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_7632e301b486",
+      "version": 1,
+      "name": "BAM alignment quality control",
+      "graph": {
+        "schema_version": 2,
+        "name": "BAM alignment quality control",
+        "base_dir": ".studio/builtin-inputs/bam_alignment_qc",
+        "nodes": [
+          {
+            "id": "alignments",
+            "kind": "source",
+            "script": null,
+            "operator": null,
+            "title": "alignments",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "BamFileReader",
+              "path": "input/region.bam",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "bam_mapq_distribution_1",
+            "kind": "operator",
+            "script": null,
+            "operator": "bam_mapq_distribution",
+            "title": "BAM MAPQ distribution",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "max_mapq": 60,
+              "max_records": 0,
+              "output": "mapq_distribution"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "script": null,
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "bam_mapq_distribution",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "bam_read_length_stats_3",
+            "kind": "operator",
+            "script": null,
+            "operator": "bam_read_length_stats",
+            "title": "BAM read length statistics",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "max_length": 1000,
+              "max_records": 0,
+              "output": "read_length_stats"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "script": null,
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "bam_read_length_stats",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "bam_alignment_summary_5",
+            "kind": "operator",
+            "script": null,
+            "operator": "bam_alignment_summary",
+            "title": "BAM alignment summary",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "max_records": 0,
+              "output": "alignment_summary"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "script": null,
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "bam_alignment_summary",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "adaptation": null,
+            "id": "alignments-bam_mapq_distribution_1-0",
+            "source": "alignments",
+            "target": "bam_mapq_distribution_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "bam_mapq_distribution_1-export_results_2-0",
+            "source": "bam_mapq_distribution_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "alignments-bam_read_length_stats_3-0",
+            "source": "alignments",
+            "target": "bam_read_length_stats_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "bam_read_length_stats_3-export_results_4-0",
+            "source": "bam_read_length_stats_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "alignments-bam_alignment_summary_5-0",
+            "source": "alignments",
+            "target": "bam_alignment_summary_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "bam_alignment_summary_5-export_results_6-0",
+            "source": "bam_alignment_summary_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "alignments",
+              "label": "alignments",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "bam"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

@@ -1,0 +1,10 @@
+{
+  "key": "bam_alignment_qc",
+  "title": "BAM alignment quality control",
+  "description": "Mapping-quality, read-length and alignment-summary QC on a BAM file, exporting one CSV table per operator.",
+  "steps": [
+    "bam_mapq_distribution",
+    "bam_read_length_stats",
+    "bam_alignment_summary"
+  ]
+}

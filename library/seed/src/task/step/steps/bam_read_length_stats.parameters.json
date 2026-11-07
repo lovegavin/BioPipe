@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "max_length": {
+      "type": "integer",
+      "default": 1000,
+      "minimum": 1,
+      "maximum": 100000,
+      "description": "Lengths above this value are placed in the trailing overflow bin."
+    },
+    "max_records": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Read at most this many alignment records (0 reads the whole file)."
+    },
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}

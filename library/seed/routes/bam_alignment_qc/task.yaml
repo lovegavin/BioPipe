@@ -1,0 +1,52 @@
+{
+  "name": "BAM alignment quality control",
+  "sources": {
+    "alignments": {
+      "path": "input/region.bam",
+      "dims": [
+        "file"
+      ],
+      "labels": {},
+      "reader": "BamFileReader"
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "bam_mapq_distribution",
+      "inputs": [
+        "alignments"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "mapq_distribution"
+      ]
+    },
+    {
+      "name": "bam_read_length_stats",
+      "inputs": [
+        "alignments"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "read_length_stats"
+      ]
+    },
+    {
+      "name": "bam_alignment_summary",
+      "inputs": [
+        "alignments"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "alignment_summary"
+      ]
+    }
+  ]
+}

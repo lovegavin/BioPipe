@@ -560,6 +560,16 @@
     "status": "generated"
   },
   {
+    "id": "bam_alignment_summary",
+    "kind": "operator",
+    "title": "BAM alignment summary",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Read counts, mapping fractions, duplicates, pairing and clipping.",
+    "doc": "src/task/step/steps/bam_alignment_summary.BamAlignmentSummaryStep.md",
+    "status": "generated"
+  },
+  {
     "id": "bam_flagstat",
     "kind": "operator",
     "title": "bam_flagstat",
@@ -587,6 +597,26 @@
     "version": "1.0.0",
     "description": "Per-gene alignment counts, gene length and CPM from a BAM and GFF/GTF.",
     "doc": "src/task/step/steps/bam_gene_counts.BamGeneCountsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bam_mapq_distribution",
+    "kind": "operator",
+    "title": "BAM MAPQ distribution",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Histogram of mapping quality for primary mapped reads.",
+    "doc": "src/task/step/steps/bam_mapq_distribution.BamMapqDistributionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "bam_read_length_stats",
+    "kind": "operator",
+    "title": "BAM read length statistics",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Histogram and summary statistics of primary mapped read lengths.",
+    "doc": "src/task/step/steps/bam_read_length_stats.BamReadLengthStatsStep.md",
     "status": "generated"
   },
   {

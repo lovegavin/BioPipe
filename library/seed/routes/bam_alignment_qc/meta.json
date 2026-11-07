@@ -1,0 +1,15 @@
+{
+  "route": "bam_alignment_qc",
+  "input": "region.bam",
+  "data": "ENCODE GM12878 ATAC-seq chr22 region",
+  "operators": [
+    "bam_mapq_distribution",
+    "bam_read_length_stats",
+    "bam_alignment_summary"
+  ],
+  "exports": [
+    "mapq_distribution.csv",
+    "read_length_stats.csv",
+    "alignment_summary.csv"
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "alignments": {}
+  },
+  "steps": [
+    {
+      "name": "bam_mapq_distribution",
+      "inputs": [
+        "alignments"
+      ],
+      "params": {
+        "output": "mapq_distribution"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "mapq_distribution"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "bam_mapq_distribution"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "bam_read_length_stats",
+      "inputs": [
+        "alignments"
+      ],
+      "params": {
+        "output": "read_length_stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "read_length_stats"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "bam_read_length_stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "bam_alignment_summary",
+      "inputs": [
+        "alignments"
+      ],
+      "params": {
+        "output": "alignment_summary"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "alignment_summary"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "bam_alignment_summary"
+      },
+      "context_params": {}
+    }
+  ]
+}

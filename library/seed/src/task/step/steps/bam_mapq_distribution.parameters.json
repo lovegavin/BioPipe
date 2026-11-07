@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "max_mapq": {
+      "type": "integer",
+      "default": 60,
+      "minimum": 1,
+      "maximum": 255,
+      "description": "Largest MAPQ value represented; larger values are clamped into this bin."
+    },
+    "max_records": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Read at most this many alignment records (0 reads the whole file)."
+    },
+    "output": {
+      "type": "string",
+      "default": "",
+      "description": "Output port name; defaults to the operator name."
+    }
+  },
+  "additionalProperties": false
+}
