@@ -3312,3 +3312,70 @@ the values agree; `workdir/b43_srv_compare.json` and
 * All samples come from one population, so no structure correction is needed
   or demonstrated; the operator accepts a covariate table for that purpose.
 * Only autosome-style biallelic SNPs and an additive dosage model are handled.
+
+## Batch 44 — BAM alignment quality control (GM12878)
+
+### Data
+
+| Input | Size | SHA-256 |
+| --- | --- | --- |
+| `region.bam` (ENCODE GM12878 ATAC-seq, chr22 region) | 1,849,147 B | `ce040a8bdd467c4da4b38895e8781a4b38d1fdcd444ba75b0d78c96a163a370d` |
+
+The region contains 35,456 primary, properly paired, mapped reads with 80
+distinct query lengths (6–101 bp) and no duplicates or clipped bases.
+
+### Route
+
+`bam_alignment_qc` — source `alignments` (`BamFileReader`, `region.bam`), then
+`bam_mapq_distribution`, `bam_read_length_stats` and `bam_alignment_summary`,
+each exported to CSV.
+
+### Results
+
+| Table | Value |
+| --- | --- |
+| total / mapped reads | 35,456 / 35,456 (1.0) |
+| proper-pair fraction | 1.0 |
+| reverse fraction | 0.499887 |
+| duplicates / clipped bases per read | 0 / 0.0 |
+| mean MAPQ (capped at 60) | 56.8434 |
+| MAPQ >= 20 / >= 30 | 0.963278 / 0.960232 |
+| MAPQ 60 reads | 32,622 (0.920070) |
+| read length mean / min / max | 90.5904 / 6 / 101 |
+| distinct read lengths | 80 |
+
+### Oracles
+
+| Oracle | Metric | Result |
+| --- | --- | --- |
+| pysam 0.24.1 | MAPQ histogram, read-length histogram, 13 summary counts | max abs 0.0 |
+| samtools 1.19.2 `stats` | raw total and mapped read counts | exact |
+| Independent recomputation | mean MAPQ, reverse fraction, clipped counts | max abs 0.0 |
+
+`workdir/b44_oracle.json` records `passed: true`.
+
+### Three platforms
+
+| Host | Steps | Total elapsed | Exported files |
+| --- | --- | --- | --- |
+| WSL (Python 3.12) | 6/6 | 0.240 s | summary `258198c2`, MAPQ `782779f9`, length `d78b86a6` |
+| srv (Python 3.11) | 6/6 | 0.484 s | identical MD5 for all three CSVs |
+| Windows (Python 3.12) | 6/6 | 0.280 s | identical MD5 for all three CSVs |
+
+### Fixes
+
+1. Each operator's `export()` looked up `ctx[self.name]`, but the route renames
+   the output ports; the lookup now uses the configured output name.
+2. MAPQ 255 ("unavailable") is capped at 60 in the histogram and in
+   `mean_mapq`, so the reported mean is on the same scale as the histogram.
+3. The read-length table now emits only observed lengths (plus an overflow
+   row) instead of every value up to `max_length`.
+
+### Limitations
+
+* A single chr22 region, not a whole-genome BAM; the operators stream records
+  and do not require an index.
+* MAPQ 255 is not reported separately from 60.
+* Duplicate status comes from the BAM flag; duplicates are not re-marked.
+* Read lengths above `max_length` (default 1000) are folded into one row; none
+  occur in this dataset.
