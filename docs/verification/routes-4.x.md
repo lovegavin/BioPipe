@@ -3150,3 +3150,94 @@ SciPy import cost (33.2 s of the 33.9 s total).
   regulatory data are used.
 * Degenerate optima mean individual fluxes are not unique; the variability
   interval, not a single flux vector, is the comparable quantity.
+
+## Batch 42 — Codon optimisation and design QC
+
+New operators: `codon_optimize`, `codon_gc_harmonize`, `codon_design_qc`.
+Route: `codon_design` (`library/seed/routes/codon_design`).
+
+### Data
+
+| File | Size (bytes) | SHA-256 |
+| --- | --- | --- |
+| `design_proteins.faa` | 4,564 | `9d19546af4f921fa09d1d4b069e1304e51b2e18028a163e8fb91deabe56f1a8e` |
+| `reference.fasta` | 4,043,037 | `582ca052cc8bb43dc0bc5d88da6d8d7ff7b400308a5830e4cad1f7c7bca9c79f` |
+
+Twenty reviewed *E. coli* K-12 proteins were selected from the annotated
+proteome; the reference CDS set is `GCF_000005845.2` (4,309 sequences pass the
+length, frame, alphabet and internal-stop filters). Both inputs are public
+RefSeq data redistributed unmodified.
+
+### Steps
+
+`codon_optimize` → export FASTA → `codon_design_qc` → export CSV →
+`codon_gc_harmonize` → export FASTA → `codon_design_qc` → export CSV.
+
+Codon choice is greedy by reference usage with motif and homopolymer guards;
+harmonisation applies synonymous swaps toward 50% GC under the same guards.
+
+### Results
+
+All 20 sequences start with ATG, contain no internal stop and translate to the
+input proteins.
+
+| Metric | Optimised | Harmonised |
+| --- | --- | --- |
+| GC range | 0.5018–0.5928 | 0.5018–0.5050 |
+| Mean CAI | 0.9591 | 0.9542 |
+| Maximum homopolymer | 6 | 6 |
+| Forbidden sites | 0 | 0 |
+
+| File | Size (bytes) | MD5 |
+| --- | --- | --- |
+| `codon_optimize_dna.fasta` | 13,283 | `9f67d9fdafb6d9706a79ce8113843419` |
+| `codon_gc_harmonize_dna.fasta` | 13,283 | `7a7d942a5b155b6336d36721c97dd14e` |
+| `codon_design_qc_optimized.csv` | 1,368 | `50f8054da6c08bc80f616798eebad6b9` |
+| `codon_design_qc_harmonized.csv` | 1,369 | `df3de719c51a921b9744cc3626d0a3e9` |
+
+### Oracle comparison
+
+| Oracle | Metric | Result |
+| --- | --- | --- |
+| Biopython 1.88 `CodonAdaptationIndex` | CAI | max abs 1.11e-16 |
+| Biopython 1.88 | GC, forbidden sites, protein | max abs 0, mismatches 0, mismatches 0 |
+| base R 4.3.3 (independent parser) | CAI, GC, forbidden sites | max abs 0, max abs 0, mismatches 0 |
+
+The Biopython comparison covers 4,309 reference sequences and all 20 designs;
+the R implementation re-parses the OBO-independent inputs and re-derives the
+weights, CAI, GC and overlapping motif counts from scratch.
+
+### Three platforms
+
+| Host | Steps | Total elapsed | Exported files |
+| --- | --- | --- | --- |
+| WSL (Python 3.12) | 8/8 | 7.6 s | all four MD5 above |
+| srv (Python 3.11, Linux) | 8/8 | 88.221 s | FASTAs byte-identical; QC CSVs differ only in float text (max abs 1.11e-16) |
+| Windows (Python 3.12) | 8/8 | 54.6603 s | all four MD5 identical to WSL |
+
+srv timings: 56.706 s optimisation, 29.647 s harmonisation. Windows timings:
+34.349 s optimisation, 18.893 s harmonisation; the remaining steps are
+sub-second.
+
+### Fixes
+
+1. `codon_optimize` originally returned a statistics table; the downstream
+   harmoniser requires a sequence Form. Both operators now emit
+   `[sequence, position]` DNA Forms with `info["sequences"]` and explicit
+   position labels.
+2. Late-stage greedy codon choices could leave a homopolymer run longer than
+   the requested limit. The fallback now picks the codon that minimises the
+   resulting run and then runs `repair_homopolymer`.
+3. Sequences that already contained a restriction site could never be repaired
+   because candidates were rejected on any hit. The repair loop now accepts
+   non-worsening candidates and runs `repair_motifs` until the hit count stops
+   decreasing.
+
+### Limitations
+
+* Codon usage is the only design objective; tRNA pools, mRNA structure and
+  translation kinetics are not modelled.
+* Only the 20 standard amino acids are accepted.
+* The motif panel is a fixed default list and can be overridden per run.
+* GC bounds can be unreachable under the motif/homopolymer guards; the operator
+  returns the best sequence found instead of failing.
