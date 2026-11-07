@@ -2597,7 +2597,7 @@ RNG; splits are canonicalised the same way (smaller side, lexicographic ties).
 | --- | --- | --- | --- |
 | WSL (Ubuntu 24.04, Python 3.12) | 8/8 complete | 0.3992 s | bootstrap 0.3204 s |
 | srv (Slurm login, Python 3.11 venv) | 8/8 complete | 2.2205 s | same four file MD5s |
-| Windows (D:\BioPipe-4.x, Python 3.12) | 8/8 complete | 0.5667 s | same CSV/Newick MD5s |
+| Windows (checkout copy, Python 3.12) | 8/8 complete | 0.5667 s | same CSV/Newick MD5s |
 
 MD5: `phylo_bootstrap.csv` `192a38adb80caad307033958c4d84404`,
 `phylo_support_summary.csv` `f424cd7034af62059f81fdd66b8cca41`,
@@ -2615,3 +2615,74 @@ Registry: 823 operators / 106 readers / 7 packages / 57 routes, errors 0.
   rate heterogeneity.
 - Bootstrap RNG differs across implementations, so support is compared with a
   Monte-Carlo tolerance (0.20) rather than bit-for-bit; topologies match exactly.
+
+## Batch 34 — Restriction digest of lambda and pBR322
+
+### Data
+
+| Source | File | Size | SHA256 | Notes |
+| --- | --- | --- | --- | --- |
+| Bacteriophage lambda | `lambda.fasta` | 49,254 B | `78a78913d3585570fa28b7cec05e4fcf067c1aaa3740d37a377f2babda70618c` | NC_001416.1, 48,502 bp, linear |
+| pBR322 | `pbr322.fasta` | 4,476 B | `2d6aed656794577332720ffaac5352c56ba5cf34e3a173869fbc1aa705b33aeb` | J01749.1, 4,361 bp, circular |
+
+### Route
+
+`restriction_digest` (8 steps): lambda linear digest with EcoRI, BamHI and
+HindIII -> fragment CSV -> fragment statistics; pBR322 circular digest with the
+same enzymes -> fragment CSV -> fragment statistics.
+
+### Results
+
+| Molecule | Cuts | Fragments | Total bp | Min | Median | Max | >= 1 kb | >= 5 kb |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| lambda | 16 | 17 | 48,502 | 493 | 2,027 | 15,721 | 12 | 2 |
+| pBR322 | 3 | 3 | 4,361 | 31 | 346 | 3,984 | 1 | 0 |
+
+pBR322 cuts are HindIII at 29, BamHI at 375 and EcoRI at 4,359: the EcoRI site
+spans the origin, so the circular branch is exercised by real data.
+
+### Oracle
+
+| Check | Reference | Result |
+| --- | --- | --- |
+| Cut coordinates (both molecules) | Biopython 1.85 `Restriction.search`, REBASE-derived | identical |
+| Fragment spans and lengths | Biopython recomputation from the same cuts | identical (17 and 3 rows) |
+| Lambda EcoRI fragment sizes | classic lambda EcoRI digest {21226, 7421, 5804, 5643, 4878, 3530} | exact |
+| Total length | 48,502 / 4,361 bp | exact |
+
+EMBOSS `restrict` was evaluated as a second CLI oracle but cannot run here: it
+needs REBASE `withrefm`/`proto` data, which neither Debian `emboss-data` nor the
+NCBI/EBI mirrors provide in this environment. The Biopython path is independent
+of the operator's hand-written enzyme table (it comes from REBASE), so the cut
+coordinate comparison remains a genuine cross-implementation check.
+
+### Three platforms
+
+| Platform | Status | total_elapsed | lambda_fragments | lambda_stats | plasmid_fragments | plasmid_stats |
+| --- | --- | --- | --- | --- | --- | --- |
+| WSL | complete | 0.0107 s | `d1b70c71` | `09bc85a7` | `92b95e06` | `fb24afbb` |
+| srv | complete | 0.1485 s | `d1b70c71` | `09bc85a7` | `92b95e06` | `fb24afbb` |
+| Windows | complete | 0.0313 s | `d1b70c71` | `09bc85a7` | `92b95e06` | `fb24afbb` |
+
+All four CSV files are byte-identical across the three platforms; registry
+`825 operators / 106 readers / 7 packages / 58 routes`, errors 0.
+
+### Fixes
+
+- Circular digests only searched the linear sequence, so a recognition site
+  spanning the origin (pBR322 EcoRI, `GAATTC` split across the origin) was
+  missed and the plasmid produced two fragments instead of three. Circular
+  searches now append the first `max(site length) - 1` bases and wrap cut
+  coordinates; a regression test covers a synthetic origin-spanning site.
+- Fragment statistics were added so the route ends in exportable summaries.
+
+### Limitations
+
+- The enzyme table curates 29 common enzymes with one cut offset each;
+  isoschizomers, methylation sensitivity and star activity are not modelled.
+- NC_001416.1 carries six HindIII sites, so its HindIII digest has seven
+  fragments; the 6,682 bp band merges the classic NEB ladder's 6,557 + 125 bp
+  pair. This is a sequence/strain difference and the NEB ladder is not used as
+  an oracle.
+- Circular fragment coordinates may exceed the sequence length (the caller
+  wraps them); GC for wrapped fragments is computed on the concatenated span.
