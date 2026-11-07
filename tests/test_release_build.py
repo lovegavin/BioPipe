@@ -60,6 +60,8 @@ def test_lite_archive_preserves_operator_docs_and_frozen_task_parameters(tmp_pat
         "tasks/example/output/unrelated.json": '{"private": true}',
         "scripts/desktop_server.py": "# Desktop entry",
         "scripts/install_maintenance.py": "# Setup runtime inspection",
+        "scripts/install_server.py": "# Server CLI installation",
+        "scripts/install_server.sh": "# Linux Python bootstrap",
         "scripts/run.py": "# Worker entry",
         "scripts/diagnose_pins.py": "# Diagnostic entry",
         "scripts/check_resources.py": "# Resource inspection",
@@ -96,4 +98,5 @@ def test_lite_archive_preserves_operator_docs_and_frozen_task_parameters(tmp_pat
         assert "src/example.Operator.md" in {row["path"] for row in manifest["files"]}
         assert manifest["product"] == "operon"
         assert "operon.cmd" in {row["path"] for row in manifest["files"]}
+        assert "scripts/install_server.sh" in {row["path"] for row in manifest["files"]}
         assert "Registration and startup read metadata" in archive.read(prefix + "START_HERE.txt").decode()

@@ -36,10 +36,21 @@ def test_deep_native_extension_and_zip_import(tmp_path, worker):
     else:
         code = ('import sys; sys.path[:0] = sys.argv[1:3]; '
                 'exec(open(sys.argv[3],encoding="utf-8").read()); ' + probe)
-        args = ['-c', code, str(target), str(archive), str(ROOT / 'scripts/bundled_paths.pth')]
+        args = ['-c', code, str(target), str(archive), str(ROOT / 'scripts/bundled_imports.py')]
     completed = subprocess.run([sys.executable, '-I', '-S', *args], capture_output=True, text=True, timeout=30)
     assert completed.returncode == 0, completed.stderr
     result = json.loads(completed.stdout)
     assert result['zip'] == 42
     assert result['origin'].startswith('\\\\?\\')
     assert str(target) in result['origin']
+
+
+@pytest.mark.skipif(sys.platform != 'win32', reason='Windows import identity')
+def test_short_source_import_keeps_original_identity(tmp_path):
+    (tmp_path / 'identity_probe.py').write_text('value = 1\n')
+    code = ('import sys; sys.path.insert(0,sys.argv[1]); '
+            'exec(open(sys.argv[2],encoding="utf-8").read()); '
+            'import identity_probe; print(identity_probe.__file__)')
+    result = subprocess.run([sys.executable, '-I', '-S', '-c', code, str(tmp_path),
+        str(ROOT / 'scripts/bundled_imports.py')], capture_output=True, text=True, check=True)
+    assert result.stdout.strip() == str(tmp_path / 'identity_probe.py')

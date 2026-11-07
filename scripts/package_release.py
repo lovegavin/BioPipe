@@ -44,6 +44,7 @@ def main():
     if not args.lite:
         shutil.copytree(io_path(args.runtime), destination / 'runtime/python')
         copy(root / 'scripts/bundled_paths.pth', 'runtime/python/Lib/site-packages/00_operon_paths.pth')
+        copy(root / 'scripts/bundled_imports.py', 'runtime/python/Lib/operon_import_paths.py')
         bootstrapper = destination / 'runtime/MicrosoftEdgeWebview2Setup.exe'
         url = 'https://go.microsoft.com/fwlink/p/?LinkId=2124703'
         if args.webview_bootstrapper:
@@ -86,7 +87,8 @@ def main():
         # Use the shipped interpreter, never the packaging host's Python tag.
         subprocess.run([python, '-I', '-m', 'compileall', '-q', '-f',
                         '--invalidation-mode', 'unchecked-hash', '-s', str(destination),
-                        *[str(destination / p) for p in ('src', 'biopipe', 'biopipe_sdk', 'scripts', 'library/seed')]], check=True)
+                        *[str(destination / p) for p in ('src', 'biopipe', 'biopipe_sdk', 'scripts', 'library/seed',
+                                                       'runtime/python/Lib/operon_import_paths.py')]], check=True)
     shutil.copytree(root / 'docs', destination / 'docs')
     # Ship the small SDK examples referenced by the extension guides.
     shutil.copytree(root / 'examples', destination / 'examples',

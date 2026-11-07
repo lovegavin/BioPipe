@@ -1,4 +1,4 @@
 # Private Windows runtime only. Resolve imports with native long-path aliases
 # before other .pth files load native wheels. Keep sys.path and host policy intact.
 # FileFinder raises ImportError for non-directories, so ZIP/custom hooks still run.
-import os, sys, importlib.machinery as m; sys.path_hooks.insert(0, lambda p, h=m.FileFinder.path_hook((m.ExtensionFileLoader, m.EXTENSION_SUFFIXES), (m.SourceFileLoader, m.SOURCE_SUFFIXES), (m.SourcelessFileLoader, m.BYTECODE_SUFFIXES)), a=os.path.abspath: h(p if p.startswith('\\\\?\\') else ('\\\\?\\UNC\\' + a(p)[2:] if a(p).startswith('\\\\') else '\\\\?\\' + a(p)))); sys.path_importer_cache.clear()
+import operon_import_paths

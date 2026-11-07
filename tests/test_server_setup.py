@@ -94,9 +94,10 @@ def test_real_server_install_reinstall_cli_and_yaml(tmp_path):
     parent = tmp_path / 'chosen directory'; parent.mkdir()
     sentinel = parent / 'research.txt'; sentinel.write_text('keep')
     workspace = tmp_path / 'my analysis data'
-    def install(*extra):
+    def install(*extra, source_install=True):
         completed = subprocess.run([sys.executable, str(source / 'scripts/install_server.py'),
-            '--prefix', str(parent), '--source', str(source), *extra], capture_output=True, text=True, timeout=900)
+            '--prefix', str(parent), *(['--source', str(source)] if source_install else []),
+            *extra], capture_output=True, text=True, timeout=900)
         assert completed.returncode == 0, completed.stdout + completed.stderr
         return json.loads(completed.stdout)
     first = install('--workspace', str(workspace))
@@ -113,7 +114,12 @@ def test_real_server_install_reinstall_cli_and_yaml(tmp_path):
         assert json.loads(run.stdout)['status'] == 'complete'
     finally:
         subprocess.run([command, 'service', 'stop'], check=True, capture_output=True)
-    second = install()
+    wheels = tmp_path / 'wheels'
+    built = subprocess.run([sys.executable, '-m', 'pip', 'wheel', '--no-deps', '--wheel-dir', str(wheels),
+        str(source), str(source / 'library')], capture_output=True, text=True, timeout=300)
+    assert built.returncode == 0, built.stdout + built.stderr
+    second = install('--app-wheel', str(next(wheels.glob('biopipe_studio-*.whl'))),
+                     '--library-wheel', str(next(wheels.glob('biopipe_builtin_library-*.whl'))), source_install=False)
     assert second['python'] != first['python']
     assert second['install_dir'] == first['install_dir'] and Path(first['python']).exists()
     assert second['workspace'] == first['workspace'] == str(workspace)
