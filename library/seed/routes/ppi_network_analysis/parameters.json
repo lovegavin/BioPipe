@@ -1,0 +1,89 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "edges": {}
+  },
+  "steps": [
+    {
+      "name": "network_summary",
+      "inputs": [
+        "edges"
+      ],
+      "params": {
+        "edge_dim": "edge",
+        "field_dim": "field",
+        "node_a_field": "node_a",
+        "node_b_field": "node_b",
+        "weight_field": "score",
+        "output": "summary"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "summary"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "network_summary"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "network_centrality",
+      "inputs": [
+        "edges"
+      ],
+      "params": {
+        "edge_dim": "edge",
+        "field_dim": "field",
+        "node_a_field": "node_a",
+        "node_b_field": "node_b",
+        "weight_field": "score",
+        "output": "centrality"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "centrality"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "network_centrality"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "network_communities",
+      "inputs": [
+        "edges"
+      ],
+      "params": {
+        "edge_dim": "edge",
+        "field_dim": "field",
+        "node_a_field": "node_a",
+        "node_b_field": "node_b",
+        "weight_field": "score",
+        "resolution": 1.0,
+        "output": "communities"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "communities"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "network_communities"
+      },
+      "context_params": {}
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "name": "STRING CRP network analysis: summary, centrality and communities",
+  "sources": {
+    "edges": {
+      "path": "input/network_edges.csv",
+      "dims": [
+        "edge",
+        "field"
+      ],
+      "labels": {
+        "edge": {
+          "field": 0
+        },
+        "field": "builtin"
+      },
+      "reader": "CsvReader"
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "network_summary",
+      "inputs": [
+        "edges"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "summary"
+      ]
+    },
+    {
+      "name": "network_centrality",
+      "inputs": [
+        "edges"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "centrality"
+      ]
+    },
+    {
+      "name": "network_communities",
+      "inputs": [
+        "edges"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "communities"
+      ]
+    }
+  ]
+}

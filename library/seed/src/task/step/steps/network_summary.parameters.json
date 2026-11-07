@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "edge_dim": {
+      "type": "string",
+      "default": "edge"
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field"
+    },
+    "node_a_field": {
+      "type": "string",
+      "default": "node_a"
+    },
+    "node_b_field": {
+      "type": "string",
+      "default": "node_b"
+    },
+    "weight_field": {
+      "type": "string",
+      "default": ""
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic"
+    },
+    "value_dim": {
+      "type": "string",
+      "default": "value"
+    },
+    "output": {
+      "type": "string",
+      "default": "summary"
+    }
+  },
+  "required": [
+    "edge_dim",
+    "field_dim",
+    "node_a_field",
+    "node_b_field",
+    "output"
+  ]
+}

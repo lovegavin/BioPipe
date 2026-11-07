@@ -1,0 +1,5 @@
+{
+  "key": "ppi_network_analysis",
+  "title": "PPI network analysis",
+  "summary": "Summarise a STRING interaction network, rank nodes by degree, betweenness, closeness, eigenvector and pagerank centrality, and detect greedy modularity communities."
+}

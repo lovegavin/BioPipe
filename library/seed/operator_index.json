@@ -4300,6 +4300,36 @@
     "status": "generated"
   },
   {
+    "id": "network_centrality",
+    "kind": "operator",
+    "title": "Network centrality",
+    "category": "Network",
+    "version": "1.0.0",
+    "description": "Degree, betweenness, closeness, eigenvector and PageRank centrality for every node.",
+    "doc": "src/task/step/steps/network_centrality.NetworkCentralityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "network_communities",
+    "kind": "operator",
+    "title": "Network communities",
+    "category": "Network",
+    "version": "1.0.0",
+    "description": "Greedy modularity (Clauset-Newman-Moore) communities for an undirected network.",
+    "doc": "src/task/step/steps/network_communities.NetworkCommunitiesStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "network_summary",
+    "kind": "operator",
+    "title": "Network topology summary",
+    "category": "Network",
+    "version": "1.0.0",
+    "description": "Summarise an undirected network: size, density, components, diameter and clustering.",
+    "doc": "src/task/step/steps/network_summary.NetworkSummaryStep.md",
+    "status": "generated"
+  },
+  {
     "id": "nmds",
     "kind": "operator",
     "title": "Non-metric multidimensional scaling",

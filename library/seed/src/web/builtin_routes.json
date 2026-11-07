@@ -186,6 +186,11 @@
       "sha256": "3f4ae49448de33f76ac357306496aab5eb149821d0c936b3c67e1a90bd2f0d59",
       "parameters_sha256": "b66d84e15dc008b729334fb0cfe926a0ecc4aab149a7b1f2e6e2ef67355aefd0"
     },
+    "route_9fd758057de6": {
+      "path": "routes/ppi_network_analysis/task.yaml",
+      "sha256": "6635a98dd0bd72ad404d61c339be8e70ace0c2b4e6a6fbdd11138b139eacd3bb",
+      "parameters_sha256": "31b2a88fb376fdd8293ca45351c7ab65786f6df29b048c668c85b4ed1a03655f"
+    },
     "route_4bf816613c56": {
       "path": "routes/primer_design_qc/task.yaml",
       "sha256": "23a04b3bba899843ea59588a45dc6babbf1a9b59e6951154101f79573a390915",
@@ -21975,6 +21980,346 @@
                   },
                   "sequences": {
                     "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_9fd758057de6",
+      "version": 1,
+      "name": "STRING CRP network analysis: summary, centrality and communities",
+      "graph": {
+        "schema_version": 2,
+        "name": "STRING CRP network analysis: summary, centrality and communities",
+        "base_dir": ".studio/builtin-inputs/ppi_network_analysis",
+        "nodes": [
+          {
+            "id": "edges",
+            "kind": "source",
+            "operator": null,
+            "title": "edges",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/network_edges.csv",
+              "dims": [
+                "edge",
+                "field"
+              ],
+              "labels": {
+                "edge": {
+                  "field": 0
+                },
+                "field": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "network_summary_1",
+            "kind": "operator",
+            "operator": "network_summary",
+            "title": "Network topology summary",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "edge_dim": "edge",
+              "field_dim": "field",
+              "node_a_field": "node_a",
+              "node_b_field": "node_b",
+              "weight_field": "score",
+              "statistic_dim": "statistic",
+              "value_dim": "value",
+              "output": "summary"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "network_summary",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "network_centrality_3",
+            "kind": "operator",
+            "operator": "network_centrality",
+            "title": "Network centrality",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "edge_dim": "edge",
+              "field_dim": "field",
+              "node_a_field": "node_a",
+              "node_b_field": "node_b",
+              "weight_field": "score",
+              "node_dim": "node",
+              "statistic_dim": "statistic",
+              "output": "centrality"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "network_centrality",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "network_communities_5",
+            "kind": "operator",
+            "operator": "network_communities",
+            "title": "Network communities",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "edge_dim": "edge",
+              "field_dim": "field",
+              "node_a_field": "node_a",
+              "node_b_field": "node_b",
+              "weight_field": "score",
+              "resolution": 1.0,
+              "node_dim": "node",
+              "statistic_dim": "statistic",
+              "output": "communities"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "network_communities",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "edges-network_summary_1-0",
+            "source": "edges",
+            "target": "network_summary_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "network_summary_1-export_results_2-0",
+            "source": "network_summary_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "edges-network_centrality_3-0",
+            "source": "edges",
+            "target": "network_centrality_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "network_centrality_3-export_results_4-0",
+            "source": "network_centrality_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "edges-network_communities_5-0",
+            "source": "edges",
+            "target": "network_communities_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "network_communities_5-export_results_6-0",
+            "source": "network_communities_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "edges",
+              "label": "edges",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "edge",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
                     "optional": true
                   }
                 },
