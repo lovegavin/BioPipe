@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codon optimisation parameters",
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "minLength": 1
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "minLength": 1
+    },
+    "output": {
+      "type": "string",
+      "default": "codon_design_qc",
+      "minLength": 1
+    },
+    "motifs": {
+      "type": "string",
+      "default": "GAATTC,GGATCC,AAGCTT,GCGGCCGC,TCTAGA,GTCGAC,CTGCAG",
+      "description": "Comma separated DNA motifs to avoid (forward and reverse complement)."
+    },
+    "gc_min": {
+      "type": "number",
+      "default": 0.4,
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "gc_max": {
+      "type": "number",
+      "default": 0.6,
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "max_homopolymer": {
+      "type": "integer",
+      "default": 6,
+      "minimum": 1
+    },
+    "max_sequences": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}

@@ -26,6 +26,11 @@
       "sha256": "f4419972e650aefa52a3fda16b1cb054dca42885ca887eb2902c1c53124659f2",
       "parameters_sha256": "5f889ce7f7f62034902914a4ad4d45d462dd5547660949a31594e4bcbaede301"
     },
+    "route_972e6bc463e2": {
+      "path": "routes/codon_design/task.yaml",
+      "sha256": "7f0150faf927df9c68dee60a44bdb5a055ba6c0a10e94420b37187b5a5936fab",
+      "parameters_sha256": "39f03b6dae851c5d03bf6bf15b48688838bce3222a2a2d1eda7970e71e97f1c4"
+    },
     "route_7e99fd975e71": {
       "path": "routes/codon_usage_bias/task.yaml",
       "sha256": "13ffc64e96bc95d4006906f49e96931352feccf6b5081b5c6bd8ae97b8a277aa",
@@ -21213,6 +21218,530 @@
                 "info_open": false,
                 "axis_info_open": false,
                 "axis_info": {}
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_972e6bc463e2",
+      "version": 1,
+      "name": "Codon optimisation for E. coli proteins",
+      "graph": {
+        "schema_version": 2,
+        "name": "Codon optimisation for E. coli proteins",
+        "base_dir": ".studio/builtin-inputs/codon_design",
+        "nodes": [
+          {
+            "id": "proteins",
+            "kind": "source",
+            "operator": null,
+            "title": "proteins",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/design_proteins.faa",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "reference",
+            "kind": "source",
+            "operator": null,
+            "title": "reference",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/reference.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "codon_optimize_1",
+            "kind": "operator",
+            "operator": "codon_optimize",
+            "title": "Codon optimisation",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "optimized",
+              "motifs": "GAATTC,GGATCC,AAGCTT,GCGGCCGC,TCTAGA,GTCGAC,CTGCAG",
+              "gc_min": 0.4,
+              "gc_max": 0.6,
+              "max_homopolymer": 6,
+              "max_sequences": 0
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "fasta",
+              "filename": "codon_optimize_dna",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "codon_design_qc_3",
+            "kind": "operator",
+            "operator": "codon_design_qc",
+            "title": "Codon design QC",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "qc_optimized",
+              "motifs": "GAATTC,GGATCC,AAGCTT,GCGGCCGC,TCTAGA,GTCGAC,CTGCAG"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "codon_design_qc_optimized",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "codon_gc_harmonize_5",
+            "kind": "operator",
+            "operator": "codon_gc_harmonize",
+            "title": "Codon GC harmonisation",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "harmonized",
+              "target_gc": 0.5,
+              "motifs": "GAATTC,GGATCC,AAGCTT,GCGGCCGC,TCTAGA,GTCGAC,CTGCAG",
+              "max_homopolymer": 6
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "fasta",
+              "filename": "codon_gc_harmonize_dna",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "codon_design_qc_7",
+            "kind": "operator",
+            "operator": "codon_design_qc",
+            "title": "Codon design QC",
+            "position": {
+              "x": 940.0,
+              "y": 520.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "qc_harmonized",
+              "motifs": "GAATTC,GGATCC,AAGCTT,GCGGCCGC,TCTAGA,GTCGAC,CTGCAG"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "codon_design_qc_harmonized",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_7"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "proteins-codon_optimize_1-0",
+            "source": "proteins",
+            "target": "codon_optimize_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reference-codon_optimize_1-1",
+            "source": "reference",
+            "target": "codon_optimize_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "codon_optimize_1-export_results_2-0",
+            "source": "codon_optimize_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "codon_optimize_1-codon_design_qc_3-0",
+            "source": "codon_optimize_1",
+            "target": "codon_design_qc_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reference-codon_design_qc_3-1",
+            "source": "reference",
+            "target": "codon_design_qc_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "codon_design_qc_3-export_results_4-0",
+            "source": "codon_design_qc_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "codon_optimize_1-codon_gc_harmonize_5-0",
+            "source": "codon_optimize_1",
+            "target": "codon_gc_harmonize_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reference-codon_gc_harmonize_5-1",
+            "source": "reference",
+            "target": "codon_gc_harmonize_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "codon_gc_harmonize_5-export_results_6-0",
+            "source": "codon_gc_harmonize_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "codon_gc_harmonize_5-codon_design_qc_7-0",
+            "source": "codon_gc_harmonize_5",
+            "target": "codon_design_qc_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reference-codon_design_qc_7-1",
+            "source": "reference",
+            "target": "codon_design_qc_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "codon_design_qc_7-export_results_8-0",
+            "source": "codon_design_qc_7",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "proteins",
+              "label": "proteins",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "reference",
+              "label": "reference",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

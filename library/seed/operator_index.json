@@ -1170,6 +1170,36 @@
     "status": "generated"
   },
   {
+    "id": "codon_design_qc",
+    "kind": "operator",
+    "title": "Codon design QC",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Report CAI, GC content, homopolymers and forbidden sites for designed CDS sequences.",
+    "doc": "src/task/step/steps/codon_design_qc.CodonDesignQcStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "codon_gc_harmonize",
+    "kind": "operator",
+    "title": "Codon GC harmonisation",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Move coding sequences toward a target GC content with synonymous codon swaps.",
+    "doc": "src/task/step/steps/codon_gc_harmonize.CodonGcHarmonizeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "codon_optimize",
+    "kind": "operator",
+    "title": "Codon optimisation",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Reverse-translate proteins with reference codon usage while avoiding motifs and homopolymers.",
+    "doc": "src/task/step/steps/codon_optimize.CodonOptimizeStep.md",
+    "status": "generated"
+  },
+  {
     "id": "codon_usage",
     "kind": "operator",
     "title": "Codon usage",

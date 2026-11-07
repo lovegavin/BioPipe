@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codon GC harmonisation parameters",
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "minLength": 1
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "minLength": 1
+    },
+    "output": {
+      "type": "string",
+      "default": "codon_design_qc",
+      "minLength": 1
+    },
+    "target_gc": {
+      "type": "number",
+      "default": 0.5,
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "motifs": {
+      "type": "string",
+      "default": "GAATTC,GGATCC,AAGCTT,GCGGCCGC,TCTAGA,GTCGAC,CTGCAG",
+      "description": "Comma separated DNA motifs to avoid (forward and reverse complement)."
+    },
+    "max_homopolymer": {
+      "type": "integer",
+      "default": 6,
+      "minimum": 1
+    }
+  },
+  "additionalProperties": false
+}

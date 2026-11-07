@@ -1,0 +1,103 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "proteins": {},
+    "reference": {}
+  },
+  "steps": [
+    {
+      "name": "codon_optimize",
+      "inputs": [
+        "proteins",
+        "reference"
+      ],
+      "params": {
+        "gc_min": 0.4,
+        "gc_max": 0.6,
+        "max_homopolymer": 6,
+        "output": "optimized"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "optimized"
+      ],
+      "params": {
+        "format": "fasta",
+        "filename": "codon_optimize_dna"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "codon_design_qc",
+      "inputs": [
+        "optimized",
+        "reference"
+      ],
+      "params": {
+        "output": "qc_optimized"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "qc_optimized"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "codon_design_qc_optimized"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "codon_gc_harmonize",
+      "inputs": [
+        "optimized",
+        "reference"
+      ],
+      "params": {
+        "target_gc": 0.5,
+        "output": "harmonized"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "harmonized"
+      ],
+      "params": {
+        "format": "fasta",
+        "filename": "codon_gc_harmonize_dna"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "codon_design_qc",
+      "inputs": [
+        "harmonized",
+        "reference"
+      ],
+      "params": {
+        "output": "qc_harmonized"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "qc_harmonized"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "codon_design_qc_harmonized"
+      },
+      "context_params": {}
+    }
+  ]
+}

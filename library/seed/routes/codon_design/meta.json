@@ -1,0 +1,21 @@
+{
+  "key": "codon_design",
+  "title": "Codon design and GC harmonisation",
+  "summary": "Design synonymous coding sequences for 20 E. coli proteins, harmonise GC and verify the designs.",
+  "tags": [
+    "sequence",
+    "codon",
+    "design",
+    "E. coli"
+  ],
+  "inputs": [
+    {
+      "name": "design_proteins.faa",
+      "sha256": "9d19546af4f921fa09d1d4b069e1304e51b2e18028a163e8fb91deabe56f1a8e"
+    },
+    {
+      "name": "reference.fasta",
+      "sha256": "582ca052cc8bb43dc0bc5d88da6d8d7ff7b400308a5830e4cad1f7c7bca9c79f"
+    }
+  ]
+}

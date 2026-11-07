@@ -1,0 +1,78 @@
+{
+  "name": "Codon optimisation for E. coli proteins",
+  "sources": {
+    "proteins": {
+      "path": "input/design_proteins.faa",
+      "reader": "FastaReader",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {}
+    },
+    "reference": {
+      "path": "input/reference.fasta",
+      "reader": "FastaReader",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {}
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "codon_optimize",
+      "inputs": [
+        "proteins",
+        "reference"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "optimized"
+      ]
+    },
+    {
+      "name": "codon_design_qc",
+      "inputs": [
+        "optimized",
+        "reference"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "qc_optimized"
+      ]
+    },
+    {
+      "name": "codon_gc_harmonize",
+      "inputs": [
+        "optimized",
+        "reference"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "harmonized"
+      ]
+    },
+    {
+      "name": "codon_design_qc",
+      "inputs": [
+        "harmonized",
+        "reference"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "qc_harmonized"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codon design QC parameters",
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "minLength": 1
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "minLength": 1
+    },
+    "output": {
+      "type": "string",
+      "default": "codon_design_qc",
+      "minLength": 1
+    },
+    "motifs": {
+      "type": "string",
+      "default": "GAATTC,GGATCC,AAGCTT,GCGGCCGC,TCTAGA,GTCGAC,CTGCAG",
+      "description": "Comma separated DNA motifs to avoid (forward and reverse complement)."
+    }
+  },
+  "additionalProperties": false
+}
