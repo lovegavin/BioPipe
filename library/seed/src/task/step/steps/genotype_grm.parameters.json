@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "maf": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 0.5,
+      "default": 0,
+      "title": "Minor allele frequency filter"
+    },
+    "max_variants": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "title": "Maximum SNP records (0 = all)"
+    },
+    "output": {
+      "type": "string",
+      "minLength": 1,
+      "default": "grm",
+      "title": "Output name"
+    }
+  },
+  "required": [
+    "maf",
+    "max_variants",
+    "output"
+  ],
+  "additionalProperties": false
+}

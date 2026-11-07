@@ -2720,6 +2720,36 @@
     "status": "generated"
   },
   {
+    "id": "genotype_grm",
+    "kind": "operator",
+    "title": "Genotype relationship matrix",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "PLINK-style genetic relationship matrix (Z Z^T / M) over biallelic SNPs.",
+    "doc": "src/task/step/steps/genotype_grm.GenotypeGrmStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "genotype_pca",
+    "kind": "operator",
+    "title": "Genotype PCA",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Principal components of a genetic relationship matrix built from biallelic SNPs.",
+    "doc": "src/task/step/steps/genotype_pca.GenotypePcaStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "genotype_pca_loadings",
+    "kind": "operator",
+    "title": "Genotype PCA loadings",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Per-variant loadings of the genotype principal components (PLINK allele weights).",
+    "doc": "src/task/step/steps/genotype_pca_loadings.GenotypePcaLoadingsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "gff_feature_stats",
     "kind": "operator",
     "title": "gff_feature_stats",

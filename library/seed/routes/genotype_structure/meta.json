@@ -1,0 +1,8 @@
+{
+  "name": "genotype_structure",
+  "title": "Genotype structure (1000 Genomes chr22)",
+  "description": "PCA, relationship matrix and allele loadings for 50 GBR samples",
+  "data": [
+    "subset_snps.vcf.gz"
+  ]
+}

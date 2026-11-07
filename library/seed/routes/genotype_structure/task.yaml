@@ -1,0 +1,21 @@
+name: "Genotype structure of 50 GBR samples"
+sources:
+  genotypes:
+    path: input/subset_snps.vcf.gz
+    dims: [file]
+    labels: {}
+    reader: VcfFileReader
+parameters_file: parameters.json
+steps:
+  - name: genotype_pca
+    inputs: [genotypes]
+  - name: export_results
+    inputs: [pca]
+  - name: genotype_grm
+    inputs: [genotypes]
+  - name: export_results
+    inputs: [grm]
+  - name: genotype_pca_loadings
+    inputs: [genotypes]
+  - name: export_results
+    inputs: [loadings]

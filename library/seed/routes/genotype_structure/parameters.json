@@ -1,0 +1,81 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "genotypes": {}
+  },
+  "steps": [
+    {
+      "name": "genotype_pca",
+      "inputs": [
+        "genotypes"
+      ],
+      "params": {
+        "n_components": 5,
+        "maf": 0.0,
+        "max_variants": 0,
+        "output": "pca"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pca"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "genotype_pca"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "genotype_grm",
+      "inputs": [
+        "genotypes"
+      ],
+      "params": {
+        "maf": 0.0,
+        "max_variants": 0,
+        "output": "grm"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "grm"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "genotype_grm"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "genotype_pca_loadings",
+      "inputs": [
+        "genotypes"
+      ],
+      "params": {
+        "n_components": 5,
+        "maf": 0.0,
+        "max_variants": 0,
+        "output": "loadings"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "loadings"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "genotype_pca_loadings"
+      },
+      "context_params": {}
+    }
+  ]
+}

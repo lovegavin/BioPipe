@@ -51,6 +51,11 @@
       "sha256": "04081f4987279188eea6b07f47a7b8f18c9a1219849538d0253c862c42e788fd",
       "parameters_sha256": "603eb631b213a8aef2eb1d4d0a9cc688dffc3aee85b9977945da45f0ada755ac"
     },
+    "route_7c4922cb23ae": {
+      "path": "routes/genotype_structure/task.yaml",
+      "sha256": "f5aec92cb00c13028dd31d19b1472b98c1f5b6bb136e3567bf6812af9099b2de",
+      "parameters_sha256": "6fac829c4f94b1fd6772c7ddefda771e44eb645899a43f8ff00820c370a63a91"
+    },
     "route_5497ce1401e0": {
       "path": "routes/gm12878_interval_annotation/task.yaml",
       "sha256": "8dd0279ef95085eae24bb2f02a9d329e294d107ada3db37a417fff96f4dcd3a5",
@@ -17004,6 +17009,318 @@
                 "axis_info_open": false,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_7c4922cb23ae",
+      "version": 1,
+      "name": "Genotype structure of 50 GBR samples",
+      "graph": {
+        "schema_version": 2,
+        "name": "Genotype structure of 50 GBR samples",
+        "base_dir": ".studio/builtin-inputs/genotype_structure",
+        "nodes": [
+          {
+            "id": "genotypes",
+            "kind": "source",
+            "operator": null,
+            "title": "genotypes",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfFileReader",
+              "path": "input/subset_snps.vcf.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genotype_pca_1",
+            "kind": "operator",
+            "operator": "genotype_pca",
+            "title": "Genotype PCA",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "n_components": 5,
+              "maf": 0.0,
+              "max_variants": 0,
+              "output": "pca"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "genotype_pca",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genotype_grm_3",
+            "kind": "operator",
+            "operator": "genotype_grm",
+            "title": "Genotype relationship matrix",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "maf": 0.0,
+              "max_variants": 0,
+              "output": "grm"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "genotype_grm",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genotype_pca_loadings_5",
+            "kind": "operator",
+            "operator": "genotype_pca_loadings",
+            "title": "Genotype PCA loadings",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "n_components": 5,
+              "maf": 0.0,
+              "max_variants": 0,
+              "output": "loadings"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "genotype_pca_loadings",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "genotypes-genotype_pca_1-0",
+            "source": "genotypes",
+            "target": "genotype_pca_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genotype_pca_1-export_results_2-0",
+            "source": "genotype_pca_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genotypes-genotype_grm_3-0",
+            "source": "genotypes",
+            "target": "genotype_grm_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genotype_grm_3-export_results_4-0",
+            "source": "genotype_grm_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genotypes-genotype_pca_loadings_5-0",
+            "source": "genotypes",
+            "target": "genotype_pca_loadings_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genotype_pca_loadings_5-export_results_6-0",
+            "source": "genotype_pca_loadings_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "genotypes",
+              "label": "genotypes",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]
