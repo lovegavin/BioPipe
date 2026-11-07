@@ -2,7 +2,7 @@
 from io import BytesIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from zipfile import ZipFile, ZIP_DEFLATED
+from zipfile import BadZipFile, ZipFile, ZIP_DEFLATED
 
 import yaml
 
@@ -34,11 +34,21 @@ def export_archive(graph, staging):
 
 
 def is_workflow_archive(data):
-    with ZipFile(BytesIO(data)) as archive:
-        return 'workflow.yaml' in archive.namelist()
+    try:
+        with ZipFile(BytesIO(data)) as archive:
+            return 'workflow.yaml' in archive.namelist()
+    except BadZipFile as exc:
+        raise ValueError('Invalid workflow archive') from exc
 
 
 def import_archive(data, staging, input_base):
+    try:
+        return _import_archive(data, staging, input_base)
+    except (BadZipFile, RuntimeError, KeyError) as exc:
+        raise ValueError('Cannot read workflow archive: ' + str(exc)) from exc
+
+
+def _import_archive(data, staging, input_base):
     with ZipFile(BytesIO(data)) as archive, TemporaryDirectory(dir=staging, prefix='yaml-') as temporary:
         names = archive.namelist()
         if len(names) != len(set(names)) or set(names) != FILES:
