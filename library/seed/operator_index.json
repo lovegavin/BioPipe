@@ -4830,6 +4830,16 @@
     "status": "generated"
   },
   {
+    "id": "propensity_score",
+    "kind": "operator",
+    "title": "propensity_score",
+    "category": "Causal Inference",
+    "version": "1.0.0",
+    "description": "Logistic propensity score for a binary treatment with covariates.",
+    "doc": "src/task/step/steps/propensity_score.PropensityScoreStep.md",
+    "status": "generated"
+  },
+  {
     "id": "proportion_ci",
     "kind": "operator",
     "title": "Binomial proportion confidence interval",
@@ -5217,6 +5227,36 @@
     "version": "1.0.0",
     "description": "Diffusion pseudotime over a low-dimensional cell embedding.",
     "doc": "src/task/step/steps/pseudotime_dpt.PseudotimeDptStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "psm_balance",
+    "kind": "operator",
+    "title": "psm_balance",
+    "category": "Causal Inference",
+    "version": "1.0.0",
+    "description": "Covariate balance diagnostics for a matched sample.",
+    "doc": "src/task/step/steps/psm_balance.PsmBalanceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "psm_effect",
+    "kind": "operator",
+    "title": "psm_effect",
+    "category": "Causal Inference",
+    "version": "1.0.0",
+    "description": "Matched difference in means with OLS standard error.",
+    "doc": "src/task/step/steps/psm_effect.PsmEffectStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "psm_match",
+    "kind": "operator",
+    "title": "psm_match",
+    "category": "Causal Inference",
+    "version": "1.0.0",
+    "description": "Caliper nearest-neighbour matching on propensity scores.",
+    "doc": "src/task/step/steps/psm_match.PsmMatchStep.md",
     "status": "generated"
   },
   {

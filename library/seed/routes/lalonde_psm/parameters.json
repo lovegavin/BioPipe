@@ -1,0 +1,108 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "data": {}
+  },
+  "steps": [
+    {
+      "name": "propensity_score",
+      "inputs": [
+        "data"
+      ],
+      "params": {
+        "treatment_field": "treat",
+        "covariate_fields": "age,educ,black,hispan,married,nodegree,re74,re75",
+        "output": "propensity"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "psm_match",
+      "inputs": [
+        "data",
+        "propensity"
+      ],
+      "params": {
+        "treatment_field": "treat",
+        "score_field": "propensity",
+        "caliper": 0.2,
+        "ratio": 1,
+        "order": "largest",
+        "output": "matched"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "psm_balance",
+      "inputs": [
+        "data",
+        "matched"
+      ],
+      "params": {
+        "treatment_field": "treat",
+        "covariate_fields": "age,educ,black,hispan,married,nodegree,re74,re75",
+        "output": "balance"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "psm_effect",
+      "inputs": [
+        "data",
+        "matched"
+      ],
+      "params": {
+        "treatment_field": "treat",
+        "outcome_field": "re78",
+        "output": "effect"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "propensity"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "propensity"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "matched"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "matched"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "balance"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "balance"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "effect"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "effect"
+      },
+      "context_params": {}
+    }
+  ]
+}

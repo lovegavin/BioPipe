@@ -1,0 +1,8 @@
+{
+  "route": "lalonde_psm",
+  "n_samples": 614,
+  "n_treated": 185,
+  "n_control": 429,
+  "source": "MatchIt::lalonde (MatchIt 4.8.2)",
+  "oracle": "R MatchIt 4.8.2 / cobalt 5.0.0 / Matching 4.10.15"
+}

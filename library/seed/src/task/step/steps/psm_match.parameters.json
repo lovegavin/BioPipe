@@ -1,0 +1,67 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "title": "Sample dim",
+      "default": "sample",
+      "description": "Axis holding samples."
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "Field dim",
+      "default": "field",
+      "description": "Axis holding table columns."
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "matched",
+      "description": "Name of the output form."
+    },
+    "score_dim": {
+      "type": "string",
+      "title": "Score dim",
+      "default": "statistic",
+      "description": "Axis holding propensity fields."
+    },
+    "treatment_field": {
+      "type": "string",
+      "title": "Treatment field",
+      "default": "treat",
+      "description": "Binary 0/1 treatment column."
+    },
+    "score_field": {
+      "type": "string",
+      "title": "Score field",
+      "default": "propensity",
+      "description": "Propensity column in the score table."
+    },
+    "caliper": {
+      "type": "number",
+      "title": "Caliper (SD)",
+      "default": 0.2,
+      "description": "Maximum distance in standard deviations of the score.",
+      "minimum": 0
+    },
+    "ratio": {
+      "type": "integer",
+      "title": "Matching ratio",
+      "default": 1,
+      "description": "Controls per treated unit.",
+      "minimum": 1
+    },
+    "order": {
+      "type": "string",
+      "title": "Treated order",
+      "default": "largest",
+      "description": "Order in which treated units are matched.",
+      "enum": [
+        "largest",
+        "smallest",
+        "data"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

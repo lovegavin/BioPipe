@@ -1,0 +1,4 @@
+{
+  "key": "lalonde_psm",
+  "name": "Lalonde propensity-score matching and balance"
+}

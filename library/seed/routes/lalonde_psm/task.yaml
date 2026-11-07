@@ -1,0 +1,43 @@
+name: "Lalonde propensity-score matching and balance"
+sources:
+  data:
+    path: input/lalonde.csv
+    dims:
+    - sample
+    - field
+    labels:
+      sample: auto
+      field: builtin
+    reader: CsvReader
+parameters_file: parameters.json
+steps:
+- name: propensity_score
+  inputs:
+  - data
+- name: psm_match
+  inputs:
+  - data
+  - propensity
+- name: psm_balance
+  inputs:
+  - data
+  - matched
+- name: psm_effect
+  inputs:
+  - data
+  - matched
+- name: export_results
+  inputs:
+  - propensity
+- name: export_results
+  inputs:
+  - matched
+- name: export_results
+  inputs:
+  - balance
+- name: export_results
+  inputs:
+  - effect
+runtime:
+  memory:
+    enabled: true

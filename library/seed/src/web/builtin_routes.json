@@ -101,6 +101,11 @@
       "sha256": "c5f05ad8dd06c5b963d8037512cd294a26f4a1039cde1729f4f375029eec57d5",
       "parameters_sha256": "7723e31bfde9d440acd251e2c4c1b843785f6c710bebdb12397ae04900f7eef7"
     },
+    "route_3122408cb94b": {
+      "path": "routes/lalonde_psm/task.yaml",
+      "sha256": "55771c960d48a919d5d873015dddfa9e1c9e47d6c370a83a31e04ed8e08dfad0",
+      "parameters_sha256": "3060802e0bda61c4ff69fb9a1e69fe2d6ab597884467283fcd625e3984002380"
+    },
     "route_f8e21faf91b1": {
       "path": "routes/ld_analysis/task.yaml",
       "sha256": "67eaaa7e348b2ee576143839f6a72966521cd327325a691ea5e8e6cd5ce2b41e",
@@ -4121,6 +4126,441 @@
                 "axis_info_open": false,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_3122408cb94b",
+      "version": 1,
+      "name": "Lalonde propensity-score matching and balance",
+      "graph": {
+        "schema_version": 2,
+        "name": "Lalonde propensity-score matching and balance",
+        "base_dir": ".studio/builtin-inputs/lalonde_psm",
+        "nodes": [
+          {
+            "id": "data",
+            "kind": "source",
+            "operator": null,
+            "title": "data",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/lalonde.csv",
+              "dims": [
+                "sample",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin",
+                "sample": "auto"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "propensity_score_1",
+            "kind": "operator",
+            "operator": "propensity_score",
+            "title": "propensity_score",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "field_dim": "field",
+              "output": "propensity",
+              "treatment_field": "treat",
+              "covariate_fields": "age,educ,black,hispan,married,nodegree,re74,re75"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "psm_match_2",
+            "kind": "operator",
+            "operator": "psm_match",
+            "title": "psm_match",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "field_dim": "field",
+              "output": "matched",
+              "score_dim": "statistic",
+              "treatment_field": "treat",
+              "score_field": "propensity",
+              "caliper": 0.2,
+              "ratio": 1,
+              "order": "largest"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "psm_balance_3",
+            "kind": "operator",
+            "operator": "psm_balance",
+            "title": "psm_balance",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "field_dim": "field",
+              "output": "balance",
+              "covariate_dim": "covariate",
+              "treatment_field": "treat",
+              "covariate_fields": "age,educ,black,hispan,married,nodegree,re74,re75"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "psm_effect_4",
+            "kind": "operator",
+            "operator": "psm_effect",
+            "title": "psm_effect",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "sample_dim": "sample",
+              "field_dim": "field",
+              "output": "effect",
+              "treatment_field": "treat",
+              "outcome_field": "re78"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_5",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "propensity",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "matched",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_2"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_7",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "balance",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 1230.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "effect",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_4"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "data-propensity_score_1-0",
+            "source": "data",
+            "target": "propensity_score_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "data-psm_match_2-0",
+            "source": "data",
+            "target": "psm_match_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "propensity_score_1-psm_match_2-1",
+            "source": "propensity_score_1",
+            "target": "psm_match_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "data-psm_balance_3-0",
+            "source": "data",
+            "target": "psm_balance_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "psm_match_2-psm_balance_3-1",
+            "source": "psm_match_2",
+            "target": "psm_balance_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "data-psm_effect_4-0",
+            "source": "data",
+            "target": "psm_effect_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "psm_match_2-psm_effect_4-1",
+            "source": "psm_match_2",
+            "target": "psm_effect_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "propensity_score_1-export_results_5-0",
+            "source": "propensity_score_1",
+            "target": "export_results_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "psm_match_2-export_results_6-0",
+            "source": "psm_match_2",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "psm_balance_3-export_results_7-0",
+            "source": "psm_balance_3",
+            "target": "export_results_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "psm_effect_4-export_results_8-0",
+            "source": "psm_effect_4",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "data",
+              "label": "data",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_5",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_7",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

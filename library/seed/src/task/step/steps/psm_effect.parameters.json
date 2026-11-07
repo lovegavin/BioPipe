@@ -1,0 +1,36 @@
+{
+  "type": "object",
+  "properties": {
+    "sample_dim": {
+      "type": "string",
+      "title": "Sample dim",
+      "default": "sample",
+      "description": "Axis holding samples."
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "Field dim",
+      "default": "field",
+      "description": "Axis holding table columns."
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "effect",
+      "description": "Name of the output form."
+    },
+    "treatment_field": {
+      "type": "string",
+      "title": "Treatment field",
+      "default": "treat",
+      "description": "Binary 0/1 treatment column."
+    },
+    "outcome_field": {
+      "type": "string",
+      "title": "Outcome field",
+      "default": "re78",
+      "description": "Numeric outcome column."
+    }
+  },
+  "additionalProperties": false
+}
