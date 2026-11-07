@@ -1,0 +1,58 @@
+{
+  "library": "5.0.0",
+  "tag": "library-v5.0.0",
+  "application": "3.0.2",
+  "sdk": "3.7.0",
+  "assets": [
+    {
+      "name": "Operon-Library-v5.0.0-Guide.md",
+      "size": 5464,
+      "sha256": "40056f6d1ddb8c518c930edd4eb045853a13f459338da6645bbc48bfea41b04f"
+    },
+    {
+      "name": "Operon-Library-v5.0.0-Linux.operon-library.zip",
+      "size": 24713713,
+      "sha256": "94b2931ca6629c113fbd62d63ce7fc1bbe2129677b8c12f8a1d3bc34d2e49d28"
+    },
+    {
+      "name": "Operon-Library-v5.0.0-Windows.operon-library.zip",
+      "size": 24714065,
+      "sha256": "96b0831aa8b158851c46274fb3ef4e941f4a1aa10397cf086b78c447c6876d4f"
+    },
+    {
+      "name": "Operon-Quickstart-v5.0.0-Windows.zip",
+      "size": 96151,
+      "sha256": "ec46e0633568ac1b2de11919b0c02667fa8fd55a6ef08d1b93eca135023301cc"
+    },
+    {
+      "name": "Operon-Quickstart-v5.0.0.zip",
+      "size": 96151,
+      "sha256": "772312ad019bffa7422e50c6b4dbb67c81356cdce3ff4f5ab661edd2d903ee57"
+    },
+    {
+      "name": "Operon-Routes-v5.0.0.zip",
+      "size": 200374,
+      "sha256": "7ef837cf32cf1964e6da164b0598dba401e92b6bc711d8a93aed51697f504c6e"
+    },
+    {
+      "name": "library-build.json",
+      "size": 546,
+      "sha256": "3211d760f06ba88b75bc601d2a11646f8a150c16e4c3e26a50bf85ec77e5212a"
+    },
+    {
+      "name": "operon_builtin_library-5.0.0-py3-none-any.whl",
+      "size": 4923983,
+      "sha256": "c4d21c9ec5485a5b0cc0e1f787b1dc4679a83b4202628d6d70e22818701a5b7f"
+    },
+    {
+      "name": "verification-Linux.json",
+      "size": 471,
+      "sha256": "7ace457c7ce1409428faaad4dbe4ed9ac0f2a0fbc72224d1a31a0a1a2043346d"
+    },
+    {
+      "name": "verification-Windows.json",
+      "size": 486,
+      "sha256": "1d0a45e6bf8f18cebef221d76e8efe7ba3a625b46d6317b93327e64c87b259a4"
+    }
+  ]
+}
