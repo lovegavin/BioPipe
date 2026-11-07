@@ -76,6 +76,17 @@ aligned to Apache-2.0 separately (see
 this tag contain the operator sources and packages; the Apache-2.0 terms in the
 repository `LICENSE` apply to them.
 
+## Documentation
+
+- [Library 5.0.0 guide](https://github.com/lovegavin/Operon/blob/main/docs/library-v5.0.0.md)
+  (packages, reader categories, builtin routes, installation).
+- [Three-platform verification](https://github.com/lovegavin/Operon/blob/main/docs/verification/operon-5.0.0-cross-platform.md)
+  (WSL, GPU cluster and Windows route values, md5s and suite results).
+- [SDK 3.7 compatibility report](https://github.com/lovegavin/Operon/blob/main/docs/verification/operon-5.0.0-compatibility.md)
+  and [release-document audit](https://github.com/lovegavin/Operon/blob/main/docs/verification/operon-5.0.0-docs-audit.md).
+- [License audit](https://github.com/lovegavin/Operon/blob/main/docs/verification/operon-5.0.0-license-audit.md)
+  and [Studio 3.0.2 release-document audit](https://github.com/lovegavin/Operon/blob/main/docs/verification/operon-3.0.2-release-doc-audit.md).
+
 ## Assets
 
 | Asset | Notes |
@@ -85,6 +96,7 @@ repository `LICENSE` apply to them.
 | `operon_builtin_library-5.0.0-py3-none-any.whl` | Portable factory seed wheel; sha256 `c4d21c9ec5485a5b0cc0e1f787b1dc4679a83b4202628d6d70e22818701a5b7f` |
 | `Operon-Routes-v5.0.0.zip` | 72 route bundles plus per-route `.operon.zip` files; sha256 `7ef837cf32cf1964e6da164b0598dba401e92b6bc711d8a93aed51697f504c6e` |
 | `Operon-Quickstart-v5.0.0.zip` | Bilingual quick start and 1MEL example data; Linux sha256 `772312ad019bffa7422e50c6b4dbb67c81356cdce3ff4f5ab661edd2d903ee57`, Windows sha256 `ec46e0633568ac1b2de11919b0c02667fa8fd55a6ef08d1b93eca135023301cc` |
+| `Operon-Library-v5.0.0-Guide.md` | Detailed package, reader and route reference for this release; sha256 `40056f6d1ddb8c518c930edd4eb045853a13f459338da6645bbc48bfea41b04f` |
 | `SHA256SUMS.txt` | Checksums for the assets above |
 | `verification-*.json` | Install, route-freeze and worker-streaming verification |
 
