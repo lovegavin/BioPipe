@@ -19,6 +19,7 @@ import threading
 import time
 import traceback
 from urllib.request import build_opener, ProxyHandler, Request
+from urllib.error import HTTPError
 import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -177,6 +178,15 @@ def main(argv=None):
                     assert Path(boot['storage']['profile_dir']).resolve() == profile.profile_dir
                     assert request('/health')['studio'] == args.version
                     check('Packaged API branding and isolated storage', boot['storage'])
+                    try:
+                        request('/api/workflows/import', b'not a zip archive', content_type='application/zip')
+                    except HTTPError as exc:
+                        assert exc.code == 422, f'Invalid archive returned HTTP {exc.code}'
+                        assert 'Invalid workflow archive' in exc.read().decode('utf-8')
+                    else:
+                        raise AssertionError('Invalid workflow archive was accepted')
+                    assert request('/health')['studio'] == args.version
+                    check('Invalid archive is rejected without stopping the service')
                     snapshots = {}
                     for name, code, parameter, default in (('generate', GENERATE, 'rows', 3), ('scale', SCALE, 'factor', 2)):
                         imported = request('/api/scripts/inspect', {'filename': name + '.py', 'code': code})
